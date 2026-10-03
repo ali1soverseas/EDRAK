@@ -1,0 +1,34 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Environment
+.env
+
+# Frontend
+node_modules/
+frontend/dist/
+
+# Docs (private, not published yet)
+docs/
+
+# EDRAK runtime
+data/vector_store/
+artifacts/runs/*
+artifacts/reports/*
+
+# Keep directory placeholders if used
+!artifacts/runs/.gitkeep
+!artifacts/reports/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
