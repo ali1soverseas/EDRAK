@@ -36,3 +36,18 @@
 - `detect_language` returns `None` for texts with fewer than five letters (outside the Arabic script rule) and for short text where langdetect is under 90 percent sure. Arabic-dominant short text is `ar`.
 - `langdetect` ships without type stubs: `backend/pyproject.toml` has a mypy override for it.
 - Search for `text_contains` compares normalized, case-folded text, so Arabic diacritics and case do not matter.
+
+## Batch 3
+
+- `mcp_servers/web_server.py` and `backend/src/edrak/mcp/` are still empty, so Serper is the local adapter from SPEC 8.4. It sits behind the `Provider` interface, so Batch 5 can swap in the shared MCP client without touching tools.
+- Providers are keyed by name in `config/providers.yaml`; the YouTube provider is `youtube_api` (as in SPEC 8.2), and a `direct_http` entry exists for `fetch_page`, which Batch 5 implements.
+- Providers receive a plain dict validated by `CallParams`; `run_id` and `task_id` are required keys. They stamp `batch_id="pending"` on evidence, and the evidence store assigns the real batch id.
+- Evidence ids come from the platform and the canonical URL, not from the provider, so the same post found through two providers gets one id.
+- `BudgetTracker` counts one tool call per `ProviderRegistry.call`, including failed ones, so a model that keeps calling a failing tool still hits the limit. The registry checks the budget before routing; Batch 5 does not need a second check.
+- The registry never raises for a provider failure except `ProviderExhausted` (and `BudgetExceeded`); tools turn those into `ToolResponse` errors in Batch 5.
+- The YouTube API key is sent in the `X-Goog-Api-Key` header, not the query string, so it never appears in URLs or logs.
+- YouTube quota resets at midnight Pacific time; the counter uses that day, falling back to UTC when the time zone database is missing.
+- The shipped `config/providers.yaml` lists Apify actors and SocialCrawl endpoints as placeholders with `verify: true`. Actors for Reddit, Google Trends and the three review stores are `null` until Batch 4 picks and verifies them.
+- GDELT volume by day is computed from the returned articles (at most `maxrecords`), not from the timeline API, and is labelled `volume_basis: returned_articles`.
+- Serper dates are free text; unparseable dates become `None`. Relative dates ("3 days ago") are resolved against the provider clock.
+- Live check of GDELT from the development machine: a single request with the documented parameters returns 200, but the service often answers 429 ("limit requests to one every 5 seconds") even when requests are well over five seconds apart, and it can stay that way for minutes. The adapter spaces requests by at least five seconds and retries 429 three times, then reports `ProviderRateLimited`. `news:gdelt` has no fallback in the routing table, so a throttled run records a gap. `smoke_providers.py` reports this as FAIL.
