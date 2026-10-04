@@ -1,4 +1,4 @@
-"""Run the Market Intelligence worker against a ResearchTask."""
+"""Run the Market Intelligence agent against a ResearchTask."""
 
 from __future__ import annotations
 
@@ -13,14 +13,14 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend" / "src"))
 sys.path.insert(0, str(ROOT))
 
+from edrak.agents.market_intelligence.graph import build_graph, worker_result_from_state
+from edrak.agents.market_intelligence.state import MOCK_INPUT, _banner, empty_market_state
 from edrak.config import settings
 from edrak.contracts import ResearchTask, WorkerResult
-from edrak.workers.market.graph import build_graph, worker_result_from_state
-from edrak.workers.market.state import MOCK_INPUT, _banner, empty_market_state
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run the EDRAK market worker")
+    parser = argparse.ArgumentParser(description="Run the EDRAK market intelligence agent")
     parser.add_argument(
         "--max-tasks",
         type=int,
@@ -58,7 +58,7 @@ def main() -> WorkerResult:
     )
 
     if args.max_tasks:
-        from edrak.workers.market.nodes import output_node, task_executor, task_planner
+        from edrak.agents.market_intelligence.nodes import output_node, task_executor, task_planner
 
         state = dict(initial_state)
         state.update(task_planner(state))

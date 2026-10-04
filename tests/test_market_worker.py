@@ -1,14 +1,14 @@
 import json
 
-from edrak.contracts import ResearchTask, WorkerResult
-from edrak.workers.market.graph import (
+from edrak.agents.market_intelligence.graph import (
     build_graph,
     run,
     task_router,
     worker_result_from_state,
 )
-from edrak.workers.market.nodes import clean_json, output_node, task_planner
-from edrak.workers.market.state import empty_market_state
+from edrak.agents.market_intelligence.nodes import clean_json, output_node, task_planner
+from edrak.agents.market_intelligence.state import empty_market_state
+from edrak.contracts import ResearchTask, WorkerResult
 
 
 class _FakeTool:
@@ -55,7 +55,7 @@ def test_clean_json_strips_fences():
 
 
 def test_task_planner_falls_back_when_llm_returns_invalid_json(monkeypatch):
-    from edrak.workers.market import nodes
+    from edrak.agents.market_intelligence import nodes
 
     monkeypatch.setattr(nodes, "call_llm", lambda _prompt: "not-json")
     state = empty_market_state("r1", "Understand AI DevOps demand", "GitLab context")
@@ -86,7 +86,7 @@ def test_output_node_builds_private_report_without_raw_docs():
 
 
 def test_run_returns_worker_result_with_unchanged_flow(monkeypatch):
-    from edrak.workers.market import nodes
+    from edrak.agents.market_intelligence import nodes
 
     def fake_llm(prompt: str) -> str:
         if "planning agent" in prompt:

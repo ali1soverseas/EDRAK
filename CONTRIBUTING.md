@@ -109,7 +109,7 @@ Changes to shared contracts should be reviewed by:
 
 Every worker follows:
 
-<worker>/
+backend/src/edrak/agents/<worker>/
 ├── graph.py
 ├── state.py
 ├── nodes.py

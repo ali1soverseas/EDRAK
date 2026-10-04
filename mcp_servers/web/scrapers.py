@@ -574,6 +574,51 @@ def fetch_serper(queries):
     return all_items, queries_run
 
 
+def _unwrap_ddg_url(href: str) -> str:
+    if href.startswith("//duckduckgo.com/l/"):
+        qs = parse_qs(urlparse("https:" + href).query)
+        return qs.get("uddg", [href])[0]
+    return href
+
+
+def _parse_ddg_html_results(html: str, query: str) -> list[dict]:
+    soup = BeautifulSoup(html, "html.parser")
+    items = []
+
+    results = soup.select(".result") or soup.select(".web-result")
+    for result in results[:10]:
+        title_el = result.select_one(".result__title a") or result.select_one("a.result__a")
+        snippet_el = result.select_one(".result__snippet")
+        if not title_el:
+            continue
+        items.append({
+            "title": title_el.get_text(strip=True),
+            "url": _unwrap_ddg_url(title_el.get("href", "")),
+            "snippet": snippet_el.get_text(strip=True) if snippet_el else "",
+            "query_used": query,
+            "method": "web_search",
+        })
+    if items:
+        return items
+
+    for link in soup.select("a.result-link")[:10]:
+        href = _unwrap_ddg_url(link.get("href", ""))
+        snippet_el = link.find_parent("tr")
+        snippet = ""
+        if snippet_el is not None:
+            next_row = snippet_el.find_next_sibling("tr")
+            if next_row is not None:
+                snippet = next_row.get_text(" ", strip=True)
+        items.append({
+            "title": link.get_text(strip=True),
+            "url": href,
+            "snippet": snippet,
+            "query_used": query,
+            "method": "web_search",
+        })
+    return items
+
+
 def fetch_web_search(queries):
     print(f"[SCRAPER]  Fetching DuckDuckGo results for {len(queries)} queries...")
     all_items = []
@@ -582,40 +627,47 @@ def fetch_web_search(queries):
     for i, query in enumerate(queries[:MAX_QUERIES]):
         if i > 0:
             time.sleep(2)
-        url = "https://html.duckduckgo.com/html/"
-        params = {"q": query, "kl": "us-en"}
+
+        items = []
         try:
-            resp = requests.post(url, data=params, headers=DDGS_HEADERS, timeout=15)
+            resp = requests.post(
+                "https://html.duckduckgo.com/html/",
+                data={"q": query, "kl": "us-en"},
+                headers=DDGS_HEADERS,
+                timeout=15,
+            )
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
-        if resp.status_code != 200:
-            print(f"[SCRAPER]  SKIP query '{query}' (status {resp.status_code})")
-            continue
 
-        soup = BeautifulSoup(resp.text, "html.parser")
-        results = soup.select(".result") or soup.select(".web-result")
-        found = 0
-        for result in results[:10]:
-            title_el = result.select_one(".result__title a") or result.select_one("a.result__a")
-            snippet_el = result.select_one(".result__snippet")
-            if not title_el:
+        # 202 is DDG bot-challenge / throttle HTML, not search results.
+        if resp.status_code == 200:
+            items = _parse_ddg_html_results(resp.text, query)
+        elif resp.status_code == 202:
+            print(f"[SCRAPER]  html.duckduckgo.com challenged query '{query}' (status 202); trying lite")
+        else:
+            print(f"[SCRAPER]  SKIP html.duckduckgo.com query '{query}' (status {resp.status_code})")
+
+        if not items:
+            try:
+                lite = requests.get(
+                    "https://lite.duckduckgo.com/lite/",
+                    params={"q": query},
+                    headers=DDGS_HEADERS,
+                    timeout=15,
+                )
+            except requests.RequestException as exc:
+                print(f"[SCRAPER]  SKIP lite query '{query}' ({type(exc).__name__})")
                 continue
-            href = title_el.get("href", "")
-            if href.startswith("//duckduckgo.com/l/"):
-                qs = parse_qs(urlparse("https:" + href).query)
-                href = qs.get("uddg", [href])[0]
-            all_items.append({
-                "title": title_el.get_text(strip=True),
-                "url": href,
-                "snippet": snippet_el.get_text(strip=True) if snippet_el else "",
-                "query_used": query,
-                "method": "web_search",
-            })
-            found += 1
-        if found:
+            if lite.status_code != 200:
+                print(f"[SCRAPER]  SKIP lite query '{query}' (status {lite.status_code})")
+                continue
+            items = _parse_ddg_html_results(lite.text, query)
+
+        if items:
+            all_items.extend(items)
             queries_run.append(query)
-        print(f"[SCRAPER]  [{query[:50]}] {found} results")
+        print(f"[SCRAPER]  [{query[:50]}] {len(items)} results")
 
     print(f"[SCRAPER]  OK {len(all_items)} results from {len(queries_run)} DuckDuckGo queries")
     return all_items, queries_run

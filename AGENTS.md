@@ -49,7 +49,7 @@ The first scenario focuses on GitLab versus GitHub, Atlassian, and Microsoft Azu
 Every worker follows:
 
 ```text
-<worker>/
+backend/src/edrak/agents/<worker>/
 ├── graph.py
 ├── state.py
 ├── nodes.py
