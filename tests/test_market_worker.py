@@ -8,7 +8,7 @@ from edrak.agents.market_intelligence.graph import (
 )
 from edrak.agents.market_intelligence.nodes import clean_json, output_node, task_planner
 from edrak.agents.market_intelligence.state import empty_market_state
-from edrak.contracts import ResearchTask, WorkerResult
+from edrak.contracts import SourceType, WorkerResult, WorkerStatus, WorkerType
 
 
 class _FakeTool:
@@ -85,7 +85,7 @@ def test_output_node_builds_private_report_without_raw_docs():
     assert report["market_findings"][0]["claim"] == "The market is expanding."
 
 
-def test_run_returns_worker_result_with_unchanged_flow(monkeypatch):
+def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_research_task):
     from edrak.agents.market_intelligence import nodes
 
     def fake_llm(prompt: str) -> str:
@@ -117,35 +117,37 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch):
         lambda _url: "Enterprise teams are adopting AI coding assistants across the software lifecycle. " * 4,
     )
 
-    task = ResearchTask(
-        task_id="task-1",
-        run_id="run-1",
-        worker="market",
-        goal="Understand the AI coding assistant market",
-        business_context="GitLab vs GitHub Copilot",
-    )
-    result = run(task)
+    result = run(sample_research_task)
 
     assert isinstance(result, WorkerResult)
-    assert result.worker == "market"
-    assert result.task_id == "task-1"
-    assert result.status == "success"
+    assert result.worker is WorkerType.MARKET_INTELLIGENCE
+    assert result.task_id == sample_research_task.task_id
+    assert result.status is WorkerStatus.COMPLETED
     assert result.findings
-    assert result.findings[0].evidence[0].type == "url"
-    assert result.findings[0].evidence[0].source == "https://example.com/ai-devops"
+    assert result.evidence
+    assert result.findings[0].evidence_refs
+    assert result.evidence[0].source_type is SourceType.WEB_PAGE
+    assert result.evidence[0].source_url == "https://example.com/ai-devops"
+    assert result.confidence == 0.75
+    assert result.findings[0].confidence == 0.75
+    assert result.started_at is not None
+    assert result.completed_at is not None
+    assert result.completed_at >= result.started_at
+    assert result.error == "none"
 
 
-def test_worker_result_from_state_marks_partial_when_tasks_skipped():
-    task = ResearchTask(
-        task_id="task-1",
-        run_id="run-1",
-        worker="market",
-        goal="goal",
-    )
-    state = empty_market_state("run-1", "goal", "")
+def test_worker_result_from_state_marks_partial_when_tasks_skipped(sample_research_task):
+    state = empty_market_state(sample_research_task.parent_request_id, "goal", "")
     state["market_findings"] = [
         {"task": "A", "claim": "One finding", "evidence": [{"type": "endpoint", "source": "[tool_serper]"}]}
     ]
     state["final_report"] = {"task_summary": {"done": 1, "skipped": 1, "total": 2}}
-    result = worker_result_from_state(task, state)
-    assert result.status == "partial"
+    result = worker_result_from_state(sample_research_task, state)
+    assert result.status is WorkerStatus.PARTIAL
+    assert result.evidence[0].source_type is SourceType.OTHER
+    assert result.findings[0].statement == "One finding"
+    assert result.confidence == 0.55
+    assert result.findings[0].confidence == 0.55
+    assert result.started_at is not None
+    assert result.completed_at is not None
+    assert result.error == "Some research tasks were skipped."

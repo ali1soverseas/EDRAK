@@ -619,8 +619,71 @@ def _parse_ddg_html_results(html: str, query: str) -> list[dict]:
     return items
 
 
+def _request_with_retry(method: str, url: str, *, label: str, retries: int = 3, **kwargs):
+    """Retry 202/429/5xx. DuckDuckGo uses 202 for bot-challenge / throttle pages."""
+    resp = None
+    for attempt in range(retries):
+        try:
+            resp = requests.request(method, url, timeout=15, **kwargs)
+        except requests.RequestException as exc:
+            print(f"[SCRAPER]  RETRY {label} ({type(exc).__name__}, attempt {attempt + 1}/{retries})")
+            time.sleep(2 ** attempt)
+            continue
+        if resp.status_code == 200:
+            return resp
+        if resp.status_code in (202, 429, 500, 502, 503, 504) and attempt < retries - 1:
+            wait = 2 ** attempt
+            print(
+                f"[SCRAPER]  {label} status {resp.status_code}; "
+                f"retry in {wait}s ({attempt + 1}/{retries})"
+            )
+            time.sleep(wait)
+            continue
+        return resp
+    return resp
+
+
+def _fetch_wikipedia_search(query: str) -> list[dict]:
+    """Key-free fallback when DuckDuckGo answers 202 instead of results."""
+    try:
+        resp = requests.get(
+            "https://en.wikipedia.org/w/api.php",
+            params={
+                "action": "query",
+                "list": "search",
+                "srsearch": query,
+                "srlimit": 8,
+                "format": "json",
+                "utf8": 1,
+            },
+            headers=HEADERS,
+            timeout=15,
+        )
+    except requests.RequestException as exc:
+        print(f"[SCRAPER]  SKIP wikipedia '{query}' ({type(exc).__name__})")
+        return []
+    if resp.status_code != 200:
+        print(f"[SCRAPER]  SKIP wikipedia '{query}' (status {resp.status_code})")
+        return []
+    hits = resp.json().get("query", {}).get("search", [])
+    items = []
+    for hit in hits:
+        title = hit.get("title") or ""
+        if not title:
+            continue
+        page = title.replace(" ", "_")
+        items.append({
+            "title": title,
+            "url": f"https://en.wikipedia.org/wiki/{page}",
+            "snippet": BeautifulSoup(hit.get("snippet", ""), "html.parser").get_text(" ", strip=True),
+            "query_used": query,
+            "method": "web_search",
+        })
+    return items
+
+
 def fetch_web_search(queries):
-    print(f"[SCRAPER]  Fetching DuckDuckGo results for {len(queries)} queries...")
+    print(f"[SCRAPER]  Fetching web search results for {len(queries)} queries...")
     all_items = []
     queries_run = []
 
@@ -629,47 +692,41 @@ def fetch_web_search(queries):
             time.sleep(2)
 
         items = []
-        try:
-            resp = requests.post(
-                "https://html.duckduckgo.com/html/",
-                data={"q": query, "kl": "us-en"},
-                headers=DDGS_HEADERS,
-                timeout=15,
-            )
-        except requests.RequestException as exc:
-            print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
-            continue
-
-        # 202 is DDG bot-challenge / throttle HTML, not search results.
-        if resp.status_code == 200:
+        resp = _request_with_retry(
+            "POST",
+            "https://html.duckduckgo.com/html/",
+            label=f"html.duckduckgo.com '{query[:40]}'",
+            data={"q": query, "kl": "us-en"},
+            headers=DDGS_HEADERS,
+        )
+        if resp is not None and resp.status_code == 200:
             items = _parse_ddg_html_results(resp.text, query)
-        elif resp.status_code == 202:
-            print(f"[SCRAPER]  html.duckduckgo.com challenged query '{query}' (status 202); trying lite")
-        else:
-            print(f"[SCRAPER]  SKIP html.duckduckgo.com query '{query}' (status {resp.status_code})")
+        elif resp is not None:
+            print(f"[SCRAPER]  html.duckduckgo.com finished with status {resp.status_code}; trying lite")
 
         if not items:
-            try:
-                lite = requests.get(
-                    "https://lite.duckduckgo.com/lite/",
-                    params={"q": query},
-                    headers=DDGS_HEADERS,
-                    timeout=15,
-                )
-            except requests.RequestException as exc:
-                print(f"[SCRAPER]  SKIP lite query '{query}' ({type(exc).__name__})")
-                continue
-            if lite.status_code != 200:
-                print(f"[SCRAPER]  SKIP lite query '{query}' (status {lite.status_code})")
-                continue
-            items = _parse_ddg_html_results(lite.text, query)
+            lite = _request_with_retry(
+                "GET",
+                "https://lite.duckduckgo.com/lite/",
+                label=f"lite.duckduckgo.com '{query[:40]}'",
+                params={"q": query},
+                headers=DDGS_HEADERS,
+            )
+            if lite is not None and lite.status_code == 200:
+                items = _parse_ddg_html_results(lite.text, query)
+            elif lite is not None:
+                print(f"[SCRAPER]  lite.duckduckgo.com finished with status {lite.status_code}")
+
+        if not items:
+            print(f"[SCRAPER]  DuckDuckGo challenged; falling back to Wikipedia for '{query[:50]}'")
+            items = _fetch_wikipedia_search(query)
 
         if items:
             all_items.extend(items)
             queries_run.append(query)
         print(f"[SCRAPER]  [{query[:50]}] {len(items)} results")
 
-    print(f"[SCRAPER]  OK {len(all_items)} results from {len(queries_run)} DuckDuckGo queries")
+    print(f"[SCRAPER]  OK {len(all_items)} results from {len(queries_run)} queries")
     return all_items, queries_run
 
 
