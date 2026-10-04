@@ -1,0 +1,87 @@
+# Provider settings and routing. Routing lives here, not in code (SPEC 8.2).
+# `verify: true` marks values taken from documentation or assumed, still to be confirmed
+# against the live service. Batch 4 verifies the Apify actors and SocialCrawl endpoints.
+
+providers:
+  serper:
+    min_interval_s: 0.25
+    max_per_request: 100
+    cost_per_call_usd: 0.001
+  gdelt:
+    min_interval_s: 5.0
+    max_per_request: 250
+    options:
+      window_days: 90
+  youtube_api:
+    min_interval_s: 0.0
+    max_per_request: 50
+    options:
+      comments_per_page: 100
+      search_units: 100
+      read_units: 1
+  apify:
+    verify: true
+    min_interval_s: 0.0
+    options:
+      cost_per_item_usd: 0.002
+      actors:
+        social_search:x: {actor: apidojo/tweet-scraper, verify: true}
+        social_comments:x: {actor: apidojo/tweet-scraper, verify: true}
+        social_search:tiktok: {actor: clockworks/tiktok-scraper, verify: true}
+        social_comments:tiktok: {actor: clockworks/tiktok-scraper, verify: true}
+        social_search:instagram: {actor: apify/instagram-scraper, verify: true}
+        social_comments:instagram: {actor: apify/instagram-scraper, verify: true}
+        social_search:facebook: {actor: apify/facebook-posts-scraper, verify: true}
+        social_comments:facebook: {actor: apify/facebook-posts-scraper, verify: true}
+        social_search:youtube: {actor: streamers/youtube-scraper, verify: true}
+        social_comments:youtube: {actor: streamers/youtube-scraper, verify: true}
+        social_search:reddit: {actor: null, verify: true}
+        social_comments:reddit: {actor: null, verify: true}
+        search_interest: {actor: null, verify: true}
+        reviews:app_store: {actor: null, verify: true}
+        reviews:google_play: {actor: null, verify: true}
+        reviews:amazon: {actor: null, verify: true}
+  socialcrawl:
+    verify: true
+    min_interval_s: 0.0
+    options:
+      endpoints:
+        social_search:x: {path: null, verify: true}
+        social_comments:x: {path: null, verify: true}
+        social_search:tiktok: {path: null, verify: true}
+        social_comments:tiktok: {path: null, verify: true}
+        social_search:instagram: {path: null, verify: true}
+        social_comments:instagram: {path: null, verify: true}
+        social_search:facebook: {path: null, verify: true}
+        social_comments:facebook: {path: null, verify: true}
+        social_search:youtube: {path: null, verify: true}
+        social_comments:youtube: {path: null, verify: true}
+        social_search:reddit: {path: null, verify: true}
+        social_comments:reddit: {path: null, verify: true}
+  google_trends_api:
+    verify: true
+  direct_http:
+    min_interval_s: 0.0
+
+# Ordered provider names per capability. A name with no registered provider is skipped.
+routing:
+  social_search:x: [apify, socialcrawl, serper]
+  social_search:tiktok: [apify, socialcrawl, serper]
+  social_search:instagram: [apify, socialcrawl, serper]
+  social_search:facebook: [apify, socialcrawl, serper]
+  social_search:reddit: [apify, socialcrawl, serper]
+  social_search:youtube: [youtube_api, apify, socialcrawl]
+  social_comments:x: [apify, socialcrawl]
+  social_comments:tiktok: [apify, socialcrawl]
+  social_comments:instagram: [apify, socialcrawl]
+  social_comments:facebook: [apify, socialcrawl]
+  social_comments:reddit: [apify, socialcrawl]
+  social_comments:youtube: [youtube_api, apify, socialcrawl]
+  search_interest: [apify, google_trends_api]
+  reviews:app_store: [apify]
+  reviews:google_play: [apify]
+  reviews:amazon: [apify]
+  news:gdelt: [gdelt]
+  news:google_news: [serper]
+  web_search: [serper]
+  fetch_page: [direct_http]
