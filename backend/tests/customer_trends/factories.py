@@ -20,6 +20,29 @@ TASK_ID = "task-test-001"
 BASE_DAY = datetime(2026, 7, 1, 12, 0, tzinfo=UTC)
 
 
+NOW = datetime(2026, 10, 1, 9, 0, tzinfo=UTC)
+
+
+class FakeClock:
+    """A clock whose `sleep` moves time forward instead of waiting."""
+
+    def __init__(self, start: float = 1000.0) -> None:
+        self.now = start
+        self.sleeps: list[float] = []
+
+    def __call__(self) -> float:
+        return self.now
+
+    async def sleep(self, seconds: float) -> None:
+        self.sleeps.append(seconds)
+        self.now += seconds
+
+
+def call_params(**overrides: Any) -> dict[str, Any]:
+    """Provider call params for the default test run."""
+    return {"run_id": RUN_ID, "task_id": TASK_ID, **overrides}
+
+
 def load_brief(use_case: str = "competitive_intelligence") -> TaskBrief:
     return TaskBrief.model_validate_json(
         (FIXTURES / f"sample_brief_{use_case}.json").read_text(encoding="utf-8")
