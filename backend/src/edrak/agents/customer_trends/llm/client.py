@@ -82,6 +82,17 @@ def _raw_text(raw: object) -> str:
     return content if isinstance(content, str) else json.dumps(content, ensure_ascii=False)
 
 
+def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
+    """Some hosted models ignore the `format` constraint, so the prompt states the schema too."""
+    return HumanMessage(
+        content=(
+            "Reply with only a JSON object that validates against this JSON schema, "
+            "with no prose and no code fences:\n"
+            + json.dumps(schema.model_json_schema(), ensure_ascii=False)
+        )
+    )
+
+
 def _parse[S: BaseModel](schema: type[S], parsed: object) -> S:
     if isinstance(parsed, schema):
         return parsed
@@ -97,7 +108,8 @@ async def structured_call[S: BaseModel](
 ) -> S:
     """Get a validated `schema` instance, with at most one repair attempt."""
     runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
-    conversation = list(messages)
+    base = [*messages, _schema_instruction(schema)]
+    conversation = list(base)
     attempts = 2 if repair else 1
     error: Exception | None = None
     for attempt in range(1, attempts + 1):
@@ -116,7 +128,7 @@ async def structured_call[S: BaseModel](
                 error_type=type(exc).__name__,
             )
             conversation = [
-                *messages,
+                *base,
                 AIMessage(content=_raw_text(raw)),
                 HumanMessage(
                     content=(

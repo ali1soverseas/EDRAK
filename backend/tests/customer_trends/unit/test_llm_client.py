@@ -76,11 +76,14 @@ async def test_structured_call_repairs_once_and_shows_the_error() -> None:
     )
     result = await structured_call(llm, Capital, [HumanMessage(content="capital of France")])
     assert result.capital == "Paris"
-    repair_prompt = llm.calls[1]
-    assert repair_prompt[0].content == "capital of France"
-    assert '"country": "France"' in str(repair_prompt[1].content)
-    assert "capital" in str(repair_prompt[2].content)
-    assert "invalid" in str(repair_prompt[2].content)
+    first_prompt, repair_prompt = llm.calls
+    assert first_prompt[0].content == "capital of France"
+    assert "JSON schema" in str(first_prompt[1].content)
+    assert '"capital"' in str(first_prompt[1].content)
+    assert repair_prompt[:2] == first_prompt
+    assert '"country": "France"' in str(repair_prompt[2].content)
+    assert "capital" in str(repair_prompt[3].content)
+    assert "invalid" in str(repair_prompt[3].content)
 
 
 async def test_structured_call_fails_after_one_repair() -> None:

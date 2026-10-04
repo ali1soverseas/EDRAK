@@ -18,4 +18,4 @@
 - `ScriptedChatModel.bind_tools` returns the same instance, so the script cursor and recorded calls are shared across bound copies.
 - The worker's `tests/**` lint config also ignores S105 and S106 (fake secrets in assertions), in addition to S101.
 - The lint paths in `backend/Makefile` include `../scripts/customer_trends`.
-- The live endpoint was not reachable from this session without a key, so the real-endpoint checks in `smoke_llm.py` ran only against the fake model.
+- Against the live endpoint (`gpt-oss:120b` on Ollama Cloud) the `format` schema constraint is not reliably honored, so `structured_call` also states the JSON schema in a closing user message. With that, the smoke script passes all three checks.
