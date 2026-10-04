@@ -2,7 +2,7 @@
 
 CT_SRC = src/edrak/agents/customer_trends
 CT_TESTS = tests/customer_trends
-CT_PATHS = $(CT_SRC) $(CT_TESTS) evals/customer_trends
+CT_PATHS = $(CT_SRC) $(CT_TESTS) evals/customer_trends ../scripts/customer_trends
 
 install:
 	uv sync
