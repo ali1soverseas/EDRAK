@@ -23,6 +23,24 @@ Launch the test UI (arrives in a later batch):
 
     make ui
 
+## Configure the LLM
+
+The worker talks to Ollama Cloud through the native chat route (`ChatOllama`, never the `/v1` shim). Settings come from `.env` at the repository root or the environment. The shared `LLM_*` keys are not used by this worker.
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `OLLAMA_API_KEY` | bearer token, required | none |
+| `OLLAMA_MODEL` | model for every role | `gpt-oss:120b` |
+| `OLLAMA_BASE_URL` | endpoint | `https://ollama.com` |
+| `OLLAMA_MODEL_ANALYSIS` | optional model for the `analyst` role | falls back to `OLLAMA_MODEL` |
+| `OLLAMA_TEMPERATURE`, `OLLAMA_TIMEOUT_S` | sampling and request timeout | `0.2`, `120` |
+
+Check the endpoint with the smoke script (completion, tool calling, structured output):
+
+    uv run python ../scripts/customer_trends/smoke_llm.py
+
+It exits non-zero on any failure and never prints the key. Tests never touch the network: they use `ScriptedChatModel` from `llm/fake.py`.
+
 ## Documentation
 
 - [docs/SPEC.md](docs/SPEC.md): implementation spec (kept local, not tracked)
