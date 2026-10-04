@@ -51,6 +51,10 @@ select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "S"]
 strict = true
 mypy_path = "src"
 
+[[tool.mypy.overrides]]
+module = ["langdetect", "langdetect.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
