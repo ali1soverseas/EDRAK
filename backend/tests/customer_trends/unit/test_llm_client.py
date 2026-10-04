@@ -49,7 +49,7 @@ def test_analyst_role_prefers_analysis_model_when_set() -> None:
     s = make_settings(ollama_api_key="k", ollama_model="base", ollama_model_analysis="deep")
     assert get_chat_model("analyst", settings=s).model == "deep"
     for role in ("planner", "writer", "branch"):
-        assert get_chat_model(role, settings=s).model == "base"  # type: ignore[arg-type]
+        assert get_chat_model(role, settings=s).model == "base"  # type: ignore[arg-type]  # loosely typed test input
 
 
 def test_analyst_role_falls_back_to_base_model() -> None:
