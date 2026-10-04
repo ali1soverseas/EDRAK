@@ -83,3 +83,14 @@ def main() -> WorkerResult:
 
 if __name__ == "__main__":
     main()
+
+"""
+# mocked unit tests
+python -m pytest tests -q
+
+# live 1-task smoke
+python scripts/run_market_worker.py --max-tasks 1
+
+# full 4–7 task run (several minutes)
+python scripts/run_market_worker.py
+"""
