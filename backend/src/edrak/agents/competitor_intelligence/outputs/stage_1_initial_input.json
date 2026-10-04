@@ -1,0 +1,231 @@
+{
+    "company": "GitLab",
+    "company_context": {
+        "company": "GitLab",
+        "industry": "DevSecOps / Software Development",
+        "core_platform": {
+            "description": "GitLab provides an integrated software development and DevSecOps platform covering source code management, planning, code review, CI/CD, security, compliance, and deployment."
+        },
+        "ai_product": {
+            "name": "GitLab Duo",
+            "agent_platform": "GitLab Duo Agent Platform",
+            "ai_capabilities": [
+                "Code Suggestions",
+                "Agentic Chat",
+                "Foundational Agents",
+                "Custom Agents",
+                "External Agents",
+                "Foundational Flows",
+                "Custom Flows",
+                "Agentic Code Review",
+                "Agentic SAST Vulnerability Resolution",
+                "AI-assisted software development",
+                "AI-assisted code explanation, generation, fixing, and refactoring"
+            ],
+            "agent_types": {
+                "foundational_agents": "Pre-built production-ready agents created by GitLab for specific development workflows.",
+                "custom_agents": "User-configured agents whose behavior is defined through system prompts and selected tools.",
+                "external_agents": "External AI agents such as Claude and Codex that can operate inside GitLab and can be triggered from issues or merge requests."
+            }
+        },
+        "agentic_software_development": {
+            "software_development_flow": {
+                "purpose": "Performs complex software-development tasks from the IDE using a plan-and-execute workflow.",
+                "behavior": [
+                    "Creates a plan from the developer's request",
+                    "Gathers project context",
+                    "Works through development tasks",
+                    "Proposes and stages repository changes",
+                    "Allows the developer to accept, modify, or reject proposed changes"
+                ],
+                "context_sources": [
+                    "Project structure",
+                    "Codebase",
+                    "Repository history",
+                    "GitLab issues",
+                    "GitLab merge requests"
+                ],
+                "supported_IDEs": [
+                    "VS Code",
+                    "Visual Studio",
+                    "JetBrains IDEs"
+                ],
+                "gitlab_access": [
+                    "Projects API",
+                    "Search API",
+                    "CI Pipelines API",
+                    "CI Jobs API",
+                    "Merge Requests API",
+                    "Issues API",
+                    "Notes API",
+                    "Usage Data API",
+                    "Metadata API"
+                ]
+            },
+            "agentic_code_review": {
+                "description": "Automatically reviews merge requests using repository, pipeline, and security-policy context.",
+                "pricing": "0.25 USD per review / 4 reviews per GitLab Credit",
+                "availability": "GitLab Duo Agent Platform"
+            },
+            "agentic_security_remediation": {
+                "name": "Agentic SAST Vulnerability Resolution",
+                "availability": "Generally available",
+                "tier": "GitLab Ultimate with GitLab Duo Agent Platform",
+                "behavior": [
+                    "Analyzes confirmed SAST findings",
+                    "Generates a code fix addressing the vulnerability",
+                    "Opens a ready-to-merge request",
+                    "Provides a confidence score"
+                ]
+            },
+            "ci_agent": {
+                "name": "CI Expert Agent",
+                "status": "Beta",
+                "behavior": [
+                    "Inspects a repository",
+                    "Identifies language and framework",
+                    "Proposes a build-and-test pipeline",
+                    "Targets a running pipeline without requiring manual YAML creation"
+                ]
+            },
+            "analytics_agent": {
+                "name": "Data Analyst Agent",
+                "status": "Generally available",
+                "behavior": [
+                    "Answers natural-language questions",
+                    "Uses live software-lifecycle data",
+                    "Provides visual answers"
+                ],
+                "data_domains": [
+                    "Merge request cycle time",
+                    "Pipeline health",
+                    "Deployment frequency"
+                ]
+            }
+        },
+        "ai_pricing_model": {
+            "pricing_currency": "GitLab Credits",
+            "important_pricing_structure": [
+                "GitLab Duo capabilities can be provided through subscription tiers/add-ons",
+                "GitLab Credits are used as a usage-based AI currency",
+                "Premium and Ultimate customers receive included GitLab Credits",
+                "Additional GitLab Credits can be purchased",
+                "Some agentic capabilities have usage-based costs",
+                "GitLab Duo Pro and Enterprise use a seat-based add-on model",
+                "GitLab Duo Agent Platform Self-Hosted can use an enterprise license agreement with a flat customer fee for offline-license customers"
+            ],
+            "known_current_pricing": {
+                "agentic_code_review": "0.25 USD per review",
+                "agentic_code_review_credit_usage": "4 reviews per GitLab Credit",
+                "premium_included_credits": "12 GitLab Credits per user per month"
+            },
+            "free_tier": "GitLab.com Free organizations can use GitLab Duo Agent Platform by purchasing a monthly GitLab Credits commitment."
+        },
+        "subscription_and_availability": {
+            "duo_addons": [
+                "GitLab Duo Core",
+                "GitLab Duo Pro",
+                "GitLab Duo Enterprise"
+            ],
+            "agent_platform": {
+                "tiers": [
+                    "Free",
+                    "Premium",
+                    "Ultimate"
+                ],
+                "offerings": [
+                    "GitLab.com",
+                    "GitLab Self-Managed",
+                    "GitLab Dedicated"
+                ]
+            },
+            "software_development_flow": {
+                "availability": [
+                    "GitLab.com",
+                    "GitLab Self-Managed",
+                    "GitLab Dedicated"
+                ],
+                "status": "Generally available"
+            }
+        },
+        "models_and_model_providers": {
+            "documented_providers": [
+                "Anthropic",
+                "Fireworks AI",
+                "Google Gemini",
+                "OpenAI"
+            ],
+            "documented_models": [
+                "Anthropic Claude Sonnet 4"
+            ],
+            "model_strategy": "GitLab Duo uses different LLMs for different AI tasks rather than relying on a single model provider."
+        },
+        "data_and_privacy": {
+            "model_training": "GitLab states that it does not train generative AI models and its AI model subprocessors are restricted from using customer inputs and outputs to train their models.",
+            "data_retention": "GitLab documents different retention behavior depending on the model provider and feature, including zero-data-retention arrangements with some providers.",
+            "security": "GitLab Duo includes secret detection and redaction in specified AI workflows before sensitive information is sent to LLMs."
+        },
+        "integration": {
+            "development_environment": [
+                "GitLab repositories",
+                "GitLab issues",
+                "GitLab merge requests",
+                "GitLab CI/CD pipelines",
+                "GitLab security findings",
+                "VS Code",
+                "Visual Studio",
+                "JetBrains IDEs"
+            ],
+            "external_agents": [
+                "OpenAI Codex",
+                "Claude Code"
+            ]
+        },
+        "recent_development": [
+            {
+                "release": "GitLab 18.10",
+                "date": "2026-03",
+                "changes": [
+                    "Broader access to GitLab Duo Agent Platform",
+                    "Free-tier access through GitLab Credits commitment",
+                    "Agentic Code Review pricing introduced at 0.25 USD per review",
+                    "Agentic false-positive detection for security scanning became generally available"
+                ]
+            },
+            {
+                "release": "GitLab 18.11",
+                "date": "2026-04",
+                "changes": [
+                    "Agentic SAST Vulnerability Resolution became generally available",
+                    "CI Expert Agent introduced in beta",
+                    "Data Analyst Agent became generally available",
+                    "Subscription-level GitLab Credit spending caps introduced",
+                    "Per-user GitLab Credit spending caps introduced"
+                ]
+            }
+        ],
+        "competitive_baseline": {
+            "ai_capability": "GitLab combines AI coding assistance with agentic capabilities that operate across development, code review, security, CI, and software-lifecycle analytics.",
+            "autonomy": "GitLab's agentic capabilities can plan and execute multi-step development tasks, generate repository changes, create fixes, and open merge requests, while retaining developer review and approval points for relevant workflows.",
+            "context": "GitLab's agents can use context already present in the GitLab platform, including repositories, project structure, code, issues, merge requests, pipelines, and security findings.",
+            "pricing": "GitLab combines subscription-based tiers/add-ons with usage-based GitLab Credits for AI capabilities.",
+            "availability": "AI capabilities vary by GitLab tier, deployment model, feature status, and whether the capability is GA, beta, or otherwise restricted.",
+            "ecosystem": "GitLab supports AI inside its own development platform and also supports external agents such as Claude Code and Codex."
+        }
+    },
+    "competitors": [
+        "GitHub",
+        "Microsoft Azure DevOps",
+        "Atlassian Bitbucket",
+        "Amazon Web Services (AWS)",
+        "Google"
+    ],
+    "research_goal": "\nCompare GitLab's competitors in AI-assisted and agentic software development\nto understand how their products support developers across the software\ndevelopment lifecycle, including the capabilities they provide, the degree\nof autonomy they enable, how they integrate with existing development\nworkflows, their availability and pricing, and how these offerings have\nevolved recently.\n",
+    "research_stage": 1,
+    "search_results": [],
+    "executed_queries": [],
+    "findings": [],
+    "verified_findings": [],
+    "requirement_checks": [],
+    "missing_information": []
+}
