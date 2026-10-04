@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from edrak.agents.customer_trends.providers import http
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.settings import Settings, get_settings
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
@@ -34,3 +35,13 @@ def loaded_store(store: EvidenceStore, evidence: list[EvidenceItem]) -> Evidence
     store.create_run(RUN_ID, TASK_ID)
     store.add_batch(RUN_ID, TASK_ID, "synthetic", evidence)
     return store
+
+
+@pytest.fixture(autouse=True)
+def no_retry_backoff(monkeypatch: pytest.MonkeyPatch) -> None:
+    """HTTP retries back off instantly in tests."""
+
+    async def instant(_: float) -> None:
+        return None
+
+    monkeypatch.setattr(http, "_sleep", instant)
