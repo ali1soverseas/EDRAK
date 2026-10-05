@@ -1,6 +1,6 @@
 # EDRAK — Internal Intelligence Feature & Architecture Guide
 
-This document provides a comprehensive overview and architectural specification of the **Internal Intelligence Agent**, the **Internal Data MCP Server**, the **RAG (Retrieval-Augmented Generation) Subsystem**, the **GitLab Handbook ETL Data Pipeline**, and the **End-to-End Flow Testing Suite** within EDRAK.
+This document provides a comprehensive overview and architectural specification of the **Internal Intelligence Agent**, the **Internal Data MCP Server**, the **RAG (Retrieval-Augmented Generation) Subsystem**, the **GitLab Company Profile Dataset**, the **GitLab Handbook ETL Pipeline**, and the **End-to-End Flow Testing Suite** within EDRAK.
 
 ---
 
@@ -8,14 +8,14 @@ This document provides a comprehensive overview and architectural specification 
 
 The **Internal Intelligence Agent** is one of the four specialized worker agents in EDRAK. Its primary responsibility is to analyze the pilot company's (**GitLab**) internal strategic posture, including:
 
-- **Product Architecture & Capabilities**: GitLab Duo AI features, latency benchmarks, multi-model routing, self-hosted and air-gapped readiness.
-- **Pricing, Packaging & Commercial Terms**: GitLab Duo Pro ($19/seat/mo), GitLab Duo Enterprise ($39/seat/mo), add-on tiers vs. bundled competitor offerings.
+- **Product Architecture & Capabilities**: GitLab Duo AI features, latency benchmarks, multi-model routing via AI Gateway, self-hosted and air-gapped readiness.
+- **Pricing, Packaging & Commercial Terms**: GitLab Duo Agent Platform, usage-based GitLab Credits, tier allowances (Premium: $12/user/mo; Ultimate: $24/user/mo), and legacy add-ons (Pro/Enterprise).
 - **Telemetry & Adoption Metrics**: Active seat utilization, customer churn triggers, CSAT scores, enterprise sentiment.
-- **Strategic OKRs & Values**: GitLab public handbook values (Results, Efficiency, Diversity, Iteration, Transparency, Collaboration - CREDIT) and quarterly product roadmaps.
+- **Strategic OKRs & Values**: GitLab public handbook values (Collaboration, Results, Efficiency, Diversity/Inclusion/Belonging, Iteration, Transparency - CREDIT), 2026 "Act 2" restructuring, and quarterly roadmaps.
 
 ### Internal vs. External Data Governance
 - **Public GitLab Handbook**: Real data scraped and cleaned directly from [GitLab Handbook](https://handbook.gitlab.com/handbook/).
-- **Confidential Internal Information**: Because internal GitLab telemetry/OKRs are confidential, synthetic internal files are generated under `data/internal/` and marked with explicit provenance tags (`source_type: "internal_doc"`).
+- **Confidential Internal Information**: Because internal GitLab telemetry/OKRs are confidential, synthetic internal files are generated under `data/internal/` and marked with explicit provenance tags (`source_type: SourceType.SYNTHETIC_INTERNAL`, `is_synthetic: True`).
 
 ---
 
@@ -37,7 +37,7 @@ flowchart TD
     end
 
     subgraph MCPPlane [Model Context Protocol Server]
-        Node2 -->|JSON-RPC / stdio| MCPClient[MCP Client]
+        Node2 -->|JSON-RPC / stdio| MCPClient[MCP Client / InternalDataToolClient]
         MCPClient --> MCPServer[internal_data_server.py]
         MCPServer --> Tool1[search_internal_knowledge]
         MCPServer --> Tool2[get_internal_document_by_id]
@@ -66,20 +66,55 @@ flowchart TD
 
 ---
 
-## 3. Component Breakdown
+## 3. Shared Contracts Compliance (`backend/src/edrak/contracts/`)
+
+All domain workers strictly communicate through the immutable contracts defined in `edrak.contracts`:
+
+| Contract | Schema & Purpose |
+| :--- | :--- |
+| **`CompanyProfile`** | Defines company baseline (`name`, `aliases`, `products`, `notes`). |
+| **`ResearchTask`** | Formal instruction dispatched by the Orchestrator (`task_id`, `parent_request_id`, `worker`, `goal`, `focus`, `company_profile`, `business_context`, `attempt`). |
+| **`Evidence`** | Grounded proof item with provenance (`evidence_id`, `source_type`, `source_title`, `source_url`, `extracted_fact`, `excerpt`, `retrieved_at`, `is_synthetic`, `metadata`). |
+| **`Finding`** | Analytical claim linked to evidence (`finding_id`, `statement`, `category`, `evidence_refs`, `confidence`, `limitations`). |
+| **`WorkerResult`** | Complete output contract with referential integrity (`task_id`, `worker`, `status`, `attempt`, `findings`, `evidence`, `gaps`, `conflicts`, `confidence`, `metadata`). |
+
+---
+
+## 4. GitLab Company Profile (`data/profiles/` & `edrak.core.profiles`)
+
+A rich, comprehensive company profile is available across the system:
+
+* **Static JSON Profile**: `data/profiles/gitlab_profile.json`
+* **Comprehensive Architecture & Strategic Markdown**: `data/profiles/gitlab-company-profile.md`
+* **Python In-Memory Contract & Loaders**: `backend/src/edrak/core/profiles.py`
+
+### Python Usage:
+```python
+from edrak.core.profiles import GITLAB_COMPANY_PROFILE, get_gitlab_profile, get_detailed_gitlab_profile
+
+# Standard contract instance
+profile = get_gitlab_profile()
+
+# Full detailed profile dictionary (financials, leadership, Act 2 strategy, competitive positioning)
+detailed_info = get_detailed_gitlab_profile()
+```
+
+---
+
+## 5. Component Breakdown
 
 ### A. Internal Intelligence Agent (`backend/src/edrak/agents/internal_intelligence/`)
 Follows the standard LangGraph worker package structure:
 
 | File | Purpose |
 | :--- | :--- |
-| `backend/src/edrak/agents/internal_intelligence/graph.py` | Defines the state machine graph: `plan_queries` ➔ `retrieve_evidence` ➔ `analyze_and_synthesize` ➔ `format_worker_result` ➔ `END`. |
-| `backend/src/edrak/agents/internal_intelligence/state.py` | Defines `InternalAgentState` containing the input `ResearchTask`, generated queries, retrieved `Evidence` pool, internal analysis text, and final `WorkerResult`. |
-| `backend/src/edrak/agents/internal_intelligence/nodes.py` | Implements query planning, semantic retrieval over MCP/RAG, posture analysis, and finding generation. |
-| `backend/src/edrak/agents/internal_intelligence/prompts.py` | System prompts instructing the agent to focus on internal strengths, telemetry weaknesses, packaging constraints, and strategic alignment. |
+| `graph.py` | State machine: `plan_queries` ➔ `retrieve_evidence` ➔ `analyze_synthesize` ➔ `format_result` ➔ `END`. |
+| `state.py` | Defines `InternalAgentState` (`task`, `queries`, `retrieved_evidence`, `findings`, `limitations_and_gaps`, `summary`, `worker_result`, `error`). |
+| `nodes.py` | Implements query planning, semantic retrieval over MCP/RAG, posture analysis, finding categorization, and result packaging. |
+| `prompts.py` | System prompts guiding the worker to analyze internal strengths, telemetry weaknesses, packaging constraints, and strategic alignment. |
 
 ### B. Internal Data MCP Server (`mcp_servers/internal_data_server.py`)
-Exposes reusable internal data access tools to any agent via standard Model Context Protocol (MCP) over `stdio`:
+Exposes reusable internal data access tools via Model Context Protocol (MCP) over `stdio`:
 
 - `search_internal_knowledge(query: str, top_k: int = 4, doc_type: Optional[str] = None)`: Semantic search over indexed handbook chunks and internal documents.
 - `get_internal_document_by_id(chunk_id: str)`: Exact chunk retrieval.
@@ -89,189 +124,135 @@ Exposes reusable internal data access tools to any agent via standard Model Cont
 
 | File | Purpose |
 | :--- | :--- |
-| `backend/src/edrak/rag/embeddings.py` | Provides local Hugging Face static embeddings (`sentence-transformers/all-MiniLM-L6-v2` via ONNX or sentence-transformers) ensuring zero network dependencies, fast vector generation, and static query/document vector consistency. |
-| `backend/src/edrak/rag/indexer.py` | Manages header-aware markdown chunking, sliding window paragraphs, metadata attachment, and persistent vector upserts in ChromaDB. |
-| `backend/src/edrak/rag/retriever.py` | Performs vector search, calculates distance-to-confidence scores, and constructs strongly-typed `Evidence` objects with provenance metadata. |
+| `embeddings.py` | Local Hugging Face static embeddings (`sentence-transformers/all-MiniLM-L6-v2`) ensuring zero network latency and vector consistency. |
+| `indexer.py` | Header-aware markdown chunking, metadata attachment, and vector upserts in ChromaDB. |
+| `retriever.py` | Semantic vector search, confidence calculation, and construction of strongly-typed `Evidence` objects. |
 
 ---
 
-## 4. GitLab Handbook ETL Pipeline (`scripts/`)
+## 6. Manual Execution & CLI Guide
 
-A 4-stage data pipeline designed for modularity, idempotence, and auditability:
+To run any step of the pipeline manually:
 
-```text
-data/
-├── handbook/
-│   ├── raw/         # Stage 1: Scraped raw JSON records with full HTML & timestamps
-│   ├── cleaned/     # Stage 2: Parsed, stripped markdown documents with frontmatter
-│   └── chunked/     # Stage 3: Semantic heading chunks with source URLs & IDs
-├── internal/        # Domain markdown: pricing, product, telemetry, sales, handbook
-└── vector_store/    # ChromaDB persistent SQLite & vector index files
+### Environment Setup
+Make sure your environment variables and Python path are set:
+```powershell
+# In PowerShell
+$env:PYTHONPATH="backend/src;backend;scripts;."
+```
+```bash
+# In Bash
+export PYTHONPATH="backend/src:backend:scripts:."
 ```
 
-### Pipeline Scripts:
-1. **`scripts/fetch_gitlab_handbook.py`**: Scrapes `https://handbook.gitlab.com/handbook/`, strips tracking parameters (`utm_source`), and saves raw JSON records to `data/handbook/raw/`.
-2. **`scripts/clean_gitlab_handbook.py`**: Strips navigation, footers, breadcrumbs, ads, and scripts. Converts HTML into clean Markdown with frontmatter to `data/handbook/cleaned/`.
-3. **`scripts/chunk_gitlab_handbook.py`**: Splits content on markdown headers (`#`, `##`, `###`) and sliding paragraphs into semantic chunks in `data/handbook/chunked/`.
-4. **`scripts/ingest_internal_data.py`**: Upserts handbook chunks and `data/internal/` documents into ChromaDB with local Hugging Face static embeddings.
-5. **`scripts/run_etl_pipeline.py`**: Master CLI runner (`--all`, `--fetch`, `--clean`, `--chunk`, `--ingest`, `--reset`).
-
 ---
 
-## 5. How to Ingest All Data / Entire GitLab Handbook
+### Step 1: Run Handbook ETL Pipeline
 
-To ingest the entire GitLab Handbook site into the ChromaDB vector database:
-
-### Option 1: Single Master Command (Recommended)
-Run the automated ETL pipeline with `--max-pages 0` (unlimited crawl) and `--reset` (cleans and rebuilds ChromaDB):
+#### Option A: Full Automated Run (Fetch ➔ Clean ➔ Chunk ➔ Ingest)
 ```bash
+# Crawl 25 pages and ingest:
+python scripts/run_etl_pipeline.py --all --max-pages 25 --reset
+
+# Or full unlimited crawl:
 python scripts/run_etl_pipeline.py --all --max-pages 0 --reset
 ```
 
-> **Tip**: If you want to crawl a specific number of pages (e.g., 50 or 200 pages):
-> ```bash
-> python scripts/run_etl_pipeline.py --all --max-pages 50 --reset
-> ```
-
----
-
-### Option 2: Step-by-Step Execution
-
-#### Step 1: Crawl the GitLab Handbook Site
+#### Option B: Step-by-Step Manual ETL
 ```bash
-python scripts/fetch_gitlab_handbook.py --url https://handbook.gitlab.com/handbook/ --max-pages 0
-```
+# 1. Scrape raw handbook pages
+python scripts/fetch_gitlab_handbook.py --url https://handbook.gitlab.com/handbook/ --max-pages 25
 
-#### Step 2: Clean the Scraped HTML into Markdown
-```bash
+# 2. Clean HTML into Markdown
 python scripts/clean_gitlab_handbook.py
-```
 
-#### Step 3: Chunk the Markdown into Semantic Units
-```bash
+# 3. Chunk Markdown into semantic units
 python scripts/chunk_gitlab_handbook.py --chunk-size 1000 --overlap 150
-```
 
-#### Step 4: Ingest Everything into ChromaDB
-```bash
+# 4. Ingest Chunks and Internal Data into ChromaDB
 python scripts/ingest_internal_data.py --reset
 ```
 
 ---
 
-## 6. End-to-End Post-Fetch Flow Testing (`backend/tests/test_internal_flow.py`)
-
-A unified test module `backend/tests/test_internal_flow.py` validates the complete pipeline post-fetch in 5 sequential stages:
-
-```
-[STEP 1: CLEAN]   Raw HTML JSONs ➔ Clean Markdown (data/handbook/cleaned/)
-        ↓
-[STEP 2: CHUNK]   Clean Markdown ➔ Semantic Header Chunks (data/handbook/chunked/)
-        ↓
-[STEP 3: INGEST]  Chunks & Internal Docs ➔ ChromaDB (edrak_internal_knowledge)
-        ↓
-[STEP 4: RETRIEVE] Semantic Vector Query ➔ Typed Evidence Objects
-        ↓
-[STEP 5: AGENT]   LangGraph Agent Execution (ResearchTask ➔ WorkerResult)
-```
-
-### Running the End-to-End Test:
+### Step 2: Start Internal Data MCP Server
+To run the MCP server over stdio for external agent integration:
 ```bash
-# Run standalone test script
-python backend/tests/test_internal_flow.py
-
-# Or run via pytest test runner alongside all unit/integration tests
-pytest backend/tests/test_internal_flow.py -v
+python mcp_servers/internal_data_server.py
 ```
 
-### Verified Execution Output & Contract Breakdown:
+---
+
+### Step 3: Run the Internal Intelligence Worker Directly
+You can run a research task through Python or an interactive script:
+```python
+from edrak.contracts.request import BusinessContext, CompanyProfile, UseCase
+from edrak.contracts.task import ResearchTask, WorkerType
+from edrak.agents.internal_intelligence.graph import run_internal_intelligence
+
+task = ResearchTask(
+    parent_request_id="req_manual_001",
+    worker=WorkerType.INTERNAL_INTELLIGENCE,
+    goal="Evaluate GitLab Duo architecture and pricing strategy against GitHub Copilot",
+    focus="Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits",
+    company_profile=CompanyProfile(name="GitLab"),
+    business_context=BusinessContext(
+        use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+        targets=["GitHub", "Azure DevOps"],
+    ),
+)
+
+result = run_internal_intelligence(task)
+print(f"Status: {result.status.value}")
+print(f"Findings: {len(result.findings)}")
+print(f"Evidence items: {len(result.evidence)}")
+```
+
+---
+
+### Step 4: Run Automated Tests
+```bash
+# Run all unit tests
+python -m pytest backend/tests/test_contracts.py backend/tests/test_internal_agent.py backend/tests/test_rag.py -v
+
+# Run the complete end-to-end lifecycle flow test
+python -m pytest backend/tests/test_internal_flow.py -v -s
+```
+
+---
+
+## 7. Verified Test Output Example
+
 ```text
 ======================================================================
 WORKER RESULT CONTRACT OUTPUT (Comprehensive Inspection)
 ======================================================================
 Task ID:       task_internal_gitlab_duo_eval
-Worker Role:   internal_intelligence
-Status:        success
-Completed At:  2026-10-04T17:26:32.914275+00:00
-Metadata:      {"query_count": 4, "evidence_count": 10, "finding_count": 10}
+Worker:        internal_intelligence
+Status:        completed
+Metadata:      {"query_count": 2, "evidence_count": 6, "finding_count": 6, "summary": "..."}
 
---- [1] HIGH-LEVEL SUMMARY ---
-Internal Intelligence Assessment for 'Assess GitLab Duo product architecture, pricing tiers, and internal telemetry metrics vs GitHub Copilot':
-- Analyzed 10 internal evidence sources across product architecture, commercial tiers, and strategy.
-• [PRICING_AND_COMMERCIALS] GitLab Duo is packaged as an add-on subscription to GitLab Premium and Ultimate tiers.
-• [COMPETITIVE_POSITIONING] Self-hosted & air-gapped deployment availability (GitLab Duo on self-managed).
-• [INTERNAL_TELEMETRY] 142,000 active paid seats across GitLab Pro & Enterprise add-ons.
-
---- [2] STRUCTURED FINDINGS (Sample) ---
-  Finding #1 [ID: find_internal_9b2e0481]:
-    Domain Topic:   pricing_and_commercials
+--- [1] STRUCTURED FINDINGS (Sample) ---
+  Finding #1 [ID: 61e050ce-79c2-4822-a9b3-1fcfb7cb62ea]:
+    Category:       pricing_packaging
     Confidence:     0.89
-    Evidence Refs:  ['ev_internal_3d4b6841']
+    Evidence Refs:  ['c0dbd06d-495c-4da6-90e2-7634fb72ca3c']
     Statement:      "GitLab Duo is packaged as an add-on subscription to GitLab Premium and Ultimate tiers."
-    Metadata:       {'source_title': 'Gitlab Pricing And Packaging', 'source_uri': 'data/internal/pricing/gitlab_pricing_and_packaging.md'}
 
---- [3] CITED EVIDENCE POOL (Sample) ---
-  Evidence #1 [ID: ev_internal_3d4b6841]:
+--- [2] CITED EVIDENCE POOL (Sample) ---
+  Evidence #1 [ID: c0dbd06d-495c-4da6-90e2-7634fb72ca3c]:
     Title:          Gitlab Pricing And Packaging
-    Source URI:     data/internal/pricing/gitlab_pricing_and_packaging.md
-    Source Type:    internal_doc
-    Confidence:     0.89
-    Timestamp:      2026-10-04T17:26:32.802145+00:00
-    Content Excerpt:"# GitLab Duo Pricing, Packaging & Commercial Strategy  ## Pricing Structure (Add-on Model) GitLab Duo is packaged as an add-on subscription..."
-    Metadata:       {'filename': 'gitlab_pricing_and_packaging.md', 'search_query': 'What is the add-on pricing model for GitLab Duo Pro and Enterprise?'}
+    Source URL:     data/internal/pricing/gitlab_pricing_and_packaging.md
+    Source Type:    synthetic_internal
+    Retrieved At:   2026-10-05T06:18:25.102391+00:00
+    Extracted Fact: "GitLab Duo is packaged as an add-on subscription to GitLab Premium and Ultimate tiers."
+    Metadata:       {'is_synthetic': True, 'search_query': '...'}
 
---- [4] LIMITATIONS AND GAPS ---
+--- [3] LIMITATIONS AND GAPS ---
   • Internal company data is adapted/synthetic for GitLab pilot demonstration purposes in accordance with project constraints.
 
 [JSON Schema Validation] WorkerResult successfully validates and serializes to standard contract JSON.
 ======================================================================
-ALL FLOW TESTS PASSED SUCCESSFULLY! (Clean -> Chunk -> Ingest -> Retrieve -> Agent)
+ALL FLOW TESTS PASSED SUCCESSFULLY!
 ======================================================================
 ```
-
----
-
-## 7. Configuration & Environment Variables
-
-Configure `.env` in the workspace root (refer to `.env.example`):
-
-```dotenv
-# ==============================================================================
-# LLM Generation (Ollama Cloud / Local OSS)
-# ==============================================================================
-LLM_PROVIDER=ollama
-LLM_MODEL=gpt-oss:120b
-LLM_BASE_URL=https://ollama.your-cloud-endpoint.com/v1
-LLM_API_KEY=your_ollama_cloud_api_key_here
-LLM_TEMPERATURE=0.2
-
-# ==============================================================================
-# Local Hugging Face Static Embeddings
-# ==============================================================================
-EMBEDDING_PROVIDER=huggingface
-EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
-EMBEDDING_DIMENSION=384
-
-# ==============================================================================
-# Data Storage & RAG Paths
-# ==============================================================================
-VECTOR_STORE_PATH=data/vector_store
-INTERNAL_DATA_PATH=data/internal
-RAW_HANDBOOK_PATH=data/handbook/raw
-CLEANED_HANDBOOK_PATH=data/handbook/cleaned
-CHUNKED_HANDBOOK_PATH=data/handbook/chunked
-ARTIFACTS_PATH=artifacts
-CHROMA_COLLECTION_NAME=edrak_internal_knowledge
-```
-
----
-
-## 8. Command Reference
-
-| Command | Description |
-| :--- | :--- |
-| `python scripts/run_etl_pipeline.py --all --max-pages 0 --reset` | Ingests the **entire** handbook into ChromaDB. |
-| `python scripts/run_etl_pipeline.py --all --max-pages 25 --reset` | Runs the ETL pipeline for a specific page limit. |
-| `python backend/tests/test_internal_flow.py` | Runs the full automated verification test (Clean ➔ Chunk ➔ Ingest ➔ Retrieve ➔ LangGraph Agent). |
-| `pytest backend/tests/ -v` | Runs all unit and integration tests (6/6 passing). |
-| `python mcp_servers/internal_data_server.py` | Starts the Model Context Protocol (MCP) server over stdio. |
