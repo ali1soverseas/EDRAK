@@ -8,6 +8,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import re
 import sys
 from typing import Any, Dict, List
 
@@ -46,18 +47,36 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
         try:
             chunks = json.loads(chunk_file.read_text(encoding="utf-8"))
             for chunk in chunks:
+                raw_content = chunk.get("content", "").strip()
+                title = chunk.get("title", "").strip()
+                heading = chunk.get("heading", "").strip()
+
+                # Skip chunks shorter than 80 characters of body text
+                body_only = re.sub(r"^#+.*$", "", raw_content, flags=re.MULTILINE).strip()
+                if len(body_only) < 80:
+                    continue
+
                 chunk_id = chunk["chunk_id"]
                 if chunk_id in seen_ids:
                     chunk_id = f"{chunk_id}_{len(seen_ids)}"
                 seen_ids.add(chunk_id)
 
-                content = chunk["content"]
+                # Ensure title and heading prefix
+                content = raw_content
+                if title and not content.startswith("#"):
+                    if heading and heading.lower() != title.lower():
+                        content = f"# {title}\n## {heading}\n\n{raw_content}"
+                    else:
+                        content = f"# {title}\n\n{raw_content}"
+
                 metadata = {
-                    "source_uri": chunk.get("source_uri", ""),
-                    "title": chunk.get("title", ""),
+                    "source_uri": str(chunk.get("source_uri", "")),
+                    "title": title,
                     "section": chunk.get("section", ""),
-                    "heading": chunk.get("heading", ""),
-                    "doc_type": chunk.get("doc_type", "internal_handbook"),
+                    "heading": heading,
+                    "doc_type": "internal_handbook",
+                    "is_synthetic": "false",
+                    "origin": "public_handbook",
                 }
                 all_ids.append(chunk_id)
                 all_documents.append(content)
@@ -99,18 +118,18 @@ def main():
         logger.info("Resetting collection '%s'...", settings.CHROMA_COLLECTION_NAME)
         indexer.reset_collection()
 
-    # 1. Ingest handbook chunks if present
+    # 1. Ingest internal markdown documents (Synthetic internal data)
+    internal_data_dir = settings.get_absolute_internal_data_path()
+    logger.info("Indexing internal documents from %s...", internal_data_dir)
+    internal_chunks_count = indexer.index_directory(internal_data_dir, is_synthetic=True)
+
+    # 2. Ingest handbook chunks
     chunk_dir = settings.get_absolute_chunked_handbook_path()
     handbook_chunks_count = ingest_chunked_handbook(indexer, chunk_dir)
 
-    # 2. Ingest internal markdown documents
-    internal_data_dir = settings.get_absolute_internal_data_path()
-    logger.info("Indexing internal documents from %s...", internal_data_dir)
-    internal_chunks_count = indexer.index_directory(internal_data_dir)
-
     total_chunks = handbook_chunks_count + internal_chunks_count
-    logger.info("Ingestion completed! Total chunks indexed: %d (Handbook: %d, Internal Docs: %d)",
-                total_chunks, handbook_chunks_count, internal_chunks_count)
+    logger.info("Ingestion completed! Total chunks indexed: %d (Internal Docs: %d, Handbook: %d)",
+                total_chunks, internal_chunks_count, handbook_chunks_count)
 
     # 3. Verification queries
     logger.info("Running verification retrieval checks...")

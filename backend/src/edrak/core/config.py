@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     EMBEDDING_PROVIDER: str = "huggingface"  # 'huggingface', 'onnx', 'sentence-transformers', 'local_fast'
     EMBEDDING_MODEL_NAME: str = "sentence-transformers/all-MiniLM-L6-v2"  # or 'BAAI/bge-small-en-v1.5'
     EMBEDDING_DIMENSION: int = 384
+    EMBEDDING_ALLOW_FALLBACK: bool = False
+    RETRIEVAL_MIN_SCORE: float = 0.30
+
+    # Internal Intelligence Worker Reranking & Retrieval Settings
+    INTERNAL_RERANK_SCORE_CUTOFF: float = 0.58
+    INTERNAL_RERANK_MAX_ITEMS: int = 12
+    INTERNAL_RERANK_MIN_ITEMS: int = 5
 
     # Storage & Paths
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent.parent.parent

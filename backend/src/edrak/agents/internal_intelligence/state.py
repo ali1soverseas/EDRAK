@@ -1,5 +1,4 @@
-"""State definition for Internal Intelligence Worker."""
-
+from datetime import datetime
 import operator
 from typing import Annotated, Any, Dict, List, Optional
 from typing_extensions import TypedDict
@@ -17,10 +16,14 @@ class InternalAgentState(TypedDict, total=False):
     """
 
     task: ResearchTask
+    started_at: Optional[datetime]
     queries: List[str]
-    retrieved_evidence: Annotated[List[Evidence], operator.add]
+    retrieved_evidence: List[Evidence]
     findings: List[Finding]
     limitations_and_gaps: List[str]
+    conflicts: List[str]
+    dropped_findings: List[Dict[str, Any]]
     summary: str
+    llm_used: bool
     worker_result: Optional[WorkerResult]
     error: Optional[str]

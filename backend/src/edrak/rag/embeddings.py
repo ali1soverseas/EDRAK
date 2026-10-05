@@ -95,6 +95,11 @@ class HuggingFaceLocalEmbeddingFunction(EmbeddingFunction[Documents]):
             logger.debug("SentenceTransformerEmbeddingFunction not available: %s", e)
 
         # 3. Fallback to deterministic FastLocalEmbeddingFunction
+        if not getattr(settings, "EMBEDDING_ALLOW_FALLBACK", False):
+            raise RuntimeError(
+                f"Failed to initialize HuggingFace/ONNX embedding model '{self.model_name}' "
+                "and EMBEDDING_ALLOW_FALLBACK is False. Install onnxruntime or sentence-transformers."
+            )
         logger.warning(
             "HuggingFace embedding libraries not ready, using fast deterministic fallback for '%s'",
             self.model_name,
@@ -122,16 +127,22 @@ def get_embedding_function(
                 from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
                 return ONNXMiniLM_L6_V2()
             except Exception as e:
-                logger.debug("Failed loading ONNXMiniLM_L6_V2: %s", e)
+                logger.warning("Failed loading ONNXMiniLM_L6_V2: %s", e)
 
         # 2. Try SentenceTransformers if installed
         try:
             from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
             return SentenceTransformerEmbeddingFunction(model_name=m_name)
         except Exception as e:
-            logger.debug("SentenceTransformerEmbeddingFunction not available: %s", e)
+            logger.warning("SentenceTransformerEmbeddingFunction not available: %s", e)
 
-        # 3. Fallback
+        # 3. Fallback check
+        if not getattr(settings, "EMBEDDING_ALLOW_FALLBACK", False):
+            raise RuntimeError(
+                f"Configured embedding provider '{prov}' could not load model '{m_name}' "
+                "and EMBEDDING_ALLOW_FALLBACK is False."
+            )
+        logger.warning("Falling back to FastLocalEmbeddingFunction for provider '%s'", prov)
         return FastLocalEmbeddingFunction(dimension=settings.EMBEDDING_DIMENSION)
 
     elif prov in ("fast", "local_fast", "mock"):
@@ -140,5 +151,10 @@ def get_embedding_function(
         try:
             from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
             return ONNXMiniLM_L6_V2()
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed loading default ONNXMiniLM_L6_V2: %s", e)
+            if not getattr(settings, "EMBEDDING_ALLOW_FALLBACK", False):
+                raise RuntimeError(
+                    "Default embedding model failed to load and EMBEDDING_ALLOW_FALLBACK is False."
+                ) from e
             return FastLocalEmbeddingFunction(dimension=settings.EMBEDDING_DIMENSION)
