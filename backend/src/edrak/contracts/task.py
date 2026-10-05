@@ -1,57 +1,63 @@
-"""Research task model dispatched from Orchestrator/Supervisor to domain workers."""
+from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
-import uuid
+
+from pydantic import Field
+
+from .base import ContractModel, NonBlankStr, new_id, utcnow
+from .request import BusinessContext, CompanyProfile
 
 
-class WorkerRole(str, Enum):
-    """Supported specialized intelligence worker domains."""
-
+class WorkerType(str, Enum):
     INTERNAL_INTELLIGENCE = "internal_intelligence"
     COMPETITOR_INTELLIGENCE = "competitor_intelligence"
     MARKET_INTELLIGENCE = "market_intelligence"
     CUSTOMER_TRENDS = "customer_trends"
 
 
-class ResearchTask(BaseModel):
-    """The formal contract representing a sub-objective assigned to a worker."""
+class ResearchTask(ContractModel):
+    """One bounded research assignment handed to a single worker.
 
-    task_id: str = Field(
-        default_factory=lambda: str(uuid.uuid4()),
-        description="Unique identifier for the research task.",
+    The orchestrator produces this; a worker consumes it. It carries no
+    questions list, dependency graph, or required-evidence list on purpose:
+    ``goal`` and ``focus`` are the whole instruction surface, and the shared
+    company and business context travel with the task so the worker never needs
+    the original request.
+    """
+
+    task_id: NonBlankStr = Field(default_factory=new_id, description="Unique task identifier.")
+    parent_request_id: NonBlankStr = Field(
+        description="request_id of the originating BusinessRequest.",
     )
-    request_id: str = Field(
-        ...,
-        description="Reference to the parent BusinessRequest ID.",
+    worker: WorkerType = Field(description="Which domain worker owns this task.")
+
+    goal: NonBlankStr = Field(description="What this task must achieve.")
+    focus: NonBlankStr = Field(description="What this task must concentrate on.")
+
+    company_profile: CompanyProfile = Field(description="Company baseline, copied from the request.")
+    business_context: BusinessContext = Field(description="Business context, copied from the request.")
+
+    attempt: int = Field(
+        default=1,
+        ge=1,
+        description="Stadrts at 1 and increments on targeted retries.",
     )
-    worker_role: WorkerRole = Field(
-        ...,
-        description="Target worker domain responsible for fulfilling this task.",
+
+
+class ResearchPlan(ContractModel):
+    """An ordered set of research assignments produced by the planner."""
+
+    plan_id: NonBlankStr = Field(default_factory=new_id, description="Unique plan identifier.")
+    request_id: NonBlankStr = Field(
+        description="request_id of the originating BusinessRequest.",
     )
-    objective: str = Field(
-        ...,
-        description="Clear, actionable goal for the worker.",
-    )
-    scope: str = Field(
-        ...,
-        description="Boundaries, specific entities, products, or departments to investigate.",
-    )
-    key_questions: List[str] = Field(
-        default_factory=list,
-        description="Key targeted questions the worker must answer.",
-    )
-    constraints: List[str] = Field(
-        default_factory=list,
-        description="Specific constraints or instructions for research.",
-    )
-    context: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Shared contextual parameters passed from the planner.",
-    )
+    tasks: list[ResearchTask] = Field(description="Tasks to dispatch.")
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        description="Timestamp when the task was dispatched.",
+        default_factory=utcnow,
+        description="When the plan was created (UTC).",
+    )
+    rationale: str | None = Field(
+        default=None,
+        description="Why these tasks, in plain language.",
     )

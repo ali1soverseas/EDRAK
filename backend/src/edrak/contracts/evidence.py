@@ -1,42 +1,86 @@
-"""Evidence models for EDRAK intelligence findings."""
+from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
-from pydantic import BaseModel, Field
-import uuid
+from datetime import datetime
+from enum import Enum
+from typing import Any
+
+from pydantic import Field, model_validator
+
+from .base import ContractModel, NonBlankStr, new_id, utcnow
 
 
-class Evidence(BaseModel):
-    """Represents a piece of verified ground-truth evidence gathered by a worker."""
+class SourceType(str, Enum):
+    WEB_PAGE = "web_page"
+    SEARCH_RESULT = "search_result"
+    OFFICIAL_DOCUMENTATION = "official_documentation"
+    PRICING_PAGE = "pricing_page"
+    RELEASE_NOTES = "release_notes"
+    ANNOUNCEMENT = "announcement"
+    NEWS_ARTICLE = "news_article"
+    REVIEW_SITE = "review_site"
+    MARKET_REPORT = "market_report"
+    REGULATORY = "regulatory"
+    ECONOMIC = "economic"
+    INTERNAL_DOCUMENT = "internal_document"
+    SYNTHETIC_INTERNAL = "synthetic_internal"
+    OTHER = "other"
 
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    source_uri: str = Field(
-        ...,
-        description="URI, filepath, or URL where this evidence originated.",
+
+class EvidenceRelation(str, Enum):
+    SUPPORTS = "supports"
+    CONTRADICTS = "contradicts"
+    CONTEXTUALIZES = "contextualizes"
+
+
+class Evidence(ContractModel):
+    """Traceable support for one or more findings.
+
+    Workers are the only producers. Verification and synthesis consume it;
+    the orchestrator must treat it as opaque.
+    """
+
+    evidence_id: NonBlankStr = Field(
+        default_factory=new_id,
+        description="Unique evidence identifier.",
     )
-    source_type: str = Field(
-        ...,
-        description="Type of source: 'internal_handbook', 'internal_doc', 'internal_rag', 'web_page', 'financial_report', etc.",
+    source_type: SourceType = Field(description="Nature of the source.")
+    source_title: str | None = Field(default=None, description="Title of the source.")
+    source_url: str | None = Field(default=None, description="URL when the source is public.")
+    publisher: str | None = Field(default=None, description="Who published the source.")
+    extracted_fact: NonBlankStr = Field(description="The specific fact drawn from the source.")
+    excerpt: str | None = Field(default=None, description="Supporting passage from the source.")
+    retrieved_at: datetime = Field(
+        default_factory=utcnow,
+        description="When the source was retrieved (UTC).",
     )
-    title: str = Field(
-        default="",
-        description="Title or heading of the document/page.",
+    is_synthetic: bool = Field(
+        default=False,
+        description="True when the content is synthetic or adapted, not authentic.",
     )
-    content: str = Field(
-        ...,
-        description="Direct excerpt or relevant content supporting a finding.",
-    )
-    timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        description="When this evidence was retrieved or created.",
-    )
-    confidence_score: float = Field(
-        default=1.0,
-        ge=0.0,
-        le=1.0,
-        description="Confidence score in the reliability/accuracy of the evidence source.",
-    )
-    metadata: Dict[str, Any] = Field(
+    metadata: dict[str, Any] = Field(
         default_factory=dict,
-        description="Additional structured metadata (e.g. author, department, section, tags).",
+        description="Source-specific extras such as pricing tier or publish date.",
+    )
+
+    @model_validator(mode="after")
+    def _synthetic_sources_must_be_flagged(self) -> Evidence:
+        if self.source_type is SourceType.SYNTHETIC_INTERNAL and not self.is_synthetic:
+            raise ValueError(
+                "source_type='synthetic_internal' requires is_synthetic=True; "
+                "synthetic internal data must never be presented as authentic"
+            )
+        return self
+
+
+class EvidenceRef(ContractModel):
+    """A finding's link to one piece of evidence, carrying what the link means.
+
+    A bare id list cannot distinguish "this source backs the claim" from "this
+    source refutes it", so the relation travels with the reference.
+    """
+
+    evidence_id: NonBlankStr = Field(description="evidence_id of the referenced Evidence.")
+    relation: EvidenceRelation = Field(
+        default=EvidenceRelation.SUPPORTS,
+        description="How this evidence relates to the finding.",
     )
