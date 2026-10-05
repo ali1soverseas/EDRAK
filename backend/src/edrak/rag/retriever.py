@@ -12,7 +12,7 @@ import uuid
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 
-from edrak.contracts.evidence import Evidence
+from edrak.contracts.evidence import Evidence, SourceType
 from edrak.core.config import settings
 from edrak.rag.embeddings import get_embedding_function
 
@@ -98,18 +98,26 @@ class InternalRetriever:
 
             source_uri = str(meta.get("source_uri", "internal://handbook/doc"))
             title = str(meta.get("title", "Internal Document"))
-            doc_type = str(meta.get("doc_type", "internal_doc"))
+            is_syn = bool(meta.get("is_synthetic", True))
+            source_type = SourceType.SYNTHETIC_INTERNAL if is_syn else SourceType.INTERNAL_DOCUMENT
+
+            # Extract first meaningful sentence as extracted_fact
+            fact_lines = [l.strip() for l in doc.split("\n") if l.strip() and not l.startswith("#")]
+            extracted_fact = fact_lines[0] if fact_lines else doc.strip()[:200]
+            if not extracted_fact:
+                extracted_fact = f"Internal intelligence finding from {title}"
 
             ev = Evidence(
-                id=f"ev_internal_{uuid.uuid4().hex[:8]}",
-                source_uri=source_uri,
-                source_type=doc_type,
-                title=title,
-                content=doc,
-                confidence_score=round(confidence, 2),
+                source_type=source_type,
+                source_title=title,
+                source_url=source_uri,
+                extracted_fact=extracted_fact,
+                excerpt=doc,
+                is_synthetic=is_syn,
                 metadata={
                     **meta,
                     "search_query": query,
+                    "confidence_score": round(confidence, 2),
                 },
             )
             evidence_items.append(ev)
@@ -123,12 +131,23 @@ class InternalRetriever:
             if res and res.get("documents") and res["documents"]:
                 doc = res["documents"][0]
                 meta = res["metadatas"][0] if res.get("metadatas") else {}
+                title = str(meta.get("title", "Internal Document"))
+                source_uri = str(meta.get("source_uri", "internal://handbook"))
+                is_syn = bool(meta.get("is_synthetic", True))
+                source_type = SourceType.SYNTHETIC_INTERNAL if is_syn else SourceType.INTERNAL_DOCUMENT
+                
+                fact_lines = [l.strip() for l in doc.split("\n") if l.strip() and not l.startswith("#")]
+                extracted_fact = fact_lines[0] if fact_lines else doc.strip()[:200]
+                if not extracted_fact:
+                    extracted_fact = f"Internal intelligence finding from {title}"
+
                 return Evidence(
-                    id=chunk_id,
-                    source_uri=str(meta.get("source_uri", "internal://handbook")),
-                    source_type=str(meta.get("doc_type", "internal_doc")),
-                    title=str(meta.get("title", "")),
-                    content=doc,
+                    source_type=source_type,
+                    source_title=title,
+                    source_url=source_uri,
+                    extracted_fact=extracted_fact,
+                    excerpt=doc,
+                    is_synthetic=is_syn,
                     metadata=meta,
                 )
         except Exception as e:

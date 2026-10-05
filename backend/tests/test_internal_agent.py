@@ -5,7 +5,8 @@ import tempfile
 from pathlib import Path
 
 from edrak.agents.internal_intelligence.graph import run_internal_intelligence
-from edrak.contracts.task import ResearchTask, WorkerRole
+from edrak.contracts.request import BusinessContext, CompanyProfile, UseCase
+from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.contracts.result import WorkerStatus
 from edrak.rag.indexer import InternalIndexer
 
@@ -28,19 +29,20 @@ def test_internal_intelligence_worker_run():
     )
 
     task = ResearchTask(
-        request_id="req-test-1",
-        worker_role=WorkerRole.INTERNAL_INTELLIGENCE,
-        objective="Investigate GitLab Duo architecture and privacy framework",
-        scope="GitLab Duo, AI Gateway",
-        key_questions=["What is the AI Gateway privacy model?"],
+        parent_request_id="req-test-1",
+        worker=WorkerType.INTERNAL_INTELLIGENCE,
+        goal="Investigate GitLab Duo architecture and privacy framework",
+        focus="GitLab Duo, AI Gateway",
+        company_profile=CompanyProfile(name="GitLab"),
+        business_context=BusinessContext(use_case=UseCase.COMPETITIVE_INTELLIGENCE),
     )
 
     result = run_internal_intelligence(task)
 
     assert result.task_id == task.task_id
-    assert result.worker_role == "internal_intelligence"
-    assert result.status == WorkerStatus.SUCCESS
+    assert result.worker == WorkerType.INTERNAL_INTELLIGENCE
+    assert result.status == WorkerStatus.COMPLETED
     assert len(result.evidence) > 0
     assert len(result.findings) > 0
-    assert result.summary != ""
-    assert result.findings[0].evidence_ids[0] in [e.id for e in result.evidence]
+    assert result.findings[0].evidence_ids[0] in [e.evidence_id for e in result.evidence]
+

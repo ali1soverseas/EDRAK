@@ -27,7 +27,8 @@ from clean_gitlab_handbook import HandbookCleaner
 from chunk_gitlab_handbook import HandbookChunker
 from ingest_internal_data import ingest_chunked_handbook
 from edrak.core.config import settings
-from edrak.contracts.task import ResearchTask, WorkerRole
+from edrak.contracts.request import BusinessContext, CompanyProfile, UseCase
+from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.contracts.result import WorkerResult, WorkerStatus
 from edrak.rag.indexer import InternalIndexer
 from edrak.rag.retriever import InternalRetriever
@@ -86,8 +87,8 @@ def test_full_internal_flow():
 
     logger.info("Query: '%s' returned %d evidence items:", test_query, len(evidence_results))
     for i, ev in enumerate(evidence_results, 1):
-        logger.info("  [%d] Title: '%s' | URI: %s | Score: %.2f", i, ev.title, ev.source_uri, ev.confidence_score)
-        logger.info("      Excerpt: %s...", ev.content[:100].replace("\n", " "))
+        logger.info("  [%d] Title: '%s' | URL: %s | Synthetic: %s", i, ev.source_title, ev.source_url, ev.is_synthetic)
+        logger.info("      Fact: %s...", ev.extracted_fact[:100].replace("\n", " "))
 
     assert len(evidence_results) > 0, "Expected retrieval to find relevant evidence"
 
@@ -97,15 +98,15 @@ def test_full_internal_flow():
     logger.info("\n>>> [STEP 5/5] Running Internal Intelligence Worker LangGraph Agent...")
     task = ResearchTask(
         task_id="task_internal_gitlab_duo_eval",
-        request_id="req_internal_eval_001",
-        worker_role=WorkerRole.INTERNAL_INTELLIGENCE,
-        objective="Assess GitLab Duo product architecture, pricing tiers, and internal telemetry metrics vs GitHub Copilot",
-        scope="Internal GitLab Duo packaging, pricing, privacy architecture, and user retention",
-        key_questions=[
-            "What is the add-on pricing model for GitLab Duo Pro and Enterprise?",
-            "What internal architecture advantages does GitLab Duo offer regarding privacy and multi-model routing?",
-            "What do internal telemetry metrics indicate regarding seat adoption and churn?",
-        ],
+        parent_request_id="req_internal_eval_001",
+        worker=WorkerType.INTERNAL_INTELLIGENCE,
+        goal="Assess GitLab Duo product architecture, pricing tiers, and internal telemetry metrics vs GitHub Copilot",
+        focus="Internal GitLab Duo packaging, pricing, privacy architecture, and user retention",
+        company_profile=CompanyProfile(name="GitLab"),
+        business_context=BusinessContext(
+            use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+            targets=["GitHub Copilot", "GitLab Duo"],
+        ),
     )
 
     worker_result: WorkerResult = run_internal_intelligence(task)
@@ -114,42 +115,36 @@ def test_full_internal_flow():
     logger.info("WORKER RESULT CONTRACT OUTPUT (Comprehensive Inspection)")
     logger.info("=" * 70)
     logger.info("Task ID:       %s", worker_result.task_id)
-    logger.info("Worker Role:   %s", worker_result.worker_role)
+    logger.info("Worker:        %s", worker_result.worker.value)
     logger.info("Status:        %s", worker_result.status.value)
-    logger.info("Completed At:  %s", worker_result.completed_at.isoformat())
     logger.info("Metadata:      %s", json.dumps(worker_result.metadata))
 
-    logger.info("\n--- [1] HIGH-LEVEL SUMMARY ---")
-    logger.info("%s", worker_result.summary)
-
-    logger.info("\n--- [2] STRUCTURED FINDINGS (%d items) ---", len(worker_result.findings))
+    logger.info("\n--- [1] STRUCTURED FINDINGS (%d items) ---", len(worker_result.findings))
     for i, f in enumerate(worker_result.findings, 1):
-        logger.info("  Finding #%d [ID: %s]:", i, f.id)
-        logger.info("    Domain Topic:   %s", f.domain_topic)
-        logger.info("    Confidence:     %.2f", f.confidence)
+        logger.info("  Finding #%d [ID: %s]:", i, f.finding_id)
+        logger.info("    Category:       %s", f.category.value)
+        logger.info("    Confidence:     %s", f.confidence)
         logger.info("    Evidence Refs:  %s", f.evidence_ids)
         logger.info("    Statement:      \"%s\"", f.statement)
-        logger.info("    Metadata:       %s", f.metadata)
 
-    logger.info("\n--- [3] CITED EVIDENCE POOL (%d items) ---", len(worker_result.evidence))
+    logger.info("\n--- [2] CITED EVIDENCE POOL (%d items) ---", len(worker_result.evidence))
     for i, ev in enumerate(worker_result.evidence, 1):
-        logger.info("  Evidence #%d [ID: %s]:", i, ev.id)
-        logger.info("    Title:          %s", ev.title)
-        logger.info("    Source URI:     %s", ev.source_uri)
-        logger.info("    Source Type:    %s", ev.source_type)
-        logger.info("    Confidence:     %.2f", ev.confidence_score)
-        logger.info("    Timestamp:      %s", ev.timestamp.isoformat())
-        logger.info("    Content Excerpt:\"%s...\"", ev.content[:140].replace("\n", " "))
+        logger.info("  Evidence #%d [ID: %s]:", i, ev.evidence_id)
+        logger.info("    Title:          %s", ev.source_title)
+        logger.info("    Source URL:     %s", ev.source_url)
+        logger.info("    Source Type:    %s", ev.source_type.value)
+        logger.info("    Retrieved At:   %s", ev.retrieved_at.isoformat())
+        logger.info("    Extracted Fact: \"%s...\"", ev.extracted_fact[:140].replace("\n", " "))
         logger.info("    Metadata:       %s", ev.metadata)
 
-    logger.info("\n--- [4] LIMITATIONS AND GAPS (%d items) ---", len(worker_result.limitations_and_gaps))
-    for g in worker_result.limitations_and_gaps:
+    logger.info("\n--- [3] LIMITATIONS AND GAPS (%d items) ---", len(worker_result.gaps))
+    for g in worker_result.gaps:
         logger.info("  • %s", g)
 
     # -------------------------------------------------------------------------
     # VALIDATION ASSERTIONS
     # -------------------------------------------------------------------------
-    assert worker_result.status == WorkerStatus.SUCCESS, f"Expected SUCCESS but got {worker_result.status}"
+    assert worker_result.status == WorkerStatus.COMPLETED, f"Expected COMPLETED but got {worker_result.status}"
     assert len(worker_result.evidence) > 0, "Worker result must contain evidence items"
     assert len(worker_result.findings) > 0, "Worker result must contain structured findings"
     assert worker_result.task_id == task.task_id, "Task ID mismatch"

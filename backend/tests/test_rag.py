@@ -33,5 +33,5 @@ def test_internal_indexer_and_retriever():
         results = retriever.retrieve(query="How much does GitLab Duo Pro cost?", top_k=2)
 
         assert len(results) > 0
-        assert "19" in results[0].content
-        assert results[0].source_uri == "internal://test/pricing.md"
+        assert "19" in (results[0].excerpt or results[0].extracted_fact)
+        assert results[0].source_url == "internal://test/pricing.md"

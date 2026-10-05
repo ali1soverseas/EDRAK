@@ -10,9 +10,9 @@ from edrak.agents.internal_intelligence.prompts import (
     INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
 )
 from edrak.agents.internal_intelligence.state import InternalAgentState
-from edrak.contracts.evidence import Evidence
-from edrak.contracts.result import Finding, WorkerResult, WorkerStatus
-from edrak.contracts.task import ResearchTask
+from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation
+from edrak.contracts.result import Finding, FindingCategory, WorkerResult, WorkerStatus
+from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.mcp.client import InternalDataToolClient
 
 logger = logging.getLogger(__name__)
@@ -26,22 +26,20 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
 
     queries: List[str] = []
 
-    # Priority 1: Key questions provided in task
-    if task.key_questions:
-        queries.extend(task.key_questions[:3])
+    # Priority 1: Focus and goal
+    queries.append(f"{task.goal} {task.focus}".strip())
+    if task.focus:
+        queries.append(task.focus.strip())
 
-    # Priority 2: Objective & scope
-    queries.append(f"{task.objective} {task.scope}".strip())
-
-    # Priority 3: Add domain-specific targeted queries for internal knowledge
-    obj_lower = (task.objective + " " + task.scope).lower()
-    if "duo" in obj_lower or "ai" in obj_lower or "copilot" in obj_lower:
+    # Priority 2: Add domain-specific targeted queries for internal knowledge
+    goal_focus_lower = (task.goal + " " + task.focus).lower()
+    if "duo" in goal_focus_lower or "ai" in goal_focus_lower or "copilot" in goal_focus_lower:
         queries.append("GitLab Duo architecture AI gateway Code Suggestions Chat")
         queries.append("GitLab Duo pricing add-on Pro Enterprise margins")
         queries.append("GitLab Duo internal OKRs roadmap adoption metrics")
-    elif "pricing" in obj_lower or "revenue" in obj_lower:
+    elif "pricing" in goal_focus_lower or "revenue" in goal_focus_lower:
         queries.append("GitLab pricing tiers Premium Ultimate add-on gross margins")
-    elif "strategy" in obj_lower or "handbook" in obj_lower:
+    elif "strategy" in goal_focus_lower or "handbook" in goal_focus_lower:
         queries.append("GitLab handbook values CREDIT DevSecOps platform strategy")
 
     # Clean and deduplicate queries
@@ -62,7 +60,7 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     if not queries:
         task = state.get("task")
         if task:
-            queries = [task.objective]
+            queries = [task.goal]
         else:
             return {"retrieved_evidence": []}
 
@@ -75,7 +73,7 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
             results = tool_client.search_internal_knowledge(query=q, top_k=3)
             for ev in results:
                 # Deduplicate evidence by snippet content hash
-                content_key = ev.content.strip()[:100]
+                content_key = (ev.excerpt or ev.extracted_fact).strip()[:100]
                 if content_key not in seen_contents:
                     seen_contents.add(content_key)
                     all_evidence.append(ev)
@@ -91,12 +89,11 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     evidence_list: List[Evidence] = state.get("retrieved_evidence", [])
 
     if not evidence_list:
-        # Graceful handling when no internal evidence is found
         return {
             "findings": [],
             "summary": (
                 f"No matching internal documents or handbook entries were found for task: "
-                f"'{task.objective if task else 'Unknown'}'."
+                f"'{task.goal if task else 'Unknown'}'."
             ),
             "limitations_and_gaps": [
                 "Internal vector index returned 0 matching results.",
@@ -111,29 +108,28 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
 
     # Synthesize findings grounded in retrieved evidence items
     for ev in evidence_list:
-        topic = _categorize_domain_topic(ev)
+        category = _categorize_domain_category(ev)
         statement = _extract_core_statement(ev)
+        confidence = float(ev.metadata.get("confidence_score", 0.9)) if ev.metadata else 0.9
 
         finding = Finding(
-            id=f"find_internal_{uuid.uuid4().hex[:8]}",
             statement=statement,
-            domain_topic=topic,
-            confidence=ev.confidence_score,
-            evidence_ids=[ev.id],
-            metadata={
-                "source_title": ev.title,
-                "source_uri": ev.source_uri,
-            },
+            category=category,
+            evidence_refs=[
+                EvidenceRef(evidence_id=ev.evidence_id, relation=EvidenceRelation.SUPPORTS)
+            ],
+            confidence=confidence,
+            limitations=[],
         )
         findings.append(finding)
 
     # Construct synthesized summary
     summary_lines = [
-        f"Internal Intelligence Assessment for '{task.objective if task else 'GitLab'}':",
+        f"Internal Intelligence Assessment for '{task.goal if task else 'GitLab'}':",
         f"- Analyzed {len(evidence_list)} internal evidence sources across product architecture, commercial tiers, and strategy.",
     ]
     for f in findings[:3]:
-        summary_lines.append(f"• [{f.domain_topic.upper()}] {f.statement}")
+        summary_lines.append(f"• [{f.category.value.upper()}] {f.statement}")
 
     summary_text = "\n".join(summary_lines)
 
@@ -152,67 +148,72 @@ def format_worker_result_node(state: InternalAgentState) -> Dict[str, Any]:
     summary = state.get("summary", "Internal intelligence research completed.")
     limitations = state.get("limitations_and_gaps", [])
 
-    status = WorkerStatus.SUCCESS
+    status = WorkerStatus.COMPLETED
     if not evidence:
-        status = WorkerStatus.NO_DATA
+        status = WorkerStatus.NO_EVIDENCE
     elif not findings:
         status = WorkerStatus.PARTIAL
 
     task_id = task.task_id if task else str(uuid.uuid4())
+    attempt = task.attempt if task else 1
 
     result = WorkerResult(
         task_id=task_id,
-        worker_role="internal_intelligence",
+        worker=WorkerType.INTERNAL_INTELLIGENCE,
         status=status,
-        summary=summary,
+        attempt=attempt,
         findings=findings,
         evidence=evidence,
-        limitations_and_gaps=limitations,
+        gaps=limitations,
+        conflicts=[],
+        confidence=0.9 if findings else 0.0,
         metadata={
             "query_count": len(state.get("queries", [])),
             "evidence_count": len(evidence),
             "finding_count": len(findings),
+            "summary": summary,
         },
     )
 
     return {"worker_result": result}
 
 
-def _categorize_domain_topic(ev: Evidence) -> str:
-    """Categorizes the evidence into standard domain topics."""
-    title_or_uri = (ev.title + " " + ev.source_uri + " " + ev.content[:200]).lower()
-    if "pricing" in title_or_uri or "tier" in title_or_uri or "margin" in title_or_uri:
-        return "pricing_and_commercials"
-    if "battlecard" in title_or_uri or "copilot" in title_or_uri or "vs" in title_or_uri:
-        return "competitive_positioning"
-    if "adoption" in title_or_uri or "telemetry" in title_or_uri or "metric" in title_or_uri:
-        return "internal_telemetry"
-    if "roadmap" in title_or_uri or "okr" in title_or_uri or "roadblock" in title_or_uri:
-        return "roadmap_and_okrs"
-    if "architecture" in title_or_uri or "gateway" in title_or_uri or "privacy" in title_or_uri:
-        return "product_architecture"
-    if "values" in title_or_uri or "handbook" in title_or_uri:
-        return "handbook_values"
-    return "internal_strategy"
+def _categorize_domain_category(ev: Evidence) -> FindingCategory:
+    """Categorizes the evidence into standard FindingCategory enum."""
+    text = f"{ev.source_title or ''} {ev.source_url or ''} {ev.extracted_fact} {ev.excerpt or ''}".lower()
+    if "pricing" in text or "tier" in text or "margin" in text or "cost" in text or "pro" in text or "enterprise" in text:
+        return FindingCategory.PRICING_PACKAGING
+    if "battlecard" in text or "copilot" in text or "vs" in text or "competitor" in text:
+        return FindingCategory.POSITIONING
+    if "adoption" in text or "telemetry" in text or "metric" in text:
+        return FindingCategory.MARKET_SIGNAL
+    if "risk" in text or "roadblock" in text:
+        return FindingCategory.RISK
+    if "opportunity" in text:
+        return FindingCategory.OPPORTUNITY
+    if "architecture" in text or "gateway" in text or "privacy" in text or "feature" in text:
+        return FindingCategory.PRODUCT_FEATURE
+    return FindingCategory.OTHER
 
 
 def _extract_core_statement(ev: Evidence) -> str:
     """Extracts a succinct, high-quality factual statement from the evidence content."""
-    lines = [line.strip() for line in ev.content.split("\n") if line.strip() and not line.startswith("#")]
-    if not lines:
-        return f"Internal documentation excerpt from {ev.title or ev.source_uri}."
+    if ev.extracted_fact and len(ev.extracted_fact) > 20:
+        return ev.extracted_fact
 
-    # Find the first substantive line (not just a bullet header like '1. **Positive Feedback**:')
+    content = ev.excerpt or ev.extracted_fact or ""
+    lines = [line.strip() for line in content.split("\n") if line.strip() and not line.startswith("#")]
+    if not lines:
+        return f"Internal documentation excerpt from {ev.source_title or ev.source_url or 'internal source'}."
+
     for line in lines:
         clean = line.lstrip("-*1234567890. ").strip()
-        # If line has more substance than just a short title
         if len(clean) > 25 and not clean.endswith(":") and not clean.startswith("**"):
             if len(clean) > 220:
                 clean = clean[:217] + "..."
             return clean
 
-    # Fallback to the first line if all lines are short
     first = lines[0].lstrip("-*1234567890. ").strip()
     if len(first) > 220:
         first = first[:217] + "..."
-    return first or f"Strategic documentation insight from {ev.title}."
+    return first or f"Strategic documentation insight from {ev.source_title}."
