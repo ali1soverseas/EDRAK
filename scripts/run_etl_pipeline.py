@@ -107,3 +107,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+"""
+python scripts/run_etl_pipeline.py --all --max-pages 25 --delay 0.2 --reset
+"""

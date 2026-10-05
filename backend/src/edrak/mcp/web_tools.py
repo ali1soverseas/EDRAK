@@ -238,12 +238,12 @@ def tool_serper(queries: List[str]) -> str:
 @tool
 def tool_web_search(queries: List[str]) -> str:
     """
-    Free web search via DuckDuckGo (no API key required).
+    Web search via Tavily. Requires TAVILY_API_KEY.
 
     Use for: general-purpose web search when Serper is unavailable or as a fallback.
     queries: list of natural-language search strings, e.g. ["Egypt e-commerce growth 2025"].
     Returns: JSON array of results (title, url, snippet).
-    Note: DuckDuckGo may rate-limit heavy usage; keep queries to 2-3.
+    Note: keep queries to 2-3 so the search is not rate-limited.
     """
     items, _ = fetch_web_search(queries)
     return serialize_items(items)

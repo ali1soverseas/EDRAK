@@ -137,7 +137,7 @@ def tool_serper(queries: List[str]) -> str:
 
 @mcp.tool()
 def tool_web_search(queries: List[str]) -> str:
-    """Free web search via DuckDuckGo."""
+    """Web search via Tavily. Requires TAVILY_API_KEY."""
     items, _ = fetch_web_search(queries)
     return serialize_items(items)
 

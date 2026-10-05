@@ -41,7 +41,7 @@ def get_llm():
     if _llm is None:
         from langchain_ollama import ChatOllama
 
-        _llm = ChatOllama(model=settings.llm_model, temperature=0)
+        _llm = ChatOllama(model="llama3.2", temperature=0)
     return _llm
 
 

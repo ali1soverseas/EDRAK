@@ -7,10 +7,19 @@ import os
 import time
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from urllib.parse import parse_qs, urlparse
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+# Scrapers read keys with os.getenv. Load .env from the repo root, or from
+# scripts/.env when that is where the file currently lives.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+for _env_file in (_REPO_ROOT / ".env", _REPO_ROOT / "scripts" / ".env"):
+    if _env_file.is_file():
+        load_dotenv(_env_file)
+        break
 
 TIMEOUT = 10
 MAX_QUERIES = 10
@@ -33,13 +42,6 @@ WORLDBANK_INDICATORS = {
 
 UA = os.getenv("SCRAPER_USER_AGENT", "edrak-web/1.0")
 HEADERS = {"User-Agent": UA}
-DDGS_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-}
 
 
 def _env(name: str) -> str:
@@ -574,77 +576,43 @@ def fetch_serper(queries):
     return all_items, queries_run
 
 
-def _unwrap_ddg_url(href: str) -> str:
-    if href.startswith("//duckduckgo.com/l/"):
-        qs = parse_qs(urlparse("https:" + href).query)
-        return qs.get("uddg", [href])[0]
-    return href
-
-
-def _parse_ddg_html_results(html: str, query: str) -> list[dict]:
-    soup = BeautifulSoup(html, "html.parser")
+def _fetch_tavily_search(query: str, api_key: str) -> list[dict]:
+    try:
+        resp = requests.post(
+            "https://api.tavily.com/search",
+            json={
+                "api_key": api_key,
+                "query": query,
+                "search_depth": "basic",
+                "max_results": 8,
+                "include_answer": False,
+            },
+            timeout=20,
+        )
+    except requests.RequestException as exc:
+        print(f"[SCRAPER]  SKIP tavily '{query[:40]}' ({type(exc).__name__})")
+        return []
+    if resp.status_code != 200:
+        print(f"[SCRAPER]  SKIP tavily '{query[:40]}' (status {resp.status_code})")
+        return []
     items = []
-
-    results = soup.select(".result") or soup.select(".web-result")
-    for result in results[:10]:
-        title_el = result.select_one(".result__title a") or result.select_one("a.result__a")
-        snippet_el = result.select_one(".result__snippet")
-        if not title_el:
+    for hit in resp.json().get("results", []):
+        url = (hit.get("url") or "").strip()
+        title = (hit.get("title") or "").strip()
+        if not url.startswith("http") or not title:
             continue
         items.append({
-            "title": title_el.get_text(strip=True),
-            "url": _unwrap_ddg_url(title_el.get("href", "")),
-            "snippet": snippet_el.get_text(strip=True) if snippet_el else "",
-            "query_used": query,
-            "method": "web_search",
-        })
-    if items:
-        return items
-
-    for link in soup.select("a.result-link")[:10]:
-        href = _unwrap_ddg_url(link.get("href", ""))
-        snippet_el = link.find_parent("tr")
-        snippet = ""
-        if snippet_el is not None:
-            next_row = snippet_el.find_next_sibling("tr")
-            if next_row is not None:
-                snippet = next_row.get_text(" ", strip=True)
-        items.append({
-            "title": link.get_text(strip=True),
-            "url": href,
-            "snippet": snippet,
+            "title": title,
+            "url": url,
+            "snippet": hit.get("content") or "",
             "query_used": query,
             "method": "web_search",
         })
     return items
 
 
-def _request_with_retry(method: str, url: str, *, label: str, retries: int = 3, **kwargs):
-    """Retry 202/429/5xx. DuckDuckGo uses 202 for bot-challenge / throttle pages."""
-    resp = None
-    for attempt in range(retries):
-        try:
-            resp = requests.request(method, url, timeout=15, **kwargs)
-        except requests.RequestException as exc:
-            print(f"[SCRAPER]  RETRY {label} ({type(exc).__name__}, attempt {attempt + 1}/{retries})")
-            time.sleep(2 ** attempt)
-            continue
-        if resp.status_code == 200:
-            return resp
-        if resp.status_code in (202, 429, 500, 502, 503, 504) and attempt < retries - 1:
-            wait = 2 ** attempt
-            print(
-                f"[SCRAPER]  {label} status {resp.status_code}; "
-                f"retry in {wait}s ({attempt + 1}/{retries})"
-            )
-            time.sleep(wait)
-            continue
-        return resp
-    return resp
-
-
 def _fetch_wikipedia_search(query: str) -> list[dict]:
-    """Key-free fallback when DuckDuckGo answers 202 instead of results."""
+    """Key-free fallback when Tavily returns no web results."""
     try:
         resp = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -683,42 +651,22 @@ def _fetch_wikipedia_search(query: str) -> list[dict]:
 
 
 def fetch_web_search(queries):
-    print(f"[SCRAPER]  Fetching web search results for {len(queries)} queries...")
+    api_key = _env("TAVILY_API_KEY")
+    if not api_key:
+        print("[SCRAPER]  SKIP Tavily: TAVILY_API_KEY is not set")
+        return [], []
+
+    print(f"[SCRAPER]  Fetching Tavily search results for {len(queries)} queries...")
     all_items = []
     queries_run = []
 
     for i, query in enumerate(queries[:MAX_QUERIES]):
         if i > 0:
-            time.sleep(2)
+            time.sleep(1)
 
-        items = []
-        resp = _request_with_retry(
-            "POST",
-            "https://html.duckduckgo.com/html/",
-            label=f"html.duckduckgo.com '{query[:40]}'",
-            data={"q": query, "kl": "us-en"},
-            headers=DDGS_HEADERS,
-        )
-        if resp is not None and resp.status_code == 200:
-            items = _parse_ddg_html_results(resp.text, query)
-        elif resp is not None:
-            print(f"[SCRAPER]  html.duckduckgo.com finished with status {resp.status_code}; trying lite")
-
+        items = _fetch_tavily_search(query, api_key)
         if not items:
-            lite = _request_with_retry(
-                "GET",
-                "https://lite.duckduckgo.com/lite/",
-                label=f"lite.duckduckgo.com '{query[:40]}'",
-                params={"q": query},
-                headers=DDGS_HEADERS,
-            )
-            if lite is not None and lite.status_code == 200:
-                items = _parse_ddg_html_results(lite.text, query)
-            elif lite is not None:
-                print(f"[SCRAPER]  lite.duckduckgo.com finished with status {lite.status_code}")
-
-        if not items:
-            print(f"[SCRAPER]  DuckDuckGo challenged; falling back to Wikipedia for '{query[:50]}'")
+            print(f"[SCRAPER]  Tavily returned nothing; falling back to Wikipedia for '{query[:50]}'")
             items = _fetch_wikipedia_search(query)
 
         if items:
