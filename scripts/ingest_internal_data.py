@@ -41,11 +41,16 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
     all_documents: List[str] = []
     all_metadatas: List[Dict[str, Any]] = []
 
+    seen_ids = set()
     for chunk_file in chunk_files:
         try:
             chunks = json.loads(chunk_file.read_text(encoding="utf-8"))
             for chunk in chunks:
                 chunk_id = chunk["chunk_id"]
+                if chunk_id in seen_ids:
+                    chunk_id = f"{chunk_id}_{len(seen_ids)}"
+                seen_ids.add(chunk_id)
+
                 content = chunk["content"]
                 metadata = {
                     "source_uri": chunk.get("source_uri", ""),
@@ -121,9 +126,9 @@ def main():
         if not results:
             logger.warning("  No evidence retrieved.")
         for i, ev in enumerate(results, 1):
-            logger.info("  [%d] Title: '%s'", i, ev.title)
-            logger.info("      URI: %s (Type: %s, Score: %.2f)", ev.source_uri, ev.source_type, ev.confidence_score)
-            snippet = ev.content[:140].replace("\n", " ")
+            logger.info("  [%d] Title: '%s'", i, ev.source_title)
+            logger.info("      URI: %s (Type: %s)", ev.source_url, ev.source_type.value)
+            snippet = (ev.excerpt or ev.extracted_fact)[:140].replace("\n", " ")
             logger.info("      Snippet: %s...", snippet)
 
 

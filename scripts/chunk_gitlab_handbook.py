@@ -80,6 +80,7 @@ class HandbookChunker:
         current_len = 0
 
         i = 0
+        chunk_idx = 0
         while i < len(sections):
             item = sections[i].strip()
             i += 1
@@ -102,8 +103,9 @@ class HandbookChunker:
                 if current_len + para_len > self.chunk_size and current_paras:
                     # Flush current chunk
                     chunk_text = "\n\n".join(current_paras)
-                    chunk_hash = hashlib.md5(f"{source_uri}:{current_heading}:{chunk_text[:60]}".encode()).hexdigest()[:12]
-                    chunk_id = f"chunk_hb_{chunk_hash}"
+                    chunk_hash = hashlib.md5(f"{source_uri}:{chunk_idx}:{current_heading}:{chunk_text[:100]}".encode()).hexdigest()[:14]
+                    chunk_id = f"chunk_hb_{chunk_hash}_{chunk_idx}"
+                    chunk_idx += 1
 
                     chunks.append({
                         "chunk_id": chunk_id,
@@ -124,8 +126,8 @@ class HandbookChunker:
 
         if current_paras:
             chunk_text = "\n\n".join(current_paras)
-            chunk_hash = hashlib.md5(f"{source_uri}:{current_heading}:{chunk_text[:60]}".encode()).hexdigest()[:12]
-            chunk_id = f"chunk_hb_{chunk_hash}"
+            chunk_hash = hashlib.md5(f"{source_uri}:{chunk_idx}:{current_heading}:{chunk_text[:100]}".encode()).hexdigest()[:14]
+            chunk_id = f"chunk_hb_{chunk_hash}_{chunk_idx}"
 
             chunks.append({
                 "chunk_id": chunk_id,

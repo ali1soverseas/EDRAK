@@ -107,10 +107,13 @@ class InternalRetriever:
             if not extracted_fact:
                 extracted_fact = f"Internal intelligence finding from {title}"
 
+            publisher = "GitLab Internal Knowledge (Synthetic)" if is_syn else "GitLab Handbook"
+
             ev = Evidence(
                 source_type=source_type,
                 source_title=title,
                 source_url=source_uri,
+                publisher=publisher,
                 extracted_fact=extracted_fact,
                 excerpt=doc,
                 is_synthetic=is_syn,
@@ -135,6 +138,7 @@ class InternalRetriever:
                 source_uri = str(meta.get("source_uri", "internal://handbook"))
                 is_syn = bool(meta.get("is_synthetic", True))
                 source_type = SourceType.SYNTHETIC_INTERNAL if is_syn else SourceType.INTERNAL_DOCUMENT
+                publisher = "GitLab Internal Knowledge (Synthetic)" if is_syn else "GitLab Handbook"
                 
                 fact_lines = [l.strip() for l in doc.split("\n") if l.strip() and not l.startswith("#")]
                 extracted_fact = fact_lines[0] if fact_lines else doc.strip()[:200]
@@ -145,6 +149,7 @@ class InternalRetriever:
                     source_type=source_type,
                     source_title=title,
                     source_url=source_uri,
+                    publisher=publisher,
                     extracted_fact=extracted_fact,
                     excerpt=doc,
                     is_synthetic=is_syn,
