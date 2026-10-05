@@ -130,9 +130,24 @@ Exposes reusable internal data access tools via Model Context Protocol (MCP) ove
 
 ---
 
-## 6. Manual Execution & CLI Guide
+---
 
-To run any step of the pipeline manually:
+## 6. Scripts & CLI Tooling Reference (`scripts/`)
+
+The repository includes a complete suite of standalone utility scripts:
+
+| Script | Purpose | Key Arguments |
+| :--- | :--- | :--- |
+| **`scripts/run_internal_agent.py`** | Standalone runner for the Internal Intelligence Worker LangGraph state machine. | `--goal <str>`, `--focus <str>`, `--json-output`, `--save-to <path>` |
+| **`scripts/run_etl_pipeline.py`** | Full automated handbook ETL pipeline orchestrator. | `--all`, `--max-pages <N>`, `--reset` |
+| **`scripts/fetch_gitlab_handbook.py`** | Scrapes raw handbook HTML and saves raw JSON responses to `data/handbook/raw/`. | `--url <URL>`, `--max-pages <N>`, `--output-dir <path>` |
+| **`scripts/clean_gitlab_handbook.py`** | Converts raw HTML into clean GitHub-flavored Markdown in `data/handbook/cleaned/`. | `--input-dir <path>`, `--output-dir <path>` |
+| **`scripts/chunk_gitlab_handbook.py`** | Chunks cleaned Markdown into semantic units in `data/handbook/chunked/`. | `--chunk-size <N>`, `--overlap <N>` |
+| **`scripts/ingest_internal_data.py`** | Embeds chunked handbook and `data/internal/` documents into ChromaDB. | `--reset` |
+
+---
+
+## 7. Manual Execution & CLI Guide
 
 ### Environment Setup
 Make sure your environment variables and Python path are set:
@@ -183,45 +198,40 @@ python mcp_servers/internal_data_server.py
 
 ---
 
-### Step 3: Run the Internal Intelligence Worker Directly
-You can run a research task through Python or an interactive script:
-```python
-from edrak.contracts.request import BusinessContext, CompanyProfile, UseCase
-from edrak.contracts.task import ResearchTask, WorkerType
-from edrak.agents.internal_intelligence.graph import run_internal_intelligence
+### Step 3: Run the Internal Intelligence Worker via CLI
 
-task = ResearchTask(
-    parent_request_id="req_manual_001",
-    worker=WorkerType.INTERNAL_INTELLIGENCE,
-    goal="Evaluate GitLab Duo architecture and pricing strategy against GitHub Copilot",
-    focus="Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits",
-    company_profile=CompanyProfile(name="GitLab"),
-    business_context=BusinessContext(
-        use_case=UseCase.COMPETITIVE_INTELLIGENCE,
-        targets=["GitHub", "Azure DevOps"],
-    ),
-)
+#### Option A: Run with Formatted Terminal Output and Save to File
+```powershell
+python scripts/run_internal_agent.py --save-to artifacts/reports/internal_worker_result.json
+```
 
-result = run_internal_intelligence(task)
-print(f"Status: {result.status.value}")
-print(f"Findings: {len(result.findings)}")
-print(f"Evidence items: {len(result.evidence)}")
+#### Option B: Output Pure JSON to stdout
+```powershell
+python scripts/run_internal_agent.py --json-output
+```
+
+#### Option C: Custom Research Goal & Focus
+```powershell
+python scripts/run_internal_agent.py \
+  --goal "Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot" \
+  --focus "GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness" \
+  --save-to artifacts/reports/internal_worker_result.json
 ```
 
 ---
 
 ### Step 4: Run Automated Tests
-```bash
+```powershell
 # Run all unit tests
-python -m pytest backend/tests/test_contracts.py backend/tests/test_internal_agent.py backend/tests/test_rag.py -v
+pytest backend/tests/test_contracts.py backend/tests/test_internal_agent.py backend/tests/test_rag.py -v
 
 # Run the complete end-to-end lifecycle flow test
-python -m pytest backend/tests/test_internal_flow.py -v -s
+pytest backend/tests/test_internal_flow.py -v -s
 ```
 
 ---
 
-## 7. Verified Test Output Example
+## 8. Verified Test Output Example
 
 ```text
 ======================================================================
@@ -230,26 +240,27 @@ WORKER RESULT CONTRACT OUTPUT (Comprehensive Inspection)
 Task ID:       task_internal_gitlab_duo_eval
 Worker:        internal_intelligence
 Status:        completed
-Metadata:      {"query_count": 2, "evidence_count": 6, "finding_count": 6, "summary": "..."}
+Confidence:    0.57
+Metadata:      {"query_count": 12, "evidence_count": 29, "finding_count": 29, "summary": "..."}
 
 --- [1] STRUCTURED FINDINGS (Sample) ---
-  Finding #1 [ID: 61e050ce-79c2-4822-a9b3-1fcfb7cb62ea]:
-    Category:       pricing_packaging
-    Confidence:     0.89
-    Evidence Refs:  ['c0dbd06d-495c-4da6-90e2-7634fb72ca3c']
-    Statement:      "GitLab Duo is packaged as an add-on subscription to GitLab Premium and Ultimate tiers."
+  Finding #1 [ID: 2b3c081b-36ad-4253-91d8-2ab443d8d3e7]:
+    Category:       positioning
+    Confidence:     0.57
+    Evidence Refs:  ['b4754041-c2e7-493b-8fa1-5db984fc2b7e']
+    Statement:      "GitLab Duo provides end-to-end SDLC coverage with a single unified data model..."
 
 --- [2] CITED EVIDENCE POOL (Sample) ---
-  Evidence #1 [ID: c0dbd06d-495c-4da6-90e2-7634fb72ca3c]:
-    Title:          Gitlab Pricing And Packaging
-    Source URL:     data/internal/pricing/gitlab_pricing_and_packaging.md
+  Evidence #1 [ID: b4754041-c2e7-493b-8fa1-5db984fc2b7e]:
+    Title:          Gitlab Duo Vs Github Copilot
+    Source URL:     data/internal/competitive/gitlab_duo_vs_github_copilot.md
     Source Type:    synthetic_internal
-    Retrieved At:   2026-10-05T06:18:25.102391+00:00
-    Extracted Fact: "GitLab Duo is packaged as an add-on subscription to GitLab Premium and Ultimate tiers."
+    Retrieved At:   2026-10-05T07:52:11.245911+00:00
+    Extracted Fact: "Competitive Assessment: GitLab Duo vs GitHub Copilot"
     Metadata:       {'is_synthetic': True, 'search_query': '...'}
 
 --- [3] LIMITATIONS AND GAPS ---
-  • Internal company data is adapted/synthetic for GitLab pilot demonstration purposes in accordance with project constraints.
+  • All retrieved private internal data is synthetic/adapted for pilot demonstration.
 
 [JSON Schema Validation] WorkerResult successfully validates and serializes to standard contract JSON.
 ======================================================================

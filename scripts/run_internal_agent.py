@@ -50,7 +50,14 @@ def main():
     parser.add_argument(
         "--json-output",
         action="store_true",
-        help="Output raw WorkerResult JSON only",
+        help="Output raw WorkerResult JSON only to stdout",
+    )
+    parser.add_argument(
+        "--save-to",
+        "--output",
+        type=str,
+        default=None,
+        help="Optional file path to save the full WorkerResult JSON (e.g., artifacts/reports/internal_worker_result.json)",
     )
     args = parser.parse_args()
 
@@ -79,6 +86,13 @@ def main():
 
     # Execute the agent graph
     worker_result = run_internal_intelligence(task)
+
+    # Save to file if requested
+    if args.save_to:
+        out_path = Path(args.save_to)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(worker_result.model_dump_json(indent=2), encoding="utf-8")
+        logger.info("\n>>> Full WorkerResult JSON successfully saved to: %s", out_path.resolve())
 
     if args.json_output:
         print(worker_result.model_dump_json(indent=2))
