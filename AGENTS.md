@@ -130,18 +130,6 @@ structured final report/result
 
 Do not wait for every real worker before testing orchestration. Mock workers should satisfy the real shared contracts.
 
-## Required Reading
-
-Read these files before making architectural changes:
-
-1. `docs/PROJECT_CONTEXT.md`
-2. `docs/ARCHITECTURE.md`
-3. `docs/CONTRACTS.md`
-4. `docs/GITLAB_PILOT.md`
-5. `docs/USE_CASE_01_COMPETITIVE_INTELLIGENCE.md`
-6. `docs/MCP_AND_TOOLS.md`
-7. `docs/IMPLEMENTATION_PLAN.md`
-
 ## Things Not To Add Yet
 
 Unless explicitly requested, do not introduce:
