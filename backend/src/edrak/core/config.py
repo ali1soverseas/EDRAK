@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "ollama"  # e.g., 'ollama', 'openai', 'anthropic', 'google', 'mock'
     LLM_MODEL: str = "gpt-oss:120b"
     LLM_BASE_URL: Optional[str] = "http://localhost:11434/v1"
-    LLM_API_KEY: Optional[str] = 
+    LLM_API_KEY: Optional[str]
     LLM_TEMPERATURE: float = 0.2
 
     # Embedding Settings (Local Hugging Face Static Embeddings)

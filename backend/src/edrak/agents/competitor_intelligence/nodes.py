@@ -70,7 +70,8 @@ from .state import (
 # ENVIRONMENT
 # ============================================================
 
-ENV_PATH = Path(__file__).resolve().parent / ".env"
+# nodes.py -> competitor_intelligence -> agents -> edrak -> src -> backend -> repo root
+ENV_PATH = Path(__file__).resolve().parents[5] / ".env"
 load_dotenv(ENV_PATH)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -81,6 +82,32 @@ if not OPENAI_API_KEY:
 
 if not TAVILY_API_KEY:
     raise ValueError("TAVILY_API_KEY is missing")
+
+
+def _compat_httpx2_brotli() -> None:
+    """google-brotli process() rejects the keyword httpx2 always passes."""
+    try:
+        from httpx2._decoders import BrotliDecoder
+    except ImportError:
+        return
+
+    original_init = BrotliDecoder.__init__
+
+    def _init(self):
+        original_init(self)
+        if hasattr(self.decompressor, "decompress"):
+            return
+        decode = self._decompress
+
+        def _decode(data, output_buffer_limit=None):
+            return decode(data)
+
+        self._decompress = _decode
+
+    BrotliDecoder.__init__ = _init
+
+
+_compat_httpx2_brotli()
 
 
 # ============================================================
