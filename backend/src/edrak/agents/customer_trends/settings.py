@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _REPO_MARKER = "AGENTS.md"
@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     edrak_cache_ttl_s: int = 86400
     edrak_log_level: str = "INFO"
     edrak_fake_llm: bool = False
+    branch_max_steps: int = Field(default=8, ge=1)  # model calls per collection branch
     youtube_daily_quota: int = 10000
     youtube_search_daily_cap: int = 100
 

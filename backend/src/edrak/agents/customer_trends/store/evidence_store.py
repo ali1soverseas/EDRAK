@@ -450,7 +450,12 @@ class EvidenceStore:
         return QueryResult([self._row_to_item(row) for row in rows], total)
 
     def count_by(
-        self, run_id: str, field: str, batch_ids: Sequence[str] | None = None
+        self,
+        run_id: str,
+        field: str,
+        batch_ids: Sequence[str] | None = None,
+        *,
+        exclude_source_type: str | None = None,
     ) -> dict[str, int]:
         """Item counts grouped by one column. Missing values are counted as `unknown`."""
         if field not in COUNT_FIELDS:
@@ -460,6 +465,9 @@ class EvidenceStore:
         if batch_ids is not None:
             sql += " AND batch_id IN (SELECT value FROM json_each(?))"
             params.append(json.dumps(list(batch_ids)))
+        if exclude_source_type is not None:
+            sql += " AND source_type != ?"
+            params.append(exclude_source_type)
         with self._lock:
             rows = self._conn.execute(sql + f" GROUP BY {field} ORDER BY n DESC, key", params)
             return {str(UNKNOWN if row["key"] is None else row["key"]): row["n"] for row in rows}

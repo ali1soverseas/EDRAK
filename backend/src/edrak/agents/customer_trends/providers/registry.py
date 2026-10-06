@@ -172,6 +172,14 @@ class ProviderRegistry:
     def providers(self) -> dict[str, Provider]:
         return dict(self._providers)
 
+    @property
+    def budget(self) -> BudgetTracker:
+        return self._budget
+
+    @property
+    def breaker(self) -> CircuitBreaker:
+        return self._breaker
+
     def routing_for(self, capability: str) -> list[str]:
         return list(self._config.routing.get(capability, []))
 

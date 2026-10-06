@@ -20,6 +20,7 @@ from edrak.agents.customer_trends.schemas.trends import TrendSeries
 
 SINGLE_SOURCE_CAVEAT = "single_source"
 MAX_HEADLINE_WORDS = 60
+MAX_FINDINGS = 20
 
 _WESTERN = "0123456789"
 _ARABIC_INDIC = "".join(chr(code) for code in range(0x0660, 0x066A))
@@ -107,6 +108,16 @@ class Finding(StrictModel):
             if SINGLE_SOURCE_CAVEAT not in self.caveats:
                 self.caveats = [*self.caveats, SINGLE_SOURCE_CAVEAT]
         return self
+
+
+class FindingsDraft(StrictModel):
+    """The writer model's answer: findings that still have to pass `submit_findings`."""
+
+    findings: list[Finding] = Field(default_factory=list, max_length=MAX_FINDINGS)
+
+
+class HeadlineDraft(StrictModel):
+    headline: NonEmpty
 
 
 class ControlSummary(StrictModel):

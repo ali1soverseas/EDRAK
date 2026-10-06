@@ -185,6 +185,18 @@ def test_count_by(loaded_store: EvidenceStore) -> None:
     assert loaded_store.count_by("other-run", "platform") == {}
 
 
+def test_count_by_can_leave_one_source_type_out(loaded_store: EvidenceStore) -> None:
+    assert loaded_store.count_by(RUN_ID, "source_type", exclude_source_type="news") == {
+        "social_post": 22,
+        "social_comment": 10,
+        "review": 3,
+    }
+    assert loaded_store.count_by(RUN_ID, "language", exclude_source_type="news") == {
+        "en": 22,
+        "ar": 13,
+    }
+
+
 def test_count_by_batches_and_invalid_field(loaded_store: EvidenceStore) -> None:
     batch_id, _, _ = loaded_store.add_batch(
         RUN_ID,

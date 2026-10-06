@@ -45,3 +45,15 @@ class QueryPlan(StrictModel):
     review_targets: list[ReviewTarget] = Field(default_factory=list)
     competitor_angles: list[str] = Field(default_factory=list)
     rationale: str = ""
+
+
+class PlanDraft(QueryPlan):
+    """What the planner model returns: the same shape as `QueryPlan`, but a sixth trend keyword
+    is trimmed instead of failing the whole answer."""
+
+    trend_keywords: list[NonEmpty] = Field(default_factory=list)
+
+    def to_plan(self) -> QueryPlan:
+        data = self.model_dump()
+        data["trend_keywords"] = self.trend_keywords[:MAX_TREND_KEYWORDS]
+        return QueryPlan.model_validate(data)
