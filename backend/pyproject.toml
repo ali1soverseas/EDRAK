@@ -21,6 +21,9 @@ dependencies = [
     "langchain>=1.4.3",
 ]
 
+[project.scripts]
+customer-trends = "edrak.agents.customer_trends.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest",

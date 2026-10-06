@@ -3,22 +3,19 @@ models that answer each role the way the real prompts ask, without a network or 
 
 import asyncio
 import json
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
-from langchain_core.callbacks import CallbackManagerForLLMRun
-from langchain_core.language_models import BaseChatModel, LanguageModelInput
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage
-from langchain_core.outputs import ChatResult
-from langchain_core.runnables import Runnable
-from langchain_core.tools import BaseTool
 
 from edrak.agents.customer_trends.deps import LlmFactory, WorkerDeps
 from edrak.agents.customer_trends.llm.client import Role
-from edrak.agents.customer_trends.llm.fake import Scripted, ScriptedChatModel
+from edrak.agents.customer_trends.llm.demo_script import BranchRouter, tool_calls
+from edrak.agents.customer_trends.llm.fake import FunctionChatModel, Scripted, ScriptedChatModel
 from edrak.agents.customer_trends.providers.base import (
     ProviderResult,
     ProviderUnavailable,
@@ -198,16 +195,6 @@ def world_registry(world: World | None = None, budget: Budget | None = None) -> 
 # the models
 
 
-class FunctionChatModel(ScriptedChatModel):
-    """A scripted model whose answer is computed from the messages it receives."""
-
-    responder: Callable[[list[BaseMessage]], Scripted]
-
-    def _next(self, messages: Sequence[BaseMessage]) -> Scripted:
-        self.calls.append(list(messages))
-        return self.responder(list(messages))
-
-
 def _human_json(messages: list[BaseMessage], marker: str) -> Any:
     human = messages[1].content
     assert isinstance(human, str)
@@ -350,51 +337,6 @@ def writer_model(script: WriterScript) -> FunctionChatModel:
         return {"findings": findings}
 
     return FunctionChatModel(responses=[], responder=respond)
-
-
-class BranchRouter(BaseChatModel):
-    """The `branch` model: each collection branch gets its own script, chosen from its tools."""
-
-    scripts: dict[str, ScriptedChatModel]
-
-    @property
-    def _llm_type(self) -> str:
-        return "branch-router"
-
-    def _generate(
-        self,
-        messages: list[BaseMessage],
-        stop: list[str] | None = None,
-        run_manager: CallbackManagerForLLMRun | None = None,
-        **kwargs: Any,
-    ) -> ChatResult:
-        raise NotImplementedError("a branch model is reached through bind_tools")
-
-    def bind_tools(
-        self,
-        tools: Sequence[dict[str, Any] | type | Callable[..., Any] | BaseTool],
-        *,
-        tool_choice: str | None = None,
-        **kwargs: Any,
-    ) -> Runnable[LanguageModelInput, AIMessage]:
-        names = {str(getattr(tool, "name", "")) for tool in tools}
-        branch = (
-            "social"
-            if "social_search" in names
-            else "demand"
-            if "search_interest" in names
-            else "reviews"
-        )
-        return self.scripts[branch]
-
-
-def tool_calls(*calls: tuple[str, dict[str, Any]], tag: str = "c") -> AIMessage:
-    return AIMessage(
-        content="",
-        tool_calls=[
-            {"name": name, "args": args, "id": f"{tag}{n}"} for n, (name, args) in enumerate(calls)
-        ],
-    )
 
 
 def social_turns(tag: str = "s") -> list[Scripted]:

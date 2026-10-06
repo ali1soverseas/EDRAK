@@ -118,6 +118,19 @@ class ScriptedChatModel(BaseChatModel):
         return RunnableLambda(run)
 
 
+class FunctionChatModel(ScriptedChatModel):
+    """A scripted model whose answer is computed from the messages it receives.
+
+    `responder` gets the messages and returns what `ScriptedChatModel` accepts as a response.
+    """
+
+    responder: Callable[[list[BaseMessage]], Scripted]
+
+    def _next(self, messages: Sequence[BaseMessage]) -> Scripted:
+        self.calls.append(list(messages))
+        return self.responder(list(messages))
+
+
 def _tool_name(tool: Any) -> str:
     if isinstance(tool, dict):
         return str(tool.get("name") or tool.get("function", {}).get("name", ""))

@@ -9,6 +9,7 @@ import asyncio
 from collections.abc import AsyncIterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
@@ -19,6 +20,7 @@ from edrak.agents.customer_trends.deps import EventBus, Listener, LlmFactory, Wo
 from edrak.agents.customer_trends.gaps import Gap, coverage_of, find_gaps
 from edrak.agents.customer_trends.graph import build_graph, open_checkpointer
 from edrak.agents.customer_trends.llm.client import Role, get_chat_model
+from edrak.agents.customer_trends.llm.demo_script import demo_llm
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
@@ -36,10 +38,13 @@ from edrak.contracts import ResearchTask, WorkerResult, WorkerStatus, WorkerType
 log = get_logger(__name__)
 
 RECURSION_LIMIT = 100
+DEMO_FIXTURES_RELATIVE = Path("backend/evals/customer_trends/fixtures/providers")
 LlmSource = BaseChatModel | LlmFactory | None
 
 
-def _llm_factory(llm: LlmSource, settings: Settings) -> LlmFactory:
+def _llm_factory(llm: LlmSource, settings: Settings, brief: TaskBrief) -> LlmFactory:
+    if llm is None and settings.edrak_fake_llm:
+        return demo_llm(brief)
     if llm is None:
 
         def build(role: Role) -> BaseChatModel:
@@ -65,7 +70,11 @@ def make_deps(
     if providers is None:
         budget, breaker = BudgetTracker(brief.budget), CircuitBreaker()
         providers = ProviderRegistry.from_config(
-            settings, budget, breaker, DiskCache.from_settings(settings)
+            settings,
+            budget,
+            breaker,
+            DiskCache.from_settings(settings),
+            fixtures_dir=settings.edrak_fixtures_dir or settings.repo_root / DEMO_FIXTURES_RELATIVE,
         )
     return WorkerDeps(
         settings=settings,
@@ -74,7 +83,7 @@ def make_deps(
         budget=providers.budget,
         breaker=providers.breaker,
         sink=sink or LocalSink(store, settings.artifacts_dir),
-        llm=_llm_factory(llm, settings),
+        llm=_llm_factory(llm, settings, brief),
         bus=EventBus(brief.run_id, brief.task_id),
         use_cases=load_use_cases(),
     )

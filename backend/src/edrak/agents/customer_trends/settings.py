@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     edrak_data_dir: Path = Path("./data")
     artifacts_path: Path = Path("artifacts")
     edrak_provider_mode: Literal["live", "fixture"] = "live"
+    edrak_fixtures_dir: Path | None = None  # fixture mode reads here; default: the demo fixtures
     edrak_cache_ttl_s: int = 86400
     edrak_log_level: str = "INFO"
     edrak_fake_llm: bool = False

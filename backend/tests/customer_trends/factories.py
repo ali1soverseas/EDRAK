@@ -16,6 +16,7 @@ from edrak.agents.customer_trends.schemas.task import TaskBrief
 from edrak.agents.customer_trends.utils.text import content_hash, evidence_id
 
 FIXTURES = Path(__file__).parent / "fixtures"
+BRIEFS = Path(__file__).resolve().parents[2] / "evals" / "customer_trends" / "briefs"
 RUN_ID = "run-test-001"
 TASK_ID = "task-test-001"
 BASE_DAY = datetime(2026, 7, 1, 12, 0, tzinfo=UTC)
@@ -50,9 +51,7 @@ def fixture_json(*parts: str) -> Any:
 
 
 def load_brief(use_case: str = "competitive_intelligence") -> TaskBrief:
-    return TaskBrief.model_validate_json(
-        (FIXTURES / f"sample_brief_{use_case}.json").read_text(encoding="utf-8")
-    )
+    return TaskBrief.model_validate_json((BRIEFS / f"{use_case}.json").read_text(encoding="utf-8"))
 
 
 def make_evidence(
