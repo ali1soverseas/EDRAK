@@ -22,9 +22,15 @@ class Settings(BaseSettings):
     # LLM Settings (Ollama Cloud / Local OSS)
     LLM_PROVIDER: str = "ollama"  # e.g., 'ollama', 'openai', 'anthropic', 'google', 'mock'
     LLM_MODEL: str = "gpt-oss:120b"
-    LLM_BASE_URL: Optional[str] = "http://localhost:11434/v1"
+    # Defaults to Ollama Cloud. Override with LLM_BASE_URL=http://localhost:11434/v1
+    # to run against a local Ollama server instead.
+    LLM_BASE_URL: Optional[str] = "https://ollama.com/v1"
     LLM_API_KEY: Optional[str]
     LLM_TEMPERATURE: float = 0.2
+
+    # Orchestration control-plane limits
+    MAX_REPLANS: int = 2
+    MAX_TASK_ATTEMPTS: int = 3
 
     # Embedding Settings (Local Hugging Face Static Embeddings)
     EMBEDDING_PROVIDER: str = "huggingface"  # 'huggingface', 'onnx', 'sentence-transformers', 'local_fast'
