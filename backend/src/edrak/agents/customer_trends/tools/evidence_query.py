@@ -20,8 +20,8 @@ MAX_ITEMS = 20
 TEXT_CHARS = 500
 LISTED_THEMES = 10
 
-DESCRIPTION = """Read items back from the evidence stored in this run, to quote them or to check a
-claim before citing them. At most 20 items come back, each text cut to 500 characters.
+DESCRIPTION = """Use it to read items back from the evidence stored in this run, to quote them or to
+check a claim before citing them. At most 20 items come back, each text cut to 500 characters.
 
 Filters (all optional, combined with AND): platform, source_type, language (ar, en), text_contains
 (case and Arabic spelling variants ignored), theme (a theme label found by analyze_text),

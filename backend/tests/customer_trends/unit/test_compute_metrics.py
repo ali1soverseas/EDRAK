@@ -48,7 +48,7 @@ async def test_volume_over_time_counts_weeks_that_start_on_monday(store: Evidenc
         "peak_bucket": "2026-06-29",
         "peak_count": 3,
     }
-    assert response.params == {"bucket": "week", "filters": {}}
+    assert response.params == {"bucket": "week"}
 
 
 async def test_volume_over_time_by_day_lists_only_days_with_items(store: EvidenceStore) -> None:

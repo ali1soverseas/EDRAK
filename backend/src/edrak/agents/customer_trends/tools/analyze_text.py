@@ -73,6 +73,7 @@ ALL_TASKS: tuple[Task, ...] = ("sentiment", "themes", "language")
 _LANGUAGE_CODE = re.compile(r"^[A-Za-z]{2}$")
 
 DESCRIPTION = """Find what people talk about in the collected evidence, and how they feel about it.
+Use it after collecting and before writing findings.
 
 Pass the batch_ids from your collection calls. The items are read in chunks by a model and
 labelled with a sentiment, a language and up to 3 short English theme labels each (Arabic and

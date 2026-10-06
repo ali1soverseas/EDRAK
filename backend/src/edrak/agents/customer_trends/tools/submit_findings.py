@@ -43,8 +43,9 @@ DOWNGRADE_CAVEAT = (
     "platforms or source types"
 )
 
-DESCRIPTION = """Hand in your findings once the analysis is done. Each is checked, and the sound
-ones are stored as the worker's result; you get back which were accepted and why any were not.
+DESCRIPTION = """Use it to hand in your findings once the analysis is done. Each is checked, and
+the sound ones are stored as the worker's result; you get back which were accepted and why any
+were not. Do NOT use it for notes or drafts: whatever is accepted becomes part of the result.
 
 A finding states what the evidence shows: a claim of one or two sentences, its type, a
 confidence, the ids of the stored evidence items behind it (from evidence_query) and a metrics

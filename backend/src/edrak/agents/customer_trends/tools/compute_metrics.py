@@ -40,8 +40,8 @@ MAX_COMPETITORS = 10
 DESCRIPTION = """Compute exact numbers over the evidence collected so far, with no model guessing.
 
 Use it for every count, share, growth rate or comparison you want to state. A finding may only
-quote numbers that come from here or from analyze_text. Do NOT use it to read or search items
-(use evidence_query).
+quote numbers that come from here or from analyze_text. Do NOT use it to read items (use
+evidence_query).
 
 Metrics (set `metric`; options go in `params`):
 - volume_over_time: items per week or day by publication date. params {"bucket": "week"|"day"},
@@ -57,9 +57,9 @@ Metrics (set `metric`; options go in `params`):
 - platform_mix and language_mix: item counts and percent by platform (news, web and review items
   are listed under their type) and by language.
 
-`batch_ids` limits the batches; leave it out for everything in this run. The evidence metrics
-also take params {"filters": {"platform": "reddit", "language": "ar", "text_contains": "copilot"}}
-to count a part of the evidence.
+`batch_ids` limits the batches (default: the whole run). The evidence metrics also take params
+{"filters": {"platform": "reddit", "language": "ar", "text_contains": "copilot"}} to count a part
+of the evidence.
 
 The response carries a `metric_id`. To cite a result in a finding, put that id in the finding's
 `metrics` as "metric_id" and copy the numbers you quote.
@@ -313,7 +313,11 @@ def _compute(ctx: ToolContext, inp: ComputeMetricsInput) -> ToolResponse | Proce
             warnings.append(f"computed over {len(items)} of {total} matching items")
         if inp.metric == "share_of_voice" and not any(values["mentions"].values()):
             warnings.append("no item mentions any of the names")
-    stored_params = params.model_dump(mode="json", exclude_none=True)
+    stored_params = {
+        key: value
+        for key, value in params.model_dump(mode="json", exclude_none=True).items()
+        if value != {}
+    }
     metric_id = metric_id_for(ctx.run_id, inp.metric, stored_params, batch_ids)
     ctx.store.save_metric(
         ctx.run_id,

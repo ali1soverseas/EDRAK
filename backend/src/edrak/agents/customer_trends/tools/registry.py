@@ -8,11 +8,15 @@ from pydantic import BaseModel
 
 from edrak.agents.customer_trends.schemas.common import ProcessingResponse, ToolResponse
 from edrak.agents.customer_trends.tools import (
+    analyze_text,
+    compute_metrics,
+    evidence_query,
     fetch_page,
     news_coverage,
     reviews_fetch,
     search_interest,
     social_search,
+    submit_findings,
     web_search,
 )
 from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, invoke_tool
@@ -27,6 +31,14 @@ COLLECTION_SPECS: tuple[ToolSpec, ...] = (
     news_coverage.SPEC,
 )
 
+PROCESSING_SPECS: tuple[ToolSpec, ...] = (
+    analyze_text.SPEC,
+    compute_metrics.SPEC,
+    evidence_query.SPEC,
+    submit_findings.SPEC,
+)
+ALL_SPECS = (*COLLECTION_SPECS, *PROCESSING_SPECS)
+
 # The tool subsets of the three collection branches (SPEC section 10).
 BRANCH_TOOLS: dict[str, tuple[str, ...]] = {
     "social": ("social_search", "social_comments", "web_search"),
@@ -34,7 +46,15 @@ BRANCH_TOOLS: dict[str, tuple[str, ...]] = {
     "reviews": ("reviews_fetch", "web_search", "fetch_page"),
 }
 
+# The processing tools each stage of the graph may use. submit_findings belongs to neither:
+# the graph calls it itself with the findings the writer produced.
+STAGE_TOOLS: dict[str, tuple[str, ...]] = {
+    "analyze": ("compute_metrics", "analyze_text"),
+    "write": ("evidence_query", "compute_metrics"),
+}
+
 _INJECTED = ("run_id", "task_id")
+_JSON_SCALARS = frozenset({"string", "number", "integer", "boolean"})
 
 
 def _inline(node: Any, defs: dict[str, Any]) -> Any:
@@ -53,9 +73,11 @@ def _inline(node: Any, defs: dict[str, Any]) -> Any:
         )
     if "anyOf" in node:
         options = [o for o in node["anyOf"] if o.get("type") != "null"]
+        rest = {k: v for k, v in node.items() if k != "anyOf"}
         if len(options) == 1:
-            rest = {k: v for k, v in node.items() if k != "anyOf"}
             return _inline({**options[0], **rest}, defs)
+        if all(set(o) == {"type"} and o["type"] in _JSON_SCALARS for o in options):
+            return _inline({"type": [o["type"] for o in options], **rest}, defs)
     return {
         k: _inline(v, defs)
         for k, v in node.items()
@@ -95,9 +117,9 @@ def _structured_tool(ctx: ToolContext, spec: ToolSpec) -> StructuredTool:
 
 
 def build_tools(ctx: ToolContext) -> dict[str, StructuredTool]:
-    """One LangChain tool per collection tool. Each injects the run and task ids from `ctx`
-    and answers with a compact JSON string, so the model never handles bulk records."""
-    return {spec.name: _structured_tool(ctx, spec) for spec in COLLECTION_SPECS}
+    """One LangChain tool per worker tool. Each injects the run and task ids from `ctx` and
+    answers with a compact JSON string, so the model never handles bulk records."""
+    return {spec.name: _structured_tool(ctx, spec) for spec in ALL_SPECS}
 
 
 def tools_for_branch(branch: str, ctx: ToolContext) -> list[StructuredTool]:
@@ -106,3 +128,11 @@ def tools_for_branch(branch: str, ctx: ToolContext) -> list[StructuredTool]:
         raise ValueError(f"unknown branch {branch!r}; choose one of {sorted(BRANCH_TOOLS)}")
     tools = build_tools(ctx.for_branch(branch))
     return [tools[name] for name in BRANCH_TOOLS[branch]]
+
+
+def tools_for_stage(stage: str, ctx: ToolContext) -> list[StructuredTool]:
+    """The processing tools the analyze or the write stage may use."""
+    if stage not in STAGE_TOOLS:
+        raise ValueError(f"unknown stage {stage!r}; choose one of {sorted(STAGE_TOOLS)}")
+    tools = build_tools(ctx)
+    return [tools[name] for name in STAGE_TOOLS[stage]]
