@@ -6,7 +6,7 @@ from typing import Any
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel
 
-from edrak.agents.customer_trends.schemas.common import ToolResponse
+from edrak.agents.customer_trends.schemas.common import ProcessingResponse, ToolResponse
 from edrak.agents.customer_trends.tools import (
     fetch_page,
     news_coverage,
@@ -75,7 +75,7 @@ def model_visible_schema(model: type[BaseModel]) -> dict[str, Any]:
     return visible
 
 
-def compact_json(response: ToolResponse) -> str:
+def compact_json(response: ToolResponse | ProcessingResponse) -> str:
     """The response as the model sees it: empty fields left out, no bulk records."""
     data = response.model_dump(mode="json", exclude_none=True)
     kept = {k: v for k, v in data.items() if v or k in ("status", "count")}

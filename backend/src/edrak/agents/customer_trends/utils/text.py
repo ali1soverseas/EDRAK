@@ -29,6 +29,16 @@ _DIACRITICS = re.compile(
     )
 )
 _TATWEEL = chr(0x0640)
+_ARABIC_FOLD = str.maketrans(
+    {
+        0x0622: 0x0627,  # alef with madda above to alef
+        0x0623: 0x0627,  # alef with hamza above to alef
+        0x0625: 0x0627,  # alef with hamza below to alef
+        0x0671: 0x0627,  # alef wasla to alef
+        0x0649: 0x064A,  # alef maksura to yeh
+        0x0629: 0x0647,  # teh marbuta to heh
+    }
+)
 _WHITESPACE = re.compile(r"\s+")
 _NOISE = re.compile(r"https?://\S+|www\.\S+|[@#]\w+")
 _ARABIC_LETTER = re.compile(
@@ -50,6 +60,15 @@ def normalize_text(text: str) -> str:
     text = unicodedata.normalize("NFKC", text)
     text = _DIACRITICS.sub("", text).replace(_TATWEEL, "")
     return _WHITESPACE.sub(" ", text).strip()
+
+
+def search_key(text: str) -> str:
+    """Case-folded text with the Arabic spelling variants folded together, for matching names.
+
+    On top of `normalize_text`: the alef forms become one alef, alef maksura becomes yeh and
+    teh marbuta becomes heh, so the same word written two common ways compares equal.
+    """
+    return normalize_text(text).casefold().translate(_ARABIC_FOLD)
 
 
 def content_hash(text: str) -> str:

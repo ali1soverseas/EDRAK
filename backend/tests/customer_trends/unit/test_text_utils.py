@@ -5,6 +5,7 @@ from edrak.agents.customer_trends.utils.text import (
     detect_language,
     evidence_id,
     normalize_text,
+    search_key,
     truncate,
 )
 
@@ -22,6 +23,15 @@ def test_normalize_strips_arabic_diacritics_and_tatweel() -> None:
     assert normalize_text("مَدْرَسَة") == "مدرسة"
     assert normalize_text("جـــميل") == "جميل"
     assert normalize_text("الدعم  الفني") == "الدعم الفني"
+
+
+def test_search_key_ignores_case_and_folds_arabic_spelling_variants() -> None:
+    assert search_key("GitLab  DUO") == search_key("gitlab duo")
+    assert search_key("أمازون") == search_key("امازون") == search_key("إمازون")
+    assert search_key("مدرسة") == search_key("مدرسه")
+    assert search_key("على") == search_key("علي")
+    assert search_key("مَدْرَسَة") == search_key("مدرسه")
+    assert search_key("أحمد") != search_key("محمد")
 
 
 def test_normalize_keeps_arabic_letters_and_mixed_text() -> None:

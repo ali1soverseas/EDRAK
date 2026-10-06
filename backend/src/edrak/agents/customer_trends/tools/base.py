@@ -2,7 +2,8 @@
 
 A tool never raises. A bad argument, a failing provider, an exhausted budget and a bug all
 come back as a `ToolResponse` with `status="error"` and an `error_code`, so the model can read
-what went wrong and carry on.
+what went wrong and carry on. The processing tools answer with their own `ProcessingResponse`
+on success and the same error `ToolResponse` on failure.
 """
 
 import time
@@ -10,6 +11,7 @@ from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
+from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, ValidationError
 
 from edrak.agents.customer_trends.logging import get_logger
@@ -19,6 +21,7 @@ from edrak.agents.customer_trends.providers.budget import BudgetExceeded, Budget
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
 from edrak.agents.customer_trends.schemas.common import (
     Depth,
+    ProcessingResponse,
     ToolResponse,
     ToolStatus,
     effective_max_results,
@@ -58,6 +61,8 @@ class ToolContext:
     # Brief values (languages, geo, since, until, depth, entity) used when the model omits them.
     defaults: dict[str, Any] = field(default_factory=dict)
     branch: str | None = None
+    # The model analyze_text calls; built from the settings for the analyst role when unset.
+    analyst: BaseChatModel | None = None
 
     def for_branch(self, branch: str) -> "ToolContext":
         return replace(self, branch=branch)
@@ -68,7 +73,7 @@ class ToolSpec:
     name: str
     description: str
     input_model: type[BaseModel]
-    run: Callable[[ToolContext, Any], Awaitable[ToolResponse]]
+    run: Callable[[ToolContext, Any], Awaitable[ToolResponse | ProcessingResponse]]
 
 
 @dataclass(frozen=True)
@@ -110,8 +115,18 @@ def shorten(raw: dict[str, Any]) -> dict[str, Any]:
     return summary
 
 
-def _emit(
-    ctx: ToolContext, tool: str, args: dict[str, Any], response: ToolResponse, started: float
+def emit_event(
+    ctx: ToolContext,
+    tool: str,
+    args: dict[str, Any],
+    *,
+    status: ToolStatus,
+    count: int,
+    started: float,
+    provider: str | None = None,
+    fallback_used: bool = False,
+    cost: float = 0.0,
+    error_code: str | None = None,
 ) -> None:
     event = {
         "type": "tool_called",
@@ -120,13 +135,13 @@ def _emit(
         "run_id": ctx.run_id,
         "task_id": ctx.task_id,
         "args": args,
-        "provider": response.provider_used,
-        "fallback_used": response.fallback_used,
-        "status": response.status.value,
-        "count": response.count,
+        "provider": provider,
+        "fallback_used": fallback_used,
+        "status": status.value,
+        "count": count,
         "latency_ms": round((time.perf_counter() - started) * 1000),
-        "cost": response.cost_estimate,
-        "error_code": response.error_code,
+        "cost": cost,
+        "error_code": error_code,
     }
     try:
         ctx.emit(event)
@@ -134,13 +149,46 @@ def _emit(
         log.warning("event_emitter_failed", tool=tool)
 
 
+def _emit(
+    ctx: ToolContext, tool: str, args: dict[str, Any], response: ToolResponse, started: float
+) -> None:
+    emit_event(
+        ctx,
+        tool,
+        args,
+        status=response.status,
+        count=response.count,
+        started=started,
+        provider=response.provider_used,
+        fallback_used=response.fallback_used,
+        cost=response.cost_estimate,
+        error_code=response.error_code,
+    )
+
+
+def finish_processing[R: ToolResponse | ProcessingResponse](
+    ctx: ToolContext, tool: str, inp: BaseModel, response: R, started: float
+) -> R:
+    """Emit the `tool_called` event of a processing tool and hand its response back."""
+    emit_event(
+        ctx,
+        tool,
+        summarize_args(inp),
+        status=response.status,
+        count=response.count,
+        started=started,
+        error_code=response.error_code if isinstance(response, ToolResponse) else None,
+    )
+    return response
+
+
 def error_response(code: str, message: str, **fields: Any) -> ToolResponse:
     return ToolResponse(status=ToolStatus.ERROR, error_code=code, gaps=[message], **fields)
 
 
-def invalid_input_response(exc: ValidationError) -> ToolResponse:
+def invalid_input_response(exc: ValidationError, prefix: str = "") -> ToolResponse:
     problems = [
-        f"{'.'.join(str(part) for part in error['loc']) or 'input'}: {error['msg']}"
+        f"{prefix}{'.'.join(str(part) for part in error['loc']) or 'input'}: {error['msg']}"
         for error in exc.errors()
     ]
     return error_response("invalid_input", "invalid input: " + "; ".join(problems))
@@ -261,7 +309,9 @@ async def execute_collection(
     return response
 
 
-async def invoke_tool(ctx: ToolContext, spec: ToolSpec, raw: dict[str, Any]) -> ToolResponse:
+async def invoke_tool(
+    ctx: ToolContext, spec: ToolSpec, raw: dict[str, Any]
+) -> ToolResponse | ProcessingResponse:
     """Validate a model's arguments, inject the run ids and brief defaults, and run the tool."""
     started = time.perf_counter()
     known = spec.input_model.model_fields

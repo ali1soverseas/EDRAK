@@ -181,6 +181,21 @@ class RequestBase(ScopeBase):
         return self
 
 
+class RunScope(StrictModel):
+    """The run and task a tool works on. The tool layer injects both, the model never sets them."""
+
+    run_id: RunId
+    task_id: NonEmpty
+
+
+class ProcessingResponse(StrictModel):
+    """Envelope of the processing tools: `count` is what the tool worked on or produced."""
+
+    status: ToolStatus = ToolStatus.OK
+    count: int = Field(default=0, ge=0)
+    warnings: list[str] = Field(default_factory=list)
+
+
 class ToolResponse(StrictModel):
     status: ToolStatus
     batch_id: str | None = None

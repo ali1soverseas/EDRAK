@@ -4,6 +4,8 @@ from collections.abc import Awaitable, Callable
 from datetime import date, timedelta
 from typing import Any
 
+from langchain_core.language_models import BaseChatModel
+
 from edrak.agents.customer_trends.providers.base import ProviderResult
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
@@ -127,3 +129,29 @@ def make_context(
         defaults=defaults or {},
     )
     return ctx, provider
+
+
+def processing_context(
+    store: EvidenceStore,
+    *,
+    analyst: BaseChatModel | None = None,
+    emit: Callable[[dict[str, Any]], None] | None = None,
+    defaults: dict[str, Any] | None = None,
+) -> ToolContext:
+    """A context for the processing tools: they read the store and never call a provider."""
+    config = load_providers_config()
+    tracker = BudgetTracker(Budget())
+    breaker = CircuitBreaker()
+    store.create_run(RUN_ID, TASK_ID)
+    return ToolContext(
+        settings=Settings(_env_file=None),
+        store=store,
+        providers=ProviderRegistry(config, budget=tracker, breaker=breaker),
+        budget=tracker,
+        breaker=breaker,
+        run_id=RUN_ID,
+        task_id=TASK_ID,
+        emit=emit or (lambda event: None),
+        defaults=defaults or {},
+        analyst=analyst,
+    )
