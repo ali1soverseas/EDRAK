@@ -1,13 +1,23 @@
 """Streamlit rendering of the developer UI. All logic sits in the sibling modules; these functions
 only lay out what they compute (SPEC section 12)."""
 
+import asyncio
 import json
 from dataclasses import dataclass
 from typing import Any
 
 import streamlit as st
 
-from edrak.agents.customer_trends.schemas.common import Depth, Platform, SourceType, UseCase
+from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
+from edrak.agents.customer_trends.providers.budget import BudgetTracker
+from edrak.agents.customer_trends.providers.registry import ProviderRegistry
+from edrak.agents.customer_trends.schemas.common import (
+    Budget,
+    Depth,
+    Platform,
+    SourceType,
+    UseCase,
+)
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters
 from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, to_worker_result
 from edrak.agents.customer_trends.schemas.task import TaskBrief
@@ -46,6 +56,16 @@ class SidebarChoice:
 # the sidebar
 
 
+def provider_health(settings: Settings) -> dict[str, dict[str, Any]]:
+    """The health of the providers these settings would set up (breakers are fresh, quotas and key
+    positions are real)."""
+    registry = ProviderRegistry.from_config(settings, BudgetTracker(Budget()), CircuitBreaker())
+    try:
+        return registry.health()
+    finally:
+        asyncio.run(registry.aclose())
+
+
 def render_sidebar(settings: Settings, runs: list[RunSummary]) -> SidebarChoice:
     with st.sidebar:
         st.header("Environment")
@@ -66,6 +86,14 @@ def render_sidebar(settings: Settings, runs: list[RunSummary]) -> SidebarChoice:
             help="Runs the whole graph with no model key.",
         )
         st.caption(f"Data directory: {settings.data_dir}")
+        st.header("Provider health")
+        if mode == "fixture":
+            st.caption("Fixture mode: no provider is called.")
+        else:
+            rows = fmt.health_rows(
+                provider_health(settings.model_copy(update={"edrak_provider_mode": mode}))
+            )
+            st.dataframe(rows, hide_index=True) if rows else st.caption("No provider is set up.")
         st.header("Run history")
         with_results = [r for r in runs if r.result_location]
         if with_results:

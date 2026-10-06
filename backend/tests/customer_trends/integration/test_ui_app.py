@@ -122,3 +122,16 @@ def test_loading_a_past_run_shows_it_without_running_anything(app: AppTest) -> N
     assert "Result of run-ci-gitlab-001" in [h.value for h in app.header]
     assert app.session_state["ct_controller"] is None
     assert run_count(app) == 2, "nothing was run"
+
+
+def test_the_sidebar_shows_provider_health_only_where_providers_are_called(app: AppTest) -> None:
+    assert "Provider health" in [h.value for h in app.sidebar.header]
+    assert any("Fixture mode" in c.value for c in app.sidebar.caption)
+    assert len(app.sidebar.dataframe) == 0
+
+    app.sidebar.radio(key="sb_provider_mode").set_value("live").run()
+    assert not app.exception
+    [table] = app.sidebar.dataframe
+    providers = table.value["provider"].tolist()
+    assert {"gdelt", "direct_http", "google_trends_api"} <= set(providers)
+    assert set(table.value["status"]) == {"ok"}

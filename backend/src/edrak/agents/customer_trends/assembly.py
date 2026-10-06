@@ -164,6 +164,7 @@ def provenance(deps: WorkerDeps) -> dict[str, Any]:
         "budget": {"tool_calls": snapshot.tool_calls, "cost_usd": round(snapshot.cost_usd, 6)},
         "node_timings_ms": dict(timings),
         "replans": sum(1 for e in events if e.get("type") == "replan"),
+        "provider_health": deps.providers.health(),
     }
 
 

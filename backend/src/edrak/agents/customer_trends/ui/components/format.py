@@ -254,6 +254,21 @@ def evidence_rows(items: Iterable[EvidenceItem]) -> list[dict[str, Any]]:
     ]
 
 
+def health_rows(report: Mapping[str, Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Provider health as table rows: open breakers first, then the details each provider gave."""
+    shown = {"capabilities", "breaker_open", "failures"}
+    rows = [
+        {
+            "provider": name,
+            "status": "breaker open" if entry["breaker_open"] else "ok",
+            "failures in a row": entry["failures"],
+            "details": ", ".join(f"{k}: {v}" for k, v in entry.items() if k not in shown),
+        }
+        for name, entry in report.items()
+    ]
+    return sorted(rows, key=lambda row: (row["status"] == "ok", row["provider"]))
+
+
 def provenance_rows(result: CustomerTrendsResult) -> dict[str, list[dict[str, Any]]]:
     """The provenance of a result as small tables: models, providers, timings, tool calls."""
     p = result.provenance
@@ -263,7 +278,8 @@ def provenance_rows(result: CustomerTrendsResult) -> dict[str, list[dict[str, An
         "fallbacks": list(p.get("fallbacks", [])),
         "timings": [{"node": n, "ms": ms} for n, ms in p.get("node_timings_ms", {}).items()],
         "tool calls": [
-            {"tool": tool, "calls": v["calls"], "errors": v["errors"]}
+            {"tool": tool, "calls": v["calls"], "errors": v["errors"], "cost USD": v["cost_usd"]}
             for tool, v in p.get("tool_calls", {}).items()
         ],
+        "provider health": health_rows(p.get("provider_health", {})),
     }

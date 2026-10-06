@@ -13,6 +13,7 @@ from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, ValidationError
+from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.base import ProviderExhausted, ProviderResult
@@ -36,6 +37,8 @@ log = get_logger(__name__)
 # What a call asks for when the model gives no `max_results`; the depth cap still applies.
 DEFAULT_RESULTS = {"web": 10, "social": 30, "reviews": 30, "news": 25}
 PREVIEW_ITEMS = 5
+# The most characters of one item's text that are stored; a longer text is a page or a feed dump.
+MAX_ITEM_CHARS = 5000
 _ARG_SUMMARY_CHARS = 80
 _ARG_SUMMARY_ITEMS = 5
 
@@ -185,6 +188,26 @@ def finish_processing[R: ToolResponse | ProcessingResponse](
     return response
 
 
+def cap_item_text(
+    result: ProviderResult, limit: int = MAX_ITEM_CHARS
+) -> tuple[ProviderResult, int]:
+    """The result with every item text cut to `limit` characters, and how many were cut. The cut
+    keeps the start of the text as it was, notes the original length, and leaves the content hash
+    (of the whole text) alone, so duplicates are still found."""
+    cut = 0
+    items: list[Any] = []
+    for item in result.items:
+        if isinstance(item, EvidenceItem) and len(item.text) > limit:
+            metadata = {**item.metadata, "text_cut_from": len(item.text)}
+            item = item.model_copy(update={"text": item.text[:limit], "metadata": metadata})
+            cut += 1
+        items.append(item)
+    if not cut:
+        return result, 0
+    warning = f"{cut} item(s) were longer than {limit} characters and were cut"
+    return result.model_copy(update={"items": items, "warnings": [*result.warnings, warning]}), cut
+
+
 def error_response(code: str, message: str, **fields: Any) -> ToolResponse:
     return ToolResponse(status=ToolStatus.ERROR, error_code=code, gaps=[message], **fields)
 
@@ -290,8 +313,10 @@ async def execute_collection(
     started = started if started is not None else time.perf_counter()
     args = summarize_args(inp)
     try:
-        result = await ctx.providers.call(
-            capability, {**params, "run_id": ctx.run_id, "task_id": ctx.task_id}
+        result, _ = cap_item_text(
+            await ctx.providers.call(
+                capability, {**params, "run_id": ctx.run_id, "task_id": ctx.task_id}
+            )
         )
         stored = persist(ctx, tool, result)
         response = ToolResponse(
@@ -337,7 +362,8 @@ async def invoke_tool(
         _emit(ctx, spec.name, shorten(raw), response, started)
         return response
     try:
-        return await spec.run(ctx, inp)
+        with bound_contextvars(tool=spec.name):
+            return await spec.run(ctx, inp)
     except Exception as exc:
         log.error("tool_failed", tool=spec.name, error=type(exc).__name__)
         response = error_response(

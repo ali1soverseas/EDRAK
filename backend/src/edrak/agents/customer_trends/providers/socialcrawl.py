@@ -113,6 +113,7 @@ class SocialCrawlProvider:
     ) -> None:
         self._client = client
         self._keys = KeyRing([api_key, *fallback_keys])
+        self._credits_seen: int | None = None
         self._base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
         self._clock = clock
         self._limiter = limiter or RateLimiter(config.min_interval_s)
@@ -152,7 +153,14 @@ class SocialCrawlProvider:
         balance = (data.get("data") or {}).get("balance")
         if not isinstance(balance, int | float):
             raise ProviderBadResponse(f"{NAME}: balance missing from response")
-        return int(balance)
+        self._credits_seen = int(balance)
+        return self._credits_seen
+
+    def health(self) -> dict[str, Any]:
+        return {
+            "key_in_use": f"{self._keys.position} of {self._keys.size}",
+            "credits_last_seen": self._credits_seen,
+        }
 
     async def call(self, capability: str, params: dict[str, Any]) -> ProviderResult:
         """Serve a capability, moving to a fallback key if the current one is out of credit."""
@@ -250,6 +258,8 @@ class SocialCrawlProvider:
             pagination = body.get("pagination") or {}
             cursor = pagination.get("next_cursor") if pagination.get("has_more") else None
             left = body.get("credits_remaining")
+            if isinstance(left, int | float):
+                self._credits_seen = int(left)
             if len(items) >= call.wanted or not cursor:
                 break
             if isinstance(left, int | float) and left < spec.credits_per_page:

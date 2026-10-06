@@ -6,6 +6,7 @@ tools through the tool registry, and the model nodes (plan, branches, write) nev
 previews and aggregates.
 """
 
+import asyncio
 import json
 import time
 from collections.abc import Awaitable, Callable, Mapping
@@ -18,6 +19,7 @@ from langchain.agents.middleware import ModelCallLimitMiddleware
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
 from langgraph.types import Overwrite
+from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.assembly import build_result, writer_context
 from edrak.agents.customer_trends.deps import WorkerDeps
@@ -85,7 +87,8 @@ def traced(name: str) -> Callable[[NodeFn], NodeFn]:
             started = time.perf_counter()
             events = [deps.bus.emit({"type": "node_started", "node": name})]
             try:
-                update = await node(state, deps)
+                with bound_contextvars(node=name):
+                    update = await node(state, deps)
             except BaseException as exc:
                 deps.bus.emit(
                     {
@@ -317,12 +320,19 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
             middleware=[ModelCallLimitMiddleware(run_limit=steps, exit_behavior="end")],
             checkpointer=False,
         )
-        out = await agent.ainvoke(
-            {"messages": [HumanMessage(content=request)]},
-            config={"recursion_limit": steps * BRANCH_RECURSION_PER_STEP + 10},
-        )
+        async with asyncio.timeout(deps.settings.branch_timeout_s) as deadline:
+            out = await agent.ainvoke(
+                {"messages": [HumanMessage(content=request)]},
+                config={"recursion_limit": steps * BRANCH_RECURSION_PER_STEP + 10},
+            )
+        if deadline.expired():
+            # the agent turned the cancellation into a normal end, so say it was the clock
+            raise TimeoutError
         note = _final_note(out["messages"])
         reason = capture.failure()
+    except TimeoutError:
+        log.warning("branch_timed_out", branch=name)
+        reason = f"the branch did not finish in {deps.settings.branch_timeout_s:g} s"
     except Exception as exc:
         log.warning("branch_failed", branch=name, error=type(exc).__name__)
         reason = f"{type(exc).__name__}: {exc}"[:NOTE_CHARS]
@@ -375,6 +385,10 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
     tools = build_tools(deps.tool_context(brief))
     batches = state.get("batches", {})
     text_batches = list(dict.fromkeys([*batches.get("social", []), *batches.get("reviews", [])]))
+    if not text_batches:
+        # A run started again over stored evidence collects only duplicates, so its branches
+        # name no batch; the run's own batches are still there to analyze.
+        text_batches = deps.store.run_summary(brief.run_id).batch_ids
     warnings: list[str] = []
     if text_batches:
         answer = await call_tool(

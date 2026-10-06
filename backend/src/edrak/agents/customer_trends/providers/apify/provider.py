@@ -169,6 +169,9 @@ class ApifyProvider:
                 raise ValueError(f"{capability}: unknown mapper {spec.mapper!r}")
         self.capabilities = {c for c, spec in self._specs.items() if spec.enabled and spec.actor}
 
+    def health(self) -> dict[str, Any]:
+        return {"key_in_use": f"{self._keys.position} of {self._keys.size}"}
+
     def spec_for(self, capability: str) -> ActorSpec:
         return self._specs[capability]
 

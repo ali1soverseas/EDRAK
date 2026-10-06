@@ -95,7 +95,11 @@ def test_the_provenance_summarizes_the_events_of_a_run(
         {"type": "replan"},
     ):
         deps.bus.emit(event)
-    assert provenance(deps) == {
+    report = provenance(deps)
+    health = report.pop("provider_health")
+    assert {"apify", "gdelt", "serper", "socialcrawl", "youtube_api"} <= set(health)
+    assert all(e["breaker_open"] is False and e["failures"] == 0 for e in health.values())
+    assert report == {
         "models": {"writer": "scripted-chat"},
         "provider_mode": "live",
         "providers_used": {"apify": 1, "socialcrawl": 1},

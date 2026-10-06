@@ -28,6 +28,11 @@ class CircuitBreaker:
         with self._lock:
             return provider in self._open
 
+    def failures(self, provider: str) -> int:
+        """Failures in a row, since the provider last succeeded."""
+        with self._lock:
+            return self._consecutive[provider]
+
     def open_providers(self) -> list[str]:
         with self._lock:
             return sorted(self._open)

@@ -134,6 +134,10 @@ class YouTubeQuota:
         with self._lock:
             return self._load(_pacific_day(self._clock()))
 
+    @property
+    def limits(self) -> dict[str, int]:
+        return {"daily_units": self._daily_units, "search_cap": self._search_cap}
+
 
 def _error_reasons(response: httpx.Response) -> list[str]:
     try:
@@ -208,6 +212,13 @@ class YouTubeProvider:
         self._search_units = int(options.get("search_units", DEFAULT_SEARCH_UNITS))
         self._read_units = int(options.get("read_units", DEFAULT_READ_UNITS))
         self._comments_per_page = int(options.get("comments_per_page", DEFAULT_COMMENTS_PER_PAGE))
+
+    def health(self) -> dict[str, Any]:
+        used, limits = self._quota.snapshot(), self._quota.limits
+        return {
+            "quota_units": f"{used['units']} of {limits['daily_units']}",
+            "searches": f"{used['searches']} of {limits['search_cap']}",
+        }
 
     async def call(self, capability: str, params: dict[str, Any]) -> ProviderResult:
         call = CallParams.model_validate(params)

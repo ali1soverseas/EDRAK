@@ -271,3 +271,21 @@ def test_evidence_rows_have_cut_text_and_total_engagement() -> None:
     [row] = fmt.evidence_rows([item])
     assert row["platform"] == "x" and row["engagement"] == 6 and len(row["text"]) == 140
     assert row["published"] == "2026-07-01" and row["snippet_only"] is False
+
+
+def test_provider_health_rows_put_open_breakers_first_and_show_what_a_provider_reported() -> None:
+    report = {
+        "apify": {"capabilities": 7, "breaker_open": False, "failures": 0, "key_in_use": "1 of 2"},
+        "gdelt": {"capabilities": 1, "breaker_open": False, "failures": 1},
+        "serper": {"capabilities": 3, "breaker_open": True, "failures": 3},
+    }
+    rows = fmt.health_rows(report)
+    assert [row["provider"] for row in rows] == ["serper", "apify", "gdelt"]
+    assert rows[0] == {
+        "provider": "serper",
+        "status": "breaker open",
+        "failures in a row": 3,
+        "details": "",
+    }
+    assert rows[1]["details"] == "key_in_use: 1 of 2" and rows[2]["status"] == "ok"
+    assert fmt.health_rows({}) == []

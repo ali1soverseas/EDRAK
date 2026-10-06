@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     edrak_log_level: str = "INFO"
     edrak_fake_llm: bool = False
     branch_max_steps: int = Field(default=8, ge=1)  # model calls per collection branch
+    branch_timeout_s: float = Field(default=100.0, gt=0)  # wall clock per collection branch
     youtube_daily_quota: int = 10000
     youtube_search_daily_cap: int = 100
 

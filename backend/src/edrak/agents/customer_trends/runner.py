@@ -14,6 +14,7 @@ from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableConfig
+from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.assembly import build_result
 from edrak.agents.customer_trends.deps import EventBus, Listener, LlmFactory, WorkerDeps
@@ -203,7 +204,8 @@ async def _session(
     if listener is not None:
         deps.bus.subscribe(listener)
     try:
-        yield deps
+        with bound_contextvars(run_id=brief.run_id, task_id=brief.task_id):
+            yield deps
     finally:
         if providers is None:
             await deps.providers.aclose()

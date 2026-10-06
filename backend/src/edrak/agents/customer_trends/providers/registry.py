@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 from pydantic import ValidationError
+from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.apify import ApifyProvider
@@ -180,6 +181,22 @@ class ProviderRegistry:
     def breaker(self) -> CircuitBreaker:
         return self._breaker
 
+    def health(self) -> dict[str, dict[str, Any]]:
+        """Each registered provider: its capabilities, whether its breaker is open, its failures in
+        a row, and what it knows about its own quota or keys (never a key value)."""
+        report: dict[str, dict[str, Any]] = {}
+        for name, provider in sorted(self._providers.items()):
+            entry: dict[str, Any] = {
+                "capabilities": len(provider.capabilities),
+                "breaker_open": self._breaker.is_open(name),
+                "failures": self._breaker.failures(name),
+            }
+            own = getattr(provider, "health", None)
+            if callable(own):
+                entry.update(own())
+            report[name] = entry
+        return report
+
     def routing_for(self, capability: str) -> list[str]:
         return list(self._config.routing.get(capability, []))
 
@@ -239,7 +256,8 @@ class ProviderRegistry:
             if cached is not None:
                 return self._tag(self._restamp(cached, params), name, position)
             try:
-                result = await provider.call(capability, params)
+                with bound_contextvars(provider=name):
+                    result = await provider.call(capability, params)
             except ProviderError as exc:
                 failure = ProviderFailure(name, type(exc).__name__, str(exc))
             except (ValidationError, KeyError, TypeError, ValueError) as exc:
