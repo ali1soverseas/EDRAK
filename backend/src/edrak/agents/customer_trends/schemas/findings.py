@@ -61,15 +61,38 @@ def find_numbers(text: str) -> list[float]:
 
 
 class Finding(StrictModel):
-    id: NonEmpty
-    type: FindingType
-    claim: NonEmpty
-    confidence: Confidence
-    evidence_ids: list[str] = Field(default_factory=list)
-    metrics: dict[str, float | int | str] = Field(default_factory=dict)
-    caveats: list[str] = Field(default_factory=list)
-    related_gaps: list[str] = Field(default_factory=list)
-    use_case_relevance: list[UseCase] = Field(default_factory=list)
+    id: NonEmpty = Field(description="Short id, unique in this submission, for example f1.")
+    type: FindingType = Field(description="What kind of finding this is.")
+    claim: NonEmpty = Field(
+        description=(
+            "One or two sentences stating what the evidence shows. Every number in it must also "
+            "be in metrics. No recommendations or verdicts."
+        )
+    )
+    confidence: Confidence = Field(
+        description=(
+            "low, medium or high. High needs at least 10 evidence ids from at least 2 platforms "
+            "or source types; a single evidence id is always low."
+        )
+    )
+    evidence_ids: list[str] = Field(
+        default_factory=list,
+        description="Ids of stored evidence items that support the claim, from evidence_query.",
+    )
+    metrics: dict[str, float | int | str] = Field(
+        default_factory=dict,
+        description=(
+            "Every number quoted in the claim, copied as written, for example "
+            '{"share_pct": 34.5}. Add "metric_id" to cite a compute_metrics result.'
+        ),
+    )
+    caveats: list[str] = Field(default_factory=list, description="Limits of this finding.")
+    related_gaps: list[str] = Field(
+        default_factory=list, description="Coverage gaps that weaken this finding."
+    )
+    use_case_relevance: list[UseCase] = Field(
+        default_factory=list, description="The use cases this finding matters for."
+    )
 
     @model_validator(mode="after")
     def _apply_single_source_rule(self) -> Self:

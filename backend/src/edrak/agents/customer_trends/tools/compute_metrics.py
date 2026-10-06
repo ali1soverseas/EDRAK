@@ -3,7 +3,6 @@
 import hashlib
 import json
 import math
-import re
 import statistics
 import time
 from collections import Counter
@@ -32,12 +31,11 @@ from edrak.agents.customer_trends.tools.base import (
     unknown_batch_response,
 )
 from edrak.agents.customer_trends.tools.selection import group_key, load_items
-from edrak.agents.customer_trends.utils.text import search_key
+from edrak.agents.customer_trends.utils.text import phrase_pattern, search_key
 
 MIN_TREND_POINTS = 8
 P90 = 0.9
 MAX_COMPETITORS = 10
-_ARABIC_BLOCK = (0x0600, 0x06FF)
 
 DESCRIPTION = """Compute exact numbers over the evidence collected so far, with no model guessing.
 
@@ -194,20 +192,11 @@ def language_mix(items: Sequence[EvidenceItem]) -> dict[str, Any]:
     return _mix([item.language or "unknown" for item in items])
 
 
-def _name_pattern(name: str) -> re.Pattern[str]:
-    """Whole-word match for Latin names; plain substring when the name has Arabic letters,
-    because Arabic attaches prefixes (and, with, the) to the word."""
-    key = re.escape(search_key(name))
-    if any(_ARABIC_BLOCK[0] <= ord(char) <= _ARABIC_BLOCK[1] for char in name):
-        return re.compile(key)
-    return re.compile(rf"(?<!\w){key}(?!\w)")
-
-
 def share_of_voice(
     items: Sequence[EvidenceItem], entity: str, competitors: Sequence[str]
 ) -> dict[str, Any]:
     names = list(dict.fromkeys([entity, *competitors]))
-    patterns = {name: _name_pattern(name) for name in names}
+    patterns = {name: phrase_pattern(name) for name in names}
     mentions = dict.fromkeys(names, 0)
     unmentioned = 0
     for item in items:

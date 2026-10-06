@@ -71,6 +71,18 @@ def search_key(text: str) -> str:
     return normalize_text(text).casefold().translate(_ARABIC_FOLD)
 
 
+def phrase_pattern(phrase: str) -> re.Pattern[str]:
+    """A matcher for `phrase` in text that went through `search_key`.
+
+    A Latin phrase must match whole words. A phrase with Arabic letters matches anywhere in a
+    word, because Arabic attaches prefixes (and, with, the) to the word they apply to.
+    """
+    key = re.escape(search_key(phrase))
+    if _ARABIC_LETTER.search(phrase):
+        return re.compile(key)
+    return re.compile(rf"(?<!\w){key}(?!\w)")
+
+
 def content_hash(text: str) -> str:
     """SHA-1 of the normalized, case-folded text: equal content hashes mean duplicates."""
     folded = normalize_text(text).casefold()
