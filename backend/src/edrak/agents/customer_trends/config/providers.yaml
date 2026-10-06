@@ -1,6 +1,7 @@
 # Provider settings and routing. Routing lives here, not in code (SPEC 8.2).
 # `verify: true` marks values taken from documentation or assumed, still to be confirmed
-# against the live service. Batch 4 verifies the Apify actors and SocialCrawl endpoints.
+# against the live service. Apify actor inputs and outputs and SocialCrawl endpoints were
+# checked against the live services on 2026-10-06; see docs/ASSUMPTIONS.md for what was not.
 
 providers:
   serper:
@@ -20,46 +21,284 @@ providers:
       search_units: 100
       read_units: 1
   apify:
-    verify: true
     min_interval_s: 0.0
     options:
-      cost_per_item_usd: 0.002
+      timeout_s: 240
+      # Prices are the FREE plan's pay-per-event rates on 2026-10-06. Input templates use
+      # {placeholders} filled from the call: query, hashtag, language (only when exactly one
+      # is requested), geo, since, until, window, max_results, url, status_id, sort, keywords,
+      # timeframe, target, target_url, country_lower, country_upper. A key whose placeholder
+      # has no value is left out, so the actor keeps its default.
       actors:
-        social_search:x: {actor: apidojo/tweet-scraper, verify: true}
-        social_comments:x: {actor: apidojo/tweet-scraper, verify: true}
-        social_search:tiktok: {actor: clockworks/tiktok-scraper, verify: true}
-        social_comments:tiktok: {actor: clockworks/tiktok-scraper, verify: true}
-        social_search:instagram: {actor: apify/instagram-scraper, verify: true}
-        social_comments:instagram: {actor: apify/instagram-scraper, verify: true}
-        social_search:facebook: {actor: apify/facebook-posts-scraper, verify: true}
-        social_comments:facebook: {actor: apify/facebook-posts-scraper, verify: true}
-        social_search:youtube: {actor: streamers/youtube-scraper, verify: true}
-        social_comments:youtube: {actor: streamers/youtube-scraper, verify: true}
-        social_search:reddit: {actor: null, verify: true}
-        social_comments:reddit: {actor: null, verify: true}
-        search_interest: {actor: null, verify: true}
-        reviews:app_store: {actor: null, verify: true}
-        reviews:google_play: {actor: null, verify: true}
-        reviews:amazon: {actor: null, verify: true}
+        social_search:x:
+          actor: apidojo/tweet-scraper
+          mapper: x_post
+          input:
+            searchTerms: ["{query}"]
+            maxItems: "{max_results}"
+            sort: "{sort}"
+            tweetLanguage: "{language}"
+            start: "{since}"
+            end: "{until}"
+          values:
+            sort: {recent: Latest, top: Top}
+          requires: [query]
+          cost_per_item_usd: 0.0004
+        social_comments:x:
+          actor: apidojo/tweet-scraper
+          mapper: x_reply
+          input:
+            conversationIds: ["{status_id}"]
+            maxItems: "{max_results}"
+          requires: [status_id]
+          cost_per_item_usd: 0.0004
+        social_search:tiktok:
+          actor: clockworks/tiktok-scraper
+          mapper: tiktok_video
+          input:
+            searchQueries: ["{query}"]
+            resultsPerPage: "{max_results}"
+            searchSection: /video
+            videoSearchSorting: "{sort}"
+            videoSearchDateFilter: "{window}"
+          values:
+            sort: {recent: LATEST, top: MOST_LIKED}
+            window: {day: PAST_24_HOURS, week: PAST_WEEK, month: PAST_MONTH, quarter: LAST_3_MONTHS, half_year: LAST_6_MONTHS}
+          requires: [query]
+          cost_per_item_usd: 0.0037
+          cost_per_run_usd: 0.001
+        social_comments:tiktok:
+          actor: clockworks/tiktok-comments-scraper
+          mapper: tiktok_comment
+          input:
+            postURLs: ["{url}"]
+            commentsPerPost: "{max_results}"
+          requires: [url]
+          cost_per_item_usd: 0.00125
+        social_search:instagram:
+          actor: apify/instagram-scraper
+          mapper: instagram_post
+          input:
+            directUrls: ["https://www.instagram.com/explore/tags/{hashtag}/"]
+            resultsType: posts
+            resultsLimit: "{max_results}"
+            onlyPostsNewerThan: "{since}"
+          requires: [hashtag]
+          cost_per_item_usd: 0.0027
+          note: Instagram has no keyword search, so the query is searched as one hashtag.
+        social_comments:instagram:
+          actor: apify/instagram-comment-scraper
+          mapper: instagram_comment
+          input:
+            directUrls: ["{url}"]
+            resultsLimit: "{max_results}"
+          requires: [url]
+          cost_per_item_usd: 0.0026
+        social_search:facebook:
+          actor: apify/facebook-posts-scraper
+          mapper: facebook_post
+          enabled: false
+          input:
+            startUrls: [{url: "{url}"}]
+            resultsLimit: "{max_results}"
+          requires: [url]
+          note: Reads the posts of one page URL, not a keyword search, so it is switched off. The only keyword-search actor tried (powerai/facebook-post-search-scraper) returned no items for two queries and charged its start fee, so SocialCrawl serves Facebook search.
+        social_comments:facebook:
+          actor: apify/facebook-comments-scraper
+          mapper: facebook_comment
+          input:
+            startUrls: [{url: "{url}"}]
+            resultsLimit: "{max_results}"
+          requires: [url]
+          cost_per_item_usd: 0.0025
+          cost_per_run_usd: 0.001
+        social_search:youtube:
+          actor: streamers/youtube-scraper
+          mapper: youtube_video
+          input:
+            searchQueries: ["{query}"]
+            maxResults: "{max_results}"
+            maxResultsShorts: 0
+            maxResultStreams: 0
+            sortingOrder: "{sort}"
+            dateFilter: "{window}"
+          values:
+            sort: {recent: date, top: views}
+            window: {day: today, week: week, month: month, quarter: year, half_year: year, year: year}
+          requires: [query]
+          cost_per_item_usd: 0.004
+        social_comments:youtube:
+          actor: streamers/youtube-comments-scraper
+          mapper: youtube_comment
+          input:
+            startUrls: [{url: "{url}"}]
+            maxComments: "{max_results}"
+            sortCommentsBy: "{sort}"
+          values:
+            sort: {recent: NEWEST_FIRST, top: TOP_COMMENTS}
+          requires: [url]
+          cost_per_item_usd: 0.002
+        social_search:reddit:
+          actor: trudax/reddit-scraper-lite
+          mapper: reddit_post
+          input:
+            searches: ["{query}"]
+            searchPosts: true
+            searchComments: false
+            sort: "{sort}"
+            time: "{window}"
+            maxItems: "{max_results}"
+            maxPostCount: "{max_results}"
+            skipComments: true
+            skipUserPosts: true
+            skipCommunity: true
+            postDateLimit: "{since}"
+          values:
+            sort: {recent: new, top: top}
+            window: {day: day, week: week, month: month, quarter: year, half_year: year, year: year, all: all}
+          requires: [query]
+          cost_per_item_usd: 0.004
+          cost_per_run_usd: 0.02
+          note: This actor returns no vote or comment counts.
+        social_comments:reddit:
+          actor: trudax/reddit-scraper-lite
+          mapper: reddit_comment
+          input:
+            startUrls: [{url: "{url}"}]
+            maxItems: "{max_results_plus_one}"
+            maxComments: "{max_results}"
+            skipUserPosts: true
+            skipCommunity: true
+          requires: [url]
+          cost_per_item_usd: 0.004
+          cost_per_run_usd: 0.02
+        search_interest:
+          actor: apify/google-trends-scraper
+          mapper: google_trends
+          input:
+            searchTerms: "{keywords}"
+            timeRange: "{timeframe}"
+            geo: "{geo}"
+            maxItems: "{max_results}"
+          requires: [keywords]
+          cost_per_item_usd: 0.003
+          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240.
+        reviews:app_store:
+          actor: thewolves/appstore-reviews-scraper
+          mapper: app_store_review
+          input:
+            appIds: ["{target}"]
+            country: "{country_lower}"
+            maxItems: "{max_results}"
+          requires: [target]
+          cost_per_item_usd: 0.0001
+        reviews:google_play:
+          actor: thewolves/google-play-reviews-scraper
+          mapper: google_play_review
+          input:
+            appIds: ["{target}"]
+            country: "{country_upper}"
+            language: "{language}"
+            sort: NEWEST
+            maxItems: "{max_results}"
+          requires: [target]
+          cost_per_item_usd: 0.0001
+        reviews:amazon:
+          actor: junglee/amazon-reviews-scraper
+          mapper: amazon_review
+          input:
+            productUrls: [{url: "{target_url}"}]
+            maxReviews: "{max_results}"
+            sort: recent
+          requires: [target]
+          cost_per_item_usd: 0.006
   socialcrawl:
-    verify: true
-    min_interval_s: 0.0
+    min_interval_s: 0.1
     options:
+      usd_per_credit: 0.001
+      max_pages: 5
+      preflight_min_credits: 5
+      filter_languages: true
+      # `input` names the query parameter (query or url); `params` are sent on every call.
+      # relevance=filter drops rows that are not about the query, at no extra credits.
       endpoints:
-        social_search:x: {path: null, verify: true}
-        social_comments:x: {path: null, verify: true}
-        social_search:tiktok: {path: null, verify: true}
-        social_comments:tiktok: {path: null, verify: true}
-        social_search:instagram: {path: null, verify: true}
-        social_comments:instagram: {path: null, verify: true}
-        social_search:facebook: {path: null, verify: true}
-        social_comments:facebook: {path: null, verify: true}
-        social_search:youtube: {path: null, verify: true}
-        social_comments:youtube: {path: null, verify: true}
-        social_search:reddit: {path: null, verify: true}
-        social_comments:reddit: {path: null, verify: true}
+        social_search:x:
+          path: /twitter/search/tweets
+          input: query
+          credits_per_page: 1
+          page_size: 20
+          params: {relevance: filter}
+          sort: {param: sort, values: {recent: latest, top: top}}
+          date_operators: true
+        social_comments:x:
+          path: /twitter/tweet/replies
+          input: url
+          credits_per_page: 1
+          page_size: 20
+        social_search:tiktok:
+          path: /tiktok/search
+          input: query
+          credits_per_page: 1
+          page_size: 30
+          params: {relevance: filter}
+          sort: {param: sort_by, values: {recent: date-posted, top: most-liked}}
+        social_comments:tiktok:
+          path: /tiktok/post/comments
+          input: url
+          credits_per_page: 1
+          page_size: 20
+          sort: {param: sort, values: {recent: recent, top: top}}
+        social_search:instagram:
+          path: /instagram/search/popular
+          input: query
+          credits_per_page: 1
+          page_size: 12
+        social_comments:instagram:
+          path: /instagram/post/comments
+          input: url
+          credits_per_page: 5
+          page_size: 15
+          sort: {param: sort, values: {recent: recent, top: top}}
+        social_search:facebook:
+          path: /facebook/search/posts
+          input: query
+          credits_per_page: 1
+          page_size: 5
+          params: {relevance: filter}
+        social_comments:facebook:
+          path: /facebook/post/comments
+          input: url
+          credits_per_page: 1
+          page_size: 20
+        social_search:youtube:
+          path: /youtube/search
+          input: query
+          credits_per_page: 1
+          page_size: 40
+          params: {relevance: filter}
+          sort: {param: sortBy, values: {top: popular}}
+        social_comments:youtube:
+          path: /youtube/video/comments
+          input: url
+          credits_per_page: 1
+          page_size: 20
+          sort: {param: order, values: {recent: newest, top: top}}
+        social_search:reddit:
+          path: /reddit/search
+          input: query
+          credits_per_page: 1
+          page_size: 25
+          params: {relevance: filter}
+          sort: {param: sort, values: {recent: new, top: top}}
+        social_comments:reddit:
+          path: /reddit/post/comments
+          input: url
+          credits_per_page: 5
+          page_size: 20
   google_trends_api:
     verify: true
+    options:
+      note: Google Trends API alpha. The adapter is a stub until access is approved.
   direct_http:
     min_interval_s: 0.0
 
