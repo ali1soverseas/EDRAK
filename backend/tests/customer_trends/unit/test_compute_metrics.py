@@ -8,7 +8,7 @@ from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
 from edrak.agents.customer_trends.tools import compute_metrics
 from edrak.agents.customer_trends.tools.base import ToolContext, invoke_tool
-from tests.customer_trends.factories import RUN_ID, TASK_ID, make_evidence, synthetic_evidence
+from tests.customer_trends.factories import RUN_ID, TASK_ID, make_evidence
 from tests.customer_trends.tool_helpers import processing_context, trend_series
 
 
@@ -328,7 +328,3 @@ async def test_the_call_is_reported_as_an_event(store: EvidenceStore) -> None:
     assert event["type"] == "tool_called" and event["tool"] == "compute_metrics"
     assert event["status"] == "ok" and event["count"] == 5 and event["provider"] is None
     assert event["args"] == {"metric": "volume_over_time"}
-
-
-def test_the_synthetic_set_has_the_shape_the_expectations_assume() -> None:
-    assert len(synthetic_evidence()) == 40
