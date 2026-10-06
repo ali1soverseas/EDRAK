@@ -159,8 +159,10 @@ def build_result(
     gaps: Sequence[Gap],
     warnings: Sequence[str],
     headline: str | None = None,
+    ending: str = "finished",
 ) -> CustomerTrendsResult:
-    """The run's result from what is stored now. Without a headline a counted one is written."""
+    """The run's result from what is stored now. Without a headline a counted one is written.
+    `ending` records how the run ended: finished, time_limit or run_failed."""
     store, run_id = deps.store, brief.run_id
     findings = store.get_findings(run_id)
     summary = store.run_summary(run_id)
@@ -201,6 +203,6 @@ def build_result(
         ),
         gaps=control.gaps,
         control_summary=control,
-        provenance=provenance(deps),
+        provenance={**provenance(deps), "ending": ending},
         created_at=datetime.now(UTC),
     )

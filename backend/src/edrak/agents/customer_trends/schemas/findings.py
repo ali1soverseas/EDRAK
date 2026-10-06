@@ -1,6 +1,8 @@
 """Findings, the control summary and the worker's own result package."""
 
 import re
+from collections.abc import Sequence
+from datetime import timedelta
 from typing import Any, Literal, Self
 
 from pydantic import Field, field_validator, model_validator
@@ -15,8 +17,14 @@ from edrak.agents.customer_trends.schemas.common import (
     UseCase,
     UtcDatetime,
 )
+from edrak.agents.customer_trends.schemas.evidence import EvidenceItem, to_shared_evidence
 from edrak.agents.customer_trends.schemas.task import TaskBrief
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
+from edrak.contracts import (
+    EvidenceRef as SharedEvidenceRef,
+)
+from edrak.contracts import Finding as SharedFinding
+from edrak.contracts import FindingCategory, ResearchTask, WorkerResult, WorkerStatus, WorkerType
 
 SINGLE_SOURCE_CAVEAT = "single_source"
 MAX_HEADLINE_WORDS = 60
@@ -160,3 +168,104 @@ class CustomerTrendsResult(StrictModel):
     control_summary: ControlSummary
     provenance: dict[str, Any] = Field(default_factory=dict)
     created_at: UtcDatetime
+
+
+# CustomerTrendsResult to the shared WorkerResult (SPEC 6.0). The shared result is compact: the
+# findings, the evidence they cite (a short fact each, not the stored text), the gaps and a
+# pointer to this worker's full artifact. Metrics, themes and the control summary ride in
+# `metadata`, because the shared finding has no field for them.
+
+_CATEGORIES = {
+    FindingType.PAIN_POINT: FindingCategory.CUSTOMER_SENTIMENT,
+    FindingType.UNMET_NEED: FindingCategory.GAP,
+    FindingType.DEMAND_SIGNAL: FindingCategory.MARKET_SIGNAL,
+    FindingType.SENTIMENT: FindingCategory.CUSTOMER_SENTIMENT,
+    FindingType.COMPETITOR_GAP: FindingCategory.GAP,
+    FindingType.TREND: FindingCategory.MARKET_SIGNAL,
+    FindingType.RISK: FindingCategory.RISK,
+}
+_CONFIDENCE = {Confidence.LOW: 0.3, Confidence.MEDIUM: 0.6, Confidence.HIGH: 0.85}
+THEMES_IN_METADATA = 10
+FAILED_PREFIX = "the run failed"
+
+
+def worker_status(result: CustomerTrendsResult) -> tuple[WorkerStatus, str | None]:
+    """The shared status of a result, and the error text a failed one needs."""
+    summary = result.control_summary
+    if result.provenance.get("ending") == "run_failed" and not result.findings:
+        error = next((gap for gap in result.gaps if gap.startswith(FAILED_PREFIX)), FAILED_PREFIX)
+        return WorkerStatus.FAILED, error
+    if summary.status == "complete":
+        return WorkerStatus.COMPLETED, None
+    if summary.status == "insufficient" and not result.findings and summary.evidence_count == 0:
+        return WorkerStatus.NO_EVIDENCE, None
+    return WorkerStatus.PARTIAL, None
+
+
+def to_worker_result(
+    result: CustomerTrendsResult,
+    evidence: Sequence[EvidenceItem],
+    *,
+    task: ResearchTask,
+    location: str | None = None,
+    synthetic: bool = False,
+) -> WorkerResult:
+    """The compact result for the orchestrator. `evidence` holds the stored items the findings cite;
+    a reference to an item that is not given is left out rather than invented."""
+    known = {item.id: item for item in evidence}
+    findings = [
+        SharedFinding(
+            finding_id=f"{result.task_id}:{finding.id}",
+            statement=finding.claim,
+            category=_CATEGORIES[finding.type],
+            evidence_refs=[
+                SharedEvidenceRef(evidence_id=evidence_id)
+                for evidence_id in finding.evidence_ids
+                if evidence_id in known
+            ],
+            confidence=_CONFIDENCE[finding.confidence],
+            limitations=[*finding.caveats, *(f"gap: {gap}" for gap in finding.related_gaps)],
+        )
+        for finding in result.findings
+    ]
+    cited = dict.fromkeys(ref.evidence_id for finding in findings for ref in finding.evidence_refs)
+    summary = result.control_summary
+    status, error = worker_status(result)
+    return WorkerResult(
+        task_id=task.task_id,
+        worker=WorkerType.CUSTOMER_TRENDS,
+        status=status,
+        attempt=task.attempt,
+        findings=findings,
+        evidence=[
+            to_shared_evidence(known[evidence_id], synthetic=synthetic) for evidence_id in cited
+        ],
+        gaps=list(result.gaps),
+        confidence=None
+        if status in {WorkerStatus.NO_EVIDENCE, WorkerStatus.FAILED}
+        else _CONFIDENCE[summary.overall_confidence],
+        started_at=result.created_at - timedelta(seconds=summary.budget_used.get("seconds", 0.0)),
+        completed_at=result.created_at,
+        error=error,
+        metadata={
+            "worker_schema_version": result.schema_version,
+            "run_id": result.run_id,
+            "control_summary": summary.model_dump(mode="json"),
+            "artifact": {
+                "result_location": location,
+                "evidence_store": result.evidence_ref.store_path,
+                "evidence_count": result.evidence_ref.count,
+                "batch_ids": result.evidence_ref.batch_ids,
+            },
+            "finding_metrics": {
+                f"{result.task_id}:{finding.id}": finding.metrics for finding in result.findings
+            },
+            "themes": [
+                a.model_dump(
+                    mode="json",
+                    include={"theme_label", "count", "share", "sentiment_mix", "recent_growth"},
+                )
+                for a in result.theme_aggregates[:THEMES_IN_METADATA]
+            ],
+        },
+    )

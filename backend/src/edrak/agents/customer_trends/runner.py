@@ -7,6 +7,8 @@ one that crashed differ only in status, gaps and warnings. Nothing here raises f
 
 import asyncio
 from collections.abc import AsyncIterator
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
@@ -22,13 +24,14 @@ from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
-from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult
-from edrak.agents.customer_trends.schemas.task import QueryPlan, TaskBrief
+from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, to_worker_result
+from edrak.agents.customer_trends.schemas.task import QueryPlan, TaskBrief, brief_from_task
 from edrak.agents.customer_trends.settings import Settings, get_settings
 from edrak.agents.customer_trends.state import initial_state
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
 from edrak.agents.customer_trends.store.sink import LocalSink, ResultSink
 from edrak.agents.customer_trends.usecases import load_use_cases
+from edrak.contracts import ResearchTask, WorkerResult, WorkerStatus, WorkerType
 
 log = get_logger(__name__)
 
@@ -95,7 +98,9 @@ def _conclude(
 ) -> CustomerTrendsResult:
     """A result for a run that did not finish: what is stored, the open gaps, why it stopped."""
     warnings = [*values.get("warnings", []), gap.description]
-    result = build_result(deps, brief, gaps=_run_gaps(deps, brief, values, gap), warnings=warnings)
+    result = build_result(
+        deps, brief, gaps=_run_gaps(deps, brief, values, gap), warnings=warnings, ending=gap.id
+    )
     try:
         deps.sink.write_result(result)
     except Exception:
@@ -174,6 +179,28 @@ def _finished(deps: WorkerDeps, result: CustomerTrendsResult) -> None:
     )
 
 
+@asynccontextmanager
+async def _session(
+    brief: TaskBrief,
+    sink: ResultSink | None,
+    providers: ProviderRegistry | None,
+    llm: LlmSource,
+    settings: Settings,
+    listener: Listener | None = None,
+) -> AsyncIterator[WorkerDeps]:
+    """The dependencies of one run, with the store and any providers built here closed after."""
+    store = EvidenceStore.from_settings(settings)
+    deps = make_deps(brief, store=store, settings=settings, sink=sink, providers=providers, llm=llm)
+    if listener is not None:
+        deps.bus.subscribe(listener)
+    try:
+        yield deps
+    finally:
+        if providers is None:
+            await deps.providers.aclose()
+        store.close()
+
+
 async def run_task(
     brief: TaskBrief,
     *,
@@ -184,7 +211,8 @@ async def run_task(
 ) -> CustomerTrendsResult:
     """Run a brief to completion. `providers` and `llm` let tests and the UI inject fixtures and
     the scripted model; `llm` is one model for every role or a function from role to model."""
-    return await _run(brief, sink, providers, llm, settings or get_settings(), None)
+    async with _session(brief, sink, providers, llm, settings or get_settings()) as deps:
+        return await _execute(brief, deps)
 
 
 async def stream_task(
@@ -203,9 +231,13 @@ async def stream_task(
     def listener(event: dict[str, Any]) -> None:
         loop.call_soon_threadsafe(queue.put_nowait, event)
 
-    task = asyncio.create_task(
-        _run(brief, sink, providers, llm, settings or get_settings(), listener)
-    )
+    async def go() -> CustomerTrendsResult:
+        async with _session(
+            brief, sink, providers, llm, settings or get_settings(), listener
+        ) as deps:
+            return await _execute(brief, deps)
+
+    task = asyncio.create_task(go())
     task.add_done_callback(lambda _: queue.put_nowait(None))
     try:
         while (event := await queue.get()) is not None:
@@ -217,21 +249,58 @@ async def stream_task(
         await asyncio.gather(task, return_exceptions=True)
 
 
-async def _run(
-    brief: TaskBrief,
-    sink: ResultSink | None,
-    providers: ProviderRegistry | None,
-    llm: LlmSource,
-    settings: Settings,
-    listener: Listener | None,
-) -> CustomerTrendsResult:
-    store = EvidenceStore.from_settings(settings)
-    deps = make_deps(brief, store=store, settings=settings, sink=sink, providers=providers, llm=llm)
-    if listener is not None:
-        deps.bus.subscribe(listener)
+async def arun_worker(
+    task: ResearchTask,
+    *,
+    sink: ResultSink | None = None,
+    providers: ProviderRegistry | None = None,
+    llm: LlmSource = None,
+    settings: Settings | None = None,
+) -> WorkerResult:
+    """The orchestrator's entry, async: a shared `ResearchTask` in, a shared `WorkerResult` out.
+
+    Never raises. A task that cannot be run, or a run that crashes before it has a result, comes
+    back as a `failed` result with the reason; the full artifact stays with the sink and the store.
+    """
+    settings = settings or get_settings()
     try:
-        return await _execute(brief, deps)
-    finally:
-        if providers is None:
-            await deps.providers.aclose()
-        store.close()
+        brief = brief_from_task(task)
+        async with _session(brief, sink, providers, llm, settings) as deps:
+            result = await _execute(brief, deps)
+            cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
+            return to_worker_result(
+                result,
+                deps.store.get_items(brief.run_id, cited),
+                task=task,
+                location=deps.store.result_location(brief.run_id),
+                synthetic=settings.edrak_provider_mode == "fixture",
+            )
+    except Exception as exc:
+        log.error(
+            "worker_failed", task_id=task.task_id, error=type(exc).__name__, detail=str(exc)[:200]
+        )
+        return WorkerResult(
+            task_id=task.task_id,
+            worker=WorkerType.CUSTOMER_TRENDS,
+            status=WorkerStatus.FAILED,
+            attempt=task.attempt,
+            error=f"{type(exc).__name__}: {str(exc)[:300]}",
+        )
+
+
+def run_worker(
+    task: ResearchTask,
+    *,
+    sink: ResultSink | None = None,
+    providers: ProviderRegistry | None = None,
+    llm: LlmSource = None,
+    settings: Settings | None = None,
+) -> WorkerResult:
+    """`arun_worker` for the orchestrator, whose workers are plain functions run on threads."""
+    coroutine = arun_worker(task, sink=sink, providers=providers, llm=llm, settings=settings)
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coroutine)
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, coroutine).result()
