@@ -324,7 +324,7 @@ def test_the_shipped_phrase_list_has_english_and_arabic_entries() -> None:
     assert len(phrases) == len(set(phrases)) and all(p.strip() for p in phrases)
     assert {"should enter", "do not launch"} <= set(phrases)
     assert any(any("؀" <= c <= "ۿ" for c in p) for p in phrases)
-    assert not any("—" in p for p in phrases)
+    assert not any(chr(0x2014) in p for p in phrases)
     assert verdict_phrases_in("Do NOT launch it", phrases) == ["do not launch"]
 
 

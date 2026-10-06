@@ -609,7 +609,7 @@ def test_the_prompt_names_the_rules_the_tool_depends_on() -> None:
         "taxonomy",
     ):
         assert required.lower() in ANALYZE_THEMES.lower(), required
-    assert "—" not in ANALYZE_THEMES
+    assert chr(0x2014) not in ANALYZE_THEMES
 
 
 def test_an_aggregate_keeps_its_quotes_through_the_store(store: EvidenceStore) -> None:
