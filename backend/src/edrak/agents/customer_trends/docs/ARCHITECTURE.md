@@ -30,7 +30,9 @@ tool -> ProviderRegistry.call(capability, params)
 ### Call params
 
 A plain dict, validated by `CallParams`: `run_id`, `task_id`, `query`, `languages`, `geo`,
-`since`, `until`, `max_results`, `cursor`, `post_url`, `hashtags`, `sort` (`recent` or `top`).
+`since`, `until`, `max_results`, `cursor`, `post_url`, `hashtags`, `sort` (`recent` or `top`),
+and for the demand and review capabilities `keywords`, `timeframe`, `target` (an app id, or a
+product id or URL) and `country`.
 Providers stamp `batch_id="pending"` on the evidence they build; the evidence store assigns the
 real batch id on insert.
 
@@ -83,13 +85,68 @@ of the recording; the registry re-stamps them for the current run. `max_results`
 items. Cost is reported as zero. A missing or invalid fixture raises `ProviderExhausted` with a
 failure from the pseudo-provider `fixture`, which tools report as a gap.
 
-### Providers in this batch
+### Providers
 
 | Provider | Capabilities | Notes |
 |---|---|---|
 | `serper` | `web_search`, `news:google_news`, `social_search:<platform>` (x, reddit, tiktok, instagram, facebook) | Needs `SERPER_API_KEY`. Snippet-level data, `snippet_only=true`. Social search is a `site:` query and always carries a warning. Local adapter until the shared web MCP server exists (SPEC 8.4). |
 | `gdelt` | `news:gdelt` | No key. About 90 days of history, `sourcelang:` filter, results are titles only. Volume by day is computed from the returned articles. |
 | `youtube_api` | `social_search:youtube`, `social_comments:youtube` | Needs `YOUTUBE_API_KEY`. Local quota counter in `<data_dir>/youtube_quota.json`, reset at midnight Pacific time. |
+| `apify` | `social_search:{x,tiktok,instagram,youtube,reddit}`, `social_comments:*`, `search_interest`, `reviews:{app_store,google_play,amazon}` | Needs `APIFY_TOKEN`. One actor per capability, configured in providers.yaml. |
+| `socialcrawl` | `social_search:*`, `social_comments:*` (all six platforms) | Needs `SOCIALCRAWL_API_KEY`. One response shape for every platform. |
+| `google_trends_api` | `search_interest` | Stub, always registered so its routing entry resolves. `ProviderNotConfigured` without `GOOGLE_TRENDS_API_KEY`, then `ProviderUnavailable("alpha api not implemented")`. |
 
-Apify, SocialCrawl and the Google Trends stub arrive in the next batch; their routing entries
-and placeholders are already in `config/providers.yaml`.
+### Apify
+
+`providers/apify/client.py` runs an actor with `POST /v2/acts/{owner~name}/run-sync-get-dataset-items`
+(bearer token, `limit` and `timeout` as query parameters, the actor input as the body). The
+sync route answers 201. A 408, or a 400 `run-failed`, means the run timed out or crashed: it
+is reported as `RunNotFinished` (a `ProviderUnavailable` that is never retried, because running
+the actor again costs again). 401 and 403 are `ProviderNotConfigured`, 402 is
+`ProviderQuotaExceeded`, 429 is retried.
+
+Per capability, `config/providers.yaml` names the actor, an input template, value translations
+and a price. A template uses placeholders such as `{query}`, `{max_results}`, `{sort}`,
+`{window}`, `{url}`, `{keywords}`, `{target}`. A string that is exactly one placeholder keeps
+the value's type; a key whose placeholder has no value is left out so the actor keeps its
+default; `requires` lists the values a capability cannot run without. `enabled: false` switches
+a capability off without removing its config.
+
+`providers/apify/mappers.py` is the only place that knows actor output field names. Each mapper
+turns one dataset item into an `EvidenceItem` (or a `TrendSeries` for Google Trends) and keeps
+unmapped small fields in `metadata`. Cost is estimated as the run fee plus the per-item price
+times the items returned; Apify reports no cost on this route.
+
+### SocialCrawl
+
+`providers/socialcrawl.py` sends `GET <base_url><path>` with an `x-api-key` header. Which path,
+query parameter, sort values, page size and credit price apply to each capability is in
+providers.yaml. Responses share one envelope: `data.items[]` with a `post` or `comment`,
+`pagination.next_cursor` (sent back verbatim as `cursor`) and `credits_used` /
+`credits_remaining`. Searches send `relevance=filter`, which drops rows that are not about the
+query at no extra credit. Rows in other languages than requested are dropped with a warning.
+A request that could cost five credits or more first reads the free `GET /credits/balance`
+and raises `ProviderQuotaExceeded` when the balance is short; paging stops early when the
+balance runs out. A comments request for a post without comments (404 `RESOURCE_NOT_FOUND`) is
+an empty result.
+
+### Routing
+
+Effective order with every key configured (`providers.yaml` lists the configured order; names
+without a registered provider that supports the capability are skipped):
+
+| Capability | Order |
+|---|---|
+| `social_search:x`, `tiktok`, `instagram`, `reddit` | apify, socialcrawl, serper (snippets) |
+| `social_search:facebook` | socialcrawl, serper (the Apify entry is switched off) |
+| `social_search:youtube` | youtube_api, apify, socialcrawl |
+| `social_comments:x`, `tiktok`, `instagram`, `facebook`, `reddit` | apify, socialcrawl |
+| `social_comments:youtube` | youtube_api, apify, socialcrawl |
+| `search_interest` | apify, google_trends_api |
+| `reviews:app_store`, `google_play`, `amazon` | apify |
+| `news:gdelt` | gdelt |
+| `news:google_news`, `web_search` | serper |
+| `fetch_page` | direct_http (built with the collection tools) |
+
+`tests/customer_trends/integration/test_routing_matrix.py` checks this table against a fully
+configured registry and prints it (`pytest -s`).

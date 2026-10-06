@@ -47,8 +47,31 @@
 - The registry never raises for a provider failure except `ProviderExhausted` (and `BudgetExceeded`); tools turn those into `ToolResponse` errors in Batch 5.
 - The YouTube API key is sent in the `X-Goog-Api-Key` header, not the query string, so it never appears in URLs or logs.
 - YouTube quota resets at midnight Pacific time; the counter uses that day, falling back to UTC when the time zone database is missing.
-- The shipped `config/providers.yaml` lists Apify actors and SocialCrawl endpoints as placeholders with `verify: true`. Actors for Reddit, Google Trends and the three review stores are `null` until Batch 4 picks and verifies them.
+- The Batch 3 `config/providers.yaml` listed Apify actors and SocialCrawl endpoints as placeholders; Batch 4 replaced them with verified values (see below).
 - GDELT volume by day is computed from the returned articles (at most `maxrecords`), not from the timeline API, and is labelled `volume_basis: returned_articles`.
 - Serper dates are free text; unparseable dates become `None`. Relative dates ("3 days ago") are resolved against the provider clock.
 - Live check of GDELT from the development machine: a single request with the documented parameters returns 200, but the service often answers 429 ("limit requests to one every 5 seconds") even when requests are well over five seconds apart, and it can stay that way for minutes. The adapter spaces requests by at least five seconds and retries 429 three times, then reports `ProviderRateLimited`. `news:gdelt` has no fallback in the routing table, so a throttled run records a gap. `smoke_providers.py` reports this as FAIL.
 - Live check with real keys (Serper, YouTube): web, news, Google News, the `site:` social fallback and YouTube search and comments all returned real results. Serper localizes its `date` field to the `hl` language, which is the first requested language, so with the default `["ar", "en"]` dates arrive in Arabic ("قبل 6 ساعات", "29/08/2025" with direction marks). `parse_serper_date` reads English and Arabic relative, written-out and numeric day/month/year forms; other languages give `None` rather than a guess. Many web results carry no date at all.
+
+## Batch 4
+
+Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
+
+- Every Apify actor id in providers.yaml was checked against its live build (`GET /v2/acts/{id}/builds/default`) for input fields and enums, and run once with at most 10 items to capture real output. The captures became the fixtures, with authors, URLs and texts replaced. Inputs that were run through the provider itself against the live API: X search, App Store reviews and Google Trends. The other actors were run with equivalent hand-built inputs; the templates are covered by tests that assert the exact input they produce.
+- Every SocialCrawl endpoint in providers.yaml (six searches, six comment endpoints) was called live once, and the paths, parameters and response shapes come from its published `llms.txt` and per-platform docs. The balance endpoint, relevance filter and `since:`/`until:` operators for X were also exercised.
+- Not verified, and flagged where they live:
+  - SocialCrawl's USD price per credit is not published on the pages read; `usd_per_credit: 0.001` is an assumption (the free tier is 100 credits).
+  - Apify prices are the FREE-plan pay-per-event rates read from each actor on that day and can change.
+  - `social_search:facebook` through Apify: switched off (see DEVIATIONS.md). Candidates seen: `apify/facebook-posts-scraper` (page URLs only), `powerai/facebook-post-search-scraper` (no results for "GitLab" or "coffee", charges a 9 cent start fee, needs `maxResults` of at least 10).
+  - The Google Trends API alpha stub does not call anything. Apify's Google Trends actor is a browser scraper: one live run took 80 to 95 seconds and an earlier one timed out at 240.
+  - The Reddit actor (`trudax/reddit-scraper-lite`) returns no vote or comment counts, so Reddit evidence from Apify has no engagement. SocialCrawl returns them.
+  - Instagram has no keyword search: the query is turned into one hashtag (letters and digits only).
+- Apify's synchronous route answers 201 and returns the dataset as a JSON list. Runs that time out or fail are not retried (a retry would run, and bill, the actor again); 429 and 5xx are.
+- The HTTP layer now waits at least `Retry-After` (up to a minute) after a 429 and accepts a per-request timeout; Apify requests use the actor timeout plus 30 seconds.
+- Naive timestamps from providers are read as UTC (a test caught them being read as local time).
+- `detect_language` returns `None` for text under 15 letters unless it is mostly Arabic, because langdetect answered confidently and wrongly for strings such as "Great product" (Romanian) and "bad" (Somali).
+- `CallParams` gained `keywords`, `timeframe`, `target` and `country` for the demand and review capabilities.
+- SocialCrawl search sends `relevance=filter` and drops rows whose detected language is not requested (rows with no detected language are kept); both are config options. `raw_count` is the number of rows fetched before filtering, so the caller can tell how much was dropped.
+- SocialCrawl also serves Google Trends and the three review stores, and Apify's Google Trends actor was slow in testing. SPEC 8.2 routes those capabilities to Apify only, so SocialCrawl was not added to them. It would be a one-line routing change if you want it as a fallback.
+- `fallback_used` is true whenever the serving provider is not first in the configured order, so a Facebook search served by SocialCrawl counts as a fallback because the Apify entry is switched off.
+- The provider layer never spends money on its own: the smoke script is the only code that calls Apify live, and it runs the cheapest actor for three items.
