@@ -60,6 +60,19 @@ limit, other 4xx and malformed JSON a bad response; none of those are retried. A
 pass an `error_mapper` to classify its own error bodies (YouTube reports quota problems inside
 403 responses). `RateLimiter` enforces a minimum interval between request starts, per provider.
 
+### Fallback API keys
+
+Apify and SocialCrawl accept more than one key. `APIFY_TOKEN` and `SOCIALCRAWL_API_KEY` are the
+first choice; `APIFY_FALLBACK_TOKENS` and `SOCIALCRAWL_FALLBACK_API_KEYS` hold comma separated
+backups (`Settings.key_list` joins them, dropping blanks and repeats; a provider is also set up
+from fallbacks alone). Each provider holds a `KeyRing` (`providers/keys.py`) and runs every call
+through `with_failover`: a key that answers with `ProviderQuotaExceeded` (usage or credit limit,
+or a SocialCrawl balance too low for the request) or `ProviderNotConfigured` (rejected key) is
+passed over, the call is repeated with the next key, and the ring stays on the working key for
+later calls. Rate limits, server errors and failed actor runs do not rotate. When every key has
+failed, the last key's error is raised and the registry falls back to the next provider as usual.
+A rotation is logged as `api_key_rotated` with the position in the list, never the key.
+
 ### Budget, breaker, cache
 
 - `BudgetTracker` refuses a call that would cross the tool-call, cost or time limit and records

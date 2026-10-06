@@ -92,3 +92,11 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - Coverage by platform leaves out items without a platform (articles, news, reviews, trend points); they appear under `source_types`.
 - Tool arguments are validated by the worker, not by LangChain: `args_schema` is a plain JSON schema, so a malformed call comes back as an `invalid_input` response the model can read, never as an exception.
 - Live check with the real keys (2026-10-06): `web_search` (web and news), `fetch_page` (a GitLab blog page; a Reddit URL refused), `social_comments` (YouTube), `reviews_fetch` (App Store) and `search_interest` all ran through `build_tools` and stored evidence; each response was under 2.2 KB.
+
+## Fallback keys (between batches 5 and 6)
+
+- Four Apify tokens and four SocialCrawl keys are configured (the first and three fallbacks each), all valid on 2026-10-06: separate FREE Apify accounts with 5 USD of monthly credit each, and SocialCrawl balances of 74 and three times 100. They live in the untracked `.env`; `.env.example` has empty entries.
+- Rotation is sticky and one-way for the life of the provider object (one run): a key that ran out is not retried, and a new run starts again from the first key. A key that recovers (a monthly reset) is picked up by the next run.
+- Both rejected keys (401, 403) and exhausted ones (402, or a SocialCrawl balance below the cost of the request) rotate. A 403 that only means one actor is not allowed would also rotate; with equivalent accounts this costs a retry, not a failure.
+- Rotation is verified live: a dead primary key for each service fell over to the first real fallback and returned results.
+- The Apify and SocialCrawl budgets of the run (`max_cost_usd`) are not multiplied by the number of keys; the budget counts spend per run, not per account.
