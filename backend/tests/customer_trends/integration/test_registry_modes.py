@@ -40,10 +40,10 @@ def build(tmp_path: Path, **kwargs: object) -> ProviderRegistry:
     )
 
 
-async def test_without_keys_only_the_keyless_provider_is_registered(tmp_path: Path) -> None:
+async def test_without_keys_only_keyless_providers_are_registered(tmp_path: Path) -> None:
     registry = build(tmp_path)
     try:
-        assert sorted(registry.providers) == ["gdelt"]
+        assert sorted(registry.providers) == ["gdelt", "google_trends_api"]
     finally:
         await registry.aclose()
 
@@ -51,7 +51,7 @@ async def test_without_keys_only_the_keyless_provider_is_registered(tmp_path: Pa
 async def test_keys_register_their_providers(tmp_path: Path) -> None:
     registry = build(tmp_path, serper_api_key="s", youtube_api_key="y")
     try:
-        assert sorted(registry.providers) == ["gdelt", "serper", "youtube_api"]
+        assert sorted(registry.providers) == ["gdelt", "google_trends_api", "serper", "youtube_api"]
         assert "social_search:x" in registry.providers["serper"].capabilities
         assert registry.providers["youtube_api"].capabilities == {
             "social_search:youtube",
@@ -128,11 +128,9 @@ def test_the_shipped_routing_table_is_valid_and_complete() -> None:
     assert config.routing["news:google_news"] == ["serper"]
 
 
-def test_unverified_providers_are_flagged_in_the_config() -> None:
+def test_only_the_trends_stub_is_flagged_unverified_in_the_config() -> None:
     providers = load_providers_config().providers
-    assert providers["apify"].verify is True
-    assert providers["socialcrawl"].verify is True
-    assert providers["serper"].verify is False
+    assert [name for name, config in providers.items() if config.verify] == ["google_trends_api"]
 
 
 async def test_fixture_mode_serves_recorded_payloads_without_opening_a_client(

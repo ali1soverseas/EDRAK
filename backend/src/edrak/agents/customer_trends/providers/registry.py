@@ -10,6 +10,7 @@ import httpx
 from pydantic import ValidationError
 
 from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.providers.apify import ApifyProvider
 from edrak.agents.customer_trends.providers.base import (
     Provider,
     ProviderBadResponse,
@@ -24,8 +25,10 @@ from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
 from edrak.agents.customer_trends.providers.config import ProvidersConfig, load_providers_config
 from edrak.agents.customer_trends.providers.gdelt import GdeltProvider
+from edrak.agents.customer_trends.providers.google_trends_api import GoogleTrendsApiProvider
 from edrak.agents.customer_trends.providers.http import make_client
 from edrak.agents.customer_trends.providers.serper import SerperProvider
+from edrak.agents.customer_trends.providers.socialcrawl import SocialCrawlProvider
 from edrak.agents.customer_trends.providers.youtube import YouTubeProvider, YouTubeQuota
 
 if TYPE_CHECKING:
@@ -81,8 +84,9 @@ class ProviderRegistry:
     ) -> "ProviderRegistry":
         """Register the providers that can run with the configured keys.
 
-        Providers that need a key are left out without one. In fixture mode no provider is
-        built at all and no client is opened.
+        Providers that need a key are left out without one; the Google Trends stub is always
+        registered so its routing entry resolves. In fixture mode no provider is built at all
+        and no client is opened.
         """
         config = config or load_providers_config()
         fixture_mode = settings.edrak_provider_mode == "fixture"
@@ -108,6 +112,33 @@ class ProviderRegistry:
                 )
             )
         registry.register(GdeltProvider(http_client, config.providers["gdelt"], clock=clock))
+        if settings.apify_token and settings.has_key("apify_token"):
+            registry.register(
+                ApifyProvider(
+                    http_client,
+                    settings.apify_token.get_secret_value(),
+                    config.providers["apify"],
+                    clock=clock,
+                )
+            )
+        if settings.socialcrawl_api_key and settings.has_key("socialcrawl_api_key"):
+            registry.register(
+                SocialCrawlProvider(
+                    http_client,
+                    settings.socialcrawl_api_key.get_secret_value(),
+                    settings.socialcrawl_base_url,
+                    config.providers["socialcrawl"],
+                    clock=clock,
+                )
+            )
+        trends_key = settings.google_trends_api_key
+        registry.register(
+            GoogleTrendsApiProvider(
+                trends_key.get_secret_value()
+                if trends_key and settings.has_key("google_trends_api_key")
+                else None
+            )
+        )
         if settings.youtube_api_key and settings.has_key("youtube_api_key"):
             quota = YouTubeQuota(
                 settings.data_dir / "youtube_quota.json",
