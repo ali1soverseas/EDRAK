@@ -51,18 +51,6 @@ class Finding(ContractModel):
         le=1.0,
         description="Optional self-reported confidence.",
     )
-    claim_type: str | None = Field(
-        default=None,
-        description="verified_fact, internal_claim, or vendor_claim.",
-    )
-    scope: str | None = Field(
-        default=None,
-        description="Specific deployment mode, tier, or product scope.",
-    )
-    supporting_quote: str | None = Field(
-        default=None,
-        description="Verbatim supporting quote from the cited evidence.",
-    )
     limitations: list[str] = Field(
         default_factory=list,
         description="Known caveats attached to this claim.",
