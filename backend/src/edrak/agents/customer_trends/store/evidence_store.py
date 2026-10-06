@@ -15,6 +15,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
+from time import sleep
 from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic import BaseModel, Field
@@ -39,6 +40,8 @@ UNKNOWN = "unknown"
 _DB_FILE = "evidence.db"
 _DT_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 _BUSY_TIMEOUT_MS = 5000
+_OPEN_ATTEMPTS = 8
+_OPEN_RETRY_S = 0.05
 
 
 class UnknownRunError(KeyError):
@@ -80,9 +83,7 @@ def _norm_for_search(value: str) -> str:
     return normalize_text(value).casefold()
 
 
-def _migration_1(conn: sqlite3.Connection) -> None:
-    conn.executescript(
-        """
+_MIGRATION_1 = """
         CREATE TABLE runs (
             run_id TEXT PRIMARY KEY,
             task_id TEXT NOT NULL,
@@ -155,11 +156,9 @@ def _migration_1(conn: sqlite3.Connection) -> None:
             location TEXT NOT NULL,
             registered_at TEXT NOT NULL
         );
-        """
-    )
+"""
 
-
-_MIGRATIONS = (_migration_1,)
+_MIGRATIONS = (_MIGRATION_1,)
 
 
 class EvidenceStore:
@@ -167,12 +166,17 @@ class EvidenceStore:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
-        self._conn = sqlite3.connect(self.path, check_same_thread=False, isolation_level=None)
+        self._conn = sqlite3.connect(
+            self.path,
+            check_same_thread=False,
+            isolation_level=None,
+            timeout=_BUSY_TIMEOUT_MS / 1000,
+        )
         self._conn.row_factory = sqlite3.Row
-        self._conn.execute("PRAGMA journal_mode=WAL")
+        self._conn.execute(f"PRAGMA busy_timeout={_BUSY_TIMEOUT_MS}")
+        self._enable_wal()
         self._conn.execute("PRAGMA synchronous=NORMAL")
         self._conn.execute("PRAGMA foreign_keys=ON")
-        self._conn.execute(f"PRAGMA busy_timeout={_BUSY_TIMEOUT_MS}")
         self._conn.create_function("norm_text", 1, _norm_for_search, deterministic=True)
         self._migrate()
 
@@ -203,17 +207,41 @@ class EvidenceStore:
                 raise
             self._conn.execute("COMMIT")
 
+    def _enable_wal(self) -> None:
+        """Switch to WAL. Several runs may open a new file at once, and SQLite can refuse the
+        switch while another connection is setting the file up, so a locked file is retried."""
+        for attempt in range(1, _OPEN_ATTEMPTS + 1):
+            try:
+                self._conn.execute("PRAGMA journal_mode=WAL")
+                return
+            except sqlite3.OperationalError as exc:
+                if "locked" not in str(exc) or attempt == _OPEN_ATTEMPTS:
+                    raise
+                sleep(_OPEN_RETRY_S * attempt)
+
     def _migrate(self) -> None:
+        """Apply the pending migrations in one write transaction, so two runs that open a new
+        file together do not both create its tables."""
         with self._lock:
-            self._conn.execute(
-                "CREATE TABLE IF NOT EXISTS schema_version (version INTEGER NOT NULL)"
-            )
-            row = self._conn.execute("SELECT MAX(version) AS v FROM schema_version").fetchone()
-            current = row["v"] or 0
-            for version, migrate in enumerate(_MIGRATIONS, start=1):
-                if version > current:
-                    migrate(self._conn)
-                    self._conn.execute("INSERT INTO schema_version(version) VALUES (?)", (version,))
+            self._conn.execute("BEGIN IMMEDIATE")
+            try:
+                self._conn.execute(
+                    "CREATE TABLE IF NOT EXISTS schema_version (version INTEGER NOT NULL)"
+                )
+                row = self._conn.execute("SELECT MAX(version) AS v FROM schema_version").fetchone()
+                current = row["v"] or 0
+                for version, script in enumerate(_MIGRATIONS, start=1):
+                    if version > current:
+                        for statement in script.split(";"):
+                            if statement.strip():
+                                self._conn.execute(statement)
+                        self._conn.execute(
+                            "INSERT INTO schema_version(version) VALUES (?)", (version,)
+                        )
+            except BaseException:
+                self._conn.execute("ROLLBACK")
+                raise
+            self._conn.execute("COMMIT")
 
     def schema_version(self) -> int:
         with self._lock:

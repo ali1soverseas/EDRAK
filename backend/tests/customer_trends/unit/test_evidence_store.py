@@ -518,3 +518,30 @@ def test_synthetic_evidence_is_a_stable_fixture() -> None:
     first, second = synthetic_evidence(), synthetic_evidence()
     assert ids(first) == ids(second)
     assert len(set(ids(first))) == 40
+
+
+def test_runs_that_open_a_new_store_at_the_same_time_do_not_collide(tmp_path: Path) -> None:
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    errors: list[str] = []
+    for attempt in range(15):
+        path = tmp_path / f"attempt-{attempt}" / "evidence.db"
+        barrier = threading.Barrier(6)
+
+        def open_and_write(
+            number: int, path: Path = path, barrier: threading.Barrier = barrier
+        ) -> None:
+            barrier.wait()
+            try:
+                with EvidenceStore(path) as opened:
+                    opened.create_run(f"run-{number}", "task")
+                    assert opened.schema_version() == 1
+            except Exception as exc:
+                errors.append(f"{type(exc).__name__}: {exc}")
+
+        with ThreadPoolExecutor(6) as pool:
+            list(pool.map(open_and_write, range(6)))
+    assert errors == []
+    with EvidenceStore(tmp_path / "attempt-0" / "evidence.db") as reopened:
+        assert len(reopened.list_runs()) == 6
