@@ -84,7 +84,7 @@ async def test_search_maps_posts_for_every_platform(
     assert arabic.text.startswith(ARABIC) and arabic.language == "ar"
     assert minimal.text == "short" and minimal.published_at is None and minimal.engagement == {}
     assert result.raw_count == 3
-    assert result.cost_estimate == pytest.approx(0.0033)
+    assert result.cost_estimate == pytest.approx(0.008)
     assert first.batch_id == "pending"
 
 
@@ -207,7 +207,7 @@ async def test_pagination_sends_the_cursor_verbatim_until_enough_items(
     assert len(items(result)) == 5
     assert result.raw_count == 6
     assert result.next_cursor is None
-    assert result.cost_estimate == pytest.approx(0.0066)
+    assert result.cost_estimate == pytest.approx(2 * 0.008)
 
 
 async def test_a_cursor_is_returned_when_more_pages_exist(respx_mock: respx.MockRouter) -> None:
@@ -476,7 +476,7 @@ async def test_search_interest_sends_keywords_together_and_returns_one_series_ea
     assert (duo.normalized, duo.source, duo.batch_id) == (True, "socialcrawl", "pending")
     assert [v for _, v in duo.points] == [20.0, 35.0, 50.0, 80.0, 100.0, 90.0, 85.0]
     assert len(copilot.points) == 8
-    assert result.cost_estimate == pytest.approx(5 * 0.0033)
+    assert result.cost_estimate == pytest.approx(5 * 0.008)
     assert result.meta["credits_used"] == 5
 
 

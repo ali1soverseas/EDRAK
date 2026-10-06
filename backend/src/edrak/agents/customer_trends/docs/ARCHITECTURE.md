@@ -151,25 +151,26 @@ results of the same quality. Run `uv run python ../scripts/customer_trends/print
 `tests/customer_trends/unit/test_costs.py` fails if a provider is placed before one that costs
 more than twice as much (Serper, a snippets-only last resort for social search, is exempt).
 
-Cost per 100 usable items in USD (Apify FREE-plan item prices; SocialCrawl at the Growth pack,
-0.0033 USD per credit, after its relevance and language filters; YouTube's API is free inside
-its daily quota):
+Only free allowances are used, so these are not what is paid but how fast an allowance is
+spent. Cost per 100 usable items in USD (Apify FREE-plan item prices; SocialCrawl credits
+priced at the cheapest pack, 0.008 USD, because free credits never renew; after SocialCrawl's
+relevance and language filters; YouTube's API is free inside its daily quota):
 
 | Capability | 1st | 2nd | 3rd |
 |---|---|---|---|
-| `social_search:x` | apify 0.040 | socialcrawl 0.030 | serper (snippets) |
-| `social_search:tiktok` | socialcrawl 0.026 | apify 0.371 | serper |
-| `social_search:instagram` | socialcrawl 0.056 | apify 0.270 | serper |
-| `social_search:facebook` | socialcrawl 0.132 | (apify switched off) | serper |
-| `social_search:reddit` | socialcrawl 0.040 | apify 0.420 | serper |
-| `social_search:youtube` | youtube_api free | socialcrawl 0.013 | apify 0.400 |
-| `social_comments:x` | socialcrawl 0.017 | apify 0.040 | |
-| `social_comments:tiktok` | socialcrawl 0.017 | apify 0.125 | |
-| `social_comments:instagram` | socialcrawl 0.116 | apify 0.260 | |
-| `social_comments:facebook` | socialcrawl 0.017 | apify 0.251 | |
-| `social_comments:reddit` | socialcrawl 0.083 | apify 0.420 | |
-| `social_comments:youtube` | youtube_api free | socialcrawl 0.003 | apify 0.200 |
-| `search_interest` (per 100 keywords) | apify 0.300 | socialcrawl 0.330 | trends API stub |
+| `social_search:x` | apify 0.040 | socialcrawl 0.072 | serper (snippets) |
+| `social_search:tiktok` | socialcrawl 0.064 | apify 0.371 | serper |
+| `social_search:instagram` | socialcrawl 0.136 | apify 0.270 | serper |
+| `social_search:facebook` | socialcrawl 0.320 | (apify switched off) | serper |
+| `social_search:reddit` | socialcrawl 0.096 | apify 0.420 | serper |
+| `social_search:youtube` | youtube_api free | socialcrawl 0.032 | apify 0.400 |
+| `social_comments:x` | apify 0.040 | socialcrawl 0.040 | |
+| `social_comments:tiktok` | socialcrawl 0.040 | apify 0.125 | |
+| `social_comments:instagram` | apify 0.260 | socialcrawl 0.280 | |
+| `social_comments:facebook` | socialcrawl 0.040 | apify 0.251 | |
+| `social_comments:reddit` | socialcrawl 0.200 | apify 0.420 | |
+| `social_comments:youtube` | youtube_api free | socialcrawl 0.008 | apify 0.200 |
+| `search_interest` (per 100 keywords) | apify 0.300 | socialcrawl 0.800 | trends API stub |
 | `reviews:app_store`, `reviews:google_play` | apify 0.010 | | |
 | `reviews:amazon` | apify 0.600 | | |
 | `web_search`, `news:google_news` | serper 0.001 | | |
@@ -180,13 +181,16 @@ Reasons behind the placement:
 - X search stays on Apify first: both cost about the same (SocialCrawl is 1.4 times cheaper) and
   Apify returns every matching tweet, where SocialCrawl's relevance filter keeps about 60
   percent of a page.
-- TikTok, Reddit, Facebook comments, X replies and Instagram: SocialCrawl is 2 to 28 times
-  cheaper and as good. Apify's TikTok actor took 217 seconds for 30 videos (48 percent about the
-  query), and its Reddit actor timed out on 25 posts.
+- TikTok, Reddit, Facebook and Instagram search, TikTok, Reddit and Facebook comments:
+  SocialCrawl is 2 to 6 times cheaper and as good. Apify's TikTok actor took 217 seconds for
+  30 videos (48 percent about the query), and its Reddit actor timed out on 25 posts.
 - Instagram search on SocialCrawl returns no publication dates; Apify's returns dates and likes
   at five times the price. Posts without a date are kept, but not placed in time.
-- Instagram comments: SocialCrawl costs 5 credits for 15 comments. At the Growth pack that is
-  2.2 times cheaper than Apify; at the Starter pack (0.008 USD a credit) the two are equal.
+- Instagram and X comments: the two are about equal (Instagram comments 0.28 against 0.26,
+  X replies 0.04 against 0.04), so Apify goes first. Its 5 USD a month renews and
+  SocialCrawl's credits do not; the credits are kept for the capabilities where they save
+  the most. Saving per credit, from largest: Facebook comments, TikTok search, Reddit search,
+  TikTok comments, Reddit comments, Instagram search, then X and Instagram comments last.
 - Search interest: Apify's actor is slightly cheaper for one to three keywords but a browser
   scraper (80 to 240 seconds, one timeout in three runs); SocialCrawl answers in about 20
   seconds for 5 credits and puts up to five keywords on one scale, so it is the fallback.
@@ -194,10 +198,12 @@ Reasons behind the placement:
   no second provider. SocialCrawl also has Amazon reviews, cheaper than Apify's, but no adapter
   is built for them yet.
 
-With the free allowances alone, Apify renews monthly (5 USD per account) while SocialCrawl's
-100 credits per key are a one-time bonus. When every SocialCrawl key is out of credit the
-registry moves on to the next provider in the list on its own, so a run still completes, at the
-higher Apify price.
+Free allowances, and what each one means for the order. SocialCrawl: 100 credits once per
+key, never renewed, so a key that is used up stays empty. Apify: 5 USD each month per
+account, renewed. Serper: a one-time grant of queries. YouTube Data API: 10,000 units a day.
+GDELT: free. When every SocialCrawl key is out of credit the registry moves on to the next
+provider in the list on its own, so a run still completes, but TikTok and Reddit then come
+from the slower Apify actors and Facebook search has no source left except Serper snippets.
 
 ### Fallback API keys
 

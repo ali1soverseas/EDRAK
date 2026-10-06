@@ -80,10 +80,15 @@ async def test_the_effective_order_per_capability(tmp_path: Path) -> None:
             "socialcrawl",
             "apify",
         ]
-        for platform in ("x", "tiktok", "instagram", "facebook", "reddit"):
+        for platform in ("tiktok", "facebook", "reddit"):
             assert serving_providers(registry, f"social_comments:{platform}") == [
                 "socialcrawl",
                 "apify",
+            ]
+        for platform in ("x", "instagram"):
+            assert serving_providers(registry, f"social_comments:{platform}") == [
+                "apify",
+                "socialcrawl",
             ]
         assert serving_providers(registry, "social_comments:youtube") == [
             "youtube_api",

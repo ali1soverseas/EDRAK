@@ -215,11 +215,13 @@ providers:
   socialcrawl:
     min_interval_s: 0.1
     options:
-      # Pay-as-you-go credit packs (pricing page, 2026-10-06, shown in GBP): Starter 2,500 credits
-      # for 15 pounds (0.006 each), Growth 20,000 for 49 (0.00245), Pro 150,000 for 299 (0.002).
-      # Converted at 1.35 USD per pound, Growth is 0.0033 USD per credit; Starter would be 0.008
-      # and Pro 0.0027. The 100 free credits per key are a one-time bonus.
-      usd_per_credit: 0.0033
+      # Only the free allowance is used and no pack is bought. Each key gets 100 credits once
+      # and they never renew, while an Apify account gets 5 USD every month. So a credit is
+      # priced at the cheapest pack (Starter, pricing page 2026-10-06: 2,500 credits for 15
+      # pounds, 0.006 each, 0.008 USD at 1.35 USD per pound), not at the cheaper large packs.
+      # At that price Apify goes first where the two are about equal and the credits are kept
+      # for what only SocialCrawl does well. Growth would be 0.0033, Pro 0.0027.
+      usd_per_credit: 0.008
       max_pages: 5
       preflight_min_credits: 5
       filter_languages: true
@@ -340,9 +342,9 @@ routing:
   social_search:facebook: [socialcrawl, apify, serper]
   social_search:reddit: [socialcrawl, apify, serper]
   social_search:youtube: [youtube_api, socialcrawl, apify]
-  social_comments:x: [socialcrawl, apify]
+  social_comments:x: [apify, socialcrawl]
   social_comments:tiktok: [socialcrawl, apify]
-  social_comments:instagram: [socialcrawl, apify]
+  social_comments:instagram: [apify, socialcrawl]
   social_comments:facebook: [socialcrawl, apify]
   social_comments:reddit: [socialcrawl, apify]
   social_comments:youtube: [youtube_api, socialcrawl, apify]

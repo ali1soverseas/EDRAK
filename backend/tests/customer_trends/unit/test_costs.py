@@ -130,10 +130,10 @@ def test_the_shipped_routing_puts_the_cheapest_provider_first_within_the_toleran
         ("social_search:youtube", "youtube_api"),
         ("social_search:x", "apify"),
         ("social_comments:tiktok", "socialcrawl"),
-        ("social_comments:instagram", "socialcrawl"),
+        ("social_comments:instagram", "apify"),
         ("social_comments:facebook", "socialcrawl"),
         ("social_comments:reddit", "socialcrawl"),
-        ("social_comments:x", "socialcrawl"),
+        ("social_comments:x", "apify"),
         ("social_comments:youtube", "youtube_api"),
         ("search_interest", "apify"),
         ("reviews:app_store", "apify"),
@@ -154,20 +154,22 @@ def test_the_worst_case_gaps_are_the_ones_that_motivated_the_order() -> None:
         assert apify is not None and socialcrawl is not None
         return apify / socialcrawl
 
-    assert ratio("social_search:reddit") > 8
-    assert ratio("social_search:tiktok") > 10
-    assert ratio("social_comments:tiktok") > 5
-    assert ratio("social_comments:facebook") > 10
-    assert 1 < ratio("social_comments:instagram") < 3
+    assert ratio("social_search:reddit") > 4
+    assert ratio("social_search:tiktok") > 5
+    assert ratio("social_comments:tiktok") > 3
+    assert ratio("social_comments:facebook") > 6
+    # about equal at the credit price used, so the renewing allowance goes first
+    assert 0.8 < ratio("social_comments:instagram") < 1.2
+    assert 0.8 < ratio("social_comments:x") < 1.2
 
 
-def test_the_credit_price_is_the_growth_pack_and_can_be_changed_in_one_place() -> None:
+def test_the_credit_price_is_the_cheapest_pack_and_can_be_changed_in_one_place() -> None:
     config = load_providers_config()
-    assert config.providers["socialcrawl"].options["usd_per_credit"] == 0.0033
-    dearer = config.model_copy(deep=True)
-    dearer.providers["socialcrawl"].options["usd_per_credit"] = 0.008
+    assert config.providers["socialcrawl"].options["usd_per_credit"] == 0.008
+    cheaper = config.model_copy(deep=True)
+    cheaper.providers["socialcrawl"].options["usd_per_credit"] = 0.0033
     base = cost_per_100("socialcrawl", "social_comments:instagram", config)
     assert base is not None
-    assert cost_per_100("socialcrawl", "social_comments:instagram", dearer) == pytest.approx(
-        base * 0.008 / 0.0033
+    assert cost_per_100("socialcrawl", "social_comments:instagram", cheaper) == pytest.approx(
+        base * 0.0033 / 0.008
     )
