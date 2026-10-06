@@ -150,3 +150,64 @@ without a registered provider that supports the capability are skipped):
 
 `tests/customer_trends/integration/test_routing_matrix.py` checks this table against a fully
 configured registry and prints it (`pytest -s`).
+
+## Collection tools
+
+Seven tools collect evidence: `web_search`, `fetch_page`, `social_search`, `social_comments`,
+`search_interest`, `reviews_fetch`, `news_coverage`. Each lives in its own module under `tools/`
+as a pydantic input model, a description for the model and an async function, bundled in a
+`ToolSpec`. `tools/registry.py` is the only place nodes get tools from: `build_tools(ctx)` makes
+one LangChain `StructuredTool` per spec and `tools_for_branch(branch, ctx)` returns the subset
+a branch may use (social: social_search, social_comments, web_search; demand: search_interest,
+news_coverage, web_search; reviews: reviews_fetch, web_search, fetch_page).
+
+```
+model tool call
+  -> invoke_tool(ctx, spec, arguments)
+       brief defaults + arguments + run_id/task_id from ctx -> validate the input model
+       invalid -> ToolResponse(status=error, error_code=invalid_input)
+  -> tool function: build provider params, clamp max_results by depth
+  -> execute_collection(ctx, tool, capability, ...)
+       providers.call(capability)   # budget check, routing, fallback, cache, cost
+       persist: EvidenceStore.add_batch (trend series and trend points for search_interest)
+       coverage by language, platform, source type; gaps; preview of at most 5
+       emit one tool_called event
+  -> compact JSON string for the model
+```
+
+Nothing in this path raises. `ProviderExhausted` becomes `error_code="provider_exhausted"` with
+the failing providers named in `gaps`; `BudgetExceeded` becomes `budget_exceeded`; a bad
+argument becomes `invalid_input`; anything unexpected becomes `tool_error`. A partial provider
+result is `status="partial"`.
+
+**Model-visible schema.** `args_schema` is the input model's JSON schema with `run_id` and
+`task_id` removed, references inlined, titles dropped and optional fields flattened, so small
+tool-calling models read it easily. Arguments are validated by the worker, not by LangChain, so
+mistakes come back as readable `invalid_input` responses. The wrapper injects `run_id` and
+`task_id`; a model cannot choose them. `ToolContext.defaults` (languages, geo, since, until,
+depth, entity from the brief) fill whatever the model leaves out.
+
+**Responses.** The model receives `ToolResponse` as compact JSON with empty fields removed:
+status, `batch_id`, `count` of new items, up to five preview pointers (id, platform, snippet of
+at most 200 characters, url), `coverage`, `gaps`, `warnings`, provider, cost. Full records stay
+in the evidence store. A repeated identical call stores nothing: `count` is 0, `batch_id` is
+null and a gap says everything was already collected.
+
+**Per tool**
+
+| Tool | Capability | Default results | Notes |
+|---|---|---|---|
+| `web_search` | `web_search` or, for `search_type="news"`, `news:google_news` | 10 (`num`) | Snippets only, so a `snippet-only` gap is always reported. |
+| `fetch_page` | `fetch_page` (provider `direct_http`) | 1 | Refuses social platform domains and private or local hosts at validation. Respects robots.txt, 2 MB cap, 20 s timeout. A refused or unreadable page is an empty result with a warning, never a provider failure. |
+| `social_search` | `social_search:<platform>` | 30 | `sort` recent or top; hashtags optional. |
+| `social_comments` | `social_comments:<platform>` | 30 | `post_url` must be on the platform's own domains; `sort` defaults to top. |
+| `search_interest` | `search_interest` | one series per keyword | Stores each `TrendSeries` and one `trend_point` evidence item per keyword so a finding can cite it. The preview gives first, last, peak value and date, direction and related queries. Direction is the least-squares slope over the period, flat inside 5 percent of the peak. The same keyword, geo and timeframe is stored once per run. |
+| `reviews_fetch` | `reviews:<store>` | 30 | `target_id_or_url` is the app id, package name or ASIN; country falls back to `geo`. |
+| `news_coverage` | `news:<source>` | 25 | Coverage includes a volume summary (days, total, peak day); day-by-day counts are stored in the batch meta (`EvidenceStore.batch_meta`). |
+
+Results asked for per call are `max_results` if given, else the tool default, never above the
+cap for the depth (light 50, standard 200, deep 1000).
+
+**Events.** Each call emits one `tool_called` event through `ToolContext.emit`: tool, branch,
+run and task ids, shortened args, provider, fallback flag, status, count, latency in ms, cost
+and error code. A failing emitter is logged and ignored.

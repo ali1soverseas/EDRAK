@@ -75,3 +75,20 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - SocialCrawl also serves Google Trends and the three review stores, and Apify's Google Trends actor was slow in testing. SPEC 8.2 routes those capabilities to Apify only, so SocialCrawl was not added to them. It would be a one-line routing change if you want it as a fallback.
 - `fallback_used` is true whenever the serving provider is not first in the configured order, so a Facebook search served by SocialCrawl counts as a fallback because the Apify entry is switched off.
 - The provider layer never spends money on its own: the smoke script is the only code that calls Apify live, and it runs the cheapest actor for three items.
+
+## Batch 5
+
+- `mcp_servers/web_server.py` and `backend/src/edrak/mcp/` are still empty, so `web_search` uses the local Serper adapter and `fetch_page` the local direct fetcher. Both sit behind the `Provider` interface, so moving to the shared MCP client later changes providers, not tools.
+- `fetch_page` is served by a `direct_http` provider (`providers/direct_http.py`, capability `fetch_page`, the routing entry that already existed), so it shares the registry's budget, breaker, cost and fixture-mode handling with every other tool. Pages that cannot be read (robots.txt, 4xx, not a text page, under 30 characters of main text) return an empty result with a warning instead of raising, so refusals never open the provider's circuit breaker. Rate limits (429), 5xx, timeouts and connection errors are provider errors.
+- robots.txt follows RFC 9309: a missing file (4xx) allows everything; a 5xx or unreachable file disallows everything. Rules are read once per site per provider instance.
+- The page text is capped at 2 MB downloaded and `max_chars` kept (500 to 50,000, default 20,000). Its evidence id is built from `fetch|<canonical url>`, so a full page and a search snippet of the same URL are separate evidence.
+- The private-host check for `fetch_page` looks at names and literal IP addresses only. A public name that resolves to a private address, or a redirect to one, is not caught.
+- `ToolContext` has the fields the batch asked for (the registry is named `providers`) plus `defaults` (brief values the wrapper fills in when the model omits them) and `branch` (recorded on events). Batch 7 `intake` fills `defaults` from the brief. The budget is checked once, inside `ProviderRegistry.call`, which also counts the tool call and cost; `execute_collection` does not check it again.
+- Default results per call when the model gives no `max_results`: web 10 (its `num`), social 30, reviews 30, news 25, all capped by depth.
+- `social_comments` has an extra `sort` argument (default `top`), which the SPEC does not list; top comments are more informative than the newest.
+- `search_interest`: `granularity` is accepted as a hint (Google picks the resolution), `include_related=false` empties the stored related queries, and the timeframe must look like a Google Trends period. Its `max_results` is the number of keywords.
+- `news_coverage` computes the volume by day from the items when the provider gives none (Google News). `fetch_page`, `search_interest` and the news batch keep provider metadata in the batch meta.
+- A call whose items were all stored earlier still creates an empty batch row in the store (`add_batch` always creates one); the response reports `batch_id: null` and `count: 0`.
+- Coverage by platform leaves out items without a platform (articles, news, reviews, trend points); they appear under `source_types`.
+- Tool arguments are validated by the worker, not by LangChain: `args_schema` is a plain JSON schema, so a malformed call comes back as an `invalid_input` response the model can read, never as an exception.
+- Live check with the real keys (2026-10-06): `web_search` (web and news), `fetch_page` (a GitLab blog page; a Reddit URL refused), `social_comments` (YouTube), `reviews_fetch` (App Store) and `search_interest` all ran through `build_tools` and stored evidence; each response was under 2.2 KB.
