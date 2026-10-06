@@ -127,6 +127,7 @@ def emit_event(
     fallback_used: bool = False,
     cost: float = 0.0,
     error_code: str | None = None,
+    batch_id: str | None = None,
 ) -> None:
     event = {
         "type": "tool_called",
@@ -142,6 +143,7 @@ def emit_event(
         "latency_ms": round((time.perf_counter() - started) * 1000),
         "cost": cost,
         "error_code": error_code,
+        "batch_id": batch_id,
     }
     try:
         ctx.emit(event)
@@ -163,6 +165,7 @@ def _emit(
         fallback_used=response.fallback_used,
         cost=response.cost_estimate,
         error_code=response.error_code,
+        batch_id=response.batch_id,
     )
 
 

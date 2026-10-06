@@ -195,8 +195,8 @@ _FINDING_RULES = """For each finding give:
 - type: pain_point, unmet_need, demand_signal, sentiment, competitor_gap, trend or risk.
 - claim: one or two sentences in English that state what the evidence shows. Arabic wording may
   appear in quotation marks.
-- evidence_ids: only ids that appear in CONTEXT (in a theme's evidence_ids or in samples).
-  Never invent, shorten or change an id. Prefer ids from several platforms.
+- evidence_ids: only ids that appear in CONTEXT (in a theme's evidence_ids, in samples or as a
+  trend's evidence_id). Never invent, shorten or change an id. Prefer ids from several platforms.
 - metrics: every number written in the claim, copied as written in the claim (45% is 45), taken
   from CONTEXT. When a number comes from a computed metric, add "metric_id" with that metric's
   id. A number that is not in CONTEXT must not appear in a claim.
