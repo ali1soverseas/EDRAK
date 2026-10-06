@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 from urllib.parse import urlparse
 
+from edrak.core.action_log import log_action
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from tavily import TavilyClient
@@ -1084,6 +1085,7 @@ def has_official_evidence(
 def identify_research_requirements_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "identifying research requirements")
     print("\n" + "=" * 80)
     print("IDENTIFYING RESEARCH REQUIREMENTS")
     print("=" * 80)
@@ -1177,6 +1179,7 @@ def identify_research_requirements_node(
 def generate_queries_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "generating search queries")
     stage = state.get(
         "research_stage",
         1,
@@ -1441,6 +1444,7 @@ def run_tavily(
 def search_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "searching sources")
     stage = state.get(
         "research_stage",
         1,
@@ -1644,6 +1648,7 @@ def search_node(
 def synthesize_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "summarizing findings from search results")
     stage = state.get(
         "research_stage",
         1,
@@ -2009,6 +2014,7 @@ def verify_batch(
 def verify_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "checking findings against sources")
     stage = state.get(
         "research_stage",
         1,
@@ -2189,6 +2195,7 @@ def verify_node(
 def check_research_requirements_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "checking which requirements are still open")
     stage = state.get(
         "research_stage",
         1,
@@ -2491,6 +2498,7 @@ def check_research_requirements_node(
 def prepare_next_stage_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "starting the next research stage")
     next_stage = (
         state.get(
             "research_stage",
@@ -3165,6 +3173,7 @@ def render_markdown(
 def final_report_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "writing the final report")
     print("\n" + "=" * 80)
     print("FINAL REPORT")
     print("=" * 80)
@@ -3318,6 +3327,7 @@ def final_report_node(
 def comparison_node(
     state: CompetitorState,
 ):
+    log_action("competitor_intelligence", "building the comparison")
     print("\n" + "=" * 80)
     print("COMPARISON")
     print("=" * 80)

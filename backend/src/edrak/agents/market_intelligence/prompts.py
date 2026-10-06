@@ -1,3 +1,13 @@
+from edrak.agents.market_intelligence.schemas import (
+    AnalysisClaim,
+    QueryArgs,
+    TaskPlan,
+    TOOL_ARG_MODELS,
+    Usefulness,
+    schema_text,
+)
+
+
 def tool_catalog_lines(tools) -> str:
     return "\n".join(
         f"  {tool.name}: {(tool.description or '').split(chr(10))[0].strip()}"
@@ -18,16 +28,8 @@ def task_planner_prompt(goal: str, context: str, tool_catalog: str) -> str:
         "2. Each task should focus on one clear aspect (trends, competitors, demand, tech, etc.).\n"
         "3. For each task, suggest the single best tool from the list above.\n"
         "4. Order tasks from most important to least important.\n\n"
-        "Return ONLY valid JSON (no markdown fences):\n"
-        "{\n"
-        '  "tasks": [\n'
-        "    {\n"
-        '      "id": 1,\n'
-        '      "description": "Identify current market size and growth rate of AI cybersecurity",\n'
-        '      "tool_hint": "tool_serper"\n'
-        "    }\n"
-        "  ]\n"
-        "}"
+        "Return ONLY valid JSON matching this schema:\n"
+        f"{schema_text(TaskPlan)}\n"
     )
 
 
@@ -39,8 +41,9 @@ def tool_arg_prompt(
     goal: str,
     attempt: int,
 ) -> str:
+    model = TOOL_ARG_MODELS.get(tool_name, QueryArgs)
     prompt = (
-        f"You are generating search arguments for the tool: {tool_name}\n\n"
+        f"You are choosing arguments for the tool: {tool_name}\n\n"
         f"Tool description: {tool_description}\n\n"
         f"Research task: {task_description}\n"
         f"Business context: {context[:300]}\n"
@@ -48,17 +51,13 @@ def tool_arg_prompt(
     )
     if attempt > 0:
         prompt += (
-            f"\nPrevious attempt #{attempt} returned empty or irrelevant data. "
-            "Generate DIFFERENT query keywords or parameters to try a fresh angle."
+            f"\nPrevious attempt #{attempt} was rejected or not useful. "
+            "Choose different arguments."
         )
     prompt += (
-        "\n\nGenerate the best query arguments for this tool and task.\n"
-        "Return ONLY valid JSON matching the tool's parameter schema.\n"
-        "Examples:\n"
-        '  list queries:  {"queries": ["AI cybersecurity market 2024", "enterprise threat detection"]}\n'
-        '  series IDs:    {"series_ids": ["CPIAUCSL", "FEDFUNDS"]}\n'
-        '  tickers:       {"tickers": ["PANW", "CRWD"]}\n'
-        '  worldbank:     {"dummy": ""}'
+        "\n\nReturn ONLY valid JSON matching this schema. "
+        "Do not add fields that are not in the schema.\n"
+        f"{schema_text(model)}\n"
     )
     return prompt
 
@@ -70,7 +69,8 @@ def usefulness_prompt(task_description: str, result_str: str) -> str:
         "Is this result USEFUL for the research task?\n"
         "USEFUL = contains relevant facts, data, or information about the topic.\n"
         "NOT_USEFUL = empty, off-topic, error messages, or clearly irrelevant.\n\n"
-        'Return ONLY valid JSON: {"useful": true} or {"useful": false, "reason": "one sentence"}'
+        "Return ONLY valid JSON matching this schema:\n"
+        f"{schema_text(Usefulness)}\n"
     )
 
 
@@ -92,8 +92,6 @@ def analysis_prompt(
         "2. Write a concise, evidence-backed claim or summary (2-4 sentences).\n"
         "3. Do NOT add information not present in the source data.\n"
         "4. Do NOT invent statistics or quotes.\n\n"
-        "Return ONLY valid JSON:\n"
-        "{\n"
-        '  "claim": "Your concise evidence-backed finding here."\n'
-        "}"
+        "Return ONLY valid JSON matching this schema:\n"
+        f"{schema_text(AnalysisClaim)}\n"
     )

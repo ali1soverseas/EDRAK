@@ -18,6 +18,7 @@ from edrak.contracts import (
     WorkerType,
     utcnow,
 )
+from edrak.verification.prompts import review_prompt
 from edrak.verification.state import VerificationState
 
 _HIGH_SOURCES = {
@@ -80,19 +81,69 @@ def _is_complete(finding: Finding, evidence: list[Evidence]) -> bool:
     return any(len(item.extracted_fact.strip()) >= 40 for item in supporting)
 
 
-def _contradictions(finding: Finding, result: WorkerResult, evidence: list[Evidence]) -> list[str]:
+def _recorded_contradictions(finding: Finding, result: WorkerResult) -> list[str]:
     notes: list[str] = []
     if finding.is_contradicted:
         notes.append("At least one linked source contradicts the claim.")
     for conflict in result.conflicts:
         if conflict.finding_id == finding.finding_id:
             notes.append(conflict.description)
+    return notes
+
+
+def _price_contradictions(evidence: list[Evidence]) -> list[str]:
     facts = [item.extracted_fact.lower() for item in evidence]
     if any("$" in fact or "price" in fact or "cost" in fact for fact in facts):
         prices = {fact for fact in facts if "$" in fact or "included" in fact or "free" in fact}
         if len(prices) >= 2:
-            notes.append("Sources report different pricing or packaging for the same claim.")
-    return notes
+            return ["Sources report different pricing or packaging for the same claim."]
+    return []
+
+
+def _source_packet(evidence: list[Evidence]) -> str:
+    blocks: list[str] = []
+    for index, item in enumerate(evidence[:4], start=1):
+        body = (item.excerpt or item.extracted_fact or "").strip()[:1500]
+        blocks.append(
+            f"[{index}] type={item.source_type.value} "
+            f"title={item.source_title or ''} url={item.source_url or ''}\n{body}"
+        )
+    return "\n\n".join(blocks) or "(no source text saved)"
+
+
+def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
+    """Compare the claim with the saved source text. None means use the rule fallback."""
+    from edrak.core.llm import get_llm_client
+
+    try:
+        data = get_llm_client().chat_structured(
+            [{"role": "user", "content": review_prompt(statement, _source_packet(evidence))}],
+            temperature=0,
+        )
+    except Exception as exc:
+        print(f"WARNING: verification LLM review failed: {exc}")
+        return None
+
+    quality = {
+        "high": EvidenceQuality.HIGH,
+        "medium": EvidenceQuality.MEDIUM,
+        "low": EvidenceQuality.LOW,
+    }.get(str(data.get("evidence_quality", "")).lower().strip())
+    if quality is None:
+        print("WARNING: verification LLM review returned no evidence_quality")
+        return None
+
+    contradictions = [
+        str(item).strip()
+        for item in (data.get("contradictions") or [])
+        if str(item).strip()
+    ]
+    invented = [
+        str(item).strip()
+        for item in (data.get("invented_details") or [])
+        if str(item).strip()
+    ]
+    return {"quality": quality, "contradictions": contradictions, "invented": invented}
 
 
 def _missing_information(statement: str, evidence: list[Evidence], finding: Finding) -> list[str]:
@@ -138,10 +189,21 @@ def assess_findings(state: VerificationState) -> dict:
         for finding in result.findings:
             evidence = _resolved_evidence(finding, catalog)
             sources = [item.source_type for item in evidence]
-            quality = _quality_for(sources)
             complete = _is_complete(finding, evidence)
-            contradictions = _contradictions(finding, result, evidence)
             missing = _missing_information(finding.statement, evidence, finding)
+            recorded = _recorded_contradictions(finding, result)
+            review = _llm_review(finding.statement, evidence)
+            if review:
+                quality = review["quality"]
+                contradictions = list(dict.fromkeys(recorded + review["contradictions"]))
+                if review["invented"]:
+                    contradictions.append(
+                        "Claim includes details that are not in the saved source: "
+                        + "; ".join(review["invented"])
+                    )
+            else:
+                quality = _quality_for(sources)
+                contradictions = list(dict.fromkeys(recorded + _price_contradictions(evidence)))
 
             verified = complete and not contradictions and quality is not EvidenceQuality.LOW
             status = FindingCheckStatus.VERIFIED if verified else FindingCheckStatus.INSUFFICIENT

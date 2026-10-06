@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from edrak.contracts import (
     BusinessContext,
     BusinessRequest,
@@ -155,12 +157,17 @@ def _customer_trend() -> WorkerResult:
     )
 
 
+def _run(payload: VerificationInput) -> VerificationResult:
+    with patch("edrak.verification.nodes._llm_review", return_value=None):
+        return run(payload)
+
+
 def test_verified_official_finding_passes_contract():
     payload = VerificationInput(
         request=_request(),
         agent_outputs=[_official_competitor(), _customer_trend()],
     )
-    result = run(payload)
+    result = _run(payload)
 
     assert isinstance(result, VerificationResult)
     assert result.research_run_id == "run_001"
@@ -181,7 +188,7 @@ def test_insufficient_snippet_and_missing_details_require_retry():
         request=_request(),
         agent_outputs=[_snippet_only_competitor()],
     )
-    result = run(payload)
+    result = _run(payload)
 
     assert result.decision.status is VerificationStatus.RETRY_REQUIRED
     assert result.decision.targeted_actions
@@ -202,7 +209,7 @@ def test_pricing_conflict_is_flagged_for_replan():
         request=_request(),
         agent_outputs=[_official_competitor(), _conflicting_market()],
     )
-    result = run(payload)
+    result = _run(payload)
 
     assert result.decision.status is VerificationStatus.REPLAN_REQUIRED
     market = next(item for item in result.findings if item.finding_id == "mkt_001")
@@ -212,8 +219,24 @@ def test_pricing_conflict_is_flagged_for_replan():
     assert any("pricing page could not be retrieved" in item for item in result.control_summary.failures)
 
 
+def test_invented_number_is_rejected():
+    payload = VerificationInput(request=_request(), agent_outputs=[_official_competitor()])
+    review = {
+        "quality": EvidenceQuality.HIGH,
+        "contradictions": [],
+        "invented": ["$19"],
+    }
+    with patch("edrak.verification.nodes._llm_review", return_value=review):
+        result = run(payload)
+
+    official = result.findings[0]
+    assert official.verification_status is FindingCheckStatus.INSUFFICIENT
+    assert any("not in the saved source" in note for note in official.contradictions)
+    assert result.decision.status is VerificationStatus.REPLAN_REQUIRED
+
+
 def test_empty_outputs_cannot_complete():
-    result = run(VerificationInput(request=_request(), agent_outputs=[]))
+    result = _run(VerificationInput(request=_request(), agent_outputs=[]))
     assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
     assert result.findings == []
     assert result.control_summary.failures

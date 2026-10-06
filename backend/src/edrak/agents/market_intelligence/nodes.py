@@ -6,12 +6,21 @@ from datetime import datetime
 
 from langchain_core.messages import HumanMessage
 
+from pydantic import ValidationError
+
 from edrak.agents.market_intelligence.prompts import (
     analysis_prompt,
     task_planner_prompt,
     tool_arg_prompt,
     tool_catalog_lines,
     usefulness_prompt,
+)
+from edrak.agents.market_intelligence.schemas import (
+    AnalysisClaim,
+    QueryArgs,
+    TaskPlan,
+    TOOL_ARG_MODELS,
+    Usefulness,
 )
 from edrak.agents.market_intelligence.state import (
     DEFAULT_FALLBACK,
@@ -26,6 +35,7 @@ from edrak.agents.market_intelligence.state import (
     _section,
 )
 from edrak.config import settings
+from edrak.core.action_log import log_action
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
     TOOL_MAP,
@@ -77,6 +87,22 @@ def clean_json(raw: str) -> str:
     return raw[start:end].strip() if end > start else raw.strip()
 
 
+def parse_model(model, raw: str):
+    try:
+        return model.model_validate_json(clean_json(raw))
+    except (ValidationError, ValueError):
+        return None
+
+
+def prepare_tool_args(tool_name: str, raw: str) -> dict | None:
+    """Validate the model reply against the tool's Pydantic schema."""
+    model = TOOL_ARG_MODELS.get(tool_name, QueryArgs)
+    parsed = parse_model(model, raw)
+    if parsed is None:
+        return None
+    return parsed.model_dump()
+
+
 def task_planner(state: MarketAgentState) -> dict:
     _banner("NODE: TASK PLANNER")
     goal = state["goal"]
@@ -86,25 +112,15 @@ def task_planner(state: MarketAgentState) -> dict:
 
     print("\n  Calling LLM to generate research task list...")
     raw = call_llm(prompt)
-    cleaned = clean_json(raw)
-
-    try:
-        parsed = json.loads(cleaned)
-        raw_tasks = parsed.get("tasks", [])
-    except json.JSONDecodeError:
-        raw_tasks = []
+    plan = parse_model(TaskPlan, raw)
+    raw_tasks = plan.tasks if plan else []
 
     task_list = []
     for i, task in enumerate(raw_tasks):
-        desc = task.get("description", "").strip()
-        if not desc:
-            continue
-        tool_hint = task.get("tool_hint", "tool_serper")
-        if tool_hint not in TOOL_MAP:
-            tool_hint = "tool_serper"
+        tool_hint = task.tool_hint if task.tool_hint in TOOL_MAP else "tool_serper"
         task_list.append({
             "id": i + 1,
-            "description": desc,
+            "description": task.description.strip(),
             "tool_hint": tool_hint,
             "status": "pending",
         })
@@ -123,6 +139,7 @@ def task_planner(state: MarketAgentState) -> dict:
     for task in task_list:
         print(f"  [{task['id']}] {task['description']}")
         print(f"       Tool hint: {task['tool_hint']}")
+        log_action("market_intelligence", f"planned task {task['id']}: {task['description']} ({task['tool_hint']})")
 
     return {
         "task_list": task_list,
@@ -188,10 +205,19 @@ def task_executor(state: MarketAgentState) -> dict:
             )
 
             raw_args = call_llm(arg_prompt)
-            try:
-                tool_args = json.loads(clean_json(raw_args))
-            except json.JSONDecodeError:
-                tool_args = {"queries": [task["description"][:80]]}
+            tool_args = prepare_tool_args(tool_name, raw_args)
+            if tool_args is None:
+                print(f"  Rejected arguments: {raw_args.strip()[:300]}")
+                print(f"  {tool_name} was not called because those arguments do not match its fields.")
+                log_action(
+                    "market_intelligence",
+                    f"{tool_name} rejected arguments: {raw_args.strip()[:240]}",
+                )
+                continue
+
+            shown = json.dumps(tool_args, ensure_ascii=False)
+            print(f"  Arguments: {shown}")
+            log_action("market_intelligence", f"call {tool_name} {shown[:300]}")
 
             result_str = ""
             conn_ok = False
@@ -222,24 +248,30 @@ def task_executor(state: MarketAgentState) -> dict:
 
             if result_str and len(result_str) > 50:
                 eval_raw = call_llm(usefulness_prompt(task["description"], result_str))
-                try:
-                    ev = json.loads(clean_json(eval_raw))
-                    is_useful = ev.get("useful", True)
-                    reason = ev.get("reason", "")
-                except json.JSONDecodeError:
-                    is_useful = True
-                    reason = ""
+                verdict = parse_model(Usefulness, eval_raw)
+                is_useful = True if verdict is None else verdict.useful
+                reason = "" if verdict is None else verdict.reason
 
                 if is_useful:
                     print("  Evaluated: USEFUL")
+                    log_action("market_intelligence", f"{tool_name} useful")
                     raw_result = result_str
                     used_tool = tool_name
                     fetch_success = True
                     break
-                print(f"  Evaluated: NOT USEFUL -- {reason}")
-                print("  Retrying with different query...")
+                print("  Not useful.")
+                print(f"  Arguments used: {shown}")
+                print(f"  Why: {reason or 'the model did not give a reason'}")
+                log_action(
+                    "market_intelligence",
+                    f"{tool_name} not useful. arguments={shown[:240]} why={reason}",
+                )
+                print("  Retrying with different arguments...")
             else:
-                print("  Empty result -- retrying")
+                print("  Empty result.")
+                print(f"  Arguments used: {shown}")
+                log_action("market_intelligence", f"{tool_name} empty result. arguments={shown[:240]}")
+                print("  Retrying with different arguments...")
 
         if fetch_success:
             break
@@ -247,6 +279,7 @@ def task_executor(state: MarketAgentState) -> dict:
 
     if not fetch_success:
         print(f"  All tools exhausted for task [{task['id']}] -- skipping")
+        log_action("market_intelligence", f"skipped task {task['id']}: {task['description']}")
         task["status"] = "skipped"
         task_list[idx] = task
         return {
@@ -265,9 +298,10 @@ def task_executor(state: MarketAgentState) -> dict:
                 try:
                     text = scrape_url_content(url)
                     if isinstance(text, str) and len(text) > 100:
-                        scraped_texts.append(f"[URL: {url}]\n{text[:settings.scrape_text_chars]}")
+                        saved = text[:settings.scrape_text_chars]
+                        scraped_texts.append(f"[URL: {url}]\n{saved}")
                         print(f"    -> {len(text):,} chars fetched")
-                        evidence_items.append({"type": "url", "source": url})
+                        evidence_items.append({"type": "url", "source": url, "text": saved})
                     else:
                         print("    -> too short or error")
                     break
@@ -283,7 +317,22 @@ def task_executor(state: MarketAgentState) -> dict:
                     print(f"    FAILED: {exc}")
                     break
     else:
-        evidence_items.append({"type": "endpoint", "source": f"[{used_tool}]"})
+        evidence_items.append(
+            {
+                "type": "endpoint",
+                "source": f"[{used_tool}]",
+                "text": (raw_result or "")[:4000],
+            }
+        )
+
+    if not any((item.get("text") or "").strip() for item in evidence_items):
+        evidence_items.append(
+            {
+                "type": "endpoint",
+                "source": f"[{used_tool}]",
+                "text": (raw_result or "")[:4000],
+            }
+        )
 
     _section("LLM ANALYSIS")
 
@@ -303,16 +352,14 @@ def task_executor(state: MarketAgentState) -> dict:
             context_block=context_block,
         )
     )
-    try:
-        parsed_analysis = json.loads(clean_json(raw_analysis))
-        claim = parsed_analysis.get("claim", "").strip()
-    except json.JSONDecodeError:
-        claim = raw_analysis.strip()[:400]
+    parsed_analysis = parse_model(AnalysisClaim, raw_analysis)
+    claim = parsed_analysis.claim.strip() if parsed_analysis else ""
 
     if not claim:
         claim = f"Data retrieved for: {task['description']}"
 
     print(f"\n  Claim   : {claim[:200]}")
+    log_action("market_intelligence", f"claim: {claim[:240]}")
     print(f"  Evidence: {evidence_items}")
 
     finding = {

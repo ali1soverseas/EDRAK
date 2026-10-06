@@ -92,17 +92,24 @@ def format_task_context(task: ResearchTask) -> str:
     return "\n".join(lines)
 
 
-def _evidence_from_private_item(item: dict, claim: str) -> Evidence:
+def _evidence_from_private_item(item: dict) -> Evidence:
+    """Keep the text the claim was summarized from, separate from the claim."""
     source = item.get("source", "")
+    text = (item.get("text") or "").strip()
+    fact = text[:800] if text else "Source text was not retained."
+    excerpt = text[:2000] or None
     if item.get("type") == "url":
         return Evidence(
             source_type=SourceType.WEB_PAGE,
             source_url=source or None,
-            extracted_fact=claim,
+            source_title=source or None,
+            extracted_fact=fact,
+            excerpt=excerpt,
         )
     return Evidence(
         source_type=SourceType.OTHER,
-        extracted_fact=claim,
+        extracted_fact=fact,
+        excerpt=excerpt,
         metadata={"endpoint": source} if source else {},
     )
 
@@ -129,7 +136,7 @@ def worker_result_from_state(
         raw_evidence = item.get("evidence", [])
         refs: list[EvidenceRef] = []
         for raw in raw_evidence:
-            ev = _evidence_from_private_item(raw, claim)
+            ev = _evidence_from_private_item(raw)
             evidence.append(ev)
             refs.append(EvidenceRef(evidence_id=ev.evidence_id))
         findings.append(

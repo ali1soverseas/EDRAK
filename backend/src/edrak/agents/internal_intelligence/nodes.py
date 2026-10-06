@@ -15,6 +15,7 @@ from edrak.agents.internal_intelligence.state import InternalAgentState
 from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation, SourceType
 from edrak.contracts.result import Conflict, Finding, FindingCategory, WorkerResult, WorkerStatus
 from edrak.contracts.task import ResearchTask, WorkerType
+from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_llm_client
 from edrak.rag.retriever import InternalRetriever
@@ -25,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
     """Generates targeted natural-language search queries dynamically using LLM with deterministic fallback."""
+    log_action("internal_intelligence", "planning search queries")
     started_at = datetime.now(timezone.utc)
     task: ResearchTask = state.get("task")
     if not task:
@@ -88,6 +90,7 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
 
 def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     """Retrieves candidates across internal docs and handbook, then cross-scores and reranks."""
+    log_action("internal_intelligence", "retrieving internal evidence")
     queries = state.get("queries", [])
     task: Optional[ResearchTask] = state.get("task")
     if not queries and task:
@@ -169,6 +172,7 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
 
 def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     """Deeply investigates evidence and synthesizes structured, grounded findings via LLM."""
+    log_action("internal_intelligence", "summarizing findings from retrieved evidence")
     task: ResearchTask = state.get("task")
     evidence_list: List[Evidence] = state.get("retrieved_evidence", [])
 
@@ -270,9 +274,14 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             if is_syn and not any("synthetic" in lim.lower() for lim in limitations):
                 limitations.append("Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.")
 
-            claim_type = rf.get("claim_type")
-            scope = rf.get("scope")
-            supporting_quote = rf.get("supporting_quote")
+            for label, value in (
+                ("Claim type", rf.get("claim_type")),
+                ("Scope", rf.get("scope")),
+                ("Supporting quote", rf.get("supporting_quote")),
+            ):
+                text = str(value or "").strip()
+                if text and text not in limitations:
+                    limitations.append(f"{label}: {text}")
 
             findings.append(
                 Finding(
@@ -281,9 +290,6 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
                     category=category,
                     evidence_refs=valid_refs,
                     confidence=conf,
-                    claim_type=claim_type,
-                    scope=scope,
-                    supporting_quote=supporting_quote,
                     limitations=limitations,
                 )
             )
@@ -339,6 +345,12 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             if ev.is_synthetic:
                 limitations.append("Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.")
 
+            claim_type = "internal_claim" if ev.is_synthetic else "verified_fact"
+            limitations.append(f"Claim type: {claim_type}")
+            quote = (ev.excerpt or "").strip()
+            if quote:
+                limitations.append(f"Supporting quote: {quote[:80]}")
+
             findings.append(
                 Finding(
                     finding_id=str(uuid.uuid4()),
@@ -346,9 +358,6 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
                     category=category,
                     evidence_refs=[EvidenceRef(evidence_id=ev.evidence_id, relation=EvidenceRelation.SUPPORTS)],
                     confidence=conf,
-                    claim_type="internal_claim" if ev.is_synthetic else "verified_fact",
-                    scope="not specified",
-                    supporting_quote=(ev.excerpt or "")[:80],
                     limitations=limitations,
                 )
             )
@@ -396,6 +405,7 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
 
 def format_worker_result_node(state: InternalAgentState) -> Dict[str, Any]:
     """Packages findings and evidence into the standard WorkerResult contract."""
+    log_action("internal_intelligence", "writing worker result")
     task: ResearchTask = state.get("task")
     findings = state.get("findings", [])
     evidence = state.get("retrieved_evidence", [])

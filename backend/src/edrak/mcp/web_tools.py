@@ -127,17 +127,17 @@ def tool_openalex(queries: List[str]) -> str:
 
 
 @tool
-def tool_worldbank(dummy: str = "") -> str:
+def tool_worldbank(country: str, indicator_codes: List[str]) -> str:
     """
-    Fetch World Bank macro indicators for Egypt (EGY) using the default indicator set.
+    Fetch World Bank indicators for one country.
 
-    Use for: GDP growth, household consumption, inflation, population, internet penetration,
-             trade share, exchange rate -- all for Egypt since 2018.
-    dummy: ignored; pass an empty string or any value.
-    Returns: JSON array of (indicator_name, indicator_code, country, year, value).
-    No query needed -- uses built-in Egypt indicator list.
+    Use for: macro series such as GDP growth, inflation, internet use, or trade.
+    country: ISO3 country code chosen for this task, for example "USA" or "WLD".
+    indicator_codes: World Bank indicator codes chosen for this task,
+                     for example ["NY.GDP.MKTP.KD.ZG", "IT.NET.USER.ZS"].
+    Returns: JSON array of indicator observations.
     """
-    items, _ = fetch_worldbank()
+    items, _ = fetch_worldbank(country, indicator_codes)
     return serialize_items(items)
 
 

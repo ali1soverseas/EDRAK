@@ -80,9 +80,9 @@ def tool_openalex(queries: List[str]) -> str:
 
 
 @mcp.tool()
-def tool_worldbank(dummy: str = "") -> str:
-    """Fetch World Bank macro indicators using the default indicator set."""
-    items, _ = fetch_worldbank()
+def tool_worldbank(country: str, indicator_codes: List[str]) -> str:
+    """Fetch World Bank indicators for a country and indicator codes chosen for the task."""
+    items, _ = fetch_worldbank(country, indicator_codes)
     return serialize_items(items)
 
 

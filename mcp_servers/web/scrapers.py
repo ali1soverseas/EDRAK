@@ -22,6 +22,19 @@ for _env_file in (_REPO_ROOT / ".env", _REPO_ROOT / "scripts" / ".env"):
         break
 
 TIMEOUT = 10
+REQUEST_DELAY_SECONDS = 2
+
+
+def _get(url, **kwargs):
+    time.sleep(REQUEST_DELAY_SECONDS)
+    return requests.get(url, **kwargs)
+
+
+def _post(url, **kwargs):
+    time.sleep(REQUEST_DELAY_SECONDS)
+    return requests.post(url, **kwargs)
+
+
 MAX_QUERIES = 10
 COUNTRY_ISO3 = "EGY"
 START_YEAR = 2018
@@ -53,7 +66,7 @@ def get(url, params=None, headers=None, label=""):
     hdrs.update(headers or {})
     for attempt in range(2):
         try:
-            resp = requests.get(url, params=params, headers=hdrs, timeout=TIMEOUT)
+            resp = _get(url, params=params, headers=hdrs, timeout=TIMEOUT)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP '{label}' ({type(exc).__name__})")
             return None
@@ -86,7 +99,7 @@ def fetch_newsapi(queries):
             "sortBy": "publishedAt",
             "apiKey": api_key,
         }
-        resp = requests.get(url, params=params, timeout=10)
+        resp = _get(url, params=params, timeout=10)
         if resp.status_code != 200:
             print(f"[SCRAPER_NEWSAPI] SKIP query '{query}' (status {resp.status_code})")
             continue
@@ -132,19 +145,24 @@ def fetch_gdelt(queries):
     all_items = []
     queries_run = []
 
-    for i, query in enumerate(queries[:MAX_QUERIES]):
-        if i > 0:
-            time.sleep(6)
+    for query in queries[:2]:
         url = "https://api.gdeltproject.org/api/v2/doc/doc"
         params = {"query": query, "mode": "timelinevol", "format": "json", "timespan": "12months"}
         resp = None
-        for attempt in range(2):
+        for attempt in range(3):
             try:
-                resp = requests.get(url, params=params, headers=HEADERS, timeout=60)
-                break
+                resp = _get(url, params=params, headers=HEADERS, timeout=60)
             except requests.RequestException as exc:
-                print(f"[SCRAPER]  RETRY query '{query}' ({type(exc).__name__}, attempt {attempt + 1}/2)")
-                time.sleep(6)
+                print(f"[SCRAPER]  RETRY query '{query}' ({type(exc).__name__}, attempt {attempt + 1}/3)")
+                time.sleep(15)
+                continue
+            if resp.status_code == 429:
+                wait = 30 * (attempt + 1)
+                print(f"[SCRAPER]  RETRY query '{query}' (status 429, waiting {wait}s, attempt {attempt + 1}/3)")
+                time.sleep(wait)
+                resp = None
+                continue
+            break
         if resp is None:
             print(f"[SCRAPER]  SKIP query '{query}' (no response)")
             continue
@@ -179,7 +197,7 @@ def fetch_openalex(queries):
 
         params = {"search": query, "group_by": "publication_year", **extra}
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
+            resp = _get(url, params=params, headers=HEADERS, timeout=30)
             if resp.status_code != 200:
                 print(f"[SCRAPER]  SKIP year counts for '{query}' (status {resp.status_code})")
             else:
@@ -191,7 +209,7 @@ def fetch_openalex(queries):
 
         params = {"search": query, "per_page": 25, **extra}
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
+            resp = _get(url, params=params, headers=HEADERS, timeout=30)
             if resp.status_code != 200:
                 print(f"[SCRAPER]  SKIP works for '{query}' (status {resp.status_code})")
             else:
@@ -234,7 +252,7 @@ def fetch_arxiv(queries):
             "sortOrder": "descending",
         }
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
+            resp = _get(url, params=params, headers=HEADERS, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -277,7 +295,7 @@ def fetch_wikidata(queries):
             "limit": 20,
         }
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=10)
+            resp = _get(url, params=params, headers=HEADERS, timeout=10)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -302,7 +320,7 @@ def fetch_imf_datamapper(queries):
     for query in queries[:MAX_QUERIES]:
         url = f"https://www.imf.org/external/datamapper/api/v1/{query}/{COUNTRY_ISO3}"
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=30)
+            resp = _get(url, headers=HEADERS, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -328,7 +346,7 @@ def fetch_eurostat(queries):
         url = f"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{query}"
         params = {"format": "JSON", "lang": "EN", **EUROSTAT_FILTERS}
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
+            resp = _get(url, params=params, headers=HEADERS, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -356,7 +374,7 @@ def fetch_sec_edgar(queries):
     for query in queries[:MAX_QUERIES]:
         url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{str(query).zfill(10)}.json"
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=30)
+            resp = _get(url, headers=HEADERS, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -393,7 +411,7 @@ def fetch_fred(queries):
             "observation_start": f"{START_YEAR}-01-01",
         }
         try:
-            resp = requests.get(url, params=params, timeout=30)
+            resp = _get(url, params=params, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -424,7 +442,7 @@ def fetch_alphavantage(queries):
         url = "https://www.alphavantage.co/query"
         params = {"function": "OVERVIEW", "symbol": query, "apikey": api_key}
         try:
-            resp = requests.get(url, params=params, timeout=30)
+            resp = _get(url, params=params, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -461,7 +479,7 @@ def fetch_finnhub(queries):
         url = "https://finnhub.io/api/v1/stock/profile2"
         params = {"symbol": query, "token": api_key}
         try:
-            resp = requests.get(url, params=params, timeout=10)
+            resp = _get(url, params=params, timeout=10)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -481,39 +499,44 @@ def fetch_finnhub(queries):
     return all_items, queries_run
 
 
-def fetch_worldbank(indicators=None):
-    indicators = indicators or WORLDBANK_INDICATORS
-    print(f"[SCRAPER]  Fetching World Bank indicators for {len(indicators)} codes ({COUNTRY_ISO3})...")
+def fetch_worldbank(country, indicator_codes):
+    country = str(country or "").strip().upper()
+    codes = [str(code).strip() for code in (indicator_codes or []) if str(code).strip()]
+    if not country or not codes:
+        print("[SCRAPER]  SKIP World Bank: country and indicator_codes are required")
+        return [], []
+
+    print(f"[SCRAPER]  Fetching World Bank indicators for {len(codes)} codes ({country})...")
     all_items = []
     queries_run = []
 
-    for name, indicator in list(indicators.items())[:MAX_QUERIES]:
-        url = f"https://api.worldbank.org/v2/country/{COUNTRY_ISO3}/indicator/{indicator}"
+    for indicator in codes[:MAX_QUERIES]:
+        url = f"https://api.worldbank.org/v2/country/{country}/indicator/{indicator}"
         params = {"format": "json", "date": f"{START_YEAR}:{datetime.now().year}", "per_page": 100}
         resp = None
         for attempt in range(3):
             try:
-                resp = requests.get(url, params=params, headers=HEADERS, timeout=60)
+                resp = _get(url, params=params, headers=HEADERS, timeout=60)
             except requests.RequestException as exc:
-                print(f"[SCRAPER]  RETRY '{name}' ({type(exc).__name__}, attempt {attempt + 1}/3)")
+                print(f"[SCRAPER]  RETRY '{indicator}' ({type(exc).__name__}, attempt {attempt + 1}/3)")
                 resp = None
                 time.sleep(5 * (attempt + 1))
                 continue
             if resp.status_code in (429, 500, 502, 503, 504):
-                print(f"[SCRAPER]  RETRY '{name}' (status {resp.status_code}, attempt {attempt + 1}/3)")
+                print(f"[SCRAPER]  RETRY '{indicator}' (status {resp.status_code}, attempt {attempt + 1}/3)")
                 time.sleep(5 * (attempt + 1))
                 continue
             break
         if resp is None or resp.status_code != 200:
-            print(f"[SCRAPER]  SKIP '{name}' (status {getattr(resp, 'status_code', 'no response')})")
+            print(f"[SCRAPER]  SKIP '{indicator}' (status {getattr(resp, 'status_code', 'no response')})")
             continue
         data = resp.json()
         if not isinstance(data, list) or len(data) < 2 or not data[1]:
-            print(f"[SCRAPER]  SKIP '{name}' (no data returned; the indicator code may be invalid)")
+            print(f"[SCRAPER]  SKIP '{indicator}' (no data returned; the indicator code may be invalid)")
             continue
-        result = {"meta": data[0], "data": data[1], "query_used": name, "method": "worldbank"}
+        result = {"meta": data[0], "data": data[1], "query_used": indicator, "method": "worldbank", "country": country}
         all_items.append(result)
-        queries_run.append(name)
+        queries_run.append(indicator)
 
     print(f"[SCRAPER]  OK {len(all_items)} data points from {len(queries_run)} indicators")
     return all_items, queries_run
@@ -528,7 +551,7 @@ def fetch_dbnomics(queries):
         url = "https://api.db.nomics.world/v22/search"
         params = {"q": query, "limit": 20}
         try:
-            resp = requests.get(url, params=params, headers=HEADERS, timeout=30)
+            resp = _get(url, params=params, headers=HEADERS, timeout=30)
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__})")
             continue
@@ -557,7 +580,7 @@ def fetch_serper(queries):
 
     for query in queries[:MAX_QUERIES]:
         try:
-            resp = requests.post(
+            resp = _post(
                 "https://google.serper.dev/search",
                 headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
                 data=json.dumps({"q": query, "num": 10}),
@@ -578,7 +601,7 @@ def fetch_serper(queries):
 
 def _fetch_tavily_search(query: str, api_key: str) -> list[dict]:
     try:
-        resp = requests.post(
+        resp = _post(
             "https://api.tavily.com/search",
             json={
                 "api_key": api_key,
@@ -614,7 +637,7 @@ def _fetch_tavily_search(query: str, api_key: str) -> list[dict]:
 def _fetch_wikipedia_search(query: str) -> list[dict]:
     """Key-free fallback when Tavily returns no web results."""
     try:
-        resp = requests.get(
+        resp = _get(
             "https://en.wikipedia.org/w/api.php",
             params={
                 "action": "query",
@@ -680,7 +703,7 @@ def fetch_web_search(queries):
 
 def scrape_url_content(url):
     headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers, timeout=TIMEOUT)
+    response = _get(url, headers=headers, timeout=TIMEOUT)
     if response.status_code != 200:
         return f"Error: Failed to retrieve page (Status {response.status_code})"
     soup = BeautifulSoup(response.text, "html.parser")
