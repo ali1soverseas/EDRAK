@@ -12,6 +12,7 @@ from edrak.agents.customer_trends.schemas.common import (
 )
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters, EvidenceItem
 from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, finish_processing
+from edrak.agents.customer_trends.tools.selection import group_key
 from edrak.agents.customer_trends.utils.labels import normalize_label
 from edrak.agents.customer_trends.utils.text import truncate
 
@@ -54,7 +55,7 @@ class EvidenceQueryResponse(ProcessingResponse):
 def _view(item: EvidenceItem) -> dict[str, Any]:
     view: dict[str, Any] = {
         "id": item.id,
-        "platform": item.platform.value if item.platform else item.source_type.value,
+        "platform": group_key(item),
         "source_type": item.source_type.value,
         "language": item.language,
         "published": item.published_at.date().isoformat() if item.published_at else None,

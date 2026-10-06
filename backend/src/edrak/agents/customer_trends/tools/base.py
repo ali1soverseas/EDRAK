@@ -186,6 +186,12 @@ def error_response(code: str, message: str, **fields: Any) -> ToolResponse:
     return ToolResponse(status=ToolStatus.ERROR, error_code=code, gaps=[message], **fields)
 
 
+def unknown_batch_response(unknown: Sequence[str]) -> ToolResponse:
+    return error_response(
+        "unknown_batch", f"batch ids not found in this run: {', '.join(unknown[:5])}"
+    )
+
+
 def invalid_input_response(exc: ValidationError, prefix: str = "") -> ToolResponse:
     problems = [
         f"{prefix}{'.'.join(str(part) for part in error['loc']) or 'input'}: {error['msg']}"

@@ -37,6 +37,7 @@ class ThemeAggregate(StrictModel):
     by_language: dict[str, int] = Field(default_factory=dict)
     recent_growth: float | None = None
     evidence_ids: list[str] = Field(default_factory=list)
+    representative_quotes: list[Quote] = Field(default_factory=list, max_length=MAX_QUOTES)
 
 
 class MetricResult(StrictModel):

@@ -14,6 +14,11 @@ ALL_ITEMS = 100_000
 _NEVER = datetime.min.replace(tzinfo=UTC)
 
 
+def group_key(item: EvidenceItem) -> str:
+    """The platform, or the source type for items that belong to no platform."""
+    return item.platform.value if item.platform else item.source_type.value
+
+
 def _ranked(items: list[EvidenceItem], order: Order) -> list[EvidenceItem]:
     if order == "top":
         return sorted(

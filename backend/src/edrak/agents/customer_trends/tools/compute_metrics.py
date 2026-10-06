@@ -29,8 +29,9 @@ from edrak.agents.customer_trends.tools.base import (
     error_response,
     finish_processing,
     invalid_input_response,
+    unknown_batch_response,
 )
-from edrak.agents.customer_trends.tools.selection import load_items
+from edrak.agents.customer_trends.tools.selection import group_key, load_items
 from edrak.agents.customer_trends.utils.text import search_key
 
 MIN_TREND_POINTS = 8
@@ -127,11 +128,6 @@ def percentile(ordered: Sequence[float], fraction: float) -> float:
     position = fraction * (len(ordered) - 1)
     low, high = math.floor(position), math.ceil(position)
     return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
-
-
-def group_key(item: EvidenceItem) -> str:
-    """The platform, or the source type for items that belong to no platform."""
-    return item.platform.value if item.platform else item.source_type.value
 
 
 def volume_over_time(items: Sequence[EvidenceItem], bucket: str) -> dict[str, Any]:
@@ -289,9 +285,7 @@ def _compute(ctx: ToolContext, inp: ComputeMetricsInput) -> ToolResponse | Proce
     batch_ids = known if inp.batch_ids is None else inp.batch_ids
     unknown = [batch for batch in batch_ids if batch not in known]
     if unknown:
-        return error_response(
-            "unknown_batch", f"batch ids not found in this run: {', '.join(unknown[:5])}"
-        )
+        return unknown_batch_response(unknown)
     params_models: dict[str, type[VolumeParams | ShareParams | TrendParams | MixParams]] = {
         "volume_over_time": VolumeParams,
         "share_of_voice": ShareParams,
