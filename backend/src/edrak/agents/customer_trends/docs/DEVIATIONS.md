@@ -19,3 +19,10 @@ SPEC.md was aligned with the repository conventions (AGENTS.md, CONTRIBUTING.md)
 ## Cost-based routing
 
 - SPEC 8.2 lists Apify first for social search and comments, and routes `search_interest` to Apify and the Google Trends API only. Measured costs and speed (see ARCHITECTURE.md, Routing and cost) put SocialCrawl first for TikTok, Instagram, Reddit and Facebook search and for every comments capability except YouTube, and YouTube's API, then SocialCrawl, then Apify for YouTube. `search_interest` gains SocialCrawl as a second provider between Apify and the stub. X search keeps Apify first.
+
+## Batch 6
+
+- SPEC 6.6 defines `ThemeAggregate` without quotes. It now has `representative_quotes` (default empty), so quotes are saved with the aggregates and reach the final result. The shared contract is not touched.
+- SPEC 6.7 and the batch ask for a loose numeric match of 1 percent or 0.5 absolute. A flat 0.5 lets 0.3 match 0.7 for shares and rates, so the absolute part is the rounding of the number as written: 0.5 for a whole number (12 matches 12.4 but not 12.6), 0.05 for one decimal, 0.005 for two. The 1 percent relative match is unchanged. Whole numbers behave as specified.
+- SPEC section 9 gives `compute_metrics(metric, batch_ids, params={})`. `batch_ids` is optional here (default: every batch of the run) and `params` takes a `filters` entry for the evidence metrics.
+

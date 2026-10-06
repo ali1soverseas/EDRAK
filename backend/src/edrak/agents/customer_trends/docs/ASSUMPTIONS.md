@@ -110,3 +110,20 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - Not done: SocialCrawl review endpoints (Amazon would be cheaper than Apify's actor, app stores dearer), a Facebook keyword-search actor on Apify, and automatic re-ordering of providers at run time by measured spend. The order is fixed in config and checked by a test against the cost model.
 - The cost model counts what one capability costs for 100 usable items. It ignores Apify run start fees except where the actor lists one, SocialCrawl cache hits (free) and the one-off free credits.
 - Only free allowances are used; no plan or credit pack will be bought. A SocialCrawl credit is therefore priced at the cheapest pack (0.008 USD) instead of the Growth price: free credits never renew, Apify's monthly 5 USD does. This moved Apify ahead for X and Instagram comments, where the two cost about the same, and keeps the credits for TikTok, Reddit and Facebook. Estimated costs, and the per-run cost budget, are counted at this price. It supersedes the 0.0033 figure above.
+
+## Batch 6
+
+- "Retry a failed chunk once through `structured_call`" is read as `structured_call`'s own single repair attempt (the invalid answer and its error are sent back once). A chunk is therefore tried at most twice before it is skipped. A transient transport error is retried by the model client first (three attempts); a chunk that still cannot be reached is skipped like an invalid one. Any other exception is a bug and is reported as `tool_error`.
+- Chunks are labelled one after another, not in parallel: a run of 300 items is 12 model calls. Concurrency is a Batch 9 tuning question once live latency is measured.
+- `ThemeAggregate` gained `representative_quotes` (up to 3, each at most 240 characters). SPEC 6.6 puts quotes on `Theme` only, but `Theme` is never stored and the batch asks for quotes saved with the aggregates. Recorded in DEVIATIONS.
+- `save_aggregates` replaces the run's aggregates (Batch 2), so `analyze_text` is meant to be called once over all batches. A later call replaces the earlier themes and warns; a call that yields no themes leaves them untouched.
+- `analyze_text` and the metrics skip `trend_point` items; `evidence_query` does not.
+- `recent_growth` needs at least 6 dated analyzed items and at least 3 items in the theme. The batch does not ask for these minimums; without them a two-item theme reports growth of plus or minus 100 percent or more, which a writer would be tempted to quote.
+- Theme `share` counts the items the model labelled (analyzed), not the items selected: an item in a skipped chunk or one the model left out is not in the denominator.
+- A theme label found by `evidence_query(theme=...)` is matched by the same normalization as the merge step, so plural, case and punctuation differences do not matter.
+- `submit_findings` checks claim numbers against the finding's own `metrics` as the batch specifies. A model can still write a made-up number into both claim and metrics; only a cited `metric_id` ties a number to computed data. The verification stage (a later batch) is where self-reported metrics should be cross-checked.
+- Year-like numbers (whole numbers from 1900 to 2100) in a claim are not checked, so a claim can say "in 2026" without a metric. The same rule lets a claim state "2000 posts" without a metric; the other checks (evidence ids, verdict phrases) still apply.
+- The verdict phrase list is deliberately conservative (phrases that only make sense as advice, such as "should enter" or "do not launch"). Words like "recommend" alone are not listed because users recommend things in reviews and a claim may report that.
+- `compute_metrics` and `analyze_text` read the whole run when `batch_ids` is left out (compute_metrics) or must be given (analyze_text); an id that is not a batch of the run is an `unknown_batch` error, not silently ignored.
+- Processing tools do not count against the run's tool-call budget: only provider calls do (the budget tracks provider spend and time). The analyst calls are not costed (Ollama Cloud, no per-call price).
+

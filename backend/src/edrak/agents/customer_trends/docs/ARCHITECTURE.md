@@ -205,109 +205,8 @@ GDELT: free. When every SocialCrawl key is out of credit the registry moves on t
 provider in the list on its own, so a run still completes, but TikTok and Reddit then come
 from the slower Apify actors and Facebook search has no source left except Serper snippets.
 
-### Fallback API keys
-
-Apify and SocialCrawl accept more than one key. `APIFY_TOKEN` and `SOCIALCRAWL_API_KEY` are the
-first choice; `APIFY_FALLBACK_TOKENS` and `SOCIALCRAWL_FALLBACK_API_KEYS` hold comma separated
-backups (`Settings.key_list` joins them, dropping blanks and repeats; a provider is also set up
-from fallbacks alone). Each provider holds a `KeyRing` (`providers/keys.py`) and runs every call
-through `with_failover`: a key that answers with `ProviderQuotaExceeded` (usage or credit limit,
-or a SocialCrawl balance too low for the request) or `ProviderNotConfigured` (rejected key) is
-passed over, the call is repeated with the next key, and the ring stays on the working key for
-later calls. Rate limits, server errors and failed actor runs do not rotate. When every key has
-failed, the last key's error is raised and the registry falls back to the next provider as usual.
-A rotation is logged as `api_key_rotated` with the position in the list, never the key.
-
-### Budget, breaker, cache
-
-- `BudgetTracker` refuses a call that would cross the tool-call, cost or time limit and records
-  what each call used.
-- `CircuitBreaker` opens a provider after three consecutive failures and keeps it open for the
-  rest of the run. A missing key does not count: such providers are simply not registered.
-- `DiskCache` stores successful results under `<data_dir>/cache/<sha256>.json` for
-  `EDRAK_CACHE_TTL_S` seconds. The key covers the provider, the capability and the canonical
-  params, but not `run_id` and `task_id`; a cache hit is re-stamped for the current run.
-
-### Fixture mode
-
-With `EDRAK_PROVIDER_MODE=fixture` the registry builds no providers and opens no HTTP client.
-It serves recorded results from `backend/tests/customer_trends/fixtures/providers/`.
-
-File name: the capability with `:` replaced by `.`, plus `.json`: `web_search` is
-`web_search.json`, `social_search:reddit` is `social_search.reddit.json`, `news:gdelt` is
-`news.gdelt.json`.
-
-File content: one serialized `ProviderResult`. `provider` names the provider the recording
-imitates (it becomes the result's provider; `fixture` if empty). Items keep the run and task ids
-of the recording; the registry re-stamps them for the current run. `max_results` truncates the
-items. Cost is reported as zero. A missing or invalid fixture raises `ProviderExhausted` with a
-failure from the pseudo-provider `fixture`, which tools report as a gap.
-
-### Providers
-
-| Provider | Capabilities | Notes |
-|---|---|---|
-| `serper` | `web_search`, `news:google_news`, `social_search:<platform>` (x, reddit, tiktok, instagram, facebook) | Needs `SERPER_API_KEY`. Snippet-level data, `snippet_only=true`. Social search is a `site:` query and always carries a warning. Local adapter until the shared web MCP server exists (SPEC 8.4). |
-| `gdelt` | `news:gdelt` | No key. About 90 days of history, `sourcelang:` filter, results are titles only. Volume by day is computed from the returned articles. |
-| `youtube_api` | `social_search:youtube`, `social_comments:youtube` | Needs `YOUTUBE_API_KEY`. Local quota counter in `<data_dir>/youtube_quota.json`, reset at midnight Pacific time. |
-| `apify` | `social_search:{x,tiktok,instagram,youtube,reddit}`, `social_comments:*`, `search_interest`, `reviews:{app_store,google_play,amazon}` | Needs `APIFY_TOKEN`. One actor per capability, configured in providers.yaml. |
-| `socialcrawl` | `social_search:*`, `social_comments:*` (all six platforms), `search_interest` | Needs `SOCIALCRAWL_API_KEY`. One response shape for every platform; Google Trends through its own endpoint. |
-| `google_trends_api` | `search_interest` | Stub, always registered so its routing entry resolves. `ProviderNotConfigured` without `GOOGLE_TRENDS_API_KEY`, then `ProviderUnavailable("alpha api not implemented")`. |
-
-### Apify
-
-`providers/apify/client.py` runs an actor with `POST /v2/acts/{owner~name}/run-sync-get-dataset-items`
-(bearer token, `limit` and `timeout` as query parameters, the actor input as the body). The
-sync route answers 201. A 408, or a 400 `run-failed`, means the run timed out or crashed: it
-is reported as `RunNotFinished` (a `ProviderUnavailable` that is never retried, because running
-the actor again costs again). 401 and 403 are `ProviderNotConfigured`, 402 is
-`ProviderQuotaExceeded`, 429 is retried.
-
-Per capability, `config/providers.yaml` names the actor, an input template, value translations
-and a price. A template uses placeholders such as `{query}`, `{max_results}`, `{sort}`,
-`{window}`, `{url}`, `{keywords}`, `{target}`. A string that is exactly one placeholder keeps
-the value's type; a key whose placeholder has no value is left out so the actor keeps its
-default; `requires` lists the values a capability cannot run without. `enabled: false` switches
-a capability off without removing its config.
-
-`providers/apify/mappers.py` is the only place that knows actor output field names. Each mapper
-turns one dataset item into an `EvidenceItem` (or a `TrendSeries` for Google Trends) and keeps
-unmapped small fields in `metadata`. Cost is estimated as the run fee plus the per-item price
-times the items returned; Apify reports no cost on this route.
-
-### SocialCrawl
-
-`providers/socialcrawl.py` sends `GET <base_url><path>` with an `x-api-key` header. Which path,
-query parameter, sort values, page size and credit price apply to each capability is in
-providers.yaml. Responses share one envelope: `data.items[]` with a `post` or `comment`,
-`pagination.next_cursor` (sent back verbatim as `cursor`) and `credits_used` /
-`credits_remaining`. Searches send `relevance=filter`, which drops rows that are not about the
-query at no extra credit. Rows in other languages than requested are dropped with a warning.
-A request that could cost five credits or more first reads the free `GET /credits/balance`
-and raises `ProviderQuotaExceeded` when the balance is short; paging stops early when the
-balance runs out. A comments request for a post without comments (404 `RESOURCE_NOT_FOUND`) is
-an empty result.
-
-### Routing
-
-Effective order with every key configured (`providers.yaml` lists the configured order; names
-without a registered provider that supports the capability are skipped):
-
-| Capability | Order |
-|---|---|
-| `social_search:x`, `tiktok`, `instagram`, `reddit` | apify, socialcrawl, serper (snippets) |
-| `social_search:facebook` | socialcrawl, serper (the Apify entry is switched off) |
-| `social_search:youtube` | youtube_api, apify, socialcrawl |
-| `social_comments:x`, `tiktok`, `instagram`, `facebook`, `reddit` | apify, socialcrawl |
-| `social_comments:youtube` | youtube_api, apify, socialcrawl |
-| `search_interest` | apify, google_trends_api |
-| `reviews:app_store`, `google_play`, `amazon` | apify |
-| `news:gdelt` | gdelt |
-| `news:google_news`, `web_search` | serper |
-| `fetch_page` | direct_http (built with the collection tools) |
-
-`tests/customer_trends/integration/test_routing_matrix.py` checks this table against a fully
-configured registry and prints it (`pytest -s`).
+`tests/customer_trends/integration/test_routing_matrix.py` checks the effective order against a
+fully configured registry and prints it (`pytest -s`).
 
 ## Collection tools
 
@@ -369,3 +268,81 @@ cap for the depth (light 50, standard 200, deep 1000).
 **Events.** Each call emits one `tool_called` event through `ToolContext.emit`: tool, branch,
 run and task ids, shortened args, provider, fallback flag, status, count, latency in ms, cost
 and error code. A failing emitter is logged and ignored.
+
+## Processing tools
+
+Four tools turn stored evidence into findings. They follow the collection tools' conventions
+(inputs validated by the worker, `run_id` and `task_id` injected, one `tool_called` event per call
+with no provider) and answer with a `ProcessingResponse`: `status`, `count`, `warnings` and the
+fields of the tool, as compact JSON. Failures are the same error `ToolResponse` as before
+(`invalid_input`, `unknown_batch`, `no_data`, `tool_error`). They are not part of any collection
+branch; `tools_for_stage("analyze")` gives `compute_metrics` and `analyze_text`,
+`tools_for_stage("write")` gives `evidence_query` and `compute_metrics`. `submit_findings` is in
+neither list: the graph calls it with the findings the writer produced.
+
+Trend point items (one sentence per search interest series) are not something people wrote, so
+counting and theme analysis skip them; `evidence_query` still returns them so a finding can cite
+a trend.
+
+**`compute_metrics`** is plain code. `batch_ids` defaults to every batch of the run. Each result
+is stored with a deterministic `metric_id` (`m_` and 12 hex digits of a hash of run, metric,
+options and sorted batch ids), so the same call twice gives the same id.
+
+| Metric | Values |
+|---|---|
+| `volume_over_time` | Items per week (Monday start, UTC) or day, only buckets with items, `undated` counted apart, peak bucket. |
+| `engagement_stats` | Mean, median and 90th percentile (linear interpolation) of interactions per item, overall and per platform. Likes, replies, shares and upvotes count; ratings and views do not. |
+| `trend_growth` | Per stored series: percent change from the mean of the first N points to the mean of the last N, N = max(2, points // 4). Under 8 points: `insufficient_data`. A zero first mean gives `zero_baseline`. |
+| `share_of_voice` | Items mentioning the entity and each competitor (an item counts once per name) and each name's percent of all mentions. Matching ignores case and Arabic spelling variants (`search_key`); Latin names match whole words, Arabic names match inside words. |
+| `platform_mix`, `language_mix` | Counts and percent. Items with no platform are listed under their source type; no language is `unknown`. |
+
+The evidence metrics accept `params.filters` (the `evidence_query` filters).
+
+**`evidence_query`** reads through `EvidenceStore.query`: at most 20 items (`limit` above that is
+lowered with a warning), each text cut to 500 characters, the number of matches as `total`. A
+`theme` filter is matched to a stored theme by normalized label, so "Slow customer supports"
+finds "Slow customer support"; an unknown theme answers with the stored labels.
+
+**`analyze_text`** is map-reduce.
+
+1. Items come from the given batches, most engaged first (then newest), at most `max_items`.
+2. Map: chunks of 25 go to the analyst model one after another with `ANALYZE_THEMES` and a strict
+   JSON schema (`structured_call`, which repairs an invalid answer once). A chunk that still
+   fails, or whose model call drops, is skipped and named in the warnings with its item count.
+   Ids the model invents are ignored; items it leaves out are counted in a warning.
+3. Reduce (code): each label is normalized (`utils/labels.py`: case, punctuation, stopwords, plain
+   plurals, Arabic spelling folding) and labels whose word sets overlap by a Jaccard of at least
+   0.6 are merged. Groups are anchored on their most used label, so a chain of loose matches
+   cannot drag two unlike labels together. The group's label is a taxonomy label if one matches,
+   else its most used wording (shortest, then alphabetical).
+4. Each group becomes a `ThemeAggregate`: `count`, `share` of the analyzed items, `sentiment_mix`,
+   `by_platform`, `by_language`, `evidence_ids` and up to three `representative_quotes`.
+   Quotes come from the most engaged items of the theme, are cut at a word to at most 240
+   characters and are always a verbatim part of the stored text; texts shorter than 20
+   characters are used only to fill a gap.
+5. `recent_growth` is the relative change of the theme's share of items between the earlier
+   two thirds and the latest third of the date range of the analyzed items (0.5 is 50 percent
+   more). It is null with fewer than 6 dated items, a theme under 3 items, or a theme absent from
+   the earlier period.
+6. Aggregates replace the run's stored aggregates, so analyze all batches in one call; a call that
+   replaces earlier themes says so, and one that finds no themes keeps the stored ones.
+
+The answer lists the 15 biggest themes (label, count, share, sentiment mix, growth, a short
+description from the model's candidate themes), the sentiment overview, the languages and
+warnings. Quotes are not in the answer: the writer reads them through `evidence_query`.
+
+**`submit_findings`** validates each `Finding` and stores the ones that pass (an id sent again
+replaces the stored finding). A finding is rejected, with every reason listed, when:
+
+- `evidence_ids` is empty or names an item that is not stored for this run;
+- a number in the claim has no match in `metrics` or in the stored metric cited as `metric_id` (or
+  any `*_metric_id`); a cited metric must exist. A match is within 1 percent, or within rounding at
+  the decimals the claim shows (0.5 for a whole number). Numbers are read by `find_numbers`
+  (Arabic digits included); four digit years from 1900 to 2100 are dates, not quantities;
+- the claim contains a phrase from `config/verdict_phrases.yaml` (English and Arabic, compared
+  without case or Arabic spelling variants).
+
+Accepted findings may be adjusted, and the response says so in `adjusted`: one evidence id means
+low confidence and the caveat `single_source`; `high` needs at least 10 evidence ids and at least
+two platforms or two source types, else it becomes `medium` with a caveat.
+
