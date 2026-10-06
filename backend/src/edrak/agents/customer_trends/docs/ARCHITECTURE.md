@@ -346,3 +346,111 @@ Accepted findings may be adjusted, and the response says so in `adjusted`: one e
 low confidence and the caveat `single_source`; `high` needs at least 10 evidence ids and at least
 two platforms or two source types, else it becomes `medium` with a caveat.
 
+## Worker graph
+
+The graph of SPEC section 10 is built in `graph.py`, its node functions are in `nodes.py`, the
+state in `state.py`, the prompts in `prompts.py` and the coverage rules in `gaps.py`. Helper
+modules beside them: `deps.py` (what the nodes need, and the event bus), `assembly.py` (the
+writer's input and the result), `usecases.py` (loader of `config/use_cases.yaml`).
+
+**LangGraph.** Installed: `langgraph` 1.2.12, `langgraph-prebuilt` 1.1.0,
+`langgraph-checkpoint-sqlite` 3.1.1, `langchain` 1.4.3. The prebuilt `create_react_agent` of
+`langgraph.prebuilt` is marked deprecated in its docstring in favor of
+`langchain.agents.create_agent`, so the collection branches use `create_agent`; `langchain` was
+added to `pyproject.toml` for it (one new package, the rest was installed). A branch's step limit
+is `ModelCallLimitMiddleware(run_limit=BRANCH_MAX_STEPS, exit_behavior="end")`: when the cap is
+reached the agent ends with its messages instead of raising, so what it collected is kept. The
+branch agents run with `checkpointer=False`; only the worker graph is checkpointed.
+
+```mermaid
+flowchart TD
+    START --> intake
+    intake --> plan_queries
+    plan_queries --> social
+    plan_queries --> demand
+    plan_queries --> reviews
+    social --> join
+    demand --> join
+    reviews --> join
+    join --> analyze
+    analyze --> gap_check
+    gap_check -.->|critical gap, replan_count 0, budget left| plan_queries
+    gap_check -.->|otherwise| write_findings
+    write_findings --> submit
+    submit --> END
+```
+
+`social`, `demand` and `reviews` run in parallel and `join` waits for all three. The dotted edges
+are one conditional edge out of `gap_check`. `tests/customer_trends/unit/test_graph_structure.py`
+compares this diagram with the compiled graph.
+
+| Node | Kind | What it does | Writes to the state |
+|---|---|---|---|
+| `intake` | code | Validates the brief (a `TaskBrief`), fills an empty focus from the use case, opens the run in the store. | `brief`, `replan_count=0`, `analysis_done=False`, `budget` |
+| `plan_queries` | model (`planner`, `QueryPlan`) | Plans queries per platform in each requested language with local wording, up to 5 trend keywords (a sixth is trimmed), news queries, review targets, competitor angles. On a second pass it gets the critical gaps and plans only to close them. A planner failure gives a default plan from the brief and a warning. | `plan`, `replan_count`, `warnings`, `events` (`replan`) |
+| `social`, `demand`, `reviews` | tool-using sub-agent (`branch`) | Each is a bounded `create_agent` with only its tool subset and the prompt `BRANCH_*`. It returns a short note and the batch ids it created. A branch with nothing in the plan makes no model call. A branch that raises, or whose tool calls all failed, reports a critical gap, never an exception. | `batches`, `branch_notes`, `branch_errors`, `gaps`, `events` (`gap_found`) |
+| `join` | code | The reducers have merged the branches; records the budget. | `budget` |
+| `analyze` | code over tools | `analyze_text` over the social and review batches, then `compute_metrics`: volume, platform mix, language mix, engagement, growth per trend series, and share of voice when competitors exist. | `metric_ids`, `analysis_done`, `warnings` |
+| `gap_check` | code (`gaps.py`) | Applies the use case's coverage rules and rebuilds the gap list; announces each new gap. | `gaps` (overwritten), `events` (`gap_found`) |
+| `write_findings` | model (`writer`, `FindingsDraft`) | Reads theme aggregates, metrics, trend summaries and `evidence_query` samples; each draft finding is checked with the rules of `submit_findings`; rejected ones get one repair pass with `REPAIR_FINDINGS`; the rest are dropped with a warning. Ids are renumbered f1, f2, and so on. | `findings`, `warnings`, `events` (`finding_rejected`) |
+| `submit` | code + model | Stores the findings through `submit_findings`, asks the writer for a headline (at most 60 words, no verdict phrase, else a counted sentence), builds the `ControlSummary` and the `CustomerTrendsResult`, writes it through the sink. | `result`, `warnings`, `events` (`finding_accepted`, `finding_rejected`) |
+
+**State.** Plain JSON values only (dicts, lists, strings, numbers), so the SQLite checkpointer
+needs no registered classes; helpers in `state.py` turn them back into models. Reducers:
+`batches` merge by branch and keep every pass, `branch_notes` and `branch_errors` take the newest
+entry of a branch, `gaps` merge by id, `warnings` are a union, `events` append. `gap_check` writes
+its gaps with `Overwrite`, so a gap that has been closed leaves the list. The state holds no
+evidence text: the only evidence text anywhere in it is the verbatim quotes of the theme
+aggregates inside the final `result`.
+
+**Replan.** After `gap_check` the graph returns to `plan_queries` once, and only when a critical
+gap exists, `replan_count` is 0 and the budget (tool calls, cost, time) is not used up. The
+second pass collects only what the new plan asks for and `analyze` runs again over all batches,
+because `analyze_text` replaces the stored themes.
+
+**Gap rules** (`gaps.py`, numbers from `config/use_cases.yaml`, all pure functions):
+
+| Gap id | Severity | When |
+|---|---|---|
+| `branch_<name>` | critical | A branch raised, made no tool call, or every tool call failed. |
+| `evidence_total` | critical | Fewer than `min_evidence_total` (30) items, not counting trend points. Makes the status `insufficient`. |
+| `platforms` | critical | Fewer than `min_platforms` (2) platforms hold at least `min_platform_items` (20) items. |
+| `trend_series` | critical when the use case requires one, minor when only `demand` is in the focus | No search interest series. |
+| `reviews` | per use case | Competitors are named, review targets were planned and no review was collected. |
+| `language_<code>` | minor | A requested language has fewer than `min_language_items` (10) items. |
+
+**Use cases** (`config/use_cases.yaml`): `competitive_intelligence` (first target, the GitLab
+pilot) stresses competitor sentiment, reviews, news coverage, share of voice, and pain points and
+unmet needs around competitor products; `product_launch` the chain problem exists, competitors
+address it poorly, demand is rising, and requires a trend series; `market_entry` the demand trend
+and local sentiment in the target geo and languages and requires a trend series. Each entry also
+holds default focus, thresholds, the review rule and query hints for the prompts.
+
+**Result.** `ControlSummary.status` is `insufficient` when the evidence total gap is open,
+`partial` when another critical gap is open, else `complete`. `overall_confidence` is `high` when
+at least half the findings are high and no critical gap is open, `medium` when at least half are
+medium or better, else `low`. `provenance` holds the model names, the providers used, the
+fallbacks, node timings, the tool call summary and the number of replans, all read from the
+run's events.
+
+**Events** (`deps.EventBus`, thread-safe, every event stamped with `seq`, `ts`, `run_id` and
+`task_id`): `node_started`, `node_finished` (status and duration), `tool_called` (tool, branch,
+args, provider, fallback, status, count, latency, cost, error code, batch id), `gap_found`,
+`replan`, `finding_accepted`, `finding_rejected`, `run_finished` and `run_failed`. The processing
+tools emit `tool_called` too, with no provider.
+
+**Runner** (`runner.py`). `run_task(brief, *, sink=None, providers=None, llm=None, settings=None)`
+and the async generator `stream_task(...)` run the same graph; `stream_task` yields the events
+as they happen and ends with `run_finished` or `run_failed`. `llm` is one model for every role or
+a function from role to model; `providers` brings its own budget and breaker; the store lives in
+`<data_dir>/evidence.db` and the checkpoints in `<data_dir>/checkpoints.db` with
+`thread_id = run_id`. Every ending writes a result through the sink:
+
+- a finished run returns its result;
+- at `brief.budget.max_seconds` the run is cancelled and the result is built from what is stored,
+  with the gap `time_limit`, a warning and status `insufficient` or `partial`;
+- an exception inside the graph emits `run_failed` and gives a result with the gap `run_failed`
+  and the error name; nothing is raised to the caller;
+- a run that crashed resumes from its last checkpoint when run again with the same `run_id`, and
+  one that already finished returns its stored result without running anything.
+

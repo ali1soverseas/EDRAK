@@ -26,3 +26,11 @@ SPEC.md was aligned with the repository conventions (AGENTS.md, CONTRIBUTING.md)
 - SPEC 6.7 and the batch ask for a loose numeric match of 1 percent or 0.5 absolute. A flat 0.5 lets 0.3 match 0.7 for shares and rates, so the absolute part is the rounding of the number as written: 0.5 for a whole number (12 matches 12.4 but not 12.6), 0.05 for one decimal, 0.005 for two. The 1 percent relative match is unchanged. Whole numbers behave as specified.
 - SPEC section 9 gives `compute_metrics(metric, batch_ids, params={})`. `batch_ids` is optional here (default: every batch of the run) and `params` takes a `filters` entry for the evidence metrics.
 
+## Batch 7
+
+- SPEC section 10 lists `gaps: list[str]` in the state. Gaps are records with a severity and a suggested action, held as JSON dicts, because the replan edge and the replan prompt need both. The result's `gaps` field is still a list of strings.
+- SPEC section 10 names `plan: QueryPlan | None` and `brief: TaskBrief` in the state. They are stored as JSON dicts (see ASSUMPTIONS, Batch 7). Three fields were added: `branch_errors`, `metric_ids`, `warnings`.
+- SPEC section 10 says "bounded tool-using sub-agents" without naming a builder. `langchain.agents.create_agent` is used and `langchain` was added to `pyproject.toml`, because `langgraph.prebuilt.create_react_agent` is deprecated in the installed version.
+- SPEC section 11 and the batch require `run_worker` and the shared adapters. They are pending the shared contracts in this branch (ASSUMPTIONS, Batch 7).
+- `tool_called` events gained a `batch_id` field, and `run_task` / `stream_task` a `settings` argument; neither is in SPEC section 11.
+
