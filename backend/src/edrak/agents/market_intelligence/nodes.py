@@ -17,9 +17,7 @@ from edrak.agents.market_intelligence.prompts import (
 )
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
-    QueryArgs,
     TaskPlan,
-    TOOL_ARG_MODELS,
     Usefulness,
 )
 from edrak.agents.market_intelligence.state import (
@@ -94,13 +92,15 @@ def parse_model(model, raw: str):
         return None
 
 
-def prepare_tool_args(tool_name: str, raw: str) -> dict | None:
-    """Validate the model reply against the tool's Pydantic schema."""
-    model = TOOL_ARG_MODELS.get(tool_name, QueryArgs)
-    parsed = parse_model(model, raw)
-    if parsed is None:
-        return None
-    return parsed.model_dump()
+def prepare_tool_args(raw: str, fallback: str) -> dict:
+    """Parse the model reply and pass it to the tool."""
+    try:
+        parsed = json.loads(clean_json(raw))
+    except json.JSONDecodeError:
+        parsed = None
+    if isinstance(parsed, dict) and parsed:
+        return parsed
+    return {"queries": [fallback[:80]]}
 
 
 def task_planner(state: MarketAgentState) -> dict:
@@ -205,15 +205,7 @@ def task_executor(state: MarketAgentState) -> dict:
             )
 
             raw_args = call_llm(arg_prompt)
-            tool_args = prepare_tool_args(tool_name, raw_args)
-            if tool_args is None:
-                print(f"  Rejected arguments: {raw_args.strip()[:300]}")
-                print(f"  {tool_name} was not called because those arguments do not match its fields.")
-                log_action(
-                    "market_intelligence",
-                    f"{tool_name} rejected arguments: {raw_args.strip()[:240]}",
-                )
-                continue
+            tool_args = prepare_tool_args(raw_args, task["description"])
 
             shown = json.dumps(tool_args, ensure_ascii=False)
             print(f"  Arguments: {shown}")

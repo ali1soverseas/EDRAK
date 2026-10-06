@@ -4,6 +4,13 @@ The three agents were built in separate commits, then wired to one verification 
 
 ## Market agent
 
+What's new since the pre-merge version (`d8565d8`):
+
+- Evidence keeps the scraped page or API text the claim was summarized from.
+- Tool arguments are the JSON object the model returns. They are passed straight to the scraper tool.
+- Web requests wait 2 seconds. A GDELT 429 waits 30, 60, then 90 seconds, and a run sends at most two GDELT queries.
+- The arguments used, and the reason a result was not useful, are printed and written to `artifacts/logs/market_intelligence.log`.
+
 Committed history:
 
 - `1125d43` moved the agent from `workers/market` into `agents/market_intelligence` and added the LangGraph loop: plan tasks, run one task, repeat, then write the private report. `tests/test_market_worker.py` was updated with that move.
@@ -12,13 +19,18 @@ Committed history:
 Uncommitted changes on top of that:
 
 - Saved source text is stored on each evidence item. The claim is no longer copied into the evidence.
-- Tool arguments are validated with Pydantic models in `schemas.py` before a tool is called. Search tools require `queries`. World Bank requires `country` and `indicator_codes`. The IMF requires `indicator_codes`. SEC EDGAR requires `cik_numbers`. FRED, Eurostat, and the ticker tools have their own models.
+- Tool arguments are parsed as JSON and passed to the scraper. A reply that is not JSON falls back to a query built from the task description.
 - Every web request waits 2 seconds. A GDELT 429 is retried after 30, 60, and 90 seconds, and a run sends at most two GDELT queries.
 - Rejected arguments, the arguments that were used, and the reason a result was not useful are printed and appended to `artifacts/logs/market_intelligence.log`.
 
 The graph is still `task_planner` to `task_executor`, looping until the task list is finished, then `output_node`. `run()` turns that private state into a `WorkerResult`.
 
 ## Internal agent
+
+What's new since the pre-merge version (`8feacf3`):
+
+- Each graph node writes a line to `artifacts/logs/internal_intelligence.log`.
+- `claim_type`, `scope`, and `supporting_quote` are stored as limitations on `Finding`, so the shared contract accepts the synthesis output.
 
 Committed history:
 
@@ -32,6 +44,12 @@ The graph is a straight line: `plan_queries` to `retrieve_evidence` to `analyze_
 Uncommitted change: each of those four nodes appends a line to `artifacts/logs/internal_intelligence.log`. Extra model fields (`claim_type`, `scope`, `supporting_quote`) are stored as limitations so they fit the shared `Finding` contract.
 
 ## Competitor agent
+
+What's new since the pre-merge version (`6745f75`):
+
+- `python __main__.py` starts the package from `backend/src`, so the relative imports resolve.
+- `.env` is loaded from the repo root, and the Brotli decoder accepts the argument `httpx2` passes, so OpenAI responses can be read.
+- Each graph node writes a line to `artifacts/logs/competitor_intelligence.log`.
 
 Committed history:
 
@@ -52,7 +70,7 @@ There is no dedicated competitor test file. The agent has been exercised by runn
 | Test file | What it checks |
 | --- | --- |
 | `tests/test_market_worker.py` | Market graph loop, router, JSON cleanup, planner fallback, private report, `WorkerResult`, partial status |
-| `tests/test_market_schemas.py` | Query args, World Bank country and codes, SEC and IMF rejecting a `queries` payload, task-plan schema |
+| `tests/test_market_schemas.py` | Task-plan schema |
 | `backend/tests/test_internal_agent.py` | Partial coverage, full coverage, and a live knowledge-base query |
 | `backend/tests/test_internal_flow.py` | End-to-end flow after retrieval |
 | `backend/tests/test_rag.py` | Indexer and retriever |

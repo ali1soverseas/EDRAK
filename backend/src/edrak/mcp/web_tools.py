@@ -155,19 +155,6 @@ def tool_fred(series_ids: List[str]) -> str:
 
 
 @tool
-def tool_imf(indicator_codes: List[str]) -> str:
-    """
-    Fetch IMF DataMapper time series for Egypt using IMF indicator codes.
-
-    Use for: IMF-standardised GDP, inflation, current account, fiscal balance for Egypt.
-    indicator_codes: list of IMF indicator codes, e.g. ["NGDPD", "PCPIPCH", "BCA_NGDPD"].
-    Returns: JSON array of (country, indicator, year, value) data points.
-    """
-    items, _ = fetch_imf_datamapper(indicator_codes)
-    return serialize_items(items)
-
-
-@tool
 def tool_eurostat(dataset_codes: List[str]) -> str:
     """
     Fetch Eurostat time-series data for the Euro area using dataset codes.
@@ -312,7 +299,6 @@ ALL_SCRAPER_TOOLS = [
     tool_openalex,
     tool_worldbank,
     tool_fred,
-    tool_imf,
     tool_eurostat,
     tool_alphavantage,
     tool_finnhub,

@@ -1,8 +1,6 @@
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
-    QueryArgs,
     TaskPlan,
-    TOOL_ARG_MODELS,
     Usefulness,
     schema_text,
 )
@@ -41,9 +39,8 @@ def tool_arg_prompt(
     goal: str,
     attempt: int,
 ) -> str:
-    model = TOOL_ARG_MODELS.get(tool_name, QueryArgs)
     prompt = (
-        f"You are choosing arguments for the tool: {tool_name}\n\n"
+        f"You are generating search arguments for the tool: {tool_name}\n\n"
         f"Tool description: {tool_description}\n\n"
         f"Research task: {task_description}\n"
         f"Business context: {context[:300]}\n"
@@ -51,13 +48,17 @@ def tool_arg_prompt(
     )
     if attempt > 0:
         prompt += (
-            f"\nPrevious attempt #{attempt} was rejected or not useful. "
-            "Choose different arguments."
+            f"\nPrevious attempt #{attempt} returned empty or irrelevant data. "
+            "Generate DIFFERENT query keywords or parameters to try a fresh angle."
         )
     prompt += (
-        "\n\nReturn ONLY valid JSON matching this schema. "
-        "Do not add fields that are not in the schema.\n"
-        f"{schema_text(model)}\n"
+        "\n\nGenerate the best query arguments for this tool and task.\n"
+        "Return ONLY valid JSON matching the tool's parameter schema.\n"
+        "Examples:\n"
+        '  list queries:  {"queries": ["AI cybersecurity market 2024", "enterprise threat detection"]}\n'
+        '  series IDs:    {"series_ids": ["CPIAUCSL", "FEDFUNDS"]}\n'
+        '  tickers:       {"tickers": ["PANW", "CRWD"]}\n'
+        '  worldbank:     {"country": "USA", "indicator_codes": ["NY.GDP.MKTP.KD.ZG"]}'
     )
     return prompt
 
