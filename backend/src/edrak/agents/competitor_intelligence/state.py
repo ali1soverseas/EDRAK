@@ -166,6 +166,7 @@ class BatchVerification(BaseModel):
 
 # ---- Target-vs-competitors comparison ----------------------
 class CompetitorAssessment(BaseModel):
+    
     competitor: str
     summary: str = Field(description="2-3 sentences comparing this competitor with the target company on this dimension")
     relative_to_target: Literal[
@@ -268,6 +269,7 @@ class RequirementCheckList(BaseModel):
 # ============================================================
 
 class CompetitorState(TypedDict, total=False):
+    task_id: str
     company: str
     company_context: Dict[str, Any]
     competitors: List[str]
@@ -307,4 +309,8 @@ COMPARISON_DIMENSIONS = [
     "Availability (plans, deployment models, GA vs preview vs announced)",
     "Pricing and packaging",
     "Recent evolution (2026 changes)",
+    "Customer adoption and market traction",
+    "Developer experience and ease of use",
+    "Security, privacy, and compliance",
+    "Support and documentation quality",
 ]

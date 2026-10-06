@@ -1,11 +1,8 @@
 """LangGraph wiring: nodes, edges and the compiled `app`."""
 
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, START, StateGraph
 
-from state import (
-    CompetitorState,
-)
-from nodes import (
+from .nodes import (
     after_queries_router,
     check_research_requirements_node,
     comparison_node,
@@ -18,6 +15,7 @@ from nodes import (
     synthesize_node,
     verify_node,
 )
+from .state import CompetitorState
 
 
 # ============================================================
