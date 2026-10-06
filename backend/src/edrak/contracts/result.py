@@ -68,6 +68,30 @@ class Finding(ContractModel):
     def is_contradicted(self) -> bool:
         return any(ref.relation is EvidenceRelation.CONTRADICTS for ref in self.evidence_refs)
 
+    @model_validator(mode="after")
+    def _one_source_cannot_support_and_contradict(self) -> Finding:
+        """Reject self-refuting claims.
+
+        Without this a single evidence_id can appear as both SUPPORTS and
+        CONTRADICTS, making is_supported and is_contradicted simultaneously
+        true and leaving verification unable to decide which to trust.
+        """
+        relations: dict[str, set[EvidenceRelation]] = {}
+        for ref in self.evidence_refs:
+            relations.setdefault(ref.evidence_id, set()).add(ref.relation)
+
+        clashing = sorted(
+            evidence_id
+            for evidence_id, seen in relations.items()
+            if EvidenceRelation.SUPPORTS in seen
+            and EvidenceRelation.CONTRADICTS in seen
+        )
+        if clashing:
+            raise ValueError(
+                f"evidence cannot both support and contradict the same finding: {clashing}"
+            )
+        return self
+
 
 class WorkerStatus(str, Enum):
     COMPLETED = "completed"
@@ -156,9 +180,47 @@ class WorkerResult(ContractModel):
                 )
         return self
 
-    def to_outcome(self):  # type: ignore[no-untyped-def]
-        from .worker import WorkerOutcome
+    @model_validator(mode="after")
+    def _status_matches_payload(self) -> WorkerResult:
+        """Reject statuses that contradict their own payload."""
+        if self.status is WorkerStatus.FAILED and not (self.error or "").strip():
+            raise ValueError("status='failed' requires a non-empty error")
 
+        if self.status is WorkerStatus.NO_EVIDENCE and self.findings:
+            raise ValueError(
+                f"status='no_evidence' cannot carry findings: "
+                f"{[f.finding_id for f in self.findings]}"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _conflicts_do_not_contradict_the_findings_own_support(self) -> WorkerResult:
+        """A conflict must not refute evidence its own finding cites as support.
+
+        Otherwise the same evidence_id is asserted on both sides and the conflict
+        is decorative: nothing reconciles the two claims.
+        """
+        findings = {finding.finding_id: finding for finding in self.findings}
+
+        for conflict in self.conflicts:
+            finding = findings.get(conflict.finding_id)
+            if finding is None:
+                continue
+
+            supported = {
+                ref.evidence_id
+                for ref in finding.evidence_refs
+                if ref.relation is EvidenceRelation.SUPPORTS
+            }
+            clash = sorted(supported & set(conflict.contradicting_evidence_ids))
+            if clash:
+                raise ValueError(
+                    f"conflict on {conflict.finding_id!r} refutes evidence the finding "
+                    f"cites as support: {clash}"
+                )
+        return self
+
+    def to_outcome(self) -> WorkerOutcome:
         return WorkerOutcome(
             task_id=self.task_id,
             worker=self.worker,
@@ -168,13 +230,18 @@ class WorkerResult(ContractModel):
         )
 
 
-# Ensure WorkerOutcome can reference WorkerStatus after both classes are defined.
-from .worker import WorkerOutcome  # noqa: E402, F401
+class WorkerOutcome(ContractModel):
+    """Control-plane view of a worker result.
 
-try:
-    WorkerOutcome.model_rebuild()
-except Exception:
-    pass
+    Orchestrator nodes may read only these fields. Findings and evidence must
+    never be inspected by the orchestrator; they pass through untouched.
+    """
+
+    task_id: NonBlankStr = Field(description="task_id of the ResearchTask this answers.")
+    worker: WorkerType = Field(description="Which worker produced this result.")
+    status: WorkerStatus = Field(description="Outcome of the task.")
+    attempt: int = Field(default=1, ge=1, description="Attempt number that produced this result.")
+    error: str | None = Field(default=None, description="Failure detail when status is failed.")
 
 
 class RunStatus(str, Enum):
@@ -201,3 +268,34 @@ class OrchestrationResult(ContractModel):
         default_factory=utcnow,
         description="When the run finished (UTC).",
     )
+
+    @model_validator(mode="after")
+    def _result_task_ids_are_unique(self) -> OrchestrationResult:
+        """Duplicate task_id means one attempt silently displaced the other."""
+        task_ids = [result.task_id for result in self.results]
+        if len(set(task_ids)) != len(task_ids):
+            duplicates = sorted({t for t in task_ids if task_ids.count(t) > 1})
+            raise ValueError(f"duplicate task_id in results: {duplicates}")
+        return self
+
+    @model_validator(mode="after")
+    def _results_are_covered_by_the_plan(self) -> OrchestrationResult:
+        """A result no planned task produced is unattributable."""
+        if self.plan is None:
+            return self
+
+        planned = {task.task_id for task in self.plan.tasks}
+        orphans = sorted({r.task_id for r in self.results} - planned)
+        if orphans:
+            raise ValueError(f"results reference task_id(s) absent from the plan: {orphans}")
+        return self
+
+    @model_validator(mode="after")
+    def _completed_run_has_no_failed_workers(self) -> OrchestrationResult:
+        """status='completed' with a FAILED member is self-contradictory."""
+        failed = [r.task_id for r in self.results if r.status is WorkerStatus.FAILED]
+        if failed and self.status is RunStatus.COMPLETED:
+            raise ValueError(
+                f"status='completed' but {len(failed)} worker(s) failed: {sorted(failed)}"
+            )
+        return self

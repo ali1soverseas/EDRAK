@@ -21,18 +21,24 @@ class TriggerType(str, Enum):
 
 
 class CompanyProfile(ContractModel):
-    """Minimal baseline describing the company under analysis."""
+    """Minimal baseline describing the company under analysis.
+
+    Provisional. This field set is intentionally minimal and is expected to be
+    replaced once the internal-knowledge baseline is derived from
+    https://handbook.gitlab.com/handbook/ . Kept small on purpose so that
+    extraction can reshape it without breaking workers already built on it.
+    """
 
     name: NonBlankStr = Field(
         description="Canonical name of the company under analysis."
     )
 
-    aliases: list[str] = Field(
+    aliases: list[NonBlankStr] = Field(
         default_factory=list,
         description="Alternative names or commonly used company names.",
     )
 
-    products: list[str] = Field(
+    products: list[NonBlankStr] = Field(
         default_factory=list,
         description="Known products or offerings relevant to the analysis.",
     )
@@ -50,12 +56,12 @@ class BusinessContext(ContractModel):
         description="EDRAK MVP use case represented by this request."
     )
 
-    targets: list[str] = Field(
+    targets: list[NonBlankStr] = Field(
         default_factory=list,
         description="Competitors, markets, products, or other analysis targets.",
     )
 
-    focus_areas: list[str] = Field(
+    focus_areas: list[NonBlankStr] = Field(
         default_factory=list,
         description="Dimensions the analysis should emphasize.",
     )
@@ -71,7 +77,7 @@ class BusinessContext(ContractModel):
         description="Optional research recency window in days.",
     )
 
-    constraints: list[str] = Field(
+    constraints: list[NonBlankStr] = Field(
         default_factory=list,
         description="Explicit analysis constraints or requirements.",
     )
