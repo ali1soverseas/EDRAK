@@ -2,7 +2,7 @@
 
 import re
 import string
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime
 from typing import Any
 
@@ -23,6 +23,7 @@ from edrak.agents.customer_trends.providers.base import (
 )
 from edrak.agents.customer_trends.providers.config import ProviderConfig
 from edrak.agents.customer_trends.providers.http import RateLimiter
+from edrak.agents.customer_trends.providers.keys import KeyRing, with_failover
 from edrak.agents.customer_trends.schemas.common import StrictModel
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
@@ -151,9 +152,12 @@ class ApifyProvider:
         token: str,
         config: ProviderConfig,
         *,
+        fallback_tokens: Sequence[str] = (),
         clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     ) -> None:
-        self._apify = ApifyClient(client, token, limiter=RateLimiter(config.min_interval_s))
+        self._http = client
+        self._limiter = RateLimiter(config.min_interval_s)
+        self._keys = KeyRing([token, *fallback_tokens])
         self._clock = clock
         self._timeout_s = int(config.options.get("timeout_s", DEFAULT_TIMEOUT_S))
         self._specs = {
@@ -169,6 +173,10 @@ class ApifyProvider:
         return self._specs[capability]
 
     async def call(self, capability: str, params: dict[str, Any]) -> ProviderResult:
+        """Serve a capability, moving to a fallback token if the current one is out of credit."""
+        return await with_failover(self._keys, NAME, lambda: self._serve(capability, params))
+
+    async def _serve(self, capability: str, params: dict[str, Any]) -> ProviderResult:
         spec = self._specs.get(capability)
         if spec is None or not spec.enabled or not spec.actor:
             raise ProviderBadResponse(f"{NAME}: unsupported capability {capability!r}")
@@ -180,7 +188,8 @@ class ApifyProvider:
         if missing:
             raise ProviderBadResponse(f"{NAME}: {capability} needs {', '.join(missing)}")
         run_input = render_input(spec.input, values, spec.values)
-        raw = await self._apify.run(spec.actor, run_input, limit=limit, timeout_s=self._timeout_s)
+        apify = ApifyClient(self._http, self._keys.current, limiter=self._limiter)
+        raw = await apify.run(spec.actor, run_input, limit=limit, timeout_s=self._timeout_s)
 
         ctx = MapContext(call, now)
         cost = spec.cost_per_run_usd + spec.cost_per_item_usd * len(raw)

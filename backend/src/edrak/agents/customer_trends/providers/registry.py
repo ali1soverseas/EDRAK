@@ -116,22 +116,26 @@ class ProviderRegistry:
         registry.register(
             DirectHttpProvider(http_client, config.providers["direct_http"], clock=clock)
         )
-        if settings.apify_token and settings.has_key("apify_token"):
+        apify_tokens = settings.key_list("apify_token", "apify_fallback_tokens")
+        if apify_tokens:
             registry.register(
                 ApifyProvider(
                     http_client,
-                    settings.apify_token.get_secret_value(),
+                    apify_tokens[0],
                     config.providers["apify"],
+                    fallback_tokens=apify_tokens[1:],
                     clock=clock,
                 )
             )
-        if settings.socialcrawl_api_key and settings.has_key("socialcrawl_api_key"):
+        socialcrawl_keys = settings.key_list("socialcrawl_api_key", "socialcrawl_fallback_api_keys")
+        if socialcrawl_keys:
             registry.register(
                 SocialCrawlProvider(
                     http_client,
-                    settings.socialcrawl_api_key.get_secret_value(),
+                    socialcrawl_keys[0],
                     settings.socialcrawl_base_url,
                     config.providers["socialcrawl"],
+                    fallback_keys=socialcrawl_keys[1:],
                     clock=clock,
                 )
             )

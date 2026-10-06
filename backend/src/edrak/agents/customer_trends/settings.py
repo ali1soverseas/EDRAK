@@ -47,7 +47,9 @@ class Settings(BaseSettings):
 
     # Data providers
     apify_token: SecretStr | None = None
+    apify_fallback_tokens: SecretStr | None = None  # comma separated
     socialcrawl_api_key: SecretStr | None = None
+    socialcrawl_fallback_api_keys: SecretStr | None = None  # comma separated
     socialcrawl_base_url: str = "https://www.socialcrawl.dev/v1"
     youtube_api_key: SecretStr | None = None
     serper_api_key: SecretStr | None = None
@@ -93,6 +95,15 @@ class Settings(BaseSettings):
     def has_key(self, name: str) -> bool:
         value = getattr(self, name.lower(), None)
         return isinstance(value, SecretStr) and bool(value.get_secret_value())
+
+    def key_list(self, primary: str, fallbacks: str) -> list[str]:
+        """The primary key and then the comma separated fallbacks, without blanks or repeats."""
+        values: list[str] = []
+        for name in (primary, fallbacks):
+            secret = getattr(self, name, None)
+            if isinstance(secret, SecretStr):
+                values.extend(part.strip() for part in secret.get_secret_value().split(","))
+        return list(dict.fromkeys(value for value in values if value))
 
     def redacted(self) -> dict[str, str | int | float | bool | None]:
         """Settings safe to display: secrets become `set` or `missing`."""

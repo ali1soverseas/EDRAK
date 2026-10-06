@@ -6,7 +6,7 @@ serves which capability is configuration (providers.yaml), not code.
 """
 
 import math
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import UTC, datetime
 from typing import Any
 
@@ -24,6 +24,7 @@ from edrak.agents.customer_trends.providers.base import (
 )
 from edrak.agents.customer_trends.providers.config import ProviderConfig
 from edrak.agents.customer_trends.providers.http import RateLimiter, request_json
+from edrak.agents.customer_trends.providers.keys import KeyRing, with_failover
 from edrak.agents.customer_trends.schemas.common import Platform, SourceType, StrictModel
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 
@@ -99,11 +100,12 @@ class SocialCrawlProvider:
         base_url: str,
         config: ProviderConfig,
         *,
+        fallback_keys: Sequence[str] = (),
         clock: Callable[[], datetime] = lambda: datetime.now(UTC),
         limiter: RateLimiter | None = None,
     ) -> None:
         self._client = client
-        self._api_key = api_key
+        self._keys = KeyRing([api_key, *fallback_keys])
         self._base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
         self._clock = clock
         self._limiter = limiter or RateLimiter(config.min_interval_s)
@@ -129,7 +131,7 @@ class SocialCrawlProvider:
             f"{self._base_url}{path}",
             provider=NAME,
             params=params,
-            headers={"x-api-key": self._api_key},
+            headers={"x-api-key": self._keys.current},
             limiter=self._limiter,
             error_mapper=map_error if tolerate_no_data else None,
         )
@@ -146,6 +148,10 @@ class SocialCrawlProvider:
         return int(balance)
 
     async def call(self, capability: str, params: dict[str, Any]) -> ProviderResult:
+        """Serve a capability, moving to a fallback key if the current one is out of credit."""
+        return await with_failover(self._keys, NAME, lambda: self._serve(capability, params))
+
+    async def _serve(self, capability: str, params: dict[str, Any]) -> ProviderResult:
         spec = self._endpoints.get(capability)
         if spec is None:
             raise ProviderBadResponse(f"{NAME}: unsupported capability {capability!r}")
