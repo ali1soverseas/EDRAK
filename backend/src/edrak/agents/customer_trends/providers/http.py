@@ -8,6 +8,7 @@ from typing import Any
 import httpx
 from tenacity import (
     AsyncRetrying,
+    RetryCallState,
     retry_if_exception_type,
     stop_after_attempt,
     wait_random_exponential,
@@ -24,6 +25,7 @@ from edrak.agents.customer_trends.providers.base import (
 
 USER_AGENT = "edrak-customer-trends/0.1"
 DEFAULT_ATTEMPTS = 3
+MAX_RETRY_AFTER_S = 60.0
 _BODY_PREVIEW_CHARS = 200
 
 ErrorMapper = Callable[[httpx.Response], ProviderError | None]
@@ -77,6 +79,20 @@ async def _sleep(seconds: float) -> None:
     await asyncio.sleep(seconds)
 
 
+_BACKOFF = wait_random_exponential(multiplier=0.5, max=8)
+
+
+def _wait(state: RetryCallState) -> float:
+    """Exponential backoff with jitter, or the server's Retry-After when that is longer."""
+    delay = _BACKOFF(state)
+    error = state.outcome.exception() if state.outcome else None
+    if isinstance(error, _Retryable) and isinstance(error.error, ProviderRateLimited):
+        advised = error.error.retry_after_s
+        if advised:
+            return max(delay, min(advised, MAX_RETRY_AFTER_S))
+    return delay
+
+
 def _retry_after(response: httpx.Response) -> float | None:
     value = response.headers.get("retry-after", "")
     return float(value) if value.replace(".", "", 1).isdigit() else None
@@ -94,7 +110,7 @@ def _interpret(
 ) -> Any:
     mapped = error_mapper(response) if error_mapper else None
     if mapped is not None:
-        if isinstance(mapped, ProviderRateLimited | ProviderUnavailable):
+        if isinstance(mapped, ProviderRateLimited | ProviderUnavailable) and mapped.retryable:
             raise _Retryable(mapped)
         raise mapped
     status = response.status_code
@@ -160,6 +176,7 @@ async def request_json(
     error_mapper: ErrorMapper | None = None,
     empty_ok: bool = False,
     attempts: int = DEFAULT_ATTEMPTS,
+    request_timeout: float | None = None,
 ) -> Any:
     """Send a request and return its parsed JSON.
 
@@ -167,14 +184,16 @@ async def request_json(
     exponential backoff and jitter, then reported as `ProviderRateLimited` or
     `ProviderUnavailable`. Rejected credentials (401, 403), usage limits (402), other client
     errors and malformed bodies fail at once. `error_mapper` can claim a response first, for
-    providers that signal quota problems inside a 403. Error messages never include the URL,
-    which may carry credentials.
+    providers that signal quota problems inside a 403, and its errors are retried only when
+    their `retryable` flag is true. A 429 with `Retry-After` waits at least that long (up to a
+    minute). `request_timeout` overrides the client's timeout for slow calls. Error messages never
+    include the URL, which may carry credentials.
     """
     try:
         async for attempt in AsyncRetrying(
             retry=retry_if_exception_type(_Retryable),
             stop=stop_after_attempt(attempts),
-            wait=wait_random_exponential(multiplier=0.5, max=8),
+            wait=_wait,
             sleep=_sleep,
             reraise=True,
         ):
@@ -190,6 +209,7 @@ async def request_json(
                     params=params,
                     json=json,
                     headers=headers,
+                    **({"timeout": request_timeout} if request_timeout is not None else {}),
                 )
     except _Retryable as exc:
         raise exc.error from None

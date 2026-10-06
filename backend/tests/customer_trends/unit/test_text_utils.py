@@ -95,7 +95,7 @@ def test_detect_language_returns_none_without_letters(text: str) -> None:
     assert detect_language(text) is None
 
 
-@pytest.mark.parametrize("text", ["ok", "good", "xx"])
+@pytest.mark.parametrize("text", ["ok", "good", "xx", "bad", "Great product", "Support is slow"])
 def test_detect_language_is_none_for_tiny_latin_text(text: str) -> None:
     assert detect_language(text) is None
 

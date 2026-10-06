@@ -9,10 +9,12 @@ from typing import Any
 import httpx
 
 from edrak.agents.customer_trends.providers.base import (
+    RELATIVE_UNIT_DAYS,
     CallParams,
     ProviderBadResponse,
     ProviderResult,
     new_evidence,
+    parse_relative_date,
 )
 from edrak.agents.customer_trends.providers.config import ProviderConfig
 from edrak.agents.customer_trends.providers.http import RateLimiter, request_json
@@ -37,8 +39,6 @@ CAPABILITIES = {
     *(f"social_search:{platform.value}" for platform in SOCIAL_DOMAINS),
 }
 
-_RELATIVE = re.compile(r"(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago", re.IGNORECASE)
-_UNIT_DAYS = {"minute": 1 / 1440, "hour": 1 / 24, "day": 1, "week": 7, "month": 30, "year": 365}
 _DATE_FORMATS = ("%b %d, %Y", "%B %d, %Y", "%Y-%m-%d", "%d %b %Y", "%d %B %Y")
 
 # Serper localizes dates with the `hl` parameter, and the first requested language is sent as
@@ -96,15 +96,14 @@ def parse_serper_date(value: str | None, now: datetime) -> datetime | None:
             return datetime(year, month, day, tzinfo=UTC)
         except ValueError:
             return None
-    relative = _RELATIVE.search(text)
+    relative = parse_relative_date(text, now)
     if relative:
-        days = int(relative.group(1)) * _UNIT_DAYS[relative.group(2).lower()]
-        return now - timedelta(days=days)
+        return relative
     arabic = _ARABIC_RELATIVE.search(text)
     if arabic:
         unit, default = _ARABIC_UNITS[arabic.group(2)]
         count = int(arabic.group(1)) if arabic.group(1) else default
-        return now - timedelta(days=count * _UNIT_DAYS[unit])
+        return now - timedelta(days=count * RELATIVE_UNIT_DAYS[unit])
     absolute = _ARABIC_ABSOLUTE.search(text)
     if absolute:
         try:

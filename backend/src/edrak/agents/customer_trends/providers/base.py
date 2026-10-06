@@ -1,7 +1,8 @@
 """Provider contract: protocol, result model, error types, capability names and call params."""
 
+import re
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Any, Literal, Protocol
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -33,6 +34,15 @@ CAPABILITY_VARIANTS: dict[str, frozenset[str] | None] = {
     "news": frozenset({"gdelt", "google_news"}),
 }
 
+_RELATIVE = re.compile(r"(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago", re.IGNORECASE)
+RELATIVE_UNIT_DAYS = {
+    "minute": 1 / 1440,
+    "hour": 1 / 24,
+    "day": 1,
+    "week": 7,
+    "month": 30,
+    "year": 365,
+}
 _TRACKING_PARAMS = frozenset({"fbclid", "gclid", "igshid", "ref", "ref_src"})
 
 
@@ -65,6 +75,8 @@ class ProviderNotConfigured(ProviderError):
 
 
 class ProviderRateLimited(ProviderError):
+    retryable = True
+
     def __init__(self, message: str, *, retry_after_s: float | None = None) -> None:
         super().__init__(message)
         self.retry_after_s = retry_after_s
@@ -76,6 +88,8 @@ class ProviderQuotaExceeded(ProviderError):
 
 class ProviderUnavailable(ProviderError):
     """Timeouts, connection failures and 5xx responses."""
+
+    retryable = True
 
 
 class ProviderBadResponse(ProviderError):
@@ -149,10 +163,31 @@ class CallParams(BaseModel):
     post_url: str | None = None
     hashtags: list[str] = Field(default_factory=list)
     sort: Literal["recent", "top"] = "recent"
+    keywords: list[str] = Field(default_factory=list)
+    timeframe: str = "today 12-m"
+    target: str | None = None
+    country: str | None = None
 
     @property
     def wanted(self) -> int:
         return self.max_results or 10
+
+
+def parse_relative_date(value: Any, now: datetime) -> datetime | None:
+    """'3 days ago' and similar English phrases, resolved against `now`."""
+    match = _RELATIVE.search(value) if isinstance(value, str) else None
+    if match is None:
+        return None
+    days = int(match.group(1)) * RELATIVE_UNIT_DAYS[match.group(2).lower()]
+    return now - timedelta(days=days)
+
+
+def in_window(published: datetime | None, since: date | None, until: date | None) -> bool:
+    """False only when `published` is known and falls outside the inclusive day range."""
+    if published is None:
+        return True
+    day = published.astimezone(UTC).date()
+    return not ((since and day < since) or (until and day > until))
 
 
 def canonical_url(url: str) -> str:

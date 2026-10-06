@@ -40,7 +40,7 @@ _PERSIAN_ONLY_LETTERS = re.compile(
     _char_class((0x067E, 0x067E), (0x0686, 0x0686), (0x0698, 0x0698), (0x06AF, 0x06AF))
 )
 _ARABIC_SCRIPT_LOOKALIKES = frozenset({"fa", "ur", "ps", "sd", "ug", "ku"})
-_MIN_LETTERS = 5
+_MIN_LETTERS = 15
 _SHORT_TEXT_LETTERS = 20
 _SHORT_TEXT_MIN_CONFIDENCE = 0.9
 

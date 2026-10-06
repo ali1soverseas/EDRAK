@@ -1,5 +1,6 @@
 """Builders for evidence and results used across the worker's tests."""
 
+import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -41,6 +42,11 @@ class FakeClock:
 def call_params(**overrides: Any) -> dict[str, Any]:
     """Provider call params for the default test run."""
     return {"run_id": RUN_ID, "task_id": TASK_ID, **overrides}
+
+
+def fixture_json(*parts: str) -> Any:
+    """A recorded payload from fixtures/: fixture_json("providers", "apify", "x_post.json")."""
+    return json.loads(FIXTURES.joinpath(*parts).read_text(encoding="utf-8"))
 
 
 def load_brief(use_case: str = "competitive_intelligence") -> TaskBrief:

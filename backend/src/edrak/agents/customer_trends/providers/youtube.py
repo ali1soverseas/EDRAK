@@ -24,6 +24,7 @@ from edrak.agents.customer_trends.providers.base import (
     ProviderQuotaExceeded,
     ProviderRateLimited,
     ProviderResult,
+    in_window,
     new_evidence,
 )
 from edrak.agents.customer_trends.providers.config import ProviderConfig
@@ -169,9 +170,10 @@ def _parse_time(value: Any) -> datetime | None:
     if not isinstance(value, str):
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError:
         return None
+    return moment.replace(tzinfo=UTC) if moment.tzinfo is None else moment.astimezone(UTC)
 
 
 def _engagement(**counts: Any) -> dict[str, int]:
@@ -399,7 +401,7 @@ class YouTubeProvider:
         snippet = top.get("snippet") or {}
         text = str(snippet.get("textDisplay") or snippet.get("textOriginal") or "").strip()
         published = _parse_time(snippet.get("publishedAt"))
-        if not text or _outside(published, call.since, call.until):
+        if not text or not in_window(published, call.since, call.until):
             return None
         comment_id = str(top.get("id") or thread.get("id") or "")
         return new_evidence(
@@ -422,13 +424,3 @@ class YouTubeProvider:
 
 def _rfc3339(day: date) -> str:
     return datetime.combine(day, time.min, tzinfo=UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _outside(published: datetime | None, since: date | None, until: date | None) -> bool:
-    if published is None or (since is None and until is None):
-        return False
-    if since and published < datetime.combine(since, time.min, tzinfo=UTC):
-        return True
-    return bool(
-        until and published >= datetime.combine(until + timedelta(days=1), time.min, tzinfo=UTC)
-    )

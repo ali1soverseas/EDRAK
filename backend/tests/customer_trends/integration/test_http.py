@@ -170,3 +170,44 @@ async def test_rate_limiter_is_applied_before_every_attempt(respx_mock: respx.Mo
     respx_mock.get(URL).mock(side_effect=[httpx.Response(500), httpx.Response(200, json={})])
     await fetch(limiter=limiter)
     assert clock.sleeps == [1.0]
+
+
+async def test_a_mapped_error_marked_not_retryable_is_raised_at_once(
+    respx_mock: respx.MockRouter,
+) -> None:
+    class NoRetry(ProviderUnavailable):
+        retryable = False
+
+    route = respx_mock.get(URL).mock(return_value=httpx.Response(400))
+    with pytest.raises(NoRetry):
+        await fetch(error_mapper=lambda response: NoRetry("run failed"))
+    assert route.call_count == 1
+
+
+async def test_retry_after_sets_a_minimum_wait(
+    respx_mock: respx.MockRouter, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from edrak.agents.customer_trends.providers import http
+
+    waits: list[float] = []
+
+    async def record(seconds: float) -> None:
+        waits.append(seconds)
+
+    monkeypatch.setattr(http, "_sleep", record)
+    respx_mock.get(URL).mock(
+        side_effect=[
+            httpx.Response(429, headers={"Retry-After": "12"}),
+            httpx.Response(429, headers={"Retry-After": "9999"}),
+            httpx.Response(200, json={}),
+        ]
+    )
+    await fetch()
+    assert waits[0] >= 12
+    assert 60 <= waits[1] < 70
+
+
+async def test_a_request_timeout_overrides_the_client_default(respx_mock: respx.MockRouter) -> None:
+    route = respx_mock.get(URL).mock(return_value=httpx.Response(200, json={}))
+    await fetch(request_timeout=123)
+    assert route.calls.last.request.extensions["timeout"]["read"] == 123
