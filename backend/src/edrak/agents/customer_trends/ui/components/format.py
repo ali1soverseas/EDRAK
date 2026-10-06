@@ -14,12 +14,10 @@ from edrak.agents.customer_trends.schemas.analysis import ThemeAggregate
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, Finding
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
-from edrak.agents.customer_trends.tools.registry import COLLECTION_SPECS
+from edrak.agents.customer_trends.tools.registry import COLLECTION_TOOL_NAMES, UNBUDGETED_ERRORS
 from edrak.agents.customer_trends.tools.search_interest import summarize_series
 
 NODE_ORDER = tuple(NODES)
-COLLECTION_TOOLS = frozenset(spec.name for spec in COLLECTION_SPECS)
-NOT_BUDGETED = frozenset({"budget_exceeded", "invalid_input"})
 ARGS_CHARS = 60
 RTL_SHARE = 0.3
 _ARABIC = re.compile("[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]")
@@ -122,8 +120,8 @@ def budget_meter(
         e
         for e in events
         if e.get("type") == "tool_called"
-        and e.get("tool") in COLLECTION_TOOLS
-        and e.get("error_code") not in NOT_BUDGETED
+        and e.get("tool") in COLLECTION_TOOL_NAMES
+        and e.get("error_code") not in UNBUDGETED_ERRORS
     ]
     used = {
         "tool calls": float(len(calls)),

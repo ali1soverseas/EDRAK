@@ -21,6 +21,7 @@ from edrak.agents.customer_trends.schemas.findings import (
     Finding,
 )
 from edrak.agents.customer_trends.schemas.task import TaskBrief
+from edrak.agents.customer_trends.tools.registry import COLLECTION_TOOL_NAMES, UNBUDGETED_ERRORS
 from edrak.agents.customer_trends.tools.search_interest import summarize_series
 from edrak.agents.customer_trends.utils.text import truncate
 
@@ -123,18 +124,29 @@ def fallback_headline(evidence: int, findings: int, gaps: Sequence[Gap], platfor
 
 
 def provenance(deps: WorkerDeps) -> dict[str, Any]:
-    """Models, providers, fallbacks, node timings and a tool call summary, from the run's events."""
+    """Models, providers, fallbacks, node timings and a tool call summary, from the run's events.
+
+    `provider_calls` and `cost_usd` are what the events say the provider calls were and cost; they
+    equal the budget tracker's snapshot, which `budget` repeats.
+    """
     events = deps.bus.events
     tool_events = [e for e in events if e.get("type") == "tool_called"]
-    calls: dict[str, dict[str, int]] = {}
+    calls: dict[str, dict[str, Any]] = {}
     for event in tool_events:
-        entry = calls.setdefault(str(event.get("tool")), {"calls": 0, "errors": 0})
+        entry = calls.setdefault(str(event.get("tool")), {"calls": 0, "errors": 0, "cost_usd": 0.0})
         entry["calls"] += 1
         entry["errors"] += event.get("status") == "error"
+        entry["cost_usd"] = round(entry["cost_usd"] + float(event.get("cost") or 0.0), 6)
     timings: Counter[str] = Counter()
     for event in events:
         if event.get("type") == "node_finished":
             timings[str(event.get("node"))] += int(event.get("duration_ms", 0))
+    budgeted = [
+        e
+        for e in tool_events
+        if e.get("tool") in COLLECTION_TOOL_NAMES and e.get("error_code") not in UNBUDGETED_ERRORS
+    ]
+    snapshot = deps.budget.snapshot()
     return {
         "models": deps.models_used,
         "provider_mode": deps.settings.edrak_provider_mode,
@@ -147,6 +159,9 @@ def provenance(deps: WorkerDeps) -> dict[str, Any]:
             if e.get("fallback_used")
         ],
         "tool_calls": calls,
+        "provider_calls": len(budgeted),
+        "cost_usd": round(sum(float(e.get("cost") or 0.0) for e in budgeted), 6),
+        "budget": {"tool_calls": snapshot.tool_calls, "cost_usd": round(snapshot.cost_usd, 6)},
         "node_timings_ms": dict(timings),
         "replans": sum(1 for e in events if e.get("type") == "replan"),
     }
@@ -203,6 +218,10 @@ def build_result(
         ),
         gaps=control.gaps,
         control_summary=control,
-        provenance={**provenance(deps), "ending": ending},
+        provenance={
+            **provenance(deps),
+            "ending": ending,
+            "open_gaps": [gap.model_dump() for gap in gaps],
+        },
         created_at=datetime.now(UTC),
     )

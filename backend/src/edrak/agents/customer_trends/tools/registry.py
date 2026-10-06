@@ -31,6 +31,10 @@ COLLECTION_SPECS: tuple[ToolSpec, ...] = (
     news_coverage.SPEC,
 )
 
+COLLECTION_TOOL_NAMES = frozenset(spec.name for spec in COLLECTION_SPECS)
+# Errors raised before a call reaches a provider, which the run's budget does not count.
+UNBUDGETED_ERRORS = frozenset({"budget_exceeded", "invalid_input"})
+
 PROCESSING_SPECS: tuple[ToolSpec, ...] = (
     analyze_text.SPEC,
     compute_metrics.SPEC,

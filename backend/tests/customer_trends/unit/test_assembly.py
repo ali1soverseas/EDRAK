@@ -101,9 +101,12 @@ def test_the_provenance_summarizes_the_events_of_a_run(
         "providers_used": {"apify": 1, "socialcrawl": 1},
         "fallbacks": [{"tool": "social_search", "provider": "socialcrawl"}],
         "tool_calls": {
-            "social_search": {"calls": 2, "errors": 1},
-            "analyze_text": {"calls": 1, "errors": 0},
+            "social_search": {"calls": 2, "errors": 1, "cost_usd": 0.0},
+            "analyze_text": {"calls": 1, "errors": 0, "cost_usd": 0.0},
         },
+        "provider_calls": 2,
+        "cost_usd": 0.0,
+        "budget": {"tool_calls": 0, "cost_usd": 0.0},
         "node_timings_ms": {"social": 150},
         "replans": 1,
     }
