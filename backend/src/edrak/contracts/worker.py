@@ -3,13 +3,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from pydantic import Field
-
-from .base import ContractModel, NonBlankStr
 from .task import ResearchTask, WorkerType
 
 if TYPE_CHECKING:
-    from .result import WorkerResult, WorkerStatus
+    from .result import WorkerResult
 
 
 @runtime_checkable
@@ -32,19 +29,6 @@ class WorkerNotRegisteredError(KeyError):
     def __init__(self, worker_type: WorkerType) -> None:
         self.worker_type = worker_type
         super().__init__(f"no worker registered for {worker_type.value!r}")
-
-
-class WorkerOutcome(ContractModel):
-    """Control-plane view of a worker result.
-
-    Only these fields may be read by orchestrator nodes.
-    """
-
-    task_id: NonBlankStr = Field(description="task_id of the ResearchTask this answers.")
-    worker: WorkerType = Field(description="Which worker produced this result.")
-    status: "WorkerStatus" = Field(description="Outcome of the task.")
-    attempt: int = Field(default=1, ge=1, description="Attempt number that produced this result.")
-    error: str | None = Field(default=None, description="Failure detail when status is failed.")
 
 
 class WorkerRegistry:

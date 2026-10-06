@@ -13,20 +13,20 @@ from .result import (
     FindingCategory,
     OrchestrationResult,
     RunStatus,
+    WorkerOutcome,
     WorkerResult,
     WorkerStatus,
 )
 from .task import ResearchPlan, ResearchTask, WorkerType
-from .worker import (
-    Worker,
-    WorkerNotRegisteredError,
-    WorkerOutcome,
-    WorkerRegistry,
-)
 from .verification import (
     TargetedAction,
     VerificationDecision,
     VerificationStatus,
+)
+from .worker import (
+    Worker,
+    WorkerNotRegisteredError,
+    WorkerRegistry,
 )
 
 __all__ = [
@@ -46,10 +46,14 @@ __all__ = [
     "ResearchTask",
     "RunStatus",
     "SourceType",
+    "TargetedAction",
     "TriggerType",
     "UseCase",
+    "VerificationDecision",
+    "VerificationStatus",
     "Worker",
     "WorkerNotRegisteredError",
+    "WorkerOutcome",
     "WorkerRegistry",
     "WorkerResult",
     "WorkerStatus",

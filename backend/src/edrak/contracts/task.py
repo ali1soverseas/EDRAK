@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .base import ContractModel, NonBlankStr, new_id, utcnow
 from .request import BusinessContext, CompanyProfile
@@ -41,7 +41,7 @@ class ResearchTask(ContractModel):
     attempt: int = Field(
         default=1,
         ge=1,
-        description="Stadrts at 1 and increments on targeted retries.",
+        description="Starts at 1 and increments on targeted retries.",
     )
 
 
@@ -61,3 +61,32 @@ class ResearchPlan(ContractModel):
         default=None,
         description="Why these tasks, in plain language.",
     )
+
+    @model_validator(mode="after")
+    def _tasks_belong_to_this_request(self) -> ResearchPlan:
+        """A plan must not carry another request's tasks.
+
+        Nothing downstream would notice a mismatch: verification groups results
+        by request_id, so the task would silently vanish from this request's
+        report while another request carried a task it never planned.
+        """
+        strays = [
+            task.task_id
+            for task in self.tasks
+            if task.parent_request_id != self.request_id
+        ]
+        if strays:
+            raise ValueError(
+                f"task parent_request_id does not match plan request_id "
+                f"{self.request_id!r}: {sorted(strays)}"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _task_ids_are_unique(self) -> ResearchPlan:
+        """Duplicate task_id would be silently merged by the dispatch reducer."""
+        task_ids = [task.task_id for task in self.tasks]
+        if len(set(task_ids)) != len(task_ids):
+            duplicates = sorted({t for t in task_ids if task_ids.count(t) > 1})
+            raise ValueError(f"duplicate task_id in plan tasks: {duplicates}")
+        return self
