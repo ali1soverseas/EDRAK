@@ -1,0 +1,131 @@
+{
+  "success": true,
+  "platform": "reddit",
+  "endpoint": "/v1/reddit/post/comments",
+  "data": {
+    "items": [
+      {
+        "comment": {
+          "id": "cm-1",
+          "url": "https://example.test/comment/1",
+          "parent_id": "1uqw75l",
+          "post_id": "1uqw75l",
+          "text": "Support took a week to answer and the pricing keeps going up. Considering alternatives.",
+          "author": {
+            "username": "reader_1",
+            "display_name": "user_6fe351",
+            "avatar_url": "https://example.test/1719be",
+            "verified": null
+          },
+          "engagement": {
+            "likes": 1,
+            "replies": 0
+          },
+          "flags": {
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-11T10:00:00.000Z",
+          "ext": {
+            "depth": 0,
+            "published_at_epoch": 1783566946
+          }
+        },
+        "computed": {
+          "language": "en",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "comment": {
+          "id": "cm-2",
+          "url": "https://example.test/comment/2",
+          "parent_id": "1uqw75l",
+          "post_id": "1uqw75l",
+          "text": "أحتاج ميزة تتبع الدخل غير المنتظم للعاملين المستقلين في مصر",
+          "author": {
+            "username": "reader_2",
+            "display_name": "user_fec043",
+            "avatar_url": "https://example.test/336725",
+            "verified": null
+          },
+          "engagement": {
+            "likes": 2,
+            "replies": 1
+          },
+          "flags": {
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-12T10:00:00.000Z",
+          "ext": {
+            "depth": 0,
+            "published_at_epoch": 1783554891
+          }
+        },
+        "computed": {
+          "language": "ar",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "comment": {
+          "id": "cm-3",
+          "url": "https://example.test/comment/3",
+          "parent_id": "1uqw75l",
+          "post_id": "1uqw75l",
+          "text": "+1",
+          "flags": {
+            "pinned": null,
+            "deleted": false
+          },
+          "ext": {
+            "depth": 0,
+            "published_at_epoch": 1783577457
+          }
+        },
+        "computed": {
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      }
+    ],
+    "total": 3,
+    "dropped": 0
+  },
+  "credits_used": 1,
+  "request_id": "req-fixture",
+  "cached": false,
+  "pagination": {
+    "next_cursor": null,
+    "has_more": false,
+    "page_size": 3
+  },
+  "credits_remaining": 99
+}

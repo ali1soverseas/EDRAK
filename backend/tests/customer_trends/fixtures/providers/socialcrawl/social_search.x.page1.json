@@ -1,0 +1,170 @@
+{
+  "success": true,
+  "platform": "twitter",
+  "endpoint": "/v1/twitter/search/tweets",
+  "data": {
+    "items": [
+      {
+        "post": {
+          "id": "x-1",
+          "url": "https://www.x.com/item/1",
+          "content": {
+            "text": "GitLab Duo gave better review comments than Copilot on our monorepo, but setup was confusing.",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_1",
+            "display_name": "Author 1",
+            "avatar_url": "https://example.test/0e9e40",
+            "verified": true
+          },
+          "engagement": {
+            "views": 1000,
+            "likes": 20,
+            "comments": 2,
+            "shares": 1,
+            "saves": 1
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": false,
+            "deleted": false
+          },
+          "published_at": "2026-09-01T10:00:00.000Z",
+          "ext": {
+            "author_followers": 70,
+            "author_following": 70,
+            "author_posts_count": 59,
+            "content_language": "ko",
+            "quote_count": 0,
+            "all_media_urls": null
+          }
+        },
+        "computed": {
+          "language": "en",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "x-2",
+          "url": "https://www.x.com/item/2",
+          "content": {
+            "text": "الدعم الفني بطيء جدا والأسعار مرتفعة لكن الميزات ممتازة",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_2",
+            "display_name": "Author 2",
+            "avatar_url": "https://example.test/115b34",
+            "verified": true
+          },
+          "engagement": {
+            "views": 2000,
+            "likes": 40,
+            "comments": 4,
+            "shares": 2,
+            "saves": 2
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": false,
+            "deleted": false
+          },
+          "published_at": "2026-09-02T10:00:00.000Z",
+          "ext": {
+            "author_followers": 218,
+            "author_following": 296,
+            "author_posts_count": 3103,
+            "content_language": "en",
+            "quote_count": 0,
+            "all_media_urls": null
+          }
+        },
+        "computed": {
+          "language": "ar",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "x-3",
+          "url": "https://www.x.com/item/3",
+          "content": {
+            "text": "short",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_3",
+            "display_name": "user_caeb92",
+            "avatar_url": "https://example.test/c4dfe3",
+            "verified": true
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": false,
+            "deleted": false
+          },
+          "ext": {
+            "author_followers": 1976,
+            "author_following": 23,
+            "author_posts_count": 179,
+            "content_language": "en",
+            "quote_count": 0,
+            "all_media_urls": null
+          }
+        },
+        "computed": {
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      }
+    ],
+    "total": 3,
+    "dropped": 0
+  },
+  "credits_used": 1,
+  "request_id": "req-fixture",
+  "cached": false,
+  "pagination": {
+    "next_cursor": "sc.cursor-two",
+    "has_more": true,
+    "page_size": 3
+  },
+  "credits_remaining": 99
+}
