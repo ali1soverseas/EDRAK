@@ -167,6 +167,8 @@ class CallParams(BaseModel):
     timeframe: str = "today 12-m"
     target: str | None = None
     country: str | None = None
+    url: str | None = None
+    max_chars: int = Field(default=20000, ge=1)
 
     @property
     def wanted(self) -> int:

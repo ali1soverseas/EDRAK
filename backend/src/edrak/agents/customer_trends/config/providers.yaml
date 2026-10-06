@@ -301,6 +301,9 @@ providers:
       note: Google Trends API alpha. The adapter is a stub until access is approved.
   direct_http:
     min_interval_s: 0.0
+    options:
+      max_bytes: 2000000
+      timeout_s: 20
 
 # Ordered provider names per capability. A name with no registered provider is skipped.
 routing:

@@ -24,6 +24,7 @@ from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
 from edrak.agents.customer_trends.providers.config import ProvidersConfig, load_providers_config
+from edrak.agents.customer_trends.providers.direct_http import DirectHttpProvider
 from edrak.agents.customer_trends.providers.gdelt import GdeltProvider
 from edrak.agents.customer_trends.providers.google_trends_api import GoogleTrendsApiProvider
 from edrak.agents.customer_trends.providers.http import make_client
@@ -84,9 +85,9 @@ class ProviderRegistry:
     ) -> "ProviderRegistry":
         """Register the providers that can run with the configured keys.
 
-        Providers that need a key are left out without one; the Google Trends stub is always
-        registered so its routing entry resolves. In fixture mode no provider is built at all
-        and no client is opened.
+        Providers that need a key are left out without one; the keyless GDELT and direct page
+        fetcher and the Google Trends stub are always registered. In fixture mode no provider
+        is built at all and no client is opened.
         """
         config = config or load_providers_config()
         fixture_mode = settings.edrak_provider_mode == "fixture"
@@ -112,6 +113,9 @@ class ProviderRegistry:
                 )
             )
         registry.register(GdeltProvider(http_client, config.providers["gdelt"], clock=clock))
+        registry.register(
+            DirectHttpProvider(http_client, config.providers["direct_http"], clock=clock)
+        )
         if settings.apify_token and settings.has_key("apify_token"):
             registry.register(
                 ApifyProvider(

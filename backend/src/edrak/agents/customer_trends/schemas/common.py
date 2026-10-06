@@ -135,11 +135,25 @@ class BudgetSnapshot(StrictModel):
 class ScopeBase(StrictModel):
     """Fields shared by the task brief and every collection tool input."""
 
-    languages: list[LanguageCode] = Field(default_factory=lambda: ["ar", "en"], min_length=1)
-    geo: CountryCode | None = None
-    since: date | None = None
-    until: date | None = None
-    depth: Depth = Depth.STANDARD
+    languages: list[LanguageCode] = Field(
+        default_factory=lambda: ["ar", "en"],
+        min_length=1,
+        description="Language codes (ISO 639-1) to cover, for example ['ar', 'en'].",
+    )
+    geo: CountryCode | None = Field(
+        default=None,
+        description="Country (ISO 3166-1 alpha-2) the question is about, for example EG.",
+    )
+    since: date | None = Field(
+        default=None, description="Only items published on or after this date (YYYY-MM-DD)."
+    )
+    until: date | None = Field(
+        default=None, description="Only items published on or before this date (YYYY-MM-DD)."
+    )
+    depth: Depth = Field(
+        default=Depth.STANDARD,
+        description="light, standard or deep: sets the most results one call may return.",
+    )
 
     @model_validator(mode="after")
     def _check_date_order(self) -> Self:
@@ -151,8 +165,14 @@ class ScopeBase(StrictModel):
 class RequestBase(ScopeBase):
     run_id: RunId
     task_id: NonEmpty
-    max_results: int | None = Field(default=None, ge=1)
-    entity: str | None = None
+    max_results: int | None = Field(
+        default=None,
+        ge=1,
+        description="How many results to ask for; the cap for the depth applies.",
+    )
+    entity: str | None = Field(
+        default=None, description="Company, product or category under study, if it matters."
+    )
 
     @model_validator(mode="after")
     def _clamp_max_results(self) -> Self:

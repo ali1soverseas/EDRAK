@@ -43,7 +43,7 @@ def build(tmp_path: Path, **kwargs: object) -> ProviderRegistry:
 async def test_without_keys_only_keyless_providers_are_registered(tmp_path: Path) -> None:
     registry = build(tmp_path)
     try:
-        assert sorted(registry.providers) == ["gdelt", "google_trends_api"]
+        assert sorted(registry.providers) == ["direct_http", "gdelt", "google_trends_api"]
     finally:
         await registry.aclose()
 
@@ -51,7 +51,13 @@ async def test_without_keys_only_keyless_providers_are_registered(tmp_path: Path
 async def test_keys_register_their_providers(tmp_path: Path) -> None:
     registry = build(tmp_path, serper_api_key="s", youtube_api_key="y")
     try:
-        assert sorted(registry.providers) == ["gdelt", "google_trends_api", "serper", "youtube_api"]
+        assert sorted(registry.providers) == [
+            "direct_http",
+            "gdelt",
+            "google_trends_api",
+            "serper",
+            "youtube_api",
+        ]
         assert "social_search:x" in registry.providers["serper"].capabilities
         assert registry.providers["youtube_api"].capabilities == {
             "social_search:youtube",

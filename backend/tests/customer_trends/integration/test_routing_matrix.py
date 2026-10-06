@@ -13,8 +13,6 @@ from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.settings import Settings
 from tests.customer_trends.factories import NOW, call_params
 
-# fetch_page is served by the direct fetcher that arrives with the collection tools.
-NOT_YET_BUILT = {"fetch_page"}
 APIFY_RUN = "https://api.apify.com/v2/acts/{actor}/run-sync-get-dataset-items"
 
 
@@ -54,8 +52,7 @@ async def test_every_capability_has_a_registered_provider_and_the_table_is_print
                 f"{capability:<24} {' > '.join(configured):<44} "
                 f"serves: {' > '.join(serving) or '-'}"
             )
-            if capability not in NOT_YET_BUILT:
-                assert serving, f"no registered provider can serve {capability}"
+            assert serving, f"no registered provider can serve {capability}"
     finally:
         print(
             "\n"
@@ -92,6 +89,7 @@ async def test_the_effective_order_per_capability(tmp_path: Path) -> None:
         assert serving_providers(registry, "news:gdelt") == ["gdelt"]
         assert serving_providers(registry, "news:google_news") == ["serper"]
         assert serving_providers(registry, "web_search") == ["serper"]
+        assert serving_providers(registry, "fetch_page") == ["direct_http"]
     finally:
         await registry.aclose()
 
