@@ -7,19 +7,21 @@ serves which capability is configuration (providers.yaml), not code.
 
 import math
 from collections.abc import Callable, Sequence
-from datetime import UTC, datetime
-from typing import Any
+from datetime import UTC, date, datetime
+from typing import Any, Literal
 
 import httpx
 from pydantic import Field
 
 from edrak.agents.customer_trends.providers.base import (
+    PENDING_BATCH,
     CallParams,
     ProviderBadResponse,
     ProviderError,
     ProviderQuotaExceeded,
     ProviderResult,
     in_window,
+    infer_granularity,
     new_evidence,
 )
 from edrak.agents.customer_trends.providers.config import ProviderConfig
@@ -27,11 +29,13 @@ from edrak.agents.customer_trends.providers.http import RateLimiter, request_jso
 from edrak.agents.customer_trends.providers.keys import KeyRing, with_failover
 from edrak.agents.customer_trends.schemas.common import Platform, SourceType, StrictModel
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
+from edrak.agents.customer_trends.schemas.trends import TrendSeries
 
 NAME = "socialcrawl"
 DEFAULT_BASE_URL = "https://www.socialcrawl.dev/v1"
 DEFAULT_MAX_PAGES = 5
 DEFAULT_PREFLIGHT_MIN_CREDITS = 5
+MAX_TREND_KEYWORDS = 5
 _METADATA_KEYS = ("relevance", "labels")
 _MAX_METADATA_CHARS = 600
 
@@ -43,12 +47,15 @@ class SortSpec(StrictModel):
 
 class EndpointSpec(StrictModel):
     path: str
-    input: str
+    input: str = "query"
+    kind: Literal["posts", "trends"] = "posts"
     credits_per_page: int = Field(default=1, ge=0)
     page_size: int = Field(default=20, ge=1)
     params: dict[str, str] = Field(default_factory=dict)
     sort: SortSpec | None = None
     date_operators: bool = False
+    expected_yield: float = Field(default=1.0, gt=0, le=1)
+    timeframes: dict[str, str] = Field(default_factory=dict)
 
 
 class NoData(ProviderBadResponse):
@@ -156,6 +163,8 @@ class SocialCrawlProvider:
         if spec is None:
             raise ProviderBadResponse(f"{NAME}: unsupported capability {capability!r}")
         call = CallParams.model_validate(params)
+        if spec.kind == "trends":
+            return await self._trends(spec, call)
         platform = Platform(capability.partition(":")[2])
         comments = capability.startswith("social_comments")
         value = call.post_url if spec.input == "url" else _query(call, spec)
@@ -172,6 +181,37 @@ class SocialCrawlProvider:
                     f"{NAME}: {remaining} credits left, about {estimated} needed"
                 )
         return await self._collect(spec, call, platform, comments, value)
+
+    async def _trends(self, spec: EndpointSpec, call: CallParams) -> ProviderResult:
+        """Interest over time for up to five keywords in one call, on one shared 0 to 100 scale."""
+        keywords = call.keywords or ([call.query] if call.query else [])
+        if not keywords or len(keywords) > MAX_TREND_KEYWORDS:
+            raise ProviderBadResponse(f"{NAME}: search_interest needs 1 to 5 keywords")
+        timeframe = spec.timeframes.get(call.timeframe)
+        if timeframe is None:
+            raise ProviderBadResponse(f"{NAME}: timeframe {call.timeframe!r} is not supported")
+        request: dict[str, Any] = {"keywords": ",".join(keywords), "timeframe": timeframe}
+        if call.geo:
+            request["location"] = call.geo
+        if spec.credits_per_page >= self._preflight_min:
+            remaining = await self.credits_remaining()
+            if remaining < spec.credits_per_page:
+                raise ProviderQuotaExceeded(
+                    f"{NAME}: {remaining} credits left, {spec.credits_per_page} needed"
+                )
+        body = await self._get(spec.path, request)
+        series = [
+            built
+            for entry in (body.get("data") or {}).get("series") or []
+            if (built := _to_series(entry, call, timeframe)) is not None
+        ]
+        credits = int(body.get("credits_used") or 0)
+        return ProviderResult(
+            items=series,
+            raw_count=len(series),
+            cost_estimate=credits * self._usd_per_credit,
+            meta={"credits_used": credits},
+        )
 
     async def _collect(
         self, spec: EndpointSpec, call: CallParams, platform: Platform, comments: bool, value: str
@@ -282,6 +322,28 @@ class SocialCrawlProvider:
             metadata={k: v for k, v in metadata.items() if v is not None},
             collected_at=now,
         )
+
+
+def _to_series(entry: Any, call: CallParams, timeframe: str) -> TrendSeries | None:
+    keyword = entry.get("keyword") if isinstance(entry, dict) else None
+    points: list[tuple[date, float]] = []
+    for point in (entry.get("points") if isinstance(entry, dict) else None) or []:
+        moment = _parse_time(point.get("datetime")) if isinstance(point, dict) else None
+        value = point.get("value") if isinstance(point, dict) else None
+        if moment is not None and isinstance(value, int | float) and not isinstance(value, bool):
+            points.append((moment.date(), float(value)))
+    if not isinstance(keyword, str) or not keyword or not points:
+        return None
+    return TrendSeries(
+        keyword=keyword,
+        geo=call.geo,
+        timeframe=call.timeframe,
+        granularity=infer_granularity([day for day, _ in points]),
+        points=points,
+        normalized=True,
+        source=NAME,
+        batch_id=PENDING_BATCH,
+    )
 
 
 def _query(call: CallParams, spec: EndpointSpec) -> str:

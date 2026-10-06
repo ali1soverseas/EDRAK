@@ -3,6 +3,7 @@
 import re
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from statistics import median
 from typing import Any, Literal, Protocol
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -182,6 +183,15 @@ def parse_relative_date(value: Any, now: datetime) -> datetime | None:
         return None
     days = int(match.group(1)) * RELATIVE_UNIT_DAYS[match.group(2).lower()]
     return now - timedelta(days=days)
+
+
+def infer_granularity(days: list[date]) -> Literal["day", "week", "month"]:
+    """Day, week or month, from the typical gap between the dates of a series."""
+    gaps = [(later - earlier).days for earlier, later in zip(days, days[1:], strict=False)]
+    typical = median(gaps) if gaps else 7
+    if typical <= 1.5:
+        return "day"
+    return "week" if typical <= 10 else "month"
 
 
 def in_window(published: datetime | None, since: date | None, until: date | None) -> bool:

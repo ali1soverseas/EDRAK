@@ -11,12 +11,12 @@ import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from statistics import median
-from typing import Any, Literal
+from typing import Any
 
 from edrak.agents.customer_trends.providers.base import (
     PENDING_BATCH,
     CallParams,
+    infer_granularity,
     new_evidence,
     parse_relative_date,
 )
@@ -530,14 +530,6 @@ def amazon_review(item: dict[str, Any], ctx: MapContext) -> EvidenceItem | None:
 # Google Trends
 
 
-def _granularity(days: list[date]) -> Literal["day", "week", "month"]:
-    gaps = [(later - earlier).days for earlier, later in zip(days, days[1:], strict=False)]
-    typical = median(gaps) if gaps else 7
-    if typical <= 1.5:
-        return "day"
-    return "week" if typical <= 10 else "month"
-
-
 def google_trends(item: dict[str, Any], ctx: MapContext) -> TrendSeries | None:
     keyword = item.get("searchTerm") or item.get("inputUrlOrTerm")
     timeline = item.get("interestOverTime_timelineData")
@@ -563,7 +555,7 @@ def google_trends(item: dict[str, Any], ctx: MapContext) -> TrendSeries | None:
         keyword=keyword,
         geo=geo,
         timeframe=ctx.params.timeframe or DEFAULT_TIMEFRAME,
-        granularity=_granularity([day for day, _ in points]),
+        granularity=infer_granularity([day for day, _ in points]),
         points=points,
         normalized=True,
         related_queries=related[:MAX_RELATED_QUERIES],

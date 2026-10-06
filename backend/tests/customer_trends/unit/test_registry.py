@@ -220,7 +220,7 @@ async def test_failures_are_never_cached(tmp_path: Path) -> None:
 
 def test_routing_follows_the_config() -> None:
     routed = registry()
-    assert routed.routing_for("social_search:youtube") == ["youtube_api", "apify", "socialcrawl"]
+    assert routed.routing_for("social_search:youtube") == ["youtube_api", "socialcrawl", "apify"]
     assert routed.routing_for("web_search") == ["serper"]
     assert routed.routing_for("social_search:x")[-1] == "serper"
     assert routed.routing_for("nothing") == []

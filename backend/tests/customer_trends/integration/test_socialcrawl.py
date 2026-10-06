@@ -18,6 +18,7 @@ from edrak.agents.customer_trends.providers.http import RateLimiter, make_client
 from edrak.agents.customer_trends.providers.socialcrawl import SocialCrawlProvider
 from edrak.agents.customer_trends.schemas.common import Platform, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
+from edrak.agents.customer_trends.schemas.trends import TrendSeries
 from tests.customer_trends.factories import NOW, call_params, fixture_json
 
 BASE = "https://www.socialcrawl.dev/v1"
@@ -56,10 +57,10 @@ def query_of(route: respx.Route) -> dict[str, str]:
     return dict(route.calls.last.request.url.params)
 
 
-def test_capabilities_are_all_social_search_and_comments() -> None:
+def test_capabilities_are_social_search_and_comments_plus_search_interest() -> None:
     provider = SocialCrawlProvider(httpx.AsyncClient(), "k", BASE, CONFIG)
     expected = {f"{kind}:{p}" for kind in ("social_search", "social_comments") for p in PLATFORMS}
-    assert provider.capabilities == expected
+    assert provider.capabilities == {*expected, "search_interest"}
 
 
 @pytest.mark.parametrize("platform", PLATFORMS)
@@ -83,7 +84,7 @@ async def test_search_maps_posts_for_every_platform(
     assert arabic.text.startswith(ARABIC) and arabic.language == "ar"
     assert minimal.text == "short" and minimal.published_at is None and minimal.engagement == {}
     assert result.raw_count == 3
-    assert result.cost_estimate == pytest.approx(0.001)
+    assert result.cost_estimate == pytest.approx(0.0033)
     assert first.batch_id == "pending"
 
 
@@ -157,8 +158,8 @@ async def test_search_request_shape(respx_mock: respx.MockRouter) -> None:
 @pytest.mark.parametrize(
     ("capability", "path", "sort", "expected"),
     [
-        ("social_search:tiktok", "/tiktok/search", "recent", {"sort_by": "date-posted"}),
-        ("social_search:tiktok", "/tiktok/search", "top", {"sort_by": "most-liked"}),
+        ("social_search:tiktok", "/tiktok/search", "recent", {}),
+        ("social_search:tiktok", "/tiktok/search", "top", {}),
         ("social_search:reddit", "/reddit/search", "recent", {"sort": "new"}),
         ("social_search:youtube", "/youtube/search", "top", {"sortBy": "popular"}),
         ("social_search:youtube", "/youtube/search", "recent", {}),
@@ -206,7 +207,7 @@ async def test_pagination_sends_the_cursor_verbatim_until_enough_items(
     assert len(items(result)) == 5
     assert result.raw_count == 6
     assert result.next_cursor is None
-    assert result.cost_estimate == pytest.approx(0.002)
+    assert result.cost_estimate == pytest.approx(0.0066)
 
 
 async def test_a_cursor_is_returned_when_more_pages_exist(respx_mock: respx.MockRouter) -> None:
@@ -426,3 +427,108 @@ async def test_an_unsuccessful_envelope_is_a_bad_response(respx_mock: respx.Mock
 
 def test_the_request_body_never_carries_the_key_in_the_url() -> None:
     assert json.dumps(CONFIG.options["endpoints"]).count("key") == 0
+
+
+# search interest
+
+EXPLORE = f"{BASE}/google_trends/explore"
+
+
+def explore_page() -> httpx.Response:
+    return httpx.Response(
+        200, json=fixture_json("providers", "socialcrawl", "search_interest.json")
+    )
+
+
+def balance(respx_mock: respx.MockRouter, credits: int = 100) -> respx.Route:
+    return api(
+        respx_mock,
+        "/credits/balance",
+        httpx.Response(200, json={"success": True, "data": {"balance": credits}}),
+    )
+
+
+async def test_search_interest_sends_keywords_together_and_returns_one_series_each(
+    respx_mock: respx.MockRouter,
+) -> None:
+    balance(respx_mock)
+    route = respx_mock.get(EXPLORE).mock(return_value=explore_page())
+    result = await call(
+        "search_interest",
+        keywords=["gitlab duo", "github copilot"],
+        timeframe="today 12-m",
+        geo="US",
+    )
+    assert dict(route.calls.last.request.url.params) == {
+        "keywords": "gitlab duo,github copilot",
+        "timeframe": "past_12_months",
+        "location": "US",
+    }
+    assert route.calls.last.request.headers["x-api-key"] == "sc-key"
+    duo, copilot = result.items
+    assert isinstance(duo, TrendSeries) and isinstance(copilot, TrendSeries)
+    assert (duo.keyword, duo.geo, duo.timeframe, duo.granularity) == (
+        "gitlab duo",
+        "US",
+        "today 12-m",
+        "day",
+    )
+    assert (duo.normalized, duo.source, duo.batch_id) == (True, "socialcrawl", "pending")
+    assert [v for _, v in duo.points] == [20.0, 35.0, 50.0, 80.0, 100.0, 90.0, 85.0]
+    assert len(copilot.points) == 8
+    assert result.cost_estimate == pytest.approx(5 * 0.0033)
+    assert result.meta["credits_used"] == 5
+
+
+@pytest.mark.parametrize(
+    ("timeframe", "sent"),
+    [
+        ("now 1-H", "past_hour"),
+        ("now 4-H", "past_4_hours"),
+        ("now 1-d", "past_day"),
+        ("now 7-d", "past_7_days"),
+        ("today 1-m", "past_30_days"),
+        ("today 3-m", "past_90_days"),
+        ("today 12-m", "past_12_months"),
+        ("today 5-y", "past_5_years"),
+    ],
+)
+async def test_search_interest_maps_the_timeframes(
+    respx_mock: respx.MockRouter, timeframe: str, sent: str
+) -> None:
+    balance(respx_mock)
+    route = respx_mock.get(EXPLORE).mock(return_value=explore_page())
+    await call("search_interest", keywords=["a"], timeframe=timeframe)
+    assert dict(route.calls.last.request.url.params)["timeframe"] == sent
+    assert "location" not in dict(route.calls.last.request.url.params)
+
+
+async def test_search_interest_refuses_what_it_cannot_ask_for(respx_mock: respx.MockRouter) -> None:
+    route = respx_mock.get(EXPLORE).mock(return_value=explore_page())
+    with pytest.raises(ProviderBadResponse, match="timeframe"):
+        await call("search_interest", keywords=["a"], timeframe="all")
+    with pytest.raises(ProviderBadResponse, match="1 to 5 keywords"):
+        await call("search_interest", keywords=[])
+    with pytest.raises(ProviderBadResponse, match="1 to 5 keywords"):
+        await call("search_interest", keywords=list("abcdef"))
+    assert route.call_count == 0
+
+
+async def test_search_interest_checks_the_balance_first(respx_mock: respx.MockRouter) -> None:
+    balance(respx_mock, credits=2)
+    route = respx_mock.get(EXPLORE).mock(return_value=explore_page())
+    with pytest.raises(ProviderQuotaExceeded, match="2 credits left, 5 needed"):
+        await call("search_interest", keywords=["a"])
+    assert route.call_count == 0
+
+
+async def test_search_interest_without_data_is_an_empty_result(
+    respx_mock: respx.MockRouter,
+) -> None:
+    balance(respx_mock)
+    respx_mock.get(EXPLORE).mock(
+        return_value=httpx.Response(
+            200, json={"success": True, "data": {"series": [{"keyword": "x", "points": []}]}}
+        )
+    )
+    assert (await call("search_interest", keywords=["x"])).items == []

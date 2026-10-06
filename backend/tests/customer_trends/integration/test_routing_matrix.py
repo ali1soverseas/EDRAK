@@ -10,8 +10,9 @@ from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
 from edrak.agents.customer_trends.schemas.common import Budget, Platform, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
+from edrak.agents.customer_trends.schemas.trends import TrendSeries
 from edrak.agents.customer_trends.settings import Settings
-from tests.customer_trends.factories import NOW, call_params
+from tests.customer_trends.factories import NOW, call_params, fixture_json
 
 APIFY_RUN = "https://api.apify.com/v2/acts/{actor}/run-sync-get-dataset-items"
 
@@ -66,25 +67,34 @@ async def test_every_capability_has_a_registered_provider_and_the_table_is_print
 async def test_the_effective_order_per_capability(tmp_path: Path) -> None:
     registry = fully_configured(tmp_path)
     try:
+        for capability in ("tiktok", "instagram", "reddit"):
+            assert serving_providers(registry, f"social_search:{capability}") == [
+                "socialcrawl",
+                "apify",
+                "serper",
+            ]
         assert serving_providers(registry, "social_search:x") == ["apify", "socialcrawl", "serper"]
-        assert serving_providers(registry, "social_search:reddit") == [
-            "apify",
-            "socialcrawl",
-            "serper",
-        ]
         assert serving_providers(registry, "social_search:facebook") == ["socialcrawl", "serper"]
         assert serving_providers(registry, "social_search:youtube") == [
             "youtube_api",
-            "apify",
             "socialcrawl",
+            "apify",
         ]
-        assert serving_providers(registry, "social_comments:facebook") == ["apify", "socialcrawl"]
+        for platform in ("x", "tiktok", "instagram", "facebook", "reddit"):
+            assert serving_providers(registry, f"social_comments:{platform}") == [
+                "socialcrawl",
+                "apify",
+            ]
         assert serving_providers(registry, "social_comments:youtube") == [
             "youtube_api",
+            "socialcrawl",
+            "apify",
+        ]
+        assert serving_providers(registry, "search_interest") == [
             "apify",
             "socialcrawl",
+            "google_trends_api",
         ]
-        assert serving_providers(registry, "search_interest") == ["apify", "google_trends_api"]
         assert serving_providers(registry, "reviews:amazon") == ["apify"]
         assert serving_providers(registry, "news:gdelt") == ["gdelt"]
         assert serving_providers(registry, "news:google_news") == ["serper"]
@@ -175,12 +185,20 @@ async def test_a_successful_primary_is_not_a_fallback(
     assert result.cost_estimate == pytest.approx(0.0004)
 
 
-async def test_search_interest_exhausts_when_apify_fails_and_the_trends_api_is_not_available(
+async def test_search_interest_exhausts_when_every_provider_fails_or_is_unavailable(
     tmp_path: Path, respx_mock: respx.MockRouter
 ) -> None:
     respx_mock.post(APIFY_RUN.format(actor="apify~google-trends-scraper")).mock(
         return_value=httpx.Response(
             400, json={"error": {"type": "run-failed", "message": "status: TIMED-OUT"}}
+        )
+    )
+    respx_mock.get("https://www.socialcrawl.dev/v1/credits/balance").mock(
+        return_value=httpx.Response(200, json={"success": True, "data": {"balance": 100}})
+    )
+    respx_mock.get("https://www.socialcrawl.dev/v1/google_trends/explore").mock(
+        return_value=httpx.Response(
+            503, json={"success": False, "error": {"type": "SERVICE_UNAVAILABLE"}}
         )
     )
     registry = fully_configured(tmp_path)
@@ -191,8 +209,65 @@ async def test_search_interest_exhausts_when_apify_fails_and_the_trends_api_is_n
         await registry.aclose()
     assert [(f.provider, f.error) for f in caught.value.failures] == [
         ("apify", "RunNotFinished"),
+        ("socialcrawl", "ProviderUnavailable"),
         ("google_trends_api", "ProviderNotConfigured"),
     ]
+
+
+async def test_search_interest_falls_back_to_socialcrawl_when_the_apify_run_times_out(
+    tmp_path: Path, respx_mock: respx.MockRouter
+) -> None:
+    respx_mock.post(APIFY_RUN.format(actor="apify~google-trends-scraper")).mock(
+        return_value=httpx.Response(408)
+    )
+    respx_mock.get("https://www.socialcrawl.dev/v1/credits/balance").mock(
+        return_value=httpx.Response(200, json={"success": True, "data": {"balance": 100}})
+    )
+    explore = respx_mock.get("https://www.socialcrawl.dev/v1/google_trends/explore").mock(
+        return_value=httpx.Response(
+            200, json=fixture_json("providers", "socialcrawl", "search_interest.json")
+        )
+    )
+    registry = fully_configured(tmp_path)
+    try:
+        result = await registry.call(
+            "search_interest",
+            call_params(keywords=["gitlab duo", "github copilot"], timeframe="today 3-m", geo="US"),
+        )
+    finally:
+        await registry.aclose()
+    assert (result.provider, result.fallback_used) == ("socialcrawl", True)
+    assert dict(explore.calls.last.request.url.params) == {
+        "keywords": "gitlab duo,github copilot",
+        "timeframe": "past_90_days",
+        "location": "US",
+    }
+    assert [s.keyword for s in result.items if isinstance(s, TrendSeries)] == [
+        "gitlab duo",
+        "github copilot",
+    ]
+
+
+async def test_reddit_search_goes_to_apify_when_socialcrawl_is_out_of_credit(
+    tmp_path: Path, respx_mock: respx.MockRouter
+) -> None:
+    sc = respx_mock.get("https://www.socialcrawl.dev/v1/reddit/search").mock(
+        return_value=httpx.Response(
+            402, json={"success": False, "error": {"type": "INSUFFICIENT_CREDITS", "status": 402}}
+        )
+    )
+    apify = respx_mock.post(APIFY_RUN.format(actor="trudax~reddit-scraper-lite")).mock(
+        return_value=httpx.Response(201, json=fixture_json("providers", "apify", "reddit.json"))
+    )
+    registry = fully_configured(tmp_path)
+    try:
+        result = await registry.call(
+            "social_search:reddit", call_params(query="gitlab duo", max_results=3)
+        )
+    finally:
+        await registry.aclose()
+    assert (sc.call_count, apify.call_count) == (1, 1)
+    assert (result.provider, result.fallback_used) == ("apify", True)
 
 
 async def test_facebook_search_skips_the_disabled_apify_actor(
@@ -229,5 +304,5 @@ async def test_facebook_search_skips_the_disabled_apify_actor(
         )
     finally:
         await registry.aclose()
-    assert (result.provider, result.fallback_used) == ("socialcrawl", True)
+    assert (result.provider, result.fallback_used) == ("socialcrawl", False)
     assert [i.text for i in result.items if isinstance(i, EvidenceItem)] == ["Duo launch post"]
