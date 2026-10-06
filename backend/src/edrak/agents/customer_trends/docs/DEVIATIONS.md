@@ -15,3 +15,7 @@ SPEC.md was aligned with the repository conventions (AGENTS.md, CONTRIBUTING.md)
 ## Batch 5
 
 - SPEC section 9 gives `social_comments(platform, post_url, + RequestBase)`. A `sort` argument (`top` or `recent`, default `top`) was added, because the providers can order comments and the most-liked ones are the most useful default.
+
+## Cost-based routing
+
+- SPEC 8.2 lists Apify first for social search and comments, and routes `search_interest` to Apify and the Google Trends API only. Measured costs and speed (see ARCHITECTURE.md, Routing and cost) put SocialCrawl first for TikTok, Instagram, Reddit and Facebook search and for every comments capability except YouTube, and YouTube's API, then SocialCrawl, then Apify for YouTube. `search_interest` gains SocialCrawl as a second provider between Apify and the stub. X search keeps Apify first.

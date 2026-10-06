@@ -106,7 +106,146 @@ failure from the pseudo-provider `fixture`, which tools report as a gap.
 | `gdelt` | `news:gdelt` | No key. About 90 days of history, `sourcelang:` filter, results are titles only. Volume by day is computed from the returned articles. |
 | `youtube_api` | `social_search:youtube`, `social_comments:youtube` | Needs `YOUTUBE_API_KEY`. Local quota counter in `<data_dir>/youtube_quota.json`, reset at midnight Pacific time. |
 | `apify` | `social_search:{x,tiktok,instagram,youtube,reddit}`, `social_comments:*`, `search_interest`, `reviews:{app_store,google_play,amazon}` | Needs `APIFY_TOKEN`. One actor per capability, configured in providers.yaml. |
-| `socialcrawl` | `social_search:*`, `social_comments:*` (all six platforms) | Needs `SOCIALCRAWL_API_KEY`. One response shape for every platform. |
+| `socialcrawl` | `social_search:*`, `social_comments:*` (all six platforms), `search_interest` | Needs `SOCIALCRAWL_API_KEY`. One response shape for every platform; Google Trends through its own endpoint. |
+| `google_trends_api` | `search_interest` | Stub, always registered so its routing entry resolves. `ProviderNotConfigured` without `GOOGLE_TRENDS_API_KEY`, then `ProviderUnavailable("alpha api not implemented")`. |
+
+### Apify
+
+`providers/apify/client.py` runs an actor with `POST /v2/acts/{owner~name}/run-sync-get-dataset-items`
+(bearer token, `limit` and `timeout` as query parameters, the actor input as the body). The
+sync route answers 201. A 408, or a 400 `run-failed`, means the run timed out or crashed: it
+is reported as `RunNotFinished` (a `ProviderUnavailable` that is never retried, because running
+the actor again costs again). 401 and 403 are `ProviderNotConfigured`, 402 is
+`ProviderQuotaExceeded`, 429 is retried.
+
+Per capability, `config/providers.yaml` names the actor, an input template, value translations
+and a price. A template uses placeholders such as `{query}`, `{max_results}`, `{sort}`,
+`{window}`, `{url}`, `{keywords}`, `{target}`. A string that is exactly one placeholder keeps
+the value's type; a key whose placeholder has no value is left out so the actor keeps its
+default; `requires` lists the values a capability cannot run without. `enabled: false` switches
+a capability off without removing its config.
+
+`providers/apify/mappers.py` is the only place that knows actor output field names. Each mapper
+turns one dataset item into an `EvidenceItem` (or a `TrendSeries` for Google Trends) and keeps
+unmapped small fields in `metadata`. Cost is estimated as the run fee plus the per-item price
+times the items returned; Apify reports no cost on this route.
+
+### SocialCrawl
+
+`providers/socialcrawl.py` sends `GET <base_url><path>` with an `x-api-key` header. Which path,
+query parameter, sort values, page size and credit price apply to each capability is in
+providers.yaml. Responses share one envelope: `data.items[]` with a `post` or `comment`,
+`pagination.next_cursor` (sent back verbatim as `cursor`) and `credits_used` /
+`credits_remaining`. Searches send `relevance=filter`, which drops rows that are not about the
+query at no extra credit. Rows in other languages than requested are dropped with a warning.
+A request that could cost five credits or more first reads the free `GET /credits/balance`
+and raises `ProviderQuotaExceeded` when the balance is short; paging stops early when the
+balance runs out. A comments request for a post without comments (404 `RESOURCE_NOT_FOUND`) is
+an empty result.
+
+### Routing and cost
+
+The order of providers per capability in `config/providers.yaml` is cheapest first among
+results of the same quality. Run `uv run python ../scripts/customer_trends/print_costs.py` from
+`backend/` for the table below; it is computed from the prices in the config, and
+`tests/customer_trends/unit/test_costs.py` fails if a provider is placed before one that costs
+more than twice as much (Serper, a snippets-only last resort for social search, is exempt).
+
+Cost per 100 usable items in USD (Apify FREE-plan item prices; SocialCrawl at the Growth pack,
+0.0033 USD per credit, after its relevance and language filters; YouTube's API is free inside
+its daily quota):
+
+| Capability | 1st | 2nd | 3rd |
+|---|---|---|---|
+| `social_search:x` | apify 0.040 | socialcrawl 0.030 | serper (snippets) |
+| `social_search:tiktok` | socialcrawl 0.026 | apify 0.371 | serper |
+| `social_search:instagram` | socialcrawl 0.056 | apify 0.270 | serper |
+| `social_search:facebook` | socialcrawl 0.132 | (apify switched off) | serper |
+| `social_search:reddit` | socialcrawl 0.040 | apify 0.420 | serper |
+| `social_search:youtube` | youtube_api free | socialcrawl 0.013 | apify 0.400 |
+| `social_comments:x` | socialcrawl 0.017 | apify 0.040 | |
+| `social_comments:tiktok` | socialcrawl 0.017 | apify 0.125 | |
+| `social_comments:instagram` | socialcrawl 0.116 | apify 0.260 | |
+| `social_comments:facebook` | socialcrawl 0.017 | apify 0.251 | |
+| `social_comments:reddit` | socialcrawl 0.083 | apify 0.420 | |
+| `social_comments:youtube` | youtube_api free | socialcrawl 0.003 | apify 0.200 |
+| `search_interest` (per 100 keywords) | apify 0.300 | socialcrawl 0.330 | trends API stub |
+| `reviews:app_store`, `reviews:google_play` | apify 0.010 | | |
+| `reviews:amazon` | apify 0.600 | | |
+| `web_search`, `news:google_news` | serper 0.001 | | |
+| `news:gdelt`, `fetch_page` | free | | |
+
+Reasons behind the placement:
+
+- X search stays on Apify first: both cost about the same (SocialCrawl is 1.4 times cheaper) and
+  Apify returns every matching tweet, where SocialCrawl's relevance filter keeps about 60
+  percent of a page.
+- TikTok, Reddit, Facebook comments, X replies and Instagram: SocialCrawl is 2 to 28 times
+  cheaper and as good. Apify's TikTok actor took 217 seconds for 30 videos (48 percent about the
+  query), and its Reddit actor timed out on 25 posts.
+- Instagram search on SocialCrawl returns no publication dates; Apify's returns dates and likes
+  at five times the price. Posts without a date are kept, but not placed in time.
+- Instagram comments: SocialCrawl costs 5 credits for 15 comments. At the Growth pack that is
+  2.2 times cheaper than Apify; at the Starter pack (0.008 USD a credit) the two are equal.
+- Search interest: Apify's actor is slightly cheaper for one to three keywords but a browser
+  scraper (80 to 240 seconds, one timeout in three runs); SocialCrawl answers in about 20
+  seconds for 5 credits and puts up to five keywords on one scale, so it is the fallback.
+- App store reviews: Apify costs 0.01 USD per 100 against about 0.03 on SocialCrawl, so there is
+  no second provider. SocialCrawl also has Amazon reviews, cheaper than Apify's, but no adapter
+  is built for them yet.
+
+With the free allowances alone, Apify renews monthly (5 USD per account) while SocialCrawl's
+100 credits per key are a one-time bonus. When every SocialCrawl key is out of credit the
+registry moves on to the next provider in the list on its own, so a run still completes, at the
+higher Apify price.
+
+### Fallback API keys
+
+Apify and SocialCrawl accept more than one key. `APIFY_TOKEN` and `SOCIALCRAWL_API_KEY` are the
+first choice; `APIFY_FALLBACK_TOKENS` and `SOCIALCRAWL_FALLBACK_API_KEYS` hold comma separated
+backups (`Settings.key_list` joins them, dropping blanks and repeats; a provider is also set up
+from fallbacks alone). Each provider holds a `KeyRing` (`providers/keys.py`) and runs every call
+through `with_failover`: a key that answers with `ProviderQuotaExceeded` (usage or credit limit,
+or a SocialCrawl balance too low for the request) or `ProviderNotConfigured` (rejected key) is
+passed over, the call is repeated with the next key, and the ring stays on the working key for
+later calls. Rate limits, server errors and failed actor runs do not rotate. When every key has
+failed, the last key's error is raised and the registry falls back to the next provider as usual.
+A rotation is logged as `api_key_rotated` with the position in the list, never the key.
+
+### Budget, breaker, cache
+
+- `BudgetTracker` refuses a call that would cross the tool-call, cost or time limit and records
+  what each call used.
+- `CircuitBreaker` opens a provider after three consecutive failures and keeps it open for the
+  rest of the run. A missing key does not count: such providers are simply not registered.
+- `DiskCache` stores successful results under `<data_dir>/cache/<sha256>.json` for
+  `EDRAK_CACHE_TTL_S` seconds. The key covers the provider, the capability and the canonical
+  params, but not `run_id` and `task_id`; a cache hit is re-stamped for the current run.
+
+### Fixture mode
+
+With `EDRAK_PROVIDER_MODE=fixture` the registry builds no providers and opens no HTTP client.
+It serves recorded results from `backend/tests/customer_trends/fixtures/providers/`.
+
+File name: the capability with `:` replaced by `.`, plus `.json`: `web_search` is
+`web_search.json`, `social_search:reddit` is `social_search.reddit.json`, `news:gdelt` is
+`news.gdelt.json`.
+
+File content: one serialized `ProviderResult`. `provider` names the provider the recording
+imitates (it becomes the result's provider; `fixture` if empty). Items keep the run and task ids
+of the recording; the registry re-stamps them for the current run. `max_results` truncates the
+items. Cost is reported as zero. A missing or invalid fixture raises `ProviderExhausted` with a
+failure from the pseudo-provider `fixture`, which tools report as a gap.
+
+### Providers
+
+| Provider | Capabilities | Notes |
+|---|---|---|
+| `serper` | `web_search`, `news:google_news`, `social_search:<platform>` (x, reddit, tiktok, instagram, facebook) | Needs `SERPER_API_KEY`. Snippet-level data, `snippet_only=true`. Social search is a `site:` query and always carries a warning. Local adapter until the shared web MCP server exists (SPEC 8.4). |
+| `gdelt` | `news:gdelt` | No key. About 90 days of history, `sourcelang:` filter, results are titles only. Volume by day is computed from the returned articles. |
+| `youtube_api` | `social_search:youtube`, `social_comments:youtube` | Needs `YOUTUBE_API_KEY`. Local quota counter in `<data_dir>/youtube_quota.json`, reset at midnight Pacific time. |
+| `apify` | `social_search:{x,tiktok,instagram,youtube,reddit}`, `social_comments:*`, `search_interest`, `reviews:{app_store,google_play,amazon}` | Needs `APIFY_TOKEN`. One actor per capability, configured in providers.yaml. |
+| `socialcrawl` | `social_search:*`, `social_comments:*` (all six platforms), `search_interest` | Needs `SOCIALCRAWL_API_KEY`. One response shape for every platform; Google Trends through its own endpoint. |
 | `google_trends_api` | `search_interest` | Stub, always registered so its routing entry resolves. `ProviderNotConfigured` without `GOOGLE_TRENDS_API_KEY`, then `ProviderUnavailable("alpha api not implemented")`. |
 
 ### Apify
