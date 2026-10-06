@@ -41,16 +41,81 @@ _RELATIVE = re.compile(r"(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago", re.
 _UNIT_DAYS = {"minute": 1 / 1440, "hour": 1 / 24, "day": 1, "week": 7, "month": 30, "year": 365}
 _DATE_FORMATS = ("%b %d, %Y", "%B %d, %Y", "%Y-%m-%d", "%d %b %Y", "%d %B %Y")
 
+# Serper localizes dates with the `hl` parameter, and the first requested language is sent as
+# `hl`. Arabic is the worker's second language, so its relative and absolute forms are read too.
+_BIDI_MARKS = dict.fromkeys([0x200E, 0x200F, *range(0x202A, 0x202F), *range(0x2066, 0x206A)])
+_DAY_MONTH_YEAR = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
+_ARABIC_INDIC = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
+_ARABIC_UNITS = {
+    "دقيقة": ("minute", 1), "دقائق": ("minute", 1), "دقيقتين": ("minute", 2),
+    "ساعة": ("hour", 1), "ساعات": ("hour", 1), "ساعتين": ("hour", 2),
+    "يوم": ("day", 1), "يوماً": ("day", 1), "أيام": ("day", 1), "يومين": ("day", 2),
+    "أسبوع": ("week", 1), "أسابيع": ("week", 1), "أسبوعين": ("week", 2),
+    "شهر": ("month", 1), "أشهر": ("month", 1), "شهور": ("month", 1), "شهرين": ("month", 2),
+    "سنة": ("year", 1), "سنوات": ("year", 1), "سنتين": ("year", 2),
+    "عام": ("year", 1), "أعوام": ("year", 1), "عامين": ("year", 2),
+}  # fmt: skip
+_ARABIC_RELATIVE = re.compile(
+    r"قبل\s+(?:(\d+)\s*)?(" + "|".join(sorted(_ARABIC_UNITS, key=len, reverse=True)) + ")"
+)
+_ARABIC_MONTHS = {
+    name: number
+    for number, names in enumerate(
+        (
+            ("يناير", "كانون الثاني"),
+            ("فبراير", "شباط"),
+            ("مارس", "آذار"),
+            ("أبريل", "نيسان"),
+            ("مايو", "أيار"),
+            ("يونيو", "حزيران"),
+            ("يوليو", "تموز"),
+            ("أغسطس", "آب"),
+            ("سبتمبر", "أيلول"),
+            ("أكتوبر", "تشرين الأول"),
+            ("نوفمبر", "تشرين الثاني"),
+            ("ديسمبر", "كانون الأول"),
+        ),
+        start=1,
+    )
+    for name in names
+}
+_ARABIC_ABSOLUTE = re.compile(
+    r"(\d{1,2})\s+(" + "|".join(sorted(_ARABIC_MONTHS, key=len, reverse=True)) + r")\s+(\d{4})"
+)
+
 
 def parse_serper_date(value: str | None, now: datetime) -> datetime | None:
-    """Serper dates are free text: 'Sep 3, 2026', '2026-09-03' or '3 days ago'."""
+    """Serper dates are free text: 'Sep 3, 2026', '3 days ago' or the Arabic forms of both."""
     if not value:
         return None
-    relative = _RELATIVE.search(value)
+    text = value.translate(_BIDI_MARKS).strip().translate(_ARABIC_INDIC)
+    numeric = _DAY_MONTH_YEAR.match(text)
+    if numeric:
+        day, month, year = (int(g) for g in numeric.groups())
+        try:
+            return datetime(year, month, day, tzinfo=UTC)
+        except ValueError:
+            return None
+    relative = _RELATIVE.search(text)
     if relative:
         days = int(relative.group(1)) * _UNIT_DAYS[relative.group(2).lower()]
         return now - timedelta(days=days)
-    text = value.strip()
+    arabic = _ARABIC_RELATIVE.search(text)
+    if arabic:
+        unit, default = _ARABIC_UNITS[arabic.group(2)]
+        count = int(arabic.group(1)) if arabic.group(1) else default
+        return now - timedelta(days=count * _UNIT_DAYS[unit])
+    absolute = _ARABIC_ABSOLUTE.search(text)
+    if absolute:
+        try:
+            day, month, year = (
+                int(absolute.group(1)),
+                _ARABIC_MONTHS[absolute.group(2)],
+                int(absolute.group(3)),
+            )
+            return datetime(year, month, day, tzinfo=UTC)
+        except ValueError:
+            return None
     for fmt in _DATE_FORMATS:
         try:
             return datetime.strptime(text, fmt).replace(tzinfo=UTC)
