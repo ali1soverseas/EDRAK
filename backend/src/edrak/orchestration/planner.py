@@ -12,7 +12,7 @@ from ..contracts import (
     ResearchTask,
     WorkerType,
 )
-from ..core.llm import build_chat_model
+from ..core.llm import LLMClient, get_llm_client
 from .prompts import PLANNER_SYSTEM_PROMPT
 
 MAX_REPAIR_ATTEMPTS = 1
@@ -55,20 +55,22 @@ class LlmPlanner:
         self.max_repair_attempts = max_repair_attempts
 
     def plan(self, request: BusinessRequest) -> ResearchPlan:
-        llm = build_chat_model()
+        llm = get_llm_client()
         context = self._build_context(request)
 
-        raw = self._invoke(llm, PLANNER_SYSTEM_PROMPT, context)
+        raw = self._require_text(self._invoke(llm, PLANNER_SYSTEM_PROMPT, context))
         assignments, failure = self._parse(raw)
 
         for _ in range(self.max_repair_attempts):
             if assignments is not None:
                 break
-            raw = self._invoke(
-                llm,
-                PLANNER_SYSTEM_PROMPT,
-                f"{context}\n\nYour previous reply was rejected: {failure}\n"
-                "Return only the corrected JSON array of worker assignments.",
+            raw = self._require_text(
+                self._invoke(
+                    llm,
+                    PLANNER_SYSTEM_PROMPT,
+                    f"{context}\n\nYour previous reply was rejected: {failure}\n"
+                    "Return only the corrected JSON array of worker assignments.",
+                )
             )
             assignments, failure = self._parse(raw)
 
@@ -77,45 +79,17 @@ class LlmPlanner:
 
         return self._build_plan(request, assignments)
 
-    def _invoke(self, llm: Any, system: str, user: str) -> str:
-        response = llm.invoke(
-            [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        )
-        return self._extract_text(response)
-
-    def _extract_text(self, response: Any) -> str:
-        content = getattr(response, "content", "")
-
-        if isinstance(content, list):
-            parts = [
-                part.get("text", "") if isinstance(part, dict) else str(part)
-                for part in content
-            ]
-            text = "".join(parts).strip()
-        else:
-            text = str(content).strip()
-
-        if text:
-            return text
-
-        reasoning = self._extract_reasoning(response)
-        if reasoning:
-            raise PlanningError(
-                "model returned no content; it appears to have produced only "
-                f"reasoning output ({len(reasoning)} chars)",
-                reasoning,
-            )
-
-        raise PlanningError("model returned empty content", "")
+    def _invoke(self, llm: LLMClient, system: str, user: str) -> str:
+        return (llm.chat_completion(
+            [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            json_mode=True,
+        ) or "").strip()
 
     @staticmethod
-    def _extract_reasoning(response: Any) -> str:
-        additional = getattr(response, "additional_kwargs", None) or {}
-        for key in ("reasoning", "reasoning_content"):
-            value = additional.get(key)
-            if isinstance(value, str) and value.strip():
-                return value.strip()
-        return ""
+    def _require_text(raw: str) -> str:
+        if raw.strip():
+            return raw
+        raise PlanningError("model returned empty content", raw)
 
     def _parse(self, raw: str) -> tuple[list[WorkerAssignment] | None, str]:
         payload = self._loads(raw)

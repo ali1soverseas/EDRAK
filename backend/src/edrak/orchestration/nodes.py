@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+import io
 from collections.abc import Callable
 
 from pydantic import ValidationError
@@ -15,8 +17,9 @@ from ..contracts import (
 )
 from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
+from ..core.action_log import log_action
 from .planner import LlmPlanner, PlanningError
-from .state import OrchestrationState
+from .state import RESET, OrchestrationState
 
 
 def plan_node(state: OrchestrationState) -> OrchestrationState:
@@ -73,14 +76,39 @@ def _failed(task: ResearchTask, detail: str) -> WorkerResult:
 
 
 def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
-    return {
-        **state,
-        "verification": VerificationDecision(
-            status=VerificationStatus.VERIFIED,
-            summary="stub verification gate; always reports VERIFIED until the "
-            "verification stage is implemented",
-        ),
-    }
+    from ..contracts.verification import VerificationInput
+    from ..verification.graph import run as run_verification
+
+    buffer = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buffer):
+            result = run_verification(
+                VerificationInput(
+                    request=state["request"],
+                    agent_outputs=state.get("results") or [],
+                )
+            )
+    except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+        return {
+            **state,
+            "verification": VerificationDecision(
+                status=VerificationStatus.REPLAN_REQUIRED,
+                summary=f"verification stage raised {type(exc).__name__}: {exc}",
+            ),
+        }
+    finally:
+        captured = buffer.getvalue()
+
+    if captured.strip():
+        log_action("verification", captured)
+
+    print(
+        f"  verification: {result.decision.status.value} "
+        f"({len(result.findings)} findings assessed) "
+        f"-> artifacts/logs/verification.log"
+    )
+
+    return {**state, "verification": result.decision}
 
 
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:
@@ -122,8 +150,8 @@ def replan_node(state: OrchestrationState) -> OrchestrationState:
         **state,
         "plan": plan,
         "replan_count": replan_count,
-        "results": [],
-        "outcomes": [],
+        "results": RESET,
+        "outcomes": RESET,
     }
 
 

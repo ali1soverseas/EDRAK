@@ -12,7 +12,14 @@ from ..contracts import (
 from ..contracts.verification import VerificationDecision
 
 
-def merge_by_task_id[T](left: list[T], right: list[T]) -> list[T]:
+class _Reset:
+    """Sentinel telling a reducer channel to discard its current value."""
+
+
+RESET = _Reset()
+
+
+def merge_by_task_id[T](left: list[T], right: list[T] | _Reset) -> list[T]:
     """Reducer for parallel dispatch.
 
     LangGraph merges the simultaneous writes from every dispatched worker
@@ -21,7 +28,13 @@ def merge_by_task_id[T](left: list[T], right: list[T]) -> list[T]:
     always see exactly one result per task.
 
     Ordering is not guaranteed and must not be relied on.
+
+    Because writes are merged, returning ``[]`` appends nothing and leaves the
+    previous value intact. A node that genuinely needs to clear the channel (a
+    replan, whose new plan carries new task ids) must write :data:`RESET`.
     """
+    if isinstance(right, _Reset):
+        return []
     merged = {item.task_id: item for item in left}
     merged.update({item.task_id: item for item in right})
     return list(merged.values())

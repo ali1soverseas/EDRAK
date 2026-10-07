@@ -52,7 +52,15 @@ def build_graph(registry: WorkerRegistry):
         },
     )
 
-    graph.add_edge("replan", "verify")
+    # A replan produces a fresh plan with fresh task ids, so it must route back
+    # through the plan router and actually re-dispatch. Going straight to verify
+    # would grade an empty result set and loop until the limits ran out.
+    graph.add_conditional_edges(
+        "replan",
+        route_from_plan,
+        {"dispatch": "dispatch", "finalize_failed": "finalize"},
+    )
+
     graph.add_edge("exhausted", "finalize")
     graph.add_edge("finalize", END)
 

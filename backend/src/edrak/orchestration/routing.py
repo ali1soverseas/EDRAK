@@ -58,12 +58,12 @@ def decide_after_verification(state: OrchestrationState) -> str:
         return "finalize"
 
     if status is VerificationStatus.RETRY_REQUIRED:
-        if state.get("attempts_exceeded") or settings.max_task_attempts < 1:
+        if state.get("attempts_exceeded") or settings.MAX_TASK_ATTEMPTS < 1:
             return "exhausted"
         return "dispatch"
 
     if status is VerificationStatus.REPLAN_REQUIRED:
-        if (state.get("replan_count") or 0) >= settings.max_replans:
+        if (state.get("replan_count") or 0) >= settings.MAX_REPLANS:
             return "exhausted"
         return "replan"
 

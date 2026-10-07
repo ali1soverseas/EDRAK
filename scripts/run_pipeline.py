@@ -113,7 +113,9 @@ def resolve_api_key() -> str | None:
     try:
         from edrak.core.config import settings
 
-        key = settings.llm_api_key.get_secret_value()
+        raw = settings.LLM_API_KEY
+        # Settings may declare the key as SecretStr or as a plain str; accept both.
+        key = raw.get_secret_value() if hasattr(raw, "get_secret_value") else raw
     except Exception as exc:  # noqa: BLE001 - configuration errors vary by type
         print(f"could not load configuration: {exc}", file=sys.stderr)
         return None
@@ -121,29 +123,27 @@ def resolve_api_key() -> str | None:
 
 
 def parse_intent(query: str) -> ParsedIntent:
-    from edrak.core.llm import build_chat_model
+    from edrak.core.llm import get_llm_client
     from edrak.orchestration.planner import PlanningError
     from edrak.orchestration.prompts import REQUEST_BUILDER_SYSTEM_PROMPT
 
-    llm = build_chat_model()
-    response = llm.invoke(
-        [
-            {"role": "system", "content": REQUEST_BUILDER_SYSTEM_PROMPT},
-            {"role": "user", "content": query},
-        ]
-    )
-    content = getattr(response, "content", "") or ""
-    if isinstance(content, list):
-        content = "".join(
-            part.get("text", "") if isinstance(part, dict) else str(part)
-            for part in content
+    llm = get_llm_client()
+    content = (
+        llm.chat_completion(
+            [
+                {"role": "system", "content": REQUEST_BUILDER_SYSTEM_PROMPT},
+                {"role": "user", "content": query},
+            ],
+            json_mode=True,
         )
+        or ""
+    ).strip()
     try:
-        return ParsedIntent.model_validate_json(str(content).strip())
+        return ParsedIntent.model_validate_json(content)
     except ValidationError as exc:
         raise PlanningError(
             f"request builder returned unusable output: {exc.error_count()} error(s)",
-            str(content),
+            content,
         ) from exc
 
 
@@ -296,6 +296,46 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
         render_result(payload)
 
 
+def build_default_registry() -> WorkerRegistry:
+    """Register the workers that are wired for this integration slice.
+
+    Competitor intelligence and market intelligence already expose classes
+    satisfying the ``Worker`` protocol (``CompetitorAgent`` and
+    ``MarketIntelligence``), so both register directly.
+
+    Internal intelligence is intentionally not registered: it needs a populated
+    handbook vector store (``scripts/run_etl_pipeline.py``), and is deferred to a
+    later slice. Customer trends is excluded because it carries private schemas
+    that do not implement the shared contracts.
+
+    Both imports are deferred. The competitor module raises at import time when
+    OPENAI_API_KEY or TAVILY_API_KEY is absent, which would otherwise take down
+    the whole run including workers that are perfectly usable.
+    """
+    from edrak.contracts import WorkerType
+
+    registry = WorkerRegistry()
+
+    try:
+        from edrak.agents.competitor_intelligence import CompetitorAgent
+
+        registry.register(WorkerType.COMPETITOR_INTELLIGENCE, CompetitorAgent())
+    except Exception as exc:  # noqa: BLE001 - import-time config guards vary
+        print(
+            f"  competitor intelligence unavailable: {exc}",
+            file=sys.stderr,
+        )
+
+    try:
+        from edrak.agents.market_intelligence.graph import MarketIntelligence
+
+        registry.register(WorkerType.MARKET_INTELLIGENCE, MarketIntelligence())
+    except Exception as exc:  # noqa: BLE001 - keep one bad worker from killing all
+        print(f"  market intelligence unavailable: {exc}", file=sys.stderr)
+
+    return registry
+
+
 def main(argv: list[str] | None = None) -> int:
     force_utf8_output()
     args = build_parser().parse_args(argv)
@@ -349,7 +389,7 @@ def main(argv: list[str] | None = None) -> int:
 
     from edrak.orchestration.graph import build_graph
 
-    state = build_graph(WorkerRegistry()).invoke({"request": request})
+    state = build_graph(build_default_registry()).invoke({"request": request})
     result = state["orchestration_result"]
 
     if args.json:
