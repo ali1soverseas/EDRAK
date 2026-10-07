@@ -83,7 +83,16 @@ def test_the_provenance_summarizes_the_events_of_a_run(
     for event in (
         {"type": "node_finished", "node": "social", "duration_ms": 120},
         {"type": "node_finished", "node": "social", "duration_ms": 30},
-        {"type": "tool_called", "tool": "social_search", "provider": "apify", "status": "ok"},
+        {
+            "type": "tool_called",
+            "tool": "social_search",
+            "branch": "social",
+            "args": {"platform": "x", "query": "gitlab duo"},
+            "provider": "apify",
+            "status": "ok",
+            "count": 0,
+            "latency_ms": 3372,
+        },
         {
             "type": "tool_called",
             "tool": "social_search",
@@ -108,6 +117,24 @@ def test_the_provenance_summarizes_the_events_of_a_run(
             "social_search": {"calls": 2, "errors": 1, "cost_usd": 0.0},
             "analyze_text": {"calls": 1, "errors": 0, "cost_usd": 0.0},
         },
+        "calls": [
+            {
+                "branch": "social",
+                "tool": "social_search",
+                "args": {"platform": "x", "query": "gitlab duo"},
+                "provider": "apify",
+                "status": "ok",
+                "count": 0,
+                "latency_ms": 3372,
+            },
+            {
+                "tool": "social_search",
+                "provider": "socialcrawl",
+                "fallback_used": True,
+                "status": "error",
+            },
+            {"tool": "analyze_text", "status": "ok"},
+        ],
         "provider_calls": 2,
         "cost_usd": 0.0,
         "budget": {"tool_calls": 0, "cost_usd": 0.0},

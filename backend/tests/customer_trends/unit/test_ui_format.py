@@ -4,7 +4,7 @@ import pytest
 
 from edrak.agents.customer_trends.schemas.analysis import ThemeAggregate
 from edrak.agents.customer_trends.schemas.common import Platform, SourceType
-from edrak.agents.customer_trends.schemas.findings import Finding
+from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, Finding
 from edrak.agents.customer_trends.ui.components import format as fmt
 from tests.customer_trends.factories import make_evidence
 from tests.customer_trends.tool_helpers import trend_series
@@ -289,3 +289,28 @@ def test_provider_health_rows_put_open_breakers_first_and_show_what_a_provider_r
     }
     assert rows[1]["details"] == "key_in_use: 1 of 2" and rows[2]["status"] == "ok"
     assert fmt.health_rows({}) == []
+
+
+def test_the_provenance_lists_every_call_with_what_was_asked() -> None:
+    call = {
+        "branch": "social",
+        "tool": "social_search",
+        "args": {"platform": "x", "query": "جيت لاب"},
+        "provider": "apify",
+        "status": "ok",
+        "count": 0,
+        "latency_ms": 3372,
+    }
+    result = CustomerTrendsResult.model_construct(provenance={"calls": [call]})
+    [row] = fmt.provenance_rows(result)["calls"]
+    assert row == {
+        "branch": "social",
+        "tool": "social_search",
+        "args": '{"platform": "x", "query": "جيت لاب"}',
+        "provider": "apify",
+        "status": "ok",
+        "count": 0,
+        "ms": 3372,
+        "error": None,
+    }
+    assert fmt.provenance_rows(CustomerTrendsResult.model_construct(provenance={}))["calls"] == []

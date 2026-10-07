@@ -4,6 +4,7 @@ Nothing here imports Streamlit, so each one can be tested on its own.
 """
 
 import html
+import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
@@ -270,7 +271,8 @@ def health_rows(report: Mapping[str, Mapping[str, Any]]) -> list[dict[str, Any]]
 
 
 def provenance_rows(result: CustomerTrendsResult) -> dict[str, list[dict[str, Any]]]:
-    """The provenance of a result as small tables: models, providers, timings, tool calls."""
+    """The provenance of a result as small tables: models, providers, timings, tool calls and the
+    calls one by one."""
     p = result.provenance
     return {
         "models": [{"role": role, "model": name} for role, name in p.get("models", {}).items()],
@@ -280,6 +282,19 @@ def provenance_rows(result: CustomerTrendsResult) -> dict[str, list[dict[str, An
         "tool calls": [
             {"tool": tool, "calls": v["calls"], "errors": v["errors"], "cost USD": v["cost_usd"]}
             for tool, v in p.get("tool_calls", {}).items()
+        ],
+        "calls": [
+            {
+                "branch": c.get("branch"),
+                "tool": c.get("tool"),
+                "args": json.dumps(c.get("args", {}), ensure_ascii=False),
+                "provider": c.get("provider"),
+                "status": c.get("status"),
+                "count": c.get("count"),
+                "ms": c.get("latency_ms"),
+                "error": c.get("error_code"),
+            }
+            for c in p.get("calls", [])
         ],
         "provider health": health_rows(p.get("provider_health", {})),
     }

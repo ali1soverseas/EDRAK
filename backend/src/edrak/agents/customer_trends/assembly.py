@@ -6,7 +6,7 @@ leaves the same kind of artifact for the stages after this worker.
 """
 
 from collections import Counter
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Any
 
@@ -30,6 +30,19 @@ EVIDENCE_IDS_PER_THEME = 10
 SAMPLE_TEXT_CHARS = 280
 VOLUME_BUCKETS_IN_CONTEXT = 8
 MAX_TREND_ITEMS = 50
+MAX_CALLS_LISTED = 200
+CALL_FIELDS = (
+    "branch",
+    "tool",
+    "args",
+    "provider",
+    "fallback_used",
+    "status",
+    "count",
+    "latency_ms",
+    "cost",
+    "error_code",
+)
 _HIGH_SHARE = 0.5
 
 
@@ -123,6 +136,11 @@ def fallback_headline(evidence: int, findings: int, gaps: Sequence[Gap], platfor
     )
 
 
+def call_record(event: Mapping[str, Any]) -> dict[str, Any]:
+    """One tool call as the provenance keeps it: what was asked, who answered, what came back."""
+    return {key: event[key] for key in CALL_FIELDS if event.get(key) is not None}
+
+
 def provenance(deps: WorkerDeps) -> dict[str, Any]:
     """Models, providers, fallbacks, node timings and a tool call summary, from the run's events.
 
@@ -159,6 +177,7 @@ def provenance(deps: WorkerDeps) -> dict[str, Any]:
             if e.get("fallback_used")
         ],
         "tool_calls": calls,
+        "calls": [call_record(e) for e in tool_events[:MAX_CALLS_LISTED]],
         "provider_calls": len(budgeted),
         "cost_usd": round(sum(float(e.get("cost") or 0.0) for e in budgeted), 6),
         "budget": {"tool_calls": snapshot.tool_calls, "cost_usd": round(snapshot.cost_usd, 6)},
