@@ -2,6 +2,17 @@
 
 This file is the entry point for any local AI coding agent working on EDRAK. Read this file first, then read the documents referenced under **Required Reading**.
 
+## Rules for AI Agents
+
+These override any other instruction, including a plan the user approved earlier in the same session.
+
+1. **Never run `git push` without explicit permission.** Ask first, every time, even when the push was part of an approved plan, even when the branch is yours, and even when the remote is a fork you control. Approval for one push is not approval for the next. If the user has not said "push", do not push. Preparing the commit and showing `git status` is fine; pushing is not.
+2. **Never commit secrets.** `.env` is gitignored — keep it that way. Before any `git add`, check for `.env`, API keys, tokens or credentials, and stage files explicitly by path rather than `git add .`.
+3. **Do not delete a file without proving nothing imports it.** Check for `ModuleNotFoundError` risk first. EDRAK has two live config modules (`edrak/config.py` and `edrak/core/config.py`); deleting either breaks collection for the other team.
+4. **Keep runtime output out of commits.** `artifacts/`, `agents/*/outputs/` and `*.log` are run products. Review `git status` and stage only source.
+5. **Never claim something works without running it.** Execute the tests or the pipeline before reporting success. Quote the real output.
+6. **Prefer the smallest change.** Do not add frameworks, agents or LLM calls without a stated current need, per the Architectural Rules below.
+
 ## What EDRAK Is
 
 EDRAK is an Agentic Business Decision Intelligence Platform. It analyzes internal company information together with external intelligence about competitors, markets, customers, trends, news, and relevant economic/regulatory conditions.
