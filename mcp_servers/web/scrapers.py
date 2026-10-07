@@ -35,6 +35,27 @@ def _post(url, **kwargs):
     return requests.post(url, **kwargs)
 
 
+def _request(method: str, url: str, retries: int = 2, **kwargs):
+    """Search/scrape HTTP without the global 2s delay. Back off only on 429."""
+    response = None
+    for attempt in range(retries):
+        try:
+            if method == "post":
+                response = requests.post(url, **kwargs)
+            else:
+                response = requests.get(url, **kwargs)
+        except requests.RequestException:
+            if attempt + 1 >= retries:
+                raise
+            time.sleep(2 ** attempt)
+            continue
+        if response.status_code == 429 and attempt + 1 < retries:
+            time.sleep(2 ** (attempt + 1))
+            continue
+        return response
+    return response
+
+
 MAX_QUERIES = 10
 COUNTRY_ISO3 = "EGY"
 START_YEAR = 2018
@@ -59,6 +80,17 @@ HEADERS = {"User-Agent": UA}
 
 def _env(name: str) -> str:
     return os.getenv(name, "").strip()
+
+
+def _query_spec(item) -> dict:
+    """Accept a keyword string or a planner query object."""
+    if isinstance(item, dict):
+        text = str(item.get("q") or item.get("query") or "").strip()
+        return {**item, "q": text}
+    return {"q": str(item).strip()}
+
+
+_RECENCY_TBS = {"day": "qdr:d", "week": "qdr:w", "month": "qdr:m", "year": "qdr:y"}
 
 
 def get(url, params=None, headers=None, label=""):
@@ -91,23 +123,29 @@ def fetch_newsapi(queries):
     queries_run = []
 
     for query in queries[:MAX_QUERIES]:
+        spec = _query_spec(query)
+        if not spec["q"]:
+            continue
+        language = str(spec.get("language") or "en").split("-")[0]
+        if len(language) != 2:
+            language = "en"
         url = "https://newsapi.org/v2/everything"
         params = {
-            "q": query,
+            "q": spec["q"],
             "pageSize": 5,
-            "language": "en",
+            "language": language,
             "sortBy": "publishedAt",
             "apiKey": api_key,
         }
         resp = _get(url, params=params, timeout=10)
         if resp.status_code != 200:
-            print(f"[SCRAPER_NEWSAPI] SKIP query '{query}' (status {resp.status_code})")
+            print(f"[SCRAPER_NEWSAPI] SKIP query '{spec['q']}' (status {resp.status_code})")
             continue
         articles = resp.json()
-        articles["query_used"] = query
+        articles["query_used"] = spec["q"]
         articles["method"] = "newsapi"
         all_articles.append(articles)
-        queries_run.append(query)
+        queries_run.append(spec["q"])
 
     print(
         f"[SCRAPER_NEWSAPI] OK {len(all_articles)} responses "
@@ -568,6 +606,32 @@ def fetch_dbnomics(queries):
     return all_items, queries_run
 
 
+def _serper_body(spec: dict, *, with_domains: bool) -> dict:
+    text = spec["q"]
+    domains = [str(domain) for domain in (spec.get("include_domains") or [])][:3]
+    if with_domains and domains:
+        sites = " OR ".join(f"site:{domain}" for domain in domains)
+        text = f"{text} ({sites})"
+    body = {"q": text, "num": 10}
+    if spec.get("gl"):
+        body["gl"] = spec["gl"]
+    if spec.get("hl"):
+        body["hl"] = spec["hl"]
+    tbs = _RECENCY_TBS.get(str(spec.get("recency") or ""))
+    if tbs:
+        body["tbs"] = tbs
+    return body
+
+
+def _annotate_serper_scores(data: dict) -> None:
+    for index, result in enumerate(data.get("organic") or [], 1):
+        if not isinstance(result, dict):
+            continue
+        result.setdefault("position", index)
+        if not isinstance(result.get("score"), (int, float)):
+            result["score"] = round(max(0.05, 1 - (index - 1) * 0.08), 3)
+
+
 def fetch_serper(queries):
     api_key = _env("SERPER_API_KEY")
     if not api_key:
@@ -579,97 +643,96 @@ def fetch_serper(queries):
     queries_run = []
 
     for query in queries[:MAX_QUERIES]:
-        try:
-            resp = _post(
-                "https://google.serper.dev/search",
-                headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
-                data=json.dumps({"q": query, "num": 10}),
-                timeout=30,
-            )
-            data = resp.json()
-        except Exception as exc:
-            print(f"[SCRAPER]  SKIP query '{query}' ({type(exc).__name__}: {exc})")
+        spec = _query_spec(query)
+        if not spec["q"]:
             continue
-        data["query_used"] = query
+        data = None
+        for with_domains in (True, False):
+            if not with_domains and not spec.get("include_domains"):
+                break
+            try:
+                resp = _request(
+                    "post",
+                    "https://google.serper.dev/search",
+                    headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
+                    data=json.dumps(_serper_body(spec, with_domains=with_domains)),
+                    timeout=30,
+                )
+                data = resp.json() if resp is not None else {}
+            except Exception as exc:
+                print(f"[SCRAPER]  SKIP query '{spec['q']}' ({type(exc).__name__}: {exc})")
+                data = None
+                break
+            if data.get("organic") or not with_domains or not spec.get("include_domains"):
+                break
+            print(f"[SCRAPER]  No Serper hits in include_domains for '{spec['q'][:50]}'; retrying without them")
+        if not isinstance(data, dict):
+            continue
+        _annotate_serper_scores(data)
+        data["query_used"] = spec["q"]
         data["method"] = "serper"
         all_items.append(data)
-        queries_run.append(query)
+        queries_run.append(spec["q"])
 
     print(f"[SCRAPER]  OK {len(all_items)} results from {len(queries_run)} Serper queries")
     return all_items, queries_run
 
 
-def _fetch_tavily_search(query: str, api_key: str) -> list[dict]:
-    try:
-        resp = _post(
-            "https://api.tavily.com/search",
-            json={
-                "api_key": api_key,
-                "query": query,
-                "search_depth": "basic",
-                "max_results": 8,
-                "include_answer": False,
-            },
-            timeout=20,
-        )
-    except requests.RequestException as exc:
-        print(f"[SCRAPER]  SKIP tavily '{query[:40]}' ({type(exc).__name__})")
-        return []
-    if resp.status_code != 200:
-        print(f"[SCRAPER]  SKIP tavily '{query[:40]}' (status {resp.status_code})")
-        return []
-    items = []
-    for hit in resp.json().get("results", []):
-        url = (hit.get("url") or "").strip()
-        title = (hit.get("title") or "").strip()
-        if not url.startswith("http") or not title:
-            continue
-        items.append({
-            "title": title,
-            "url": url,
-            "snippet": hit.get("content") or "",
-            "query_used": query,
-            "method": "web_search",
-        })
-    return items
+def _tavily_body(spec: dict, api_key: str, *, with_domains: bool) -> dict:
+    body = {
+        "api_key": api_key,
+        "query": spec["q"],
+        "search_depth": "basic",
+        "max_results": 8,
+        "include_answer": False,
+    }
+    recency = str(spec.get("recency") or "")
+    if recency in _RECENCY_TBS:
+        body["time_range"] = recency
+    if spec.get("tavily_country"):
+        body["country"] = spec["tavily_country"]
+    if with_domains and spec.get("include_domains"):
+        body["include_domains"] = list(spec["include_domains"])[:8]
+    return body
 
 
-def _fetch_wikipedia_search(query: str) -> list[dict]:
-    """Key-free fallback when Tavily returns no web results."""
-    try:
-        resp = _get(
-            "https://en.wikipedia.org/w/api.php",
-            params={
-                "action": "query",
-                "list": "search",
-                "srsearch": query,
-                "srlimit": 8,
-                "format": "json",
-                "utf8": 1,
-            },
-            headers=HEADERS,
-            timeout=15,
-        )
-    except requests.RequestException as exc:
-        print(f"[SCRAPER]  SKIP wikipedia '{query}' ({type(exc).__name__})")
-        return []
-    if resp.status_code != 200:
-        print(f"[SCRAPER]  SKIP wikipedia '{query}' (status {resp.status_code})")
-        return []
-    hits = resp.json().get("query", {}).get("search", [])
-    items = []
-    for hit in hits:
-        title = hit.get("title") or ""
-        if not title:
-            continue
-        page = title.replace(" ", "_")
-        items.append({
-            "title": title,
-            "url": f"https://en.wikipedia.org/wiki/{page}",
-            "snippet": BeautifulSoup(hit.get("snippet", ""), "html.parser").get_text(" ", strip=True),
-            "query_used": query,
-            "method": "web_search",
-        })
+def _fetch_tavily_search(query: str, api_key: str, spec: dict | None = None) -> list[dict]:
+    spec = spec or {"q": query}
+
+    def once(with_domains: bool) -> list[dict]:
+        try:
+            resp = _request(
+                "post",
+                "https://api.tavily.com/search",
+                json=_tavily_body(spec, api_key, with_domains=with_domains),
+                timeout=20,
+            )
+        except requests.RequestException as exc:
+            print(f"[SCRAPER]  SKIP tavily '{spec['q'][:40]}' ({type(exc).__name__})")
+            return []
+        if resp is None or resp.status_code != 200:
+            print(f"[SCRAPER]  SKIP tavily '{spec['q'][:40]}' (status {resp.status_code})")
+            return []
+        items = []
+        for hit in resp.json().get("results", []):
+            url = (hit.get("url") or "").strip()
+            title = (hit.get("title") or "").strip()
+            if not url.startswith("http") or not title:
+                continue
+            items.append({
+                "title": title,
+                "url": url,
+                "snippet": hit.get("content") or "",
+                "score": hit.get("score") or 0,
+                "query_used": spec["q"],
+                "method": "web_search",
+            })
+        return items
+
+    items = once(True)
+    if not items and spec.get("include_domains"):
+        print(f"[SCRAPER]  No Tavily hits in include_domains for '{spec['q'][:50]}'; retrying without them")
+        items = once(False)
     return items
 
 
@@ -683,19 +746,17 @@ def fetch_web_search(queries):
     all_items = []
     queries_run = []
 
-    for i, query in enumerate(queries[:MAX_QUERIES]):
-        if i > 0:
-            time.sleep(1)
+    for query in queries[:MAX_QUERIES]:
+        spec = _query_spec(query)
+        if not spec["q"]:
+            continue
 
-        items = _fetch_tavily_search(query, api_key)
-        if not items:
-            print(f"[SCRAPER]  Tavily returned nothing; falling back to Wikipedia for '{query[:50]}'")
-            items = _fetch_wikipedia_search(query)
+        items = _fetch_tavily_search(spec["q"], api_key, spec)
 
         if items:
             all_items.extend(items)
-            queries_run.append(query)
-        print(f"[SCRAPER]  [{query[:50]}] {len(items)} results")
+            queries_run.append(spec["q"])
+        print(f"[SCRAPER]  [{spec['q'][:50]}] {len(items)} results")
 
     print(f"[SCRAPER]  OK {len(all_items)} results from {len(queries_run)} queries")
     return all_items, queries_run
@@ -703,9 +764,10 @@ def fetch_web_search(queries):
 
 def scrape_url_content(url):
     headers = {"User-Agent": "Mozilla/5.0"}
-    response = _get(url, headers=headers, timeout=TIMEOUT)
-    if response.status_code != 200:
-        return f"Error: Failed to retrieve page (Status {response.status_code})"
+    response = _request("get", url, headers=headers, timeout=TIMEOUT)
+    if response is None or response.status_code != 200:
+        status = getattr(response, "status_code", "none")
+        return f"Error: Failed to retrieve page (Status {status})"
     soup = BeautifulSoup(response.text, "html.parser")
     for script in soup(["script", "style"]):
         script.extract()
