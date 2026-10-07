@@ -1,14 +1,20 @@
 import json
 
 from edrak.agents.market_intelligence.graph import (
+    MarketIntelligence,
     build_graph,
     run,
     task_router,
     worker_result_from_state,
 )
-from edrak.agents.market_intelligence.nodes import clean_json, output_node, task_planner
+from edrak.agents.market_intelligence.nodes import (
+    clean_json,
+    invoke_search_tool,
+    output_node,
+    task_planner,
+)
 from edrak.agents.market_intelligence.state import empty_market_state
-from edrak.contracts import SourceType, WorkerResult, WorkerStatus, WorkerType
+from edrak.contracts import SourceType, Worker, WorkerResult, WorkerStatus, WorkerType
 
 
 class _FakeTool:
@@ -29,6 +35,31 @@ class _FakeTool:
                 "method": "serper",
             }
         ])
+
+
+def test_market_intelligence_matches_worker_protocol():
+    worker = MarketIntelligence()
+    assert isinstance(worker, Worker)
+    assert worker.worker_type is WorkerType.MARKET_INTELLIGENCE
+    assert callable(worker.run)
+
+
+def test_invoke_search_tool_sends_keyword_strings():
+    seen: list[list[str]] = []
+
+    class _StringTool:
+        def invoke(self, args):
+            queries = args.get("queries") or []
+            seen.append(queries)
+            assert all(isinstance(item, str) for item in queries)
+            return json.dumps({"organic": [{"link": "https://example.com", "title": queries[0]}]})
+
+    result = invoke_search_tool(
+        _StringTool(),
+        {"queries": [{"q": "automotive compliance market", "language": "en"}]},
+    )
+    assert seen == [["automotive compliance market"]]
+    assert "automotive compliance market" in result
 
 
 def test_graph_keeps_planner_executor_output_loop():
@@ -288,15 +319,15 @@ def test_output_node_builds_private_report_without_raw_docs():
     assert report["market_findings"][0]["claim"] == "The market is expanding."
 
 
-def test_log_block_writes_a_titled_section(tmp_path, monkeypatch):
-    from edrak.core import action_log
+def test_log_block_writes_a_titled_section(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
 
-    monkeypatch.setattr(action_log, "_log_path", lambda agent: tmp_path / f"{agent}.log")
-    action_log.log_block("market_intelligence", "GOAL", "enter mainland China")
+    logged: list[str] = []
+    monkeypatch.setattr(nodes, "log_action", lambda _agent, message: logged.append(message))
+    nodes.log_block("market_intelligence", "GOAL", "enter mainland China")
+    assert "GOAL" in logged
+    assert "enter mainland China" in logged
 
-    text = (tmp_path / "market_intelligence.log").read_text(encoding="utf-8")
-    assert "GOAL" in text
-    assert "enter mainland China" in text
 
 
 def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_research_task):

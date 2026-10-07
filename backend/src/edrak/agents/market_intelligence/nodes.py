@@ -47,7 +47,7 @@ from edrak.agents.market_intelligence.state import (
     _section,
 )
 from edrak.config import settings
-from edrak.core.action_log import log_action, log_block
+from edrak.core.action_log import log_action
 from edrak.core.llm import get_llm_client
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
@@ -55,6 +55,14 @@ from edrak.mcp.web_tools import (
     extract_urls_from_tool_result,
     scrape_url_content,
 )
+
+def log_block(agent: str, title: str, body: str) -> None:
+    """Write a titled multi-line record using the shared one-line logger."""
+    text = body if isinstance(body, str) else str(body)
+    log_action(agent, title)
+    for line in text.strip().splitlines() or [text]:
+        log_action(agent, line)
+
 
 def call_llm(prompt: str) -> str:
     """Call the inference API from .env. Failures are printed."""
@@ -516,6 +524,27 @@ def tasks_from_plan_reply(raw: str) -> list[dict]:
     return found
 
 
+def _query_strings(queries) -> list[str]:
+    found: list[str] = []
+    if not isinstance(queries, list):
+        return found
+    for item in queries:
+        if isinstance(item, dict):
+            text = str(item.get("q") or item.get("query") or "").strip()
+        else:
+            text = str(item).strip()
+        if text and text not in found:
+            found.append(text)
+    return found
+
+
+def invoke_search_tool(tool_obj, tool_args: dict) -> str:
+    """MCP search tools take List[str]. Flatten planner query objects to keywords."""
+    strings = _query_strings(tool_args.get("queries"))
+    result = tool_obj.invoke({"queries": strings})
+    return result if isinstance(result, str) else json.dumps(result, ensure_ascii=False)
+
+
 def task_planner(state: MarketAgentState) -> dict:
     _banner("NODE: TASK PLANNER")
     goal = state["goal"]
@@ -672,7 +701,7 @@ def task_executor(state: MarketAgentState) -> dict:
             conn_ok = False
             for conn_attempt in range(MAX_RETRIES):
                 try:
-                    result_str = tool_obj.invoke(tool_args)
+                    result_str = invoke_search_tool(tool_obj, tool_args)
                     conn_ok = True
                     break
                 except (_requests.ConnectionError, _requests.Timeout, ConnectionError) as exc:

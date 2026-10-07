@@ -1,7 +1,12 @@
 from langgraph.graph import END, START, StateGraph
 
-from edrak.agents.market_intelligence.nodes import fill_gaps, output_node, task_executor, task_planner
-from edrak.core.action_log import log_block
+from edrak.agents.market_intelligence.nodes import (
+    fill_gaps,
+    log_block,
+    output_node,
+    task_executor,
+    task_planner,
+)
 from edrak.agents.market_intelligence.state import MarketAgentState, empty_market_state
 from datetime import datetime
 
@@ -205,7 +210,7 @@ def worker_result_from_state(
 
 
 def run(task: ResearchTask) -> WorkerResult:
-    """Accept ResearchTask, run the unchanged market graph, return WorkerResult."""
+    """Accept ResearchTask, run the market graph, return WorkerResult."""
     started_at = utcnow()
     app = get_graph()
     final_state = app.invoke(
@@ -213,7 +218,11 @@ def run(task: ResearchTask) -> WorkerResult:
             run_id=task.parent_request_id,
             goal=task.goal,
             business_context=format_task_context(task),
-        )
+        ),
+        config={
+            "recursion_limit": 100,
+            "configurable": {"thread_id": f"market-{task.task_id}"},
+        },
     )
     return worker_result_from_state(task, final_state, started_at=started_at)
 
@@ -221,9 +230,7 @@ def run(task: ResearchTask) -> WorkerResult:
 class MarketIntelligence:
     """Domain worker satisfying the shared Worker protocol."""
 
-    @property
-    def worker_type(self) -> WorkerType:
-        return WorkerType.MARKET_INTELLIGENCE
+    worker_type = WorkerType.MARKET_INTELLIGENCE
 
     def run(self, task: ResearchTask) -> WorkerResult:
         return run(task)

@@ -317,17 +317,19 @@ def decide(state: VerificationState) -> dict:
     elif insufficient or any(topic_gaps.get(worker) for worker in present) or any(
         result.gaps for result in payload.agent_outputs
     ):
-        status = VerificationStatus.RETRY_REQUIRED
+        # RETRY_REQUIRED would send the orchestrator back to dispatch without a
+        # Send({task}) payload, which raises KeyError. Finalize with graded findings.
         verified_count = len(assessments) - len(insufficient)
-        summary = (
-            f"{verified_count} of {len(assessments)} findings are evidence-backed; "
-            f"{len(insufficient)} need targeted follow-up."
-            if assessments
-            else "Findings need targeted follow-up."
-        )
-        if not actions:
-            worker = next(iter(present))
-            actions = [TargetedAction(worker=worker, reason=missing[0] if missing else "Retry research for uncovered topics.")]
+        if verified_count:
+            status = VerificationStatus.VERIFIED
+            summary = (
+                f"{verified_count} of {len(assessments)} findings are evidence-backed; "
+                f"{len(insufficient)} were insufficient and recorded for follow-up."
+            )
+        else:
+            status = VerificationStatus.CANNOT_COMPLETE
+            summary = "No finding was evidence-backed enough to verify."
+        actions = []
     else:
         status = VerificationStatus.VERIFIED
         summary = f"All {len(assessments)} findings are evidence-backed with no unresolved conflicts."
