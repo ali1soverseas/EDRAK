@@ -42,6 +42,7 @@ CALL_FIELDS = (
     "latency_ms",
     "cost",
     "error_code",
+    "message",
 )
 _HIGH_SHARE = 0.5
 

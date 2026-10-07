@@ -293,6 +293,7 @@ def provenance_rows(result: CustomerTrendsResult) -> dict[str, list[dict[str, An
                 "count": c.get("count"),
                 "ms": c.get("latency_ms"),
                 "error": c.get("error_code"),
+                "message": c.get("message"),
             }
             for c in p.get("calls", [])
         ],

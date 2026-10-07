@@ -312,5 +312,6 @@ def test_the_provenance_lists_every_call_with_what_was_asked() -> None:
         "count": 0,
         "ms": 3372,
         "error": None,
+        "message": None,
     }
     assert fmt.provenance_rows(CustomerTrendsResult.model_construct(provenance={}))["calls"] == []

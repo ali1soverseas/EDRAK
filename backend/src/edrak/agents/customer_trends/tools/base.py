@@ -43,6 +43,7 @@ NO_RESULTS_HINT = (
     "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
 )
 _ARG_SUMMARY_CHARS = 80
+_ERROR_MESSAGE_CHARS = 200
 _ARG_SUMMARY_ITEMS = 5
 
 Emitter = Callable[[dict[str, Any]], None]
@@ -134,6 +135,7 @@ def emit_event(
     cost: float = 0.0,
     error_code: str | None = None,
     batch_id: str | None = None,
+    message: str | None = None,
 ) -> None:
     event = {
         "type": "tool_called",
@@ -149,12 +151,20 @@ def emit_event(
         "latency_ms": round((time.perf_counter() - started) * 1000),
         "cost": cost,
         "error_code": error_code,
+        "message": message,
         "batch_id": batch_id,
     }
     try:
         ctx.emit(event)
     except Exception:
         log.warning("event_emitter_failed", tool=tool)
+
+
+def _error_message(response: ToolResponse) -> str | None:
+    """What an error response said, shortened, so a stored run shows why a call failed."""
+    if response.error_code is None or not response.gaps:
+        return None
+    return truncate(response.gaps[0], _ERROR_MESSAGE_CHARS)
 
 
 def _emit(
@@ -172,6 +182,7 @@ def _emit(
         cost=response.cost_estimate,
         error_code=response.error_code,
         batch_id=response.batch_id,
+        message=_error_message(response),
     )
 
 
@@ -187,6 +198,7 @@ def finish_processing[R: ToolResponse | ProcessingResponse](
         count=response.count,
         started=started,
         error_code=response.error_code if isinstance(response, ToolResponse) else None,
+        message=_error_message(response) if isinstance(response, ToolResponse) else None,
     )
     return response
 
@@ -350,12 +362,19 @@ async def execute_collection(
     return response
 
 
+def _unset(value: Any) -> bool:
+    """Models fill every field of a tool's schema, with an empty string for what they leave
+    out; that means "not given", so the brief's default applies."""
+    return value is None or (isinstance(value, str) and not value.strip())
+
+
 async def invoke_tool(
     ctx: ToolContext, spec: ToolSpec, raw: dict[str, Any]
 ) -> ToolResponse | ProcessingResponse:
     """Validate a model's arguments, inject the run ids and brief defaults, and run the tool."""
     started = time.perf_counter()
     known = spec.input_model.model_fields
+    raw = {k: v for k, v in raw.items() if not _unset(v)}
     arguments = {
         **{k: v for k, v in ctx.defaults.items() if k in known},
         **raw,

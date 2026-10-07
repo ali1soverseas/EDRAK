@@ -214,6 +214,18 @@ async def test_every_call_emits_one_tool_called_event(store: EvidenceStore, tool
     assert first["provider"] == ok.provider_used and first["cost"] == ok.cost_estimate
     assert first["latency_ms"] >= 0 and first["run_id"] == RUN_ID
     assert (second["status"], second["error_code"]) == ("error", "invalid_input")
+    assert second["message"].startswith("invalid input:") and first["message"] is None
+
+
+@pytest.mark.parametrize("tool", sorted(CASES))
+async def test_an_empty_string_means_the_argument_was_not_given(
+    store: EvidenceStore, tool: str
+) -> None:
+    ctx, provider, arguments, _ = set_up(store, tool)
+    blanks = {"geo": "", "granularity": "", "since": "  ", "until": None}
+    response = await run(ctx, tool, {**arguments, **blanks})
+    assert response.status is ToolStatus.OK, response.gaps
+    assert len(provider.calls) == 1
 
 
 async def test_the_event_args_are_short_and_leave_out_ids_and_defaults(
