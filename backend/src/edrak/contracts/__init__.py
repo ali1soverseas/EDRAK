@@ -19,8 +19,14 @@ from .result import (
 )
 from .task import ResearchPlan, ResearchTask, WorkerType
 from .verification import (
+    ControlSummary,
+    EvidenceQuality,
+    FindingCheckStatus,
+    FindingVerdict,
     TargetedAction,
     VerificationDecision,
+    VerificationInput,
+    VerificationResult,
     VerificationStatus,
 )
 from .worker import (
@@ -35,11 +41,15 @@ __all__ = [
     "CompanyProfile",
     "Conflict",
     "ContractModel",
+    "ControlSummary",
     "Evidence",
+    "EvidenceQuality",
     "EvidenceRef",
     "EvidenceRelation",
     "Finding",
     "FindingCategory",
+    "FindingCheckStatus",
+    "FindingVerdict",
     "NonBlankStr",
     "OrchestrationResult",
     "ResearchPlan",
@@ -50,6 +60,8 @@ __all__ = [
     "TriggerType",
     "UseCase",
     "VerificationDecision",
+    "VerificationInput",
+    "VerificationResult",
     "VerificationStatus",
     "Worker",
     "WorkerNotRegisteredError",
