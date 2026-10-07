@@ -144,7 +144,8 @@ def check_no_verdicts(result: CustomerTrendsResult, store: EvidenceStore) -> lis
 
 
 def check_high_confidence(result: CustomerTrendsResult, store: EvidenceStore) -> list[CheckFailure]:
-    """A high confidence finding has enough evidence from enough platforms or source types."""
+    """A high confidence finding has enough evidence from enough platforms or source types, and no
+    open gap that weakens it."""
     failures = []
     for finding in result.findings:
         if finding.confidence.value != "high":
@@ -158,6 +159,14 @@ def check_high_confidence(result: CustomerTrendsResult, store: EvidenceStore) ->
                     "high_confidence",
                     f"{len(finding.evidence_ids)} evidence ids from {spread} platform(s) or "
                     f"source type(s); needs {HIGH_MIN_EVIDENCE} from {HIGH_MIN_SPREAD}",
+                    finding.id,
+                )
+            )
+        elif finding.related_gaps:
+            failures.append(
+                CheckFailure(
+                    "high_confidence",
+                    f"high confidence with open gaps: {', '.join(finding.related_gaps)}",
                     finding.id,
                 )
             )

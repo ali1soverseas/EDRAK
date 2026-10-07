@@ -113,6 +113,14 @@ def test_high_confidence_needs_the_evidence_it_claims(
     assert any(f.check == "high_confidence" and "needs 10 from 2" in f.detail for f in failures)
     assert result.findings[2].confidence is Confidence.HIGH
     assert not [f for f in run_on(result, settings) if f.check == "high_confidence"]
+    third = result.findings[2].model_copy(update={"related_gaps": ["platforms"]})
+    gapped = result.model_copy(
+        update={"findings": [*result.findings[:2], third, *result.findings[3:]]}
+    )
+    assert any(
+        f.check == "high_confidence" and "open gaps: platforms" in f.detail
+        for f in run_on(gapped, settings)
+    )
 
 
 @pytest.mark.parametrize(

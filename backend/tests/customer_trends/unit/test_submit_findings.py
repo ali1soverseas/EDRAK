@@ -15,6 +15,7 @@ from edrak.agents.customer_trends.tools import compute_metrics, submit_findings
 from edrak.agents.customer_trends.tools.base import ToolContext, invoke_tool
 from edrak.agents.customer_trends.tools.submit_findings import (
     DOWNGRADE_CAVEAT,
+    GAP_CAVEAT,
     claim_numbers,
     load_verdict_phrases,
     matches,
@@ -401,6 +402,31 @@ async def test_high_confidence_needs_ten_ids_and_two_platforms_or_source_types(
         ("one_platform", Confidence.MEDIUM, [DOWNGRADE_CAVEAT]),
         ("nine", Confidence.MEDIUM, [DOWNGRADE_CAVEAT]),
     ]
+
+
+async def test_high_confidence_is_lowered_when_the_finding_lists_open_gaps(
+    store: EvidenceStore,
+) -> None:
+    store.create_run(RUN_ID, TASK_ID)
+    spread = [
+        *high_evidence(6),
+        *[make_evidence(f"x post {n}", platform=Platform.X) for n in range(6)],
+    ]
+    store.add_batch(RUN_ID, TASK_ID, "test", spread)
+    ctx = processing_context(store)
+    ids = [i.id for i in spread]
+    response = await submit(
+        ctx,
+        finding(id="open", claim="Support is common.", confidence="high", evidence_ids=ids,
+                metrics={}, related_gaps=["platforms"]),
+        finding(id="clear", claim="Support is common.", confidence="high", evidence_ids=ids,
+                metrics={}),
+    )  # fmt: skip
+    stored = {f.id: f for f in store.get_findings(RUN_ID)}
+    assert stored["open"].confidence is Confidence.MEDIUM
+    assert stored["open"].caveats == [GAP_CAVEAT]
+    assert stored["clear"].confidence is Confidence.HIGH
+    assert [(a.id, a.reasons) for a in response.adjusted] == [("open", [GAP_CAVEAT])]
 
 
 async def test_a_single_evidence_id_means_low_confidence_and_a_caveat(

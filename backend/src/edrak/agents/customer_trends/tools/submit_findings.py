@@ -41,6 +41,7 @@ DOWNGRADE_CAVEAT = (
     "confidence lowered from high: high needs at least 10 evidence items from at least 2 "
     "platforms or source types"
 )
+GAP_CAVEAT = "confidence lowered from high: the finding is weakened by open gaps"
 
 DESCRIPTION = """Use it to hand in your findings once the analysis is done. Each is checked, and
 the sound ones are stored as the worker's result; you get back which were accepted and why any
@@ -55,7 +56,7 @@ object. Rules:
 - a claim must not recommend or decide ("should enter", "do not launch"): describe, do not
   advise;
 - one evidence id means low confidence; high confidence needs at least 10 evidence ids from at
-  least 2 platforms or source types, otherwise it is lowered to medium.
+  least 2 platforms or source types and no related_gaps, otherwise it is lowered to medium.
 
 A rejected finding can be fixed and sent again with the same id; an accepted one is replaced
 when its id is sent again. Send at most 20 findings per call.
@@ -205,21 +206,26 @@ def check_finding(
     return reasons
 
 
-def confidence_adjustment(finding: Finding, store: EvidenceStore, run_id: str) -> Finding:
-    """Lower an unearned `high` to `medium` with a caveat."""
+def high_confidence_shortfall(finding: Finding, store: EvidenceStore, run_id: str) -> str | None:
+    """Why a `high` finding has not earned it (the caveat to add), or None when it has."""
     if finding.confidence is not Confidence.HIGH:
-        return finding
+        return None
     items = store.get_items(run_id, finding.evidence_ids)
     platforms = {item.platform for item in items if item.platform is not None}
     kinds = {item.source_type for item in items}
     spread = max(len(platforms), len(kinds))
-    if len(finding.evidence_ids) >= HIGH_MIN_EVIDENCE and spread >= HIGH_MIN_SPREAD:
+    if len(finding.evidence_ids) < HIGH_MIN_EVIDENCE or spread < HIGH_MIN_SPREAD:
+        return DOWNGRADE_CAVEAT
+    return GAP_CAVEAT if finding.related_gaps else None
+
+
+def confidence_adjustment(finding: Finding, store: EvidenceStore, run_id: str) -> Finding:
+    """Lower an unearned `high` to `medium` with a caveat."""
+    shortfall = high_confidence_shortfall(finding, store, run_id)
+    if shortfall is None:
         return finding
     return finding.model_copy(
-        update={
-            "confidence": Confidence.MEDIUM,
-            "caveats": [*finding.caveats, DOWNGRADE_CAVEAT],
-        }
+        update={"confidence": Confidence.MEDIUM, "caveats": [*finding.caveats, shortfall]}
     )
 
 
@@ -242,7 +248,7 @@ def _submit(ctx: ToolContext, inp: SubmitFindingsInput) -> SubmitFindingsRespons
         if len(finding.evidence_ids) < HIGH_MIN_SPREAD:
             notes.append("one evidence id only: confidence is low and marked single_source")
         if final.confidence is not finding.confidence:
-            notes.append(DOWNGRADE_CAVEAT)
+            notes.append(final.caveats[-1])
         if notes:
             adjusted.append(
                 AdjustedFinding(id=final.id, confidence=final.confidence, reasons=notes)
