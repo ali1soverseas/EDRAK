@@ -177,3 +177,11 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - The second planning pass is given the queries of the first, so "do not repeat queries that already ran" can be followed. The planner is asked for queries of 2 to 4 words; the run's long phrases returned 0 to 1 items on Reddit and X.
 - The writer prompt says what `recent_growth` and `share_of_voice` measure (the collected sample, not search interest or market share). The run wrote "interest rising rapidly" from a theme's growth.
 - An empty collection answer carries a hint to use shorter words or another platform; the model repeated empty X queries until it reached its step cap.
+
+## After the second live run
+
+- The second live run (`run-ci-gitlab-001-2`) ended at its 300 s limit with 84 evidence items and no findings: pass one took about 165 s (planning, 100 s of collection, analysis), `gap_check` replanned because time was not yet used up, and the second pass plus its analysis used the rest, so `write_findings` never ran. The last 30 percent of `max_seconds` is now kept for analysis and writing: a branch gets the smaller of `BRANCH_TIMEOUT_S` and the collection time left, and a replan needs at least 30 s of it. With the default 300 s the second pass gets about 45 s.
+- 5 of the 21 tool calls failed validation because the model sent `geo: ""` or `granularity: ""` for fields it meant to leave out. An empty or blank string, or null, is now treated as not given before validation, so the brief's default applies.
+- The call log keeps the error message of a failed call (`message`).
+- Instagram search takes its hashtag page from the first planned hashtag, else from the query run together; before, the query and every hashtag were joined into one meaningless tag. Hashtags make no difference on Reddit search (2 items with and without one, checked on 2026-10-07).
+- Measured: the Apify search interest actor did not finish within 60 s in either pass, so every demand branch pays 60 s before SocialCrawl answers (about 10 s when the key has credits). Reddit through SocialCrawl costs 4 to 5 credits a call for 2 to 18 items.

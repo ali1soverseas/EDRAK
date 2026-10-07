@@ -412,6 +412,12 @@ gap exists, `replan_count` is 0 and the budget (tool calls, cost, time) is not u
 second pass collects only what the new plan asks for and `analyze` runs again over all batches,
 because `analyze_text` replaces the stored themes.
 
+**Time.** The last 30 percent of `max_seconds` is kept for analysis and writing
+(`FINISH_RESERVE`). A collection branch gets the smaller of `BRANCH_TIMEOUT_S` and the time left
+before that reserve, does not start with under 10 seconds, and the graph replans only when at
+least 30 seconds of collection time remain. A 300 second run therefore gives pass one up to 100
+seconds a branch and pass two what is left of 210 seconds, and always has 90 seconds to write.
+
 **Gap rules** (`gaps.py`, numbers from `config/use_cases.yaml`, all pure functions):
 
 | Gap id | Severity | When |

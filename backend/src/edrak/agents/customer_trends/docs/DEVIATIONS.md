@@ -89,3 +89,4 @@ pointers; the evidence the spec sketch calls `preview` is at most five items of 
 
 - SPEC 6.7 gives the rule for `high` confidence (10 evidence ids, 2 platforms or source types). `submit_findings` also lowers a `high` finding that lists `related_gaps` to `medium`, and the `high_confidence` check reports one that kept it. This is stricter than SPEC and follows its own principle that gaps are a first-class output.
 - `ActorSpec.timeout_s` and the per-run memory of an actor over its monthly limit are additions to the Apify configuration described in SPEC section 8; `provenance.calls` is an addition to the provenance of SPEC 6.8.
+- SPEC section 10 replans once "while budget remains". The replan edge also needs enough collection time (`MIN_REPLAN_S` 30 s after the 30 percent kept for analysis and writing), and a branch's time limit is the smaller of `BRANCH_TIMEOUT_S` and that remaining time.

@@ -114,8 +114,13 @@ fallback serve it. A key whose quota is used up for the day shows the same.
   had stored before is kept).
 - **Log:** `branch_timed_out`, `node_finished status=error`.
 
+A branch is also cut short, with the gap "the branch did not finish in N s" (N below
+`BRANCH_TIMEOUT_S`), or not started ("no time was left for collection before the time kept for
+the findings"), when the time kept back for the findings (30 percent of `max_seconds`) is near.
+The second collection pass is skipped when too little collection time remains.
+
 Fix: raise `budget.max_seconds` in the brief or `BRANCH_TIMEOUT_S`, lower the `depth`, or look for a
-slow provider in the tool call table (latency per call).
+slow provider in the Calls table of the Provenance tab (latency per call).
 
 ## Budget used up
 
