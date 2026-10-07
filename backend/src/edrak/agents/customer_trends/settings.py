@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _REPO_MARKER = "AGENTS.md"
@@ -35,6 +35,8 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         env_ignore_empty=True,
         extra="ignore",
+        validate_by_name=True,
+        validate_by_alias=True,
     )
 
     # LLM (Ollama Cloud)
@@ -55,8 +57,8 @@ class Settings(BaseSettings):
     serper_api_key: SecretStr | None = None
     google_trends_api_key: SecretStr | None = None
 
-    # Runtime (EDRAK_ENV and ARTIFACTS_PATH are shared with the rest of the platform)
-    edrak_env: str = "development"
+    # Runtime (ENV and ARTIFACTS_PATH are shared with the platform; EDRAK_ENV also works)
+    edrak_env: str = Field(default="development", validation_alias=AliasChoices("EDRAK_ENV", "ENV"))
     edrak_data_dir: Path = Path("./data")
     artifacts_path: Path = Path("artifacts")
     edrak_provider_mode: Literal["live", "fixture"] = "live"

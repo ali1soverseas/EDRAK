@@ -454,3 +454,112 @@ a function from role to model; `providers` brings its own budget and breaker; th
 - a run that crashed resumes from its last checkpoint when run again with the same `run_id`, and
   one that already finished returns its stored result without running anything.
 
+## Data flow and storage
+
+```mermaid
+flowchart LR
+    task["ResearchTask (orchestrator) or TaskBrief (CLI, UI, tests)"] --> brief["TaskBrief"]
+    brief --> graph["worker graph"]
+    graph <--> tools["tools and providers"]
+    tools --> store[("evidence.db")]
+    graph <--> store
+    graph --> sink[("result.json")]
+    graph --> checkpoints[("checkpoints.db")]
+    sink --> shared["WorkerResult (compact)"]
+    store --> shared
+    shared --> next["verification and synthesis"]
+```
+
+A task arrives as a shared `ResearchTask` (`run_worker`, the orchestrator's entry) or as a
+`TaskBrief` (`run_task`, the CLI, the UI). `intake` opens a run in the store. The tools write full
+records to the store and give the model pointers; the graph state holds batch ids, gaps, metric
+ids and findings only. `submit` stores the findings, builds the `CustomerTrendsResult` and writes it
+through the sink. `run_worker` then makes the compact `WorkerResult` from that result and the cited
+evidence, and hands it back; everything else stays with the sink and the store.
+
+Storage layout (paths resolve as in `settings.py`: `EDRAK_DATA_DIR` against `backend/`,
+`ARTIFACTS_PATH` against the repository root):
+
+```text
+<EDRAK_DATA_DIR>/                       default backend/data
+    evidence.db                         SQLite, WAL: runs, batches, evidence, theme aggregates,
+                                        trend series, metrics, findings, the result registry
+    checkpoints.db                      LangGraph checkpoints, thread_id = run_id
+    cache/<sha256>.json                 provider results, kept EDRAK_CACHE_TTL_S seconds
+    youtube_quota.json                  YouTube units and searches used today
+<ARTIFACTS_PATH>/                       default <repository>/artifacts
+    runs/<run_id>/customer_trends/result.json
+```
+
+`run_id` is also a directory name, so it matches `[A-Za-z0-9][A-Za-z0-9_.-]{0,127}`. For a task from the
+orchestrator it is `<task_id>.a<attempt>`: a retry is a new run, and running the same attempt again
+returns the stored result.
+
+## Provider routing
+
+The order of providers per capability, generated from `config/providers.yaml` by
+`scripts/customer_trends/print_routing.py` (a test keeps this table equal to its output). A provider
+marked `(off)` is switched off for that capability and skipped. The reasons for the order, and its
+cost, are in "Routing and cost" above.
+
+| Capability | 1st | 2nd | 3rd |
+|---|---|---|---|
+| `fetch_page` | direct_http |  |  |
+| `news:gdelt` | gdelt |  |  |
+| `news:google_news` | serper |  |  |
+| `reviews:amazon` | apify |  |  |
+| `reviews:app_store` | apify |  |  |
+| `reviews:google_play` | apify |  |  |
+| `search_interest` | apify | socialcrawl | google_trends_api |
+| `social_comments:facebook` | socialcrawl | apify |  |
+| `social_comments:instagram` | apify | socialcrawl |  |
+| `social_comments:reddit` | socialcrawl | apify |  |
+| `social_comments:tiktok` | socialcrawl | apify |  |
+| `social_comments:x` | apify | socialcrawl |  |
+| `social_comments:youtube` | youtube_api | socialcrawl | apify |
+| `social_search:facebook` | socialcrawl | apify (off) | serper |
+| `social_search:instagram` | socialcrawl | apify | serper |
+| `social_search:reddit` | socialcrawl | apify | serper |
+| `social_search:tiktok` | socialcrawl | apify | serper |
+| `social_search:x` | apify | socialcrawl | serper |
+| `social_search:youtube` | youtube_api | socialcrawl | apify |
+| `web_search` | serper |  |  |
+
+## How verification and synthesis read the output
+
+They get the `WorkerResult`. When a stage needs more than it carries, `metadata["artifact"]` points
+to the rest:
+
+- `result_location` is the `result.json` of the full `CustomerTrendsResult`
+  (`ResultSink.read_result(run_id)` returns it; `ResultSink` is a protocol, so another store can
+  replace `LocalSink`).
+- `evidence_store` and `run_id` open the evidence read-only: `EvidenceStore(path).get_items(run_id,
+  ids)`, `.query(run_id, filters)`, `.get_metric(run_id, metric_id)`, `.get_aggregates(run_id)`,
+  `.get_trend_series(run_id)`. A stage that checks a claim re-reads the cited items there and
+  recomputes any number from the stored metric a finding names in `metadata["finding_metrics"]`.
+- `metadata["control_summary"]` and `metadata["themes"]` hold the headline, coverage, gaps, warnings
+  and the theme counts, so synthesis needs no raw text.
+
+The worker's own checks (`gaps.py`, `submit_findings`, `evals/customer_trends/checks.py`) are
+internal quality gates. They do not replace Verification.
+
+## Mapping to the shared contracts
+
+The adapters are the only code that touches `edrak.contracts` (`schemas/task.py`,
+`schemas/evidence.py`, `schemas/findings.py`); `worker.py` registers the worker.
+
+| Shared | Worker | How |
+|---|---|---|
+| `ResearchTask` | `TaskBrief` | `brief_from_task`: entity = company name, question = goal, competitors = targets (for market entry the targets describe the market), focus from the words of `focus` and `focus_areas`, country read from the text, `since` from `time_window_days`, `run_id` = `<task_id>.a<attempt>`. |
+| `UseCase` | `UseCase` | `market_entry_expansion` is `market_entry`. |
+| `Evidence` | `EvidenceItem` | `to_shared_evidence`: a 280 character fact, an excerpt (500 characters) only for longer text, the url, the platform or host as publisher; platform, language, engagement and provider in `metadata`. Web pages map to `web_page` (`search_result` for snippets), news to `news_article`, reviews to `review_site`, social items and trend points to `other`. `is_synthetic` is true in fixture mode. |
+| `Finding` | `Finding` | `finding_id` = `<task_id>:<id>`, `statement` = claim, `category` from the type (pain point and sentiment: customer sentiment; unmet need and competitor gap: gap; demand signal and trend: market signal; risk: risk), refs all `supports`, confidence low, medium, high as 0.3, 0.6, 0.85, `limitations` = caveats and related gaps. The metrics ride in `WorkerResult.metadata["finding_metrics"]`. |
+| `WorkerStatus` | `ControlSummary.status` | complete: `completed`; partial: `partial`; insufficient with no evidence and no findings: `no_evidence`, else `partial`; a run that failed without findings: `failed` with the error. |
+| `WorkerResult` | `CustomerTrendsResult` | `to_worker_result`: only the evidence the findings cite, the gaps, the overall confidence (none for `no_evidence` and `failed`), start and end times, and the pointer to the artifact. |
+
+`run_worker(task)` (sync, for the orchestrator's thread pool) and `arun_worker(task)` never raise:
+a task that cannot run comes back as a `failed` result. `register(registry)` adds the worker to a
+`WorkerRegistry` as `customer_trends`; each task gets its own budget and breaker. A `WorkerResult`
+made from the demo or a fixture run validates against the shared model, which the tests check, and
+so does the "no evidence" case.
+

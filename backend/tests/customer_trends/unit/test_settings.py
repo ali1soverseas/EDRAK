@@ -116,3 +116,16 @@ def test_is_production() -> None:
 
 def test_get_settings_is_cached() -> None:
     assert get_settings() is get_settings()
+
+
+def test_the_environment_name_reads_the_shared_env_key_or_its_own(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    assert Settings(_env_file=None).is_production is False
+    monkeypatch.setenv("ENV", "production")
+    assert Settings(_env_file=None).is_production is True
+    monkeypatch.setenv("EDRAK_ENV", "development")
+    assert Settings(_env_file=None).is_production is False, "EDRAK_ENV wins over ENV"
+    monkeypatch.delenv("ENV")
+    monkeypatch.delenv("EDRAK_ENV")
+    assert Settings(_env_file=None, edrak_env="prod").is_production is True

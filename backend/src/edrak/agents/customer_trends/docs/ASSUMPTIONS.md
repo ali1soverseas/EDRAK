@@ -1,18 +1,18 @@
 # Assumptions
 
-## Batch 1
+## Batch 0
 
 - The repository structure changed: the worker lives in `backend/src/edrak/agents/customer_trends/`, imported as `edrak.agents.customer_trends`. The standalone `agents/customer_trends/` project from the first attempt is gone.
 - `backend/pyproject.toml` was an empty placeholder, so it now defines the shared `edrak` project (src layout, hatchling) with the worker's dependencies. Other components add their own dependencies there.
 - `make` targets, lint and mypy are scoped to the worker's paths so other components are not checked or reformatted. Run them from `backend/`.
 - Tests live in `backend/tests/customer_trends/`, evals in `backend/evals/customer_trends/`, scripts in `scripts/customer_trends/`, config YAML in the package's `config/`.
 - The repository `.gitignore` ignores `docs/`. The worker docs directory is re-included, and only `docs/SPEC.md` is ignored, at the owner's request.
-- The worker settings in `.env.example` are appended to the existing root file. `EDRAK_ENV` already exists there, so the spec's duplicate line is omitted.
+- The worker settings in `.env.example` are appended to the existing root file. The shared environment name is `ENV` there (it was `EDRAK_ENV` before Batch 9 merged `develop`), so `Settings` reads `EDRAK_ENV` or `ENV`, and the spec's duplicate line is omitted.
 
 ## Batch 1
 
 - `Settings` ignores empty values (`env_ignore_empty`), so `KEY=` lines in `.env.example` fall back to defaults or `None`.
-- `EDRAK_ENV` is the shared key (`development` in the root `.env.example`); `prod` or `production` selects JSON logs, anything else console logs.
+- The environment name is the shared `ENV` key (`EDRAK_ENV` also works and wins); `prod` or `production` selects JSON logs, anything else console logs.
 - `structured_call`, `invoke_with_retry` and the fake model are async, matching the async-first rule (SPEC section 4). The smoke script wraps them with `asyncio.run`.
 - `structured_call` asks for `include_raw=True` so the repair attempt can show the model its own invalid output.
 - `ScriptedChatModel.bind_tools` returns the same instance, so the script cursor and recorded calls are shared across bound copies.
@@ -31,8 +31,8 @@
 - Datetimes are normalized to UTC; a naive datetime is taken as UTC. Date filters (`since`, `until`) use `published_at`, so undated items never match them.
 - `TaskBrief.focus` defaults to empty: `intake` fills it from `use_cases.yaml`.
 - Models added beyond the spec's list, each needed by the store: `MetricResult` (what `save_metric` stores), `EvidenceFilters`, `QueryResult`, `RunSummary`, `ReviewTarget`, `ReviewStore`, `Sentiment`.
-- `ThemeAggregate` has no quotes field (SPEC 6.6), but `Theme` does. Batch 6 has to decide where `analyze_text` keeps representative quotes (for example as a second stored record).
-- `find_numbers` skips digits glued to a Latin letter (Q3, B2B, GPT4) and treats years as ordinary numbers. Batch 6 can exempt years from the claim-versus-metrics rule if findings need them.
+- `ThemeAggregate` had no quotes field (SPEC 6.6); Batch 6 added `representative_quotes` (see DEVIATIONS).
+- `find_numbers` skips digits glued to a Latin letter (Q3, B2B, GPT4) and treats years as ordinary numbers; `submit_findings` exempts whole numbers from 1900 to 2100 from the claim check (Batch 6).
 - `detect_language` returns `None` for texts with fewer than five letters (outside the Arabic script rule) and for short text where langdetect is under 90 percent sure. Arabic-dominant short text is `ar`.
 - `langdetect` ships without type stubs: `backend/pyproject.toml` has a mypy override for it.
 - Search for `text_contains` compares normalized, case-folded text, so Arabic diacritics and case do not matter.
@@ -60,12 +60,7 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - Every Apify actor id in providers.yaml was checked against its live build (`GET /v2/acts/{id}/builds/default`) for input fields and enums, and run once with at most 10 items to capture real output. The captures became the fixtures, with authors, URLs and texts replaced. Inputs that were run through the provider itself against the live API: X search, App Store reviews and Google Trends. The other actors were run with equivalent hand-built inputs; the templates are covered by tests that assert the exact input they produce.
 - Every SocialCrawl endpoint in providers.yaml (six searches, six comment endpoints) was called live once, and the paths, parameters and response shapes come from its published `llms.txt` and per-platform docs. The balance endpoint, relevance filter and `since:`/`until:` operators for X were also exercised.
 - Not verified, and flagged where they live:
-  - SocialCrawl's USD price per credit is not published on the pages read; `usd_per_credit: 0.001` is an assumption (the free tier is 100 credits).
-  - Apify prices are the FREE-plan pay-per-event rates read from each actor on that day and can change.
-  - `social_search:facebook` through Apify: switched off (see DEVIATIONS.md). Candidates seen: `apify/facebook-posts-scraper` (page URLs only), `powerai/facebook-post-search-scraper` (no results for "GitLab" or "coffee", charges a 9 cent start fee, needs `maxResults` of at least 10).
-  - The Google Trends API alpha stub does not call anything. Apify's Google Trends actor is a browser scraper: one live run took 80 to 95 seconds and an earlier one timed out at 240.
-  - The Reddit actor (`trudax/reddit-scraper-lite`) returns no vote or comment counts, so Reddit evidence from Apify has no engagement. SocialCrawl returns them.
-  - Instagram has no keyword search: the query is turned into one hashtag (letters and digits only).
+  - SocialCrawl's USD price per credit was not published on the pages read; the later pricing page gave it (see "Cost-based routing"), and the config now uses 0.008.
 - Apify's synchronous route answers 201 and returns the dataset as a JSON list. Runs that time out or fail are not retried (a retry would run, and bill, the actor again); 429 and 5xx are.
 - The HTTP layer now waits at least `Retry-After` (up to a minute) after a 429 and accepts a per-request timeout; Apify requests use the actor timeout plus 30 seconds.
 - Naive timestamps from providers are read as UTC (a test caught them being read as local time).
@@ -129,11 +124,11 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 
 ## Batch 7
 
-- Shared-contract adapters and `run_worker(task) -> WorkerResult` are NOT built. In this branch `backend/src/edrak/contracts/` still holds empty stubs, so by the batch rules the step is skipped and nothing was invented in its place. `origin/develop` now carries the contracts (merged PR 6: `ResearchTask`, `WorkerResult`, `Evidence`, `Finding`, `EvidenceRef`, `WorkerStatus`), which this branch does not have. Notes for the adapter batch, from reading them without importing them:
-  - `ResearchTask` has `goal`, `focus` (both free text), `company_profile` (name, aliases, products), `business_context` (use case, `targets`, `focus_areas`, `time_window_days`, constraints) and `attempt`. It has no entity, competitors, geo, languages, market, depth or budget: entity would come from the company profile, competitors from `targets`, `since` from `time_window_days`, the rest from defaults or extras. Its `UseCase` value for market entry is `market_entry_expansion`; this worker's is `market_entry`.
-  - `Finding` there has `finding_id`, `statement`, `category` (a different enum from this worker's `FindingType`), `evidence_refs` with a relation, a float `confidence` and `limitations`. `Evidence` needs `extracted_fact` and uses another set of source types (web_page, news_article, review_site and so on). `WorkerStatus` is completed, partial, no_evidence or failed; `WorkerResult.confidence` is a float.
-  - `WorkerResult` checks that every evidence reference resolves inside the result, so an adapter must carry the evidence a finding cites, in compact form (fact and short excerpt), not the stored text.
-- `intake` accepts a `TaskBrief` only. Converting a `ResearchTask` belongs to the same pending adapter.
+- The shared contracts reached this branch when `develop` was merged in Batch 9, and the adapters and `run_worker` were built then (see Batch 9). Notes from reading them, which shaped the adapters:
+  - `ResearchTask` has `goal`, `focus` (both free text), `company_profile` (name, aliases, products), `business_context` (use case, `targets`, `focus_areas`, `time_window_days`, constraints) and `attempt`. It has no entity, competitors, geo, languages, market, depth or budget: entity comes from the company profile, competitors from `targets`, `since` from `time_window_days`, the rest from defaults or the task text. Its `UseCase` value for market entry is `market_entry_expansion`; this worker's is `market_entry`.
+  - `Finding` there has `finding_id`, `statement`, `category` (a different enum from this worker's `FindingType`), `evidence_refs` with a relation, a float `confidence` and `limitations`. `Evidence` needs `extracted_fact` and uses another set of source types. `WorkerStatus` is completed, partial, no_evidence or failed; `WorkerResult.confidence` is a float.
+  - `WorkerResult` checks that every evidence reference resolves inside the result, so the adapter carries the cited evidence in compact form (a fact and a short excerpt), not the stored text.
+- `intake` accepts a `TaskBrief`; a `ResearchTask` is converted before the graph starts (`brief_from_task`, Batch 9).
 - The collection branches use `langchain.agents.create_agent`, because LangGraph's `create_react_agent` is marked deprecated in the installed version. This adds one dependency (`langchain`). The step cap is a model call limit that ends the run gracefully instead of raising, so a branch keeps what it collected.
 - State values are plain JSON, not pydantic objects: the SQLite checkpointer logs that unregistered classes "will be blocked in a future version". State fields beyond SPEC section 10: `branch_errors`, `metric_ids` and `warnings`. `gaps` hold gap records (id, severity, description, suggested action) rather than strings, because the replan needs the severity and the suggested action.
 - `gaps` has the union reducer the batch asks for, and `gap_check` overwrites it with `Overwrite` so that a gap which has been closed is removed. A failing branch adds its own gap to the state and announces it; `gap_check` rebuilds the same gap from `branch_errors`.
@@ -148,5 +143,27 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - Resume: a run whose checkpoint is unfinished continues from it when started again with the same `run_id`; one that finished returns its stored result. The branch conversations are not checkpointed, so a branch that was interrupted starts again (items already stored are reported as duplicates).
 - A run that fails inside the graph (for example the sink cannot write) returns a result built from the store with the gap `run_failed`, and tries to write it. If that write fails too, the result is returned and the failure is logged.
 - The overall confidence rule (high when half the findings are high and no critical gap is open) is this worker's own convention; SPEC does not define it.
-- Not done here: parallel chunk labelling in `analyze_text`, live runs against the real model and providers (Batch 9), the CLI and UI (Batch 8). The scripted models used in the tests are test helpers and are not shipped.
+- Not done in Batch 7: parallel chunk labelling in `analyze_text` (still sequential, see Batch 6), live runs against the real model and providers (opt-in live tests, Batch 9). The scripted models of the tests are test helpers; the demo script (Batch 8) is the one shipped.
 
+## Batch 8
+
+- The sample briefs moved from `tests/customer_trends/fixtures/` to `evals/customer_trends/briefs/`, where SPEC section 3 puts them; the tests read them from there (`factories.BRIEFS`), so the UI presets and the tests use the same files. The GitLab pilot is first.
+- Fixture mode used for runs (`--fixture`, the UI toggle, `EDRAK_PROVIDER_MODE=fixture`) reads `evals/customer_trends/fixtures/providers/`, richer files than the three-item recordings in `tests/customer_trends/fixtures/providers/`, which the registry tests depend on. `EDRAK_FIXTURES_DIR` points it elsewhere. The registry's own default is unchanged.
+- The demo fixtures are synthetic: eight product-neutral phrases in English and Arabic (`llm/demo_script.py`), cycled over posts, reviews and news by `scripts/customer_trends/build_demo_fixtures.py`, and a test keeps the files equal to the script's output. They serve every demo brief the same posts, so a demo run of the product launch brief finds the same themes as the GitLab one; the numbers it states are the demo's, not a market's. Evidence from a fixture run is marked `is_synthetic` in the shared `WorkerResult`.
+- The demo model answers each role from the prompt it gets (a plan from the brief, labels by phrase, findings from the aggregates and metrics in the writer's context). It is not a model of anything: it exists to run the whole graph with no keys.
+- The CLI keeps the structured log off the terminal unless `--verbose`, so the event lines stay readable; the log level otherwise follows `EDRAK_LOG_LEVEL`. `run` refuses to start without `OLLAMA_API_KEY` unless `--fake-llm` is given, rather than run a graph that cannot plan.
+- A UI run always gets a free run id (`run-id-2` when `run-id` was used), because running a finished run id returns its stored result instead of running. Stop cancels the run without writing a result.
+- The UI shows the shared `WorkerResult` by building a stand-in `ResearchTask` from the brief (`parent_request_id` `developer-ui`). It is a display aid, not what the orchestrator will send.
+- The UI uses Streamlit's own tables and charts on plain lists of dicts, not pandas frames, and a `streamlit.testing.v1.AppTest` smoke test drives it in fixture and fake-LLM mode. `make ui` was started once in that mode and answered its health check with no error in its log.
+
+## Batch 9
+
+- The shared contracts came from merging `origin/develop` into this branch (a merge commit; no history was rewritten, nothing was pushed to another branch). The contract files are untouched. The merge also brought in the orchestrator, which imports `langchain_openai`; that package is not a dependency of this project, so the orchestrator's dispatch function is not imported by the tests. The tests do what it does with a worker (`WorkerResult.model_validate(worker.run(task))`) through the shared `WorkerRegistry`.
+- Adapters: `brief_from_task` (entity is the company name, competitors the targets, `since` from `time_window_days`, the country read from a short list of country names in the task text, the focus from its words) and `to_worker_result` (see ARCHITECTURE, "Mapping to the shared contracts"). Evidence from social posts, comments and trend points maps to the shared source type `other`, because the shared enum has no social type; the platform and engagement travel in `metadata`. That is a point for the contracts owner.
+- `run_id` of a task from the orchestrator is `<task_id>.a<attempt>`: a retry is a new run, the same attempt is idempotent. `run_worker` is synchronous for the orchestrator's thread pool and works from a thread inside a running event loop; `arun_worker` is its async twin. Neither raises.
+- The shared `WorkerStatus` is derived: `completed` for complete, `no_evidence` only when there is neither evidence nor a finding, `failed` only when the run crashed before it had findings, `partial` otherwise. A `failed` or `no_evidence` result carries no confidence.
+- Hardening: an item text over 5,000 characters is cut with a note (`metadata.text_cut_from`) and a warning, the content hash stays that of the whole text; each collection branch has a wall-clock limit (`BRANCH_TIMEOUT_S`, 100 s) because LangGraph turns a cancelled agent into a normal end, so the limit is checked after the call; `ProviderRegistry.health()` reports capabilities, breaker state and what a provider knows of its own keys and quota; every log line carries `run_id` and `task_id`, node lines `node`, tool lines `tool`, provider lines `provider`.
+- The evidence store opens a new file safely when several runs start at once (a test found two runs colliding on the schema). A rerun after the checkpoints were deleted collects only duplicates, so `analyze` falls back to the run's own batches rather than skip the analysis.
+- The cost totals in the provenance (`provider_calls`, `cost_usd`) are what the tool events report, and equal the budget tracker's snapshot, which the provenance repeats under `budget`. The Ollama calls are not priced.
+- The live tests were written and skip cleanly without keys; they were not run with the real keys while this was written, because they spend free-plan credits.
+- The `evals` checks read checkpoints with the synchronous SQLite saver and compare only the top graph (the branch conversations are not checkpointed).
