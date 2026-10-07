@@ -15,58 +15,34 @@ class MarketAgentState(TypedDict):
     current_task_idx: int
 
     # Accumulated findings across all tasks
-    market_findings: list  # [{task, claim, evidence:[{type,source}]}]
+    market_findings: list  # [{task, claim, quote, confidence, evidence}]
+
+    # Tasks that produced no supported fact
+    market_gaps: list
+
+    # One extra search pass has already been queued for the gaps
+    gap_fill_done: bool
 
     # Final assembled output (private agent state, not the orchestrator contract)
     final_report: dict
 
 
-MAX_RETRIES = 3
-MAX_TOOL_FALLBACK = 3
+MAX_RETRIES = 2
+MAX_TOOL_FALLBACK = 2
+# Keep this many relevant pages. Rank more candidates and stop once this many are kept.
 MAX_URLS_PER_TASK = 2
-MAX_AGENT_STEPS = 5
+MAX_URL_CANDIDATES = 5
 
-URL_BEARING_TOOLS = {
-    "tool_serper",
-    "tool_web_search",
-    "tool_newsapi",
-    "tool_hacker_news",
-    "tool_openalex",
-    "tool_arxiv",
-}
+SEARCH_TOOLS = ("tool_serper", "tool_web_search", "tool_newsapi")
+
+URL_BEARING_TOOLS = set(SEARCH_TOOLS)
 
 TOOL_FALLBACK_CHAIN: dict[str, list[str]] = {
-    "tool_serper": ["tool_web_search", "tool_newsapi", "tool_hacker_news"],
-    "tool_web_search": ["tool_serper", "tool_newsapi", "tool_hacker_news"],
-    "tool_newsapi": ["tool_serper", "tool_web_search", "tool_hacker_news"],
-    "tool_hacker_news": ["tool_newsapi", "tool_serper", "tool_web_search"],
-    "tool_worldbank": ["tool_imf", "tool_fred", "tool_dbnomics"],
-    "tool_imf": ["tool_worldbank", "tool_fred", "tool_dbnomics"],
-    "tool_fred": ["tool_worldbank", "tool_imf", "tool_dbnomics"],
-    "tool_arxiv": ["tool_openalex", "tool_hacker_news", "tool_serper"],
-    "tool_openalex": ["tool_arxiv", "tool_serper", "tool_web_search"],
-    "tool_alphavantage": ["tool_finnhub", "tool_sec_edgar"],
-    "tool_finnhub": ["tool_alphavantage", "tool_sec_edgar"],
-    "tool_sec_edgar": ["tool_alphavantage", "tool_finnhub"],
-    "tool_gdelt": ["tool_newsapi", "tool_serper"],
-    "tool_eurostat": ["tool_fred", "tool_worldbank"],
-    "tool_dbnomics": ["tool_worldbank", "tool_imf"],
-    "tool_wikidata": ["tool_serper", "tool_web_search"],
+    "tool_serper": ["tool_web_search"],
+    "tool_web_search": ["tool_serper"],
+    "tool_newsapi": ["tool_serper"],
 }
-DEFAULT_FALLBACK = ["tool_serper", "tool_web_search", "tool_newsapi"]
-
-MOCK_INPUT = {
-    "goal": (
-        "Understand the current market trends for AI-powered cybersecurity solutions "
-        "and identify key growth opportunities."
-    ),
-    "business_context": (
-        "Our company provides AI-based cybersecurity software for enterprise clients. "
-        "Our products include threat detection, anomaly monitoring, and automated incident response. "
-        "We target mid-to-large enterprises in financial services, healthcare, and critical infrastructure. "
-        "We are currently evaluating expansion into the MENA region."
-    ),
-}
+DEFAULT_FALLBACK = ["tool_serper", "tool_web_search"]
 
 
 def empty_market_state(
@@ -81,6 +57,8 @@ def empty_market_state(
         "task_list": [],
         "current_task_idx": 0,
         "market_findings": [],
+        "market_gaps": [],
+        "gap_fill_done": False,
         "final_report": {},
     }
 
