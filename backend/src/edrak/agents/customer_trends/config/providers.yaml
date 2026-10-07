@@ -182,7 +182,8 @@ providers:
             maxItems: "{max_results}"
           requires: [keywords]
           cost_per_item_usd: 0.003
-          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240.
+          timeout_s: 60
+          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240. It is cut off at 60 so that SocialCrawl, about 20 seconds, serves the call within the branch's time.
         reviews:app_store:
           actor: thewolves/appstore-reviews-scraper
           mapper: app_store_review

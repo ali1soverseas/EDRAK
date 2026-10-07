@@ -12,6 +12,7 @@ from edrak.agents.customer_trends.providers.apify.client import (
     RunNotFinished,
     actor_path,
 )
+from edrak.agents.customer_trends.providers.apify.provider import ActorLimitReached, is_placeholder
 from edrak.agents.customer_trends.providers.base import (
     ProviderBadResponse,
     ProviderNotConfigured,
@@ -404,3 +405,66 @@ async def test_an_actor_run_that_times_out_is_unavailable(respx_mock: respx.Mock
     )
     with pytest.raises(RunNotFinished):
         await call("search_interest", keywords=["x"])
+
+
+async def test_each_actor_runs_for_its_own_time_limit(respx_mock: respx.MockRouter) -> None:
+    trends = route(respx_mock, "apify/google-trends-scraper", served("google_trends"))
+    tweets = route(respx_mock, "apidojo/tweet-scraper", served("x_post"))
+    await call("search_interest", keywords=["x"])
+    await call("social_search:x", query="q")
+    assert trends.calls.last.request.url.params["timeout"] == "60"
+    assert tweets.calls.last.request.url.params["timeout"] == str(CONFIG.options["timeout_s"])
+
+
+# placeholder rows: a free account over an actor's monthly runs
+
+
+PLACEHOLDER = [{"noResults": True}]
+X_RUNS = "https://api.apify.com/v2/acts/apidojo~tweet-scraper/runs"
+RUN_LOG = "https://api.apify.com/v2/actor-runs/run1/log"
+
+
+def latest_run(respx_mock: respx.MockRouter, log: str) -> None:
+    respx_mock.get(X_RUNS).mock(
+        return_value=httpx.Response(200, json={"data": {"items": [{"id": "run1"}]}})
+    )
+    respx_mock.get(RUN_LOG).mock(return_value=httpx.Response(200, text=log))
+
+
+def test_placeholder_rows_are_recognized() -> None:
+    assert is_placeholder({"noResults": True})
+    assert not is_placeholder({})
+    assert not is_placeholder({"noResults": True, "id": "1"})
+    assert not is_placeholder({"type": "tweet", "id": "1"})
+
+
+async def test_placeholder_rows_are_not_counted_as_results_or_paid_for(
+    respx_mock: respx.MockRouter,
+) -> None:
+    route(respx_mock, "apidojo/tweet-scraper", httpx.Response(201, json=PLACEHOLDER * 3))
+    latest_run(respx_mock, "ACTOR: Starting container.\nINFO  The run finished.")
+    result = await call("social_search:x", query="nothing like this", max_results=3)
+    assert result.items == [] and result.raw_count == 0 and result.cost_estimate == 0
+
+
+async def test_a_refused_run_is_a_quota_error_for_that_actor(respx_mock: respx.MockRouter) -> None:
+    route(respx_mock, "apidojo/tweet-scraper", httpx.Response(201, json=PLACEHOLDER))
+    latest_run(respx_mock, "ERROR \nMonthly run limit exceeded per user.\n")
+    async with make_client(5) as client:
+        provider = ApifyProvider(client, "apify-token", CONFIG, clock=lambda: NOW)
+        assert "social_comments:x" in provider.capabilities
+        with pytest.raises(ActorLimitReached, match="apidojo/tweet-scraper"):
+            await provider.call("social_search:x", call_params(query="q"))
+        # the actor is out for the rest of the run, the others are not
+        assert {"social_search:x", "social_comments:x"}.isdisjoint(provider.capabilities)
+        assert "social_search:reddit" in provider.capabilities
+        assert provider.health()["actors_over_their_monthly_limit"] == ["apidojo/tweet-scraper"]
+
+
+async def test_a_failed_look_at_the_run_log_counts_as_no_results(
+    respx_mock: respx.MockRouter,
+) -> None:
+    route(respx_mock, "apidojo/tweet-scraper", httpx.Response(201, json=PLACEHOLDER))
+    respx_mock.get(X_RUNS).mock(return_value=httpx.Response(500))
+    result = await call("social_search:x", query="q")
+    assert result.items == []

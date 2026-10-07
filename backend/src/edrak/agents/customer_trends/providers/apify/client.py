@@ -15,6 +15,7 @@ NAME = "apify"
 BASE_URL = "https://api.apify.com/v2"
 MAX_SYNC_TIMEOUT_S = 300
 _TIMEOUT_MARGIN_S = 30
+_PLAN_LIMIT_TEXT = "limit exceeded"
 
 
 class RunNotFinished(ProviderUnavailable):
@@ -83,3 +84,26 @@ class ApifyClient:
         if not isinstance(data, list):
             raise ProviderBadResponse(f"{NAME}: expected a list of dataset items")
         return [item for item in data if isinstance(item, dict)]
+
+    async def plan_limit_reached(self, actor_id: str) -> bool:
+        """Whether this account's latest run of the actor was refused for a plan limit.
+
+        A free account that used up an actor's monthly runs still gets a run that succeeds, with
+        one placeholder row, and the synchronous endpoint does not name the run. The refusal is
+        only in that run's log, so it is read when a run returned nothing but placeholders. Any
+        failure to look is treated as "no".
+        """
+        headers = {"Authorization": f"Bearer {self._token}"}
+        try:
+            runs = await self._client.get(
+                f"{BASE_URL}/acts/{actor_path(actor_id)}/runs",
+                params={"limit": 1, "desc": 1},
+                headers=headers,
+            )
+            runs.raise_for_status()
+            latest = runs.json()["data"]["items"][0]["id"]
+            log = await self._client.get(f"{BASE_URL}/actor-runs/{latest}/log", headers=headers)
+            log.raise_for_status()
+        except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError):
+            return False
+        return _PLAN_LIMIT_TEXT in log.text.lower()

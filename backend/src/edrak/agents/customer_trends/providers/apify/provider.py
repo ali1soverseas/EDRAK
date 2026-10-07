@@ -18,6 +18,7 @@ from edrak.agents.customer_trends.providers.apify.mappers import (
 from edrak.agents.customer_trends.providers.base import (
     CallParams,
     ProviderBadResponse,
+    ProviderQuotaExceeded,
     ProviderResult,
     in_window,
 )
@@ -31,6 +32,7 @@ from edrak.agents.customer_trends.schemas.trends import TrendSeries
 NAME = "apify"
 DEFAULT_TIMEOUT_S = 240
 _DROP = object()
+_PLACEHOLDER_KEYS = frozenset({"noResults"})
 _STATUS_ID = re.compile(r"/status(?:es)?/(\d+)")
 _WINDOWS = (
     (1, "day"),
@@ -52,10 +54,24 @@ class ActorSpec(StrictModel):
     requires: list[str] = Field(default_factory=list)
     enabled: bool = True
     min_items: int | None = None
+    timeout_s: int | None = None  # this actor's own limit; the provider's `timeout_s` otherwise
     cost_per_item_usd: float = 0.0
     cost_per_run_usd: float = 0.0
     verify: bool = False
     note: str = ""
+
+
+class ActorLimitReached(ProviderQuotaExceeded):
+    """A key's account has used up an actor's monthly runs. Other actors on it still work."""
+
+    def __init__(self, actor: str) -> None:
+        super().__init__(f"{NAME}: {actor} refused the run, the monthly run limit of this account")
+        self.actor = actor
+
+
+def is_placeholder(row: dict[str, Any]) -> bool:
+    """The one-field row an actor returns instead of results, such as `{"noResults": true}`."""
+    return bool(row) and set(row) <= _PLACEHOLDER_KEYS
 
 
 def date_window(since: date | None, today: date) -> str | None:
@@ -167,17 +183,38 @@ class ApifyProvider:
         for capability, spec in self._specs.items():
             if spec.mapper not in MAPPERS and spec.mapper not in TREND_MAPPERS:
                 raise ValueError(f"{capability}: unknown mapper {spec.mapper!r}")
-        self.capabilities = {c for c, spec in self._specs.items() if spec.enabled and spec.actor}
+        self._limited: set[str] = set()
+        self.capabilities = self._served_capabilities()
+
+    def _served_capabilities(self) -> set[str]:
+        return {
+            capability
+            for capability, spec in self._specs.items()
+            if spec.enabled and spec.actor and spec.actor not in self._limited
+        }
 
     def health(self) -> dict[str, Any]:
-        return {"key_in_use": f"{self._keys.position} of {self._keys.size}"}
+        report: dict[str, Any] = {"key_in_use": f"{self._keys.position} of {self._keys.size}"}
+        if self._limited:
+            report["actors_over_their_monthly_limit"] = sorted(self._limited)
+        return report
 
     def spec_for(self, capability: str) -> ActorSpec:
         return self._specs[capability]
 
     async def call(self, capability: str, params: dict[str, Any]) -> ProviderResult:
-        """Serve a capability, moving to a fallback token if the current one is out of credit."""
-        return await with_failover(self._keys, NAME, lambda: self._serve(capability, params))
+        """Serve a capability, moving to a fallback token if the current one is out of credit.
+
+        When every token's account has used up an actor's monthly runs, that actor's capabilities
+        are left out for the rest of the run, so routing goes to the next provider at once
+        instead of paying for a refused run each time.
+        """
+        try:
+            return await with_failover(self._keys, NAME, lambda: self._serve(capability, params))
+        except ActorLimitReached as exc:
+            self._limited.add(exc.actor)
+            self.capabilities = self._served_capabilities()
+            raise
 
     async def _serve(self, capability: str, params: dict[str, Any]) -> ProviderResult:
         spec = self._specs.get(capability)
@@ -192,7 +229,13 @@ class ApifyProvider:
             raise ProviderBadResponse(f"{NAME}: {capability} needs {', '.join(missing)}")
         run_input = render_input(spec.input, values, spec.values)
         apify = ApifyClient(self._http, self._keys.current, limiter=self._limiter)
-        raw = await apify.run(spec.actor, run_input, limit=limit, timeout_s=self._timeout_s)
+        raw = await apify.run(
+            spec.actor, run_input, limit=limit, timeout_s=spec.timeout_s or self._timeout_s
+        )
+        rows = [row for row in raw if not is_placeholder(row)]
+        if raw and not rows and await apify.plan_limit_reached(spec.actor):
+            raise ActorLimitReached(spec.actor)
+        raw = rows
 
         ctx = MapContext(call, now)
         cost = spec.cost_per_run_usd + spec.cost_per_item_usd * len(raw)

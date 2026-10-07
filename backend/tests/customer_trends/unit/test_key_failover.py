@@ -356,3 +356,59 @@ async def test_rotation_is_logged_without_any_key_value(respx_mock: respx.MockRo
         3,
     )
     assert not any(token in stream.getvalue() for token in TOKENS)
+
+
+async def test_an_account_over_an_actors_monthly_limit_moves_to_the_next_token(
+    respx_mock: respx.MockRouter,
+) -> None:
+    refused = httpx.Response(201, json=[{"noResults": True}])
+    route = respx_mock.post(APIFY_RUN).mock(side_effect=[refused, served()])
+    respx_mock.get("https://api.apify.com/v2/acts/apidojo~tweet-scraper/runs").mock(
+        return_value=httpx.Response(200, json={"data": {"items": [{"id": "run1"}]}})
+    )
+    respx_mock.get("https://api.apify.com/v2/actor-runs/run1/log").mock(
+        return_value=httpx.Response(200, text="Monthly run limit exceeded per user.")
+    )
+    async with make_client(5) as client:
+        provider = ApifyProvider(client, TOKENS[0], APIFY, fallback_tokens=TOKENS[1:])
+        result = await provider.call("social_search:x", call_params(query="q", max_results=3))
+    assert len(result.items) == 3
+    assert [bearer(route, i) for i in range(2)] == [TOKENS[0], TOKENS[1]]
+
+
+async def test_x_search_goes_to_socialcrawl_when_every_apify_account_is_over_the_limit(
+    respx_mock: respx.MockRouter, tmp_path: Any
+) -> None:
+    config = settings(
+        edrak_data_dir=tmp_path / "data",
+        apify_token=TOKENS[0],
+        apify_fallback_tokens=",".join(TOKENS[1:]),
+        socialcrawl_api_key=KEYS[0],
+    )
+    apify = respx_mock.post(APIFY_RUN).mock(
+        return_value=httpx.Response(201, json=[{"noResults": 1}])
+    )
+    respx_mock.get("https://api.apify.com/v2/acts/apidojo~tweet-scraper/runs").mock(
+        return_value=httpx.Response(200, json={"data": {"items": [{"id": "run1"}]}})
+    )
+    respx_mock.get("https://api.apify.com/v2/actor-runs/run1/log").mock(
+        return_value=httpx.Response(200, text="Monthly run limit exceeded per user.")
+    )
+    respx_mock.get(SC_BALANCE).mock(
+        return_value=httpx.Response(200, json={"data": {"credits_remaining": 90}})
+    )
+    sc = respx_mock.get(SC_SEARCH).mock(return_value=sc_page())
+    breaker = CircuitBreaker()
+    registry = ProviderRegistry.from_config(
+        config, BudgetTracker(Budget()), breaker, clock=lambda: NOW
+    )
+    try:
+        first = await registry.call("social_search:x", call_params(query="q", max_results=3))
+        second = await registry.call("social_search:x", call_params(query="q2", max_results=3))
+    finally:
+        await registry.aclose()
+    assert (first.provider, first.fallback_used) == ("socialcrawl", True)
+    assert (second.provider, second.fallback_used) == ("socialcrawl", True)
+    assert apify.call_count == 3  # one refused run per token, then Apify is not asked again
+    assert sc.call_count == 2
+    assert breaker.is_open("apify") is False
