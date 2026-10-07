@@ -92,7 +92,8 @@ def test_template_values_cover_the_call() -> None:
         country="eg",
     )
     assert v["query"] == "gitlab duo devops"
-    assert v["hashtag"] == "gitlabduodevops"
+    assert v["hashtag"] == "devops"  # a real tag beats the query run together
+    assert values(query="GitLab Duo")["hashtag"] == "gitlabduo"
     assert v["language"] == "en"
     assert (v["geo"], v["since"], v["until"]) == ("EG", "2026-09-01", "2026-09-30")
     assert (v["max_results"], v["max_results_plus_one"]) == (40, 41)

@@ -82,6 +82,11 @@ def date_window(since: date | None, today: date) -> str | None:
     return next((name for limit, name in _WINDOWS if days <= limit), "all")
 
 
+def _squash(text: str) -> str:
+    """Letters and digits only, lower case: the form of a hashtag."""
+    return re.sub(r"\W+", "", text).lower()
+
+
 def template_values(call: CallParams, today: date, limit: int) -> dict[str, Any]:
     """Everything an actor input template can refer to. Missing values are None."""
     single_language = call.languages[0] if len(call.languages) == 1 else None
@@ -90,7 +95,7 @@ def template_values(call: CallParams, today: date, limit: int) -> dict[str, Any]
     status = _STATUS_ID.search(call.post_url or "")
     return {
         "query": query or None,
-        "hashtag": re.sub(r"\W+", "", query).lower() or None,
+        "hashtag": _squash(call.hashtags[0] if call.hashtags else call.query) or None,
         "language": single_language,
         "geo": call.geo,
         "since": call.since.isoformat() if call.since else None,
