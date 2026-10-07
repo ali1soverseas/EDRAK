@@ -23,6 +23,7 @@ from edrak.agents.customer_trends.state import WorkerState, gaps_of
 
 CHECKPOINTS_FILE = "checkpoints.db"
 MAX_REPLANS = 1
+MIN_REPLAN_S = 30  # a second collection shorter than this is not worth its planning call
 
 WorkerGraph = CompiledStateGraph[WorkerState, None, WorkerState, WorkerState]
 NODES: dict[str, nodes.NodeFn] = {
@@ -54,11 +55,13 @@ def budget_remains(budget: BudgetTracker) -> bool:
 def route_after_gap_check(
     state: WorkerState, budget: BudgetTracker
 ) -> Literal["plan_queries", "write_findings"]:
-    """Replan once, and only for a critical gap while the budget allows it."""
+    """Replan once, and only for a critical gap while the budget allows it, including enough
+    time for a second collection that still leaves the reserve for analysis and writing."""
     replan = (
         bool(critical_gaps(gaps_of(state)))
         and state.get("replan_count", 0) < MAX_REPLANS
         and budget_remains(budget)
+        and budget.collection_seconds_left() >= MIN_REPLAN_S
     )
     return "plan_queries" if replan else "write_findings"
 

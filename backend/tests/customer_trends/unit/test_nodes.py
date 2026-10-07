@@ -277,6 +277,22 @@ async def test_a_branch_stops_at_the_step_cap(tmp_path: Path, store: EvidenceSto
     assert "run limit (3/3)" in update["branch_notes"]["social"]
 
 
+async def test_a_branch_does_not_start_when_the_time_is_kept_for_the_findings(
+    tmp_path: Path, store: EvidenceStore
+) -> None:
+    scripted = models()
+    deps = worker_deps(
+        brief_for(), tmp_path, store, scripted=scripted, budget=Budget(max_seconds=10)
+    )
+    state = state_for(plan=QueryPlan.model_validate(PLAN).model_dump(mode="json"))
+    update = await nodes.run_branch("social", state, deps)
+    assert update["branch_errors"] == {
+        "social": "no time was left for collection before the time kept for the findings"
+    }
+    assert update["batches"] == {"social": []}
+    assert scripted.branch_calls["social"] == 0
+
+
 async def test_the_step_cap_comes_from_the_settings(tmp_path: Path) -> None:
     assert scenario_settings(tmp_path).branch_max_steps == 8
 
@@ -443,6 +459,15 @@ def test_no_replan_without_budget_left() -> None:
     spent = BudgetTracker(Budget(max_tool_calls=1))
     spent.record()
     assert route_after_gap_check(state, spent) == "write_findings"
+
+
+def test_no_replan_when_the_second_collection_would_eat_the_time_for_the_findings() -> None:
+    state: WorkerState = {"gaps": [gap_record("platforms")], "replan_count": 0}
+    budget, clock = exhausted_clock_budget(max_seconds=300)
+    clock.now = 170  # 210 s may be used for collection, 40 s are left of it
+    assert route_after_gap_check(state, budget) == "plan_queries"
+    clock.now = 185  # 25 s left of it: less than a second pass is worth
+    assert route_after_gap_check(state, budget) == "write_findings"
 
 
 def test_the_budget_is_spent_when_any_limit_is_reached() -> None:

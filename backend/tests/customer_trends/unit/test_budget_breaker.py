@@ -85,3 +85,13 @@ def test_an_open_breaker_stays_open_and_providers_are_independent() -> None:
     assert breaker.is_open("apify")
     assert not breaker.is_open("serper")
     assert breaker.open_providers() == ["apify"]
+
+
+def test_collection_may_use_the_time_that_is_not_kept_for_the_findings() -> None:
+    clock = FakeClock(0.0)
+    budget = tracker(clock, max_seconds=300)
+    assert budget.collection_seconds_left() == pytest.approx(210)
+    clock.now = 160
+    assert budget.collection_seconds_left() == pytest.approx(50)
+    clock.now = 250
+    assert budget.collection_seconds_left() < 0

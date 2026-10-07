@@ -7,6 +7,10 @@ from typing import Literal
 
 from edrak.agents.customer_trends.schemas.common import Budget, BudgetSnapshot
 
+# The share of `max_seconds` kept back for analysis and writing, so that collecting never uses
+# the time the findings need.
+FINISH_RESERVE = 0.3
+
 
 class BudgetExceeded(Exception):
     def __init__(self, limit: Literal["tool_calls", "cost", "seconds"], message: str) -> None:
@@ -42,6 +46,12 @@ class BudgetTracker:
         with self._lock:
             self._tool_calls += 1
             self._cost_usd += cost
+
+    def collection_seconds_left(self) -> float:
+        """Seconds that collection may still use: what is left after the finish reserve."""
+        with self._lock:
+            limits = self._budget
+            return limits.max_seconds * (1 - FINISH_RESERVE) - (self._clock() - self._started)
 
     def snapshot(self) -> BudgetSnapshot:
         with self._lock:

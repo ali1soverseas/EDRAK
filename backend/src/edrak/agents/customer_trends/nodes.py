@@ -71,6 +71,7 @@ ANALYSIS_ITEMS = {Depth.LIGHT: 50, Depth.STANDARD: 200, Depth.DEEP: 400}
 BRANCH_PROMPTS = {"social": BRANCH_SOCIAL, "demand": BRANCH_DEMAND, "reviews": BRANCH_REVIEWS}
 NOTE_CHARS = 500
 BRANCH_RECURSION_PER_STEP = 6
+MIN_BRANCH_S = 10  # a branch with less time than this does not start
 DEFAULT_PLATFORMS = (Platform.REDDIT, Platform.X, Platform.YOUTUBE)
 TOP_THEME_SAMPLES = 6
 OVERALL_SAMPLES = 8
@@ -329,7 +330,11 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
         work, ensure_ascii=False
     )
     note, reason = "", ""
+    time_left = deps.budget.collection_seconds_left()
+    allowed = min(deps.settings.branch_timeout_s, time_left)
     try:
+        if time_left < MIN_BRANCH_S:
+            raise TimeoutError
         agent = create_agent(
             deps.model("branch"),
             tools_for_branch(name, ctx),
@@ -337,7 +342,7 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
             middleware=[ModelCallLimitMiddleware(run_limit=steps, exit_behavior="end")],
             checkpointer=False,
         )
-        async with asyncio.timeout(deps.settings.branch_timeout_s) as deadline:
+        async with asyncio.timeout(allowed) as deadline:
             out = await agent.ainvoke(
                 {"messages": [HumanMessage(content=request)]},
                 config={"recursion_limit": steps * BRANCH_RECURSION_PER_STEP + 10},
@@ -349,7 +354,11 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
         reason = capture.failure()
     except TimeoutError:
         log.warning("branch_timed_out", branch=name)
-        reason = f"the branch did not finish in {deps.settings.branch_timeout_s:g} s"
+        reason = (
+            f"the branch did not finish in {allowed:.3g} s"
+            if time_left >= MIN_BRANCH_S
+            else "no time was left for collection before the time kept for the findings"
+        )
     except Exception as exc:
         log.warning("branch_failed", branch=name, error=type(exc).__name__)
         reason = f"{type(exc).__name__}: {exc}"[:NOTE_CHARS]
