@@ -191,9 +191,13 @@ Reasons behind the placement:
   SocialCrawl's credits do not; the credits are kept for the capabilities where they save
   the most. Saving per credit, from largest: Facebook comments, TikTok search, Reddit search,
   TikTok comments, Reddit comments, Instagram search, then X and Instagram comments last.
+  The X actor itself allows only 5 runs a month on a free account (4 accounts, 20 runs), so
+  once they are used SocialCrawl and then Serper serve X search and replies.
 - Search interest: Apify's actor is slightly cheaper for one to three keywords but a browser
   scraper (80 to 240 seconds, one timeout in three runs); SocialCrawl answers in about 20
-  seconds for 5 credits and puts up to five keywords on one scale, so it is the fallback.
+  seconds for 5 credits and puts up to five keywords on one scale, so it is the fallback. The
+  Apify actor is given 60 seconds (`timeout_s` on its entry), so a slow run fails fast and
+  SocialCrawl answers inside the demand branch's time.
 - App store reviews: Apify costs 0.01 USD per 100 against about 0.03 on SocialCrawl, so there is
   no second provider. SocialCrawl also has Amazon reviews, cheaper than Apify's, but no adapter
   is built for them yet.
@@ -343,8 +347,8 @@ replaces the stored finding). A finding is rejected, with every reason listed, w
   without case or Arabic spelling variants).
 
 Accepted findings may be adjusted, and the response says so in `adjusted`: one evidence id means
-low confidence and the caveat `single_source`; `high` needs at least 10 evidence ids and at least
-two platforms or two source types, else it becomes `medium` with a caveat.
+low confidence and the caveat `single_source`; `high` needs at least 10 evidence ids, at least
+two platforms or two source types and no `related_gaps`, else it becomes `medium` with a caveat.
 
 ## Worker graph
 
@@ -430,8 +434,9 @@ holds default focus, thresholds, the review rule and query hints for the prompts
 `partial` when another critical gap is open, else `complete`. `overall_confidence` is `high` when
 at least half the findings are high and no critical gap is open, `medium` when at least half are
 medium or better, else `low`. `provenance` holds the model names, the providers used, the
-fallbacks, node timings, the tool call summary and the number of replans, all read from the
-run's events.
+fallbacks, node timings, the tool call summary, the number of replans and `calls` (every tool
+call with its branch, arguments, provider, count, latency and error code, at most 200), all read
+from the run's events.
 
 **Events** (`deps.EventBus`, thread-safe, every event stamped with `seq`, `ts`, `run_id` and
 `task_id`): `node_started`, `node_finished` (status and duration), `tool_called` (tool, branch,

@@ -50,6 +50,24 @@ monthly reset, or accept the fallback order. SocialCrawl's free credits do not r
 table in ARCHITECTURE.md keeps Apify first where the two cost about the same. Fixture mode needs
 none of them.
 
+## An Apify actor returns "no results" for everything
+
+A free Apify account has a monthly run limit on some actors. `apidojo/tweet-scraper` (X search
+and replies) allows 5 runs a month per account, measured on 2026-10-07. Past it, the actor still answers `succeeded`, with one placeholder row `{"noResults": true}` and
+no tweets, so a call looks like a query nobody posted about.
+
+- **Log:** `api_key_rotated` (the next token is tried), then `provider_failed ... error=ActorLimitReached`
+  once every token is over the limit.
+- **Result:** the call is served by the next provider (X search: SocialCrawl, then Serper) and
+  the actor is left out for the rest of the run. UI Provider health lists it under
+  `actors_over_their_monthly_limit`. The actor's own run log says "Monthly run limit exceeded
+  per user".
+- When the placeholder is genuine (no tweets match), the provider looks at the run log, finds no
+  limit and returns an empty result.
+
+Fix: wait for the monthly reset, add a token of another account to `APIFY_FALLBACK_TOKENS`, or
+accept the fallback order. Costs of a refused run: a few seconds and no credit.
+
 ## An Apify actor changed its input
 
 - **Log:** `provider_failed ... error=ProviderBadResponse` or `RunNotFinished` for the Apify
