@@ -13,7 +13,7 @@ from edrak.agents.customer_trends.providers.base import (
 )
 from edrak.agents.customer_trends.schemas.common import Budget, ToolResponse, ToolStatus
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
-from edrak.agents.customer_trends.tools.base import ToolContext, invoke_tool
+from edrak.agents.customer_trends.tools.base import NO_RESULTS_HINT, ToolContext, invoke_tool
 from edrak.agents.customer_trends.tools.registry import COLLECTION_SPECS
 from tests.customer_trends.factories import RUN_ID
 from tests.customer_trends.tool_helpers import (
@@ -296,6 +296,8 @@ async def test_gaps_name_a_missing_language_zero_results_and_snippet_only_data(
     empty = await run(empty_ctx, "news_coverage", {"query": "nothing"})
     assert empty.status is ToolStatus.OK and empty.count == 0
     assert "no results were returned for this request" in empty.gaps
+    assert NO_RESULTS_HINT in empty.warnings
+    assert NO_RESULTS_HINT not in response.warnings
 
 
 async def test_provider_warnings_and_the_fallback_flag_reach_the_response(

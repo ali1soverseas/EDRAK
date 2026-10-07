@@ -169,6 +169,26 @@ async def test_a_second_pass_asks_only_for_what_closes_the_gaps(
     assert event["gap_ids"] == ["platforms"] and event["replan_count"] == 1
 
 
+async def test_a_second_pass_lists_the_queries_that_already_ran(
+    tmp_path: Path, store: EvidenceStore
+) -> None:
+    scripted = models(plans=[PLAN])
+    deps = worker_deps(brief_for(), tmp_path, store, scripted=scripted)
+    first = {
+        "social_queries": {"x": ["gitlab duo review", "جيت لاب"], "reddit": ["copilot pricing"]},
+        "trend_keywords": ["gitlab duo", "copilot"],
+        "news_queries": ["gitlab ai"],
+    }
+    await nodes.plan_queries(
+        state_for(analysis_done=True, replan_count=0, plan=first, gaps=[gap_record("platforms")]),
+        deps,
+    )
+    prompt = str(scripted.planner.calls[0][0].content)
+    done = prompt.split("Queries that already ran:")[1].split("Never invent")[0]
+    assert "- x: gitlab duo review | جيت لاب" in done and "- reddit: copilot pricing" in done
+    assert "- search interest: gitlab duo | copilot" in done and "- news: gitlab ai" in done
+
+
 async def test_a_planner_that_cannot_answer_gives_the_default_plan_and_a_warning(
     tmp_path: Path, store: EvidenceStore
 ) -> None:

@@ -130,6 +130,14 @@ def test_the_planner_prompt_asks_for_dialect_five_keywords_and_no_guessed_ids() 
     assert "never guess one" in text
     assert "{replan}" in text
     assert "second pass" in prompts.REPLAN_NOTE and "{gaps}" in prompts.REPLAN_NOTE
+    assert "{done}" in prompts.REPLAN_NOTE and "2 to 4 words" in text
+
+
+def test_the_writer_prompt_says_what_growth_and_share_of_voice_measure() -> None:
+    text = WRITE_FINDINGS
+    assert "describes this sample only" in text and "not search interest" in text
+    assert "not market share" in text
+    assert "related_gaps is at most" in text.replace("\n  ", " ")
 
 
 def test_the_writer_prompt_sets_the_citation_number_and_confidence_rules() -> None:

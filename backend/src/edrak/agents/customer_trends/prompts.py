@@ -103,8 +103,10 @@ PLAN_QUERIES = (
 
 Return a query plan (JSON):
 - social_queries: for each platform worth searching (x, reddit, tiktok, instagram, facebook,
-  youtube), 1 to 4 short queries. Write each idea in every requested language, and when a country
-  is set add the local-dialect wording people use there.
+  youtube), 1 to 4 short queries of 2 to 4 words, the way people search: a product name plus one
+  word ("GitLab Duo review"). Long sentences match nothing on a keyword search. Write each idea
+  in every requested language, and when a country is set add the local-dialect wording people
+  use there.
 - hashtags: per platform, only hashtags people really use.
 - trend_keywords: at most 5 search terms for Google search interest: the entity, its category
   and the competitors, short and in the language people search in.
@@ -121,9 +123,12 @@ Never invent a platform, id or number. Reply with only the JSON object."""
 )
 
 REPLAN_NOTE = """This is a second pass. Plan only what closes these coverage gaps; evidence already
-collected stays. Do not repeat queries that already ran.
+collected stays. Leave empty every list that the gaps do not need: a branch with nothing planned
+does not run. Never repeat a query that already ran; use a different wording or another platform.
 Gaps:
-{gaps}"""
+{gaps}
+Queries that already ran:
+{done}"""
 
 BRANCH_SOCIAL = (
     "You are the social branch of a customer research worker: you collect public posts and "
@@ -201,7 +206,8 @@ _FINDING_RULES = """For each finding give:
   from CONTEXT. When a number comes from a computed metric, add "metric_id" with that metric's
   id. A number that is not in CONTEXT must not appear in a claim.
 - confidence: low, medium or high. high needs at least 2 platforms or source types and 10 or
-  more evidence ids; one evidence id is always low. Lower it when open gaps weaken the finding.
+  more evidence ids; one evidence id is always low. A finding that lists related_gaps is at most
+  medium.
 - caveats: the limits of the finding (platform skew, a language with little data, snippet-only
   sources, small samples).
 - related_gaps: the open gaps that weaken it.
@@ -216,9 +222,19 @@ WRITE_FINDINGS = (
     + _TASK_BLOCK
     + """
 
-CONTEXT is a JSON object: themes (label, count, share, sentiment mix, growth, evidence ids,
-quotes), metrics (each with a metric_id and its numbers), trends, samples of stored evidence
-with their ids, and the open gaps.
+CONTEXT is a JSON object: themes (label, count, share, sentiment mix, recent_growth, evidence
+ids, quotes), metrics (each with a metric_id and its numbers), trends, samples of stored
+evidence with their ids, and the open gaps.
+
+Read the numbers for what they measure:
+- recent_growth is the change of a theme's share among the collected items between the earlier
+  and the latest part of the period. It describes this sample only. It is not search interest or
+  market growth, so never write that interest or demand is rising from it. A trend claim about
+  demand needs a search interest series (trend_growth) in CONTEXT.
+- share_of_voice counts the collected items that name each company, and those items were found
+  by searching for the names. It shows how the sample is made up, not market share: say so in
+  the caveats and do not rank companies by it.
+- When most evidence comes from one platform or one language, say that in the caveats.
 
 Write 3 to 8 findings that answer the business question from the evidence, covering the focus.
 """

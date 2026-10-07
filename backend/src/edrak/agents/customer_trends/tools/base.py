@@ -39,6 +39,9 @@ DEFAULT_RESULTS = {"web": 10, "social": 30, "reviews": 30, "news": 25}
 PREVIEW_ITEMS = 5
 # The most characters of one item's text that are stored; a longer text is a page or a feed dump.
 MAX_ITEM_CHARS = 5000
+NO_RESULTS_HINT = (
+    "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
+)
 _ARG_SUMMARY_CHARS = 80
 _ARG_SUMMARY_ITEMS = 5
 
@@ -328,7 +331,11 @@ async def execute_collection(
             fallback_used=result.fallback_used,
             coverage=stored.coverage,
             gaps=collection_gaps(stored, result, languages),
-            warnings=[*result.warnings, *stored.extra_warnings],
+            warnings=[
+                *result.warnings,
+                *stored.extra_warnings,
+                *([NO_RESULTS_HINT] if not result.items else []),
+            ],
             cost_estimate=result.cost_estimate,
             next_cursor=result.next_cursor,
         )

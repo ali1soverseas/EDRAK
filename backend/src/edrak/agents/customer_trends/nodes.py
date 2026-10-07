@@ -182,6 +182,20 @@ def default_plan(brief: TaskBrief) -> QueryPlan:
     )
 
 
+def queries_run(plan: QueryPlan | None) -> str:
+    """The queries of a plan, one line each, for the second planning pass."""
+    if plan is None:
+        return "none"
+    lines = [
+        f"- {platform.value}: {' | '.join(qs)}" for platform, qs in plan.social_queries.items()
+    ]
+    if plan.trend_keywords:
+        lines.append(f"- search interest: {' | '.join(plan.trend_keywords)}")
+    if plan.news_queries:
+        lines.append(f"- news: {' | '.join(plan.news_queries)}")
+    return "\n".join(lines) or "none"
+
+
 @traced("plan_queries")
 async def plan_queries(state: WorkerState, deps: WorkerDeps) -> Update:
     """Ask the planner model for a query plan; on a second pass, only to close the gaps."""
@@ -195,7 +209,10 @@ async def plan_queries(state: WorkerState, deps: WorkerDeps) -> Update:
         open_gaps = critical_gaps(gaps_of(state))
         replan = render(
             REPLAN_NOTE,
-            {"gaps": "\n".join(f"- {g.description}: {g.suggested_action}" for g in open_gaps)},
+            {
+                "gaps": "\n".join(f"- {g.description}: {g.suggested_action}" for g in open_gaps),
+                "done": queries_run(plan_of(state)),
+            },
         )
         update["replan_count"] = state.get("replan_count", 0) + 1
         events.append(
