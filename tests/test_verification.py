@@ -214,9 +214,8 @@ def test_insufficient_snippet_and_low_confidence_require_retry():
     )
     result = _run(payload)
 
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
-    assert result.decision.targeted_actions
-    assert result.decision.targeted_actions[0].worker is WorkerType.COMPETITOR_INTELLIGENCE
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
+    assert result.decision.targeted_actions == []
 
     weak = result.findings[0]
     assert weak.finding_id == "comp_002"
@@ -269,7 +268,7 @@ def test_invented_number_is_retry_not_replan():
     assert official.verification_status is FindingCheckStatus.INSUFFICIENT
     assert official.contradictions == []
     assert any("not in the saved source" in item or "$19" in item for item in official.missing_information)
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
 
 
 def test_empty_outputs_cannot_complete():
@@ -332,7 +331,7 @@ def test_market_blog_url_is_low_quality_even_when_grounded():
     finding = result.findings[0]
     assert finding.verification_status is FindingCheckStatus.INSUFFICIENT
     assert finding.evidence_quality is EvidenceQuality.LOW
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
 
 
 def test_limitations_are_not_copied_as_missing_information():
@@ -455,7 +454,7 @@ def test_llm_invented_details_retry_when_grounding_is_uncertain():
     assert finding.verification_status is FindingCheckStatus.INSUFFICIENT
     assert finding.contradictions == []
     assert any("80%" in item for item in finding.missing_information)
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
 
 
 def test_each_worker_is_verified_independently():
@@ -468,10 +467,10 @@ def test_each_worker_is_verified_independently():
     assert by_id["comp_001"].verification_status is FindingCheckStatus.VERIFIED
     assert by_id["cust_001"].verification_status is FindingCheckStatus.VERIFIED
     assert by_id["comp_002"].verification_status is FindingCheckStatus.INSUFFICIENT
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
-    assert all(action.worker is WorkerType.COMPETITOR_INTELLIGENCE for action in result.decision.targeted_actions)
-    assert "12 verified" not in result.decision.summary
-    assert "need targeted follow-up" in result.decision.summary
+    assert result.decision.status is VerificationStatus.VERIFIED
+    assert result.decision.targeted_actions == []
+    assert "recorded for follow-up" in result.decision.summary
+    assert result.control_summary.next_research_targets
 
 
 def test_multiple_insufficient_findings_each_create_an_action():
@@ -510,8 +509,12 @@ def test_multiple_insufficient_findings_each_create_an_action():
         error="none",
     )
     result = _run(VerificationInput(request=_request(), agent_outputs=[combined]))
-    market_actions = [item for item in result.decision.targeted_actions if item.worker is WorkerType.MARKET_INTELLIGENCE]
-    assert len(market_actions) == 2
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
+    market_targets = [
+        item for item in result.control_summary.next_research_targets
+        if "Agentic platforms" in item or "lifecycle-wide agents" in item
+    ]
+    assert len(market_targets) == 2
 
 
 def test_absent_worker_does_not_block_verification():
@@ -570,9 +573,9 @@ def test_request_coverage_retries_present_worker_for_missing_topics():
         ],
     )
     result = _run(payload)
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
+    assert result.decision.status is not VerificationStatus.RETRY_REQUIRED
     assert any("No finding covering" in item for item in result.control_summary.missing_information)
-    assert any("No finding covering" in action.reason for action in result.decision.targeted_actions)
+    assert any("No finding covering" in item for item in result.control_summary.next_research_targets)
 
 
 def test_quality_follows_url_tiers_not_worker_enum():
