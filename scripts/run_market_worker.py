@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 sys.path.insert(0, str(ROOT))
 
 from edrak.agents.market_intelligence.graph import build_graph, format_task_context, worker_result_from_state
-from edrak.agents.market_intelligence.state import MOCK_INPUT, _banner, empty_market_state
+from edrak.agents.market_intelligence.state import _banner, empty_market_state
 from edrak.core.config import settings
 from edrak.contracts import (
     BusinessContext,
@@ -27,6 +27,19 @@ from edrak.contracts import (
 )
 
 
+DEFAULT_GOAL = (
+    "Understand the current market trends for AI-powered cybersecurity solutions "
+    "and identify key growth opportunities."
+)
+
+DEFAULT_CONTEXT = (
+    "Our company provides AI-based cybersecurity software for enterprise clients. "
+    "Our products include threat detection, anomaly monitoring, and automated incident response. "
+    "We target mid-to-large enterprises in financial services, healthcare, and critical infrastructure. "
+    "We are currently evaluating expansion into the MENA region."
+)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the EDRAK market intelligence agent")
     parser.add_argument(
@@ -35,8 +48,8 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Cap planned tasks after the planner. Use 1 for a live smoke test.",
     )
-    parser.add_argument("--goal", default=MOCK_INPUT["goal"])
-    parser.add_argument("--context", default=MOCK_INPUT["business_context"])
+    parser.add_argument("--goal", default=DEFAULT_GOAL)
+    parser.add_argument("--context", default=DEFAULT_CONTEXT)
     parser.add_argument("--company", default="GitLab")
     return parser.parse_args()
 
