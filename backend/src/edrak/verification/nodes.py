@@ -90,12 +90,12 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
             temperature=0,
         )
     except Exception as exc:
-        print(f"WARNING: verification LLM review failed: {exc}")
+        print(f"[verification] WARNING: LLM review failed: {exc}")
         return None
 
     supported = data.get("supported")
     if not isinstance(supported, bool):
-        print("WARNING: verification LLM review returned no supported flag")
+        print("[verification] WARNING: LLM review returned no supported flag")
         return None
 
     contradictions = [

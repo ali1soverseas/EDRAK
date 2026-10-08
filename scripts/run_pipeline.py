@@ -223,7 +223,7 @@ def write_artifact_plan(plan: ResearchPlan, request_id: str) -> Path | None:
 def render_request(request: BusinessRequest) -> None:
     print()
     print("=" * 70)
-    print("REQUEST")
+    print("[orchestrator] REQUEST")
     print("=" * 70)
     context = request.business_context
     print()
@@ -238,7 +238,7 @@ def render_request(request: BusinessRequest) -> None:
 
 def render_plan(plan: ResearchPlan) -> None:
     print()
-    print(f"  plan_id: {plan.plan_id}   tasks: {len(plan.tasks)}")
+    print(f"  [orchestrator] plan_id: {plan.plan_id}   tasks: {len(plan.tasks)}")
     for task in plan.tasks:
         print()
         print(f"  [{task.worker.value}]  attempt={task.attempt}")
@@ -249,6 +249,9 @@ def render_plan(plan: ResearchPlan) -> None:
 
 def render_result(result: OrchestrationResult) -> None:
     print()
+    print("=" * 70)
+    print("[orchestrator] RESULT")
+    print("=" * 70)
     print(f"  status : {result.status.value}")
     if result.error:
         print(f"  error  : {result.error}")
@@ -260,11 +263,24 @@ def render_result(result: OrchestrationResult) -> None:
     print()
     print(f"  findings: {findings}   evidence: {evidence}")
     if result.cross_signal is not None:
+        signals = result.cross_signal.get("signals") or []
         print(
-            "  cross-signal: "
-            f"{result.cross_signal['status']} "
-            f"({len(result.cross_signal['signals'])} signals)"
+            "  [cross_signal] "
+            f"{result.cross_signal.get('status', 'unknown')} "
+            f"({len(signals)} signals)"
         )
+        for index, signal in enumerate(signals, start=1):
+            kind = signal.get("signal_type") or ""
+            title = signal.get("title") or ""
+            claim = signal.get("signal") or ""
+            interpretation = signal.get("interpretation") or ""
+            heading = title or claim or f"signal {index}"
+            suffix = f" ({kind})" if kind else ""
+            print(f"  [cross_signal] {index}. {heading}{suffix}")
+            if claim:
+                print(f"      claim: {claim}")
+            if interpretation:
+                print(f"      interpretation: {interpretation}")
 
 
 def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None:
@@ -286,7 +302,7 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
     render_request(request)
     print()
     print("=" * 70)
-    print("PLAN")
+    print("[orchestrator] PLAN")
     print("=" * 70)
 
     plan = payload if isinstance(payload, ResearchPlan) else payload.plan
@@ -296,10 +312,6 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
         render_plan(plan)
 
     if isinstance(payload, OrchestrationResult):
-        print()
-        print("=" * 70)
-        print("RESULT")
-        print("=" * 70)
         render_result(payload)
 
 
@@ -389,9 +401,9 @@ def main(argv: list[str] | None = None) -> int:
             _render_human(request, plan)
         if not args.no_out:
             out = write_artifact_plan(plan, request.request_id)
-            if out and not args.json:
+            if out:
                 print()
-                print(f"  wrote {out}")
+                print(f"  [orchestrator] run artifact saved: {out}")
         return EXIT_COMPLETED
 
     from edrak.orchestration.graph import build_graph
@@ -417,9 +429,9 @@ def main(argv: list[str] | None = None) -> int:
             if args.plan_only
             else write_artifact(result)
         )
-        if out and not args.json:
+        if out:
             print()
-            print(f"  wrote {out}")
+            print(f"  [orchestrator] run artifact saved: {out}")
 
     if args.plan_only:
         return EXIT_COMPLETED

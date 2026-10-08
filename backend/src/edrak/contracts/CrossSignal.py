@@ -6,7 +6,7 @@ from typing import Any
 
 from pydantic import Field
 
-from backend.src.edrak.contracts.task import WorkerType
+from .task import WorkerType
 
 from .base import (
     ContractModel,
@@ -80,16 +80,21 @@ def build_cross_signal_input(
             "did not complete successfully."
         )
 
+    if any(
+        finding.verification_status != FindingCheckStatus.VERIFIED
+        for finding in verification_result.findings
+    ):
+        raise ValueError(
+            "Cross-Signal cannot run because one or more findings "
+            "did not pass verification."
+        )
+
     verified_findings = [
         finding
         for finding in verification_result.findings
         if finding.verification_status
         == FindingCheckStatus.VERIFIED
     ]
-    if not verified_findings:
-        raise ValueError(
-            "Cross-Signal cannot run because no finding passed verification."
-        )
 
     return CrossSignalInput(
         research_run_id=verification_result.research_run_id,

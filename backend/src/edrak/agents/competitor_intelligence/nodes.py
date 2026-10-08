@@ -85,6 +85,12 @@ if not TAVILY_API_KEY:
     raise ValueError("TAVILY_API_KEY is missing")
 
 
+def _banner(title: str) -> None:
+    print("\n" + "=" * 80)
+    print(f"[competitor_intelligence] {title}")
+    print("=" * 80)
+
+
 def _compat_httpx2_brotli() -> None:
     """google-brotli process() rejects the keyword httpx2 always passes."""
     try:
@@ -1086,9 +1092,7 @@ def identify_research_requirements_node(
     state: CompetitorState,
 ):
     log_action("competitor_intelligence", "identifying research requirements")
-    print("\n" + "=" * 80)
-    print("IDENTIFYING RESEARCH REQUIREMENTS")
-    print("=" * 80)
+    _banner("NODE: identify_requirements")
 
     company = state["company"]
 
@@ -1190,12 +1194,7 @@ def generate_queries_node(
         "targeted_missing_requirements",
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"RESEARCH STAGE {stage}: "
-        f"{strategy.upper()}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: generate_queries  STAGE {stage}: {strategy.upper()}")
 
     reqs = requirements_by_id(state)
 
@@ -1455,11 +1454,7 @@ def search_node(
         "discovery",
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"SEARCH - {strategy.upper()}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: search  {strategy.upper()}")
 
     known = {
         (
@@ -1654,11 +1649,7 @@ def synthesize_node(
         1,
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"SYNTHESIZE - STAGE {stage}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: synthesize  STAGE {stage}")
 
     guidance = STAGE_SYNTH_GUIDANCE.get(
         stage,
@@ -2020,11 +2011,7 @@ def verify_node(
         1,
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"VERIFY - STAGE {stage}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: verify  STAGE {stage}")
 
     previously_verified = state.get(
         "verified_findings",
@@ -2201,11 +2188,7 @@ def check_research_requirements_node(
         1,
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"CHECKING RESEARCH COMPLETENESS - STAGE {stage}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: check_requirements  STAGE {stage}")
 
     requirements = state.get(
         "research_requirements",
@@ -2507,11 +2490,7 @@ def prepare_next_stage_node(
         + 1
     )
 
-    print("\n" + "=" * 80)
-    print(
-        f"MOVING TO RESEARCH STAGE {next_stage}"
-    )
-    print("=" * 80)
+    _banner(f"NODE: prepare_next_stage  STAGE {next_stage}")
 
     for item in state.get(
         "missing_information",
@@ -3174,9 +3153,7 @@ def final_report_node(
     state: CompetitorState,
 ):
     log_action("competitor_intelligence", "writing the final report")
-    print("\n" + "=" * 80)
-    print("FINAL REPORT")
-    print("=" * 80)
+    _banner("NODE: final_report")
 
     profiles = {}
 
@@ -3328,9 +3305,7 @@ def comparison_node(
     state: CompetitorState,
 ):
     log_action("competitor_intelligence", "building the comparison")
-    print("\n" + "=" * 80)
-    print("COMPARISON")
-    print("=" * 80)
+    _banner("NODE: comparison")
 
     report = state[
         "final_report"
