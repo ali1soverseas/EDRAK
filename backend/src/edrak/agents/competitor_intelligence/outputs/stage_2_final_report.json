@@ -2,572 +2,340 @@
     "final_report": {
         "agent": "competitor_intelligence",
         "target_company": "GitLab",
-        "research_goal": "Assess competitor AI capabilities for GitLab.",
+        "research_goal": "Assess Azure DevOps capabilities and positioning within the automotive compliance market",
         "competitors": [
-            "GitHub",
-            "Microsoft Azure DevOps"
+            "Azure DevOps"
         ],
         "research_stages_completed": 2,
-        "queries_executed": 10,
-        "total_sources": 45,
-        "total_verified_findings": 11,
+        "queries_executed": 14,
+        "total_sources": 0,
+        "total_verified_findings": 0,
         "dynamic_research_requirements": [
             {
                 "id": "R1",
-                "competitor": "GitHub",
-                "requirement": "Current AI capabilities related to code suggestions and completions, including the specific algorithms and models used."
+                "competitor": "Azure DevOps",
+                "requirement": "Current capabilities of Azure DevOps in managing automotive compliance workflows."
             },
             {
                 "id": "R2",
-                "competitor": "GitHub",
-                "requirement": "Integration of AI features within the GitHub platform, including how they enhance existing workflows."
+                "competitor": "Azure DevOps",
+                "requirement": "Details on Azure DevOps' integration with automotive industry standards and regulations."
             },
             {
                 "id": "R3",
-                "competitor": "GitHub",
-                "requirement": "Pricing structure for GitHub's AI features, detailing any tiers or additional costs associated with usage."
+                "competitor": "Azure DevOps",
+                "requirement": "Actual pricing structure for Azure DevOps services relevant to automotive compliance."
             },
             {
                 "id": "R4",
-                "competitor": "GitHub",
-                "requirement": "Customer adoption rates and case studies demonstrating the effectiveness of GitHub's AI capabilities."
+                "competitor": "Azure DevOps",
+                "requirement": "Customer adoption rates of Azure DevOps within the automotive sector."
             },
             {
                 "id": "R5",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Current AI capabilities integrated into Azure DevOps, including specific functionalities and use cases."
+                "competitor": "Azure DevOps",
+                "requirement": "Security features of Azure DevOps that are specifically applicable to automotive compliance."
             },
             {
                 "id": "R6",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Details on how Azure DevOps AI features integrate with other Microsoft products and services."
+                "competitor": "Azure DevOps",
+                "requirement": "Support options provided by Azure DevOps for automotive compliance users."
             },
             {
                 "id": "R7",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Pricing structure for AI features within Azure DevOps, including any subscription models or additional fees."
-            },
-            {
-                "id": "R8",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Customer feedback and adoption metrics for AI functionalities in Azure DevOps."
+                "competitor": "Azure DevOps",
+                "requirement": "Any planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026."
             }
         ],
         "competitor_profiles": {
-            "GitHub": {
-                "overview": "GitHub offers AI capabilities primarily through GitHub Copilot, which utilizes OpenAI's Codex model based on advanced neural architectures, particularly transformer models. This tool provides code suggestions and completions, with approximately 30% of its suggestions being accepted by users. Copilot is integrated into popular IDEs like Visual Studio Code and JetBrains, enhancing workflows by offering inline suggestions and context-aware code completions, which can lead to task completion times being up to 55% faster. GitHub Copilot features a tiered pricing structure, with plans ranging from free to $39 per month, and has seen significant adoption, with over 61 billion successful model requests in the last 90 days and 84% of developers using or planning to use AI tools in development.",
+            "Azure DevOps": {
+                "overview": "No verified findings were established for this competitor.",
                 "requirements": [
                     {
                         "requirement_id": "R1",
-                        "requirement": "Current AI capabilities related to code suggestions and completions, including the specific algorithms and models used.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "generally_available",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot utilizes OpenAI's Codex model, which is based on advanced neural architectures, particularly transformer models, to provide AI code suggestions and completions. It excels at understanding relationships between distant code elements and maintaining coherent code style, offering both automated suggestions for completing lines or blocks of code and broader assistance in generating entire functions from comments or creating boilerplate code. Approximately 30% of its suggestions are accepted by users.",
-                        "sources": [
-                            {
-                                "url": "https://pensero.ai/blog/code-completion-tools",
-                                "title": "8 Best AI Code Completion Tools for Engineering Teams in 2026 | Pensero",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.getpanto.ai/blog/github-copilot-statistics",
-                                "title": "GitHub Copilot Statistics 2026 — Users, Revenue & Adoption",
-                                "first_party": false
-                            }
-                        ]
+                        "requirement": "Current capabilities of Azure DevOps in managing automotive compliance workflows.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on Azure DevOps' capabilities in managing automotive compliance workflows.",
+                        "release_status": "not_stated",
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     },
                     {
                         "requirement_id": "R2",
-                        "requirement": "Integration of AI features within the GitHub platform, including how they enhance existing workflows.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "generally_available",
-                        "confidence": 0.79,
-                        "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot is deeply integrated into popular IDEs such as Visual Studio Code, Neovim, and JetBrains, enhancing existing workflows by providing inline suggestions and context-aware code completions. This integration allows developers to receive AI-generated code suggestions directly in their coding environment, streamlining coding tasks and improving efficiency, with reported task completion times being up to 55% faster when using Copilot.",
-                        "sources": [
-                            {
-                                "url": "https://pensero.ai/blog/code-completion-tools",
-                                "title": "8 Best AI Code Completion Tools for Engineering Teams in 2026 | Pensero",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.f22labs.com/blogs/15-best-ai-code-generators-of-2025-reviewed",
-                                "title": "15 Best AI Code Generators of 2026 (Free & Paid)",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.index.dev/blog/ai-pair-programming-statistics",
-                                "title": "Top 100 AI Pair Programming Statistics 2026: GitHub Copilot Adoption & Tools",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.getpanto.ai/blog/github-copilot-statistics",
-                                "title": "GitHub Copilot Statistics 2026 — Users, Revenue & Adoption",
-                                "first_party": false
-                            }
-                        ]
+                        "requirement": "Details on Azure DevOps' integration with automotive industry standards and regulations.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on Azure DevOps' integration with automotive industry standards and regulations.",
+                        "release_status": "not_stated",
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     },
                     {
                         "requirement_id": "R3",
-                        "requirement": "Pricing structure for GitHub's AI features, detailing any tiers or additional costs associated with usage.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "generally_available",
-                        "confidence": 0.81,
-                        "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot offers a tiered pricing structure starting from a free plan to various paid plans, including Copilot Pro at $10/month, Pro+ at $39/month, Business at $19/user/month, and Enterprise at $39/user/month.",
-                        "sources": [
-                            {
-                                "url": "https://softverdict.com/github-copilot-github-ai-agents-pricing-2026",
-                                "title": "GitHub Copilot / GitHub AI Agents Pricing 2026: Plans, Costs & Hidden Fees - SoftVerdict",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://tech-insider.org/au/github-copilot-usage-based-billing-2026",
-                                "title": "GitHub Copilot Pricing [2026]: From $0 to $39/mo",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.terseai.org/github-copilot-pricing",
-                                "title": "GitHub Copilot Pricing 2026: Plans & AI Credits — Terse",
-                                "first_party": false
-                            }
-                        ]
+                        "requirement": "Actual pricing structure for Azure DevOps services relevant to automotive compliance.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on the pricing structure for Azure DevOps services relevant to automotive compliance.",
+                        "release_status": "not_stated",
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     },
                     {
                         "requirement_id": "R4",
-                        "requirement": "Customer adoption rates and case studies demonstrating the effectiveness of GitHub's AI capabilities.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "generally_available",
-                        "confidence": 0.79,
-                        "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot has seen significant adoption, with over 61 billion successful model requests in the last 90 days. Additionally, 84% of developers are using or planning to use AI tools in development, and 51% reported using AI tools daily, indicating a strong trend towards AI-assisted coding practices in the developer community.",
-                        "sources": [
-                            {
-                                "url": "https://code.visualstudio.com/blogs/2026/09/16/building-the-github-copilot-inline-suggestions-model-part-one",
-                                "title": "Building the new GitHub Copilot Inline Suggestions Model: Part One",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.index.dev/blog/ai-pair-programming-statistics",
-                                "title": "Top 100 AI Pair Programming Statistics 2026: GitHub Copilot Adoption & Tools",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.getpanto.ai/blog/github-copilot-statistics",
-                                "title": "GitHub Copilot Statistics 2026 — Users, Revenue & Adoption",
-                                "first_party": false
-                            }
-                        ]
-                    }
-                ],
-                "caveats": [
-                    "R1: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R2: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R3: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R4: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
-                ],
-                "verified_findings_count": 7
-            },
-            "Microsoft Azure DevOps": {
-                "overview": "Microsoft Azure DevOps is enhancing its AI capabilities with features such as AI-assisted code reviews, Copilot-powered workflows, and AI-agent-based DevOps scenarios. These functionalities enable developers to generate code, analyze pull requests, create infrastructure, troubleshoot pipelines, and automate repetitive tasks, thereby improving the software delivery process. Azure DevOps also integrates with other Microsoft products, utilizing Azure OpenAI Service to enhance CI/CD pipelines, which facilitates intelligent code reviews and deployment recommendations. The platform operates on a consumption-based pricing model for its AI features, with customer feedback indicating strong adoption and satisfaction with its AI functionalities.",
-                "requirements": [
+                        "requirement": "Customer adoption rates of Azure DevOps within the automotive sector.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on customer adoption rates of Azure DevOps within the automotive sector.",
+                        "release_status": "not_stated",
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
+                    },
                     {
                         "requirement_id": "R5",
-                        "requirement": "Current AI capabilities integrated into Azure DevOps, including specific functionalities and use cases.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
+                        "requirement": "Security features of Azure DevOps that are specifically applicable to automotive compliance.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on security features of Azure DevOps specifically applicable to automotive compliance.",
                         "release_status": "not_stated",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "Microsoft Azure DevOps is expanding its AI capabilities to include AI-assisted code reviews, Copilot-powered workflows, and AI-agent-based DevOps scenarios. These features allow developers to generate code, analyze pull requests, create infrastructure, troubleshoot pipelines, and automate repetitive tasks, enhancing the overall software delivery process.",
-                        "sources": [
-                            {
-                                "url": "https://visiblecampus.com/blogs/ai-transforming-devops-2026-azure-devops-github-copilot",
-                                "title": "How AI Is Transforming DevOps in 2026: Azure DevOps, GitHub Copilot & CI/CD | Visible Campus | Visible Campus",
-                                "first_party": false
-                            }
-                        ]
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     },
                     {
                         "requirement_id": "R6",
-                        "requirement": "Details on how Azure DevOps AI features integrate with other Microsoft products and services.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
+                        "requirement": "Support options provided by Azure DevOps for automotive compliance users.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on support options provided by Azure DevOps for automotive compliance users.",
                         "release_status": "not_stated",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "Azure DevOps integrates with other Microsoft products and services, leveraging Azure OpenAI Service to enhance its CI/CD pipelines. This integration allows for intelligent code reviews, security analysis, and deployment recommendations, streamlining the development workflow.",
-                        "sources": [
-                            {
-                                "url": "https://www.cloudthat.com/resources/blog/building-an-ai-powered-ci-cd-pipeline-in-azure-devops",
-                                "title": "Building an AI-Powered CI/CD Pipeline in Azure DevOps",
-                                "first_party": false
-                            }
-                        ]
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     },
                     {
                         "requirement_id": "R7",
-                        "requirement": "Pricing structure for AI features within Azure DevOps, including any subscription models or additional fees.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
+                        "requirement": "Any planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026.",
+                        "status": "missing",
+                        "missing_reason": "No verified findings on planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026.",
                         "release_status": "not_stated",
-                        "confidence": 0.94,
-                        "evidence_quality": "first_party",
-                        "summary": "Azure DevOps offers a consumption-based pricing model for its AI features, including Azure Document Intelligence. The pricing varies based on the specific AI model used and the volume of data processed, with options for free tiers and pay-as-you-go structures for different functionalities. For instance, Azure Document Intelligence pricing is based on the number of pages processed, with costs ranging from approximately $1.50 to $310 per 1,000 pages depending on the model and complexity of the task.",
-                        "sources": [
-                            {
-                                "url": "https://learn.microsoft.com/en-us/answers/questions/5927427/azure-document-intelligence-pricing",
-                                "title": "Azure Document Intelligence pricing - Microsoft Q&A",
-                                "first_party": true
-                            },
-                            {
-                                "url": "https://azure.microsoft.com/en-us/pricing/details/document-intelligence",
-                                "title": "Pricing - Azure Document Intelligence in Foundry Tools | Microsoft Azure",
-                                "first_party": true
-                            }
-                        ]
-                    },
-                    {
-                        "requirement_id": "R8",
-                        "requirement": "Customer feedback and adoption metrics for AI functionalities in Azure DevOps.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "not_stated",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "Customer feedback indicates a strong adoption of AI functionalities within Azure DevOps, with a notable focus on AI-assisted code creation and collaboration. The platform's integration with GitHub Copilot and its AI-driven features are seen as significant enhancements to the development process.",
-                        "sources": [
-                            {
-                                "url": "https://www.getpanto.ai/blog/azure-devops-statistics",
-                                "title": "Azure DevOps Statistics 2026: Usage, Costs & Market Share",
-                                "first_party": false
-                            }
-                        ]
+                        "confidence": null,
+                        "evidence_quality": "none",
+                        "summary": "Not established by the verified evidence.",
+                        "sources": []
                     }
                 ],
-                "caveats": [
-                    "R5: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R6: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R8: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
-                ],
-                "verified_findings_count": 4
+                "caveats": [],
+                "verified_findings_count": 0
             }
         },
-        "remaining_unresolved_requirements": [],
+        "remaining_unresolved_requirements": [
+            {
+                "requirement_id": "R1",
+                "competitor": "Azure DevOps",
+                "requirement": "Current capabilities of Azure DevOps in managing automotive compliance workflows.",
+                "missing_reason": "No verified findings on Azure DevOps' capabilities in managing automotive compliance workflows."
+            },
+            {
+                "requirement_id": "R2",
+                "competitor": "Azure DevOps",
+                "requirement": "Details on Azure DevOps' integration with automotive industry standards and regulations.",
+                "missing_reason": "No verified findings on Azure DevOps' integration with automotive industry standards and regulations."
+            },
+            {
+                "requirement_id": "R3",
+                "competitor": "Azure DevOps",
+                "requirement": "Actual pricing structure for Azure DevOps services relevant to automotive compliance.",
+                "missing_reason": "No verified findings on the pricing structure for Azure DevOps services relevant to automotive compliance."
+            },
+            {
+                "requirement_id": "R4",
+                "competitor": "Azure DevOps",
+                "requirement": "Customer adoption rates of Azure DevOps within the automotive sector.",
+                "missing_reason": "No verified findings on customer adoption rates of Azure DevOps within the automotive sector."
+            },
+            {
+                "requirement_id": "R5",
+                "competitor": "Azure DevOps",
+                "requirement": "Security features of Azure DevOps that are specifically applicable to automotive compliance.",
+                "missing_reason": "No verified findings on security features of Azure DevOps specifically applicable to automotive compliance."
+            },
+            {
+                "requirement_id": "R6",
+                "competitor": "Azure DevOps",
+                "requirement": "Support options provided by Azure DevOps for automotive compliance users.",
+                "missing_reason": "No verified findings on support options provided by Azure DevOps for automotive compliance users."
+            },
+            {
+                "requirement_id": "R7",
+                "competitor": "Azure DevOps",
+                "requirement": "Any planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026.",
+                "missing_reason": "No verified findings on planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026."
+            }
+        ],
         "comparison": {
-            "executive_summary": "The comparison of AI capabilities between GitLab and its competitors, GitHub and Microsoft Azure DevOps, reveals distinct strengths and approaches. GitHub's AI capabilities, primarily through GitHub Copilot, are well-integrated into development workflows and have seen significant adoption, indicating a strong market presence. Azure DevOps, leveraging Microsoft's broader ecosystem, offers comprehensive AI functionalities that enhance the software delivery process, although its integration and pricing models differ from GitHub's. Both competitors have established AI capabilities, but GitHub's integration and adoption metrics suggest a more mature offering. GitLab's position remains undefined due to the lack of documented evidence, highlighting areas for potential development and differentiation.",
+            "executive_summary": "The comparison between GitLab and Azure DevOps in the automotive compliance market reveals significant gaps in the available evidence for Azure DevOps. Across all dimensions, Azure DevOps lacks verified findings, making it challenging to assess its capabilities relative to GitLab. This absence of evidence results in a consistent 'not_established' status for Azure DevOps across all dimensions, indicating a need for further investigation to understand its positioning and capabilities. GitLab's documented capabilities remain unchallenged by Azure DevOps due to this lack of information. Consequently, GitLab appears to maintain its position without any direct competition from Azure DevOps in the automotive compliance sector.",
             "dimensions": [
                 {
                     "dimension": "AI capabilities and software-development lifecycle coverage",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.77,
-                            "summary": "GitHub offers AI capabilities through GitHub Copilot, which provides code suggestions and completions using OpenAI's Codex model. This tool is integrated into popular IDEs, enhancing the software development lifecycle by improving coding efficiency and task completion times.",
-                            "requirement_ids": [
-                                "R1"
-                            ],
-                            "sources": [
-                                "https://pensero.ai/blog/code-completion-tools",
-                                "https://www.getpanto.ai/blog/github-copilot-statistics"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps enhances its software development lifecycle with AI-assisted code reviews, Copilot-powered workflows, and AI-agent-based DevOps scenarios, offering a comprehensive suite of AI functionalities.",
-                            "requirement_ids": [
-                                "R5"
-                            ],
-                            "sources": [
-                                "https://visiblecampus.com/blogs/ai-transforming-devops-2026-azure-devops-github-copilot"
-                            ]
+                            "confidence": "low",
+                            "summary": "Azure DevOps lacks verified findings regarding its AI capabilities and software-development lifecycle coverage in the automotive compliance market.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "Both GitHub and Azure DevOps have established AI capabilities that enhance the software development lifecycle, while GitLab's position is not documented."
+                    "takeaway": "Azure DevOps' AI capabilities and lifecycle coverage are not established."
                 },
                 {
                     "dimension": "Degree of autonomy and human approval points",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "GitHub Copilot provides AI-driven code suggestions that require human approval, maintaining a balance between automation and developer control.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "Azure DevOps incorporates AI features that assist in code reviews and task automation, with human oversight ensuring quality and compliance.",
+                            "summary": "There is no verified evidence on Azure DevOps' degree of autonomy and human approval points in the automotive compliance context.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "Both competitors offer AI features that integrate human approval points, but GitLab's approach is not documented."
+                    "takeaway": "Azure DevOps' autonomy and approval mechanisms are not established."
                 },
                 {
                     "dimension": "Integration with existing development workflows",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.79,
-                            "summary": "GitHub Copilot is deeply integrated into IDEs like Visual Studio Code and JetBrains, enhancing workflows with inline suggestions and context-aware completions.",
-                            "requirement_ids": [
-                                "R2"
-                            ],
-                            "sources": [
-                                "https://pensero.ai/blog/code-completion-tools",
-                                "https://www.f22labs.com/blogs/15-best-ai-code-generators-of-2025-reviewed",
-                                "https://www.index.dev/blog/ai-pair-programming-statistics",
-                                "https://www.getpanto.ai/blog/github-copilot-statistics"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps integrates AI features with Microsoft's ecosystem, enhancing CI/CD pipelines and development workflows through intelligent code reviews and deployment recommendations.",
-                            "requirement_ids": [
-                                "R6"
-                            ],
-                            "sources": [
-                                "https://www.cloudthat.com/resources/blog/building-an-ai-powered-ci-cd-pipeline-in-azure-devops"
-                            ]
+                            "confidence": "low",
+                            "summary": "Azure DevOps has no verified findings on its integration with existing development workflows for automotive compliance.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "GitHub and Azure DevOps both offer strong integration with development workflows, while GitLab's integration is not documented."
+                    "takeaway": "Integration capabilities of Azure DevOps are not established."
                 },
                 {
                     "dimension": "Availability (plans, deployment models, GA vs preview vs announced)",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.81,
-                            "summary": "GitHub Copilot is generally available with a tiered pricing structure, indicating a mature deployment model.",
-                            "requirement_ids": [
-                                "R3"
-                            ],
-                            "sources": [
-                                "https://softverdict.com/github-copilot-github-ai-agents-pricing-2026",
-                                "https://tech-insider.org/au/github-copilot-usage-based-billing-2026",
-                                "https://www.terseai.org/github-copilot-pricing"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps offers AI features with a consumption-based pricing model, though specific deployment statuses are not clearly stated.",
-                            "requirement_ids": [
-                                "R7"
-                            ],
-                            "sources": [
-                                "https://learn.microsoft.com/en-us/answers/questions/5927427/azure-document-intelligence-pricing",
-                                "https://azure.microsoft.com/en-us/pricing/details/document-intelligence"
-                            ]
+                            "confidence": "low",
+                            "summary": "There is no verified evidence regarding the availability of Azure DevOps in terms of plans, deployment models, or release status for automotive compliance.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "GitHub's AI features are generally available, while Azure DevOps' deployment status is less clear; GitLab's availability is not documented."
+                    "takeaway": "Availability details for Azure DevOps are not established."
                 },
                 {
                     "dimension": "Pricing and packaging",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.81,
-                            "summary": "GitHub Copilot uses a tiered pricing structure, offering plans from free to enterprise levels, providing flexibility for different user needs.",
-                            "requirement_ids": [
-                                "R3"
-                            ],
-                            "sources": [
-                                "https://softverdict.com/github-copilot-github-ai-agents-pricing-2026",
-                                "https://tech-insider.org/au/github-copilot-usage-based-billing-2026",
-                                "https://www.terseai.org/github-copilot-pricing"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.85,
-                            "summary": "Azure DevOps employs a consumption-based pricing model for its AI features, with costs varying based on usage and complexity.",
-                            "requirement_ids": [
-                                "R7"
-                            ],
-                            "sources": [
-                                "https://learn.microsoft.com/en-us/answers/questions/5927427/azure-document-intelligence-pricing",
-                                "https://azure.microsoft.com/en-us/pricing/details/document-intelligence"
-                            ]
+                            "confidence": "low",
+                            "summary": "Azure DevOps lacks verified findings on its pricing structure relevant to automotive compliance.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "GitHub and Azure DevOps have distinct pricing models, with GitHub using tiered plans and Azure DevOps using consumption-based pricing; GitLab's pricing is not documented."
+                    "takeaway": "Pricing structure for Azure DevOps is not established."
                 },
                 {
                     "dimension": "Recent evolution (2026 changes)",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "No specific recent changes documented for GitHub's AI capabilities in 2026.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "No specific recent changes documented for Azure DevOps' AI capabilities in 2026.",
+                            "summary": "There are no verified findings on any planned changes or enhancements to Azure DevOps relevant to automotive compliance by 2026.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "No recent changes in AI capabilities for 2026 are documented for either competitor or GitLab."
+                    "takeaway": "Future changes for Azure DevOps are not established."
                 },
                 {
                     "dimension": "Customer adoption and market traction",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.79,
-                            "summary": "GitHub Copilot has seen significant adoption, with over 61 billion model requests and a high percentage of developers using AI tools, indicating strong market traction.",
-                            "requirement_ids": [
-                                "R4"
-                            ],
-                            "sources": [
-                                "https://code.visualstudio.com/blogs/2026/09/16/building-the-github-copilot-inline-suggestions-model-part-one",
-                                "https://www.index.dev/blog/ai-pair-programming-statistics",
-                                "https://www.getpanto.ai/blog/github-copilot-statistics"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps reports strong adoption of its AI functionalities, particularly in AI-assisted code creation and collaboration, supported by positive customer feedback.",
-                            "requirement_ids": [
-                                "R8"
-                            ],
-                            "sources": [
-                                "https://www.getpanto.ai/blog/azure-devops-statistics"
-                            ]
+                            "confidence": "low",
+                            "summary": "Customer adoption rates of Azure DevOps within the automotive sector are not established by verified evidence.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "Both GitHub and Azure DevOps demonstrate strong customer adoption and market traction, while GitLab's metrics are not documented."
+                    "takeaway": "Customer adoption for Azure DevOps is not established."
                 },
                 {
                     "dimension": "Developer experience and ease of use",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
-                            "confidence": 0.79,
-                            "summary": "GitHub Copilot enhances developer experience by providing intuitive code suggestions and seamless integration into popular IDEs, improving ease of use.",
-                            "requirement_ids": [
-                                "R2"
-                            ],
-                            "sources": [
-                                "https://pensero.ai/blog/code-completion-tools",
-                                "https://www.f22labs.com/blogs/15-best-ai-code-generators-of-2025-reviewed",
-                                "https://www.index.dev/blog/ai-pair-programming-statistics",
-                                "https://www.getpanto.ai/blog/github-copilot-statistics"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps offers a comprehensive suite of AI tools that enhance developer experience through integration with Microsoft's ecosystem, though specific ease of use metrics are not detailed.",
-                            "requirement_ids": [
-                                "R5"
-                            ],
-                            "sources": [
-                                "https://visiblecampus.com/blogs/ai-transforming-devops-2026-azure-devops-github-copilot"
-                            ]
+                            "confidence": "low",
+                            "summary": "There is no verified evidence on the developer experience and ease of use of Azure DevOps in the automotive compliance market.",
+                            "requirement_ids": [],
+                            "sources": []
                         }
                     ],
-                    "takeaway": "GitHub provides a strong developer experience with its AI tools, while Azure DevOps offers comprehensive integration; GitLab's developer experience is not documented."
+                    "takeaway": "Developer experience for Azure DevOps is not established."
                 },
                 {
                     "dimension": "Security, privacy, and compliance",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "No specific security, privacy, or compliance details documented for GitHub's AI capabilities.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "No specific security, privacy, or compliance details documented for Azure DevOps' AI capabilities.",
+                            "summary": "Security features of Azure DevOps specifically applicable to automotive compliance are not established by verified evidence.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "Security, privacy, and compliance details are not documented for either competitor or GitLab."
+                    "takeaway": "Security and compliance features for Azure DevOps are not established."
                 },
                 {
                     "dimension": "Support and documentation quality",
-                    "target_position": "Not documented for GitLab.",
+                    "target_position": "Not specified in the baseline.",
                     "assessments": [
                         {
-                            "competitor": "GitHub",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "No specific support or documentation quality details documented for GitHub's AI capabilities.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "No specific support or documentation quality details documented for Azure DevOps' AI capabilities.",
+                            "summary": "Support options provided by Azure DevOps for automotive compliance users are not established by verified evidence.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "Support and documentation quality details are not documented for either competitor or GitLab."
+                    "takeaway": "Support and documentation for Azure DevOps are not established."
                 }
             ],
             "areas_where_target_appears_ahead": [],
-            "areas_where_competitors_appear_ahead": [
-                "AI capabilities and software-development lifecycle coverage: GitHub, Microsoft Azure DevOps",
-                "Integration with existing development workflows: GitHub, Microsoft Azure DevOps",
-                "Customer adoption and market traction: GitHub, Microsoft Azure DevOps"
-            ],
+            "areas_where_competitors_appear_ahead": [],
             "limitations": [
-                "GitLab's AI capabilities are not documented, limiting direct comparison.",
-                "Competitors' security, privacy, and compliance details are not documented.",
-                "Recent evolution details for 2026 are not available for any competitor.",
-                "7 competitor requirement(s) were supported by third-party sources. These sources were accepted because the evidence was verified as relevant to the research requirement."
+                "The comparison is limited by the absence of verified findings for Azure DevOps across all dimensions. This lack of evidence prevents a comprehensive assessment of Azure DevOps' capabilities and positioning in the automotive compliance market.",
+                "7 requirement(s) remained unresolved after research."
             ]
         }
     }

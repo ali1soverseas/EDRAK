@@ -89,12 +89,16 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
                 )
             )
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+        detail = f"verification stage raised {type(exc).__name__}: {exc}"
+        print(f"  {detail}")
         return {
             **state,
             "verification": VerificationDecision(
-                status=VerificationStatus.REPLAN_REQUIRED,
-                summary=f"verification stage raised {type(exc).__name__}: {exc}",
+                status=VerificationStatus.CANNOT_COMPLETE,
+                summary=detail,
             ),
+            "verification_result": None,
+            "error": detail,
         }
     finally:
         captured = buffer.getvalue()
@@ -108,8 +112,81 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
         f"-> artifacts/logs/verification.log"
     )
 
-    return {**state, "verification": result.decision}
+    return {
+        **state,
+        "verification": result.decision,
+        "verification_result": result,
+    }
 
+
+async def cross_signal_node(
+    state: OrchestrationState,
+) -> OrchestrationState:
+
+    from ..contracts.CrossSignal import build_cross_signal_input
+    from ..CrossSignal.graph import run_cross_signal
+    from ..contracts.verification import (
+        FindingCheckStatus,
+        VerificationStatus,
+    )
+
+    verification_result = state.get("verification_result")
+
+    if verification_result is None:
+        raise ValueError(
+            "Cross-Signal requires the full verification result."
+        )
+
+    # Hard gate: Cross-Signal only runs after successful verification.
+    if verification_result.decision.status is not VerificationStatus.VERIFIED:
+        raise ValueError(
+            "Cross-Signal can run only after successful verification."
+        )
+
+    # Only verified findings are allowed into Cross-Signal.
+    verified_findings = [
+        finding
+        for finding in verification_result.findings
+        if finding.verification_status is FindingCheckStatus.VERIFIED
+    ]
+
+    if not verified_findings:
+        raise ValueError(
+            "Verification completed but no verified findings "
+            "are available for Cross-Signal."
+        )
+
+    # Build Cross-Signal input from the verified findings.
+    cross_signal_input = build_cross_signal_input(
+        verification_result,
+        state["request"],
+    )
+
+    try:
+        output = await run_cross_signal(cross_signal_input)
+
+    except Exception as exc:  # noqa: BLE001
+        detail = (
+            f"Cross-Signal stage raised "
+            f"{type(exc).__name__}: {exc}"
+        )
+
+        print(f"  {detail}")
+
+        return {
+            **state,
+            "error": detail,
+        }
+
+    print(
+        f"  cross-signal: {output.status} "
+        f"({len(output.signals)} signals)"
+    )
+
+    return {
+        **state,
+        "cross_signal_output": output.model_dump(mode="json"),
+    }
 
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:
     return {
@@ -134,6 +211,7 @@ def finalize_node(state: OrchestrationState) -> OrchestrationState:
         plan=plan,
         results=results,
         error=error,
+        cross_signal=state.get("cross_signal_output"),
     )
     return {
         **state,
@@ -158,6 +236,7 @@ def replan_node(state: OrchestrationState) -> OrchestrationState:
 __all__ = [
     "PlanningError",
     "exhausted_node",
+    "cross_signal_node",
     "finalize_node",
     "make_dispatch_worker",
     "plan_node",

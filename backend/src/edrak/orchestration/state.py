@@ -8,6 +8,7 @@ from ..contracts import (
     ResearchPlan,
     WorkerOutcome,
     WorkerResult,
+    VerificationResult,
 )
 from ..contracts.verification import VerificationDecision
 
@@ -46,6 +47,8 @@ class OrchestrationState(TypedDict, total=False):
     results: Annotated[list[WorkerResult], merge_by_task_id]
     outcomes: Annotated[list[WorkerOutcome], merge_by_task_id]
     verification: VerificationDecision | None
+    verification_result: VerificationResult | None
+    cross_signal_output: dict[str, object] | None
     replan_count: int
     status: str | None
     error: str | None

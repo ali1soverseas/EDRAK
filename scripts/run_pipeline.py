@@ -14,6 +14,7 @@ Full run (dispatch included; every task reports FAILED until real workers land):
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import sys
 from pathlib import Path
@@ -258,6 +259,12 @@ def render_result(result: OrchestrationResult) -> None:
     evidence = sum(len(item.evidence) for item in result.results)
     print()
     print(f"  findings: {findings}   evidence: {evidence}")
+    if result.cross_signal is not None:
+        print(
+            "  cross-signal: "
+            f"{result.cross_signal['status']} "
+            f"({len(result.cross_signal['signals'])} signals)"
+        )
 
 
 def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None:
@@ -389,7 +396,9 @@ def main(argv: list[str] | None = None) -> int:
 
     from edrak.orchestration.graph import build_graph
 
-    state = build_graph(build_default_registry()).invoke({"request": request})
+    state = asyncio.run(
+        build_graph(build_default_registry()).ainvoke({"request": request})
+    )
     result = state["orchestration_result"]
 
     if args.json:

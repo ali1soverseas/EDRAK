@@ -6,6 +6,7 @@ from ..contracts.worker import WorkerRegistry
 from .nodes import (
     exhausted_node,
     finalize_node,
+    cross_signal_node,
     make_dispatch_worker,
     plan_node,
     replan_node,
@@ -27,6 +28,7 @@ def build_graph(registry: WorkerRegistry):
     graph.add_node("plan", plan_node)
     graph.add_node("dispatch", make_dispatch_worker(registry))
     graph.add_node("verify", verification_gate_node)
+    graph.add_node("cross_signal", cross_signal_node)
     graph.add_node("replan", replan_node)
     graph.add_node("exhausted", exhausted_node)
     graph.add_node("finalize", finalize_node)
@@ -48,10 +50,12 @@ def build_graph(registry: WorkerRegistry):
             "dispatch": "dispatch",
             "replan": "replan",
             "exhausted": "exhausted",
+            "cross_signal": "cross_signal",
             "finalize": "finalize",
         },
     )
 
+    graph.add_edge("cross_signal", "finalize")
     # A replan produces a fresh plan with fresh task ids, so it must route back
     # through the plan router and actually re-dispatch. Going straight to verify
     # would grade an empty result set and loop until the limits ran out.

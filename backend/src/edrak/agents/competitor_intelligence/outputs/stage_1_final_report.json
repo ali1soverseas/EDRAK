@@ -2,103 +2,145 @@
     "final_report": {
         "agent": "competitor_intelligence",
         "target_company": "GitLab",
-        "research_goal": "Resolve this conflict using the saved sources: Claim includes details that are not in the saved source: the phrase \"over 4.7 million\" (source states exactly 4.7 million) Claim includes details that are not in the saved source: integration within the GitHub platform is not mentioned in the source The claim states that Copilot assists in code reviews by analyzing pull request changes and suggesting improvements, but the source only mentions upcoming Copilot Autofix for code scanning alerts and does not describe any code‑review assistance. Claim includes details that are not in the saved source: Copilot; collaboration between development and testing teams The claim attributes the pricing model to Azure DevOps, while the source text describes Azure AI Services, not Azure DevOps. Claim includes details that are not in the saved source: \"Azu",
+        "research_goal": "Compare GitHub and Azure DevOps AI-assisted and agentic development offerings against GitLab",
         "competitors": [
             "GitHub",
-            "Microsoft Azure DevOps"
+            "Azure DevOps"
         ],
         "research_stages_completed": 1,
-        "queries_executed": 7,
-        "total_sources": 31,
-        "total_verified_findings": 7,
+        "queries_executed": 8,
+        "total_sources": 34,
+        "total_verified_findings": 12,
         "dynamic_research_requirements": [
             {
                 "id": "R1",
                 "competitor": "GitHub",
-                "requirement": "Current user adoption metrics for GitHub, specifically the number of active users and any recent growth statistics."
+                "requirement": "Current AI-assisted development capabilities, including specific features and functionalities offered by GitHub Copilot."
             },
             {
                 "id": "R2",
                 "competitor": "GitHub",
-                "requirement": "Details on GitHub Copilot's capabilities, specifically its features related to code reviews and pull request analysis."
+                "requirement": "Details on the integration of GitHub Copilot with existing GitHub workflows and tools."
             },
             {
                 "id": "R3",
                 "competitor": "GitHub",
-                "requirement": "Information on the integration of GitHub Copilot within the GitHub platform and its impact on collaboration."
+                "requirement": "Actual pricing structure for GitHub Copilot and any associated services."
             },
             {
                 "id": "R4",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Current pricing structure for Microsoft Azure DevOps, including any tiers or plans available."
+                "competitor": "GitHub",
+                "requirement": "Customer adoption metrics for GitHub Copilot, including user demographics and usage statistics."
             },
             {
                 "id": "R5",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Details on AI features specifically tied to Microsoft Azure DevOps, including any recent updates or planned enhancements."
+                "competitor": "Azure DevOps",
+                "requirement": "Current AI-assisted development capabilities within Azure DevOps, including specific features and functionalities."
             },
             {
                 "id": "R6",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Information on how Microsoft Azure DevOps facilitates collaboration between development and testing teams."
+                "competitor": "Azure DevOps",
+                "requirement": "Information on how AI features in Azure DevOps integrate with existing development workflows."
             },
             {
                 "id": "R7",
-                "competitor": "Microsoft Azure DevOps",
-                "requirement": "Current user adoption metrics for Microsoft Azure DevOps, including the number of active users and any recent growth statistics."
+                "competitor": "Azure DevOps",
+                "requirement": "Actual pricing structure for AI features in Azure DevOps and any associated services."
+            },
+            {
+                "id": "R8",
+                "competitor": "Azure DevOps",
+                "requirement": "Customer adoption metrics for AI features in Azure DevOps, including user demographics and usage statistics."
             }
         ],
         "competitor_profiles": {
             "GitHub": {
-                "overview": "GitHub is a widely used platform for version control and collaboration, boasting a user base that grew to over 180 million developers by late 2025, reflecting significant growth in user adoption. The platform integrates GitHub Copilot, an AI-powered tool that assists developers by providing features such as AI-generated pull request summaries and inline comments with suggested fixes during code reviews. GitHub Copilot enhances collaboration by streamlining the development workflow, making it easier for teams to manage code changes and reviews effectively.",
+                "overview": "GitHub offers AI-assisted development capabilities through GitHub Copilot, which includes features such as code suggestion generation, with an average of 46% of code written by users being generated by the tool. In 2026, Copilot introduced specialized agents and a Plan Mode that allows developers to create structured development plans, leading to a reported 30% reduction in planning time and a 25% increase in task completion rates. Copilot integrates seamlessly with existing GitHub workflows, enabling multi-file editing and complex refactoring tasks, and includes a usage metrics dashboard for tracking adoption and engagement. The pricing structure for GitHub Copilot includes various plans, with a Business tier priced at $19 per user per month and a reported 4.7 million paid subscribers as of Q2 FY26.",
                 "requirements": [
                     {
                         "requirement_id": "R1",
-                        "requirement": "Current user adoption metrics for GitHub, specifically the number of active users and any recent growth statistics.",
+                        "requirement": "Current AI-assisted development capabilities, including specific features and functionalities offered by GitHub Copilot.",
                         "status": "fulfilled",
                         "missing_reason": "",
                         "release_status": "not_stated",
                         "confidence": 0.77,
                         "evidence_quality": "third_party_only",
-                        "summary": "GitHub's user base grew to over 180 million developers by late 2025, with an increase of approximately 80 million developers in under three years, indicating significant growth in user adoption metrics.",
+                        "summary": "GitHub Copilot provides AI-assisted development capabilities that include generating code suggestions, with an average of 46% of code written by users being generated by the tool. The acceptance rate of Copilot's suggestions averages between 27% and 30%. In 2026, Copilot introduced specialized agents and enhanced model capabilities, including a Plan Mode that allows developers to create structured development plans, resulting in a reported 30% reduction in planning time and a 25% increase in task completion rates compared to traditional workflows.",
                         "sources": [
                             {
-                                "url": "https://www.getpanto.ai/blog/github-statistics",
-                                "title": "GitHub Statistics 2026: Insights on Users and Growth",
+                                "url": "https://dasroot.net/posts/2026/01/ai-assisted-development-copilot-cursor",
+                                "title": "AI-Assisted Development in 2026: Copilot, Cursor, and Beyond · Technical news about AI, coding and all",
+                                "first_party": false
+                            },
+                            {
+                                "url": "https://www.quantumrun.com/consulting/github-copilot-statistics",
+                                "title": "GitHub Copilot Statistics 2026",
                                 "first_party": false
                             }
                         ]
                     },
                     {
                         "requirement_id": "R2",
-                        "requirement": "Details on GitHub Copilot's capabilities, specifically its features related to code reviews and pull request analysis.",
+                        "requirement": "Details on the integration of GitHub Copilot with existing GitHub workflows and tools.",
                         "status": "fulfilled",
                         "missing_reason": "",
-                        "release_status": "not_stated",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot includes a code review agent that reads pull request diffs, explores the surrounding repository, and leaves inline comments with suggested fixes, enhancing the code review process.",
+                        "release_status": "generally_available",
+                        "confidence": 0.87,
+                        "evidence_quality": "mixed",
+                        "summary": "GitHub Copilot integrates deeply with existing GitHub workflows, allowing for multi-file editing and complex refactoring tasks. The Copilot coding agent operates within GitHub’s native control layer, facilitating seamless interactions with pull requests and issue tracking. Additionally, GitHub has introduced a Copilot usage metrics dashboard, which is generally available for GitHub Enterprise customers, allowing organizations to track Copilot adoption and engagement metrics.",
                         "sources": [
                             {
-                                "url": "https://www.erol.ca/github-copilot-code-review",
-                                "title": "Set Up GitHub Copilot Code Review on Every Pull Request",
+                                "url": "https://www.javacodegeeks.com/2025/12/ai-assisted-coding-in-2026-how-github-copilot-cursor-and-amazon-q-are-reshaping-developer-workflows.html",
+                                "title": "AI-Assisted Coding in 2026: How GitHub Copilot, Cursor, and Amazon Q Are Reshaping Developer Workflows - Java Code Geeks",
                                 "first_party": false
+                            },
+                            {
+                                "url": "https://github.com/orgs/community/discussions/177273",
+                                "title": "Copilot usage metrics dashboard and API in public preview · community · Discussion #177273 · GitHub",
+                                "first_party": true
                             }
                         ]
                     },
                     {
                         "requirement_id": "R3",
-                        "requirement": "Information on the integration of GitHub Copilot within the GitHub platform and its impact on collaboration.",
+                        "requirement": "Actual pricing structure for GitHub Copilot and any associated services.",
+                        "status": "fulfilled",
+                        "missing_reason": "",
+                        "release_status": "not_stated",
+                        "confidence": 0.79,
+                        "evidence_quality": "third_party_only",
+                        "summary": "The pricing structure for GitHub Copilot includes a Pro plan at $10 per user per month, a Pro+ plan at $39 per user per month, and an Enterprise plan at $39 per user per month. Additionally, GitHub Copilot is priced at $19 per user per month for the Business tier, with a reported 4.7 million paid subscribers as of Q2 FY26, reflecting a year-over-year growth of approximately 75%.",
+                        "sources": [
+                            {
+                                "url": "https://pixlodo.com/github-copilot-pricing",
+                                "title": "GitHub Copilot Pricing 2026: Enterprise Costs, Controls, Buying Guide",
+                                "first_party": false
+                            },
+                            {
+                                "url": "https://sqmagazine.co.uk/copilot-statistics",
+                                "title": "Copilot Statistics 2026: Users & Adoption • SQ Magazine",
+                                "first_party": false
+                            }
+                        ]
+                    },
+                    {
+                        "requirement_id": "R4",
+                        "requirement": "Customer adoption metrics for GitHub Copilot, including user demographics and usage statistics.",
                         "status": "fulfilled",
                         "missing_reason": "",
                         "release_status": "not_stated",
                         "confidence": 0.77,
                         "evidence_quality": "third_party_only",
-                        "summary": "GitHub Copilot is integrated within the GitHub platform, providing features such as AI-generated pull request summaries and code review assistance throughout the development workflow, which facilitates collaboration between development teams.",
+                        "summary": "GitHub Copilot has seen significant customer adoption, with enterprise deployments including major companies like Goldman Sachs and Accenture. Approximately 90% of Fortune 100 companies have adopted Copilot, with a total of around 20 million users reported by July 2025. Developers using Copilot report productivity gains, with task speed-ups of up to 55%, and metrics from Duolingo indicate a 25% speed increase for new engineers and a 67% reduction in code review turnaround time.",
                         "sources": [
                             {
-                                "url": "https://www.stackmatix.com/blog/copilot-developers-github-integration",
-                                "title": "Copilot for Developers: Github Integration",
+                                "url": "https://www.companieshistory.com/github-copilot-statistics",
+                                "title": "GitHub Copilot Statistics And User Trends In 2026",
+                                "first_party": false
+                            },
+                            {
+                                "url": "https://www.getpanto.ai/blog/github-copilot-statistics",
+                                "title": "GitHub Copilot Statistics 2026 — Users, Revenue & Adoption",
                                 "first_party": false
                             }
                         ]
@@ -106,45 +148,89 @@
                 ],
                 "caveats": [
                     "R1: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R2: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R3: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
+                    "R3: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
+                    "R4: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
                 ],
-                "verified_findings_count": 3
+                "verified_findings_count": 8
             },
-            "Microsoft Azure DevOps": {
-                "overview": "Microsoft Azure DevOps is a comprehensive suite of development tools that supports the entire software development lifecycle. It offers a range of services including Azure Boards for project management, Azure Repos for source control, Azure Pipelines for CI/CD, and Azure Test Plans for testing. The platform has integrated AI-driven analytics to predict build failures and optimize pipeline performance, enhancing its CI/CD workflows. As of 2026, Azure DevOps is utilized by over 350,000 organizations, reflecting a significant growth in its user base.",
+            "Azure DevOps": {
+                "overview": "Azure DevOps offers a comprehensive suite of tools for software development, integrating AI-assisted capabilities through GitHub Copilot. This integration allows for agentic workflows, enabling the system to autonomously generate code changes, create pull requests, and debug issues based on real runtime behavior. The platform's AI features seamlessly integrate into existing development workflows, allowing users to select custom agents in Azure Boards for task automation. Azure DevOps has seen a significant increase in AI investment among DevOps teams, indicating strong customer adoption of its AI features.",
                 "requirements": [
                     {
-                        "requirement_id": "R4",
-                        "requirement": "Current pricing structure for Microsoft Azure DevOps, including any tiers or plans available.",
+                        "requirement_id": "R5",
+                        "requirement": "Current AI-assisted development capabilities within Azure DevOps, including specific features and functionalities.",
                         "status": "fulfilled",
                         "missing_reason": "",
                         "release_status": "not_stated",
                         "confidence": 0.79,
                         "evidence_quality": "third_party_only",
-                        "summary": "The current pricing structure for Microsoft Azure DevOps includes a free tier for up to five users, a Basic plan at $6 per user per month, and a Basic + Test Plans option at $52 per user per month. Additionally, the Azure DevOps Server pricing is $45 per user per month for Visual Studio Professional and $250 per user per month for Visual Studio Enterprise.",
+                        "summary": "Azure DevOps integrates GitHub Copilot to provide AI-assisted coding capabilities, including agentic workflows that allow the system to autonomously generate code changes, create pull requests, and debug issues based on real runtime behavior.",
                         "sources": [
                             {
-                                "url": "https://www.getpanto.ai/blog/azure-devops-statistics",
-                                "title": "Azure DevOps Statistics 2026: Usage, Costs & Market Share",
+                                "url": "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "title": "Azure DevOps vs Jira: Complete Comparison Guide [2026]",
                                 "first_party": false
                             },
                             {
-                                "url": "https://www.epcgroup.net/azure-devops-pricing-features-plan-smarter-collaborate-better-ship-faster",
-                                "title": "Azure DevOps Pricing 2026: Plans, Users & Real Costs",
+                                "url": "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows",
+                                "title": "The Future of Automation: How AI is Transforming Azure DevOps | OnlineITGuru",
                                 "first_party": false
                             }
                         ]
                     },
                     {
-                        "requirement_id": "R5",
-                        "requirement": "Details on AI features specifically tied to Microsoft Azure DevOps, including any recent updates or planned enhancements.",
+                        "requirement_id": "R6",
+                        "requirement": "Information on how AI features in Azure DevOps integrate with existing development workflows.",
+                        "status": "fulfilled",
+                        "missing_reason": "",
+                        "release_status": "not_stated",
+                        "confidence": 0.79,
+                        "evidence_quality": "third_party_only",
+                        "summary": "AI features in Azure DevOps, particularly through GitHub Copilot, integrate seamlessly into existing development workflows by allowing users to select custom agents in Azure Boards that can autonomously handle tasks such as generating code changes and debugging.",
+                        "sources": [
+                            {
+                                "url": "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "title": "Azure DevOps vs Jira: Complete Comparison Guide [2026]",
+                                "first_party": false
+                            },
+                            {
+                                "url": "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows",
+                                "title": "The Future of Automation: How AI is Transforming Azure DevOps | OnlineITGuru",
+                                "first_party": false
+                            }
+                        ]
+                    },
+                    {
+                        "requirement_id": "R7",
+                        "requirement": "Actual pricing structure for AI features in Azure DevOps and any associated services.",
+                        "status": "fulfilled",
+                        "missing_reason": "",
+                        "release_status": "not_stated",
+                        "confidence": 0.79,
+                        "evidence_quality": "third_party_only",
+                        "summary": "The pricing structure for Azure DevOps in 2026 includes a Basic plan at $6 per user per month and a Basic + Test Plans option at approximately $52 per user per month.",
+                        "sources": [
+                            {
+                                "url": "https://www.epcgroup.net/azure-devops-pricing-features-plan-smarter-collaborate-better-ship-faster",
+                                "title": "Azure DevOps Pricing 2026: Plans, Users & Real Costs",
+                                "first_party": false
+                            },
+                            {
+                                "url": "https://getautonoma.com/blog/azure-test-plans-pricing",
+                                "title": "Azure Test Plans Pricing: Cost Inside the Azure DevOps Stack | Autonoma AI",
+                                "first_party": false
+                            }
+                        ]
+                    },
+                    {
+                        "requirement_id": "R8",
+                        "requirement": "Customer adoption metrics for AI features in Azure DevOps, including user demographics and usage statistics.",
                         "status": "fulfilled",
                         "missing_reason": "",
                         "release_status": "not_stated",
                         "confidence": 0.77,
                         "evidence_quality": "third_party_only",
-                        "summary": "Microsoft Azure DevOps has introduced AI-driven analytics that predict build failures and optimize pipeline performance. These features are part of the platform's ongoing enhancements to integrate AI capabilities into its CI/CD workflows.",
+                        "summary": "67% of DevOps teams reportedly increased their investment in AI for DevOps in the past year, indicating strong customer adoption of its AI features.",
                         "sources": [
                             {
                                 "url": "https://softjourn.com/insights/how-ai-is-transforming-devops",
@@ -152,365 +238,344 @@
                                 "first_party": false
                             }
                         ]
-                    },
-                    {
-                        "requirement_id": "R6",
-                        "requirement": "Information on how Microsoft Azure DevOps facilitates collaboration between development and testing teams.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "not_stated",
-                        "confidence": 0.74,
-                        "evidence_quality": "third_party_only",
-                        "summary": "Microsoft Azure DevOps facilitates collaboration between development and testing teams through its integrated tools, such as Azure Boards for project management and Azure Test Plans for testing. This integration allows for seamless communication and shared responsibilities across teams.",
-                        "sources": [
-                            {
-                                "url": "https://www.igmguru.com/blog/what-is-azure-devops",
-                                "title": "What is Azure DevOps? A Complete Overview [2026] | igmGuru",
-                                "first_party": false
-                            },
-                            {
-                                "url": "https://www.200oksolutions.com/blog/ultimate-guide-devops-integration-2026-azure-devops-ci-microsoft-project",
-                                "title": "The Complete Guide to DevOps Integration: Azure DevOps, Continuous Integration, and Microsoft Project Integration in 2026 200OK Solutions Blog",
-                                "first_party": false
-                            }
-                        ]
-                    },
-                    {
-                        "requirement_id": "R7",
-                        "requirement": "Current user adoption metrics for Microsoft Azure DevOps, including the number of active users and any recent growth statistics.",
-                        "status": "fulfilled",
-                        "missing_reason": "",
-                        "release_status": "not_stated",
-                        "confidence": 0.77,
-                        "evidence_quality": "third_party_only",
-                        "summary": "As of 2026, Microsoft Azure DevOps holds a 13.62% share in the DevOps services market. The platform is utilized by over 350,000 organizations, reflecting a 14.2% year-over-year increase in its customer base.",
-                        "sources": [
-                            {
-                                "url": "https://turbo360.com/blog/azure-statistics",
-                                "title": "55+ Azure Statistics & Growth Trends (2026)",
-                                "first_party": false
-                            }
-                        ]
                     }
                 ],
                 "caveats": [
-                    "R4: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
                     "R5: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
                     "R6: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
-                    "R7: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
+                    "R7: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
+                    "R8: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
                 ],
                 "verified_findings_count": 4
             }
         },
         "remaining_unresolved_requirements": [],
         "comparison": {
-            "executive_summary": "The comparison between GitLab and its competitors, GitHub and Microsoft Azure DevOps, reveals distinct strengths and weaknesses across various dimensions. GitHub demonstrates broader AI capabilities and integration within development workflows compared to GitLab, particularly with its Copilot features. However, GitLab's pricing and packaging structure remains comparable to both competitors. Microsoft Azure DevOps shows a broader scope in software-development lifecycle coverage and collaboration tools, but its pricing model is distinct and not directly comparable to GitLab's. In terms of customer adoption, GitHub leads with a significantly larger user base, while Azure DevOps shows strong growth in organizational adoption. Overall, GitHub appears ahead in AI capabilities and integration, while Azure DevOps excels in lifecycle coverage and collaboration.",
+            "executive_summary": "GitLab's AI-assisted development offerings are compared against GitHub and Azure DevOps across multiple dimensions. GitHub Copilot offers a broader range of AI capabilities and integration with existing workflows, with high customer adoption and a well-defined pricing structure. Azure DevOps, leveraging GitHub Copilot, provides strong AI integration and agentic workflows, but lacks detailed pricing and adoption metrics compared to GitHub. GitLab's position is not documented, making it challenging to assess its relative standing. GitHub appears ahead in AI capabilities and customer adoption, while Azure DevOps shows strength in integration and autonomy.",
             "dimensions": [
                 {
                     "dimension": "AI capabilities and software-development lifecycle coverage",
-                    "target_position": "GitLab offers comprehensive CI/CD capabilities with integrated DevOps tools, focusing on automation and efficiency in the software development lifecycle.",
+                    "target_position": "Not documented for GitLab.",
                     "assessments": [
                         {
                             "competitor": "GitHub",
                             "relative_to_target": "broader",
                             "confidence": 0.77,
-                            "summary": "GitHub, with its Copilot tool, offers advanced AI capabilities that assist in code reviews and pull request analysis, enhancing the software development lifecycle through automation and collaboration.",
-                            "requirement_ids": [
-                                "R2",
-                                "R3"
-                            ],
-                            "sources": [
-                                "https://www.erol.ca/github-copilot-code-review",
-                                "https://www.stackmatix.com/blog/copilot-developers-github-integration"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "Azure DevOps provides a comprehensive suite of tools covering the entire software development lifecycle, with AI-driven analytics to optimize CI/CD workflows, indicating a broader coverage compared to GitLab.",
-                            "requirement_ids": [
-                                "R5"
-                            ],
-                            "sources": [
-                                "https://softjourn.com/insights/how-ai-is-transforming-devops"
-                            ]
-                        }
-                    ],
-                    "takeaway": "Both GitHub and Azure DevOps offer broader AI capabilities and lifecycle coverage compared to GitLab."
-                },
-                {
-                    "dimension": "Degree of autonomy and human approval points",
-                    "target_position": "GitLab emphasizes automation with human oversight, allowing for customizable approval points within the CI/CD pipeline.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "comparable",
-                            "confidence": 0.65,
-                            "summary": "GitHub's Copilot enhances automation in code reviews but maintains human oversight through suggested fixes and inline comments, aligning closely with GitLab's approach.",
-                            "requirement_ids": [
-                                "R2"
-                            ],
-                            "sources": [
-                                "https://www.erol.ca/github-copilot-code-review"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "comparable",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps supports automation with integrated tools for project management and testing, allowing for human oversight and approval points, similar to GitLab's approach.",
-                            "requirement_ids": [
-                                "R6"
-                            ],
-                            "sources": [
-                                "https://www.igmguru.com/blog/what-is-azure-devops",
-                                "https://www.200oksolutions.com/blog/ultimate-guide-devops-integration-2026-azure-devops-ci-microsoft-project"
-                            ]
-                        }
-                    ],
-                    "takeaway": "Both GitHub and Azure DevOps offer comparable levels of automation and human oversight to GitLab."
-                },
-                {
-                    "dimension": "Integration with existing development workflows",
-                    "target_position": "GitLab integrates seamlessly with various development tools and platforms, enhancing workflow efficiency and collaboration.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "GitHub's integration of Copilot within its platform enhances collaboration and workflow efficiency, offering a broader integration compared to GitLab.",
-                            "requirement_ids": [
-                                "R3"
-                            ],
-                            "sources": [
-                                "https://www.stackmatix.com/blog/copilot-developers-github-integration"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "comparable",
-                            "confidence": 0.74,
-                            "summary": "Azure DevOps integrates multiple development tools within its suite, facilitating seamless workflow integration, which is comparable to GitLab's integration capabilities.",
-                            "requirement_ids": [
-                                "R6"
-                            ],
-                            "sources": [
-                                "https://www.igmguru.com/blog/what-is-azure-devops",
-                                "https://www.200oksolutions.com/blog/ultimate-guide-devops-integration-2026-azure-devops-ci-microsoft-project"
-                            ]
-                        }
-                    ],
-                    "takeaway": "GitHub offers broader integration within its platform, while Azure DevOps is comparable to GitLab."
-                },
-                {
-                    "dimension": "Availability (plans, deployment models, GA vs preview vs announced)",
-                    "target_position": "GitLab offers a range of deployment models, including cloud and on-premises options, with features generally available to users.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "GitHub provides its services primarily through a cloud-based model with features generally available, similar to GitLab's deployment options.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "Azure DevOps offers both cloud and on-premises deployment models, with a variety of services generally available, aligning with GitLab's availability.",
-                            "requirement_ids": [],
-                            "sources": []
-                        }
-                    ],
-                    "takeaway": "Both GitHub and Azure DevOps offer comparable availability and deployment models to GitLab."
-                },
-                {
-                    "dimension": "Pricing and packaging",
-                    "target_position": "GitLab offers a tiered pricing structure with options for different user needs, including free and paid plans.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "not_established",
-                            "confidence": "low",
-                            "summary": "GitHub's pricing structure includes free and paid plans, similar to GitLab's tiered approach, making them comparable in pricing and packaging.",
-                            "requirement_ids": [],
-                            "sources": []
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "different_approach",
-                            "confidence": 0.65,
-                            "summary": "Azure DevOps has a distinct pricing model with specific tiers for different services, which is not directly comparable to GitLab's structure.",
-                            "requirement_ids": [
-                                "R4"
-                            ],
-                            "sources": [
-                                "https://www.getpanto.ai/blog/azure-devops-statistics",
-                                "https://www.epcgroup.net/azure-devops-pricing-features-plan-smarter-collaborate-better-ship-faster"
-                            ]
-                        }
-                    ],
-                    "takeaway": "GitHub's pricing is comparable to GitLab, while Azure DevOps uses a different approach."
-                },
-                {
-                    "dimension": "Recent evolution (2026 changes)",
-                    "target_position": "GitLab continues to evolve its platform with updates focused on enhancing CI/CD capabilities and user experience.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "GitHub has expanded its AI capabilities with Copilot, reflecting significant recent changes that enhance its platform's functionality.",
-                            "requirement_ids": [
-                                "R2",
-                                "R3"
-                            ],
-                            "sources": [
-                                "https://www.erol.ca/github-copilot-code-review",
-                                "https://www.stackmatix.com/blog/copilot-developers-github-integration"
-                            ]
-                        },
-                        {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "Azure DevOps has introduced AI-driven analytics to improve CI/CD workflows, marking a significant evolution in its platform capabilities.",
-                            "requirement_ids": [
-                                "R5"
-                            ],
-                            "sources": [
-                                "https://softjourn.com/insights/how-ai-is-transforming-devops"
-                            ]
-                        }
-                    ],
-                    "takeaway": "Both GitHub and Azure DevOps have made significant recent advancements, particularly in AI capabilities."
-                },
-                {
-                    "dimension": "Customer adoption and market traction",
-                    "target_position": "GitLab has a strong user base with growing adoption in the DevOps market.",
-                    "assessments": [
-                        {
-                            "competitor": "GitHub",
-                            "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "GitHub leads with a significantly larger user base, having grown to over 180 million developers, indicating strong market traction.",
+                            "summary": "GitHub Copilot offers extensive AI-assisted development capabilities, including code suggestion generation and specialized agents, which are not documented for GitLab.",
                             "requirement_ids": [
                                 "R1"
                             ],
                             "sources": [
-                                "https://www.getpanto.ai/blog/github-statistics"
+                                "https://dasroot.net/posts/2026/01/ai-assisted-development-copilot-cursor",
+                                "https://www.quantumrun.com/consulting/github-copilot-statistics"
                             ]
                         },
                         {
-                            "competitor": "Microsoft Azure DevOps",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "broader",
-                            "confidence": 0.77,
-                            "summary": "Azure DevOps shows strong growth with over 350,000 organizations using its services, reflecting significant market traction.",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps integrates GitHub Copilot for AI-assisted coding, providing agentic workflows, which are not documented for GitLab.",
                             "requirement_ids": [
-                                "R7"
+                                "R5"
                             ],
                             "sources": [
-                                "https://turbo360.com/blog/azure-statistics"
+                                "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows"
                             ]
                         }
                     ],
-                    "takeaway": "GitHub and Azure DevOps both demonstrate broader market traction compared to GitLab."
+                    "takeaway": "GitHub and Azure DevOps offer broader AI capabilities compared to GitLab."
                 },
                 {
-                    "dimension": "Developer experience and ease of use",
-                    "target_position": "GitLab focuses on providing a user-friendly interface and seamless developer experience through its integrated DevOps tools.",
+                    "dimension": "Degree of autonomy and human approval points",
+                    "target_position": "Not documented for GitLab.",
                     "assessments": [
                         {
                             "competitor": "GitHub",
                             "relative_to_target": "broader",
                             "confidence": 0.77,
-                            "summary": "GitHub offers a streamlined developer experience with its integrated tools and Copilot features, enhancing ease of use compared to GitLab.",
+                            "summary": "GitHub Copilot includes specialized agents and a Plan Mode for structured development, enhancing autonomy beyond what is documented for GitLab.",
                             "requirement_ids": [
-                                "R2",
-                                "R3"
+                                "R1"
                             ],
                             "sources": [
-                                "https://www.erol.ca/github-copilot-code-review",
-                                "https://www.stackmatix.com/blog/copilot-developers-github-integration"
+                                "https://dasroot.net/posts/2026/01/ai-assisted-development-copilot-cursor",
+                                "https://www.quantumrun.com/consulting/github-copilot-statistics"
                             ]
                         },
                         {
-                            "competitor": "Microsoft Azure DevOps",
-                            "relative_to_target": "comparable",
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
                             "confidence": 0.65,
-                            "summary": "Azure DevOps provides a comprehensive suite of tools that enhance developer experience, making it comparable to GitLab in terms of ease of use.",
+                            "summary": "Azure DevOps supports agentic workflows through GitHub Copilot, allowing autonomous code changes and debugging, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R5"
+                            ],
+                            "sources": [
+                                "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows"
+                            ]
+                        }
+                    ],
+                    "takeaway": "Both GitHub and Azure DevOps provide broader autonomy features than GitLab."
+                },
+                {
+                    "dimension": "Integration with existing development workflows",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.85,
+                            "summary": "GitHub Copilot integrates deeply with GitHub workflows, enabling seamless interactions, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R2"
+                            ],
+                            "sources": [
+                                "https://www.javacodegeeks.com/2025/12/ai-assisted-coding-in-2026-how-github-copilot-cursor-and-amazon-q-are-reshaping-developer-workflows.html",
+                                "https://github.com/orgs/community/discussions/177273"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps integrates AI features seamlessly into workflows, particularly through GitHub Copilot, which is not documented for GitLab.",
                             "requirement_ids": [
                                 "R6"
                             ],
                             "sources": [
-                                "https://www.igmguru.com/blog/what-is-azure-devops",
-                                "https://www.200oksolutions.com/blog/ultimate-guide-devops-integration-2026-azure-devops-ci-microsoft-project"
+                                "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows"
                             ]
                         }
                     ],
-                    "takeaway": "GitHub offers a broader developer experience, while Azure DevOps is comparable to GitLab."
+                    "takeaway": "GitHub and Azure DevOps offer broader integration capabilities compared to GitLab."
+                },
+                {
+                    "dimension": "Availability (plans, deployment models, GA vs preview vs announced)",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "GitHub Copilot is generally available with various plans, which is not documented for GitLab.",
+                            "requirement_ids": [
+                                "R2"
+                            ],
+                            "sources": [
+                                "https://www.javacodegeeks.com/2025/12/ai-assisted-coding-in-2026-how-github-copilot-cursor-and-amazon-q-are-reshaping-developer-workflows.html",
+                                "https://github.com/orgs/community/discussions/177273"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps offers AI features through GitHub Copilot, but specific availability details are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R6"
+                            ],
+                            "sources": [
+                                "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows"
+                            ]
+                        }
+                    ],
+                    "takeaway": "GitHub and Azure DevOps have broader availability documentation compared to GitLab."
+                },
+                {
+                    "dimension": "Pricing and packaging",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "GitHub Copilot has a detailed pricing structure with multiple tiers, which is not documented for GitLab.",
+                            "requirement_ids": [
+                                "R3"
+                            ],
+                            "sources": [
+                                "https://pixlodo.com/github-copilot-pricing",
+                                "https://sqmagazine.co.uk/copilot-statistics"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps provides a basic pricing structure, but lacks the detailed tiering seen in GitHub, which is not documented for GitLab.",
+                            "requirement_ids": [
+                                "R7"
+                            ],
+                            "sources": [
+                                "https://www.epcgroup.net/azure-devops-pricing-features-plan-smarter-collaborate-better-ship-faster",
+                                "https://getautonoma.com/blog/azure-test-plans-pricing"
+                            ]
+                        }
+                    ],
+                    "takeaway": "GitHub offers a broader pricing structure compared to GitLab, with Azure DevOps also providing more detail."
+                },
+                {
+                    "dimension": "Recent evolution (2026 changes)",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.77,
+                            "summary": "GitHub Copilot introduced specialized agents and Plan Mode in 2026, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R1"
+                            ],
+                            "sources": [
+                                "https://dasroot.net/posts/2026/01/ai-assisted-development-copilot-cursor",
+                                "https://www.quantumrun.com/consulting/github-copilot-statistics"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps has seen increased AI investment, but specific 2026 changes are not as detailed as GitHub's, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R8"
+                            ],
+                            "sources": [
+                                "https://softjourn.com/insights/how-ai-is-transforming-devops"
+                            ]
+                        }
+                    ],
+                    "takeaway": "GitHub shows broader recent evolution compared to GitLab, with Azure DevOps also evolving."
+                },
+                {
+                    "dimension": "Customer adoption and market traction",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.77,
+                            "summary": "GitHub Copilot has high adoption with significant enterprise deployments, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R4"
+                            ],
+                            "sources": [
+                                "https://www.companieshistory.com/github-copilot-statistics",
+                                "https://www.getpanto.ai/blog/github-copilot-statistics"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps shows strong customer adoption with increased AI investment, which is not documented for GitLab.",
+                            "requirement_ids": [
+                                "R8"
+                            ],
+                            "sources": [
+                                "https://softjourn.com/insights/how-ai-is-transforming-devops"
+                            ]
+                        }
+                    ],
+                    "takeaway": "GitHub and Azure DevOps demonstrate broader customer adoption compared to GitLab."
+                },
+                {
+                    "dimension": "Developer experience and ease of use",
+                    "target_position": "Not documented for GitLab.",
+                    "assessments": [
+                        {
+                            "competitor": "GitHub",
+                            "relative_to_target": "broader",
+                            "confidence": 0.85,
+                            "summary": "GitHub Copilot enhances developer experience with features like multi-file editing, which are not documented for GitLab.",
+                            "requirement_ids": [
+                                "R2"
+                            ],
+                            "sources": [
+                                "https://www.javacodegeeks.com/2025/12/ai-assisted-coding-in-2026-how-github-copilot-cursor-and-amazon-q-are-reshaping-developer-workflows.html",
+                                "https://github.com/orgs/community/discussions/177273"
+                            ]
+                        },
+                        {
+                            "competitor": "Azure DevOps",
+                            "relative_to_target": "broader",
+                            "confidence": 0.65,
+                            "summary": "Azure DevOps, through GitHub Copilot, offers ease of use with seamless integration, which is not documented for GitLab.",
+                            "requirement_ids": [
+                                "R6"
+                            ],
+                            "sources": [
+                                "https://www.moveworkforward.com/blog/azure-devops-vs-jira",
+                                "https://onlineitguru.com/blog/the-future-of-automation-how-ai-transforming-azure-devops-workflows"
+                            ]
+                        }
+                    ],
+                    "takeaway": "GitHub and Azure DevOps provide a broader developer experience compared to GitLab."
                 },
                 {
                     "dimension": "Security, privacy, and compliance",
-                    "target_position": "GitLab emphasizes strong security measures, privacy controls, and compliance with industry standards.",
+                    "target_position": "Not documented for GitLab.",
                     "assessments": [
                         {
                             "competitor": "GitHub",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "GitHub implements robust security and privacy measures, aligning closely with GitLab's focus on compliance and security.",
+                            "summary": "Security, privacy, and compliance features are not specifically documented for GitHub Copilot in comparison to GitLab.",
                             "requirement_ids": [],
                             "sources": []
                         },
                         {
-                            "competitor": "Microsoft Azure DevOps",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "Azure DevOps provides comprehensive security and compliance features, comparable to GitLab's offerings.",
+                            "summary": "Security, privacy, and compliance features are not specifically documented for Azure DevOps in comparison to GitLab.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "Both GitHub and Azure DevOps offer security and compliance features comparable to GitLab."
+                    "takeaway": "Security, privacy, and compliance features are not established for GitHub and Azure DevOps compared to GitLab."
                 },
                 {
                     "dimension": "Support and documentation quality",
-                    "target_position": "GitLab provides extensive support and documentation to assist users in navigating its platform effectively.",
+                    "target_position": "Not documented for GitLab.",
                     "assessments": [
                         {
                             "competitor": "GitHub",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "GitHub offers comprehensive support and documentation, comparable to GitLab's offerings, ensuring users have access to necessary resources.",
+                            "summary": "Support and documentation quality for GitHub Copilot is not specifically documented in comparison to GitLab.",
                             "requirement_ids": [],
                             "sources": []
                         },
                         {
-                            "competitor": "Microsoft Azure DevOps",
+                            "competitor": "Azure DevOps",
                             "relative_to_target": "not_established",
                             "confidence": "low",
-                            "summary": "Azure DevOps provides robust support and documentation, aligning with GitLab's standards in assisting users.",
+                            "summary": "Support and documentation quality for Azure DevOps is not specifically documented in comparison to GitLab.",
                             "requirement_ids": [],
                             "sources": []
                         }
                     ],
-                    "takeaway": "GitHub and Azure DevOps provide support and documentation quality comparable to GitLab."
+                    "takeaway": "Support and documentation quality are not established for GitHub and Azure DevOps compared to GitLab."
                 }
             ],
             "areas_where_target_appears_ahead": [],
             "areas_where_competitors_appear_ahead": [
-                "AI capabilities and software-development lifecycle coverage: GitHub, Microsoft Azure DevOps",
-                "Integration with existing development workflows: GitHub",
-                "Recent evolution (2026 changes): GitHub, Microsoft Azure DevOps",
-                "Customer adoption and market traction: GitHub, Microsoft Azure DevOps",
-                "Developer experience and ease of use: GitHub"
+                "AI capabilities and software-development lifecycle coverage (GitHub, Azure DevOps)",
+                "Degree of autonomy and human approval points (GitHub, Azure DevOps)",
+                "Integration with existing development workflows (GitHub, Azure DevOps)",
+                "Availability (plans, deployment models, GA vs preview vs announced) (GitHub, Azure DevOps)",
+                "Pricing and packaging (GitHub, Azure DevOps)",
+                "Recent evolution (2026 changes) (GitHub, Azure DevOps)",
+                "Customer adoption and market traction (GitHub, Azure DevOps)",
+                "Developer experience and ease of use (GitHub, Azure DevOps)"
             ],
             "limitations": [
-                "The GitLab baseline lacks specific details on AI capabilities and recent changes, limiting direct comparisons.",
-                "Competitor information is primarily supported by third-party sources, which may not fully capture the latest updates or internal strategies.",
-                "Pricing models are distinct and not directly comparable, particularly for Azure DevOps.",
+                "GitLab's position is not documented, making direct comparisons challenging.",
+                "Competitor information is primarily supported by third-party sources, which may limit the depth of insight.",
                 "7 competitor requirement(s) were supported by third-party sources. These sources were accepted because the evidence was verified as relevant to the research requirement."
             ]
         }
