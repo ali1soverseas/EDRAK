@@ -1,4 +1,16 @@
 from .base import ContractModel, NonBlankStr, new_id, utcnow
+from .CrossSignal import (
+    CrossSignal,
+    CrossSignalInput,
+    CrossSignalOutput,
+    CrossSignalSummary,
+    DecisionReadyContext,
+    DecisionRelevance,
+    SignalEvidence,
+    SignalType,
+    Urgency,
+    build_cross_signal_input,
+)
 from .evidence import Evidence, EvidenceRef, EvidenceRelation, SourceType
 from .request import (
     BusinessContext,
@@ -18,18 +30,6 @@ from .result import (
     WorkerStatus,
 )
 from .task import ResearchPlan, ResearchTask, WorkerType
-from .CrossSignal import (
-    CrossSignal,
-    CrossSignalInput,
-    CrossSignalOutput,
-    CrossSignalSummary,
-    DecisionReadyContext,
-    DecisionRelevance,
-    SignalEvidence,
-    SignalType,
-    Urgency,
-    build_cross_signal_input,
-)
 from .verification import (
     ControlSummary,
     EvidenceQuality,
@@ -53,13 +53,13 @@ __all__ = [
     "CompanyProfile",
     "Conflict",
     "ContractModel",
+    "ControlSummary",
     "CrossSignal",
     "CrossSignalInput",
     "CrossSignalOutput",
     "CrossSignalSummary",
     "DecisionReadyContext",
     "DecisionRelevance",
-    "ControlSummary",
     "Evidence",
     "EvidenceQuality",
     "EvidenceRef",

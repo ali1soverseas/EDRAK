@@ -6,17 +6,14 @@ from typing import Any
 
 from pydantic import Field
 
-from .task import WorkerType
-
 from .base import (
     ContractModel,
     NonBlankStr,
     new_id,
     utcnow,
 )
-
 from .request import BusinessRequest
-
+from .task import WorkerType
 from .verification import (
     EvidenceQuality,
     FindingCheckStatus,
@@ -24,7 +21,6 @@ from .verification import (
     VerificationResult,
     VerificationStatus,
 )
-
 
 # ============================================================================
 # CROSS-SIGNAL INPUT
