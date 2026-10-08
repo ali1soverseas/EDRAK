@@ -1,0 +1,286 @@
+/*
+ * App glue, loaded after edrak.css.
+ *
+ * edrak.css is the design and stays exactly as handed over. The static screens were
+ * drawn at a fixed 1440 x 960 with sample data, so a few things need a rule once real
+ * viewports and real data are involved: the shell fills the window, pages scroll,
+ * disabled and invalid states exist, and the controls the design only implies (tag
+ * input, drawer, modal) get their styles. Colours and sizes are the design's tokens.
+ */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  min-width: 1024px;
+}
+.boot {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* ------------------------------------------------------------------ shell */
+.app {
+  height: 100vh;
+  height: 100dvh;
+}
+.page {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.page.flush {
+  padding: 0;
+  overflow: hidden;
+}
+/* A screen that fills the page and grows past it when the data is long. */
+.pg {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.ellip {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brand {
+  display: flex;
+  margin-inline-start: 4px;
+}
+.brand.rail {
+  margin: 0;
+  justify-content: center;
+}
+.crumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.crumb a {
+  color: inherit;
+}
+.crumb a:hover {
+  color: var(--ink);
+}
+.signout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.signout:hover {
+  color: var(--ink);
+  background: rgba(11, 13, 56, 0.06);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------- controls */
+/* edrak.css styles `label.lbl` only. Group headings (tag lists, chips) are not labels. */
+div.lbl,
+span.lbl {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn:disabled:hover {
+  border-color: var(--hair2);
+}
+.btn.pri:disabled:hover {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+.btn.ink:disabled:hover {
+  background: var(--ink);
+}
+.inp:disabled {
+  background: var(--paper2);
+  color: var(--ink3);
+  cursor: not-allowed;
+}
+.inp.bad,
+.inp[aria-invalid="true"] {
+  border-color: var(--bad);
+}
+.inp.bad:focus,
+.inp[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px var(--bad-bg);
+}
+.tog:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--bad);
+}
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #e7b8b0;
+  border-radius: 10px;
+  background: var(--bad-bg);
+  color: #8f2110;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.spin-fast {
+  display: inline-flex;
+  animation: spin 1.6s linear infinite;
+}
+button.ev {
+  border: 0;
+}
+.ev:focus-visible {
+  outline-offset: 1px;
+}
+.bar > i {
+  transition: width 0.6s var(--ease);
+}
+
+/* Selectable tag, as used for industry, target customers and focus areas. */
+.tag.choice {
+  cursor: pointer;
+  height: 34px;
+  padding: 0 14px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.tag.choice:hover {
+  border-color: var(--ink);
+}
+.tag.choice.on {
+  background: var(--ink);
+  color: #f4f3ee;
+  border-color: var(--ink);
+}
+/* Removable tag and the dashed "Add" tag. */
+.tag.tag-item {
+  height: 32px;
+}
+.tag.add {
+  border-style: dashed;
+  color: var(--ink2);
+  cursor: pointer;
+}
+.tag.add:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.tag.add.editing {
+  border-style: solid;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-soft);
+  cursor: text;
+  padding: 0 4px 0 10px;
+}
+.tag-field {
+  width: 132px;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.tag-x {
+  display: inline-flex;
+  padding: 2px;
+  margin-inline-end: -4px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--ink3);
+  cursor: pointer;
+}
+.tag-x:hover {
+  color: var(--ink);
+  background: var(--sunk);
+}
+
+/* ------------------------------------------------------- drawer and modal */
+.ovl {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  --slide: 100%;
+}
+[dir="rtl"] .ovl {
+  --slide: -100%;
+}
+.ovl-scrim {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.ovl.open .ovl-scrim {
+  opacity: 1;
+}
+.ovl-panel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.ovl.drawer .ovl-panel {
+  top: 0;
+  bottom: 0;
+  inset-inline-end: 0;
+  width: min(520px, 100vw);
+  border-radius: 0;
+  border-width: 0;
+  border-inline-start-width: 1px;
+  background: var(--card);
+  transform: translateX(var(--slide));
+}
+.ovl.drawer.open .ovl-panel {
+  transform: none;
+}
+.ovl.modal .ovl-panel {
+  top: 50%;
+  left: 50%;
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 12px));
+}
+.ovl.modal.open .ovl-panel {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+/* Loading placeholders use .shim from edrak.css. */
+.skel-row {
+  height: 54px;
+  margin: 8px 0;
+}
