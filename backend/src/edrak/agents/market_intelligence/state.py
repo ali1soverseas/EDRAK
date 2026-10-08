@@ -80,4 +80,4 @@ def _section(msg: str) -> None:
 
 
 def _kv(key: str, val: Any) -> None:
-    print(f"  {key:<20}: {str(val)[:120]}")
+    print(f"  [{_AGENT}] {key:<20}: {str(val)[:120]}")

@@ -45,13 +45,13 @@ def task_router(state: MarketAgentState) -> str:
     remaining = [task for task in task_list[idx:] if task["status"] in ("pending", "running")]
     if remaining:
         label = remaining[0]["description"][:50]
-        print(f"\n  [TASK ROUTER] Next task: {label}")
+        print(f"\n  [market_intelligence] TASK ROUTER: Next task: {label}")
         return "task_executor"
     gaps = [gap for gap in (state.get("market_gaps") or []) if gap]
     if gaps and not state.get("gap_fill_done"):
-        print(f"\n  [TASK ROUTER] {len(gaps)} gap(s) -- searching again")
+        print(f"\n  [market_intelligence] TASK ROUTER: {len(gaps)} gap(s) -- searching again")
         return "fill_gaps"
-    print("\n  [TASK ROUTER] All tasks complete -- proceeding to output_node")
+    print("\n  [market_intelligence] TASK ROUTER: All tasks complete -- proceeding to output_node")
     return "output_node"
 
 

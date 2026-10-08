@@ -54,7 +54,9 @@ def decide_after_verification(state: OrchestrationState) -> str:
 
     status = verification.status
 
-    if status in (VerificationStatus.VERIFIED, VerificationStatus.CANNOT_COMPLETE):
+    if status is VerificationStatus.VERIFIED:
+        return "cross_signal"
+    if status is VerificationStatus.CANNOT_COMPLETE:
         return "finalize"
 
     if status is VerificationStatus.RETRY_REQUIRED:

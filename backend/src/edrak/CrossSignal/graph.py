@@ -206,7 +206,7 @@ async def run_cross_signal(
     CrossSignalOutput
         Fully validated Cross-Signal result.
     """
-    print("==========================Running Cross Signal Agent=======================================")
+    print("\n[cross_signal] Running Cross Signal Agent")
 
     if not isinstance(cross_signal_input, CrossSignalInput):
         cross_signal_input = CrossSignalInput.model_validate(
