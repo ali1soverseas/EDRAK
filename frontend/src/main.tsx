@@ -11,6 +11,7 @@ import "./styles/dashboard.css";
 import "./styles/analysis.css";
 import "./styles/run.css";
 import "./styles/brief.css";
+import "./styles/responsive.css";
 
 const root = document.getElementById("root");
 

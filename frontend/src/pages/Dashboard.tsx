@@ -177,7 +177,7 @@ export function Dashboard() {
     <div className="pg" style={{ gap: 26 }}>
       <PageChrome crumbs={[{ label: t("nav.analyses") }]} title={t("nav.analyses")} />
 
-      <div className="row jb ae">
+      <div className="row jb ae page-head">
         <div>
           <div className="eyebrow">{t("nav.analyses")}</div>
           <h1 className="disp" style={{ fontSize: 44, margin: "10px 0 0" }}>
@@ -211,7 +211,7 @@ export function Dashboard() {
       </div>
 
       <section className="col" style={{ flex: 1, minHeight: 0 }}>
-        <div className="row jb" style={{ marginBottom: 6 }}>
+        <div className="row jb list-head" style={{ marginBottom: 6 }}>
           <h2 className="disp s20" style={{ margin: 0 }}>
             {t("home.list")}
           </h2>

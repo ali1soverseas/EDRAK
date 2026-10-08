@@ -69,6 +69,7 @@ export const ar: Record<TKey, string> & Record<string, string> = {
   "nav.workspace": "مساحة العمل",
   "nav.signOut": "تسجيل الخروج",
   "nav.main": "الرئيسية",
+  "nav.menu": "القائمة",
 
   /* status */
   "status.draft": "مسودة",

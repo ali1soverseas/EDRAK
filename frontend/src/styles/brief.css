@@ -39,7 +39,21 @@
   scrollbar-width: thin;
 }
 
+/* The card roots fill their card. These values used to be inline, and the narrow layouts in
+   responsive.css need to change them. */
+.bc-fill {
+  height: 100%;
+}
+.bc-head {
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
 /* ---- 01 Summary ---- */
+.summary-grid {
+  height: 100%;
+  gap: 52px;
+}
 .summary-left {
   width: 430px;
   flex: none;
@@ -194,6 +208,10 @@
 }
 
 /* ---- 04 Options and next steps ---- */
+.option-row {
+  align-items: stretch;
+  gap: 16px;
+}
 .option {
   display: flex;
   flex-direction: column;

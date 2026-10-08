@@ -40,8 +40,8 @@ function SourceRow({ item, onOpen }: { item: BriefEvidence; onOpen: (item: Brief
 export function EvidenceCard({ brief, onOpen }: { brief: Brief; onOpen: (item: BriefEvidence) => void }) {
   const { t, tn } = useI18n();
   return (
-    <div className="col" style={{ height: "100%" }}>
-      <div className="row as jb bc-a" style={{ gap: 24, marginBottom: 22 }}>
+    <div className="col bc-fill">
+      <div className="row as jb bc-a bc-head">
         <div className="col g8">
           <div className="eyebrow tb">{t("brief.sec.3.eyebrow")}</div>
           <h2 className="disp" style={{ fontSize: 34, margin: 0, maxWidth: 1000 }}>

@@ -46,6 +46,7 @@ export const en = {
   "nav.workspace": "Workspace",
   "nav.signOut": "Sign out",
   "nav.main": "Main",
+  "nav.menu": "Menu",
 
   /* status */
   "status.draft": "Draft",

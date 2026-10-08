@@ -43,6 +43,23 @@ English and Arabic. Arabic sets `dir="rtl"` on `<html>` and the layout mirrors. 
 `ar.ts`; the compiler fails if Arabic is missing a key. Text that comes from the backend (findings, sources, supervisor
 log lines) is shown as written.
 
+## Window sizes
+
+The design is drawn at 1440 px. Above 1180 px nothing differs from it. Below that the layout adapts, in one file,
+`src/styles/responsive.css`, which only changes layout (never colours, type or motion):
+
+| Width | What changes |
+|---|---|
+| 1180 px and below | The side column of Company, New analysis, Plan review and Live run drops below the main column |
+| 960 px and below | The brief's four cards stop being fixed-height frames and grow with their content; the sources table drops its Origin column |
+| 900 px and below | The sidebar becomes the 72 px icon rail; sign in stacks (the decorative hub is left out) |
+| 760 px and below | The Analyses table becomes a list of cards |
+| 640 px and below | The sidebar becomes a menu opened from the top bar (closes on Esc, a tap outside, or choosing a page); the breadcrumb shows only the current page; the live-run stage tracker stands up |
+
+It follows the window as it is resized, with no reload. When a component used to set a size inline, the narrow rule says so
+in a comment and uses `!important` to override it. A new class that replaces an inline style needs a base rule for desktop
+as well as the narrow override.
+
 ## How the code is laid out
 
 ```

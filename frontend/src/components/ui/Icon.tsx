@@ -4,6 +4,7 @@
  */
 const PATHS = {
   plus: "M12 5v14M5 12h14",
+  menu: "M4 7h16M4 12h16M4 17h16",
   home: "M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6",
   building: "M4 21V5l8-2v18M12 9l8 2v10M4 21h16M8 8h.01M8 12h.01M8 16h.01M16 14h.01M16 17h.01",
   target: "M12 3a9 9 0 100 18 9 9 0 000-18M12 8a4 4 0 100 8 4 4 0 000-8M12 12h.01",

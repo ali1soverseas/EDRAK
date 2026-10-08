@@ -80,9 +80,9 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
   const panel = `task-log-${task.task_id}`;
   return (
     <article className="card" style={{ padding: "14px 18px" }}>
-      <div className="row g14">
+      <div className="row g14 task-row">
         <WorkerBadge worker={task.worker} large />
-        <div className="grow col g6" style={{ minWidth: 0 }}>
+        <div className="grow col g6 task-main" style={{ minWidth: 0 }}>
           <div className="row g10">
             <span className="b6 s15">{t(`worker.name.${workerKey(task.worker)}` as TKey)}</span>
             <TaskChip state={task.state} />
@@ -92,7 +92,7 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
             {task.state === "running" && <span className="caret" aria-hidden="true" />}
           </div>
         </div>
-        <div className="col g6" style={{ width: 190 }}>
+        <div className="col g6 task-progress">
           <div className="row jb s12 t3">
             <span>{tn("plural.sources", task.sources)}</span>
             <span className="num">{formatNumber(task.progress)}%</span>
@@ -332,14 +332,14 @@ export function LiveRun() {
   return (
     <div className="col g20 pg">
       {chrome}
-      <div className="row jb ae">
+      <div className="row jb ae run-head">
         <div>
           <div className="eyebrow">{t("run.eyebrow", { useCase: t(USE_CASE_META[data.use_case].short) })}</div>
           <h1 className="disp" style={{ fontSize: 32, margin: "8px 0 0" }}>
             {t(title.key, title.params)}
           </h1>
         </div>
-        <div className="row g16">
+        <div className="row g16 run-controls">
           <div className="col" style={{ alignItems: "flex-end" }}>
             <div className="mono t3">{t("run.elapsed")}</div>
             <div className="disp s24 num" role="timer" aria-live="off">

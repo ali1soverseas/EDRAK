@@ -41,7 +41,7 @@ interface UseCaseSwitchProps {
 function UseCaseSwitch({ value, onChange }: UseCaseSwitchProps) {
   const { t } = useI18n();
   return (
-    <div className="row" style={{ gap: 14, alignItems: "stretch" }} role="radiogroup" aria-label={t("form.useCase")}>
+    <div className="row uc-switch" role="radiogroup" aria-label={t("form.useCase")}>
       {USE_CASES.map((useCase) => {
         const meta = USE_CASE_META[useCase];
         const on = useCase === value;
@@ -153,7 +153,7 @@ export function RequestForm({ form, onChange, onUseCaseChange, showGoalError }: 
                 </label>
                 <input id="offering" className="inp" value={form.offering} onChange={(event) => onChange({ offering: event.target.value })} />
               </div>
-              <div className="row g16 as">
+              <div className="row g16 as split">
                 <div className="grow">
                   <div className="lbl">{t("form.customers")}</div>
                   <ChoiceChips<TargetCustomers>
@@ -191,7 +191,7 @@ export function RequestForm({ form, onChange, onUseCaseChange, showGoalError }: 
                 </label>
                 <input id="market" className="inp" value={form.market} onChange={(event) => onChange({ market: event.target.value })} />
               </div>
-              <div className="row g16 as">
+              <div className="row g16 as split">
                 <div className="grow">{focusChips}</div>
                 <div className="grow">{timeWindow}</div>
               </div>

@@ -236,7 +236,7 @@ export function PlanReview() {
       {chrome}
       <div className="analysis-grid">
         <div className="col grow" style={{ minWidth: 0, gap: 18 }}>
-          <div className="row jb ae">
+          <div className="row jb ae plan-head">
             <div>
               <div className="eyebrow">{t("plan.eyebrow")}</div>
               <h1 className="disp plan-title" style={{ fontSize: 32, margin: "8px 0 0" }}>

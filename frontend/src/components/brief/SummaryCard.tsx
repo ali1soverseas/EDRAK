@@ -28,7 +28,7 @@ export function SummaryCard({ brief }: { brief: Brief }) {
   const limits = brief.summary.limits ?? brief.gaps.map((gap) => gap.text).join(". ");
 
   return (
-    <div className="row as" style={{ height: "100%", gap: 52 }}>
+    <div className="row as summary-grid">
       <div className="col bc-a summary-left">
         <div className="col" style={{ gap: 16 }}>
           <div className="eyebrow tb">{t("brief.sec.1.eyebrow")}</div>

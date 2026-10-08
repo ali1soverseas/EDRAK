@@ -12,6 +12,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-d
 import { useI18n } from "../../i18n";
 import { useAuth } from "../../state/auth";
 import type { Lang } from "../../types/app";
+import { useMediaQuery } from "../../lib/useMediaQuery";
 import { Icon } from "../ui/Icon";
 import { Logo } from "../ui/Logo";
 import { Segmented } from "../ui/Controls";
@@ -71,9 +72,13 @@ export function LanguageSwitch() {
   );
 }
 
-function TopBar({ crumbs }: { crumbs: Crumb[] }) {
+function TopBar({ crumbs, menuOpen, onMenu }: { crumbs: Crumb[]; menuOpen: boolean; onMenu: () => void }) {
+  const { t } = useI18n();
   return (
     <header className="top">
+      <button type="button" className="iconbtn nav-toggle" aria-label={t("nav.menu")} aria-expanded={menuOpen} onClick={onMenu}>
+        <Icon name="menu" size={18} />
+      </button>
       <nav className="crumb" aria-label="Breadcrumb">
         {crumbs.map((crumb, index) => {
           const last = index === crumbs.length - 1;
@@ -104,7 +109,7 @@ function TopBar({ crumbs }: { crumbs: Crumb[] }) {
   );
 }
 
-function Sidebar({ rail }: { rail: boolean }) {
+function Sidebar({ rail, open }: { rail: boolean; open: boolean }) {
   const { t } = useI18n();
   const { session, signOut } = useAuth();
   const navigate = useNavigate();
@@ -121,7 +126,7 @@ function Sidebar({ rail }: { rail: boolean }) {
   ];
 
   return (
-    <aside className="side">
+    <aside className={`side ${open ? "open" : ""}`.trim()}>
       <Link to="/" aria-label="edrak" className={rail ? "brand rail" : "brand"}>
         {rail ? <Logo variant="mark" height={30} style={{ alignSelf: "center" }} /> : <Logo variant="full" height={26} style={{ alignSelf: "flex-start" }} />}
       </Link>
@@ -193,6 +198,20 @@ export function ShellLayout(): ReactNode {
   const navigate = useNavigate();
   const location = useLocation();
   const [chrome, setChrome] = useState<ChromeConfig>({ crumbs: [] });
+  // Below 900 px the sidebar shrinks to icons. Below 640 px it leaves the layout and slides in
+  // from the top bar's menu button.
+  const phone = useMediaQuery("(max-width: 640px)");
+  const narrow = useMediaQuery("(max-width: 900px)");
+  const rail = !phone && (Boolean(chrome.rail) || narrow);
+  const [navOpen, setNavOpen] = useState(false);
+
+  useEffect(() => setNavOpen(false), [location.pathname, phone]);
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setNavOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [navOpen]);
 
   // N opens a new analysis, as the key hint on the button says.
   useEffect(() => {
@@ -217,10 +236,11 @@ export function ShellLayout(): ReactNode {
 
   return (
     <ChromeContext.Provider value={context}>
-      <div className={`app ${chrome.rail ? "rail" : ""}`.trim()}>
-        <Sidebar rail={Boolean(chrome.rail)} />
+      <div className={`app ${rail ? "rail" : ""} ${navOpen ? "nav-open" : ""}`.trim()}>
+        <Sidebar rail={rail} open={navOpen} />
+        {navOpen && <div className="nav-scrim" onClick={() => setNavOpen(false)} aria-hidden="true" />}
         <div className="main">
-          <TopBar crumbs={chrome.crumbs} />
+          <TopBar crumbs={chrome.crumbs} menuOpen={navOpen} onMenu={() => setNavOpen((value) => !value)} />
           <main className={`page ${chrome.flush ? "flush" : ""}`.trim()}>
             <Outlet />
           </main>

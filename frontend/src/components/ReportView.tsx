@@ -68,11 +68,15 @@ export function ReportView({ brief }: { brief: Brief }) {
   return (
     <EvidenceContext.Provider value={context}>
       <div className="col brief-page">
-        <div className="row jb" style={{ height: 36 }}>
+        <div className="row jb brief-bar" style={{ height: 36 }}>
           <div className="row g10">
             <span className="mono t3">{t("brief.no", { no: briefNumber(brief.brief_no) })}</span>
-            <span className="t3">·</span>
-            <span className="s13 t3">{t("brief.requestedBy", { name: brief.requested_by })}</span>
+            <span className="row g10 brief-requested">
+              <span className="t3">·</span>
+              <span className="s13 t3" dir="auto">
+                {t("brief.requestedBy", { name: brief.requested_by })}
+              </span>
+            </span>
           </div>
           <div className="row g8">
             <span className="row g8 mono t3" aria-live="polite">

@@ -16,8 +16,8 @@ export function OptionsCard({ brief }: { brief: Brief }) {
   const steps = [...brief.next_steps, t("brief.step.choose")];
 
   return (
-    <div className="col" style={{ height: "100%" }}>
-      <div className="row as jb bc-a" style={{ gap: 24, marginBottom: 22 }}>
+    <div className="col bc-fill">
+      <div className="row as jb bc-a bc-head">
         <div className="col g8">
           <div className="eyebrow tb">{t("brief.sec.4.eyebrow")}</div>
           <h2 className="disp" style={{ fontSize: 34, margin: 0, maxWidth: 1000 }}>
@@ -31,7 +31,7 @@ export function OptionsCard({ brief }: { brief: Brief }) {
         </span>
       </div>
 
-      <div className="row bc-b" style={{ gap: 16, alignItems: "stretch" }}>
+      <div className="row bc-b option-row">
         {brief.options.map((option) => (
           <article key={option.option_id} className="card col option">
             <div className="row g10">

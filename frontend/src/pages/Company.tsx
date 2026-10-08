@@ -255,7 +255,7 @@ export function Company() {
           </p>
 
           <div className="col g20 grow">
-            <div className="row g16 as">
+            <div className="row g16 as split">
               <div className="grow">
                 <label className="lbl" htmlFor="company-name">
                   {t("company.name")}
@@ -303,7 +303,7 @@ export function Company() {
               />
             </div>
 
-            <div className="row g16 as">
+            <div className="row g16 as split">
               <div className="grow">
                 <div className="lbl">{t("company.offerings")}</div>
                 <TagInput values={fields.offerings} onChange={(values) => update("offerings", values)} label={t("company.offerings")} />
