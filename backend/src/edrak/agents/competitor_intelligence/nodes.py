@@ -78,11 +78,25 @@ load_dotenv(ENV_PATH)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY is missing")
 
-if not TAVILY_API_KEY:
-    raise ValueError("TAVILY_API_KEY is missing")
+def _require(name: str, value: str | None) -> str:
+    """Fail with the variable name when a credential is absent.
+
+    Resolved per call rather than at import so a key can be rotated without
+    restarting the process, and so an unconfigured competitor worker does not
+    stop the other workers from loading.
+    """
+    if not value:
+        raise ValueError(f"{name} is missing")
+    return value
+
+
+def _openai_key() -> str:
+    return _require("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", "").strip())
+
+
+def _tavily_key() -> str:
+    return _require("TAVILY_API_KEY", os.getenv("TAVILY_API_KEY", "").strip())
 
 
 def _banner(title: str) -> None:
@@ -121,23 +135,45 @@ _compat_httpx2_brotli()
 # CLIENTS
 # ============================================================
 
-tavily = TavilyClient(api_key=TAVILY_API_KEY)
+# Clients are built on first use so a rotated key is picked up without a
+# restart, and so an unconfigured worker imports cleanly instead of raising
+# while the module loads.
+_tavily_client = None
+_llm = None
+_llm_strong = None
 
-# Cheap model: planning, queries, synthesis
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-    api_key=OPENAI_API_KEY,
-    max_retries=4,
-)
 
-# Stronger model: verification and completeness
-llm_strong = ChatOpenAI(
-    model="gpt-4o",
-    temperature=0,
-    api_key=OPENAI_API_KEY,
-    max_retries=4,
-)
+def tavily():
+    global _tavily_client
+    if _tavily_client is None:
+        _tavily_client = TavilyClient(api_key=_tavily_key())
+    return _tavily_client
+
+
+def llm():
+    """Cheap model: planning, queries, synthesis."""
+    global _llm
+    if _llm is None:
+        _llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0,
+            api_key=_openai_key(),
+            max_retries=4,
+        )
+    return _llm
+
+
+def llm_strong():
+    """Stronger model: verification and completeness."""
+    global _llm_strong
+    if _llm_strong is None:
+        _llm_strong = ChatOpenAI(
+            model="gpt-4o",
+            temperature=0,
+            api_key=_openai_key(),
+            max_retries=4,
+        )
+    return _llm_strong
 
 
 # ============================================================
@@ -185,7 +221,7 @@ def call_structured(
     Returns None if the model never produced a valid structured result.
     """
 
-    model = llm_strong if strong else llm
+    model = llm_strong() if strong else llm()
 
     structured = model.with_structured_output(
         model_class,
@@ -1437,7 +1473,7 @@ def run_tavily(
     if domains:
         params["include_domains"] = domains
 
-    return tavily.search(**params)
+    return tavily().search(**params)
 
 
 def search_node(
