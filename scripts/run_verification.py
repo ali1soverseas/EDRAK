@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend" / "src"))
 sys.path.insert(0, str(ROOT))
 
-from edrak.contracts import (
+from backend.src.edrak.contracts import (
     BusinessContext,
     BusinessRequest,
     CompanyProfile,
@@ -27,7 +27,7 @@ from edrak.contracts import (
     WorkerStatus,
     WorkerType,
 )
-from edrak.verification import run
+from backend.src.edrak.verification import run
 
 
 def mock_request() -> BusinessRequest:
