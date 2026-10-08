@@ -63,16 +63,19 @@ def empty_market_state(
     }
 
 
+_AGENT = "market_intelligence"
+
+
 def _banner(msg: str) -> None:
     width = 72
     print(f"\n{'=' * width}")
-    print(f"  {msg}")
+    print(f"  [{_AGENT}] {msg}")
     print(f"{'=' * width}")
 
 
 def _section(msg: str) -> None:
     print(f"\n  {'-' * 60}")
-    print(f"  {msg}")
+    print(f"  [{_AGENT}] {msg}")
     print(f"  {'-' * 60}")
 
 

@@ -23,6 +23,7 @@ from .state import RESET, OrchestrationState
 
 
 def plan_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: plan")
     request: BusinessRequest = state["request"]
     plan = LlmPlanner().plan(request)
     return {**state, "plan": plan}
@@ -59,7 +60,9 @@ def make_dispatch_worker(
     """
 
     def dispatch_worker(payload: dict) -> dict:
-        result = run_task(payload["task"], registry)
+        task = payload["task"]
+        print(f"\n[{task.worker.value}] NODE: dispatch")
+        result = run_task(task, registry)
         return {"results": [result], "outcomes": [result.to_outcome()]}
 
     return dispatch_worker
@@ -76,6 +79,7 @@ def _failed(task: ResearchTask, detail: str) -> WorkerResult:
 
 
 def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[verification] NODE: verify")
     from ..contracts.verification import VerificationInput
     from ..verification.graph import run as run_verification
 
@@ -103,7 +107,7 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
         log_action("verification", captured)
 
     print(
-        f"  verification: {result.decision.status.value} "
+        f"  [verification] {result.decision.status.value} "
         f"({len(result.findings)} findings assessed) "
         f"-> artifacts/logs/verification.log"
     )
@@ -112,6 +116,7 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
 
 
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: exhausted")
     return {
         **state,
         "error": "orchestration retry/replan limits exhausted; "
@@ -120,6 +125,7 @@ def exhausted_node(state: OrchestrationState) -> OrchestrationState:
 
 
 def finalize_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: finalize")
     request: BusinessRequest = state["request"]
     plan = state.get("plan")
     results = state.get("results") or []
@@ -143,6 +149,7 @@ def finalize_node(state: OrchestrationState) -> OrchestrationState:
 
 
 def replan_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: replan")
     request: BusinessRequest = state["request"]
     replan_count = (state.get("replan_count") or 0) + 1
     plan = LlmPlanner().plan(request)

@@ -308,6 +308,96 @@ def test_market_web_page_on_analyst_url_can_verify():
     assert result.decision.status is VerificationStatus.VERIFIED
 
 
+def test_market_vendor_learning_and_report_pages_are_not_low():
+    learning = Evidence(
+        evidence_id="ev_learn",
+        source_type=SourceType.WEB_PAGE,
+        source_url="https://www.parasoft.com/learning-center/iso-26262/",
+        extracted_fact="MISRA guidelines support ISO 26262 by providing coding standards for automotive software.",
+    )
+    report = Evidence(
+        evidence_id="ev_report",
+        source_type=SourceType.WEB_PAGE,
+        source_url="https://www.perforce.com/resources/sca/2026-state-automotive-software-development-report",
+        extracted_fact="Over 450 automotive development professionals responded to the survey.",
+    )
+    payload = VerificationInput(
+        request=_request(),
+        agent_outputs=[
+            _finding_result(
+                worker=WorkerType.MARKET_INTELLIGENCE,
+                finding_id="mkt_learn",
+                statement="MISRA guidelines support ISO 26262 by providing coding standards for automotive software.",
+                evidence=[learning],
+                confidence=0.65,
+            ),
+            _finding_result(
+                worker=WorkerType.MARKET_INTELLIGENCE,
+                finding_id="mkt_report",
+                statement="Over 450 automotive development professionals responded to the survey.",
+                evidence=[report],
+                confidence=0.65,
+            ),
+        ],
+    )
+    result = _run(payload)
+    by_id = {item.finding_id: item for item in result.findings}
+    assert by_id["mkt_learn"].evidence_quality is EvidenceQuality.MEDIUM
+    assert by_id["mkt_learn"].verification_status is FindingCheckStatus.VERIFIED
+    assert by_id["mkt_report"].evidence_quality is EvidenceQuality.MEDIUM
+    assert by_id["mkt_report"].verification_status is FindingCheckStatus.VERIFIED
+
+
+def test_market_high_confidence_unknown_host_is_not_low():
+    evidence = Evidence(
+        evidence_id="ev_size",
+        source_type=SourceType.WEB_PAGE,
+        source_url="https://www.gminsights.com/industry-analysis/automotive-software-market",
+        extracted_fact="The EU Cyber Resilience Act entered into force on December 10, 2024.",
+    )
+    payload = VerificationInput(
+        request=_request(),
+        agent_outputs=[
+            _finding_result(
+                worker=WorkerType.MARKET_INTELLIGENCE,
+                finding_id="mkt_cra",
+                statement="The EU Cyber Resilience Act entered into force on December 10, 2024.",
+                evidence=[evidence],
+                confidence=0.9,
+            )
+        ],
+    )
+    result = _run(payload)
+    finding = result.findings[0]
+    assert finding.evidence_quality is EvidenceQuality.MEDIUM
+    assert finding.verification_status is FindingCheckStatus.VERIFIED
+
+
+def test_market_aggregator_stays_low_even_with_high_confidence():
+    evidence = Evidence(
+        evidence_id="ev_reddit",
+        source_type=SourceType.WEB_PAGE,
+        source_url="https://www.reddit.com/r/devops/comments/market",
+        extracted_fact="The automotive compliance market will double by 2027.",
+    )
+    payload = VerificationInput(
+        request=_request(),
+        agent_outputs=[
+            _finding_result(
+                worker=WorkerType.MARKET_INTELLIGENCE,
+                finding_id="mkt_reddit",
+                statement="The automotive compliance market will double by 2027.",
+                evidence=[evidence],
+                confidence=0.9,
+            )
+        ],
+    )
+    result = _run(payload)
+    finding = result.findings[0]
+    assert finding.evidence_quality is EvidenceQuality.LOW
+    assert finding.verification_status is FindingCheckStatus.INSUFFICIENT
+
+
 def test_market_blog_url_is_low_quality_even_when_grounded():
     evidence = Evidence(
         evidence_id="ev_blog",

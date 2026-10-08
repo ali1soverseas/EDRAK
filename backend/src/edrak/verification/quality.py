@@ -34,6 +34,23 @@ _ANNOUNCE_PATHS = (
     "/release-notes",
 )
 _WEAK_PATHS = ("/discussions", "/community", "/orgs/", "/search", "/comments")
+_MARKET_LEARNING_PATHS = (
+    "/learning-center",
+    "/learning",
+    "/learn/",
+    "/academy",
+    "/knowledge-base",
+    "/knowledge/",
+)
+_MARKET_REPORT_PATHS = (
+    "/report",
+    "/resources/",
+    "/research",
+    "/whitepaper",
+    "/white-paper",
+    "/industry-analysis",
+)
+MARKET_QUALITY_CONFIDENCE = 0.70
 _NEWS_HOSTS = (
     "reuters.com",
     "bloomberg.com",
@@ -169,6 +186,41 @@ def quality_from_url(
     if source_type in _TYPE_FALLBACK_HIGH:
         return EvidenceQuality.HIGH
     if source_type in _TYPE_FALLBACK_MEDIUM:
+        return EvidenceQuality.MEDIUM
+    return EvidenceQuality.LOW
+
+
+def _penalized_url(url: str) -> bool:
+    if not url:
+        return False
+    path = (urlparse(url).path or "").lower()
+    if any(marker in path for marker in _WEAK_PATHS):
+        return True
+    return source_weight(url, DEFAULT_SOURCE_TIERS) <= -0.20
+
+
+def _market_vendor_page(url: str) -> bool:
+    path = (urlparse(url or "").path or "").lower()
+    return any(marker in path for marker in _MARKET_LEARNING_PATHS + _MARKET_REPORT_PATHS)
+
+
+def lift_market_quality(
+    quality: EvidenceQuality,
+    evidence: list[Evidence],
+    confidence: float | None,
+) -> EvidenceQuality:
+    """Market findings: vendor learning/report pages and high confidence are not LOW.
+
+    Aggregators, community threads, and review sites stay LOW.
+    """
+    if quality is not EvidenceQuality.LOW:
+        return quality
+    urls = [item.source_url or "" for item in evidence]
+    if urls and all(_penalized_url(url) for url in urls):
+        return EvidenceQuality.LOW
+    if confidence is not None and confidence > MARKET_QUALITY_CONFIDENCE:
+        return EvidenceQuality.MEDIUM
+    if any(_market_vendor_page(url) for url in urls):
         return EvidenceQuality.MEDIUM
     return EvidenceQuality.LOW
 
