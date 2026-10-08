@@ -1,0 +1,1048 @@
+{
+  "$defs": {
+    "BusinessContext": {
+      "additionalProperties": false,
+      "description": "Context that frames how the business goal should be analyzed.",
+      "properties": {
+        "constraints": {
+          "description": "Explicit analysis constraints or requirements.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "focus_areas": {
+          "description": "Dimensions the analysis should emphasize.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Focus Areas",
+          "type": "array"
+        },
+        "targets": {
+          "description": "Competitors, markets, products, or other analysis targets.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Targets",
+          "type": "array"
+        },
+        "time_window_days": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional research recency window in days.",
+          "title": "Time Window Days"
+        },
+        "trigger": {
+          "$ref": "#/$defs/TriggerType",
+          "default": "on_demand",
+          "description": "How the analysis was initiated."
+        },
+        "use_case": {
+          "$ref": "#/$defs/UseCase",
+          "description": "EDRAK MVP use case represented by this request."
+        }
+      },
+      "required": [
+        "constraints",
+        "focus_areas",
+        "targets",
+        "time_window_days",
+        "trigger",
+        "use_case"
+      ],
+      "title": "BusinessContext",
+      "type": "object"
+    },
+    "BusinessRequest": {
+      "additionalProperties": false,
+      "description": "High-level business request entering the EDRAK orchestration workflow.",
+      "properties": {
+        "business_context": {
+          "$ref": "#/$defs/BusinessContext",
+          "description": "Context and framing parameters for the analysis."
+        },
+        "company_profile": {
+          "$ref": "#/$defs/CompanyProfile",
+          "description": "Baseline information about the company under analysis."
+        },
+        "created_at": {
+          "description": "When the request was created in UTC.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "extras": {
+          "additionalProperties": true,
+          "description": "Optional request-specific information not part of the core contract.",
+          "title": "Extras",
+          "type": "object"
+        },
+        "goal": {
+          "description": "The main business question or objective EDRAK must address.",
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "Unique request identifier.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_context",
+        "company_profile",
+        "created_at",
+        "extras",
+        "goal",
+        "request_id"
+      ],
+      "title": "BusinessRequest",
+      "type": "object"
+    },
+    "CompanyProfile": {
+      "additionalProperties": false,
+      "description": "Minimal baseline describing the company under analysis.\n\nProvisional. This field set is intentionally minimal and is expected to be\nreplaced once the internal-knowledge baseline is derived from\nhttps://handbook.gitlab.com/handbook/ . Kept small on purpose so that\nextraction can reshape it without breaking workers already built on it.",
+      "properties": {
+        "aliases": {
+          "description": "Alternative names or commonly used company names.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "name": {
+          "description": "Canonical name of the company under analysis.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional high-level company baseline notes.",
+          "title": "Notes"
+        },
+        "products": {
+          "description": "Known products or offerings relevant to the analysis.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Products",
+          "type": "array"
+        }
+      },
+      "required": [
+        "aliases",
+        "name",
+        "notes",
+        "products"
+      ],
+      "title": "CompanyProfile",
+      "type": "object"
+    },
+    "Conflict": {
+      "additionalProperties": false,
+      "description": "A contradiction discovered between findings or between a finding and its evidence.",
+      "properties": {
+        "contradicting_evidence_ids": {
+          "description": "Evidence that refutes the claim.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Contradicting Evidence Ids",
+          "type": "array"
+        },
+        "description": {
+          "description": "What the contradiction is.",
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "finding_id": {
+          "description": "finding_id of the claim in question.",
+          "minLength": 1,
+          "title": "Finding Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contradicting_evidence_ids",
+        "description",
+        "finding_id"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "ControlSummary": {
+      "additionalProperties": false,
+      "description": "Compact retry/replan brief. Does not carry raw documents.",
+      "properties": {
+        "conflicts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "failures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failures",
+          "type": "array"
+        },
+        "missing_information": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Information",
+          "type": "array"
+        },
+        "next_research_targets": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Next Research Targets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "conflicts",
+        "failures",
+        "missing_information",
+        "next_research_targets"
+      ],
+      "title": "ControlSummary",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "Traceable support for one or more findings.\n\nWorkers are the only producers. Verification and synthesis consume it;\nthe orchestrator must treat it as opaque.",
+      "properties": {
+        "evidence_id": {
+          "description": "Unique evidence identifier.",
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supporting passage from the source.",
+          "title": "Excerpt"
+        },
+        "extracted_fact": {
+          "description": "The specific fact drawn from the source.",
+          "minLength": 1,
+          "title": "Extracted Fact",
+          "type": "string"
+        },
+        "is_synthetic": {
+          "default": false,
+          "description": "True when the content is synthetic or adapted, not authentic.",
+          "title": "Is Synthetic",
+          "type": "boolean"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Source-specific extras such as pricing tier or publish date.",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "publisher": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who published the source.",
+          "title": "Publisher"
+        },
+        "retrieved_at": {
+          "description": "When the source was retrieved (UTC).",
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title of the source.",
+          "title": "Source Title"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType",
+          "description": "Nature of the source."
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL when the source is public.",
+          "title": "Source Url"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "excerpt",
+        "extracted_fact",
+        "is_synthetic",
+        "metadata",
+        "publisher",
+        "retrieved_at",
+        "source_title",
+        "source_type",
+        "source_url"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceQuality": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "EvidenceQuality",
+      "type": "string"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "description": "A finding's link to one piece of evidence, carrying what the link means.\n\nA bare id list cannot distinguish \"this source backs the claim\" from \"this\nsource refutes it\", so the relation travels with the reference.",
+      "properties": {
+        "evidence_id": {
+          "description": "evidence_id of the referenced Evidence.",
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/EvidenceRelation",
+          "default": "supports",
+          "description": "How this evidence relates to the finding."
+        }
+      },
+      "required": [
+        "evidence_id",
+        "relation"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "EvidenceRelation": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "contextualizes"
+      ],
+      "title": "EvidenceRelation",
+      "type": "string"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One evidence-backed claim.\n\nSupport and contradiction are derived from ``evidence_refs`` rather than\nstored, so they cannot drift away from the actual links.",
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/FindingCategory",
+          "default": "other",
+          "description": "Dimension this claim speaks to."
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional self-reported confidence.",
+          "title": "Confidence"
+        },
+        "evidence_refs": {
+          "description": "Evidence backing or refuting this claim.",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "finding_id": {
+          "description": "Unique finding identifier.",
+          "minLength": 1,
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "limitations": {
+          "description": "Known caveats attached to this claim.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "statement": {
+          "description": "The claim being made.",
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "confidence",
+        "evidence_refs",
+        "finding_id",
+        "limitations",
+        "statement"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FindingCategory": {
+      "enum": [
+        "product_feature",
+        "pricing_packaging",
+        "positioning",
+        "target_customer",
+        "strength",
+        "gap",
+        "market_signal",
+        "customer_sentiment",
+        "risk",
+        "opportunity",
+        "other"
+      ],
+      "title": "FindingCategory",
+      "type": "string"
+    },
+    "FindingCheckStatus": {
+      "enum": [
+        "verified",
+        "insufficient"
+      ],
+      "title": "FindingCheckStatus",
+      "type": "string"
+    },
+    "FindingVerdict": {
+      "additionalProperties": false,
+      "description": "Per-finding verification result consumed by synthesis.",
+      "properties": {
+        "confidence": {
+          "description": "Verifier confidence in this verdict.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "contradictions": {
+          "description": "Conflicts found in the backing evidence or across findings.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradictions",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "description": "Evidence ids inspected for this finding.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "evidence_quality": {
+          "$ref": "#/$defs/EvidenceQuality",
+          "description": "Highest quality of backing evidence."
+        },
+        "finding_id": {
+          "description": "finding_id from the source WorkerResult.",
+          "minLength": 1,
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "missing_information": {
+          "description": "What is still needed to support the claim.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Information",
+          "type": "array"
+        },
+        "statement": {
+          "description": "The claim being verified.",
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/FindingCheckStatus",
+          "description": "Per-finding verdict."
+        },
+        "worker": {
+          "$ref": "#/$defs/WorkerType",
+          "description": "Which worker produced the finding."
+        }
+      },
+      "required": [
+        "confidence",
+        "contradictions",
+        "evidence_ids",
+        "evidence_quality",
+        "finding_id",
+        "missing_information",
+        "statement",
+        "verification_status",
+        "worker"
+      ],
+      "title": "FindingVerdict",
+      "type": "object"
+    },
+    "OrchestrationResult": {
+      "additionalProperties": false,
+      "description": "Terminal output of one orchestrator run.\n\nCarries worker results through to verification unchanged. The orchestrator\nitself reads only the control fields of each WorkerResult.",
+      "properties": {
+        "completed_at": {
+          "description": "When the run finished (UTC).",
+          "format": "date-time",
+          "title": "Completed At",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run-level failure detail.",
+          "title": "Error"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchPlan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plan that was executed."
+        },
+        "request_id": {
+          "description": "request_id of the originating BusinessRequest.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "description": "Worker results collected.",
+          "items": {
+            "$ref": "#/$defs/WorkerResult"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus",
+          "description": "Overall run outcome."
+        }
+      },
+      "required": [
+        "completed_at",
+        "error",
+        "plan",
+        "request_id",
+        "results",
+        "status"
+      ],
+      "title": "OrchestrationResult",
+      "type": "object"
+    },
+    "ResearchPlan": {
+      "additionalProperties": false,
+      "description": "An ordered set of research assignments produced by the planner.",
+      "properties": {
+        "created_at": {
+          "description": "When the plan was created (UTC).",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "plan_id": {
+          "description": "Unique plan identifier.",
+          "minLength": 1,
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why these tasks, in plain language.",
+          "title": "Rationale"
+        },
+        "request_id": {
+          "description": "request_id of the originating BusinessRequest.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "tasks": {
+          "description": "Tasks to dispatch.",
+          "items": {
+            "$ref": "#/$defs/ResearchTask"
+          },
+          "title": "Tasks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "created_at",
+        "plan_id",
+        "rationale",
+        "request_id",
+        "tasks"
+      ],
+      "title": "ResearchPlan",
+      "type": "object"
+    },
+    "ResearchTask": {
+      "additionalProperties": false,
+      "description": "One bounded research assignment handed to a single worker.\n\nThe orchestrator produces this; a worker consumes it. It carries no\nquestions list, dependency graph, or required-evidence list on purpose:\n``goal`` and ``focus`` are the whole instruction surface, and the shared\ncompany and business context travel with the task so the worker never needs\nthe original request.",
+      "properties": {
+        "attempt": {
+          "default": 1,
+          "description": "Starts at 1 and increments on targeted retries.",
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "business_context": {
+          "$ref": "#/$defs/BusinessContext",
+          "description": "Business context, copied from the request."
+        },
+        "company_profile": {
+          "$ref": "#/$defs/CompanyProfile",
+          "description": "Company baseline, copied from the request."
+        },
+        "focus": {
+          "description": "What this task must concentrate on.",
+          "minLength": 1,
+          "title": "Focus",
+          "type": "string"
+        },
+        "goal": {
+          "description": "What this task must achieve.",
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "parent_request_id": {
+          "description": "request_id of the originating BusinessRequest.",
+          "minLength": 1,
+          "title": "Parent Request Id",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "Unique task identifier.",
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "worker": {
+          "$ref": "#/$defs/WorkerType",
+          "description": "Which domain worker owns this task."
+        }
+      },
+      "required": [
+        "attempt",
+        "business_context",
+        "company_profile",
+        "focus",
+        "goal",
+        "parent_request_id",
+        "task_id",
+        "worker"
+      ],
+      "title": "ResearchTask",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "completed",
+        "partial",
+        "failed"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "SourceType": {
+      "enum": [
+        "web_page",
+        "search_result",
+        "official_documentation",
+        "pricing_page",
+        "release_notes",
+        "announcement",
+        "news_article",
+        "review_site",
+        "market_report",
+        "regulatory",
+        "economic",
+        "internal_document",
+        "synthetic_internal",
+        "other"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TargetedAction": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "description": "What action to take in plain language.",
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "worker": {
+          "$ref": "#/$defs/WorkerType",
+          "description": "Which worker to act on."
+        }
+      },
+      "required": [
+        "reason",
+        "worker"
+      ],
+      "title": "TargetedAction",
+      "type": "object"
+    },
+    "TriggerType": {
+      "enum": [
+        "on_demand",
+        "scheduled"
+      ],
+      "title": "TriggerType",
+      "type": "string"
+    },
+    "UseCase": {
+      "enum": [
+        "competitive_intelligence",
+        "market_entry_expansion",
+        "product_launch"
+      ],
+      "title": "UseCase",
+      "type": "string"
+    },
+    "VerificationDecision": {
+      "additionalProperties": false,
+      "description": "Compact control-plane result used by the orchestrator for retry/replan.",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/VerificationStatus",
+          "description": "Verification outcome."
+        },
+        "summary": {
+          "description": "One-line explanation of the decision.",
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "targeted_actions": {
+          "description": "Concrete actions to take if action is required.",
+          "items": {
+            "$ref": "#/$defs/TargetedAction"
+          },
+          "title": "Targeted Actions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "summary",
+        "targeted_actions"
+      ],
+      "title": "VerificationDecision",
+      "type": "object"
+    },
+    "VerificationResult": {
+      "additionalProperties": false,
+      "description": "Full verification stage output.\n\n``decision`` is the orchestrator control contract. ``findings`` are the\nverified/insufficient claims passed to synthesis.",
+      "properties": {
+        "completed_at": {
+          "format": "date-time",
+          "title": "Completed At",
+          "type": "string"
+        },
+        "control_summary": {
+          "$ref": "#/$defs/ControlSummary"
+        },
+        "decision": {
+          "$ref": "#/$defs/VerificationDecision"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/FindingVerdict"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "research_run_id": {
+          "description": "request_id of the originating BusinessRequest.",
+          "minLength": 1,
+          "title": "Research Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "completed_at",
+        "control_summary",
+        "decision",
+        "findings",
+        "metadata",
+        "research_run_id"
+      ],
+      "title": "VerificationResult",
+      "type": "object"
+    },
+    "VerificationStatus": {
+      "enum": [
+        "verified",
+        "retry_required",
+        "replan_required",
+        "cannot_complete"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    },
+    "WorkerResult": {
+      "additionalProperties": false,
+      "description": "The single contract every worker returns for a ResearchTask.\n\nReferential integrity is enforced here: every evidence reference and every\nconflict must resolve inside this result. Workers are therefore forced to\ncarry provenance, and a dangling id fails at the boundary instead of\nsurfacing later inside verification or synthesis.",
+      "properties": {
+        "attempt": {
+          "default": 1,
+          "description": "Attempt number that produced this result.",
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Completion time (UTC).",
+          "title": "Completed At"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional overall confidence.",
+          "title": "Confidence"
+        },
+        "conflicts": {
+          "description": "Contradictions found.",
+          "items": {
+            "$ref": "#/$defs/Conflict"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Failure detail when status is failed.",
+          "title": "Error"
+        },
+        "evidence": {
+          "description": "Evidence collected.",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "findings": {
+          "description": "Claims produced.",
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "gaps": {
+          "description": "Known information gaps.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Gaps",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Worker-specific extras.",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start time (UTC).",
+          "title": "Started At"
+        },
+        "status": {
+          "$ref": "#/$defs/WorkerStatus",
+          "description": "Outcome of the task."
+        },
+        "task_id": {
+          "description": "task_id of the ResearchTask this answers.",
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "worker": {
+          "$ref": "#/$defs/WorkerType",
+          "description": "Which worker produced this result."
+        }
+      },
+      "required": [
+        "attempt",
+        "completed_at",
+        "confidence",
+        "conflicts",
+        "error",
+        "evidence",
+        "findings",
+        "gaps",
+        "metadata",
+        "started_at",
+        "status",
+        "task_id",
+        "worker"
+      ],
+      "title": "WorkerResult",
+      "type": "object"
+    },
+    "WorkerStatus": {
+      "enum": [
+        "completed",
+        "partial",
+        "no_evidence",
+        "failed"
+      ],
+      "title": "WorkerStatus",
+      "type": "string"
+    },
+    "WorkerType": {
+      "enum": [
+        "internal_intelligence",
+        "competitor_intelligence",
+        "market_intelligence",
+        "customer_trends"
+      ],
+      "title": "WorkerType",
+      "type": "string"
+    }
+  },
+  "title": "EdrakContracts"
+}
