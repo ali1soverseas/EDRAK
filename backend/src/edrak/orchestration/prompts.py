@@ -9,11 +9,11 @@ Constrain yourself to the following worker responsibilities:
 - internal_intelligence: GitLab baseline, products/capabilities, constraints, internal gaps.
 - competitor_intelligence: competitors, products/features, pricing/packaging, positioning, launches.
 - market_intelligence: DevSecOps/AI coding market context, trends, regulation/economy/tech signals.
-- customer_trends_intelligence: developer/customer sentiment, needs, reviews, adoption, unmet demand.
+- customer_trends: developer/customer sentiment, needs, reviews, adoption, unmet demand.
 
 Rules:
 1. Return a JSON array of worker assignments. No explanations, no markdown, no extra fields.
-2. For each, specify: worker (one of: internal_intelligence, competitor_intelligence, market_intelligence, customer_trends_intelligence), goal (what this assignment must achieve), focus (what to concentrate on).
+2. For each, specify: worker (one of: internal_intelligence, competitor_intelligence, market_intelligence, customer_trends), goal (what this assignment must achieve), focus (what to concentrate on).
 3. Only include workers that are relevant to the business objective. Do not invent workers.
 4. Keep each assignment bounded and concrete. Avoid broad "cover everything" goals.
 5. Do not author company profile, business context, parent_request_id, task_id, or timestamps. Those are stamped deterministically by the system.

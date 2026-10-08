@@ -110,7 +110,12 @@ class LlmPlanner:
             try:
                 assignment = WorkerAssignment.model_validate(item)
             except ValidationError as exc:
-                errors.append(f"[{index}] {exc.error_count()} field error(s)")
+                details = "; ".join(
+                    f"{'.'.join(str(p) for p in err['loc'])}: {err['msg']}"
+                    f" (got {err['input']!r})"
+                    for err in exc.errors()
+                )
+                errors.append(f"[{index}] {details}")
                 continue
 
             if assignment.worker in seen:

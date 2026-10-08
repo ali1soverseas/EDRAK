@@ -318,18 +318,20 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
 def build_default_registry() -> WorkerRegistry:
     """Register the workers that are wired for this integration slice.
 
-    Competitor intelligence and market intelligence already expose classes
-    satisfying the ``Worker`` protocol (``CompetitorAgent`` and
-    ``MarketIntelligence``), so both register directly.
+    All four contract workers are registered. Competitor, market and customer
+    trends already expose classes satisfying the ``Worker`` protocol
+    (``CompetitorAgent``, ``MarketIntelligence``, ``CustomerTrendsWorker``) and
+    register directly. Internal intelligence exposes a module-level function, so
+    a thin adapter carries it into the protocol.
 
-    Internal intelligence is intentionally not registered: it needs a populated
-    handbook vector store (``scripts/run_etl_pipeline.py``), and is deferred to a
-    later slice. Customer trends is excluded because it carries private schemas
-    that do not implement the shared contracts.
+    Internal intelligence retrieves from a handbook vector store. Until
+    ``scripts/run_etl_pipeline.py`` has populated it, a dispatched internal task
+    finds no evidence rather than failing outright.
 
-    Both imports are deferred. The competitor module raises at import time when
-    OPENAI_API_KEY or TAVILY_API_KEY is absent, which would otherwise take down
-    the whole run including workers that are perfectly usable.
+    Every import is deferred. The competitor module raises at import time when
+    OPENAI_API_KEY or TAVILY_API_KEY is absent, and the customer trends package
+    pulls in provider SDKs, so one unavailable worker must not take down the rest
+    of the run.
     """
     from edrak.contracts import WorkerType
 
@@ -351,6 +353,28 @@ def build_default_registry() -> WorkerRegistry:
         registry.register(WorkerType.MARKET_INTELLIGENCE, MarketIntelligence())
     except Exception as exc:  # noqa: BLE001 - keep one bad worker from killing all
         print(f"  market intelligence unavailable: {exc}", file=sys.stderr)
+
+    try:
+        from edrak.agents.customer_trends.worker import CustomerTrendsWorker
+
+        registry.register(WorkerType.CUSTOMER_TRENDS, CustomerTrendsWorker())
+    except Exception as exc:  # noqa: BLE001 - provider SDK imports can fail
+        print(f"  customer trends unavailable: {exc}", file=sys.stderr)
+
+    try:
+        from edrak.agents.internal_intelligence.graph import run_internal_intelligence
+
+        class InternalWorker:
+            """Adapter for internal intelligence's module-level entry point."""
+
+            worker_type = WorkerType.INTERNAL_INTELLIGENCE
+
+            def run(self, task: Any) -> Any:
+                return run_internal_intelligence(task)
+
+        registry.register(WorkerType.INTERNAL_INTELLIGENCE, InternalWorker())
+    except Exception as exc:  # noqa: BLE001 - keep one bad worker from killing all
+        print(f"  internal intelligence unavailable: {exc}", file=sys.stderr)
 
     return registry
 
