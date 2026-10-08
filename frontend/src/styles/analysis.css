@@ -1,0 +1,93 @@
+/* New analysis and Plan review. Layout from screens/new-analysis.html and plan-review.html. */
+
+.analysis-grid {
+  display: flex;
+  align-items: stretch;
+  gap: 32px;
+  min-height: 100%;
+}
+.analysis-side {
+  width: 380px;
+  flex: none;
+  gap: 16px;
+}
+.plan-side {
+  width: 360px;
+  flex: none;
+  gap: 16px;
+}
+/* The plan title stays on one line, as drawn, while there is room for it. */
+.plan-title {
+  white-space: nowrap;
+}
+@media (max-width: 1320px) {
+  .plan-title {
+    white-space: normal;
+  }
+}
+
+/* The three use-case options. */
+.uc-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--hair);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.2s, background 0.15s;
+}
+.uc-option:hover {
+  border-color: var(--ink);
+}
+.uc-option.on {
+  /* 2 px border in the design. The padding gives back the extra pixel so nothing shifts. */
+  padding: 15px 17px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  box-shadow: 0 10px 28px -14px rgba(11, 13, 56, 0.25);
+}
+.uc-option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--paper2);
+  color: var(--ink2);
+}
+.uc-option.on .uc-option-icon {
+  background: var(--ink);
+  color: #f4f3ee;
+}
+.uc-option-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 1.5px solid var(--hair2);
+  background: #fff;
+  display: block;
+  transition: border-width 0.15s var(--ease), border-color 0.15s;
+}
+.uc-option.on .uc-option-radio {
+  border: 6px solid var(--ink);
+}
+
+/* The two-column screens are drawn for 1440 px. In a narrower window the side column drops below. */
+@media (max-width: 1180px) {
+  .analysis-grid {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .analysis-side,
+  .plan-side {
+    width: auto;
+  }
+}

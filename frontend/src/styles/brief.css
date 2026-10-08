@@ -1,0 +1,261 @@
+/*
+ * The brief. Layout values come from screens/brief.html. The scroll-driven blur and
+ * parallax are in edrak.css (.bscroll, .bcard, .bc-body, .bc-a/b/c) and are not
+ * repeated or overridden here, apart from mirroring for right-to-left.
+ */
+
+.brief-page {
+  height: 100%;
+  padding: 16px 40px 22px;
+  gap: 12px;
+}
+
+/* edrak.css pins the rail, its labels and the card padding to the right with physical
+   values. In Arabic the rail moves to the left edge, so the card gives it room there. */
+[dir="rtl"] .brail {
+  right: auto;
+  left: 14px;
+}
+[dir="rtl"] .btip {
+  right: auto;
+  left: 38px;
+  transform: translate(-10px, -50%);
+}
+[dir="rtl"] .bdot:hover .btip,
+[dir="rtl"] .bdot:focus-visible .btip {
+  transform: translate(0, -50%);
+}
+[dir="rtl"] .bcard {
+  padding: 38px 52px 62px 92px;
+}
+
+/* Inner lists scroll on their own when the window is shorter than the design. */
+.lens-findings,
+.sources-body,
+.options-col,
+.summary-left {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* ---- 01 Summary ---- */
+.summary-left {
+  width: 430px;
+  flex: none;
+  height: 100%;
+  justify-content: space-between;
+  gap: 16px;
+}
+.summary-right {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin-top: 6px;
+  border-top: 1px solid var(--ink);
+}
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.summary-text {
+  font-size: 20px;
+  line-height: 1.5;
+}
+.worker-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.worker-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--hair);
+  background: var(--card);
+  min-width: 0;
+}
+.worker-pill.failed {
+  border-color: #e7b8b0;
+  background: var(--bad-bg);
+}
+.limits {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--hair2);
+  border-radius: 12px;
+}
+.limits.bad {
+  border: 1px solid #e7b8b0;
+  background: var(--bad-bg);
+  color: #5e1a0f;
+}
+
+/* ---- 02 Findings by lens ---- */
+.lens-row {
+  gap: 16px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+.lens {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px 16px 6px;
+  gap: 8px;
+}
+.lens.failed {
+  padding: 16px 16px 14px;
+  gap: 10px;
+  border-style: dashed;
+  border-color: #e7b8b0;
+}
+.lens-failed-body {
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--hair);
+}
+.lens-findings {
+  flex: 1;
+}
+.finding {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 0;
+  border-top: 1px solid var(--hair);
+}
+.finding-text {
+  font-size: 17px;
+  line-height: 1.38;
+}
+.lens-foot {
+  padding: 10px 0 8px;
+  border-top: 1px solid var(--hair);
+}
+.synthesis {
+  padding: 18px 24px;
+  align-items: center;
+  margin-top: 16px;
+}
+.synth-mark {
+  background: linear-gradient(transparent 56%, rgba(255, 230, 107, 0.32) 56% 94%, transparent 94%);
+}
+
+/* ---- 03 Evidence and sources ---- */
+.sources {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0 2px;
+  overflow: hidden;
+}
+.sources-body {
+  flex: 1;
+}
+.srow-head,
+.srow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 120px 80px 140px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 10px;
+}
+.srow-head {
+  border-bottom: 1px solid var(--hair);
+}
+.srow {
+  width: 100%;
+  text-align: start;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.srow:hover {
+  background: rgba(11, 13, 56, 0.03);
+}
+
+/* ---- 04 Options and next steps ---- */
+.option {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px;
+  gap: 12px;
+}
+.option-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--ink);
+  color: #f4f3ee;
+  font-size: 15px;
+  font-weight: 700;
+  flex: none;
+}
+.options-bottom {
+  gap: 28px;
+  margin-top: 18px;
+  flex: 1;
+  min-height: 0;
+}
+.options-col {
+  gap: 8px;
+  min-width: 0;
+  max-height: 100%;
+}
+.gap-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--hair2);
+  border-radius: 12px;
+}
+.gap-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--warn-bg);
+  color: #7a4400;
+  flex: none;
+}
+
+/* ---- source drawer ---- */
+.drawer-body {
+  flex: 1;
+  gap: 16px;
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+/* In Arabic the bold lead-in gets its own line, so English data after it does not scramble it. */
+[dir="rtl"] .limits b {
+  display: block;
+  margin-bottom: 2px;
+}

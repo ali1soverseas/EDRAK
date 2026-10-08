@@ -1,0 +1,99 @@
+/* Live run and plan review. Layout from screens/live-run.html and plan-review.html. */
+
+.stage-tracker {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 18px 24px;
+  list-style: none;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+.step-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+.step-box.done {
+  background: var(--ink);
+  color: #f4f3ee;
+}
+.step-box.current {
+  background: var(--blue-soft);
+  color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue-line);
+}
+.step-box.pending {
+  border: 1.5px dashed var(--hair2);
+  background: var(--paper);
+}
+.step-box.failed {
+  background: var(--bad-bg);
+  color: var(--bad);
+  box-shadow: 0 0 0 1px #e7b8b0;
+}
+.step-box.stopped {
+  background: var(--sunk);
+  color: var(--ink2);
+}
+.step-line {
+  flex: 1;
+  height: 2px;
+  margin-top: 14px;
+  background: repeating-linear-gradient(90deg, var(--hair2) 0 4px, transparent 4px 8px);
+}
+.step-line.solid {
+  background: var(--ink);
+}
+.task-log {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--paper2);
+}
+
+/* The small source tags under each task in the plan. */
+.tag.tag-sm {
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--paper);
+}
+
+.run-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+.run-body > .col:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.run-side {
+  width: 380px;
+  flex: none;
+}
+@media (max-width: 1180px) {
+  .run-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .run-body > .col:first-child {
+    flex: none;
+  }
+  .run-side {
+    width: auto;
+  }
+}
