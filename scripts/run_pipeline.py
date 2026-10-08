@@ -313,6 +313,7 @@ def print_run_intro() -> None:
     print("    [customer_trends]           buyers and adoption")
     print("    [verification]              source-check of each claim")
     print("    [cross_signal]              links among verified claims")
+    print("    [decision_analysis]         final analysis and recommendations")
 
 
 def render_request(request: BusinessRequest) -> None:
@@ -372,6 +373,66 @@ def _render_worker_result(item: Any) -> None:
         print(f"    … {extra} more claim(s) in the saved artifact")
 
 
+def _render_decision_analysis(analysis: dict[str, Any] | None) -> None:
+    _rule("5. Decision analysis")
+    print()
+    if analysis is None:
+        print("  [decision_analysis] No result was produced.")
+        return
+
+    print(
+        f"  [decision_analysis] {analysis.get('status', 'unknown')} "
+        f"| run id: {analysis.get('research_run_id', 'unknown')}"
+    )
+    if analysis.get("business_goal"):
+        print(_wrap(f"Business goal: {analysis['business_goal']}"))
+    if analysis.get("executive_summary"):
+        print(_wrap(f"Executive summary: {analysis['executive_summary']}"))
+
+    for heading, key, detail_fields in (
+        (
+            "Opportunities",
+            "opportunities",
+            ("description", "business_rationale", "potential_impact"),
+        ),
+        ("Risks", "risks", ("description", "business_rationale")),
+        (
+            "Recommended actions",
+            "recommended_actions",
+            ("description", "rationale", "intended_outcome"),
+        ),
+    ):
+        items = analysis.get(key) or []
+        print()
+        print(f"  {heading} ({len(items)}):")
+        if not items:
+            print("    (none)")
+            continue
+        for item in items:
+            title = item.get("title", "Untitled")
+            priority = item.get("priority")
+            suffix = f" [{priority}]" if priority else ""
+            print(_wrap(f"- {title}{suffix}"))
+            for field in detail_fields:
+                value = item.get(field)
+                if value:
+                    label = field.replace("_", " ").capitalize()
+                    print(_wrap(f"{label}: {value}", indent="    "))
+
+    for heading, key in (
+        ("Decision questions", "decision_questions"),
+        ("Additional information needed", "additional_information_needed"),
+        ("Limitations", "limitations"),
+        ("Warnings", "warnings"),
+    ):
+        entries = analysis.get(key) or []
+        if entries:
+            print()
+            print(f"  {heading}:")
+            for entry in entries:
+                print(_wrap(f"- {entry}"))
+
+
 def render_result(result: OrchestrationResult, artifact_path: Path | None = None) -> None:
     _rule("3. What the specialists returned")
     print()
@@ -403,29 +464,27 @@ def render_result(result: OrchestrationResult, artifact_path: Path | None = None
         print()
         print("  [cross_signal] Did not run. That happens when verification does")
         print("  not finish as verified, or when no claim passed the source check.")
-        _print_artifact_line(artifact_path)
-        return
-
-    signals = result.cross_signal.get("signals") or []
-    cs_status = result.cross_signal.get("status", "unknown")
-    print()
-    print(f"  [cross_signal] {cs_status}   {len(signals)} signal(s)")
-    if not signals:
-        print("  No cross-domain relationships were produced from the verified claims.")
-        _print_artifact_line(artifact_path)
-        return
-    for index, signal in enumerate(signals, start=1):
-        kind = signal.get("signal_type") or ""
-        title = signal.get("title") or f"Signal {index}"
-        claim = signal.get("signal") or ""
-        interpretation = signal.get("interpretation") or ""
-        suffix = f"  [{kind}]" if kind else ""
+    else:
+        signals = result.cross_signal.get("signals") or []
+        cs_status = result.cross_signal.get("status", "unknown")
         print()
-        print(f"  [cross_signal] {index}. {title}{suffix}")
-        if claim:
-            print(_wrap(f"Claim: {claim}"))
-        if interpretation:
-            print(_wrap(f"Why it matters: {interpretation}"))
+        print(f"  [cross_signal] {cs_status}   {len(signals)} signal(s)")
+        if not signals:
+            print("  No cross-domain relationships were produced from the verified claims.")
+        for index, signal in enumerate(signals, start=1):
+            kind = signal.get("signal_type") or ""
+            title = signal.get("title") or f"Signal {index}"
+            claim = signal.get("signal") or ""
+            interpretation = signal.get("interpretation") or ""
+            suffix = f"  [{kind}]" if kind else ""
+            print()
+            print(f"  [cross_signal] {index}. {title}{suffix}")
+            if claim:
+                print(_wrap(f"Claim: {claim}"))
+            if interpretation:
+                print(_wrap(f"Why it matters: {interpretation}"))
+
+    _render_decision_analysis(result.decision_analysis)
     _print_artifact_line(artifact_path)
 
 

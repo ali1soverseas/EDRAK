@@ -14,7 +14,7 @@ from .nodes import (
 )
 from .routing import decide_after_verification, route_from_plan
 from .state import OrchestrationState
-
+from .nodes import make_decision_analysis_node
 
 def build_graph(registry: WorkerRegistry):
     """Compile the orchestrator.
@@ -30,6 +30,7 @@ def build_graph(registry: WorkerRegistry):
     graph.add_node("dispatch", make_dispatch_worker(registry))
     graph.add_node("verify", verification_gate_node)
     graph.add_node("cross_signal", cross_signal_node)
+    graph.add_node("decision_analysis", make_decision_analysis_node())
     graph.add_node("replan", replan_node)
     graph.add_node("exhausted", exhausted_node)
     graph.add_node("finalize", finalize_node)
@@ -55,8 +56,8 @@ def build_graph(registry: WorkerRegistry):
             "finalize": "finalize",
         },
     )
-    graph.add_edge("cross_signal", "finalize")
-
+    graph.add_edge("cross_signal", "decision_analysis")
+    graph.add_edge("decision_analysis", "finalize")
     # A replan produces a fresh plan with fresh task ids, so it must route back
     # through the plan router and actually re-dispatch. Going straight to verify
     # would grade an empty result set and loop until the limits ran out.
