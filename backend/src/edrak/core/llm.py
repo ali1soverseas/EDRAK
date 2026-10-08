@@ -25,10 +25,10 @@ class LLMClient:
         temperature: Optional[float] = None,
         timeout: float = 60.0,
     ):
-        self.base_url = (base_url or settings.LLM_BASE_URL or "http://localhost:11434/v1").rstrip("/")
-        self.api_key = api_key or settings.LLM_API_KEY or "ollama"
-        self.model = model or settings.LLM_MODEL or "gpt-oss:120b"
-        self.temperature = temperature if temperature is not None else settings.LLM_TEMPERATURE
+        self.base_url = (base_url or settings.OLLAMA_BASE_URL or "http://localhost:11434/v1").rstrip("/")
+        self.api_key = api_key or settings.OLLAMA_API_KEY or "ollama"
+        self.model = model or settings.OLLAMA_MODEL or "gpt-oss:120b"
+        self.temperature = temperature if temperature is not None else settings.OLLAMA_TEMPERATURE
         self.timeout = timeout
 
     def chat_completion(

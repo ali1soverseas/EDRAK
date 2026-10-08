@@ -114,7 +114,7 @@ def resolve_api_key() -> str | None:
     try:
         from edrak.core.config import settings
 
-        raw = settings.LLM_API_KEY
+        raw = settings.OLLAMA_API_KEY
         # Settings may declare the key as SecretStr or as a plain str; accept both.
         key = raw.get_secret_value() if hasattr(raw, "get_secret_value") else raw
     except Exception as exc:  # noqa: BLE001 - configuration errors vary by type

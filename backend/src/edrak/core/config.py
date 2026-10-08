@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from typing import Optional
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,13 +20,27 @@ class Settings(BaseSettings):
     EDRAK_DEBUG: bool = True
 
     # LLM Settings (Ollama Cloud / Local OSS)
-    LLM_PROVIDER: str = "ollama"  # e.g., 'ollama', 'openai', 'anthropic', 'google', 'mock'
-    LLM_MODEL: str = "gpt-oss:120b"
-    # Defaults to Ollama Cloud. Override with LLM_BASE_URL=http://localhost:11434/v1
-    # to run against a local Ollama server instead.
-    LLM_BASE_URL: Optional[str] = "https://ollama.com/v1"
-    LLM_API_KEY: Optional[str]
-    LLM_TEMPERATURE: float = 0.2
+    # Every component talks to the native Ollama client, so the OLLAMA_* names match
+    # customer_trends' own settings. The LLM_* names stay accepted as environment
+    # aliases so an existing .env keeps working.
+    OLLAMA_MODEL: str = Field(
+        default="gpt-oss:120b",
+        validation_alias=AliasChoices("OLLAMA_MODEL", "LLM_MODEL"),
+    )
+    # The /v1 suffix is an OpenAI-compatible shim path. It still applies to the raw
+    # httpx client; the native client uses the bare host and overrides this in llm.py.
+    OLLAMA_BASE_URL: Optional[str] = Field(
+        default="https://ollama.com/v1",
+        validation_alias=AliasChoices("OLLAMA_BASE_URL", "LLM_BASE_URL"),
+    )
+    OLLAMA_API_KEY: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("OLLAMA_API_KEY", "LLM_API_KEY"),
+    )
+    OLLAMA_TEMPERATURE: float = Field(
+        default=0.2,
+        validation_alias=AliasChoices("OLLAMA_TEMPERATURE", "LLM_TEMPERATURE"),
+    )
 
     # Orchestration control-plane limits
     MAX_REPLANS: int = 2

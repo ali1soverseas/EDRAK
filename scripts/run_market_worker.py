@@ -77,7 +77,7 @@ def main() -> WorkerResult:
     context_text = format_task_context(task)
 
     _banner("MARKET AGENT  --  STARTING")
-    print(f"\n  LLM            : {settings.LLM_MODEL}")
+    print(f"\n  LLM            : {settings.OLLAMA_MODEL}")
     print(f"  Max tasks      : {args.max_tasks or 'all planned'}")
     print(f"\n  Goal:")
     print(f"    {task.goal}")
