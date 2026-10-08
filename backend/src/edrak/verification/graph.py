@@ -28,7 +28,7 @@ def run(payload: VerificationInput) -> VerificationResult:
     )
     result = VerificationResult.model_validate(final_state["result"])
     print("\n" + "=" * 72)
-    print("VERIFICATION OUTPUT STATE")
+    print("[verification] OUTPUT STATE")
     print("=" * 72)
     print(result.model_dump_json(indent=2))
     return result

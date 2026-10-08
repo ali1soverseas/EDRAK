@@ -115,7 +115,7 @@ def run_research(
 
     if print_result:
         print("\n" + "=" * 80)
-        print("WORKER RESULT")
+        print("[competitor_intelligence] WORKER RESULT")
         print("=" * 80)
 
         pprint.pprint(

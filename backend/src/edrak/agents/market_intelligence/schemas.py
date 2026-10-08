@@ -7,9 +7,19 @@ import json
 from pydantic import BaseModel, Field
 
 
+class SearchQuery(BaseModel):
+    q: str = ""
+    query: str = ""
+    language: str = ""
+    gl: str = ""
+    recency: str = ""
+    include_domains: list[str] = Field(default_factory=list)
+
+
 class PlannedTask(BaseModel):
     description: str = Field(min_length=1)
     tool_hint: str = Field(min_length=1)
+    queries: list[SearchQuery] = Field(default_factory=list)
 
 
 class TaskPlan(BaseModel):
@@ -22,7 +32,12 @@ class Usefulness(BaseModel):
 
 
 class AnalysisClaim(BaseModel):
-    claim: str = Field(min_length=1)
+    claim: str = ""
+    quote: str = ""
+
+
+class AnalysisReply(BaseModel):
+    claims: list[AnalysisClaim] = Field(default_factory=list)
 
 
 def schema_text(model: type[BaseModel]) -> str:

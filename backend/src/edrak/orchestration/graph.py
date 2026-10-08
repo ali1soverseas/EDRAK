@@ -4,6 +4,7 @@ from langgraph.graph import END, StateGraph
 
 from ..contracts.worker import WorkerRegistry
 from .nodes import (
+    cross_signal_node,
     exhausted_node,
     finalize_node,
     make_dispatch_worker,
@@ -21,12 +22,14 @@ def build_graph(registry: WorkerRegistry):
     Workers are dispatched in parallel via ``Send``: ``route_from_plan`` emits
     one ``Send`` per task, LangGraph runs them concurrently in a thread pool,
     and ``verify`` runs once after the whole superstep completes.
+    A verified run then enters ``cross_signal`` before finalize.
     """
     graph = StateGraph(OrchestrationState)
 
     graph.add_node("plan", plan_node)
     graph.add_node("dispatch", make_dispatch_worker(registry))
     graph.add_node("verify", verification_gate_node)
+    graph.add_node("cross_signal", cross_signal_node)
     graph.add_node("replan", replan_node)
     graph.add_node("exhausted", exhausted_node)
     graph.add_node("finalize", finalize_node)
@@ -46,11 +49,13 @@ def build_graph(registry: WorkerRegistry):
         decide_after_verification,
         {
             "dispatch": "dispatch",
+            "cross_signal": "cross_signal",
             "replan": "replan",
             "exhausted": "exhausted",
             "finalize": "finalize",
         },
     )
+    graph.add_edge("cross_signal", "finalize")
 
     # A replan produces a fresh plan with fresh task ids, so it must route back
     # through the plan router and actually re-dispatch. Going straight to verify

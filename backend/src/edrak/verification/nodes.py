@@ -8,7 +8,6 @@ from edrak.contracts import (
     Finding,
     FindingCheckStatus,
     FindingVerdict,
-    SourceType,
     TargetedAction,
     VerificationDecision,
     VerificationInput,
@@ -19,66 +18,45 @@ from edrak.contracts import (
     utcnow,
 )
 from edrak.verification.prompts import review_prompt
+from edrak.verification.quality import (
+    MIN_CONFIDENCE,
+    best_quality,
+    coverage_gaps,
+    dedupe_evidence,
+    lift_market_quality,
+    price_conflicts,
+    quantities_missing,
+    support_strength,
+    vendor_hosts,
+)
 from edrak.verification.state import VerificationState
 
-_HIGH_SOURCES = {
-    SourceType.OFFICIAL_DOCUMENTATION,
-    SourceType.PRICING_PAGE,
-    SourceType.RELEASE_NOTES,
-    SourceType.ANNOUNCEMENT,
-    SourceType.REGULATORY,
-    SourceType.MARKET_REPORT,
-}
-_MEDIUM_SOURCES = {
-    SourceType.NEWS_ARTICLE,
-    SourceType.INTERNAL_DOCUMENT,
-    SourceType.ECONOMIC,
-}
-_CLAIM_DETAIL_CUES = (
-    ("autonom", "Level of autonomy"),
-    ("enterprise", "Enterprise availability"),
-    ("pric", "Pricing from an official source"),
-    ("plan", "Which plan or packaging includes the capability"),
-    ("available", "Availability / rollout status"),
-    ("task", "Which tasks the capability covers"),
-)
+_MAX_ACTIONS_PER_WORKER = 5
 
 
 def _evidence_by_id(result: WorkerResult) -> dict[str, Evidence]:
     return {item.evidence_id: item for item in result.evidence}
 
 
-def _quality_for(sources: list[SourceType]) -> EvidenceQuality:
-    if not sources:
-        return EvidenceQuality.LOW
-    if any(source is SourceType.SEARCH_RESULT for source in sources) and all(
-        source in (SourceType.SEARCH_RESULT, SourceType.OTHER, SourceType.WEB_PAGE)
-        for source in sources
-    ):
-        return EvidenceQuality.LOW
-    if any(source in _HIGH_SOURCES for source in sources):
-        return EvidenceQuality.HIGH
-    if any(source in _MEDIUM_SOURCES for source in sources):
-        return EvidenceQuality.MEDIUM
-    return EvidenceQuality.LOW
-
-
 def _resolved_evidence(finding: Finding, catalog: dict[str, Evidence]) -> list[Evidence]:
-    return [catalog[ref.evidence_id] for ref in finding.evidence_refs if ref.evidence_id in catalog]
+    linked = [catalog[ref.evidence_id] for ref in finding.evidence_refs if ref.evidence_id in catalog]
+    return dedupe_evidence(linked)
 
 
-def _is_complete(finding: Finding, evidence: list[Evidence]) -> bool:
-    if not evidence:
-        return False
+def _supporting(finding: Finding, evidence: list[Evidence]) -> list[Evidence]:
     supporting_ids = {
         ref.evidence_id
         for ref in finding.evidence_refs
         if ref.relation is EvidenceRelation.SUPPORTS
     }
-    supporting = [item for item in evidence if item.evidence_id in supporting_ids]
+    return [item for item in evidence if item.evidence_id in supporting_ids]
+
+
+def _is_complete(finding: Finding, evidence: list[Evidence], strength: str) -> bool:
+    supporting = _supporting(finding, evidence)
     if not supporting:
         return False
-    return any(len(item.extracted_fact.strip()) >= 40 for item in supporting)
+    return strength == "yes"
 
 
 def _recorded_contradictions(finding: Finding, result: WorkerResult) -> list[str]:
@@ -89,15 +67,6 @@ def _recorded_contradictions(finding: Finding, result: WorkerResult) -> list[str
         if conflict.finding_id == finding.finding_id:
             notes.append(conflict.description)
     return notes
-
-
-def _price_contradictions(evidence: list[Evidence]) -> list[str]:
-    facts = [item.extracted_fact.lower() for item in evidence]
-    if any("$" in fact or "price" in fact or "cost" in fact for fact in facts):
-        prices = {fact for fact in facts if "$" in fact or "included" in fact or "free" in fact}
-        if len(prices) >= 2:
-            return ["Sources report different pricing or packaging for the same claim."]
-    return []
 
 
 def _source_packet(evidence: list[Evidence]) -> str:
@@ -112,7 +81,7 @@ def _source_packet(evidence: list[Evidence]) -> str:
 
 
 def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
-    """Compare the claim with the saved source text. None means use the rule fallback."""
+    """Ground the claim in saved source text. None means keep the deterministic result."""
     from edrak.core.llm import get_llm_client
 
     try:
@@ -121,16 +90,12 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
             temperature=0,
         )
     except Exception as exc:
-        print(f"WARNING: verification LLM review failed: {exc}")
+        print(f"[verification] WARNING: LLM review failed: {exc}")
         return None
 
-    quality = {
-        "high": EvidenceQuality.HIGH,
-        "medium": EvidenceQuality.MEDIUM,
-        "low": EvidenceQuality.LOW,
-    }.get(str(data.get("evidence_quality", "")).lower().strip())
-    if quality is None:
-        print("WARNING: verification LLM review returned no evidence_quality")
+    supported = data.get("supported")
+    if not isinstance(supported, bool):
+        print("[verification] WARNING: LLM review returned no supported flag")
         return None
 
     contradictions = [
@@ -143,24 +108,54 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
         for item in (data.get("invented_details") or [])
         if str(item).strip()
     ]
-    return {"quality": quality, "contradictions": contradictions, "invented": invented}
+    return {"supported": supported, "contradictions": contradictions, "invented": invented}
 
 
-def _missing_information(statement: str, evidence: list[Evidence], finding: Finding) -> list[str]:
-    combined = " ".join(item.extracted_fact.lower() for item in evidence)
+def _confidence_too_low(finding: Finding) -> bool:
+    return finding.confidence is not None and finding.confidence < MIN_CONFIDENCE
+
+
+def _should_call_llm(
+    finding: Finding,
+    quality: EvidenceQuality,
+    strength: str,
+) -> bool:
+    if _confidence_too_low(finding):
+        return False
+    if quality is EvidenceQuality.LOW:
+        return False
+    if strength == "yes":
+        return False
+    if strength == "no":
+        return False
+    return True
+
+
+def _missing_information(
+    finding: Finding,
+    evidence: list[Evidence],
+    quality: EvidenceQuality,
+    invented: list[str],
+    strength: str,
+) -> list[str]:
     missing: list[str] = []
-    lowered = statement.lower()
-    for cue, label in _CLAIM_DETAIL_CUES:
-        if cue in lowered and cue not in combined:
-            missing.append(label)
-    for limitation in finding.limitations:
-        if limitation not in missing:
-            missing.append(limitation)
+    if _confidence_too_low(finding):
+        missing.append(f"Worker confidence below {MIN_CONFIDENCE:.0%}.")
     if not evidence:
         missing.append("No evidence was attached to the claim.")
-    elif all(item.source_type is SourceType.SEARCH_RESULT for item in evidence):
-        missing.append("Official source beyond a search snippet.")
-    return missing
+    missing.extend(
+        f"Claim quantity {token} is not in the saved source."
+        for token in quantities_missing(finding.statement, evidence)
+    )
+    if invented:
+        missing.append("Claim includes details that are not in the saved source: " + "; ".join(invented))
+    if quality is EvidenceQuality.LOW and evidence:
+        missing.append("Named official, analyst, or news source beyond this URL class.")
+    if strength == "no" and evidence and not quantities_missing(finding.statement, evidence):
+        missing.append("Saved source does not contain the claim.")
+    if strength == "uncertain":
+        missing.append("Source overlap is too weak to confirm the claim without a closer read.")
+    return list(dict.fromkeys(missing))
 
 
 def _confidence(
@@ -180,80 +175,134 @@ def _confidence(
     return max(0.05, min(0.99, round(score, 2)))
 
 
-def assess_findings(state: VerificationState) -> dict:
-    payload: VerificationInput = state["payload"]
-    assessments: list[FindingVerdict] = []
+def _assess_one(
+    result: WorkerResult,
+    finding: Finding,
+    catalog: dict[str, Evidence],
+    vendor_domains: tuple[str, ...],
+) -> FindingVerdict:
+    evidence = _resolved_evidence(finding, catalog)
+    supporting = _supporting(finding, evidence) or evidence
+    quality = best_quality(supporting, vendor_domains)
+    if result.worker is WorkerType.MARKET_INTELLIGENCE:
+        quality = lift_market_quality(quality, supporting, finding.confidence)
+    strength = support_strength(finding.statement, supporting)
+    recorded = _recorded_contradictions(finding, result)
+    prices = price_conflicts(supporting)
+    invented: list[str] = []
+    contradictions = list(dict.fromkeys(recorded + prices))
+    review = None
+    if _should_call_llm(finding, quality, strength):
+        review = _llm_review(finding.statement, supporting)
+    if review:
+        if review["invented"]:
+            invented = review["invented"]
+            strength = "no"
+        elif review["supported"]:
+            strength = "yes"
+        else:
+            strength = "no"
+        contradictions = list(dict.fromkeys(contradictions + review["contradictions"]))
 
+    complete = _is_complete(finding, evidence, strength)
+    missing = _missing_information(finding, evidence, quality, invented, strength)
+    if _confidence_too_low(finding):
+        complete = False
+
+    verified = (
+        complete
+        and not contradictions
+        and not invented
+        and quality is not EvidenceQuality.LOW
+        and not _confidence_too_low(finding)
+    )
+    status = FindingCheckStatus.VERIFIED if verified else FindingCheckStatus.INSUFFICIENT
+    if status is FindingCheckStatus.INSUFFICIENT and not missing and not contradictions:
+        missing.append("Evidence does not contain enough information to support the claim.")
+    if status is FindingCheckStatus.VERIFIED:
+        missing = []
+
+    return FindingVerdict(
+        finding_id=finding.finding_id,
+        worker=result.worker,
+        statement=finding.statement,
+        verification_status=status,
+        evidence_quality=quality,
+        evidence_ids=[item.evidence_id for item in evidence],
+        contradictions=contradictions,
+        missing_information=missing,
+        confidence=_confidence(status, quality, contradictions, missing),
+    )
+
+
+def assess_findings(state: VerificationState) -> dict:
+    print("\n[verification] NODE: assess_findings")
+    payload: VerificationInput = state["payload"]
+    hosts = vendor_hosts(payload.request)
+    assessments: list[FindingVerdict] = []
     for result in payload.agent_outputs:
         catalog = _evidence_by_id(result)
         for finding in result.findings:
-            evidence = _resolved_evidence(finding, catalog)
-            sources = [item.source_type for item in evidence]
-            complete = _is_complete(finding, evidence)
-            missing = _missing_information(finding.statement, evidence, finding)
-            recorded = _recorded_contradictions(finding, result)
-            review = _llm_review(finding.statement, evidence)
-            if review:
-                quality = review["quality"]
-                contradictions = list(dict.fromkeys(recorded + review["contradictions"]))
-                if review["invented"]:
-                    contradictions.append(
-                        "Claim includes details that are not in the saved source: "
-                        + "; ".join(review["invented"])
-                    )
-            else:
-                quality = _quality_for(sources)
-                contradictions = list(dict.fromkeys(recorded + _price_contradictions(evidence)))
-
-            verified = complete and not contradictions and quality is not EvidenceQuality.LOW
-            status = FindingCheckStatus.VERIFIED if verified else FindingCheckStatus.INSUFFICIENT
-            if status is FindingCheckStatus.INSUFFICIENT and not missing and not contradictions:
-                missing.append("Evidence does not contain enough information to support the claim.")
-
-            assessments.append(
-                FindingVerdict(
-                    finding_id=finding.finding_id,
-                    worker=result.worker,
-                    statement=finding.statement,
-                    verification_status=status,
-                    evidence_quality=quality,
-                    evidence_ids=[item.evidence_id for item in evidence],
-                    contradictions=contradictions,
-                    missing_information=missing,
-                    confidence=_confidence(status, quality, contradictions, missing),
-                )
-            )
-
+            assessments.append(_assess_one(result, finding, catalog, hosts))
     return {"assessments": assessments}
 
 
+def _worker_error(result: WorkerResult) -> str | None:
+    error = (result.error or "").strip()
+    if not error or error.lower() == "none":
+        return None
+    return f"{result.worker.value}: {error}"
+
+
 def decide(state: VerificationState) -> dict:
+    print("\n[verification] NODE: decide")
     payload: VerificationInput = state["payload"]
     assessments: list[FindingVerdict] = list(state.get("assessments") or [])
+    present = {result.worker for result in payload.agent_outputs}
 
     missing = [item for verdict in assessments for item in verdict.missing_information]
     conflicts = [item for verdict in assessments for item in verdict.contradictions]
-    failures = [
-        f"{result.worker.value}: {result.error}"
-        for result in payload.agent_outputs
-        if result.error and result.error != "none"
-    ]
+    failures = [note for result in payload.agent_outputs if (note := _worker_error(result))]
+    for result in payload.agent_outputs:
+        missing.extend(result.gaps)
+
+    topic_gaps = coverage_gaps(payload.request, payload.agent_outputs)
+    for worker, gaps in topic_gaps.items():
+        if worker in present:
+            missing.extend(gaps)
+
     insufficient = [v for v in assessments if v.verification_status is FindingCheckStatus.INSUFFICIENT]
+    conflicted = [v for v in assessments if v.contradictions]
 
     actions: list[TargetedAction] = []
     next_targets: list[str] = []
-    seen_workers: set[WorkerType] = set()
+    per_worker_count: dict[WorkerType, int] = {}
+
+    def add_action(worker: WorkerType, reason: str) -> None:
+        next_targets.append(reason)
+        used = per_worker_count.get(worker, 0)
+        if used >= _MAX_ACTIONS_PER_WORKER:
+            return
+        per_worker_count[worker] = used + 1
+        actions.append(TargetedAction(worker=worker, reason=reason))
+
     for verdict in insufficient:
         target = (
             verdict.missing_information[0]
             if verdict.missing_information
-            else "Collect official evidence for the claim."
+            else (verdict.contradictions[0] if verdict.contradictions else "Collect official evidence for the claim.")
         )
-        reason = f"{verdict.statement} — {target}"
-        next_targets.append(reason)
-        if verdict.worker not in seen_workers:
-            seen_workers.add(verdict.worker)
-            actions.append(TargetedAction(worker=verdict.worker, reason=reason))
+        add_action(verdict.worker, f"{verdict.statement} — {target}")
+
+    for worker, gaps in topic_gaps.items():
+        if worker not in present:
+            continue
+        for gap in gaps:
+            add_action(worker, gap)
+
+    for result in payload.agent_outputs:
+        for gap in result.gaps:
+            add_action(result.worker, gap)
 
     if not assessments:
         status = VerificationStatus.CANNOT_COMPLETE
@@ -261,21 +310,36 @@ def decide(state: VerificationState) -> dict:
         if not failures:
             failures.append("No worker findings were submitted.")
         actions = []
-    elif conflicts:
+    elif conflicted:
         status = VerificationStatus.REPLAN_REQUIRED
-        summary = "Verification found conflicting evidence that must be resolved."
+        summary = (
+            f"{len(conflicted)} of {len(assessments)} findings have conflicting sources "
+            "and need a revised research plan."
+        )
         if not actions:
-            worker = assessments[0].worker
-            actions = [TargetedAction(worker=worker, reason=conflicts[0])]
-    elif insufficient:
-        status = VerificationStatus.RETRY_REQUIRED
-        summary = "Some findings lack sufficient evidence and need targeted follow-up."
+            worker = conflicted[0].worker
+            actions = [TargetedAction(worker=worker, reason=conflicted[0].contradictions[0])]
+    elif insufficient or any(topic_gaps.get(worker) for worker in present) or any(
+        result.gaps for result in payload.agent_outputs
+    ):
+        # RETRY_REQUIRED would send the orchestrator back to dispatch without a
+        # Send({task}) payload, which raises KeyError. Finalize with graded findings.
+        verified_count = len(assessments) - len(insufficient)
+        if verified_count:
+            status = VerificationStatus.VERIFIED
+            summary = (
+                f"{verified_count} of {len(assessments)} findings are evidence-backed; "
+                f"{len(insufficient)} were insufficient and recorded for follow-up."
+            )
+        else:
+            status = VerificationStatus.CANNOT_COMPLETE
+            summary = "No finding was evidence-backed enough to verify."
+        actions = []
     else:
         status = VerificationStatus.VERIFIED
-        summary = "All findings are evidence-backed with no unresolved conflicts."
+        summary = f"All {len(assessments)} findings are evidence-backed with no unresolved conflicts."
         actions = []
 
-    # VERIFIED / CANNOT_COMPLETE cannot carry targeted_actions.
     if status in (VerificationStatus.VERIFIED, VerificationStatus.CANNOT_COMPLETE):
         actions = []
 

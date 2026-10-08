@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, TypedDict
+from typing import Annotated, Any, TypedDict
 
 from ..contracts import (
     BusinessRequest,
@@ -9,7 +9,7 @@ from ..contracts import (
     WorkerOutcome,
     WorkerResult,
 )
-from ..contracts.verification import VerificationDecision
+from ..contracts.verification import VerificationDecision, VerificationResult
 
 
 class _Reset:
@@ -46,6 +46,8 @@ class OrchestrationState(TypedDict, total=False):
     results: Annotated[list[WorkerResult], merge_by_task_id]
     outcomes: Annotated[list[WorkerOutcome], merge_by_task_id]
     verification: VerificationDecision | None
+    verification_result: VerificationResult | None
+    cross_signal: dict[str, Any] | None
     replan_count: int
     status: str | None
     error: str | None
