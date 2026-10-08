@@ -1,0 +1,69 @@
+# Per use case: what the prompts stress and what counts as enough evidence. The gap rules in
+# gaps.py read the numbers; planning and the branch prompts read the emphasis and hints.
+# `min_platforms` platforms must each hold at least `min_platform_items` items.
+
+competitive_intelligence:
+  emphasis: >-
+    Competitive intelligence and monitoring, the first target (the GitLab pilot: GitLab against
+    GitHub Copilot, Atlassian and Microsoft Azure DevOps, around AI-assisted development). Study
+    how people talk about the competitors' products and about the entity: competitor sentiment,
+    reviews, news coverage, share of voice against the entity, and the pain points and unmet
+    needs people report around competitor products such as GitHub Copilot and Atlassian AI.
+    Describe and compare; never rank or advise.
+  default_focus: [pain_points, sentiment, competitor_gaps]
+  min_evidence_total: 30
+  min_platforms: 2
+  min_platform_items: 20
+  min_language_items: 10
+  require_trend_series: false
+  reviews:
+    required_with_competitors: true
+    severity: critical
+  query_hints:
+    - comparisons between the entity and each competitor
+    - complaints and praise about each competitor product
+    - pricing, limits and quality complaints
+    - people switching from or to a competitor
+    - launch, outage and partnership news
+
+product_launch:
+  emphasis: >-
+    Product launch intelligence. Build the evidence chain: the problem exists (pain points and
+    unmet needs people describe), competitors address it poorly (complaints about competitor
+    products, low-rated reviews), and demand is rising (search interest and conversation
+    growth). Report each link with its evidence; never say whether to launch.
+  default_focus: [pain_points, demand, competitor_gaps]
+  min_evidence_total: 30
+  min_platforms: 2
+  min_platform_items: 20
+  min_language_items: 10
+  require_trend_series: true
+  reviews:
+    required_with_competitors: true
+    severity: critical
+  query_hints:
+    - first-person complaints about the problem and workarounds people use
+    - wishes and feature requests ("I wish", "why can't")
+    - low-rated reviews of competitor apps
+    - search interest for the problem and for the solution category
+
+market_entry:
+  emphasis: >-
+    Market entry and expansion intelligence. Study demand and sentiment in the target country and
+    languages: the demand trend over time, local sentiment about the category, and how present and
+    how well liked the competitors are there. Describe the market as the evidence shows it; never
+    say whether to enter.
+  default_focus: [demand, sentiment, competitor_gaps]
+  min_evidence_total: 30
+  min_platforms: 2
+  min_platform_items: 20
+  min_language_items: 10
+  require_trend_series: true
+  reviews:
+    required_with_competitors: false
+    severity: minor
+  query_hints:
+    - search interest by country and language
+    - local wording and dialect for the category
+    - ratings and reviews of the competitors present in the market
+    - local news about the sector
