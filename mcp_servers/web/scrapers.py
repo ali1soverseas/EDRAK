@@ -82,6 +82,24 @@ def _env(name: str) -> str:
     return os.getenv(name, "").strip()
 
 
+def _key(name: str, scope: str | None = None) -> tuple[str, str]:
+    """Resolve an API key and return it with the variable it came from.
+
+    The second element is the env var name, for logging and quota
+    attribution only. A caller that logs a key must log the name, never the
+    value. When a scope is given the scoped variable is preferred, so each
+    worker can hold its own key for a shared provider, and the bare name
+    remains the fallback.
+    """
+    names = [f"{name}_{scope.upper()}"] if scope else []
+    names.append(name)
+    for candidate in names:
+        value = os.getenv(candidate, "").strip()
+        if value:
+            return value, candidate
+    return "", names[0]
+
+
 def _query_spec(item) -> dict:
     """Accept a keyword string or a planner query object."""
     if isinstance(item, dict):
@@ -113,12 +131,15 @@ def get(url, params=None, headers=None, label=""):
 
 
 def fetch_newsapi(queries):
-    api_key = _env("NEWS_API_KEY")
+    api_key, key_name = _key("NEWS_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP NewsAPI: NEWS_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP NewsAPI: {key_name} is not set")
         return [], []
 
-    print(f"[SCRAPER_NEWSAPI] Fetching NewsAPI articles for {len(queries)} queries...")
+    print(
+            f"[SCRAPER_NEWSAPI] Fetching NewsAPI articles for {len(queries)} queries "
+            f"(key: {key_name})..."
+        )
     all_articles = []
     queries_run = []
 
@@ -431,9 +452,9 @@ def fetch_sec_edgar(queries):
 
 
 def fetch_fred(queries):
-    api_key = _env("FRED_API_KEY")
+    api_key, key_name = _key("FRED_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP FRED: FRED_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP FRED: {key_name} is not set")
         return [], []
 
     print(f"[SCRAPER]  Fetching FRED series for {len(queries)} ids...")
@@ -467,12 +488,15 @@ def fetch_fred(queries):
 
 
 def fetch_alphavantage(queries):
-    api_key = _env("ALPHAVANTAGE_API_KEY")
+    api_key, key_name = _key("ALPHAVANTAGE_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP Alpha Vantage: ALPHAVANTAGE_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP Alpha Vantage: {key_name} is not set")
         return [], []
 
-    print(f"[SCRAPER]  Fetching Alpha Vantage overviews for {len(queries)} tickers...")
+    print(
+        f"[SCRAPER]  Fetching Alpha Vantage overviews for {len(queries)} tickers "
+        f"(key: {key_name})..."
+    )
     all_items = []
     queries_run = []
 
@@ -504,12 +528,15 @@ def fetch_alphavantage(queries):
 
 
 def fetch_finnhub(queries):
-    api_key = _env("FINNHUB_API_KEY")
+    api_key, key_name = _key("FINNHUB_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP Finnhub: FINNHUB_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP Finnhub: {key_name} is not set")
         return [], []
 
-    print(f"[SCRAPER]  Fetching Finnhub profiles for {len(queries)} tickers...")
+    print(
+        f"[SCRAPER]  Fetching Finnhub profiles for {len(queries)} tickers "
+        f"(key: {key_name})..."
+    )
     all_items = []
     queries_run = []
 
@@ -633,12 +660,15 @@ def _annotate_serper_scores(data: dict) -> None:
 
 
 def fetch_serper(queries):
-    api_key = _env("SERPER_API_KEY")
+    api_key, key_name = _key("SERPER_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP Serper: SERPER_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP Serper: {key_name} is not set")
         return [], []
 
-    print(f"[SCRAPER]  Fetching Serper search results for {len(queries)} queries...")
+    print(
+        f"[SCRAPER]  Fetching Serper search results for {len(queries)} queries "
+        f"(key: {key_name})..."
+    )
     all_items = []
     queries_run = []
 
@@ -737,10 +767,11 @@ def _fetch_tavily_search(query: str, api_key: str, spec: dict | None = None) -> 
 
 
 def fetch_web_search(queries):
-    api_key = _env("TAVILY_API_KEY")
+    api_key, key_name = _key("TAVILY_API_KEY")
     if not api_key:
-        print("[SCRAPER]  SKIP Tavily: TAVILY_API_KEY is not set")
+        print(f"[SCRAPER]  SKIP Tavily: {key_name} is not set")
         return [], []
+    print(f"[SCRAPER]  key: {key_name}")
 
     print(f"[SCRAPER]  Fetching Tavily search results for {len(queries)} queries...")
     all_items = []
