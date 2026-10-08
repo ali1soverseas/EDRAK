@@ -23,6 +23,7 @@ from edrak.verification.quality import (
     best_quality,
     coverage_gaps,
     dedupe_evidence,
+    lift_market_quality,
     price_conflicts,
     quantities_missing,
     support_strength,
@@ -183,6 +184,8 @@ def _assess_one(
     evidence = _resolved_evidence(finding, catalog)
     supporting = _supporting(finding, evidence) or evidence
     quality = best_quality(supporting, vendor_domains)
+    if result.worker is WorkerType.MARKET_INTELLIGENCE:
+        quality = lift_market_quality(quality, supporting, finding.confidence)
     strength = support_strength(finding.statement, supporting)
     recorded = _recorded_contradictions(finding, result)
     prices = price_conflicts(supporting)
@@ -233,6 +236,7 @@ def _assess_one(
 
 
 def assess_findings(state: VerificationState) -> dict:
+    print("\n[verification] NODE: assess_findings")
     payload: VerificationInput = state["payload"]
     hosts = vendor_hosts(payload.request)
     assessments: list[FindingVerdict] = []
@@ -251,6 +255,7 @@ def _worker_error(result: WorkerResult) -> str | None:
 
 
 def decide(state: VerificationState) -> dict:
+    print("\n[verification] NODE: decide")
     payload: VerificationInput = state["payload"]
     assessments: list[FindingVerdict] = list(state.get("assessments") or [])
     present = {result.worker for result in payload.agent_outputs}
