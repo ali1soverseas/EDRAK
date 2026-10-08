@@ -1,12 +1,15 @@
 """Run the EDRAK orchestrator from a natural-language query.
 
+Prints a start-of-run briefing, live [agent_name] progress, then an
+end-of-run recap a technical reader can follow without project background.
+
 Examples
 --------
 Plan only, no workers needed::
 
     python scripts/run_pipeline.py --query "Compare GitLab Duo to GitHub Copilot on pricing" --plan-only
 
-Full run (dispatch included; every task reports FAILED until real workers land)::
+Full run::
 
     python scripts/run_pipeline.py --query "Should GitLab enter automotive compliance?" --target "Azure DevOps"
 """
@@ -17,6 +20,7 @@ import argparse
 import asyncio
 import json
 import sys
+import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -86,6 +90,9 @@ class ParsedIntent(BaseModel):
         if isinstance(value, list):
             return [item for item in value if isinstance(item, str) and item.strip()]
         return value
+
+
+ParsedIntent.model_rebuild()
 
 
 def force_utf8_output() -> None:
@@ -175,7 +182,10 @@ def build_request(query: str, args: argparse.Namespace) -> BusinessRequest:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="run_pipeline.py",
-        description="Run the EDRAK orchestrator against a natural-language query.",
+        description=(
+            "Run EDRAK research: specialists gather evidence, verification "
+            "checks claims against sources, then a briefing is printed."
+        ),
     )
     parser.add_argument("--query", required=True, help="What you want to find out.")
     parser.add_argument("--company", help="Override the inferred company.")
@@ -201,7 +211,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Print machine-readable JSON only (suppresses the human tables).",
+        help="Print machine-readable JSON only (skips the briefing).",
     )
     parser.add_argument(
         "--no-out", action="store_true", help="Do not write artifacts/runs output."
@@ -220,67 +230,248 @@ def write_artifact_plan(plan: ResearchPlan, request_id: str) -> Path | None:
     return path
 
 
+_WIDTH = 72
+
+_WORKER_GUIDE = {
+    "internal_intelligence": (
+        "Internal intelligence",
+        "The company's own products, capabilities, and constraints",
+    ),
+    "competitor_intelligence": (
+        "Competitor intelligence",
+        "Rivals' products, pricing, positioning, and launches",
+    ),
+    "market_intelligence": (
+        "Market intelligence",
+        "Market size, demand, regulation, and economic signals",
+    ),
+    "customer_trends": (
+        "Customer and trends intelligence",
+        "Buyer needs, sentiment, and adoption",
+    ),
+}
+
+_STATUS_GUIDE = {
+    "completed": "Finished with usable findings",
+    "partial": "Finished, but some questions are still open",
+    "no_evidence": "Ran, but found no usable public evidence",
+    "failed": "Did not complete",
+}
+
+_RUN_STATUS_GUIDE = {
+    "completed": "Every assigned specialist finished without a hard failure.",
+    "partial": "At least one specialist failed or left gaps. Findings from the others were still verified and linked.",
+    "failed": "The run could not produce a usable result.",
+}
+
+
+def _rule(title: str) -> None:
+    print()
+    print("=" * _WIDTH)
+    print(title)
+    print("=" * _WIDTH)
+
+
+def _wrap(text: str, indent: str = "    ") -> str:
+    return textwrap.fill(
+        " ".join(text.split()),
+        width=_WIDTH,
+        initial_indent=indent,
+        subsequent_indent=indent,
+    )
+
+
+def _plain_error(error: str | None) -> str:
+    if not error or error.strip().lower() in {"none", "null"}:
+        return ""
+    cleaned = error.strip().strip('"')
+    if "no worker registered" in cleaned:
+        return "This specialist is not wired into the pipeline yet."
+    return cleaned
+
+
+def print_run_intro() -> None:
+    _rule("EDRAK  |  Evidence-backed research pipeline")
+    print()
+    print("  This system researches a business question with specialist agents,")
+    print("  checks their claims against saved sources, then links verified")
+    print("  claims across domains. It supports a human decision; it does not")
+    print("  make the decision.")
+    print()
+    print("  Steps in this run:")
+    print("    1. Turn the question into a structured research request")
+    print("    2. Assign specialist agents (internal, competitor, market, customer)")
+    print("    3. Research in parallel")
+    print("    4. Verify each claim against the source text that was saved")
+    print("    5. Link verified claims into cross-domain signals")
+    print()
+    print("  Progress lines are tagged so you can see who is speaking:")
+    print("    [orchestrator]              control plane (plan, dispatch, finish)")
+    print("    [competitor_intelligence]   rival products and positioning")
+    print("    [market_intelligence]       market size, demand, regulation")
+    print("    [internal_intelligence]     own-company capabilities")
+    print("    [customer_trends]           buyers and adoption")
+    print("    [verification]              source-check of each claim")
+    print("    [cross_signal]              links among verified claims")
+
+
 def render_request(request: BusinessRequest) -> None:
-    print()
-    print("=" * 70)
-    print("[orchestrator] REQUEST")
-    print("=" * 70)
     context = request.business_context
+    _rule("1. Research question")
     print()
-    print(f"  request_id : {request.request_id}")
-    print(f"  goal       : {request.goal}")
-    print(f"  company    : {request.company_profile.name}")
-    print(f"  use_case   : {context.use_case.value}")
-    print(f"  targets    : {', '.join(context.targets) or '(none)'}")
-    print(f"  focus_areas: {', '.join(context.focus_areas) or '(none)'}")
-    print(f"  constraints: {'; '.join(context.constraints) or '(none)'}")
+    print(f"  Company     : {request.company_profile.name}")
+    print(f"  Question    : {request.goal}")
+    print(f"  Compared to : {', '.join(context.targets) or '(none named)'}")
+    print(f"  Focus       : {', '.join(context.focus_areas) or '(none named)'}")
+    if context.constraints:
+        print(f"  Limits      : {'; '.join(context.constraints)}")
+    if context.time_window_days:
+        print(f"  Recency     : last {context.time_window_days} days")
+    print(f"  Run id      : {request.request_id}")
 
 
 def render_plan(plan: ResearchPlan) -> None:
+    _rule("2. Specialist assignments")
     print()
-    print(f"  [orchestrator] plan_id: {plan.plan_id}   tasks: {len(plan.tasks)}")
+    print("  A planner split the question. Each specialist receives one bounded")
+    print("  task. They do not see each other's notes.")
+    print()
+    print(f"  Plan id: {plan.plan_id}   ({len(plan.tasks)} assignment(s))")
     for task in plan.tasks:
+        name, role = _WORKER_GUIDE.get(
+            task.worker.value,
+            (task.worker.value, "Domain research"),
+        )
         print()
-        print(f"  [{task.worker.value}]  attempt={task.attempt}")
-        print(f"    task_id: {task.task_id}")
-        print(f"    goal   : {task.goal}")
-        print(f"    focus  : {task.focus}")
+        print(f"  [{task.worker.value}]  {name}")
+        print(f"    Role  : {role}")
+        print(_wrap(f"Goal  : {task.goal}"))
+        print(_wrap(f"Focus : {task.focus}"))
 
 
-def render_result(result: OrchestrationResult) -> None:
+def _render_worker_result(item: Any) -> None:
+    name, _role = _WORKER_GUIDE.get(
+        item.worker.value,
+        (item.worker.value, ""),
+    )
+    status = item.status.value if hasattr(item.status, "value") else str(item.status)
+    status_plain = _STATUS_GUIDE.get(status, status)
+    n_findings = len(item.findings)
+    n_evidence = len(item.evidence)
     print()
-    print("=" * 70)
-    print("[orchestrator] RESULT")
-    print("=" * 70)
-    print(f"  status : {result.status.value}")
+    print(f"  [{item.worker.value}]  {name}")
+    print(f"    Outcome  : {status_plain} ({status})")
+    print(f"    Claims   : {n_findings}   Sources: {n_evidence}")
+    note = _plain_error(item.error)
+    if note:
+        print(_wrap(f"Note    : {note}"))
+    for finding in item.findings[:3]:
+        print(_wrap(f"- {finding.statement}"))
+    extra = n_findings - min(n_findings, 3)
+    if extra > 0:
+        print(f"    … {extra} more claim(s) in the saved artifact")
+
+
+def render_result(result: OrchestrationResult, artifact_path: Path | None = None) -> None:
+    _rule("3. What the specialists returned")
+    print()
+    run_status = result.status.value
+    print(f"  Overall run : {run_status}")
+    meaning = _RUN_STATUS_GUIDE.get(run_status, "")
+    if meaning:
+        print(_wrap(meaning))
     if result.error:
-        print(f"  error  : {result.error}")
-    print(f"  results: {len(result.results)}")
+        print(_wrap(f"Run error : {result.error}"))
+    print()
+    print("  A claim is a statement the specialist made. A source is the page")
+    print("  or document saved as evidence for that claim. Verification later")
+    print("  keeps only claims that match the saved text.")
     for item in result.results:
-        print(f"    {item.worker.value:<24} {item.status.value:<10} {item.error or ''}")
+        _render_worker_result(item)
     findings = sum(len(item.findings) for item in result.results)
     evidence = sum(len(item.evidence) for item in result.results)
     print()
-    print(f"  findings: {findings}   evidence: {evidence}")
-    if result.cross_signal is not None:
-        signals = result.cross_signal.get("signals") or []
-        print(
-            "  [cross_signal] "
-            f"{result.cross_signal.get('status', 'unknown')} "
-            f"({len(signals)} signals)"
-        )
-        for index, signal in enumerate(signals, start=1):
-            kind = signal.get("signal_type") or ""
-            title = signal.get("title") or ""
-            claim = signal.get("signal") or ""
-            interpretation = signal.get("interpretation") or ""
-            heading = title or claim or f"signal {index}"
-            suffix = f" ({kind})" if kind else ""
-            print(f"  [cross_signal] {index}. {heading}{suffix}")
-            if claim:
-                print(f"      claim: {claim}")
-            if interpretation:
-                print(f"      interpretation: {interpretation}")
+    print(f"  Totals: {findings} claims, {evidence} sources")
+
+    _rule("4. Cross-domain signals")
+    print()
+    print("  After verification, a separate agent looks for relationships among")
+    print("  claims that survived the source check (for example a market size")
+    print("  figure that lines up with a competitor launch). These are observations,")
+    print("  not recommendations.")
+    if result.cross_signal is None:
+        print()
+        print("  [cross_signal] Did not run. That happens when verification does")
+        print("  not finish as verified, or when no claim passed the source check.")
+        _print_artifact_line(artifact_path)
+        return
+
+    signals = result.cross_signal.get("signals") or []
+    cs_status = result.cross_signal.get("status", "unknown")
+    print()
+    print(f"  [cross_signal] {cs_status}   {len(signals)} signal(s)")
+    if not signals:
+        print("  No cross-domain relationships were produced from the verified claims.")
+        _print_artifact_line(artifact_path)
+        return
+    for index, signal in enumerate(signals, start=1):
+        kind = signal.get("signal_type") or ""
+        title = signal.get("title") or f"Signal {index}"
+        claim = signal.get("signal") or ""
+        interpretation = signal.get("interpretation") or ""
+        suffix = f"  [{kind}]" if kind else ""
+        print()
+        print(f"  [cross_signal] {index}. {title}{suffix}")
+        if claim:
+            print(_wrap(f"Claim: {claim}"))
+        if interpretation:
+            print(_wrap(f"Why it matters: {interpretation}"))
+    _print_artifact_line(artifact_path)
+
+
+def _print_artifact_line(
+    artifact_path: Path | None,
+    *,
+    plan_only: bool = False,
+) -> None:
+    _rule("3. Full record" if plan_only else "5. Full record")
+    print()
+    if plan_only:
+        print("  The JSON file below is the plan only. No research was run.")
+    else:
+        print("  The JSON file below is the complete run: plan, every claim,")
+        print("  every source URL, verification grades, and cross-signal objects.")
+        print("  Open it if you need IDs, excerpts, or to audit a claim.")
+    print()
+    if artifact_path:
+        print(f"  [orchestrator] run artifact saved: {artifact_path}")
+    else:
+        print("  [orchestrator] No artifact was written (--no-out).")
+
+
+def _render_human(
+    request: BusinessRequest,
+    payload: ResearchPlan | OrchestrationResult,
+    artifact_path: Path | None = None,
+) -> None:
+    """Print a briefing a technical reader can follow without EDRAK background."""
+    if isinstance(payload, OrchestrationResult):
+        _rule("Run complete  |  Briefing")
+        print()
+        print("  The tagged lines above were live progress. The sections below")
+        print("  recap the same run in order, with terms explained.")
+    render_request(request)
+    plan = payload if isinstance(payload, ResearchPlan) else payload.plan
+    if plan is None:
+        _rule("2. Specialist assignments")
+        print()
+        print("  (none)")
+    else:
+        render_plan(plan)
+    if isinstance(payload, OrchestrationResult):
+        render_result(payload, artifact_path=artifact_path)
+    else:
+        _print_artifact_line(artifact_path, plan_only=True)
 
 
 def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None:
@@ -292,27 +483,6 @@ def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None
         print(f"  warning: could not write {path}: {exc}", file=sys.stderr)
         return None
     return path
-
-
-def _render_human(request: BusinessRequest, payload: ResearchPlan | OrchestrationResult) -> None:
-    """Print the human-readable report.
-
-    ``--json`` skips this entirely so stdout stays parseable.
-    """
-    render_request(request)
-    print()
-    print("=" * 70)
-    print("[orchestrator] PLAN")
-    print("=" * 70)
-
-    plan = payload if isinstance(payload, ResearchPlan) else payload.plan
-    if plan is None:
-        print("  (none)")
-    else:
-        render_plan(plan)
-
-    if isinstance(payload, OrchestrationResult):
-        render_result(payload)
 
 
 def build_default_registry() -> WorkerRegistry:
@@ -384,6 +554,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"raw output: {exc.raw_output[:400]}", file=sys.stderr)
         return EXIT_FAILED
 
+    if not args.json:
+        print_run_intro()
+
     if args.plan_only:
         from edrak.orchestration.planner import LlmPlanner
 
@@ -395,15 +568,13 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"raw output: {exc.raw_output[:400]}", file=sys.stderr)
             return EXIT_FAILED
 
+        out = None if args.no_out else write_artifact_plan(plan, request.request_id)
         if args.json:
             print(json.dumps(plan.model_dump(mode="json"), indent=2, ensure_ascii=False))
-        else:
-            _render_human(request, plan)
-        if not args.no_out:
-            out = write_artifact_plan(plan, request.request_id)
             if out:
-                print()
-                print(f"  [orchestrator] run artifact saved: {out}")
+                print(f"[orchestrator] run artifact saved: {out}", file=sys.stderr)
+        else:
+            _render_human(request, plan, artifact_path=out)
         return EXIT_COMPLETED
 
     from edrak.orchestration.graph import build_graph
@@ -412,29 +583,15 @@ def main(argv: list[str] | None = None) -> int:
         build_graph(build_default_registry()).ainvoke({"request": request})
     )
     result = state["orchestration_result"]
+    out = None if args.no_out else write_artifact(result)
 
     if args.json:
-        payload = (
-            plan.model_dump(mode="json")
-            if args.plan_only
-            else result.model_dump(mode="json")
-        )
-        print(json.dumps(payload, indent=2, ensure_ascii=False))
-    else:
-        _render_human(request, plan if args.plan_only else result)
-
-    if not args.no_out:
-        out = (
-            write_artifact_plan(plan, request.request_id)
-            if args.plan_only
-            else write_artifact(result)
-        )
+        print(json.dumps(result.model_dump(mode="json"), indent=2, ensure_ascii=False))
         if out:
-            print()
-            print(f"  [orchestrator] run artifact saved: {out}")
+            print(f"[orchestrator] run artifact saved: {out}", file=sys.stderr)
+    else:
+        _render_human(request, result, artifact_path=out)
 
-    if args.plan_only:
-        return EXIT_COMPLETED
     if result.status.value == "completed":
         return EXIT_COMPLETED
     if result.status.value == "partial":
