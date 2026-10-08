@@ -54,6 +54,9 @@ class Settings(BaseSettings):
     ARTIFACTS_PATH: Path = Field(default=Path("artifacts"))
     CHROMA_COLLECTION_NAME: str = "edrak_internal_knowledge"
 
+    # Web scraping
+    SCRAPE_TEXT_CHARS: int = 2000
+
     # API / Server
     BACKEND_HOST: str = "127.0.0.1"
     BACKEND_PORT: int = 8000

@@ -46,7 +46,7 @@ from edrak.agents.market_intelligence.state import (
     _kv,
     _section,
 )
-from edrak.config import settings
+from edrak.core.config import settings
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_llm_client
 from edrak.mcp.web_tools import (
@@ -818,7 +818,7 @@ def task_executor(state: MarketAgentState) -> dict:
                 print("    -> too short or error")
                 log_block("market_intelligence", f"SCRAPED URL  {url}", "skipped: too short or error")
                 continue
-            excerpt = relevant_excerpt(text, task["description"], goal, settings.scrape_text_chars)
+            excerpt = relevant_excerpt(text, task["description"], goal, settings.SCRAPE_TEXT_CHARS)
             page_ok, page_why = source_is_relevant(task["description"], goal, excerpt)
             if not page_ok:
                 print(f"    -> skipped page ({page_why})")

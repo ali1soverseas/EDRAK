@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT))
 
 from edrak.agents.market_intelligence.graph import build_graph, format_task_context, worker_result_from_state
 from edrak.agents.market_intelligence.state import MOCK_INPUT, _banner, empty_market_state
-from edrak.config import settings
+from edrak.core.config import settings
 from edrak.contracts import (
     BusinessContext,
     CompanyProfile,
@@ -64,7 +64,7 @@ def main() -> WorkerResult:
     context_text = format_task_context(task)
 
     _banner("MARKET AGENT  --  STARTING")
-    print(f"\n  LLM            : {settings.llm_model}")
+    print(f"\n  LLM            : {settings.LLM_MODEL}")
     print(f"  Max tasks      : {args.max_tasks or 'all planned'}")
     print(f"\n  Goal:")
     print(f"    {task.goal}")
@@ -92,7 +92,7 @@ def main() -> WorkerResult:
     else:
         result = worker_result_from_state(task, app.invoke(initial_state), started_at=started_at)
 
-    reports_dir = ROOT / settings.artifacts_path / "reports"
+    reports_dir = ROOT / settings.ARTIFACTS_PATH / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
     out_path = reports_dir / f"market_agent_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.json"
     out_path.write_text(result.model_dump_json(indent=2), encoding="utf-8")
