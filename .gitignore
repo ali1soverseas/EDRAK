@@ -22,6 +22,11 @@ data/vector_store/
 data/handbook/
 artifacts/runs/*
 artifacts/reports/*
+artifacts/logs/
+# LangGraph checkpoints and the customer trends evidence store
+backend/data/
+# Per-worker run products
+backend/src/edrak/agents/*/outputs/
 
 # Keep directory placeholders if used
 !artifacts/runs/.gitkeep
@@ -30,6 +35,9 @@ artifacts/reports/*
 # IDE
 .vscode/
 .idea/
+
+# Local AI agent tooling
+.opencode/
 
 # OS
 .DS_Store
