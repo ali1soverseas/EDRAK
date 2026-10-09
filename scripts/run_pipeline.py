@@ -320,10 +320,9 @@ def build_default_registry() -> WorkerRegistry:
     ``scripts/run_etl_pipeline.py`` has populated it, a dispatched internal task
     finds no evidence rather than failing outright.
 
-    Every import is deferred. The competitor module raises at import time when
-    OPENAI_API_KEY or TAVILY_API_KEY is absent, and the customer trends package
-    pulls in provider SDKs, so one unavailable worker must not take down the rest
-    of the run.
+    Every import is deferred. The customer trends package pulls in provider
+    SDKs, and a worker that cannot reach its model or its search provider must
+    not take down the rest of the run.
     """
     from edrak.contracts import WorkerType
 

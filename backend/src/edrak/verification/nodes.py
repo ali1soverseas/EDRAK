@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pydantic import BaseModel
+
 from edrak.contracts import (
     ControlSummary,
     Evidence,
@@ -80,19 +82,31 @@ def _source_packet(evidence: list[Evidence]) -> str:
     return "\n\n".join(blocks) or "(no source text saved)"
 
 
+class _LLMReview(BaseModel):
+    """The reply shape review_prompt asks for."""
+
+    supported: bool
+    contradictions: list[str]
+    invented_details: list[str]
+
+
 def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
     """Ground the claim in saved source text. None means keep the deterministic result."""
-    from edrak.core.llm import get_llm_client
+    from edrak.core.llm import get_structured
 
     try:
-        data = get_llm_client().chat_structured(
-            [{"role": "user", "content": review_prompt(statement, _source_packet(evidence))}],
-            temperature=0,
+        reply = get_structured(_LLMReview, temperature=0).invoke(
+            review_prompt(statement, _source_packet(evidence))
         )
     except Exception as exc:
         print(f"[verification] WARNING: LLM review failed: {exc}")
         return None
 
+    if reply is None:
+        print("[verification] WARNING: LLM review returned no parsable reply")
+        return None
+
+    data = reply.model_dump()
     supported = data.get("supported")
     if not isinstance(supported, bool):
         print("[verification] WARNING: LLM review returned no supported flag")

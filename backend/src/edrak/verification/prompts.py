@@ -6,12 +6,6 @@ def review_prompt(statement: str, source_text: str) -> str:
         "Do not judge publisher quality or URL class.\n\n"
         f"CLAIM:\n{statement}\n\n"
         f"SAVED SOURCE TEXT:\n{source_text}\n\n"
-        "Return ONLY valid JSON with these keys:\n"
-        "{\n"
-        '  "supported": true,\n'
-        '  "contradictions": ["one sentence each, or an empty list"],\n'
-        '  "invented_details": ["numbers, dates, prices, or percentages in the claim that are not in the source, or an empty list"]\n'
-        "}\n\n"
         "supported: true only when the source states the claim. "
         "false when the source is about something else or does not contain the claim.\n"
         "contradictions: list a conflict when two saved sources disagree, "
