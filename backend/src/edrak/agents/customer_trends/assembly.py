@@ -12,6 +12,7 @@ from typing import Any
 
 from edrak.agents.customer_trends.deps import WorkerDeps
 from edrak.agents.customer_trends.gaps import Gap, critical_gaps, run_status
+from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.schemas.common import Confidence, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters
 from edrak.agents.customer_trends.schemas.findings import (
@@ -27,6 +28,8 @@ from edrak.agents.customer_trends.tools.registry import (
 )
 from edrak.agents.customer_trends.tools.search_interest import summarize_series
 from edrak.agents.customer_trends.utils.text import truncate
+
+log = get_logger(__name__)
 
 THEMES_IN_CONTEXT = 8
 EVIDENCE_IDS_PER_THEME = 10
@@ -169,7 +172,8 @@ def provenance(deps: WorkerDeps) -> dict[str, Any]:
         if e.get("tool") in COLLECTION_TOOL_NAMES and e.get("error_code") not in UNBUDGETED_ERRORS
     ]
     snapshot = deps.budget.snapshot()
-    return {
+    health = deps.providers.health()
+    report = {
         "models": deps.models_used,
         "provider_mode": deps.settings.edrak_provider_mode,
         "providers_used": dict(
@@ -187,8 +191,20 @@ def provenance(deps: WorkerDeps) -> dict[str, Any]:
         "budget": {"tool_calls": snapshot.tool_calls, "cost_usd": round(snapshot.cost_usd, 6)},
         "node_timings_ms": dict(timings),
         "replans": sum(1 for e in events if e.get("type") == "replan"),
-        "provider_health": deps.providers.health(),
+        "provider_health": health,
     }
+    log.info(
+        "providers used: %s | health: %s",
+        ", ".join(f"{name}={n}" for name, n in sorted(report["providers_used"].items()))
+        or "none",
+        ", ".join(
+            f"{name}[failures={entry['failures']}"
+            f"{', breaker open' if entry['breaker_open'] else ''}]"
+            for name, entry in sorted(health.items())
+        )
+        or "none",
+    )
+    return report
 
 
 def build_result(
@@ -242,10 +258,6 @@ def build_result(
         ),
         gaps=control.gaps,
         control_summary=control,
-        provenance={
-            **provenance(deps),
-            "ending": ending,
-            "open_gaps": [gap.model_dump() for gap in gaps],
-        },
+        provenance=report,
         created_at=datetime.now(UTC),
     )
