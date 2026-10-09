@@ -59,9 +59,9 @@ AGENTS = (
 def provider_key(name: str, agent: str | None = None, *, backup: bool = True) -> tuple[str, str]:
     """Resolve a credential and report which variable supplied it.
 
-    Lookup order is the agent's backup, then the agent's primary, then the
+    Lookup order is the agent's primary, then the agent's backup, then the
     shared variable. A scoped variable therefore always beats the shared one,
-    and the backup is only reached when the primary is absent.
+    and the backup is only reached when the primary is absent or empty.
 
     An agent only ever reads its own scoped variables and the shared fallback.
     It never reads another agent's, which is what keeps one agent's exhausted

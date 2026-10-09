@@ -43,7 +43,8 @@ def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllam
 
     s = settings or get_settings()
     # Resolved through the shared resolver so this worker gets its own quota,
-    # with the same backup-then-shared fallback every other component uses.
+    # with the same own-key-then-backup-then-shared fallback as every other
+    # component.
     key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
     if not key:
         raise LLMConfigError(
