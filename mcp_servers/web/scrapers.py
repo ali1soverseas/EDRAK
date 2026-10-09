@@ -83,21 +83,26 @@ def _env(name: str) -> str:
 
 
 def _key(name: str, scope: str | None = None) -> tuple[str, str]:
-    """Resolve an API key and return it with the variable it came from.
+      """Resolve an API key and return it with the variable it came from.
 
-    The second element is the env var name, for logging and quota
-    attribution only. A caller that logs a key must log the name, never the
-    value. When a scope is given the scoped variable is preferred, so each
-    worker can hold its own key for a shared provider, and the bare name
-    remains the fallback.
-    """
-    names = [f"{name}_{scope.upper()}"] if scope else []
-    names.append(name)
-    for candidate in names:
-        value = os.getenv(candidate, "").strip()
-        if value:
-            return value, candidate
-    return "", names[0]
+      The second element is the env var name, for logging and quota
+      attribution only. A caller that logs a key must log the name, never the
+      value. When a scope is given the scoped variable is preferred, so each
+      worker can hold its own key for a shared provider, and the bare name
+      remains the fallback.
+
+      This mirrors edrak.core.llm.provider_key and is deliberately a separate
+      copy rather than an import: this module is a standalone MCP server that
+      does not depend on the backend package, so it keeps working on its own.
+      The two must agree on the naming rule, so change them together.
+      """
+      names = [f"{name}_{scope.upper()}"] if scope else []
+      names.append(name)
+      for candidate in names:
+          value = os.getenv(candidate, "").strip()
+          if value:
+              return value, candidate
+      return "", names[0]
 
 
 def _query_spec(item) -> dict:
@@ -660,7 +665,7 @@ def _annotate_serper_scores(data: dict) -> None:
 
 
 def fetch_serper(queries):
-    api_key, key_name = _key("SERPER_API_KEY")
+    api_key, key_name = _key("SERPER_API_KEY", "market")
     if not api_key:
         print(f"[SCRAPER]  SKIP Serper: {key_name} is not set")
         return [], []
@@ -767,7 +772,7 @@ def _fetch_tavily_search(query: str, api_key: str, spec: dict | None = None) -> 
 
 
 def fetch_web_search(queries):
-    api_key, key_name = _key("TAVILY_API_KEY")
+    api_key, key_name = _key("TAVILY_API_KEY", "market")
     if not api_key:
         print(f"[SCRAPER]  SKIP Tavily: {key_name} is not set")
         return [], []

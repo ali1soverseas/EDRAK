@@ -10,6 +10,7 @@ import httpx
 from pydantic import ValidationError
 from structlog.contextvars import bound_contextvars
 
+from edrak.core.llm import provider_key
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.apify import ApifyProvider
 from edrak.agents.customer_trends.providers.base import (
@@ -109,11 +110,12 @@ class ProviderRegistry:
         if fixture_mode:
             return registry
         http_client = registry._client = client or make_client(CLIENT_TIMEOUT_S)
-        if settings.serper_api_key and settings.has_key("serper_api_key"):
+        serper_key, _serper_variable = provider_key("SERPER_API_KEY", "customer_trends")
+        if serper_key:
             registry.register(
                 SerperProvider(
                     http_client,
-                    settings.serper_api_key.get_secret_value(),
+                    serper_key,
                     config.providers["serper"],
                     clock=clock,
                 )

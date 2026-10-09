@@ -91,7 +91,10 @@ def _require(name: str, value: str | None) -> str:
 
 
 def _tavily_key() -> str:
-    return _require("TAVILY_API_KEY", os.getenv("TAVILY_API_KEY", "").strip())
+    from edrak.core.llm import provider_key
+
+    key, variable = provider_key("TAVILY_API_KEY", "competitor")
+    return _require(variable, key)
 
 
 def _banner(title: str) -> None:
