@@ -5,21 +5,30 @@ from typing import Any, TypedDict
 from ..contracts.DecisionAnalysis import (
     DecisionAnalysisInput,
     DecisionAnalysisResult,
+    DecisionAnalysisStatus,
+    QuestionRecommendation,
 )
-from .schemas import DecisionAnalysisDraft
 
 
 class DecisionAnalysisState(TypedDict, total=False):
-    # Input
+    """LangGraph state for EDRAK Decision Analysis."""
+
+    # Canonical input contract
     input: DecisionAnalysisInput
 
-    # Intermediate state
-    prepared_context: dict[str, Any]
-    draft: DecisionAnalysisDraft
+    # Optional compatibility fields for existing integrations
+    request: Any
+    cross_signal: Any
 
-    # Final state
-    result: DecisionAnalysisResult
+    # Intermediate context used by the analysis node
+    context: dict[str, Any]
 
-    # Error handling
+    # Intermediate recommendation pairs
+    question_recommendations: list[QuestionRecommendation]
+
+    # Diagnostics and execution status
     warnings: list[str]
-    error: str | None
+    status: DecisionAnalysisStatus
+
+    # Canonical typed final output
+    result: DecisionAnalysisResult
