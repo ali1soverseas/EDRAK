@@ -49,7 +49,10 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
             "Formulate up to 6 precise natural-language queries covering the checklist topics as JSON."
         )
         resp = get_json_object(
-            INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT, user_prompt, temperature=0.1
+            INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT,
+            user_prompt,
+            agent="internal",
+            temperature=0.1,
         )
         if isinstance(resp, dict) and "queries" in resp and isinstance(resp["queries"], list):
             for q in resp["queries"]:
@@ -222,7 +225,10 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             "Analyze the evidence strictly according to the grounding rules, coverage checklist, and JSON schema."
         )
         res_data = get_json_object(
-            INTERNAL_SYNTHESIS_SYSTEM_PROMPT, user_prompt, temperature=0.1
+            INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
+            user_prompt,
+            agent="internal",
+            temperature=0.1,
         )
 
         raw_findings = res_data.get("findings", [])

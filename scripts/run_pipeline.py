@@ -131,7 +131,7 @@ def parse_intent(query: str) -> ParsedIntent:
     # json_mode rather than function_calling, for the same reason as the planner:
     # the request-builder prompt spells out the JSON shape and this model answers
     # with prose instead of a tool call, so binding it to the schema yields nothing.
-    intent = get_chat_model(temperature=0).with_structured_output(
+    intent = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
         ParsedIntent, method="json_mode"
     ).invoke(REQUEST_BUILDER_SYSTEM_PROMPT + "\n\n" + query)
 

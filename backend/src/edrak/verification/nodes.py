@@ -95,7 +95,7 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
     from edrak.core.llm import get_structured
 
     try:
-        reply = get_structured(_LLMReview, temperature=0).invoke(
+        reply = get_structured(_LLMReview, agent="orchestrator", temperature=0).invoke(
             review_prompt(statement, _source_packet(evidence))
         )
     except Exception as exc:

@@ -149,7 +149,7 @@ def llm():
     """The shared Ollama model, used for planning, queries and synthesis."""
     global _llm
     if _llm is None:
-        _llm = get_chat_model(temperature=0)
+        _llm = get_chat_model(agent="competitor", temperature=0)
     return _llm
 
 

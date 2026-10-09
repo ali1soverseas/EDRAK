@@ -85,7 +85,7 @@ class LlmPlanner:
         real enum, an invented name is rejected rather than silently accepted.
         Every other call site uses function_calling.
         """
-        plan = get_chat_model(temperature=0).with_structured_output(
+        plan = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
             PlannerPlan, method="json_mode"
         ).invoke(PLANNER_SYSTEM_PROMPT + "\n\n" + prompt)
 
