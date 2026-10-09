@@ -110,7 +110,8 @@ class ProviderRegistry:
         if fixture_mode:
             return registry
         http_client = registry._client = client or make_client(CLIENT_TIMEOUT_S)
-        serper_key, _serper_variable = provider_key("SERPER_API_KEY", "customer_trends")
+        skipped: list[tuple[str, str]] = []
+        serper_key, serper_variable = provider_key("SERPER_API_KEY", "customer_trends")
         if serper_key:
             registry.register(
                 SerperProvider(
@@ -120,6 +121,8 @@ class ProviderRegistry:
                     clock=clock,
                 )
             )
+        else:
+            skipped.append(("serper", f"{serper_variable} not set"))
         registry.register(GdeltProvider(http_client, config.providers["gdelt"], clock=clock))
         registry.register(
             DirectHttpProvider(http_client, config.providers["direct_http"], clock=clock)
@@ -135,6 +138,8 @@ class ProviderRegistry:
                     clock=clock,
                 )
             )
+        else:
+            skipped.append(("apify", "APIFY_TOKEN not set"))
         socialcrawl_keys = settings.key_list("socialcrawl_api_key", "socialcrawl_fallback_api_keys")
         if socialcrawl_keys:
             registry.register(
@@ -147,13 +152,19 @@ class ProviderRegistry:
                     clock=clock,
                 )
             )
+        else:
+            skipped.append(("socialcrawl", "SOCIALCRAWL_API_KEY not set"))
         trends_key = settings.google_trends_api_key
+        trends_usable = bool(trends_key and settings.has_key("google_trends_api_key"))
         registry.register(
             GoogleTrendsApiProvider(
-                trends_key.get_secret_value()
-                if trends_key and settings.has_key("google_trends_api_key")
-                else None
+                trends_key.get_secret_value() if trends_usable else None
             )
+        )
+        # Registered either way, so it has to be reported separately: health()
+        # lists it whether or not it can do anything.
+        keyless = (
+            [] if trends_usable else [("google_trends_api", "GOOGLE_TRENDS_API_KEY not set")]
         )
         if settings.youtube_api_key and settings.has_key("youtube_api_key"):
             quota = YouTubeQuota(
@@ -171,6 +182,15 @@ class ProviderRegistry:
                     clock=clock,
                 )
             )
+        else:
+            skipped.append(("youtube_api", "YOUTUBE_API_KEY not set"))
+
+        log.info(
+            "providers: registered=%s | keyless=%s | skipped=%s",
+            ",".join(sorted(registry._providers)) or "none",
+            ", ".join(f"{name} ({why})" for name, why in keyless) or "none",
+            ", ".join(f"{name} ({why})" for name, why in skipped) or "none",
+        )
         return registry
 
     def register(self, provider: Provider) -> None:
