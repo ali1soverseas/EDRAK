@@ -42,7 +42,7 @@ from edrak.contracts import (
 from pydantic import BaseModel, Field, field_validator
 
 # The orchestration chain imports core.config, which constructs Settings at import
-# time and raises when LLM_API_KEY is missing. Those imports are deliberately
+# time and raises when OLLAMA_API_KEY is missing. Those imports are deliberately
 # deferred into the functions that need them so a missing key produces a readable
 # message instead of a traceback during module import.
 
@@ -376,7 +376,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not resolve_api_key():
         print(
-            "LLM_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
+            "OLLAMA_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
             "Create a key at https://ollama.com/settings/keys",
             file=sys.stderr,
         )
