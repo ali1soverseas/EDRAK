@@ -87,6 +87,24 @@ def call_llm(prompt: str) -> str:
     raise RuntimeError(f"LLM call failed after 3 attempts: {last_error}")
 
 
+def call_structured(schema, prompt: str, *, method: str = "function_calling"):
+    """Ask for a validated `schema` instance, or None.
+
+    `method` defaults to tool calling, which is what constrains output against
+    Ollama Cloud. A prompt that reads as a prose question can still be answered
+    without a tool call, so a caller whose prompt already states the schema uses
+    json_mode instead: that parses rather than enforces, and a reply that is
+    not JSON fails rather than slipping through.
+    """
+    try:
+        return get_chat_model(agent="market", temperature=0).with_structured_output(
+            schema, method=method
+        ).invoke(prompt)
+    except Exception as exc:
+        log_action("market_intelligence", f"structured call failed: {type(exc).__name__}")
+        return None
+
+
 def clean_json(raw: str) -> str:
     """Strip markdown fences from an LLM response to get raw JSON."""
     raw = raw.strip()
@@ -741,9 +759,10 @@ def task_executor(state: MarketAgentState) -> dict:
             strong_hits = titles_on_topic(result_str, task["description"], goal, scope)
             verdict = None
             if relevant and not strong_hits:
-                verdict = parse_model(
+                verdict = call_structured(
                     Usefulness,
-                    call_llm(usefulness_prompt(task["description"], preview or result_str)),
+                    usefulness_prompt(task["description"], preview or result_str),
+                    method="json_mode",
                 )
             model_rejects = verdict is not None and not verdict.useful
             is_useful = bool(new_urls) and (strong_hits or (relevant and not model_rejects))
