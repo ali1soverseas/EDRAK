@@ -507,42 +507,24 @@ def claim_confidence(claim: str, quote: str) -> float:
     return round(min(score, 0.9), 2)
 
 
-def tasks_from_plan_reply(raw: str) -> list[dict]:
-    """Read a task list from a TaskPlan reply or a plain tasks array."""
-    plan = parse_model(TaskPlan, raw)
-    if plan:
-        return [
-            {
-                "description": task.description,
-                "tool_hint": task.tool_hint,
-                "queries": [item.model_dump() for item in task.queries if item.q or item.query],
-            }
-            for task in plan.tasks
-        ]
-    try:
-        parsed = json.loads(clean_json(raw))
-    except json.JSONDecodeError:
+def tasks_from_plan_reply(plan: TaskPlan | None) -> list[dict]:
+    """The task list from a validated plan, or empty when the reply did not fit.
+
+    The reply is bound to TaskPlan by the caller, so this only flattens it.
+    The hand-walked fallbacks it used to have — a bare array of strings, a dict
+    keyed by task, goal or tool — are gone; those shapes no longer reach here
+    because the schema rejects them first.
+    """
+    if plan is None:
         return []
-    items = parsed.get("tasks") if isinstance(parsed, dict) else parsed
-    if not isinstance(items, list):
-        return []
-    found: list[dict] = []
-    for item in items:
-        if isinstance(item, str) and item.strip():
-            found.append({"description": item.strip(), "tool_hint": "tool_serper", "queries": []})
-            continue
-        if not isinstance(item, dict):
-            continue
-        description = str(item.get("description") or item.get("task") or item.get("goal") or "").strip()
-        tool_hint = str(item.get("tool_hint") or item.get("tool") or "tool_serper").strip()
-        queries = item.get("queries") if isinstance(item.get("queries"), list) else []
-        if description:
-            found.append({
-                "description": description,
-                "tool_hint": tool_hint or "tool_serper",
-                "queries": queries,
-            })
-    return found
+    return [
+        {
+            "description": task.description,
+            "tool_hint": task.tool_hint,
+            "queries": [item.model_dump() for item in task.queries if item.q or item.query],
+        }
+        for task in plan.tasks
+    ]
 
 
 def _query_strings(queries) -> list[str]:
@@ -579,16 +561,16 @@ def task_planner(state: MarketAgentState) -> dict:
     print(f"  Scope: {scope.note()}")
 
     print("\n  Calling LLM to generate research task list...")
-    raw = call_llm(prompt)
-    raw_tasks = tasks_from_plan_reply(raw)
+    raw_tasks = tasks_from_plan_reply(call_structured(TaskPlan, prompt, method="json_mode"))
     if len(raw_tasks) < 4:
         print(f"  Planner reply had {len(raw_tasks)} task(s). Asking again for 4 to 7.")
-        print(f"  Reply: {raw.strip()[:300]}")
         retried = tasks_from_plan_reply(
-            call_llm(
+            call_structured(
+                TaskPlan,
                 prompt
                 + "\nThe previous reply was not a list of 4 to 7 tasks. "
-                "Return only the JSON object."
+                "Return only the JSON object.",
+                method="json_mode",
             )
         )
         if len(retried) > len(raw_tasks):

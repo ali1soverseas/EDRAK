@@ -7,6 +7,7 @@ from edrak.agents.market_intelligence.graph import (
     worker_result_from_state,
 )
 from edrak.agents.market_intelligence.nodes import clean_json, output_node, task_planner
+from edrak.agents.market_intelligence.schemas import PlannedTask
 from edrak.agents.market_intelligence.state import empty_market_state
 from edrak.contracts import SourceType, WorkerResult, WorkerStatus, WorkerType
 
@@ -57,7 +58,9 @@ def test_clean_json_strips_fences():
 def test_task_planner_falls_back_when_llm_returns_invalid_json(monkeypatch):
     from edrak.agents.market_intelligence import nodes
 
-    monkeypatch.setattr(nodes, "call_llm", lambda _prompt: "not-json")
+    # call_structured is the seam now: it returns None when the reply does not
+    # fit the schema, which is the failure this test is about.
+    monkeypatch.setattr(nodes, "call_structured", lambda *_a, **_k: None)
     state = empty_market_state("r1", "Understand AI DevOps demand", "GitLab context")
     update = task_planner(state)
 
@@ -109,7 +112,23 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
             })
         return "{}"
 
+    def fake_structured(schema, _prompt, **_kwargs):
+        """The bound-call seam. Returns schema instances, not JSON text."""
+        if schema is nodes.TaskPlan:
+            return nodes.TaskPlan(
+                tasks=[
+                    PlannedTask(
+                        description="Identify current market size of AI coding assistants",
+                        tool_hint="tool_serper",
+                    )
+                ]
+            )
+        if schema is nodes.Usefulness:
+            return nodes.Usefulness(useful=True)
+        return None
+
     monkeypatch.setattr(nodes, "call_llm", fake_llm)
+    monkeypatch.setattr(nodes, "call_structured", fake_structured)
     monkeypatch.setitem(nodes.TOOL_MAP, "tool_serper", _FakeTool())
     monkeypatch.setattr(
         nodes,
