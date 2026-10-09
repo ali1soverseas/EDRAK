@@ -46,9 +46,9 @@ from edrak.agents.market_intelligence.state import (
     _kv,
     _section,
 )
-from edrak.core.config import settings
 from edrak.core.action_log import log_action
-from edrak.core.llm import get_llm_client
+from edrak.core.config import settings
+from edrak.core.llm import get_chat_model
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
     TOOL_MAP,
@@ -65,23 +65,24 @@ def log_block(agent: str, title: str, body: str) -> None:
 
 
 def call_llm(prompt: str) -> str:
-    """Call the inference API from .env. Failures are printed."""
-    client = get_llm_client()
+    """Call the shared Ollama model.
+
+    Raises once the retries are exhausted. It used to return a string reading
+    "[LLM ERROR: ...]", which was indistinguishable from a real model reply and
+    travelled on into JSON parsing and synthesis as though it were content.
+    """
     last_error = "the model did not respond"
     for attempt in range(3):
-        print(f"  Model call {attempt + 1}/3 ({client.model} @ {client.base_url})...")
+        print(f"  Model call {attempt + 1}/3 ({settings.OLLAMA_MODEL})...")
         try:
-            return client.chat_completion(
-                [{"role": "user", "content": prompt}],
-                temperature=client.temperature,
-            )
+            return str(get_chat_model().invoke(prompt).content)
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             print(f"  [LLM ERROR] {last_error}")
             log_action("market_intelligence", f"LLM ERROR: {last_error}")
             if attempt < 2:
                 time.sleep(2 ** attempt)
-    return f"[LLM ERROR: {last_error}]"
+    raise RuntimeError(f"LLM call failed after 3 attempts: {last_error}")
 
 
 def clean_json(raw: str) -> str:

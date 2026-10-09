@@ -17,7 +17,7 @@ from edrak.contracts.result import Conflict, Finding, FindingCategory, WorkerRes
 from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
-from edrak.core.llm import get_llm_client
+from edrak.core.llm import get_json_object
 from edrak.rag.retriever import InternalRetriever
 from edrak.rag.text_utils import clean_markdown
 
@@ -40,7 +40,6 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
     llm_planned = False
 
     try:
-        llm = get_llm_client()
         user_prompt = (
             f"Company Context: {company}\n"
             f"Research Goal: {task.goal}\n"
@@ -49,11 +48,9 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
             f"Domain Focus Areas: {', '.join(focus_areas) if focus_areas else 'None'}\n\n"
             "Formulate up to 6 precise natural-language queries covering the checklist topics as JSON."
         )
-        messages = [
-            {"role": "system", "content": INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ]
-        resp = llm.chat_structured(messages=messages, temperature=0.1)
+        resp = get_json_object(
+            INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT, user_prompt, temperature=0.1
+        )
         if isinstance(resp, dict) and "queries" in resp and isinstance(resp["queries"], list):
             for q in resp["queries"]:
                 if isinstance(q, str) and len(q.strip()) > 3:
@@ -217,7 +214,6 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
 
     # 1. Attempt LLM Evidence Investigation and Synthesis
     try:
-        llm = get_llm_client()
         user_prompt = (
             f"RESEARCH GOAL: {task.goal}\n"
             f"FOCUS AREAS: {task.focus}\n\n"
@@ -225,11 +221,9 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             f"{evidence_context_str}\n\n"
             "Analyze the evidence strictly according to the grounding rules, coverage checklist, and JSON schema."
         )
-        messages = [
-            {"role": "system", "content": INTERNAL_SYNTHESIS_SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ]
-        res_data = llm.chat_structured(messages=messages, temperature=0.1)
+        res_data = get_json_object(
+            INTERNAL_SYNTHESIS_SYSTEM_PROMPT, user_prompt, temperature=0.1
+        )
 
         raw_findings = res_data.get("findings", [])
         for rf in raw_findings:

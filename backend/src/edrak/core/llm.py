@@ -69,6 +69,32 @@ def get_structured(schema, model: Optional[str] = None, *, temperature: Optional
     )
 
 
+def get_json_object(
+    system: str,
+    user: str,
+    *,
+    model: Optional[str] = None,
+    temperature: Optional[float] = None,
+) -> dict:
+    """Ask for a JSON object and return it as a dict.
+
+    For callers whose reply shape is large, optional or still evolving, where
+    pinning a pydantic schema would be more churn than the guarantee is worth.
+    Note json_mode parses rather than enforces: a reply can be valid JSON and
+    still nonsense, so validate anything that matters.
+    """
+    message = get_chat_model(model, temperature=temperature).invoke(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        # json_mode is off deliberately; the prompt already asks for JSON and
+        # asking twice changed nothing.
+    )
+    text = str(message.content).strip()
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    if not match:
+        raise ValueError(f"model reply contained no JSON object: {text[:200]!r}")
+    return json.loads(match.group(0))
+
+
 class LLMClient:
     """Legacy hand-rolled client. Superseded by `get_chat_model`."""
 

@@ -39,7 +39,7 @@ from edrak.contracts import (
     UseCase,
     WorkerRegistry,
 )
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 # The orchestration chain imports core.config, which constructs Settings at import
 # time and raises when LLM_API_KEY is missing. Those imports are deliberately
@@ -124,28 +124,20 @@ def resolve_api_key() -> str | None:
 
 
 def parse_intent(query: str) -> ParsedIntent:
-    from edrak.core.llm import get_llm_client
+    from edrak.core.llm import get_chat_model
     from edrak.orchestration.planner import PlanningError
     from edrak.orchestration.prompts import REQUEST_BUILDER_SYSTEM_PROMPT
 
-    llm = get_llm_client()
-    content = (
-        llm.chat_completion(
-            [
-                {"role": "system", "content": REQUEST_BUILDER_SYSTEM_PROMPT},
-                {"role": "user", "content": query},
-            ],
-            json_mode=True,
-        )
-        or ""
-    ).strip()
-    try:
-        return ParsedIntent.model_validate_json(content)
-    except ValidationError as exc:
-        raise PlanningError(
-            f"request builder returned unusable output: {exc.error_count()} error(s)",
-            content,
-        ) from exc
+    # json_mode rather than function_calling, for the same reason as the planner:
+    # the request-builder prompt spells out the JSON shape and this model answers
+    # with prose instead of a tool call, so binding it to the schema yields nothing.
+    intent = get_chat_model(temperature=0).with_structured_output(
+        ParsedIntent, method="json_mode"
+    ).invoke(REQUEST_BUILDER_SYSTEM_PROMPT + "\n\n" + query)
+
+    if not isinstance(intent, ParsedIntent):
+        raise PlanningError("request builder returned no usable intent", str(intent)[:200])
+    return intent
 
 
 def build_request(query: str, args: argparse.Namespace) -> BusinessRequest:
