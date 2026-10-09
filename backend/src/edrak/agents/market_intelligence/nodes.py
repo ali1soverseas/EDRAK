@@ -462,13 +462,17 @@ def titles_on_topic(raw: str, task: str, goal: str, scope: SearchScope | None = 
     return matched >= 2
 
 
-def claims_from_analysis(raw: str, source_text: str) -> list[AnalysisClaim]:
-    reply = parse_model(AnalysisReply, raw)
-    items = list(reply.claims) if reply and reply.claims else []
-    if not items:
-        one = parse_model(AnalysisClaim, raw)
-        if one:
-            items = [one]
+def claims_from_analysis(
+    reply: AnalysisReply | AnalysisClaim | None, source_text: str
+) -> list[AnalysisClaim]:
+    """The reply's claims that the source actually supports.
+
+    The caller binds to AnalysisReply first and falls back to a bare
+    AnalysisClaim, so either type can arrive here.
+    """
+    items = list(reply.claims) if isinstance(reply, AnalysisReply) and reply.claims else []
+    if not items and isinstance(reply, AnalysisClaim):
+        items = [reply]
     supported: list[AnalysisClaim] = []
     for item in items[:3]:
         if claim_is_supported(item.claim.strip(), item.quote.strip(), source_text):
@@ -840,16 +844,19 @@ def task_executor(state: MarketAgentState) -> dict:
         return _gap(f"No page stated a relevant fact for: {task['description']}")
 
     _section("LLM ANALYSIS")
-    raw_analysis = call_llm(
-        analysis_prompt(
-            task_description=task["description"],
-            goal=goal,
-            context=context,
-            context_note="Source text:",
-            context_block=source_text,
-        )
+    prompt = analysis_prompt(
+        task_description=task["description"],
+        goal=goal,
+        context=context,
+        context_note="Source text:",
+        context_block=source_text,
     )
-    parsed_claims = claims_from_analysis(raw_analysis, source_text)
+    reply = call_structured(AnalysisReply, prompt, method="json_mode")
+    if reply is None:
+        # A single claim often comes back bare rather than wrapped, which the
+        # wrapper schema rejects. One extra call, only on that failure.
+        reply = call_structured(AnalysisClaim, prompt, method="json_mode")
+    parsed_claims = claims_from_analysis(reply, source_text)
     if not parsed_claims:
         print("  Claim rejected: no supported fact")
         return _gap(f"No supported fact for: {task['description']}")
