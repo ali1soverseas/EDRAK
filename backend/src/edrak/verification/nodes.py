@@ -92,11 +92,22 @@ class _LLMReview(BaseModel):
 
 def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
     """Ground the claim in saved source text. None means keep the deterministic result."""
-    from edrak.core.llm import get_structured
+    from edrak.core.llm import get_structured, schema_instruction
 
     try:
+        # The schema must also be stated in the prompt, not just bound on the
+        # model. json_schema steers the reply without hard-constraining the
+        # decoder, so without this the model sometimes answers in prose and the
+        # review is silently skipped: measured 2/3 without, 3/3 with, on this
+        # three-list schema.
         reply = get_structured(_LLMReview, agent="orchestrator", temperature=0).invoke(
-            review_prompt(statement, _source_packet(evidence))
+            [
+                {
+                    "role": "user",
+                    "content": review_prompt(statement, _source_packet(evidence)),
+                },
+                schema_instruction(_LLMReview),
+            ]
         )
     except Exception as exc:
         print(f"[verification] WARNING: LLM review failed: {exc}")
