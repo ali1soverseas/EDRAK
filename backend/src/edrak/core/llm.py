@@ -1,6 +1,12 @@
-"""LLM Client Interface for EDRAK.
+"""LLM access for EDRAK.
 
-Supports Ollama Cloud / Local and OpenAI-compatible inference endpoints using standard chat completions.
+New components should use `get_chat_model` or `get_structured`. They talk to
+the native Ollama client rather than posting to an OpenAI-compatible shim by
+hand, because Ollama documents that shim as experimental and subject to
+breaking changes.
+
+`LLMClient` is the older hand-rolled httpx path. It stays until its remaining
+callers are moved, then it is removed.
 """
 
 import json
@@ -9,13 +15,62 @@ import re
 from typing import Any, Dict, List, Optional
 import httpx
 
+from langchain_ollama import ChatOllama
+
 from edrak.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+# The native Ollama API lives at the bare host. The /v1 path is the
+# OpenAI-compatible shim, which ChatOllama does not speak.
+NATIVE_BASE_URL = "https://ollama.com"
+
+
+def ollama_key() -> str:
+    key = settings.OLLAMA_API_KEY
+    if not key or not str(key).strip():
+        raise RuntimeError(
+            "OLLAMA_API_KEY is not configured. Set it in the environment or .env."
+        )
+    return str(key)
+
+
+def get_chat_model(
+    model: Optional[str] = None,
+    *,
+    temperature: Optional[float] = None,
+    base_url: Optional[str] = None,
+) -> ChatOllama:
+    """The one chat model every component uses.
+
+    ChatOllama has no api_key argument: passing one is silently discarded as a
+    pydantic extra and the request goes out unauthenticated, which surfaces as
+    a 401 rather than a configuration error. Auth therefore has to go through
+    client_kwargs.
+    """
+    return ChatOllama(
+        model=model or settings.OLLAMA_MODEL,
+        base_url=base_url or NATIVE_BASE_URL,
+        temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
+        num_predict=2048,
+        client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key()}"}},
+    )
+
+
+def get_structured(schema, model: Optional[str] = None, *, temperature: Optional[float] = None):
+    """A model bound to `schema` for structured output.
+
+    `function_calling` is the only method that works against Ollama Cloud.
+    `json_schema` and `json_mode` both rely on `format=`, which Cloud ignores,
+    so the model answers in prose and parsing fails.
+    """
+    return get_chat_model(model, temperature=temperature).with_structured_output(
+        schema, method="function_calling"
+    )
+
 
 class LLMClient:
-    """Client for generating completions using Ollama Cloud / OpenAI-compatible APIs."""
+    """Legacy hand-rolled client. Superseded by `get_chat_model`."""
 
     def __init__(
         self,
@@ -94,7 +149,7 @@ _global_llm_client: Optional[LLMClient] = None
 
 
 def get_llm_client() -> LLMClient:
-    """Returns singleton LLM client."""
+    """Returns the legacy client. Migrate callers to `get_chat_model`."""
     global _global_llm_client
     if _global_llm_client is None:
         _global_llm_client = LLMClient()
