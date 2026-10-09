@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-import os
-
-from dotenv import load_dotenv
 from langchain_core.language_models import BaseChatModel
-from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 
 from ..contracts.CrossSignal import (
     CrossSignalInput,
     CrossSignalOutput,
 )
+from ..core.llm import get_chat_model
 from .nodes import CrossSignalNodes
 from .state import CrossSignalSettings, CrossSignalState
-
-
-load_dotenv()
 
 
 def build_cross_signal_graph(
@@ -73,20 +67,7 @@ def build_cross_signal_graph(
     settings = settings or CrossSignalSettings()
 
     if llm is None:
-        api_key = os.getenv("OPENAI_API_KEY")
-
-        if not api_key:
-            raise RuntimeError(
-                "OPENAI_API_KEY is not configured. "
-                "Set OPENAI_API_KEY in the environment or .env file."
-            )
-
-        llm = ChatOpenAI(
-            model=settings.model,
-            temperature=settings.temperature,
-            api_key=api_key,
-            max_retries=settings.max_retries,
-        )
+        llm = get_chat_model(settings.model, temperature=settings.temperature)
 
     nodes = CrossSignalNodes(
         llm=llm,
