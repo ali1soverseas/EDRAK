@@ -10,11 +10,22 @@ Auth does not go through an argument. ChatOllama has no api_key field;
 passing one is silently discarded as a pydantic extra and the request goes out
 unauthenticated, which surfaces as a 401 rather than a configuration error.
 
-Structured output goes through tool calling. Ollama Cloud ignores the
-`format=` parameter, so `json_schema` and `json_mode` do not constrain the
-reply: the model answers in prose and nothing parses. Prompts must therefore
-not describe the expected JSON shape either, since an instruction to "reply
-with only JSON" suppresses the tool call just as reliably.
+Structured output goes through json_schema plus the schema restated in the
+prompt, and both halves are load-bearing. Measured on gpt-oss:120b against the
+schemas this project actually sends, first attempt, repair off:
+
+  json_schema + schema instruction   works on flat and nested schemas alike
+  function_calling                  0/5 on every nested-list schema tried
+
+Tool calling is not merely worse here, it returns nothing at all for a schema
+whose top-level field is a list of objects, which is most of them. And
+`json_schema` alone is not sufficient: without the instruction the model
+answers in prose or picks its own shape, such as returning the bare array
+instead of the object wrapping it.
+
+So `get_structured` binds json_schema and `schema_instruction` puts the schema
+in the prompt. Do not drop either, and do not copy a method from another
+worker without measuring it on that worker's own schemas.
 """
 
 import json
@@ -129,21 +140,43 @@ def get_chat_model(
     )
 
 
+def schema_instruction(schema: type) -> dict:
+    """Restate `schema` in the prompt as the shape to answer with.
+
+    Every structured call needs this. json_schema alone does not hard-constrain
+    the decoder, so without it the model answers in prose or picks its own
+    shape. Measured on the cross-signal schema: 0/5 without this message, 5/5
+    with it.
+    """
+    return {
+        "role": "user",
+        "content": (
+            "Reply with only a JSON object that validates against this JSON schema, "
+            "with no prose and no code fences:\n"
+            + json.dumps(schema.model_json_schema(), ensure_ascii=False)
+        ),
+    }
+
+
 def get_structured(
     schema,
     model: Optional[str] = None,
     *,
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
-    method: str = "function_calling",
+    method: str = "json_schema",
 ):
     """A model bound to `schema` for structured output.
 
-    Defaults to `function_calling`, the only method that constrains output
-    against Ollama Cloud. `method="json_mode"` is the documented exception for
-    the two call sites whose replies are lists of objects, which this model
-    declines to emit as tool calls. json_mode parses rather than enforces, so
-    validate anything that matters.
+    Defaults to `json_schema`, with the schema restated in the prompt by
+    `schema_instruction`. Measured, not preferred: `function_calling`, the
+    previous default, returned no structured output at all on every
+    nested-list schema tried here. Pass `method` only with a measurement
+    behind it, and never without the instruction.
+
+    json_schema steers the reply rather than hard-constraining the decoder, so
+    still validate: a prose reply or a wrong top-level shape does slip
+    through when the instruction is omitted.
     """
     return get_chat_model(
         model, agent=agent, temperature=temperature

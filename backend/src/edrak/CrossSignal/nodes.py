@@ -21,6 +21,8 @@ from ..contracts.CrossSignal import (
 
 from ..contracts.base import new_id
 
+from ..core.llm import schema_instruction
+
 from .state import (
     CrossSignalSettings,
     CrossSignalState,
@@ -1641,10 +1643,12 @@ class CrossSignalNodes:
             len(LENSES),
         )
 
-        structured_llm = (
-            self.llm.with_structured_output(
-                SignalDetectionResult
-            )
+        # json_schema stated explicitly, plus the schema restated in the prompt
+        # at each call site. Both are required: left to the library default with
+        # no instruction this scored 0/5, returning the bare signals array
+        # instead of the object wrapping it. With both, 5/5.
+        structured_llm = self.llm.with_structured_output(
+            SignalDetectionResult, method="json_schema"
         )
 
         for lens in LENSES:
@@ -1677,6 +1681,11 @@ class CrossSignalNodes:
                         ),
                         HumanMessage(
                             content=human_prompt
+                        ),
+                        HumanMessage(
+                            content=schema_instruction(
+                                SignalDetectionResult
+                            )["content"]
                         ),
                     ]
                 )

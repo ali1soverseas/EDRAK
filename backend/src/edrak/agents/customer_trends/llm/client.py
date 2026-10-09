@@ -9,6 +9,7 @@ import httpx
 import ollama
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.settings import Settings, get_settings
+from edrak.core.llm import schema_instruction
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
@@ -95,14 +96,8 @@ def _raw_text(raw: object) -> str:
 
 
 def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
-    """Some hosted models ignore the `format` constraint, so the prompt states the schema too."""
-    return HumanMessage(
-        content=(
-            "Reply with only a JSON object that validates against this JSON schema, "
-            "with no prose and no code fences:\n"
-            + json.dumps(schema.model_json_schema(), ensure_ascii=False)
-        )
-    )
+    """The shared helper from edrak.core.llm, as a message this worker can append."""
+    return HumanMessage(content=schema_instruction(schema)["content"])
 
 
 def _parse[S: BaseModel](schema: type[S], parsed: object) -> S:
