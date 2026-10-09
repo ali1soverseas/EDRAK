@@ -43,7 +43,10 @@ class Settings(BaseSettings):
     )
 
     # Orchestration control-plane limits
-    MAX_REPLANS: int = 2
+    # 1 not 2: a replan now re-dispatches only the workers whose findings
+    # contradicted, but it still re-runs their research. One attempt is enough
+    # to resolve a contradiction, and a second buys very little.
+    MAX_REPLANS: int = 1
     MAX_TASK_ATTEMPTS: int = 3
 
     # Embedding Settings (Local Hugging Face Static Embeddings)

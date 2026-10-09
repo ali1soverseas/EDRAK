@@ -200,14 +200,122 @@ def finalize_node(state: OrchestrationState) -> OrchestrationState:
     }
 
 
+def _targeted_tasks(
+    state: OrchestrationState,
+) -> tuple[list[ResearchTask], dict[str, list[str]]] | None:
+    """Re-task only the workers whose findings verification found contradictory.
+
+    Returns the amended tasks and the reasons per worker, or None when no worker
+    can be identified, which sends the caller back to a full replan.
+
+    The task keeps its original ``task_id`` on purpose. ``merge_by_task_id``
+    replaces a result when the same task id comes back, so re-dispatching these
+    tasks overwrites exactly these workers' results and leaves every other
+    worker's findings in place.
+    """
+    raw = state.get("verification_result")
+    if raw is None:
+        return None
+
+    findings = getattr(raw, "findings", None)
+    if findings is None and isinstance(raw, dict):
+        findings = raw.get("findings")
+    if not findings:
+        return None
+
+    reasons: dict[str, list[str]] = {}
+    for verdict in findings:
+        contradictions = (
+            verdict.get("contradictions")
+            if isinstance(verdict, dict)
+            else getattr(verdict, "contradictions", None)
+        )
+        worker = (
+            verdict.get("worker")
+            if isinstance(verdict, dict)
+            else getattr(verdict, "worker", None)
+        )
+        if not contradictions or worker is None:
+            continue
+        key = getattr(worker, "value", worker)
+        bucket = reasons.setdefault(str(key), [])
+        for item in contradictions:
+            text = str(item).strip()
+            if text and text not in bucket:
+                bucket.append(text)
+
+    if not reasons:
+        return None
+
+    plan = state.get("plan")
+    if plan is None:
+        return None
+
+    amended: list[ResearchTask] = []
+    for task in plan.tasks:
+        worker_key = getattr(task.worker, "value", task.worker)
+        wanted = reasons.get(str(worker_key))
+        if not wanted:
+            continue
+        amended.append(
+            task.model_copy(
+                update={
+                    "goal": _amended_goal(task, wanted),
+                    "focus": _amended_focus(task, wanted),
+                    "attempt": task.attempt + 1,
+                }
+            )
+        )
+
+    return (amended, reasons) if amended else None
+
+
+def _amended_goal(task: ResearchTask, reasons: list[str]) -> str:
+    detail = "; ".join(reasons)
+    return (
+        f"{task.goal} Re-check the conflicting evidence for this assignment: {detail}."
+    )
+
+
+def _amended_focus(task: ResearchTask, reasons: list[str]) -> str:
+    detail = "; ".join(reasons)
+    return f"{task.focus} Resolve the contradiction first: {detail}."
+
+
 def replan_node(state: OrchestrationState) -> OrchestrationState:
     print("\n[orchestrator] NODE: replan")
     request: BusinessRequest = state["request"]
     replan_count = (state.get("replan_count") or 0) + 1
+
+    targeted = _targeted_tasks(state)
+    if targeted is not None:
+        tasks, reasons = targeted
+        plan = state["plan"]
+        print(
+            f"  targeted replan {replan_count}: re-dispatching "
+            f"{len(tasks)} of {len(plan.tasks)} worker(s): "
+            + ", ".join(str(getattr(t.worker, "value", t.worker)) for t in tasks)
+        )
+        for worker, items in reasons.items():
+            print(f"    {worker}: {len(items)} contradiction(s) to resolve")
+        # The plan is left intact on purpose. Its tasks keep their original ids,
+        # so merge_by_task_id swaps in these results and the results of the
+        # workers that were not re-run stay valid against the plan.
+        return {
+            **state,
+            "replan_tasks": tasks,
+            "replan_count": replan_count,
+        }
+
+    # No worker could be identified, which happens when the verification stage
+    # itself raised and set REPLAN_REQUIRED without any findings. Re-plan from
+    # the request as before, otherwise there would be nothing to dispatch.
+    print("  no conflicting worker identified: replanning the whole request")
     plan = LlmPlanner().plan(request)
     return {
         **state,
         "plan": plan,
+        "replan_tasks": None,
         "replan_count": replan_count,
         "results": RESET,
         "outcomes": RESET,

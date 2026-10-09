@@ -30,10 +30,18 @@ class ConcurrentWorkerDispatchError(RuntimeError):
 def route_from_plan(state: OrchestrationState) -> list[Send] | str:
     """Fan out one Send per task so workers run in parallel.
 
-    Also the single place the one-task-per-worker invariant is enforced.
+    Also the single place where the one-task-per-worker invariant is enforced.
+
+    A targeted replan narrows the dispatch to the workers verification found
+    contradictory by setting ``replan_tasks``. The plan itself keeps every task,
+    so results from the workers that were not re-run still belong to it.
     """
-    plan = state.get("plan")
-    tasks = plan.tasks if plan else []
+    pending = state.get("replan_tasks")
+    if pending:
+        tasks = pending
+    else:
+        plan = state.get("plan")
+        tasks = plan.tasks if plan else []
 
     if not tasks:
         return "finalize_failed"

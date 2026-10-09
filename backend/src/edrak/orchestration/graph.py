@@ -57,9 +57,12 @@ def build_graph(registry: WorkerRegistry):
     )
     graph.add_edge("cross_signal", "finalize")
 
-    # A replan produces a fresh plan with fresh task ids, so it must route back
-    # through the plan router and actually re-dispatch. Going straight to verify
-    # would grade an empty result set and loop until the limits ran out.
+    # A replan routes back through the plan router because either shape needs a
+    # dispatch. A targeted replan keeps the original task ids and narrows
+    # plan.tasks to the workers that contradicted, so it re-runs those workers
+    # only. The fallback replan mints a fresh plan with fresh task ids and
+    # clears the results. Going straight to verify would grade an empty result
+    # set and loop until the limits ran out.
     graph.add_conditional_edges(
         "replan",
         route_from_plan,

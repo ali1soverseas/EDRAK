@@ -6,6 +6,7 @@ from ..contracts import (
     BusinessRequest,
     OrchestrationResult,
     ResearchPlan,
+    ResearchTask,
     WorkerOutcome,
     WorkerResult,
 )
@@ -43,6 +44,11 @@ def merge_by_task_id[T](left: list[T], right: list[T] | _Reset) -> list[T]:
 class OrchestrationState(TypedDict, total=False):
     request: BusinessRequest
     plan: ResearchPlan | None
+    # The subset of ``plan.tasks`` a targeted replan wants re-dispatched. Kept
+    # apart from ``plan`` because the plan must keep listing every task whose
+    # result is in the channel: OrchestrationResult rejects a result whose
+    # task_id is absent from the plan.
+    replan_tasks: list[ResearchTask] | None
     results: Annotated[list[WorkerResult], merge_by_task_id]
     outcomes: Annotated[list[WorkerOutcome], merge_by_task_id]
     verification: VerificationDecision | None
