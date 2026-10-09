@@ -1,9 +1,8 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-import json
-from typing import Any, Protocol
+from typing import Protocol
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from ..contracts import (
     BusinessRequest,
@@ -12,7 +11,7 @@ from ..contracts import (
     ResearchTask,
     WorkerType,
 )
-from ..core.llm import LLMClient, get_llm_client
+from ..core.llm import get_chat_model
 from .prompts import PLANNER_SYSTEM_PROMPT
 
 MAX_REPAIR_ATTEMPTS = 1
@@ -50,99 +49,49 @@ class Planner(Protocol):
     def plan(self, request: BusinessRequest) -> ResearchPlan: ...
 
 
+class PlannerPlan(BaseModel):
+    """The reply shape: one entry per worker assignment."""
+
+    assignments: list[WorkerAssignment]
+
+
 class LlmPlanner:
     def __init__(self, *, max_repair_attempts: int = MAX_REPAIR_ATTEMPTS) -> None:
         self.max_repair_attempts = max_repair_attempts
 
     def plan(self, request: BusinessRequest) -> ResearchPlan:
-        llm = get_llm_client()
         context = self._build_context(request)
 
-        raw = self._require_text(self._invoke(llm, PLANNER_SYSTEM_PROMPT, context))
-        assignments, failure = self._parse(raw)
-
-        for _ in range(self.max_repair_attempts):
-            if assignments is not None:
-                break
-            raw = self._require_text(
-                self._invoke(
-                    llm,
-                    PLANNER_SYSTEM_PROMPT,
-                    f"{context}\n\nYour previous reply was rejected: {failure}\n"
-                    "Return only the corrected JSON array of worker assignments.",
-                )
+        try:
+            assignments = self._invoke(context)
+        except PlanningError as exc:
+            if self.max_repair_attempts < 1:
+                raise
+            assignments = self._invoke(
+                f"{context}\n\nYour previous reply was rejected: {exc.reason}\n"
+                "Return a corrected plan covering the relevant workers."
             )
-            assignments, failure = self._parse(raw)
-
-        if assignments is None:
-            raise PlanningError(failure, raw)
 
         return self._build_plan(request, assignments)
 
-    def _invoke(self, llm: LLMClient, system: str, user: str) -> str:
-        return (llm.chat_completion(
-            [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            json_mode=True,
-        ) or "").strip()
+    def _invoke(self, prompt: str) -> list[WorkerAssignment]:
+        """Ask for a plan, validated against the assignment schema.
 
-    @staticmethod
-    def _require_text(raw: str) -> str:
-        if raw.strip():
-            return raw
-        raise PlanningError("model returned empty content", raw)
+        json_mode rather than function_calling. This is the one call site that
+        needs a list of objects, and gpt-oss:120b does not reliably emit a tool
+        call for a list-of-objects schema here: it answers with prose or a bare
+        JSON array instead, and the binding then yields nothing. json_mode does
+        return parseable JSON, and because the schema constrains `worker` to the
+        real enum, an invented name is rejected rather than silently accepted.
+        Every other call site uses function_calling.
+        """
+        plan = get_chat_model(temperature=0).with_structured_output(
+            PlannerPlan, method="json_mode"
+        ).invoke(PLANNER_SYSTEM_PROMPT + "\n\n" + prompt)
 
-    def _parse(self, raw: str) -> tuple[list[WorkerAssignment] | None, str]:
-        payload = self._loads(raw)
-        if payload is None:
-            return None, "reply was not valid JSON"
-
-        items = payload if isinstance(payload, list) else None
-        if items is None and isinstance(payload, dict):
-            items = payload.get("assignments")
-        if not isinstance(items, list):
-            return None, "expected a JSON array of assignments"
-
-        assignments: list[WorkerAssignment] = []
-        seen: set[WorkerType] = set()
-        errors: list[str] = []
-
-        for index, item in enumerate(items):
-            try:
-                assignment = WorkerAssignment.model_validate(item)
-            except ValidationError as exc:
-                details = "; ".join(
-                    f"{'.'.join(str(p) for p in err['loc'])}: {err['msg']}"
-                    f" (got {err['input']!r})"
-                    for err in exc.errors()
-                )
-                errors.append(f"[{index}] {details}")
-                continue
-
-            if assignment.worker in seen:
-                continue
-            seen.add(assignment.worker)
-            assignments.append(assignment)
-
-        if not items:
-            return None, "assignment list was empty"
-        if errors:
-            return None, f"{len(errors)} assignment(s) failed validation: {'; '.join(errors)}"
-        if not assignments:
-            return None, "no valid assignments after de-duplication"
-        return assignments, ""
-
-    @staticmethod
-    def _loads(raw: str) -> Any:
-        text = raw.strip()
-        if text.startswith("```"):
-            text = text.strip("`")
-            if text.lower().startswith("json"):
-                text = text[4:]
-            text = text.strip()
-        try:
-            return json.loads(text)
-        except ValueError:
-            return None
+        if plan is None or not plan.assignments:
+            raise PlanningError("model returned no usable plan", "")
+        return list(plan.assignments)
 
     def _build_plan(
         self,

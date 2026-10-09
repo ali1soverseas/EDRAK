@@ -17,14 +17,15 @@ Rules:
 3. Only include workers that are relevant to the business objective. Do not invent workers.
 4. Keep each assignment bounded and concrete. Avoid broad "cover everything" goals.
 5. Do not author company profile, business context, parent_request_id, task_id, or timestamps. Those are stamped deterministically by the system.
-6. Prefer the minimal set that covers the stated objective and targets.
+  6. Prefer the minimal set that covers the stated objective and targets.
 
-Output format (exact JSON):
-[
-  {"worker": "competitor_intelligence", "goal": "...", "focus": "..."},
-  ...
-]
-"""
+  Output format (exact JSON):
+  {
+    "assignments": [
+      {"worker": "competitor_intelligence", "goal": "...", "focus": "..."}
+    ]
+  }
+  """
 
 REQUEST_BUILDER_SYSTEM_PROMPT = """You turn a user's business query into a structured EDRAK research request.
 
