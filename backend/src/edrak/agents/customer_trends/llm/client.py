@@ -119,6 +119,14 @@ async def structured_call[S: BaseModel](
     repair: bool = True,
 ) -> S:
     """Get a validated `schema` instance, with at most one repair attempt."""
+    # json_schema, not function_calling. Measured on the four schemas this
+    # worker sends, 10 first-attempt runs each with repair off, three times:
+    # 119/120 for this method against 11/120 for function_calling. The losing
+    # arm scored zero on every nested schema every run, and the only schema it
+    # ever returned was the only flat one. Do not switch this on intuition, and
+    # do not copy the market worker's json_mode choice: it disagrees here.
+    # Re-measure with llm/ab_structured_output.py after changing model,
+    # schemas, or langchain-ollama.
     runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
     base = [*messages, _schema_instruction(schema)]
     conversation = list(base)
