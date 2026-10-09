@@ -86,17 +86,6 @@ def _raw_text(raw: object) -> str:
     return content if isinstance(content, str) else json.dumps(content, ensure_ascii=False)
 
 
-def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
-    """Some hosted models ignore the `format` constraint, so the prompt states the schema too."""
-    return HumanMessage(
-        content=(
-            "Reply with only a JSON object that validates against this JSON schema, "
-            "with no prose and no code fences:\n"
-            + json.dumps(schema.model_json_schema(), ensure_ascii=False)
-        )
-    )
-
-
 def _parse[S: BaseModel](schema: type[S], parsed: object) -> S:
     if isinstance(parsed, schema):
         return parsed
@@ -111,8 +100,16 @@ async def structured_call[S: BaseModel](
     repair: bool = True,
 ) -> S:
     """Get a validated `schema` instance, with at most one repair attempt."""
-    runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
-    base = [*messages, _schema_instruction(schema)]
+    # function_calling, not json_schema: this method depends on `format=`, which
+    # Ollama Cloud ignores, so the model replies in prose, nothing parses, and
+    # the repair attempt below fails for the same reason.
+    #
+    # The schema is delivered through the tool definition, so the messages are
+    # passed through untouched. They used to be followed by an instruction to
+    # "reply with only a JSON object, no prose", which described the output in
+    # the terms the model would otherwise not use and so suppressed the call.
+    runnable = llm.with_structured_output(schema, method="function_calling", include_raw=True)
+    base = list(messages)
     conversation = list(base)
     attempts = 2 if repair else 1
     error: Exception | None = None
