@@ -226,7 +226,15 @@ def test_invented_number_is_rejected():
         "contradictions": [],
         "invented": ["$19"],
     }
-    with patch("edrak.verification.nodes._llm_review", return_value=review):
+    # _should_call_llm is opened as well as _llm_review. The gate skips the
+    # reviewer once the deterministic check has decided the claim either way,
+    # and this fixture is decided: the statement matches the evidence, and the
+    # "$19" being reported exists only in the review stub, not in the fixture.
+    # Without opening the gate the reviewer never runs and the behaviour under
+    # test is unreachable.
+    with patch("edrak.verification.nodes._llm_review", return_value=review), patch(
+        "edrak.verification.nodes._should_call_llm", return_value=True
+    ):
         result = run(payload)
 
     official = result.findings[0]
