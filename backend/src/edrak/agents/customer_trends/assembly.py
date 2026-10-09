@@ -258,6 +258,10 @@ def build_result(
         ),
         gaps=control.gaps,
         control_summary=control,
-        provenance=report,
+        provenance={
+            **provenance(deps),
+            "ending": ending,
+            "open_gaps": [gap.model_dump() for gap in gaps],
+        },
         created_at=datetime.now(UTC),
     )
