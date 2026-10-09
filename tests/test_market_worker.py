@@ -6,8 +6,12 @@ from edrak.agents.market_intelligence.graph import (
     task_router,
     worker_result_from_state,
 )
-from edrak.agents.market_intelligence.nodes import clean_json, output_node, task_planner
-from edrak.agents.market_intelligence.schemas import PlannedTask
+from edrak.agents.market_intelligence.nodes import output_node, task_planner
+from edrak.agents.market_intelligence.schemas import (
+    AnalysisClaim,
+    PlannedTask,
+    SearchQuery,
+)
 from edrak.agents.market_intelligence.state import empty_market_state
 from edrak.contracts import SourceType, WorkerResult, WorkerStatus, WorkerType
 
@@ -50,11 +54,6 @@ def test_task_router_loops_until_tasks_are_consumed():
     assert task_router(done) == "output_node"
 
 
-def test_clean_json_strips_fences():
-    raw = '```json\n{"useful": true}\n```'
-    assert json.loads(clean_json(raw)) == {"useful": True}
-
-
 def test_task_planner_falls_back_when_llm_returns_invalid_json(monkeypatch):
     from edrak.agents.market_intelligence import nodes
 
@@ -91,27 +90,6 @@ def test_output_node_builds_private_report_without_raw_docs():
 def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_research_task):
     from edrak.agents.market_intelligence import nodes
 
-    def fake_llm(prompt: str) -> str:
-        if "planning agent" in prompt:
-            return json.dumps({
-                "tasks": [
-                    {
-                        "id": 1,
-                        "description": "Identify current market size of AI coding assistants",
-                        "tool_hint": "tool_serper",
-                    }
-                ]
-            })
-        if "generating search arguments" in prompt:
-            return json.dumps({"queries": ["AI coding assistants market"]})
-        if "USEFUL for the research task" in prompt:
-            return json.dumps({"useful": True})
-        if "market research analyst" in prompt:
-            return json.dumps({
-                "claim": "Adoption of AI coding assistants is increasing among enterprise DevOps teams."
-            })
-        return "{}"
-
     def fake_structured(schema, _prompt, **_kwargs):
         """The bound-call seam. Returns schema instances, not JSON text."""
         if schema is nodes.TaskPlan:
@@ -123,11 +101,26 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
                     )
                 ]
             )
+        if schema is nodes.QueryArgs:
+            return nodes.QueryArgs(
+                queries=[SearchQuery(q="AI coding assistants market", language="en")]
+            )
         if schema is nodes.Usefulness:
             return nodes.Usefulness(useful=True)
+        if schema is nodes.AnalysisReply:
+            return nodes.AnalysisReply(
+                claims=[
+                    AnalysisClaim(
+                        claim=(
+                            "Adoption of AI coding assistants is increasing among "
+                            "enterprise DevOps teams."
+                        ),
+                        quote="Enterprise teams are adopting AI coding assistants.",
+                    )
+                ]
+            )
         return None
 
-    monkeypatch.setattr(nodes, "call_llm", fake_llm)
     monkeypatch.setattr(nodes, "call_structured", fake_structured)
     monkeypatch.setitem(nodes.TOOL_MAP, "tool_serper", _FakeTool())
     monkeypatch.setattr(

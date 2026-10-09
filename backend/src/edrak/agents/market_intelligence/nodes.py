@@ -65,30 +65,7 @@ def log_block(agent: str, title: str, body: str) -> None:
         log_action(agent, line)
 
 
-def call_llm(prompt: str) -> str:
-    """Call the shared Ollama model.
-
-    Raises once the retries are exhausted. It used to return a string reading
-    "[LLM ERROR: ...]", which was indistinguishable from a real model reply and
-    travelled on into JSON parsing and synthesis as though it were content.
-    """
-    last_error = "the model did not respond"
-    for attempt in range(3):
-        print(f"  Model call {attempt + 1}/3 ({settings.OLLAMA_MODEL})...")
-        try:
-            return str(
-                get_chat_model(agent="market", temperature=0).invoke(prompt).content
-            )
-        except Exception as exc:
-            last_error = f"{type(exc).__name__}: {exc}"
-            print(f"  [LLM ERROR] {last_error}")
-            log_action("market_intelligence", f"LLM ERROR: {last_error}")
-            if attempt < 2:
-                time.sleep(2 ** attempt)
-    raise RuntimeError(f"LLM call failed after 3 attempts: {last_error}")
-
-
-def call_structured(schema, prompt: str, *, method: str = "function_calling"):
+def call_structured(schema, prompt: str, *, method: str = "function_calling", retries: int = 1):
     """Ask for a validated `schema` instance, or None.
 
     `method` defaults to tool calling, which is what constrains output against
@@ -96,40 +73,23 @@ def call_structured(schema, prompt: str, *, method: str = "function_calling"):
     without a tool call, so a caller whose prompt already states the schema uses
     json_mode instead: that parses rather than enforces, and a reply that is
     not JSON fails rather than slipping through.
+
+    Retries, which replaces the retry loop the free-text helper used to own.
+    A schema call returns None rather than raising, so a caller cannot tell a
+    parse failure from an empty answer without this.
     """
-    try:
-        return get_chat_model(agent="market", temperature=0).with_structured_output(
-            schema, method=method
-        ).invoke(prompt)
-    except Exception as exc:
-        log_action("market_intelligence", f"structured call failed: {type(exc).__name__}")
-        return None
-
-
-def clean_json(raw: str) -> str:
-    """Strip markdown fences from an LLM response to get raw JSON."""
-    raw = raw.strip()
-    for fence in ("```json", "```JSON", "```"):
-        if raw.startswith(fence):
-            raw = raw[len(fence):]
-            break
-    if raw.endswith("```"):
-        raw = raw[:-3]
-    start = min(
-        (raw.find(c) for c in "{[" if c in raw),
-        default=0,
-    )
-    end_brace = raw.rfind("}")
-    end_bracket = raw.rfind("]")
-    end = max(end_brace, end_bracket) + 1
-    return raw[start:end].strip() if end > start else raw.strip()
-
-
-def parse_model(model, raw: str):
-    try:
-        return model.model_validate_json(clean_json(raw))
-    except (ValidationError, ValueError):
-        return None
+    last_error = "the model did not respond"
+    for attempt in range(max(retries, 1)):
+        try:
+            return get_chat_model(agent="market", temperature=0).with_structured_output(
+                schema, method=method
+            ).invoke(prompt)
+        except Exception as exc:
+            last_error = f"{type(exc).__name__}: {exc}"
+            log_action("market_intelligence", f"structured call failed: {last_error}")
+            if attempt < retries - 1:
+                time.sleep(2**attempt)
+    return None
 
 
 _STOPWORDS = {
