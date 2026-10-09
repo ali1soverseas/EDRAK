@@ -39,16 +39,23 @@ class StructuredOutputError(RuntimeError):
 
 def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
     """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
+    from edrak.core.llm import provider_key
+
     s = settings or get_settings()
-    if s.ollama_api_key is None or not s.ollama_api_key.get_secret_value():
-        raise LLMConfigError("OLLAMA_API_KEY is not set: add it to .env at the repository root")
+    # Resolved through the shared resolver so this worker gets its own quota,
+    # with the same backup-then-shared fallback every other component uses.
+    key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
+    if not key:
+        raise LLMConfigError(
+            f"{variable} is not set: add it to .env at the repository root"
+        )
     model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
     return ChatOllama(
         model=model or s.ollama_model,
         base_url=s.ollama_base_url,
         temperature=s.ollama_temperature,
         client_kwargs={
-            "headers": {"Authorization": f"Bearer {s.ollama_api_key.get_secret_value()}"},
+            "headers": {"Authorization": f"Bearer {key}"},
             "timeout": s.ollama_timeout_s,
         },
     )
