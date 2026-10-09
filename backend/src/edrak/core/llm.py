@@ -99,12 +99,21 @@ def ollama_key(agent: str | None = None) -> str:
     return key
 
 
+# A structured reply over a real evidence pool runs long: internal synthesis
+# reached 2048 on eight items and was cut off mid-string, which surfaces as a
+# JSON parse error rather than as a truncation. This leaves room for a reply
+# several times that size. It is a ceiling, not a target; temperature and the
+# schema decide the actual length.
+DEFAULT_NUM_PREDICT = 16384
+
+
 def get_chat_model(
     model: Optional[str] = None,
     *,
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
     base_url: Optional[str] = None,
+    num_predict: Optional[int] = None,
 ) -> ChatOllama:
     """The chat model every component uses.
 
@@ -115,7 +124,7 @@ def get_chat_model(
         model=model or settings.OLLAMA_MODEL,
         base_url=base_url or NATIVE_BASE_URL,
         temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
-        num_predict=2048,
+        num_predict=num_predict or DEFAULT_NUM_PREDICT,
         client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
     )
 
