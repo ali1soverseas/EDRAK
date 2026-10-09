@@ -75,7 +75,9 @@ def call_llm(prompt: str) -> str:
     for attempt in range(3):
         print(f"  Model call {attempt + 1}/3 ({settings.OLLAMA_MODEL})...")
         try:
-            return str(get_chat_model(agent="market").invoke(prompt).content)
+            return str(
+                get_chat_model(agent="market", temperature=0).invoke(prompt).content
+            )
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             print(f"  [LLM ERROR] {last_error}")
