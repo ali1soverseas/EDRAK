@@ -5,7 +5,7 @@ import re
 import time
 from datetime import datetime
 
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from edrak.agents.market_intelligence.prompts import (
     analysis_prompt,
@@ -17,6 +17,7 @@ from edrak.agents.market_intelligence.prompts import (
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
     AnalysisReply,
+    SearchQuery,
     TaskPlan,
     Usefulness,
 )
@@ -264,8 +265,14 @@ def _specs_from_queries(
     return specs
 
 
+class QueryArgs(BaseModel):
+    """The query list tool_arg_prompt asks for."""
+
+    queries: list[SearchQuery] = Field(default_factory=list)
+
+
 def search_arguments(
-    raw: str,
+    reply: QueryArgs | None,
     task: str,
     goal: str,
     attempt: int,
@@ -275,15 +282,7 @@ def search_arguments(
 ) -> dict:
     """Keep short keyword queries and stamp the brief's region, language, and recency."""
     scope = scope or scope_from_brief(goal, context)
-    try:
-        parsed = json.loads(clean_json(raw))
-    except json.JSONDecodeError:
-        parsed = None
-    raw_queries = None
-    if isinstance(parsed, dict):
-        raw_queries = parsed.get("queries")
-        if isinstance(raw_queries, str):
-            raw_queries = [raw_queries]
+    raw_queries = [item.model_dump() for item in reply.queries] if reply else None
     specs = _specs_from_queries(raw_queries, task, scope, seen)
     if not specs:
         fallback = [query for query in keyword_queries(task, goal, attempt) if query.lower() not in seen]
@@ -689,9 +688,8 @@ def task_executor(state: MarketAgentState) -> dict:
                     scope_note=scope.note(),
                     rejected_queries=rejected_queries,
                 )
-                raw_args = call_llm(arg_prompt)
                 tool_args = search_arguments(
-                    raw_args,
+                    call_structured(QueryArgs, arg_prompt, method="json_mode"),
                     task["description"],
                     goal,
                     attempt,
