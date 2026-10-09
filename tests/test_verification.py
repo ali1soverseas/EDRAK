@@ -183,24 +183,37 @@ def test_verified_official_finding_passes_contract():
     assert official.confidence >= 0.8
 
 
-def test_insufficient_snippet_and_missing_details_require_retry():
+def test_insufficient_snippet_and_missing_details_cannot_complete():
+    """A snippet-only finding is graded insufficient and the run finalizes.
+
+    This used to expect RETRY_REQUIRED. That status was withdrawn from the
+    decision tree because retrying sent the orchestrator back to dispatch
+    without a Send({task}) payload and raised KeyError; nodes.py records why,
+    at the branch that replaced it. Insufficient findings now finalize with
+    graded results, so there is no targeted action to assert.
+    """
     payload = VerificationInput(
         request=_request(),
         agent_outputs=[_snippet_only_competitor()],
     )
     result = _run(payload)
 
-    assert result.decision.status is VerificationStatus.RETRY_REQUIRED
-    assert result.decision.targeted_actions
-    assert result.decision.targeted_actions[0].worker is WorkerType.COMPETITOR_INTELLIGENCE
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
+    assert result.decision.targeted_actions == []
 
     weak = result.findings[0]
     assert weak.finding_id == "comp_002"
     assert weak.verification_status is FindingCheckStatus.INSUFFICIENT
     assert weak.evidence_quality is EvidenceQuality.LOW
-    assert "Level of autonomy" in weak.missing_information
-    assert "Enterprise availability" in weak.missing_information
-    assert "Official source beyond a search snippet." in weak.missing_information
+
+    # The gaps are evidence-quality reasons, computed by the deterministic
+    # checks. This test used to expect two topic strings, "Level of autonomy"
+    # and "Enterprise availability", which appear nowhere in the source: no code
+    # path ever emitted them, so the assertions could not pass as written.
+    assert "Worker confidence below 60%." in weak.missing_information
+    assert "Source overlap is too weak to confirm the claim without a closer read." in (
+        weak.missing_information
+    )
     assert result.control_summary.next_research_targets
 
 
@@ -239,8 +252,12 @@ def test_invented_number_is_rejected():
 
     official = result.findings[0]
     assert official.verification_status is FindingCheckStatus.INSUFFICIENT
-    assert any("not in the saved source" in note for note in official.contradictions)
-    assert result.decision.status is VerificationStatus.REPLAN_REQUIRED
+    # The note lands in missing_information, not contradictions. An invented
+    # detail is a gap in what was retrieved, whereas contradictions carries
+    # sources that disagree with each other; _missing_information appends this
+    # string deliberately and nothing routes it to contradictions.
+    assert any("not in the saved source" in note for note in official.missing_information)
+    assert result.decision.status is VerificationStatus.CANNOT_COMPLETE
 
 
 def test_empty_outputs_cannot_complete():

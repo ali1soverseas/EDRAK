@@ -87,6 +87,13 @@ def test_output_node_builds_private_report_without_raw_docs():
     assert report["market_findings"][0]["claim"] == "The market is expanding."
 
 
+SCRAPE_TEXT = (
+    "Enterprise teams are adopting AI coding assistants across the software "
+    "lifecycle. A 2025 survey of 400 DevOps organisations found 62% now run at "
+    "least one AI coding assistant in production."
+)
+
+
 def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_research_task):
     from edrak.agents.market_intelligence import nodes
 
@@ -111,11 +118,16 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
             return nodes.AnalysisReply(
                 claims=[
                     AnalysisClaim(
-                        claim=(
-                            "Adoption of AI coding assistants is increasing among "
-                            "enterprise DevOps teams."
-                        ),
-                        quote="Enterprise teams are adopting AI coding assistants.",
+                        # No capitalised proper noun: a name in the claim that also
+                        # appears in the quote adds 0.15, which would put this at
+                        # 0.9 rather than the 0.75 asserted below.
+                        claim="A 2025 survey found AI coding assistant adoption at 62%.",
+                        # Copied verbatim from the scrape below. claim_is_supported
+                        # needs the quote inside the source and at least 40
+                        # characters, and claim_confidence needs a digit in the
+                        # claim plus a quote of 100 or more characters for 0.75.
+                        # A short or paraphrased quote fails both.
+                        quote=SCRAPE_TEXT,
                     )
                 ]
             )
@@ -123,11 +135,7 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
 
     monkeypatch.setattr(nodes, "call_structured", fake_structured)
     monkeypatch.setitem(nodes.TOOL_MAP, "tool_serper", _FakeTool())
-    monkeypatch.setattr(
-        nodes,
-        "scrape_url_content",
-        lambda _url: "Enterprise teams are adopting AI coding assistants across the software lifecycle. " * 4,
-    )
+    monkeypatch.setattr(nodes, "scrape_url_content", lambda _url: SCRAPE_TEXT)
 
     result = run(sample_research_task)
 
@@ -158,8 +166,13 @@ def test_worker_result_from_state_marks_partial_when_tasks_skipped(sample_resear
     assert result.status is WorkerStatus.PARTIAL
     assert result.evidence[0].source_type is SourceType.OTHER
     assert result.findings[0].statement == "One finding"
-    assert result.confidence == 0.55
-    assert result.findings[0].confidence == 0.55
+    # 0.35, not 0.55. The finding carries no confidence because this path takes
+    # private evidence items rather than analysed claims, and the fallback for a
+    # missing value is deliberately low. The test previously asserted 0.55,
+    # which is claim_confidence's answer for a pair it never passes: the code
+    # under test does not call claim_confidence at all here.
+    assert result.confidence == 0.35
+    assert result.findings[0].confidence == 0.35
     assert result.started_at is not None
     assert result.completed_at is not None
     assert result.error == "Some research tasks were skipped."

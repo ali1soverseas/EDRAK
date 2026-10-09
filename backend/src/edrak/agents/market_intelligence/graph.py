@@ -162,6 +162,10 @@ def worker_result_from_state(
             evidence.append(ev)
             refs.append(EvidenceRef(evidence_id=ev.evidence_id))
         stored = item.get("confidence")
+        # A finding carries the confidence its analysis node computed. The
+        # fallback is deliberately low: this path receives private evidence
+        # items rather than analysed claims, so a missing value means nothing
+        # scored it, and claiming mid-confidence would overstate the finding.
         confidence_value = float(stored) if isinstance(stored, (int, float)) else 0.35
         findings.append(
             Finding(
