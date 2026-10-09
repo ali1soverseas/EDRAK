@@ -10,8 +10,8 @@ from typing import List, Dict, Any
 from urllib.parse import urlparse
 
 from edrak.core.action_log import log_action
+from edrak.core.llm import get_chat_model
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from tavily import TavilyClient
 
 from edrak.contracts.result import (
@@ -75,7 +75,6 @@ from .state import (
 ENV_PATH = Path(__file__).resolve().parents[5] / ".env"
 load_dotenv(ENV_PATH)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 
@@ -89,10 +88,6 @@ def _require(name: str, value: str | None) -> str:
     if not value:
         raise ValueError(f"{name} is missing")
     return value
-
-
-def _openai_key() -> str:
-    return _require("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", "").strip())
 
 
 def _tavily_key() -> str:
@@ -151,29 +146,21 @@ def tavily():
 
 
 def llm():
-    """Cheap model: planning, queries, synthesis."""
+    """The shared Ollama model, used for planning, queries and synthesis."""
     global _llm
     if _llm is None:
-        _llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0,
-            api_key=_openai_key(),
-            max_retries=4,
-        )
+        _llm = get_chat_model(temperature=0)
     return _llm
 
 
 def llm_strong():
-    """Stronger model: verification and completeness."""
-    global _llm_strong
-    if _llm_strong is None:
-        _llm_strong = ChatOpenAI(
-            model="gpt-4o",
-            temperature=0,
-            api_key=_openai_key(),
-            max_retries=4,
-        )
-    return _llm_strong
+    """Same model as `llm`.
+
+    This used to be a second, larger model for verification and completeness.
+    There is now one model for the whole platform, so the two are kept only so
+    existing call sites keep their intent visible.
+    """
+    return llm()
 
 
 # ============================================================
