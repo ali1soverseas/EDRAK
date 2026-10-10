@@ -8,9 +8,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend" / "src"))
-sys.path.insert(0, str(ROOT))
 
-from backend.src.edrak.contracts import (
+# Imported as edrak.*, not backend.src.edrak.*. The latter resolves the same
+# files through a second module identity, because there are no __init__.py files
+# at backend/ or backend/src/ to make it a real package. Two copies of one
+# module means BusinessRequest from this import is a different class from the
+# one the agents build, and pydantic refuses to treat one as the other.
+from edrak.contracts import (
     BusinessContext,
     BusinessRequest,
     CompanyProfile,
@@ -27,7 +31,7 @@ from backend.src.edrak.contracts import (
     WorkerStatus,
     WorkerType,
 )
-from backend.src.edrak.verification import run
+from edrak.verification import run
 
 
 def mock_request() -> BusinessRequest:

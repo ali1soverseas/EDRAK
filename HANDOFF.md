@@ -279,17 +279,47 @@ working shape for no gain in this merge, so `run_pipeline.py` was restored from
 `pre-merge-4feaaae` and only the `decision_analysis` output block was added
 back. Their reporting improvements can be ported deliberately later.
 
-### An unreferenced duplicate contracts tree came in
+### An unreferenced duplicate contracts tree came in — now removed
 
-Their branch adds a top-level `contracts/` package: 9 files, 1297 lines,
-duplicating `backend/src/edrak/contracts/`. **Nothing in the repo imports it** —
-no `from contracts.` or `import contracts` anywhere. The two copies already
-disagree: root `result.py` is 12,337 characters against the backend's 12,508.
+Their branch added a top-level `contracts/` package: 9 files, ~1000 lines,
+duplicating `backend/src/edrak/contracts/`. Nothing imported it, and it had
+already drifted from the canonical copy.
 
-Kept for now so the merge stays reviewable, but it should not be merged to
-`develop` as-is. Either delete it or make it a re-export shim of the backend
-package. Flagging rather than deciding, because it is their structure and the
-intent is not recoverable from the code.
+Compared file by file before deleting anything:
+
+| File | Root | Canonical | Verdict |
+|---|---|---|---|
+`base.py`, `evidence.py`, `request.py`, `task.py`, `verification.py`, `worker.py` | — | — | byte-identical |
+`CrossSignal.py` | 282 | 286 | canonical newer: filters on `verification_status != VERIFIED`, root only checked for an empty list |
+`result.py` | 253 | 257 | canonical newer: has `decision_analysis` |
+`__init__.py` | 74 | 114 | canonical exports 45 names, root 25 |
+
+**Nothing needed moving.** Of every name genuinely defined across those modules,
+zero were missing from the canonical package, so it was already sufficient. The
+root copy also imported *backwards*, `from backend.src.edrak.contracts.task
+import WorkerType`, which is evidence it was generated rather than authored.
+
+Deleted. `tests/test_contracts_location.py` now fails if a root `contracts/`
+package reappears, or if anything imports the canonical package through the
+wrong path.
+
+### A second module identity for the same contracts
+
+`scripts/run_verification.py` imported `from backend.src.edrak.contracts import
+...`. There are no `__init__.py` files at `backend/` or `backend/src/`, so that
+path resolved the *same files* under a second module name. Measured before the
+fix:
+
+```
+same module object         : False
+BusinessRequest same class : False
+```
+
+Two distinct classes for one schema, so an object built by an agent would be
+rejected by anything this module created — failing far from the import. It now
+imports `edrak.contracts`, which the script's existing `sys.path` entry already
+resolves. `CrossSignal/loader.py` had the same pattern in a usage string and was
+corrected.
 
 ### Verified after the merge
 

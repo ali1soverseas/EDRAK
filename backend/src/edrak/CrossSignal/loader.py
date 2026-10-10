@@ -3,16 +3,13 @@ from __future__ import annotations
 import asyncio
 import json
 import sys
-
 from pathlib import Path
 from typing import Any
 
 from ..contracts.CrossSignal import (
     CrossSignalInput,
 )
-
 from .graph import run_cross_signal
-
 
 # ============================================================
 # Convert Verification Payload
@@ -140,7 +137,7 @@ if __name__ == "__main__":
 
         raise SystemExit(
             "Usage: python -m "
-            "backend.src.edrak.CrossSignal.loader "
+            "edrak.CrossSignal.loader "
             "<verification_result.json>"
         )
 
