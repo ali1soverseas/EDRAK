@@ -150,15 +150,15 @@ def build_brief(
                 verdict = verdict_by_finding.get(vkey)
                 verdict_status = (
                     getattr(verdict.verification_status, "value", str(verdict.verification_status))
-                    if verdict
+                    if verdict and getattr(verdict, "verification_status", None)
                     else "unchecked"
                 )
-                verdict_verdict = (
-                    getattr(verdict.verdict, "value", str(verdict.verdict))
-                    if verdict
-                    else None
+                verdict_verdict = verdict_status if verdict else None
+                rel = (
+                    reliability_from_quality(verdict.evidence_quality)
+                    if verdict and getattr(verdict, "evidence_quality", None)
+                    else 1
                 )
-                rel = reliability_from_quality(verdict.evidence_quality) if verdict else 1
 
                 refs: list[dict[str, Any]] = []
                 for ref in f.evidence_refs:
@@ -267,16 +267,39 @@ def build_brief(
     # Synthesis
     synthesis = None
     if cross_signal:
-        summary_text = cross_signal.get("summary", "")
+        raw_summary = cross_signal.get("summary")
+        summary_text = ""
+        patterns_list: list[str] = []
+        themes_list: list[str] = []
+        impacts_list: list[str] = []
+
+        if isinstance(raw_summary, dict):
+            patterns_list = [str(p) for p in (raw_summary.get("dominant_patterns") or []) if str(p).strip()]
+            themes_list = [str(p) for p in (raw_summary.get("strategic_themes") or []) if str(p).strip()]
+            impacts_list = [str(p) for p in (raw_summary.get("business_impacts") or []) if str(p).strip()]
+            combined_items = patterns_list or themes_list or impacts_list
+            if combined_items:
+                summary_text = " ".join(combined_items)
+        elif isinstance(raw_summary, str):
+            summary_text = raw_summary
+
         signals = cross_signal.get("signals") or []
         sig_count = len(signals)
+        first_sig_title = ""
+        if signals and isinstance(signals[0], dict):
+            first_sig_title = signals[0].get("title", "")
+
         synthesis = {
             "statement": summary_text
             or (
                 f"Cross-signal analysis identified {sig_count} interconnected pattern(s) across intelligence domains."
             ),
-            "highlight": signals[0].get("title", "Strategic Convergence") if signals else "Market Convergence",
+            "highlight": first_sig_title or "Strategic Convergence",
             "support": f"Synthesized from {len(evidence_list)} verified evidence sources.",
+            "patterns": patterns_list,
+            "themes": themes_list,
+            "impacts": impacts_list,
+            "signals": signals[:4] if isinstance(signals, list) else [],
         }
 
     # Summary text
@@ -340,4 +363,6 @@ def build_brief(
         "gaps": gaps,
         "next_steps": next_steps,
         "synthesis": synthesis,
+        "cross_signal": cross_signal,
+        "decision_analysis": decision_analysis,
     }

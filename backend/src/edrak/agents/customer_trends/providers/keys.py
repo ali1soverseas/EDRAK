@@ -2,6 +2,9 @@
 
 import threading
 from collections.abc import Awaitable, Callable, Sequence
+from typing import TypeVar
+
+T = TypeVar("T")
 
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.base import (
@@ -52,7 +55,7 @@ class KeyRing:
             return False
 
 
-async def with_failover[T](ring: KeyRing, provider: str, attempt: Callable[[], Awaitable[T]]) -> T:
+async def with_failover(ring: KeyRing, provider: str, attempt: Callable[[], Awaitable[T]]) -> T:
     """Run `attempt`, moving to the next key when the current one is out of credit or rejected.
 
     Other failures pass straight through: a rate limit or a server error is not the key's fault.

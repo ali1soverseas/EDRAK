@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import uuid
 from datetime import datetime, timezone
 from typing import Any, Optional
 
@@ -251,53 +252,114 @@ class RunManager:
             registry = get_default_registry()
             graph = build_graph(registry)
 
-            # Invoke orchestration graph
+            # Invoke orchestration graph with live event streaming
             logger.info("Starting orchestration graph execution for analysis %s", analysis_id)
-            state = await graph.ainvoke({"request": request})
+            state: dict[str, Any] = {"request": request}
+
+            async for chunk in graph.astream({"request": request}, stream_mode="updates"):
+                for node_name, node_output in chunk.items():
+                    logger.info("LangGraph node [%s] completed", node_name)
+                    if not isinstance(node_output, dict):
+                        continue
+
+                    # Update local state
+                    for k, v in node_output.items():
+                        if k in ("results", "outcomes"):
+                            from edrak.orchestration.state import merge_by_task_id
+                            state[k] = merge_by_task_id(state.get(k) or [], v)
+                        else:
+                            state[k] = v
+
+                    now = now_iso()
+
+                    if node_name == "dispatch":
+                        dispatch_results = node_output.get("results") or []
+                        for wr in dispatch_results:
+                            for tv in run_view.tasks:
+                                if tv.worker == wr.worker:
+                                    is_success = wr.status in (WorkerStatus.COMPLETED, WorkerStatus.PARTIAL)
+                                    tv.state = "done" if is_success else "failed"
+                                    tv.progress = 100 if is_success else 0
+                                    tv.sources = len(wr.evidence)
+                                    tv.activity = f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources." if is_success else (wr.error or "Task failed")
+                                    tv.log.append(
+                                        {
+                                            "at": now,
+                                            "text": f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources.",
+                                        }
+                                    )
+                                    if not is_success:
+                                        tv.error = wr.error
+                                    await stream.emit("task_update", tv.model_dump(mode="json"))
+
+                    elif node_name == "verify":
+                        run_view.stage = "verify"
+                        run_view.verification = "running"
+                        await stream.emit("stage_change", {"stage": "verify"})
+                        await stream.emit("verification", {"status": "running"})
+
+                        v_res = node_output.get("verification_result")
+                        v_dec = node_output.get("verification")
+                        status_val = v_dec.status.value if v_dec else "assessed"
+                        findings_count = len(v_res.findings) if v_res else 0
+                        run_view.verification = "done"
+                        await stream.emit("verification", {"status": "done"})
+                        await stream.emit(
+                            "event",
+                            RunEvent(
+                                event_id=f"ev-{analysis_id}-verify-{uuid.uuid4().hex[:6]}",
+                                at=now,
+                                source="verification",
+                                kind="info",
+                                message=f"Verification completed: {findings_count} findings evaluated ({status_val}).",
+                            ).model_dump(mode="json"),
+                        )
+
+                    elif node_name == "replan":
+                        replan_tasks = node_output.get("replan_tasks") or []
+                        run_view.stage = "dispatch"
+                        await stream.emit("stage_change", {"stage": "dispatch"})
+                        for tv in run_view.tasks:
+                            if any(rt.worker == tv.worker for rt in replan_tasks):
+                                tv.state = "running"
+                                tv.progress = 50
+                                tv.activity = "Refining research on conflicting evidence"
+                                tv.log.append({"at": now, "text": "Re-dispatched for targeted refinement"})
+                                await stream.emit("task_update", tv.model_dump(mode="json"))
+                        await stream.emit(
+                            "event",
+                            RunEvent(
+                                event_id=f"ev-{analysis_id}-replan-{uuid.uuid4().hex[:6]}",
+                                at=now,
+                                source="supervisor",
+                                kind="warning",
+                                message=f"Re-planning targeted research for {len(replan_tasks)} worker(s) to resolve contradictions.",
+                            ).model_dump(mode="json"),
+                        )
+
+                    elif node_name in ("cross_signal", "decision_analysis"):
+                        run_view.stage = "synthesize"
+                        await stream.emit("stage_change", {"stage": "synthesize"})
+                        stage_label = (
+                            "Cross-domain signals" if node_name == "cross_signal" else "Strategic decision analysis"
+                        )
+                        await stream.emit(
+                            "event",
+                            RunEvent(
+                                event_id=f"ev-{analysis_id}-{node_name}-{uuid.uuid4().hex[:6]}",
+                                at=now,
+                                source=node_name,
+                                kind="info",
+                                message=f"{stage_label} synthesized successfully.",
+                            ).model_dump(mode="json"),
+                        )
+
+                    elif node_name == "finalize":
+                        run_view.stage = "brief"
+                        await stream.emit("stage_change", {"stage": "brief"})
 
             results = state.get("results") or []
-            res_by_worker = {r.worker: r for r in results}
-
-            # Update tasks progress
-            now = now_iso()
-            for tv in run_view.tasks:
-                wr = res_by_worker.get(tv.worker)
-                if wr:
-                    is_success = wr.status in (WorkerStatus.COMPLETED, WorkerStatus.PARTIAL)
-                    tv.state = "done" if is_success else "failed"
-                    tv.progress = 100 if is_success else 0
-                    tv.sources = len(wr.evidence)
-                    tv.activity = "Research complete" if is_success else (wr.error or "Task failed")
-                    tv.log.append(
-                        {
-                            "at": now,
-                            "text": f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources.",
-                        }
-                    )
-                    if not is_success:
-                        tv.error = wr.error
-                else:
-                    tv.state = "failed"
-                    tv.error = "No worker result produced"
-                await stream.emit("task_update", tv.model_dump(mode="json"))
-
-            # Stage 3: Verification
-            run_view.stage = "verify"
-            run_view.verification = "running"
-            await stream.emit("stage_change", {"stage": "verify"})
-            await stream.emit("verification", {"status": "running"})
-
             verification: Optional[VerificationResult] = state.get("verification_result")
-            run_view.verification = "done"
-            await stream.emit("verification", {"status": "done"})
-
-            # Stage 4: Synthesis
-            run_view.stage = "synthesize"
-            await stream.emit("stage_change", {"stage": "synthesize"})
-
-            # Stage 5: Finalize and generate Brief
-            run_view.stage = "brief"
-            await stream.emit("stage_change", {"stage": "brief"})
 
             orchestration_result: OrchestrationResult = state.get(
                 "orchestration_result"

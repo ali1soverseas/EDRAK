@@ -3,7 +3,7 @@
 import asyncio
 import json
 from collections.abc import Awaitable, Callable, Sequence
-from typing import Any, Literal
+from typing import Any, Literal, TypeVar
 
 import httpx
 import ollama
@@ -21,6 +21,9 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
+
+T = TypeVar("T")
+S = TypeVar("S", bound=BaseModel)
 
 Role = Literal["planner", "analyst", "writer", "branch"]
 
@@ -76,7 +79,7 @@ async def _sleep(seconds: float) -> None:
     await asyncio.sleep(seconds)
 
 
-async def invoke_with_retry[T](call: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
+async def invoke_with_retry(call: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
     """Await `call` with up to three attempts on transient errors only."""
     async for attempt in AsyncRetrying(
         retry=retry_if_exception(is_transient),
@@ -100,13 +103,13 @@ def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
     return HumanMessage(content=schema_instruction(schema)["content"])
 
 
-def _parse[S: BaseModel](schema: type[S], parsed: object) -> S:
+def _parse(schema: type[S], parsed: object) -> S:
     if isinstance(parsed, schema):
         return parsed
     return schema.model_validate(parsed)
 
 
-async def structured_call[S: BaseModel](
+async def structured_call(
     llm: BaseChatModel,
     schema: type[S],
     messages: Sequence[BaseMessage],

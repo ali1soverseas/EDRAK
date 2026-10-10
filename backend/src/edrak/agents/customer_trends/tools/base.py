@@ -9,7 +9,7 @@ on success and the same error `ToolResponse` on failure.
 import time
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, field, replace
-from typing import Any
+from typing import Any, TypeVar, Union
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, ValidationError
@@ -189,7 +189,10 @@ def _emit(
     )
 
 
-def finish_processing[R: ToolResponse | ProcessingResponse](
+R = TypeVar("R", bound=Union[ToolResponse, ProcessingResponse])
+
+
+def finish_processing(
     ctx: ToolContext, tool: str, inp: BaseModel, response: R, started: float
 ) -> R:
     """Emit the `tool_called` event of a processing tool and hand its response back."""

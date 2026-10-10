@@ -92,7 +92,7 @@ def _require(name: str, value: str | None) -> str:
 
 def _tavily_key() -> str:
     from edrak.core.llm import provider_key
-
+    load_dotenv(ENV_PATH, override=True)
     key, variable = provider_key("TAVILY_API_KEY", "competitor")
     return _require(variable, key)
 
@@ -143,14 +143,17 @@ _compat_httpx2_brotli()
 # restart, and so an unconfigured worker imports cleanly instead of raising
 # while the module loads.
 _tavily_client = None
+_tavily_client_key = None
 _llm = None
 _llm_strong = None
 
 
 def tavily():
-    global _tavily_client
-    if _tavily_client is None:
-        _tavily_client = TavilyClient(api_key=_tavily_key())
+    global _tavily_client, _tavily_client_key
+    current_key = _tavily_key()
+    if _tavily_client is None or _tavily_client_key != current_key:
+        _tavily_client = TavilyClient(api_key=current_key)
+        _tavily_client_key = current_key
     return _tavily_client
 
 
@@ -1629,8 +1632,46 @@ def search_node(
 
         except Exception as e:
             print(
-                f"Tavily error for '{query}': {e}"
+                f"Tavily error for '{query}': {e}. Attempting Serper fallback..."
             )
+            try:
+                serper_key = os.getenv("SERPER_API_KEY", "").strip()
+                if serper_key:
+                    resp = requests.post(
+                        "https://google.serper.dev/search",
+                        headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
+                        json={"q": query, "num": MAX_RESULTS_PER_QUERY},
+                        timeout=15,
+                    )
+                    if resp.status_code == 200:
+                        serper_data = resp.json()
+                        serper_items = serper_data.get("organic", [])
+                        print(f"Serper fallback results: {len(serper_items)}")
+                        for s_res in serper_items:
+                            url = normalize_url(s_res.get("link", ""))
+                            if not url or belongs_to_other_competitor(url, competitor):
+                                continue
+                            key = (competitor, url)
+                            if key in known:
+                                continue
+                            known[key] = {
+                                "competitor": competitor,
+                                "requirement_id": item.get("requirement_id", ""),
+                                "query": query,
+                                "purpose": item.get("purpose", ""),
+                                "search_type": strategy,
+                                "stage": stage,
+                                "title": s_res.get("title", ""),
+                                "url": url,
+                                "text": s_res.get("snippet", ""),
+                                "published_date": s_res.get("date"),
+                                "score": 0.8,
+                                "provider": "serper",
+                                "publisher": s_res.get("displayedLink", competitor),
+                            }
+                            added += 1
+            except Exception as serper_err:
+                print(f"Serper fallback error for '{query}': {serper_err}")
 
         executed.append(
             {
