@@ -274,6 +274,33 @@ def render_result(result: OrchestrationResult) -> None:
             if interpretation:
                 print(f"      interpretation: {interpretation}")
 
+    analysis = getattr(result, "decision_analysis", None)
+    if isinstance(analysis, dict) and analysis:
+        questions = (
+            analysis.get("question_recommendations")
+            or analysis.get("questions")
+            or []
+        )
+        status = analysis.get("status", "unknown")
+        print(f"  [decision_analysis] {status} ({len(questions)} recommendation(s))")
+        for index, item in enumerate(questions, start=1):
+            if isinstance(item, str):
+                question, recommendation = item, ""
+            else:
+                question = item.get("question") or item.get("decision_question") or ""
+                recommendation = item.get("recommendation") or ""
+                # recommendation is a nested object, not a string.
+                if isinstance(recommendation, dict):
+                    recommendation = (
+                        recommendation.get("summary")
+                        or recommendation.get("rationale")
+                        or recommendation.get("action")
+                        or ""
+                    )
+            print(f"  [decision_analysis] {index}. {question}".rstrip())
+            if recommendation:
+                print(f"      recommendation: {recommendation}")
+
 
 def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None:
     path = ARTIFACTS_DIR / f"{result.request_id}{suffix}.json"

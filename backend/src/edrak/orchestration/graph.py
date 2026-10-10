@@ -7,6 +7,7 @@ from .nodes import (
     cross_signal_node,
     exhausted_node,
     finalize_node,
+    make_decision_analysis_node,
     make_dispatch_worker,
     plan_node,
     replan_node,
@@ -30,6 +31,7 @@ def build_graph(registry: WorkerRegistry):
     graph.add_node("dispatch", make_dispatch_worker(registry))
     graph.add_node("verify", verification_gate_node)
     graph.add_node("cross_signal", cross_signal_node)
+    graph.add_node("decision_analysis", make_decision_analysis_node())
     graph.add_node("replan", replan_node)
     graph.add_node("exhausted", exhausted_node)
     graph.add_node("finalize", finalize_node)
@@ -55,13 +57,15 @@ def build_graph(registry: WorkerRegistry):
             "finalize": "finalize",
         },
     )
-    graph.add_edge("cross_signal", "finalize")
+    graph.add_edge("cross_signal", "decision_analysis")
+    graph.add_edge("decision_analysis", "finalize")
 
     # A replan routes back through the plan router because either shape needs a
     # dispatch. A targeted replan keeps the original task ids and narrows
-    # plan.tasks to the workers that contradicted, so it re-runs those workers
-    # only. The fallback replan mints a fresh plan with fresh task ids and
-    # clears the results. Going straight to verify would grade an empty result
+    # replan_tasks to the workers that contradicted, so it re-runs those workers
+    # only; the plan itself stays whole so the untouched workers' results remain
+    # attributable. The fallback replan mints a fresh plan with fresh task ids
+    # and clears the results. Going straight to verify would grade an empty result
     # set and loop until the limits ran out.
     graph.add_conditional_edges(
         "replan",

@@ -3,7 +3,9 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import logging
 from collections.abc import Callable
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -16,11 +18,120 @@ from ..contracts import (
     WorkerResult,
     WorkerStatus,
 )
+from ..contracts.CrossSignal import CrossSignalOutput
+from ..contracts.DecisionAnalysis import (
+    DecisionAnalysisInput,
+)
 from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
 from ..core.action_log import log_action
+from ..DecisionAnalysis.service import run_decision_analysis
 from .planner import LlmPlanner, PlanningError
 from .state import RESET, OrchestrationState
+
+logger = logging.getLogger(__name__)
+
+
+def make_decision_analysis_node():
+    """
+    Create the orchestrator's Decision Analysis node.
+
+    Expected input:
+        state["request"]
+        state["cross_signal"]
+
+    Output:
+        state["decision_analysis"]
+    """
+    print("\n[orchestrator] NODE: decision_analysis")
+    async def decision_analysis_node(
+        state: OrchestrationState,
+    ) -> dict[str, Any]:
+        raw_cross_signal = state.get("cross_signal")
+        request = state.get("request")
+    
+        if not raw_cross_signal:
+            message = (
+                "Decision Analysis skipped: Cross-Signal output "
+                "is missing."
+            )
+
+            logger.warning(message)
+
+            return {
+                "decision_analysis": None,
+                "error": message,
+            }
+
+        if request is None:
+            message = (
+                "Decision Analysis skipped: business request "
+                "is missing."
+            )
+
+            logger.error(message)
+
+            return {
+                "decision_analysis": None,
+                "error": message,
+            }
+
+        try:
+            if isinstance(raw_cross_signal, CrossSignalOutput):
+                cross_signal = raw_cross_signal
+            else:
+                cross_signal = CrossSignalOutput.model_validate(
+                    raw_cross_signal
+                )
+
+            if cross_signal.status.lower() != "completed":
+                raise ValueError(
+                    "Cross-Signal did not complete successfully. "
+                    f"Received status: {cross_signal.status!r}"
+                )
+
+            decision_input = DecisionAnalysisInput(
+                research_run_id=cross_signal.research_run_id,
+                business_request=request,
+                cross_signal=cross_signal,
+                metadata={
+                    "source_stage": "cross_signal",
+                    "orchestrator_stage": "decision_analysis",
+                },
+            )
+            print(
+                f"  [decision_analysis] running for run_id={decision_input.research_run_id}"
+            )
+            result = await run_decision_analysis(
+                decision_input=decision_input
+            )
+
+            dumped_result = result.model_dump(mode="json")
+
+            logger.info(
+                "Decision Analysis finished for run %s with status %s",
+                result.research_run_id,
+                result.status.value,
+            )
+
+            return {
+                "decision_analysis": dumped_result,
+            }
+
+        except Exception as exc:
+            logger.exception(
+                "Decision Analysis failed."
+            )
+
+            return {
+                "decision_analysis": None,
+                "error": (
+                    "Decision Analysis failed: "
+                    f"{type(exc).__name__}: {exc}"
+                ),
+            }
+
+    return decision_analysis_node
 
 
 def plan_node(state: OrchestrationState) -> OrchestrationState:
@@ -181,9 +292,23 @@ def finalize_node(state: OrchestrationState) -> OrchestrationState:
     plan = state.get("plan")
     results = state.get("results") or []
     error = state.get("error")
+    decision_analysis = state.get("decision_analysis")
 
-    any_failed = any(r.status is WorkerStatus.FAILED for r in results)
-    overall_status = RunStatus.PARTIAL if (any_failed or error) else RunStatus.COMPLETED
+    any_failed = any(
+        r.status is WorkerStatus.FAILED
+        for r in results
+    )
+
+    decision_analysis_failed = (
+        decision_analysis is None
+        and bool(state.get("cross_signal"))
+    )
+
+    overall_status = (
+        RunStatus.PARTIAL
+        if any_failed or error or decision_analysis_failed
+        else RunStatus.COMPLETED
+    )
 
     result = OrchestrationResult(
         request_id=request.request_id,
@@ -191,14 +316,22 @@ def finalize_node(state: OrchestrationState) -> OrchestrationState:
         plan=plan,
         results=results,
         cross_signal=state.get("cross_signal"),
-        error=error,
+        decision_analysis=decision_analysis,
+        error=(
+            error
+            or (
+                state.get("error")
+                if decision_analysis_failed
+                else None
+            )
+        ),
     )
+
     return {
         **state,
         "status": overall_status.value,
         "orchestration_result": result,
     }
-
 
 def _targeted_tasks(
     state: OrchestrationState,

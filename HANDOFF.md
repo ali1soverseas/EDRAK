@@ -211,6 +211,102 @@ Corrected locally, **not visible to anyone else**:
 If these should be shared, lift the ignore for `docs/` in a separate, explicit
 change and say so in the PR. Do not assume they propagated.
 
+## Merge result: `origin/feat/full_pipeline` merged 2026-10-10
+
+Merged into `feat/integration` with `--no-ff`. 34 conflicts, all resolved; the
+merge commit is on this branch and the pre-merge point remains tagged
+`pre-merge-4feaaae`.
+
+### How each conflict was decided, and why
+
+The rule was evidence, not preference: keep whichever side is correct for the
+code that actually ships now.
+
+| Area | Kept | Reason |
+|---|---|---|
+| `orchestration/nodes.py` `replan_node` | **ours** | Theirs is byte-identical to the version we replaced: full replan, `results: RESET` |
+| `orchestration/nodes.py` `finalize_node` | **theirs** | Wires `decision_analysis` into the run result |
+| `orchestration/state.py`, `graph.py` | **merged** | Both: `replan_tasks` and `decision_analysis` |
+| `verification/nodes.py` | **ours** | Theirs calls `get_llm_client()`, which no longer exists |
+| `market_intelligence/nodes.py` | **ours** | 13 hunks, two referencing `get_llm_client()` |
+| `CrossSignal/*`, `contracts/CrossSignal.py` | **ours** | Theirs hardcodes `gpt-4o-mini` and imports `ChatOpenAI` |
+| `contracts/result.py` | **theirs** | Adds `decision_analysis`; ours already had no change there |
+| `tests/*` | **ours** | Test our code, not the discarded version |
+| `.pyc`, `outputs/`, `logs/` | **deleted** | Run products; 47 files untracked, none on our side before |
+
+### The finding that decided several of those
+
+**`feat/full_pipeline` still calls an API this branch deleted.**
+`get_llm_client` and its `LLMClient` shim were removed during the Ollama
+migration, but that branch's `verification/nodes.py`, `market_intelligence/nodes.py`
+and `scripts/run_pipeline.py` still import it. Taking their side of those files
+would have produced `ImportError` at runtime, not a test failure — nothing in
+the suite exercises those imports.
+
+That branch also still carries OpenAI in four files: `CrossSignal/graph.py`
+(`from langchain_openai import ChatOpenAI`, `OPENAI_API_KEY`),
+`CrossSignal/state.py` (`model = "gpt-4o-mini"`),
+`competitor_intelligence/nodes.py`, and `DecisionAnalysis/nodes.py`. Ours wins
+in the first three. The fourth is the new agent, so it was ported rather than
+discarded — see below.
+
+Worth knowing: `langchain-openai` is **not in `requirements.txt`** but *is*
+present in `backend/.venv`, left over from before the migration. So
+`import langchain_openai` still succeeds locally and would fail on a clean
+install. Anything depending on that is passing for the wrong reason.
+
+### DecisionAnalysis ported to Ollama
+
+Their new stage arrived wired to OpenAI. Its own error message said
+"replace ChatOpenAI with EDRAK's configured LLM client", so this was a known
+loose end, not a design choice. Two changes:
+
+1. `get_chat_model(agent="orchestrator", temperature=0)` instead of
+   `ChatOpenAI(**model_kwargs)` built from `OPENAI_API_KEY`. The model is
+   `gpt-oss:120b` and it uses the per-agent credential scope.
+2. `json_schema` **plus `schema_instruction`**. The first live run failed
+   because `json_schema` alone let the model return the bare recommendations
+   array with no `{"question_recommendations": [...]}` wrapper, and pydantic
+   refused it. This is the same failure shape as cross-signal, now observed
+   twice. It parses correctly after the fix.
+
+### Their reporting overhaul was not taken
+
+`scripts/run_pipeline.py` gained ~165 lines of rendering on their side,
+restructuring `_render_human`. Their version also reintroduces the
+`get_llm_client` call. Taking it wholesale would have lost our renderer's
+working shape for no gain in this merge, so `run_pipeline.py` was restored from
+`pre-merge-4feaaae` and only the `decision_analysis` output block was added
+back. Their reporting improvements can be ported deliberately later.
+
+### An unreferenced duplicate contracts tree came in
+
+Their branch adds a top-level `contracts/` package: 9 files, 1297 lines,
+duplicating `backend/src/edrak/contracts/`. **Nothing in the repo imports it** —
+no `from contracts.` or `import contracts` anywhere. The two copies already
+disagree: root `result.py` is 12,337 characters against the backend's 12,508.
+
+Kept for now so the merge stays reviewable, but it should not be merged to
+`develop` as-is. Either delete it or make it a re-export shim of the backend
+package. Flagging rather than deciding, because it is their structure and the
+intent is not recoverable from the code.
+
+### Verified after the merge
+
+- 35 passed (was 33; their 2 DecisionAnalysis tests added).
+- All 17 conflicted modules compile and import.
+- Live run exits 1 with all four workers producing findings, 118/118 evidence
+  references resolving.
+- Targeted replan confirmed working in the merged pipeline: **5 dispatches
+  instead of 12**, re-running only `competitor_intelligence` for its one
+  contradiction.
+
+The health check reports `FAIL` on two counts, both expected on this run:
+status `partial`, and cross-signal absent because verification returned
+`replan_required`, which routes to replan rather than cross-signal. When
+verification passes, cross-signal and decision-analysis both run. This is
+pre-existing routing, not merge damage.
+
 ## Known issues, ranked
 
 1. **customer-trends is intermittent.** Two consecutive runs of the same query

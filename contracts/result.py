@@ -267,10 +267,6 @@ class OrchestrationResult(ContractModel):
         default=None,
         description="Validated CrossSignalOutput serialized as JSON, if verification succeeded.",
     )
-    decision_analysis: dict[str, Any] | None = Field(
-        default=None,
-        description="DecisionAnalysisResult serialized as JSON, if that stage ran.",
-    )
     error: str | None = Field(default=None, description="Run-level failure detail.")
     completed_at: datetime = Field(
         default_factory=utcnow,

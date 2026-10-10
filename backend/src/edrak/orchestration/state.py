@@ -54,6 +54,7 @@ class OrchestrationState(TypedDict, total=False):
     verification: VerificationDecision | None
     verification_result: VerificationResult | None
     cross_signal: dict[str, Any] | None
+    decision_analysis: dict[str, Any] | None
     replan_count: int
     status: str | None
     error: str | None

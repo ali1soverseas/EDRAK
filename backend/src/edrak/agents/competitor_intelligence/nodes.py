@@ -103,6 +103,12 @@ def _banner(title: str) -> None:
     print("=" * 80)
 
 
+def _banner(title: str) -> None:
+    print("\n" + "=" * 80)
+    print(f"[competitor_intelligence] {title}")
+    print("=" * 80)
+
+
 def _compat_httpx2_brotli() -> None:
     """google-brotli process() rejects the keyword httpx2 always passes."""
     try:
