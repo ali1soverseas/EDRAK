@@ -73,7 +73,7 @@ def build_graph(registry: WorkerRegistry):
         {"dispatch": "dispatch", "finalize_failed": "finalize"},
     )
 
-    graph.add_edge("exhausted", "finalize")
+    graph.add_edge("exhausted", "cross_signal")
     graph.add_edge("finalize", END)
 
     return graph.compile()

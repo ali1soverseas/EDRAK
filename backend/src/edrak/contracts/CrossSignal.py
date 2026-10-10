@@ -63,46 +63,51 @@ def build_cross_signal_input(
     """
     Convert Verification output into the canonical Cross-Signal input.
 
-    Cross-Signal is not allowed to run against an unsuccessful
-    verification stage.
+    Cross-Signal needs at least one finding that passed verification, and
+    nothing else. Two statuses qualify: VERIFIED outright, and REPLAN_REQUIRED,
+    which means the orchestrator ran out of replans while some findings still
+    conflicted. Discarding the whole run there would throw away verified
+    evidence over one unresolvable pricing discrepancy, and the stage below
+    only ever sees VERIFIED findings anyway.
+
+    CANNOT_COMPLETE is rejected, and so is a payload with no verified findings:
+    that status is only produced when nothing passed.
     """
 
-    if (
-        verification_result.decision.status
-        != VerificationStatus.VERIFIED
-    ):
+    verified = [
+        finding
+        for finding in verification_result.findings
+        if finding.verification_status == FindingCheckStatus.VERIFIED
+    ]
+
+    allowed_statuses = (
+        VerificationStatus.VERIFIED,
+        VerificationStatus.REPLAN_REQUIRED,
+    )
+    if verification_result.decision.status not in allowed_statuses:
         raise ValueError(
             "Cross-Signal cannot run because verification "
             "did not complete successfully."
         )
 
-    if any(
-        finding.verification_status != FindingCheckStatus.VERIFIED
-        for finding in verification_result.findings
-    ):
+    if not verified:
         raise ValueError(
-            "Cross-Signal cannot run because one or more findings "
-            "did not pass verification."
+            "Cross-Signal cannot run because no finding passed verification."
         )
-
-    verified_findings = [
-        finding
-        for finding in verification_result.findings
-        if finding.verification_status
-        == FindingCheckStatus.VERIFIED
-    ]
+    # No gate on unverified findings: they are filtered out above, so this
+    # input can only ever carry findings that passed.
 
     return CrossSignalInput(
         research_run_id=verification_result.research_run_id,
         business_request=request,
-        verified_findings=verified_findings,
+        verified_findings=verified,
         metadata={
             "source_stage": "verification",
             "total_findings": len(
                 verification_result.findings
             ),
             "verified_findings": len(
-                verified_findings
+                verified
             ),
             "verification_completed_at": (
                 verification_result.completed_at.isoformat()

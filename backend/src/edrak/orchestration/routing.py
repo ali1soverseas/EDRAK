@@ -74,7 +74,15 @@ def decide_after_verification(state: OrchestrationState) -> str:
 
     if status is VerificationStatus.REPLAN_REQUIRED:
         if (state.get("replan_count") or 0) >= settings.MAX_REPLANS:
-            return "exhausted"
+            # Out of replans, but not out of signal. One contradictory finding
+            # used to send the whole run straight to finalize, which threw away
+            # cross_signal and decision_analysis even though the remaining
+            # findings were verified and usable. Both stages only ever receive
+            # VERIFIED findings, so they are safe to run on a partial set; the
+            # contract gate accepts REPLAN_REQUIRED when at least one finding
+            # passed. CANNOT_COMPLETE keeps going to finalize, because that
+            # status means nothing verified at all.
+            return "cross_signal"
         return "replan"
 
     return "finalize"
