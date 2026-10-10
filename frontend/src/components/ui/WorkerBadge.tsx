@@ -10,7 +10,7 @@ interface WorkerBadgeProps {
 }
 
 export function WorkerBadge({ worker, large = false, iconSize }: WorkerBadgeProps) {
-  const meta = WORKER_META[worker];
+  const meta = WORKER_META[worker] || WORKER_META.competitor_intelligence;
   return (
     <span className={`wk ${meta.css} ${large ? "lg" : ""}`.trim()}>
       <Icon name={meta.icon} size={iconSize ?? (large ? 19 : 15)} />

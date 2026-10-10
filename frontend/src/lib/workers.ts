@@ -20,6 +20,12 @@ export const WORKER_META: Record<WorkerType, WorkerMeta> = {
 };
 
 /** Short key used in translation keys, for example `worker.name.int`. */
-export function workerKey(worker: WorkerType): "int" | "comp" | "mkt" | "cust" {
-  return WORKER_META[worker].css;
+export function workerKey(worker?: string | null): "int" | "comp" | "mkt" | "cust" {
+  if (worker && worker in WORKER_META) {
+    return WORKER_META[worker as WorkerType].css;
+  }
+  if (worker?.includes("market")) return "mkt";
+  if (worker?.includes("internal")) return "int";
+  if (worker?.includes("customer") || worker?.includes("trend")) return "cust";
+  return "comp";
 }

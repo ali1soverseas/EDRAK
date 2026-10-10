@@ -111,55 +111,152 @@ export function FindingsCard({ brief }: { brief: Brief }) {
   const { t } = useI18n();
   const reported = brief.lenses.filter((lens) => !lens.failed).length;
   const synthesis = brief.synthesis;
+  const count = brief.lenses.length;
 
-  let titleKey: TKey;
-  if (reported < brief.lenses.length) titleKey = "brief.sec.2.titlePartial";
-  else titleKey = "brief.sec.2.title";
+  let titleText: string;
+  if (reported < count) {
+    titleText = t("brief.sec.2.titlePartial", { reported, total: count });
+  } else {
+    const specificKey = `brief.sec.2.title.${count}` as TKey;
+    const localized = t(specificKey);
+    titleText = localized && localized !== specificKey ? localized : t("brief.sec.2.title", { n: count });
+  }
 
-  const highlight = synthesis && synthesis.statement.includes(synthesis.highlight) ? synthesis.statement.indexOf(synthesis.highlight) : -1;
+  const statement = typeof synthesis?.statement === "string" ? synthesis.statement : "";
+  const highlightTerm = typeof synthesis?.highlight === "string" ? synthesis.highlight : "";
+  const highlight = highlightTerm && statement.includes(highlightTerm) ? statement.indexOf(highlightTerm) : -1;
+
+  const patterns = synthesis?.patterns || [];
+  const signals = synthesis?.signals || [];
+  const impacts = synthesis?.impacts || [];
 
   return (
     <div className="col bc-fill">
-      <div className="row as jb bc-a bc-head">
+      <div className="row as jb bc-head">
         <div className="col g8">
           <div className="eyebrow tb">{t("brief.sec.2.eyebrow")}</div>
           <h2 className="disp" style={{ fontSize: 34, margin: 0, maxWidth: 1000 }}>
-            {titleKey === "brief.sec.2.titlePartial" ? t(titleKey, { reported, total: brief.lenses.length }) : t(titleKey)}
+            {titleText}
           </h2>
         </div>
         <div className="col g6" style={{ alignItems: "flex-end", paddingTop: 6 }}>
           <span className="s13 t3">{t("brief.sec.2.note")}</span>
         </div>
       </div>
-      <div className="row bc-b lens-row">
+      <div className="row lens-row">
         {brief.lenses.map((lens) => (
           <LensCard key={lens.worker} lens={lens} analysisId={brief.analysis_id} />
         ))}
       </div>
       {synthesis && (
-        <div className="card inkc row g20 bc-c synthesis">
-          <div className="col g8" style={{ width: 200, flex: "none" }}>
-            <span className="row jc" style={{ width: 32, height: 32, borderRadius: 10, background: "var(--mark)", color: "var(--ink)" }}>
-              <Icon name="sparkle" size={17} />
-            </span>
-            <span className="mono" style={{ color: "#8D8FC0" }}>
-              {t("brief.synthesis")}
-            </span>
+        <div className="synthesis-card">
+          <div className="synthesis-head">
+            <div className="synthesis-badge">
+              <span className="synthesis-badge-icon">
+                <Icon name="sparkle" size={13} />
+              </span>
+              <span>{t("brief.synthesis.badge")}</span>
+            </div>
+            <div className="synthesis-meta-tags">
+              {signals.length > 0 && (
+                <span className="synthesis-pill">
+                  <Icon name="layers" size={13} />
+                  <span>{signals.length} {t("brief.synthesis.signals")}</span>
+                </span>
+              )}
+              {synthesis.support && (
+                <span className="synthesis-pill">
+                  <Icon name="shield" size={13} />
+                  <span>{synthesis.support}</span>
+                </span>
+              )}
+            </div>
           </div>
-          <div className="serif grow" dir="auto" style={{ fontSize: 22, lineHeight: 1.4, color: "#F4F3EE" }}>
-            {highlight < 0 ? (
-              synthesis.statement
-            ) : (
-              <>
-                {synthesis.statement.slice(0, highlight)}
-                <span className="synth-mark">{synthesis.highlight}</span>
-                {synthesis.statement.slice(highlight + synthesis.highlight.length)}
-              </>
-            )}
+
+          <div className="synthesis-statement-wrap">
+            <div className="serif synthesis-main-text" dir="auto">
+              {highlight < 0 ? (
+                statement
+              ) : (
+                <>
+                  {statement.slice(0, highlight)}
+                  <span className="synth-mark">{highlightTerm}</span>
+                  {statement.slice(highlight + highlightTerm.length)}
+                </>
+              )}
+            </div>
           </div>
-          <div className="s13" dir="auto" style={{ width: 240, flex: "none", color: "#B9B7D6" }}>
-            {synthesis.support}
-          </div>
+
+          {(patterns.length > 0 || signals.length > 0 || impacts.length > 0) && (
+            <div className="synthesis-grid">
+              {patterns.length > 0 && (
+                <div className="synthesis-item-box" style={{ gridColumn: patterns.length > 0 && signals.length === 0 ? "1 / -1" : undefined }}>
+                  <div className="synthesis-subheading">
+                    <Icon name="trend" size={13} />
+                    <span>{t("brief.synthesis.patterns")}</span>
+                  </div>
+                  <div className="synthesis-patterns-list">
+                    {patterns.slice(0, 4).map((p, idx) => (
+                      <div key={idx} className="synthesis-pattern-row" dir="auto">
+                        <span className="synthesis-pattern-dot" />
+                        <span>{p}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {signals.length > 0 && (
+                <div className="synthesis-item-box">
+                  <div className="synthesis-subheading">
+                    <Icon name="activity" size={13} />
+                    <span>{t("brief.synthesis.signals")}</span>
+                  </div>
+                  <div className="synthesis-patterns-list">
+                    {signals.slice(0, 3).map((sig, idx) => (
+                      <div key={sig.signal_id || idx} className="col g4" style={{ padding: "6px 0", borderBottom: idx < Math.min(signals.length, 3) - 1 ? "1px solid rgba(255, 255, 255, 0.06)" : undefined }}>
+                        <div className="row jb ac g8 wrap">
+                          <span className="b6 s13" style={{ color: "#F1F5F9" }} dir="auto">{sig.title}</span>
+                          {sig.tension_or_alignment && (
+                            <Chip
+                              tone={sig.tension_or_alignment.toLowerCase().includes("align") ? "ok" : "warn"}
+                              style={{ height: 18, fontSize: 10, padding: "0 6px" }}
+                            >
+                              {sig.tension_or_alignment.toLowerCase().includes("align")
+                                ? t("brief.synthesis.alignment")
+                                : t("brief.synthesis.tension")}
+                            </Chip>
+                          )}
+                        </div>
+                        {sig.description && (
+                          <div className="s12 lh14" style={{ color: "rgba(226, 232, 240, 0.75)" }} dir="auto">
+                            {sig.description}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {impacts.length > 0 && (
+                <div className="synthesis-item-box" style={{ gridColumn: "1 / -1" }}>
+                  <div className="synthesis-subheading">
+                    <Icon name="target" size={13} />
+                    <span>{t("brief.synthesis.impacts")}</span>
+                  </div>
+                  <div className="synthesis-chips-row">
+                    {impacts.slice(0, 6).map((imp, idx) => (
+                      <span key={idx} className="synthesis-impact-chip" dir="auto">
+                        <Icon name="check" size={12} stroke={2.2} />
+                        <span>{imp}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

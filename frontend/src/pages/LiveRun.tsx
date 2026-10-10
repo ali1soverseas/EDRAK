@@ -171,7 +171,18 @@ function VerificationCard({ run }: { run: RunView }) {
 
 function EventRow({ event }: { event: RunEvent }) {
   const { t, formatTime } = useI18n();
-  const source = event.source === "supervisor" ? t("run.log.supervisor") : t(`worker.label.${workerKey(event.source)}` as TKey);
+  let source = event.source;
+  if (event.source === "supervisor") {
+    source = t("run.log.supervisor");
+  } else if (event.source === "verification") {
+    source = "Verification Gate";
+  } else if (event.source === "cross_signal") {
+    source = "Cross-Signal Synthesis";
+  } else if (event.source === "decision_analysis") {
+    source = "Strategic Decision Analysis";
+  } else if (event.source in WORKER_META) {
+    source = t(`worker.label.${workerKey(event.source)}` as TKey);
+  }
   const callout = event.callout;
   const isDecision = event.kind === "failure" || event.kind === "decision";
 
@@ -271,6 +282,15 @@ export function LiveRun() {
     });
     return unsub;
   }, [id, data?.state]);
+
+  useEffect(() => {
+    if (data && (data.state === "completed" || data.state === "partial") && data.brief_id) {
+      const timer = setTimeout(() => {
+        navigate(`/briefs/${data.brief_id}`);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [data?.state, data?.brief_id, navigate]);
 
   const crumbs = [
     { label: t("nav.analyses"), to: "/" },

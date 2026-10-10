@@ -195,8 +195,8 @@ export type RunEventKind = "info" | "gap" | "replan" | "failure" | "decision";
 export interface RunEvent {
   event_id: string;
   at: string;
-  /** "supervisor" for control-plane events, otherwise the worker. */
-  source: "supervisor" | WorkerType;
+  /** "supervisor" for control-plane events, otherwise the worker or stage. */
+  source: "supervisor" | WorkerType | "verification" | "cross_signal" | "decision_analysis" | string;
   kind: RunEventKind;
   message: string;
   /** Extra callout under the message (a re-plan, or a Supervisor decision). */
@@ -244,12 +244,23 @@ export interface BriefOption {
   would_change_if: string;
 }
 
-/** The cross-signal hypothesis. Optional: the contracts have no synthesis object yet. */
+/** The cross-signal hypothesis and synthesis structure. */
 export interface BriefSynthesis {
   statement: string;
   highlight: string;
   /** Support line, for example "A hypothesis backed by four independent lines of evidence." */
   support: string;
+  patterns?: string[];
+  themes?: string[];
+  impacts?: string[];
+  signals?: Array<{
+    signal_id?: string;
+    title: string;
+    description: string;
+    tension_or_alignment?: string;
+    confidence?: number;
+    primary_domains?: string[];
+  }>;
 }
 
 export type SourceNoteKind =
