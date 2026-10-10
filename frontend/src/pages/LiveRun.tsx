@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StageTracker } from "../components/RunStatus";
 import { PageChrome } from "../components/shell/AppShell";
@@ -12,6 +12,7 @@ import { useNow, usePolled } from "../lib/hooks";
 import { USE_CASE_META } from "../lib/usecases";
 import { WORKER_META, workerKey } from "../lib/workers";
 import { api } from "../services/api";
+import { subscribeToRun } from "../services/sse";
 import type { RunEvent, RunTaskView, RunView } from "../types/app";
 
 const POLL_MS = 1500;
@@ -259,6 +260,17 @@ export function LiveRun() {
   const [opened, setOpened] = useState<Record<string, boolean>>({});
   const [cancelling, setCancelling] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!id || (data && data.state !== "running")) return;
+    const unsub = subscribeToRun(id, {
+      onStageChange: () => run.reload(),
+      onTaskUpdate: () => run.reload(),
+      onVerification: () => run.reload(),
+      onComplete: () => run.reload(),
+    });
+    return unsub;
+  }, [id, data?.state]);
 
   const crumbs = [
     { label: t("nav.analyses"), to: "/" },

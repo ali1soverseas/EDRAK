@@ -25,7 +25,7 @@ const PLATFORMS: Array<{ id: SocialPlatform; name: string; glyph: string; placeh
 
 const platformOf = (id: SocialPlatform) => PLATFORMS.find((platform) => platform.id === id)!;
 
-const ACCEPT = ".pdf,.doc,.docx,.txt,.md,.csv";
+const ACCEPT = ".pdf,.doc,.docx,.txt,.md,.csv,.json";
 
 function PlatformBadge({ platform, small = false }: { platform: SocialPlatform; small?: boolean }) {
   return (
@@ -102,26 +102,33 @@ function DocumentRow({ doc, onRemove }: { doc: CompanyDocument; onRemove: () => 
         <div className="b6 s13 ellip">{doc.filename}</div>
         <div className="s12 t3">{documentSubtitle(doc, t, formatNumber)}</div>
       </div>
-      {doc.status === "indexed" && (
-        <Chip tone="ok" icon="check">
-          {t("company.docs.indexed")}
-        </Chip>
-      )}
-      {doc.status === "indexing" && (
-        <Chip tone="run" icon="refresh" spinning>
-          {t("company.docs.indexing")}
-        </Chip>
-      )}
-      {doc.status === "failed" && (
-        <>
+      <div className="row g6" style={{ alignItems: "center", flexShrink: 0 }}>
+        {doc.status === "indexed" && (
+          <Chip tone="ok" icon="check">
+            {t("company.docs.indexed")}
+          </Chip>
+        )}
+        {doc.status === "indexing" && (
+          <Chip tone="run" icon="refresh" spinning>
+            {t("company.docs.indexing")}
+          </Chip>
+        )}
+        {doc.status === "failed" && (
           <Chip tone="bad" icon="x">
             {t("company.docs.failedChip")}
           </Chip>
-          <button type="button" className="btn sm ghost icon" aria-label={t("common.remove", { name: doc.filename })} onClick={onRemove}>
-            <Icon name="x" size={15} />
-          </button>
-        </>
-      )}
+        )}
+        <button
+          type="button"
+          className="btn sm ghost icon"
+          style={{ width: 28, height: 28, padding: 0 }}
+          aria-label={t("common.remove", { name: doc.filename })}
+          title={t("common.remove", { name: doc.filename })}
+          onClick={onRemove}
+        >
+          <Icon name="x" size={15} />
+        </button>
+      </div>
     </div>
   );
 }
@@ -138,6 +145,7 @@ export function Company() {
   const [nameError, setNameError] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [docsCollapsed, setDocsCollapsed] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -169,6 +177,18 @@ export function Company() {
     if (list.length === 0) return;
     const added = await api.uploadDocuments(list);
     setDocuments((current) => [...current, ...added]);
+
+    // If any JSON profile was uploaded, auto-reload form fields
+    if (list.some((f) => f.name.toLowerCase().endsWith(".json"))) {
+      try {
+        const updated = await api.getCompany();
+        const { documents: _d, completed, ...rest } = updated;
+        setFields(rest);
+        setWasCompleted(completed);
+      } catch {
+        // ignore
+      }
+    }
   };
 
   const onDrop = (event: DragEvent) => {
@@ -408,61 +428,87 @@ export function Company() {
           </section>
 
           <section className="card col" style={{ padding: "20px 22px", gap: 12 }}>
-            <div className="row g10">
-              <WorkerBadge worker="internal_intelligence" large iconSize={17} />
-              <div>
-                <div className="b6 s15">{t("company.files.title")}</div>
-                <div className="s12 t3">{t("company.files.sub")}</div>
-              </div>
-            </div>
             <div
-              className={`dropzone ${dragging ? "over" : ""}`.trim()}
-              onDragOver={(event) => {
-                event.preventDefault();
-                setDragging(true);
-              }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={onDrop}
+              className="row jb"
+              style={{ alignItems: "center", cursor: "pointer", userSelect: "none" }}
+              onClick={() => setDocsCollapsed((v) => !v)}
             >
-              <span className="doc-icon">
-                <Icon name="upload" size={17} />
-              </span>
-              <div className="grow">
-                <div className="b6 s13">
-                  {t("company.files.drop")}{" "}
-                  <button type="button" className="link" onClick={() => fileInput.current?.click()}>
-                    {t("company.files.browse")}
-                  </button>
+              <div className="row g10" style={{ alignItems: "center" }}>
+                <WorkerBadge worker="internal_intelligence" large iconSize={17} />
+                <div>
+                  <div className="b6 s15">
+                    {t("company.files.title")}{" "}
+                    {documents.length > 0 && <span className="t3 s13">({documents.length})</span>}
+                  </div>
+                  <div className="s12 t3">{t("company.files.sub")}</div>
                 </div>
-                <div className="s12 t3">{t("company.files.types")}</div>
               </div>
-              <input
-                ref={fileInput}
-                type="file"
-                className="sr-only"
-                multiple
-                accept={ACCEPT}
-                tabIndex={-1}
-                aria-label={t("company.files.browse")}
-                onChange={(event) => {
-                  void upload(event.target.files ?? []);
-                  event.target.value = "";
+              <button
+                type="button"
+                className="btn sm ghost icon"
+                aria-label={docsCollapsed ? "Expand files" : "Minimize files"}
+                title={docsCollapsed ? "Expand files" : "Minimize files"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDocsCollapsed((v) => !v);
                 }}
-              />
+              >
+                <Icon name={docsCollapsed ? "chevronDown" : "chevronUp"} size={16} />
+              </button>
             </div>
-            {documents.length > 0 && (
-              <div className="col g8">
-                {documents.map((doc) => (
-                  <DocumentRow
-                    key={doc.document_id}
-                    doc={doc}
-                    onRemove={() => {
-                      setDocuments((current) => current.filter((candidate) => candidate.document_id !== doc.document_id));
-                      void api.removeDocument(doc.document_id);
+
+            {!docsCollapsed && (
+              <>
+                <div
+                  className={`dropzone ${dragging ? "over" : ""}`.trim()}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={onDrop}
+                >
+                  <span className="doc-icon">
+                    <Icon name="upload" size={17} />
+                  </span>
+                  <div className="grow">
+                    <div className="b6 s13">
+                      {t("company.files.drop")}{" "}
+                      <button type="button" className="link" onClick={() => fileInput.current?.click()}>
+                        {t("company.files.browse")}
+                      </button>
+                    </div>
+                    <div className="s12 t3">PDF, DOCX, TXT, MD, JSON</div>
+                  </div>
+                  <input
+                    ref={fileInput}
+                    type="file"
+                    className="sr-only"
+                    multiple
+                    accept={ACCEPT}
+                    tabIndex={-1}
+                    aria-label={t("company.files.browse")}
+                    onChange={(event) => {
+                      void upload(event.target.files ?? []);
+                      event.target.value = "";
                     }}
                   />
-                ))}
-              </div>
+                </div>
+                {documents.length > 0 && (
+                  <div className="col g8">
+                    {documents.map((doc) => (
+                      <DocumentRow
+                        key={doc.document_id}
+                        doc={doc}
+                        onRemove={() => {
+                          setDocuments((current) => current.filter((candidate) => candidate.document_id !== doc.document_id));
+                          void api.removeDocument(doc.document_id);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </section>
         </aside>

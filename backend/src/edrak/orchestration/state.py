@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Any, TypedDict
+from typing import Annotated, Any, TypeVar, TypedDict
 
 from ..contracts import (
     BusinessRequest,
@@ -19,8 +19,10 @@ class _Reset:
 
 RESET = _Reset()
 
+T = TypeVar("T")
 
-def merge_by_task_id[T](left: list[T], right: list[T] | _Reset) -> list[T]:
+
+def merge_by_task_id(left: list[T], right: list[T] | _Reset) -> list[T]:
     """Reducer for parallel dispatch.
 
     LangGraph merges the simultaneous writes from every dispatched worker

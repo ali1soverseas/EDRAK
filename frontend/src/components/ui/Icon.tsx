@@ -13,6 +13,7 @@ const PATHS = {
   arrow: "M5 12h14M13 6l6 6-6 6",
   chevron: "M9 6l6 6-6 6",
   chevronDown: "M6 9l6 6 6-6",
+  chevronUp: "M18 15l-6-6-6 6",
   x: "M6 6l12 12M18 6L6 18",
   check: "M5 12.5l4.5 4.5L19 7.5",
   checks: "M2 12.5l4.5 4.5L15 8M11 16l1 1L22 7",

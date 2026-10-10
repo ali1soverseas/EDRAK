@@ -49,6 +49,13 @@ def get_gitlab_profile() -> CompanyProfile:
 
 def get_detailed_gitlab_profile() -> Dict[str, Any]:
     """Loads the comprehensive JSON profile containing full strategic, financial, and product data."""
+    active_path = settings.BASE_DIR / "data" / "profiles" / "active_profile.json"
+    if active_path.exists():
+        try:
+            with open(active_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
     profile_path = settings.BASE_DIR / "data" / "profiles" / "gitlab_profile.json"
     if profile_path.exists():
         try:
@@ -61,6 +68,21 @@ def get_detailed_gitlab_profile() -> Dict[str, Any]:
 
 def get_company_profile(company_name: str) -> CompanyProfile:
     """Retrieves a pre-configured CompanyProfile by name or constructs a default profile."""
+    # Check active_profile.json first
+    active_path = settings.BASE_DIR / "data" / "profiles" / "active_profile.json"
+    if active_path.exists():
+        try:
+            with open(active_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if not company_name or data.get("name", "").strip().lower() == company_name.strip().lower():
+                    return CompanyProfile(
+                        name=data.get("name", company_name.strip() or "Company"),
+                        aliases=data.get("aliases", []),
+                        products=data.get("products", data.get("offerings", [])),
+                        notes=data.get("notes", data.get("description")),
+                    )
+        except Exception:
+            pass
     key = company_name.strip().lower()
     if key in COMPANY_PROFILES:
         return COMPANY_PROFILES[key].model_copy()

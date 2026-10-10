@@ -72,4 +72,7 @@ export interface EdrakApi {
   getBrief(briefId: string): Promise<Brief>;
 }
 
-export const api: EdrakApi = mockApi;
+import { httpApi } from "./httpApi";
+
+export const api: EdrakApi =
+  import.meta.env.VITE_USE_MOCK === "true" ? mockApi : httpApi;
