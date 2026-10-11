@@ -154,13 +154,27 @@
           },
           "title": "Products",
           "type": "array"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace whose uploaded documents the Internal worker may search. When unset the whole knowledge base is searched.",
+          "title": "Workspace Id"
         }
       },
       "required": [
         "aliases",
         "name",
         "notes",
-        "products"
+        "products",
+        "workspace_id"
       ],
       "title": "CompanyProfile",
       "type": "object"
@@ -562,6 +576,34 @@
           "title": "Completed At",
           "type": "string"
         },
+        "cross_signal": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Validated CrossSignalOutput serialized as JSON, if verification succeeded.",
+          "title": "Cross Signal"
+        },
+        "decision_analysis": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DecisionAnalysisResult serialized as JSON, if that stage ran.",
+          "title": "Decision Analysis"
+        },
         "error": {
           "anyOf": [
             {
@@ -608,6 +650,8 @@
       },
       "required": [
         "completed_at",
+        "cross_signal",
+        "decision_analysis",
         "error",
         "plan",
         "request_id",

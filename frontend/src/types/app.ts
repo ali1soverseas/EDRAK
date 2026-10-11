@@ -216,6 +216,10 @@ export interface RunView {
   tasks: RunTaskView[];
   events: RunEvent[];
   verification: "waiting" | "running" | "done";
+  /** What verification is doing while it runs. The backend sends these, the mock does not. */
+  verification_activity?: string;
+  verification_progress?: number;
+  verification_log?: Array<{ at: string; text: string }>;
   brief_id: string | null;
 }
 

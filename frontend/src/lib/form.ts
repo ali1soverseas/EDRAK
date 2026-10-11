@@ -79,6 +79,7 @@ export function toCompanyProfile(company: CompanyFields): CompanyProfile {
     aliases: company.aliases,
     products: company.offerings,
     notes: company.description.trim() || null,
+    workspace_id: null,
   };
 }
 

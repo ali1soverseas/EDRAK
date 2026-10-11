@@ -64,6 +64,15 @@
   padding: 10px 12px;
   border-radius: 10px;
   background: var(--paper2);
+  /* A long run writes hundreds of lines. The card keeps its size and the list scrolls. */
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.event-list {
+  max-height: 460px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 /* The small source tags under each task in the plan. */

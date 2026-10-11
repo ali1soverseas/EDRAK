@@ -9,6 +9,7 @@ import { ProgressBar } from "../components/ui/Progress";
 import { WorkerBadge } from "../components/ui/WorkerBadge";
 import { useI18n, type TKey } from "../i18n";
 import { useNow, usePolled } from "../lib/hooks";
+import { useStickToBottom } from "../lib/useStickToBottom";
 import { USE_CASE_META } from "../lib/usecases";
 import { WORKER_META, workerKey } from "../lib/workers";
 import { api } from "../services/api";
@@ -75,7 +76,8 @@ function TaskChip({ state }: { state: RunTaskView["state"] }) {
 }
 
 function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean; onToggle: () => void }) {
-  const { t, tn, formatTime, formatNumber } = useI18n();
+  const { t, tn, formatTimeSeconds, formatNumber } = useI18n();
+  const logRef = useStickToBottom<HTMLDivElement>(task.log.length);
   const meta = WORKER_META[task.worker];
   const color = task.state === "failed" ? "var(--bad)" : meta.color;
   const panel = `task-log-${task.task_id}`;
@@ -95,7 +97,7 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
         </div>
         <div className="col g6 task-progress">
           <div className="row jb s12 t3">
-            <span>{tn("plural.sources", task.sources)}</span>
+            <span>{task.state === "running" && task.sources === 0 ? t("run.task.collecting") : tn("plural.sources", task.sources)}</span>
             <span className="num">{formatNumber(task.progress)}%</span>
           </div>
           <ProgressBar value={task.progress} color={color} growIn={task.state === "running"} />
@@ -112,14 +114,16 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
         </button>
       </div>
       {open && (
-        <div id={panel} className="col g6 s12 t2 task-log">
+        <div id={panel} ref={logRef} className="col g6 s12 t2 task-log" aria-live="off">
           {task.log.length === 0 && !task.error && <div>{t("run.task.noLog")}</div>}
-          {task.log.map((entry) => (
-            <div key={`${entry.at}-${entry.text}`} className="row g8">
-              <span className="mono t3" style={{ width: 44, flex: "none" }}>
-                {formatTime(entry.at)}
+          {task.log.map((entry, index) => (
+            <div key={`${index}-${entry.at}`} className="row g8 as">
+              <span className="mono t3" style={{ width: 62, flex: "none" }}>
+                {formatTimeSeconds(entry.at)}
               </span>
-              <span dir="auto">{entry.text}</span>
+              <span dir="auto" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
+                {entry.text}
+              </span>
             </div>
           ))}
           {task.error && (
@@ -135,27 +139,43 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
 }
 
 function VerificationCard({ run }: { run: RunView }) {
-  const { t } = useI18n();
+  const { t, formatTimeSeconds, formatNumber } = useI18n();
+  const log = run.verification_log ?? [];
+  const logRef = useStickToBottom<HTMLDivElement>(log.length);
+  const showLog = run.verification === "running" && log.length > 0;
   const allIn = run.tasks.length > 0 && run.tasks.every((task) => task.state === "done" || task.state === "failed");
   const failed = run.tasks.filter((task) => task.state === "failed").length;
   const reported = run.tasks.length - failed;
 
   let body: string;
-  if (run.verification === "running") body = t("run.verify.running");
+  if (run.verification === "running") body = run.verification_activity || t("run.verify.running");
   else if (run.verification === "done") body = t("run.verify.done");
   else if (allIn && failed > 0 && reported > 0) body = t("run.verify.next", { reported, total: run.tasks.length });
   else if (run.state === "failed" || run.state === "cancelled") body = t("run.verify.skipped");
   else body = t("run.verify.waiting", { n: run.tasks.length });
 
   return (
-    <article className="card hatch row g14" style={{ padding: "14px 18px", borderStyle: "dashed" }}>
+    <article className="card hatch" style={{ padding: "14px 18px", borderStyle: "dashed" }}>
+      <div className="row g14 task-row">
       <span className="wk lg" style={{ background: "var(--warn-bg)", color: "#7A4400" }}>
         <Icon name="shield" size={19} />
       </span>
-      <div className="grow">
+      <div className="grow task-main" style={{ minWidth: 0 }}>
         <div className="b6 s15">{t("run.verify.title")}</div>
-        <div className="s13 t2">{body}</div>
+        <div className="s13 t2" dir="auto">
+          {body}
+          {run.verification === "running" && <span className="caret" aria-hidden="true" />}
+        </div>
       </div>
+      {run.verification === "running" && (run.verification_progress ?? 0) > 0 && (
+        <div className="col g6 task-progress">
+          <div className="row jb s12 t3">
+            <span>{t("run.verify.progress")}</span>
+            <span className="num">{formatNumber(run.verification_progress ?? 0)}%</span>
+          </div>
+          <ProgressBar value={run.verification_progress ?? 0} color="#A85F00" />
+        </div>
+      )}
       {run.verification === "done" ? (
         <Chip tone="ok" icon="check">
           {t("run.task.done")}
@@ -164,6 +184,21 @@ function VerificationCard({ run }: { run: RunView }) {
         <Chip tone="blue">{t("run.task.working")}</Chip>
       ) : (
         <Chip tone="draft">{t("run.task.queued")}</Chip>
+      )}
+      </div>
+      {showLog && (
+        <div ref={logRef} className="col g6 s12 t2 task-log" aria-live="off">
+          {log.map((entry, index) => (
+            <div key={`${index}-${entry.at}`} className="row g8 as">
+              <span className="mono t3" style={{ width: 62, flex: "none" }}>
+                {formatTimeSeconds(entry.at)}
+              </span>
+              <span dir="auto" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
+                {entry.text}
+              </span>
+            </div>
+          ))}
+        </div>
       )}
     </article>
   );
@@ -267,6 +302,7 @@ export function LiveRun() {
     stopWhen: (value) => value.state !== "running",
   });
   const data = run.data;
+  const eventsRef = useStickToBottom<HTMLDivElement>(data?.events.length ?? 0);
   const now = useNow(data?.state === "running");
   const [opened, setOpened] = useState<Record<string, boolean>>({});
   const [cancelling, setCancelling] = useState(false);
@@ -336,9 +372,10 @@ export function LiveRun() {
 
   const title = titleKey(data);
   const elapsed = (data.finished_at ? Date.parse(data.finished_at) : now) - Date.parse(data.started_at);
-  // Until the person opens or closes a card, show the log of the first worker that is working.
-  const firstActive = data.tasks.find((task) => task.state === "running" && task.log.length > 0)?.task_id;
-  const isOpen = (task: RunTaskView) => opened[task.task_id] ?? task.task_id === firstActive;
+  // Until the person opens or closes a card, show the log of every worker that is working or has
+  // failed, so what each one is doing is visible without a click.
+  const isOpen = (task: RunTaskView) =>
+    opened[task.task_id] ?? ((task.state === "running" && task.log.length > 1) || task.state === "failed");
 
   const cancel = async () => {
     setBusy(true);
@@ -419,9 +456,11 @@ export function LiveRun() {
               <span className="eyebrow">{t("run.log.title")}</span>
               <span className="s12 t3">{t("run.log.level")}</span>
             </div>
-            {data.events.map((event) => (
-              <EventRow key={event.event_id} event={event} />
-            ))}
+            <div ref={eventsRef} className="col event-list" style={{ gap: 16 }}>
+              {data.events.map((event) => (
+                <EventRow key={event.event_id} event={event} />
+              ))}
+            </div>
           </section>
           <div className="card sunk row as g10" style={{ padding: "14px 16px" }}>
             <Icon name="lock" size={16} className="t2" />

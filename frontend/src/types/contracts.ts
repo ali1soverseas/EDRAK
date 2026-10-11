@@ -124,6 +124,10 @@ export interface CompanyProfile {
    * Known products or offerings relevant to the analysis.
    */
   products: string[];
+  /**
+   * Workspace whose uploaded documents the Internal worker may search. When unset the whole knowledge base is searched.
+   */
+  workspace_id: string | null;
 }
 /**
  * An ordered set of research assignments produced by the planner.
@@ -359,6 +363,18 @@ export interface OrchestrationResult {
    * When the run finished (UTC).
    */
   completed_at: string;
+  /**
+   * Validated CrossSignalOutput serialized as JSON, if verification succeeded.
+   */
+  cross_signal: {
+    [k: string]: unknown;
+  } | null;
+  /**
+   * DecisionAnalysisResult serialized as JSON, if that stage ran.
+   */
+  decision_analysis: {
+    [k: string]: unknown;
+  } | null;
   /**
    * Run-level failure detail.
    */

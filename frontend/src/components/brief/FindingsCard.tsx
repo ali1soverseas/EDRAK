@@ -219,7 +219,7 @@ export function FindingsCard({ brief }: { brief: Brief }) {
                           <span className="b6 s13" style={{ color: "#F1F5F9" }} dir="auto">{sig.title}</span>
                           {sig.tension_or_alignment && (
                             <Chip
-                              tone={sig.tension_or_alignment.toLowerCase().includes("align") ? "ok" : "warn"}
+                              tone={sig.tension_or_alignment.toLowerCase().includes("align") ? "ok" : "ins"}
                               style={{ height: 18, fontSize: 10, padding: "0 6px" }}
                             >
                               {sig.tension_or_alignment.toLowerCase().includes("align")

@@ -47,6 +47,8 @@ export interface I18n {
   /** Pluralised text such as "3 sources". `{n}` is filled in. */
   tn: (key: PluralKey, n: number, params?: Params) => string;
   formatTime: (iso: string) => string;
+  /** HH:MM:SS, for log lines that arrive seconds apart. */
+  formatTimeSeconds: (iso: string) => string;
   formatDate: (iso: string) => string;
   formatDateTime: (iso: string) => string;
   /**
@@ -108,7 +110,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" });
     const numbers = new Intl.NumberFormat(locale);
 
+    const timeSeconds = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
     const formatTime = (iso: string) => time.format(new Date(iso));
+    const formatTimeSeconds = (iso: string) => timeSeconds.format(new Date(iso));
     // Newer ICU writes "Sept" for en-GB. The design says "Sep".
     const shortMonth = (text: string) => (lang === "en" ? text.replace("Sept", "Sep") : text);
     const formatDate = (iso: string) => shortMonth(dateLong.format(new Date(iso)));
@@ -141,6 +145,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       t,
       tn,
       formatTime,
+      formatTimeSeconds,
       formatDate,
       formatDateTime,
       formatWhen,
