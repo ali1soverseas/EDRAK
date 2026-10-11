@@ -10,7 +10,7 @@ from typing import Any, Optional
 import aiosqlite
 
 from edrak.core.config import settings
-from edrak.db.repository import save_company_profile
+from edrak.db.repository import add_company_document, save_company_profile
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +134,7 @@ async def ingest_company_profile_data(
     logger.info("Successfully ingested active company profile: %s", name)
 
 
-def index_text_into_rag(filename: str, text: str) -> bool:
+def index_text_into_rag(filename: str, text: str, workspace_id: str) -> bool:
     """Chunk and index document text into ChromaDB vector store."""
     if not text.strip():
         return False
@@ -150,9 +150,68 @@ def index_text_into_rag(filename: str, text: str) -> bool:
             extra_metadata={"filename": filename},
             is_synthetic=False,
             fallback_title=filename,
+            workspace_id=workspace_id,
         )
         logger.info("Indexed %d chunks for document: %s", count, filename)
         return count > 0
     except Exception as exc:
         logger.warning("Could not index document %s into RAG: %s", filename, exc)
         return False
+
+
+def _sync_index_state(workspace_id: str) -> list[dict[str, Any]]:
+    """Blocking part of the startup sync: tag old chunks and list what the demo workspace has indexed."""
+    from edrak.rag.indexer import InternalIndexer
+
+    indexer = InternalIndexer()
+    tagged = indexer.backfill_workspace(workspace_id)
+    if tagged:
+        logger.info("Assigned %d untagged chunks to workspace %s", tagged, workspace_id)
+    return indexer.workspace_documents(workspace_id)
+
+
+async def sync_demo_workspace(db: aiosqlite.Connection) -> None:
+    """List the pre-loaded knowledge (data/internal, the handbook) as indexed documents.
+
+    The documents come from the vector index itself, so a file shows as indexed only if its
+    chunks are there. Rows get fixed ids, which makes this safe to run on every start.
+    """
+    import asyncio
+    import re
+
+    workspace_id = settings.DEMO_WORKSPACE_ID
+    cursor = await db.execute("SELECT 1 FROM workspaces WHERE workspace_id = ?;", (workspace_id,))
+    if not await cursor.fetchone():
+        return
+    try:
+        indexed = await asyncio.to_thread(_sync_index_state, workspace_id)
+    except Exception as exc:  # noqa: BLE001 - the app must still start without the index
+        logger.warning("Could not read the knowledge index: %s", exc)
+        return
+
+    cursor = await db.execute(
+        "SELECT filename FROM company_documents WHERE workspace_id = ?;", (workspace_id,)
+    )
+    listed = {row["filename"] for row in await cursor.fetchall()}
+    for doc in indexed:
+        if doc["kind"] == "handbook":
+            doc_id = "doc-demo-handbook"
+            name = f"GitLab handbook ({doc['chunks']} pages)"
+            size = {"unit": "pages", "value": doc["chunks"]}
+            stale = "GitLab handbook (%"
+        else:
+            doc_id = "doc-demo-" + re.sub(r"[^a-z0-9]+", "-", doc["filename"].lower()).strip("-")
+            name = doc["filename"]
+            on_disk = next(settings.get_absolute_internal_data_path().rglob(doc["filename"]), None)
+            size = {"unit": "kb", "value": round(on_disk.stat().st_size / 1024, 1)} if on_disk else None
+            stale = None
+        if stale:
+            await db.execute(
+                "DELETE FROM company_documents WHERE document_id = ? OR (workspace_id = ? AND filename LIKE ?);",
+                (doc_id, workspace_id, stale),
+            )
+        elif name in listed:
+            continue  # already there, for example uploaded through the UI
+        await add_company_document(
+            db, doc_id, workspace_id, name, size, status="indexed"
+        )

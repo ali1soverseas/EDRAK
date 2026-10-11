@@ -556,3 +556,29 @@ async def get_brief_by_analysis(db: aiosqlite.Connection, analysis_id: str) -> O
     if not row:
         return None
     return json.loads(row["brief_json"])
+
+
+async def fail_orphaned_runs(db: aiosqlite.Connection) -> list[str]:
+    """Mark runs that were in flight when the server stopped as failed.
+
+    A run lives in memory while it executes. If the server restarts (a crash, a deploy, or
+    a code reload in development) nothing is running it any more, but the database would
+    still say `running` and the screen would wait forever. Called once at startup, when no
+    run can legitimately be in flight yet. Returns the analyses it changed.
+    """
+    cursor = await db.execute("SELECT analysis_id FROM runs WHERE state = 'running'")
+    ids = [row[0] for row in await cursor.fetchall()]
+    if not ids:
+        return []
+    now = now_iso()
+    for analysis_id in ids:
+        await db.execute(
+            "UPDATE runs SET state = 'failed', finished_at = ? WHERE analysis_id = ?",
+            (now, analysis_id),
+        )
+        await db.execute(
+            "UPDATE analyses SET status = 'failed', updated_at = ? WHERE analysis_id = ?",
+            (now, analysis_id),
+        )
+    await db.commit()
+    return ids

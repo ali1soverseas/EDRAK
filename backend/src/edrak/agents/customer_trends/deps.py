@@ -10,6 +10,7 @@ from langchain_core.language_models import BaseChatModel
 
 from edrak.agents.customer_trends.llm.client import Role
 from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.narration import narrate
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
@@ -19,6 +20,7 @@ from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
 from edrak.agents.customer_trends.store.sink import ResultSink
 from edrak.agents.customer_trends.tools.base import ToolContext
 from edrak.agents.customer_trends.usecases import UseCases
+from edrak.core.action_log import log_action
 
 log = get_logger(__name__)
 
@@ -61,6 +63,10 @@ class EventBus:
                 listener(stamped)
             except Exception:
                 log.warning("event_listener_failed", event_type=stamped.get("type"))
+        # The same step, in words, for the shared action log and the live run screen.
+        line = narrate(stamped)
+        if line:
+            log_action("customer_trends", line)
         return stamped
 
     def __call__(self, event: dict[str, Any]) -> None:

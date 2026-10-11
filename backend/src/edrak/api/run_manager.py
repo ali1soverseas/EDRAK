@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -17,6 +18,7 @@ from edrak.api.schemas import (
     RunViewOut,
 )
 from edrak.api.streaming import EventStream
+from edrak.core import action_log
 from edrak.contracts import (
     BusinessRequest,
     OrchestrationResult,
@@ -51,6 +53,9 @@ class ActiveRun:
         self.run_view = run_view
         self.stream = stream
         self.task: Optional[asyncio.Task[None]] = None
+        # How many log lines a card had when its current round of work began, so progress
+        # for a second pass is counted from that pass and not from the first.
+        self.round_base: dict[str, int] = {}
 
 
 class RunManager:
@@ -113,6 +118,86 @@ class RunManager:
                 verification="done" if row["state"] in ("completed", "partial") else "waiting",
                 brief_id=brief_id,
             )
+
+    # ---- live activity ----------------------------------------------------------------
+
+    _AGENT_TO_WORKER = {
+        "competitor_intelligence": WorkerType.COMPETITOR_INTELLIGENCE,
+        "market_intelligence": WorkerType.MARKET_INTELLIGENCE,
+        "internal_intelligence": WorkerType.INTERNAL_INTELLIGENCE,
+        "customer_trends": WorkerType.CUSTOMER_TRENDS,
+    }
+    _MAX_LOG_LINES = 300
+
+    def _apply_activity(self, active: ActiveRun, agent: str, message: str) -> None:
+        """A worker did something: show it on its card now, not when it finishes.
+
+        Runs on the event loop. Workers call from their own threads, so they reach this
+        through `call_soon_threadsafe`.
+        """
+        text = next((line.strip() for line in message.splitlines() if line.strip()), "")
+        if not text:
+            return
+        text = text if len(text) <= 240 else text[:239].rstrip() + "…"
+        if agent == "verification":
+            view = active.run_view
+            if view.verification != "running" or text.startswith("[verification]"):
+                return  # only live steps; the stage's captured printout is for the log file
+            view.verification_activity = text
+            view.verification_log.append({"at": now_iso(), "text": text})
+            if len(view.verification_log) > self._MAX_LOG_LINES:
+                del view.verification_log[: len(view.verification_log) - self._MAX_LOG_LINES]
+            done = re.search(r"finding (\d+) of (\d+)", text)
+            if done and int(done.group(2)) > 0:
+                view.verification_progress = max(view.verification_progress, int(100 * (int(done.group(1)) - 1) / int(done.group(2))))
+            return
+        worker = self._AGENT_TO_WORKER.get(agent)
+        if worker is None:
+            return
+        for tv in active.run_view.tasks:
+            if tv.worker != worker or tv.state not in ("queued", "running"):
+                continue
+            tv.state = "running"
+            tv.activity = text
+            tv.log.append({"at": now_iso(), "text": text})
+            if len(tv.log) > self._MAX_LOG_LINES:
+                del tv.log[: len(tv.log) - self._MAX_LOG_LINES]
+            # Workers do not report a percentage, so progress rises with the number of steps
+            # taken and levels off below 100. It only reaches 100 when the worker finishes.
+            steps = len(tv.log) - active.round_base.get(tv.task_id, 0)
+            estimate = 25 + int(67 * (1 - 0.93 ** max(steps, 0)))
+            tv.progress = max(tv.progress, min(92, estimate))
+            active.stream.emit_nowait("task_update", tv.model_dump(mode="json"))
+
+    def _restart_card(self, active: ActiveRun, tv: RunTaskView, text: str, now: str) -> None:
+        """Put a finished card back to work for another pass, with progress counted afresh."""
+        tv.state = "running"
+        tv.progress = 30
+        tv.error = None
+        tv.activity = text
+        tv.log.append({"at": now, "text": text})
+        active.round_base[tv.task_id] = len(tv.log)
+
+    async def _event(
+        self,
+        active: ActiveRun,
+        *,
+        kind: str,
+        message: str,
+        source: str = "supervisor",
+        callout: Optional[RunEventCallout] = None,
+    ) -> None:
+        """Add a line to the Supervisor log, where the polled snapshot and the stream both see it."""
+        event = RunEvent(
+            event_id=f"ev-{active.run_view.analysis_id}-{uuid.uuid4().hex[:8]}",
+            at=now_iso(),
+            source=source,
+            kind=kind,
+            message=message,
+            callout=callout,
+        )
+        active.run_view.events.append(event)
+        await active.stream.emit("event", event.model_dump(mode="json"))
 
     async def start_run(self, analysis_id: str, approved_by: str) -> None:
         async with get_db() as db:
@@ -230,6 +315,7 @@ class RunManager:
 
         run_view = active.run_view
         stream = active.stream
+        sub_token = None
 
         try:
             # Stage 1: Dispatch
@@ -254,9 +340,16 @@ class RunManager:
 
             # Invoke orchestration graph with live event streaming
             logger.info("Starting orchestration graph execution for analysis %s", analysis_id)
-            state: dict[str, Any] = {"request": request}
+            # Run the plan that was approved. Without it the graph plans again by itself.
+            state: dict[str, Any] = {"request": request, "plan": plan}
 
-            async for chunk in graph.astream({"request": request}, stream_mode="updates"):
+            # From here until the run ends, every line a worker logs also reaches its card.
+            loop = asyncio.get_running_loop()
+            sub_token = action_log.subscribe(
+                analysis_id,
+                lambda agent, message: loop.call_soon_threadsafe(self._apply_activity, active, agent, message),
+            )
+            async for chunk in graph.astream({"request": request, "plan": plan}, stream_mode="updates"):
                 for node_name, node_output in chunk.items():
                     logger.info("LangGraph node [%s] completed", node_name)
                     if not isinstance(node_output, dict):
@@ -273,85 +366,137 @@ class RunManager:
                     now = now_iso()
 
                     if node_name == "dispatch":
-                        dispatch_results = node_output.get("results") or []
-                        for wr in dispatch_results:
+                        for wr in node_output.get("results") or []:
                             for tv in run_view.tasks:
-                                if tv.worker == wr.worker:
-                                    is_success = wr.status in (WorkerStatus.COMPLETED, WorkerStatus.PARTIAL)
-                                    tv.state = "done" if is_success else "failed"
-                                    tv.progress = 100 if is_success else 0
-                                    tv.sources = len(wr.evidence)
-                                    tv.activity = f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources." if is_success else (wr.error or "Task failed")
-                                    tv.log.append(
-                                        {
-                                            "at": now,
-                                            "text": f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources.",
-                                        }
+                                if tv.worker != wr.worker:
+                                    continue
+                                name = wr.worker.value.replace("_", " ")
+                                gap = wr.gaps[0] if wr.gaps else None
+                                tv.sources = len(wr.evidence)
+                                if wr.status in (WorkerStatus.COMPLETED, WorkerStatus.PARTIAL):
+                                    summary = f"Found {len(wr.findings)} findings across {len(wr.evidence)} sources."
+                                    tv.state, tv.progress, tv.error = "done", 100, None
+                                    tv.activity = summary
+                                    tv.log.append({"at": now, "text": summary + (f" Gap: {gap}" if gap else "")})
+                                    await self._event(
+                                        active,
+                                        source=wr.worker.value,
+                                        kind="gap" if gap else "info",
+                                        message=f"Complete. {summary}" + (f" Gap reported: {gap}" if gap else ""),
                                     )
-                                    if not is_success:
-                                        tv.error = wr.error
-                                    await stream.emit("task_update", tv.model_dump(mode="json"))
+                                elif wr.status == WorkerStatus.NO_EVIDENCE:
+                                    # It ran and searched, and found nothing. That is not a crash.
+                                    reason = gap or "No matching evidence was found."
+                                    tv.state, tv.progress, tv.error = "done", 100, None
+                                    tv.activity = f"No evidence found. {reason}"
+                                    tv.log.append({"at": now, "text": f"No evidence found. {reason}"})
+                                    await self._event(
+                                        active,
+                                        source=wr.worker.value,
+                                        kind="gap",
+                                        message=f"No evidence found. {reason}",
+                                    )
+                                else:
+                                    reason = wr.error or gap or "The worker stopped without a result."
+                                    tv.state, tv.progress, tv.error = "failed", max(tv.progress, 0), reason
+                                    tv.activity = f"Failed: {reason}"
+                                    tv.log.append({"at": now, "text": f"Failed: {reason}"})
+                                    await self._event(
+                                        active,
+                                        source=wr.worker.value,
+                                        kind="failure",
+                                        message=f"Failed: {reason}",
+                                        callout=RunEventCallout(
+                                            text=f"Continue without the {name} worker. Verification and the brief will mark the evidence as partial.",
+                                            highlight=None,
+                                        ),
+                                    )
+                                await stream.emit("task_update", tv.model_dump(mode="json"))
+
+                        # Once every worker has reported, verification is what is running.
+                        if run_view.stage == "workers" and all(
+                            tv.state in ("done", "failed") for tv in run_view.tasks
+                        ):
+                            run_view.stage = "verify"
+                            run_view.verification = "running"
+                            run_view.verification_progress = 0
+                            run_view.verification_activity = "Starting verification"
+                            await stream.emit("stage_change", {"stage": "verify"})
+                            await stream.emit("verification", {"status": "running"})
+                            await self._event(
+                                active,
+                                kind="info",
+                                message="All workers have reported. Verification is checking completeness, source quality and contradictions.",
+                            )
 
                     elif node_name == "verify":
-                        run_view.stage = "verify"
-                        run_view.verification = "running"
-                        await stream.emit("stage_change", {"stage": "verify"})
-                        await stream.emit("verification", {"status": "running"})
-
                         v_res = node_output.get("verification_result")
                         v_dec = node_output.get("verification")
                         status_val = v_dec.status.value if v_dec else "assessed"
                         findings_count = len(v_res.findings) if v_res else 0
                         run_view.verification = "done"
+                        run_view.verification_progress = 100
                         await stream.emit("verification", {"status": "done"})
-                        await stream.emit(
-                            "event",
-                            RunEvent(
-                                event_id=f"ev-{analysis_id}-verify-{uuid.uuid4().hex[:6]}",
-                                at=now,
-                                source="verification",
-                                kind="info",
-                                message=f"Verification completed: {findings_count} findings evaluated ({status_val}).",
-                            ).model_dump(mode="json"),
+                        await self._event(
+                            active,
+                            kind="info",
+                            message=f"Verification completed: {findings_count} findings evaluated ({status_val.replace('_', ' ')}).",
                         )
+                        if status_val in ("replan_required", "retry_required"):
+                            # Verification wants some workers to go again. Put them back to
+                            # work on screen now, so their new activity shows up as it happens.
+                            actions = list(v_dec.targeted_actions) if v_dec else []
+                            run_view.stage = "workers"
+                            run_view.verification = "waiting"
+                            await stream.emit("stage_change", {"stage": "workers"})
+                            reasons_by_worker: dict[WorkerType, list[str]] = {}
+                            for action in actions:
+                                reasons_by_worker.setdefault(action.worker, []).append(action.reason)
+                            for tv in run_view.tasks:
+                                reasons = reasons_by_worker.get(tv.worker)
+                                if reasons:
+                                    more = f" (and {len(reasons) - 1} more)" if len(reasons) > 1 else ""
+                                    self._restart_card(active, tv, f"Going again: {reasons[0]}{more}", now)
+                                    await stream.emit("task_update", tv.model_dump(mode="json"))
+                            names = ", ".join(w.value.replace("_", " ") for w in reasons_by_worker)
+                            await self._event(
+                                active,
+                                kind="replan",
+                                message=v_dec.summary if v_dec else "Verification asked for more research.",
+                                callout=RunEventCallout(
+                                    text=f"Re-running {len(reasons_by_worker)} worker(s) on {len(actions)} point(s): {names}.",
+                                    highlight=None,
+                                ),
+                            )
+                        else:
+                            run_view.stage = "synthesize"
+                            await stream.emit("stage_change", {"stage": "synthesize"})
+                            await self._event(
+                                active,
+                                kind="info",
+                                message="Looking for patterns across the workers' findings.",
+                            )
 
                     elif node_name == "replan":
                         replan_tasks = node_output.get("replan_tasks") or []
-                        run_view.stage = "dispatch"
-                        await stream.emit("stage_change", {"stage": "dispatch"})
+                        run_view.stage = "workers"
+                        run_view.verification = "waiting"
+                        await stream.emit("stage_change", {"stage": "workers"})
                         for tv in run_view.tasks:
                             if any(rt.worker == tv.worker for rt in replan_tasks):
-                                tv.state = "running"
-                                tv.progress = 50
-                                tv.activity = "Refining research on conflicting evidence"
-                                tv.log.append({"at": now, "text": "Re-dispatched for targeted refinement"})
+                                self._restart_card(active, tv, "Re-dispatched for targeted refinement", now)
                                 await stream.emit("task_update", tv.model_dump(mode="json"))
-                        await stream.emit(
-                            "event",
-                            RunEvent(
-                                event_id=f"ev-{analysis_id}-replan-{uuid.uuid4().hex[:6]}",
-                                at=now,
-                                source="supervisor",
-                                kind="warning",
-                                message=f"Re-planning targeted research for {len(replan_tasks)} worker(s) to resolve contradictions.",
-                            ).model_dump(mode="json"),
-                        )
 
-                    elif node_name in ("cross_signal", "decision_analysis"):
+                    elif node_name == "cross_signal":
                         run_view.stage = "synthesize"
                         await stream.emit("stage_change", {"stage": "synthesize"})
-                        stage_label = (
-                            "Cross-domain signals" if node_name == "cross_signal" else "Strategic decision analysis"
+                        await self._event(
+                            active, kind="info", message="Cross-domain signals identified. Preparing the decision analysis."
                         )
-                        await stream.emit(
-                            "event",
-                            RunEvent(
-                                event_id=f"ev-{analysis_id}-{node_name}-{uuid.uuid4().hex[:6]}",
-                                at=now,
-                                source=node_name,
-                                kind="info",
-                                message=f"{stage_label} synthesized successfully.",
-                            ).model_dump(mode="json"),
+
+                    elif node_name == "decision_analysis":
+                        await self._event(
+                            active, kind="info", message="Decision analysis written. Building the brief."
                         )
 
                     elif node_name == "finalize":
@@ -442,6 +587,9 @@ class RunManager:
                     finished_at=now,
                 )
                 await update_analysis_status(db, analysis_id, "failed")
+
+        finally:
+            action_log.unsubscribe(analysis_id, sub_token)
 
 
 # Global singleton instance

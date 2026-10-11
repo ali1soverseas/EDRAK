@@ -97,24 +97,27 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
         queries = [task.goal] if task.goal else []
 
     retriever = InternalRetriever()
+    workspace_id = task.company_profile.workspace_id if task else None
     candidates: List[Evidence] = []
     seen_keys: Set[str] = set()
 
     for q in queries:
         try:
-            # Retrieve synthetic internal docs (high precision)
+            # The company's own documents (uploads and seeded internal files): high precision
             syn_res = retriever.retrieve(
                 query=q,
                 top_k=4,
-                where_filter={"origin": "synthetic_internal"},
+                where_filter={"origin": {"$ne": "public_handbook"}},
                 min_score=0.25,
+                workspace_id=workspace_id,
             )
-            # Retrieve public handbook docs
+            # Public handbook pages
             hb_res = retriever.retrieve(
                 query=q,
                 top_k=3,
                 where_filter={"origin": "public_handbook"},
                 min_score=0.45,
+                workspace_id=workspace_id,
             )
             for ev in syn_res + hb_res:
                 key = f"{ev.source_url}::{(ev.excerpt or '')[:140]}"
@@ -134,10 +137,11 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
         ev_tokens = set(re.findall(r"\w+", ev_text))
         overlap = len(goal_tokens & ev_tokens) / max(1, len(goal_tokens))
         
-        # Synthetic internal documents get a strategic priority boost
-        boost = 0.15 if ev.is_synthetic else 0.0
+        # The company's own documents get a strategic priority boost
+        own = ev.metadata.get("origin") != "public_handbook"
+        boost = 0.15 if own else 0.0
         # Handbook pages with no goal token overlap get penalized
-        penalty = -0.20 if (not ev.is_synthetic and overlap < 0.05) else 0.0
+        penalty = -0.20 if (not own and overlap < 0.05) else 0.0
         
         return round(base_score * 0.6 + overlap * 0.4 + boost + penalty, 3)
 
@@ -193,7 +197,12 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     for ev in evidence_list:
         rank = ev.metadata.get("rank", "-")
         rel_score = ev.metadata.get("relevance_score", 0.70)
-        doc_type_label = "Synthetic Internal Strategic Doc" if ev.is_synthetic else "Public GitLab Handbook"
+        if ev.metadata.get("origin") == "public_handbook":
+            doc_type_label = "Public GitLab Handbook"
+        elif ev.is_synthetic:
+            doc_type_label = "Synthetic Internal Strategic Doc"
+        else:
+            doc_type_label = "Company document uploaded by the user"
         last_updated = ev.metadata.get("last_updated", "Unknown")
         evidence_prompts.append(
             f"=== Evidence Item [ID: {ev.evidence_id}] ===\n"
@@ -388,7 +397,9 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
         "GA date and pricing model lack non-synthetic external corroboration.",
         "External GitHub Copilot comparison is delegated to the Competitor worker.",
     ]
-    for sg in standard_gaps:
+    # These gaps describe the seeded GitLab demo documents, so only they trigger them.
+    demo_gaps = standard_gaps if any(ev.metadata.get("origin") == "synthetic_internal" for ev in evidence_list) else []
+    for sg in demo_gaps:
         if not any(sg.lower()[:30] in g.lower() for g in gaps):
             gaps.append(sg)
 

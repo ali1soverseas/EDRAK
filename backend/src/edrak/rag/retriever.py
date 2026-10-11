@@ -79,7 +79,7 @@ class InternalRetriever:
         uri = str(meta.get("source_uri", ""))
         if meta.get("doc_type") == "internal_handbook" or uri.startswith("http"):
             return "GitLab Handbook (public)"
-        return "GitLab Internal Knowledge"
+        return "Company document"
 
     def _to_evidence(
         self, doc: str, meta: Dict[str, Any], query: str = "", score: Optional[float] = None
@@ -114,8 +114,11 @@ class InternalRetriever:
         top_k: int = 4,
         where_filter: Optional[Dict[str, Any]] = None,
         min_score: Optional[float] = None,
+        workspace_id: Optional[str] = None,
     ) -> List[Evidence]:
-        """Semantic search -> thresholded, de-duplicated Evidence (best first)."""
+        """Semantic search -> thresholded, de-duplicated Evidence (best first).
+
+        With `workspace_id`, only that workspace's chunks are searched."""
         if not query.strip():
             return []
         threshold = self.min_score if min_score is None else min_score
@@ -129,6 +132,9 @@ class InternalRetriever:
                 "query_texts": [query],
                 "n_results": min(max(top_k * 3, top_k), count),  # over-fetch, then filter
             }
+            if workspace_id:
+                scope: Dict[str, Any] = {"workspace_id": workspace_id}
+                where_filter = {"$and": [scope, where_filter]} if where_filter else scope
             if where_filter:
                 kwargs["where"] = where_filter
             results = self.collection.query(**kwargs)

@@ -1,19 +1,32 @@
 """EDRAK FastAPI application entrypoint."""
 
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from edrak.agents.market_intelligence import run
+from edrak.api.ingestion import sync_demo_workspace
 from edrak.api.routes import router as api_router
 from edrak.contracts import ResearchTask, WorkerResult
-from edrak.db.connection import init_db
+from edrak.db.connection import get_db, init_db
+from edrak.db.repository import fail_orphaned_runs
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize SQLite database schema and seed defaults
     await init_db()
+    # A run that was in flight when the server last stopped can never finish. Say so.
+    async with get_db() as db:
+        orphaned = await fail_orphaned_runs(db)
+    if orphaned:
+        logger.warning("Marked %d interrupted run(s) as failed: %s", len(orphaned), ", ".join(orphaned))
+    # List the pre-loaded GitLab knowledge as indexed documents of the demo workspace.
+    async with get_db() as db:
+        await sync_demo_workspace(db)
     yield
 
 

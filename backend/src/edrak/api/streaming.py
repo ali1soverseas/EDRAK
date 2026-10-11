@@ -30,6 +30,11 @@ class EventStream:
             formatted = format_sse_event(event_type, data)
             await self.queue.put(formatted)
 
+    def emit_nowait(self, event_type: str, data: Any) -> None:
+        """`emit` for code already running on the event loop that cannot await."""
+        if not self.closed:
+            self.queue.put_nowait(format_sse_event(event_type, data))
+
     def close(self) -> None:
         """Mark stream as closed."""
         self.closed = True

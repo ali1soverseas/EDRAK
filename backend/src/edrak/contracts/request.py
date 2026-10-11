@@ -48,6 +48,12 @@ class CompanyProfile(ContractModel):
         description="Optional high-level company baseline notes.",
     )
 
+    workspace_id: str | None = Field(
+        default=None,
+        description="Workspace whose uploaded documents the Internal worker may search. "
+        "When unset the whole knowledge base is searched.",
+    )
+
 
 class BusinessContext(ContractModel):
     """Context that frames how the business goal should be analyzed."""

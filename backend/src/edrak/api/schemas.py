@@ -185,4 +185,9 @@ class RunViewOut(BaseModel):
     tasks: list[RunTaskView] = Field(default_factory=list)
     events: list[RunEvent] = Field(default_factory=list)
     verification: str = "waiting"  # "waiting" | "running" | "done"
+    # What verification is doing while it runs: the latest step, how far through the findings
+    # it is (0 to 100), and every step so far.
+    verification_activity: str = ""
+    verification_progress: int = 0
+    verification_log: list[dict[str, str]] = Field(default_factory=list)
     brief_id: Optional[str] = None

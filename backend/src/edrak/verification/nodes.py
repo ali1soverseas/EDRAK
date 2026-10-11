@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from edrak.core.action_log import log_action
 from edrak.contracts import (
     ControlSummary,
     Evidence,
@@ -265,9 +266,13 @@ def assess_findings(state: VerificationState) -> dict:
     payload: VerificationInput = state["payload"]
     hosts = vendor_hosts(payload.request)
     assessments: list[FindingVerdict] = []
+    total = sum(len(result.findings) for result in payload.agent_outputs)
+    log_action("verification", f"Checking {total} findings against their sources")
     for result in payload.agent_outputs:
         catalog = _evidence_by_id(result)
         for finding in result.findings:
+            # One line per finding: the check can take minutes, and this is what shows it moving.
+            log_action("verification", f"Checking finding {len(assessments) + 1} of {total}: {finding.statement[:90]}")
             assessments.append(_assess_one(result, finding, catalog, hosts))
     return {"assessments": assessments}
 

@@ -215,6 +215,10 @@ async def get_company(
     profile = await get_company_profile(db, session.workspace.workspace_id)
     documents = await list_company_documents(db, session.workspace.workspace_id)
 
+    if not profile and session.workspace.workspace_id != settings.DEMO_WORKSPACE_ID:
+        # A new workspace starts blank: the company setup screen asks for the details.
+        profile = {"name": "", "completed": False}
+
     if not profile:
         profile = {
             "name": "GitLab",
@@ -302,7 +306,7 @@ async def upload_documents(
     )
 
     saved_docs: list[CompanyDocumentOut] = []
-    upload_dir = settings.BASE_DIR / "data" / "internal"
+    upload_dir = settings.BASE_DIR / "data" / "uploads" / session.workspace.workspace_id
     upload_dir.mkdir(parents=True, exist_ok=True)
 
     for file in files:
@@ -328,7 +332,7 @@ async def upload_documents(
 
         # 2. Ingest text into RAG vector store for PDF, MD, TXT, DOCX, etc.
         if extracted_text:
-            index_text_into_rag(filename, extracted_text)
+            index_text_into_rag(filename, extracted_text, session.workspace.workspace_id)
 
         doc = await add_company_document(
             db,
@@ -366,8 +370,8 @@ async def remove_document(
     row = await cursor.fetchone()
     if row:
         filename = row["filename"]
-        # Remove from data/internal
-        file_path = settings.BASE_DIR / "data" / "internal" / filename
+        # Remove the uploaded copy. Seeded demo files live in data/internal and stay.
+        file_path = settings.BASE_DIR / "data" / "uploads" / session.workspace.workspace_id / filename
         if file_path.exists():
             try:
                 file_path.unlink()
@@ -379,7 +383,10 @@ async def remove_document(
             from edrak.rag.indexer import InternalIndexer
 
             indexer = InternalIndexer()
-            indexer.collection.delete(where={"filename": filename})
+            if document_id.startswith("doc-demo-handbook"):
+                indexer.delete_workspace_documents(session.workspace.workspace_id, origin="public_handbook")
+            else:
+                indexer.delete_workspace_documents(session.workspace.workspace_id, filename=filename)
         except Exception as exc:
             logger.warning("Could not remove RAG chunks for %s: %s", filename, exc)
 
@@ -443,7 +450,7 @@ async def draft_plan(
 
     # Fetch company profile from DB or disk
     company_data = await get_company_profile(db, session.workspace.workspace_id)
-    company_name = company_data.get("name", "GitLab") if company_data else "GitLab"
+    company_name = company_data.get("name") or "Unnamed company" if company_data else "Unnamed company"
     company_aliases = company_data.get("aliases", []) if company_data else []
     company_offerings = company_data.get("offerings", []) if company_data else []
     company_desc = company_data.get("description", "") if company_data else ""
@@ -453,6 +460,7 @@ async def draft_plan(
         aliases=company_aliases,
         products=company_offerings,
         notes=company_desc or None,
+        workspace_id=session.workspace.workspace_id,
     )
 
     targets = list(dict.fromkeys([c.strip() for c in form.competitors if c.strip()] + ([form.market.strip()] if form.market.strip() else [])))

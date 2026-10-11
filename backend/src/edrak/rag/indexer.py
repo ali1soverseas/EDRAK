@@ -190,6 +190,7 @@ class InternalIndexer:
         extra_metadata: Optional[Dict[str, Any]] = None,
         is_synthetic: Optional[bool] = None,
         fallback_title: str = "Internal Document",
+        workspace_id: Optional[str] = None,
     ) -> int:
         """Parse header, chunk by heading, and upsert. Returns number of chunks."""
         fm, body = parse_frontmatter(content)
@@ -204,6 +205,8 @@ class InternalIndexer:
         }  # document_id, classification, last_updated, author
         doc_meta.update({k: v for k, v in fm.items() if k not in ("title", "source_url")})
         doc_meta.update(extra_metadata or {})
+        if workspace_id:
+            doc_meta["workspace_id"] = workspace_id
         doc_meta["is_synthetic"] = bool(is_synthetic)
         doc_meta["origin"] = "synthetic_internal" if is_synthetic else doc_meta.get("origin", "internal")
 
@@ -236,6 +239,7 @@ class InternalIndexer:
         doc_type: Optional[str] = None,
         is_synthetic: Optional[bool] = None,
         base_dir: Optional[Path] = None,
+        workspace_id: Optional[str] = None,
     ) -> int:
         """Reads and indexes a single markdown or text file."""
         if not file_path.exists():
@@ -259,9 +263,15 @@ class InternalIndexer:
             extra_metadata={"filename": file_path.name},
             is_synthetic=is_synthetic,
             fallback_title=file_path.stem.replace("_", " ").title(),
+            workspace_id=workspace_id,
         )
 
-    def index_directory(self, dir_path: Path, is_synthetic: Optional[bool] = True) -> int:
+    def index_directory(
+        self,
+        dir_path: Path,
+        is_synthetic: Optional[bool] = True,
+        workspace_id: Optional[str] = None,
+    ) -> int:
         """Index all .md/.txt files. Everything under data/internal is synthetic in this pilot."""
         if not dir_path.exists():
             return 0
@@ -269,7 +279,9 @@ class InternalIndexer:
         for ext in ("*.md", "*.txt"):
             for fp in dir_path.rglob(ext):
                 try:
-                    total += self.index_file(fp, is_synthetic=is_synthetic, base_dir=dir_path)
+                    total += self.index_file(
+                        fp, is_synthetic=is_synthetic, base_dir=dir_path, workspace_id=workspace_id
+                    )
                 except Exception as e:
                     logger.error("Failed to index %s: %s", fp, e)
         return total
@@ -286,3 +298,40 @@ class InternalIndexer:
             embedding_function=self.embedding_fn,
             metadata=COLLECTION_METADATA,
         )
+
+    def delete_workspace_documents(self, workspace_id: str, **match: str) -> None:
+        """Remove one workspace's chunks, narrowed by metadata such as filename=... or origin=..."""
+        clauses: List[Dict[str, Any]] = [{"workspace_id": workspace_id}]
+        clauses.extend({k: v} for k, v in match.items())
+        self.collection.delete(where={"$and": clauses} if len(clauses) > 1 else clauses[0])
+
+    def backfill_workspace(self, workspace_id: str) -> int:
+        """Give chunks indexed before workspaces existed to `workspace_id`. Returns how many."""
+        got = self.collection.get(include=["metadatas"])
+        ids: List[str] = []
+        metas: List[Dict[str, Any]] = []
+        for chunk_id, meta in zip(got.get("ids") or [], got.get("metadatas") or []):
+            if not meta or meta.get("workspace_id"):
+                continue
+            ids.append(chunk_id)
+            metas.append({**meta, "workspace_id": workspace_id})
+        for i in range(0, len(ids), 500):
+            self.collection.update(ids=ids[i : i + 500], metadatas=metas[i : i + 500])
+        return len(ids)
+
+    def workspace_documents(self, workspace_id: str) -> List[Dict[str, Any]]:
+        """What is indexed for a workspace: one entry per file, plus one for the public handbook."""
+        got = self.collection.get(where={"workspace_id": workspace_id}, include=["metadatas"])
+        files: Dict[str, int] = {}
+        handbook_pages: set = set()
+        for meta in got.get("metadatas") or []:
+            if (meta or {}).get("origin") == "public_handbook":
+                handbook_pages.add(meta.get("source_uri", ""))
+            else:
+                name = (meta or {}).get("filename")
+                if name:
+                    files[name] = files.get(name, 0) + 1
+        docs = [{"filename": name, "chunks": n, "kind": "file"} for name, n in sorted(files.items())]
+        if handbook_pages:
+            docs.append({"filename": "GitLab handbook", "chunks": len(handbook_pages), "kind": "handbook"})
+        return docs

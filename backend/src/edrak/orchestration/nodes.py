@@ -136,6 +136,11 @@ def make_decision_analysis_node():
 
 def plan_node(state: OrchestrationState) -> OrchestrationState:
     print("\n[orchestrator] NODE: plan")
+    # A plan that arrives with the request is the one a person reviewed and approved. Run that
+    # one. Planning again would run different workers than the ones approved, ignore the
+    # sources they allowed, and cost another model call.
+    if state.get("plan") is not None:
+        return state
     request: BusinessRequest = state["request"]
     plan = LlmPlanner().plan(request)
     return {**state, "plan": plan}

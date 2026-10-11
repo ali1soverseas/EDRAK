@@ -77,6 +77,7 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
                     "doc_type": "internal_handbook",
                     "is_synthetic": "false",
                     "origin": "public_handbook",
+                    "workspace_id": settings.DEMO_WORKSPACE_ID,
                 }
                 all_ids.append(chunk_id)
                 all_documents.append(content)
@@ -121,7 +122,9 @@ def main():
     # 1. Ingest internal markdown documents (Synthetic internal data)
     internal_data_dir = settings.get_absolute_internal_data_path()
     logger.info("Indexing internal documents from %s...", internal_data_dir)
-    internal_chunks_count = indexer.index_directory(internal_data_dir, is_synthetic=True)
+    internal_chunks_count = indexer.index_directory(
+        internal_data_dir, is_synthetic=True, workspace_id=settings.DEMO_WORKSPACE_ID
+    )
 
     # 2. Ingest handbook chunks
     chunk_dir = settings.get_absolute_chunked_handbook_path()
