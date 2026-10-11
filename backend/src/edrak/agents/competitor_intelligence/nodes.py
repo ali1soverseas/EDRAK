@@ -5,6 +5,7 @@ import json
 import os
 import pprint
 import re
+import requests
 from pathlib import Path
 from typing import List, Dict, Any
 from urllib.parse import urlparse
@@ -95,12 +96,6 @@ def _tavily_key() -> str:
     load_dotenv(ENV_PATH, override=True)
     key, variable = provider_key("TAVILY_API_KEY", "competitor")
     return _require(variable, key)
-
-
-def _banner(title: str) -> None:
-    print("\n" + "=" * 80)
-    print(f"[competitor_intelligence] {title}")
-    print("=" * 80)
 
 
 def _banner(title: str) -> None:
@@ -1090,14 +1085,10 @@ def is_official(
     url: str,
     competitor: str,
 ) -> bool:
-    return host_matches(
-        host_of(url),
-        OFFICIAL_DOMAINS.get(
-            competitor,
-            [],
-        ),
-    )
-
+    """Return whether the URL matches a configured official domain."""
+    host = host_of(url)
+    domains = OFFICIAL_DOMAINS.get(competitor, [])
+    return host_matches(host, domains)
 
 def has_official_evidence(
     verified: List[Dict[str, Any]],
@@ -1469,127 +1460,61 @@ def run_tavily(
         chunks_per_source=3,
     )
 
-    if stage == 1:
-        params["time_range"] = "year"
+    # No time_range filter: evergreen pricing, docs and product pages often
+    # carry no recent date and were being filtered out of discovery.
 
-    if domains:
-        params["include_domains"] = domains
+    # if domains:
+    #     params["include_domains"] = domains
 
     return tavily().search(**params)
 
 
-def search_node(
-    state: CompetitorState,
-):
+
+def search_node(state: CompetitorState):
     log_action("competitor_intelligence", "searching sources")
-    stage = state.get(
-        "research_stage",
-        1,
-    )
 
-    strategy = state.get(
-        "research_strategy",
-        "discovery",
-    )
+    stage = state.get("research_stage", 1)
+    strategy = state.get("research_strategy", "discovery")
 
-    _banner(f"NODE: search  {strategy.upper()}")
+    _banner(f"NODE: search {strategy.upper()}")
 
     known = {
         (
             r["competitor"],
             normalize_url(r["url"]),
         ): r
-        for r in state.get(
-            "search_results",
-            [],
-        )
-        if normalize_url(
-            r.get("url", "")
-        )
+        for r in state.get("search_results", [])
+        if normalize_url(r.get("url", ""))
     }
 
-    executed = list(
-        state.get(
-            "executed_queries",
-            [],
-        )
-    )
-
+    executed = list(state.get("executed_queries", []))
     added = 0
 
-    for item in state.get(
-        "search_queries",
-        [],
-    ):
+    for item in state.get("search_queries", []):
         query = item["query"]
         competitor = item["competitor"]
 
-        print(
-            f"\n[{competitor}] Query: {query}"
-        )
-
-        domains = (
-            OFFICIAL_DOMAINS.get(competitor)
-            if stage in (2, 3)
-            else None
-        )
+        print(f"\n[{competitor}] Query: {query}")
 
         try:
+            # Search the web without restricting domains.
             response = run_tavily(
                 query,
                 stage,
-                domains,
+                None,
             )
 
-            tavily_results = response.get(
-                "results",
-                [],
-            )
+            tavily_results = response.get("results", [])
 
-            if domains and not tavily_results:
-                print(
-                    "No results on official domains; "
-                    "retrying unrestricted."
-                )
-
-                response = run_tavily(
-                    query,
-                    stage,
-                    None,
-                )
-
-                tavily_results = response.get(
-                    "results",
-                    [],
-                )
-
-            print(
-                f"Tavily results: "
-                f"{len(tavily_results)}"
-            )
+            print(f"Tavily results: {len(tavily_results)}")
 
             for result in tavily_results:
-                url = normalize_url(
-                    result.get("url", "")
-                )
+                url = normalize_url(result.get("url", ""))
 
                 if not url:
                     continue
 
-                if belongs_to_other_competitor(
-                    url,
-                    competitor,
-                ):
-                    print(
-                        "Skipping cross-competitor source: "
-                        f"{url}"
-                    )
-                    continue
-
-                key = (
-                    competitor,
-                    url,
-                )
+                key = (competitor, url)
 
                 if key in known:
                     continue
@@ -1597,20 +1522,13 @@ def search_node(
                 known[key] = {
                     "competitor": competitor,
                     "requirement_id": item.get(
-                        "requirement_id",
-                        "",
+                        "requirement_id", ""
                     ),
                     "query": query,
-                    "purpose": item.get(
-                        "purpose",
-                        "",
-                    ),
+                    "purpose": item.get("purpose", ""),
                     "search_type": strategy,
                     "stage": stage,
-                    "title": result.get(
-                        "title",
-                        "",
-                    ),
+                    "title": result.get("title", ""),
                     "url": url,
                     "text": result_text(
                         result,
@@ -1619,44 +1537,70 @@ def search_node(
                     "published_date": result.get(
                         "published_date"
                     ),
-                    "score": result.get(
-                        "score"
-                    ),
+                    "score": result.get("score"),
                     "provider": "tavily",
-                    "publisher": result.get(
-                        "publisher"
-                    ),
+                    "publisher": result.get("publisher"),
                 }
 
                 added += 1
 
         except Exception as e:
             print(
-                f"Tavily error for '{query}': {e}. Attempting Serper fallback..."
+                f"Tavily error for '{query}': {e}. "
+                "Attempting Serper fallback..."
             )
+
             try:
-                serper_key = os.getenv("SERPER_API_KEY", "").strip()
+                serper_key = os.getenv(
+                    "SERPER_API_KEY", ""
+                ).strip()
+
                 if serper_key:
                     resp = requests.post(
                         "https://google.serper.dev/search",
-                        headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
-                        json={"q": query, "num": MAX_RESULTS_PER_QUERY},
+                        headers={
+                            "X-API-KEY": serper_key,
+                            "Content-Type": "application/json",
+                        },
+                        json={
+                            "q": query,
+                            "num": MAX_RESULTS_PER_QUERY,
+                        },
                         timeout=15,
                     )
+
                     if resp.status_code == 200:
                         serper_data = resp.json()
-                        serper_items = serper_data.get("organic", [])
-                        print(f"Serper fallback results: {len(serper_items)}")
+                        serper_items = serper_data.get(
+                            "organic", []
+                        )
+
+                        print(
+                            "Serper fallback results: "
+                            f"{len(serper_items)}"
+                        )
+
                         for s_res in serper_items:
-                            url = normalize_url(s_res.get("link", ""))
-                            if not url or belongs_to_other_competitor(url, competitor):
+                            url = normalize_url(
+                                s_res.get("link", "")
+                            )
+
+                            # Do not reject a source based only
+                            # on its domain belonging to another
+                            # configured competitor.
+                            if not url:
                                 continue
+
                             key = (competitor, url)
+
                             if key in known:
                                 continue
+
                             known[key] = {
                                 "competitor": competitor,
-                                "requirement_id": item.get("requirement_id", ""),
+                                "requirement_id": item.get(
+                                    "requirement_id", ""
+                                ),
                                 "query": query,
                                 "purpose": item.get("purpose", ""),
                                 "search_type": strategy,
@@ -1667,11 +1611,29 @@ def search_node(
                                 "published_date": s_res.get("date"),
                                 "score": 0.8,
                                 "provider": "serper",
-                                "publisher": s_res.get("displayedLink", competitor),
+                                "publisher": s_res.get(
+                                    "displayedLink", ""
+                                ),
                             }
+
                             added += 1
+
+                    else:
+                        print(
+                            "Serper returned HTTP "
+                            f"{resp.status_code}"
+                        )
+                else:
+                    print(
+                        "Serper fallback skipped: "
+                        "SERPER_API_KEY is not configured."
+                    )
+
             except Exception as serper_err:
-                print(f"Serper fallback error for '{query}': {serper_err}")
+                print(
+                    f"Serper fallback error for '{query}': "
+                    f"{serper_err}"
+                )
 
         executed.append(
             {
@@ -1681,17 +1643,10 @@ def search_node(
             }
         )
 
-    results = list(
-        known.values()
-    )
+    results = list(known.values())
 
-    print(
-        f"\nAdded {added} new results."
-    )
-
-    print(
-        f"Total sources: {len(results)}"
-    )
+    print(f"\nAdded {added} new results.")
+    print(f"Total sources: {len(results)}")
 
     save_node_output(
         "search_results",
@@ -1709,7 +1664,6 @@ def search_node(
         "executed_queries": executed,
         "new_sources_this_stage": added,
     }
-
 
 # ============================================================
 # NODE 4: SYNTHESIZE
@@ -1857,14 +1811,24 @@ def synthesize_node(
         all_new,
     )
 
-    findings = merge_findings(
-        previous_findings,
+    # Dedupe against what was VERIFIED, not against every earlier claim.
+    # Comparing with previous_findings meant a claim the verifier rejected in
+    # stage 1 could never be proposed again with better evidence in stage 2.
+    verified_so_far = state.get(
+        "verified_findings",
+        [],
+    )
+
+    candidates = merge_findings(
+        verified_so_far,
         new_unique,
     )
 
-    truly_new = findings[
-        len(previous_findings):
+    truly_new = candidates[
+        len(verified_so_far):
     ]
+
+    findings = previous_findings + truly_new
 
     print(
         "Evidence-backed findings this stage: "
@@ -2002,6 +1966,27 @@ def verify_batch(
         f["requirement_id"]
         for f in batch
     }
+
+    returned_keys = {
+        (
+            f.requirement_id.strip(),
+            (f.finding or "")[:40].lower(),
+        )
+        for f in result.verified_findings
+    }
+
+    for f in batch:
+        if (
+            f["requirement_id"],
+            f["finding"][:40].lower(),
+        ) not in returned_keys:
+            # The verifier may have rewritten the text, so this is a hint,
+            # not proof of rejection.
+            print(
+                f"POSSIBLY REJECTED [{competitor}] "
+                f"({f['requirement_id']}) {f['finding'][:140]} "
+                f"| cited: {[e['source_url'] for e in f.get('evidence', [])]}"
+            )
 
     verified = []
 
@@ -3777,7 +3762,7 @@ def build_worker_result(
     # 1. Build unique Evidence objects
     # --------------------------------------------------------
 
-    evidence_by_url: Dict[str, Evidence] = {}
+    evidence_by_url: Dict[tuple, Evidence] = {}
 
     for result in search_results:
         url = normalize_url(
@@ -3787,7 +3772,9 @@ def build_worker_result(
         if not url:
             continue
 
-        if url in evidence_by_url:
+        ev_key = (result.get("competitor", ""), url)
+
+        if ev_key in evidence_by_url:
             continue
 
         source_type = (
@@ -3799,7 +3786,7 @@ def build_worker_result(
             else SourceType.WEB_PAGE
         )
 
-        evidence_by_url[url] = Evidence(
+        evidence_by_url[ev_key] = Evidence(
             source_type=source_type,
             source_title=result.get("title") or None,
             source_url=url,
@@ -3812,6 +3799,10 @@ def build_worker_result(
                 result.get("text") or ""
             )[:SOURCE_CHARS],
             metadata={
+                "first_party": is_official(
+                    url,
+                    result.get("competitor", ""),
+                ),
                 "competitor": result.get(
                     "competitor",
                     "",
@@ -3880,7 +3871,9 @@ def build_worker_result(
                 )
             )
 
-            source = evidence_by_url.get(url)
+            source = evidence_by_url.get(
+                (raw_finding.get("competitor", ""), url)
+            )
 
             if not source:
                 continue

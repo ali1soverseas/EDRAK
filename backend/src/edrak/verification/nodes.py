@@ -74,8 +74,10 @@ def _recorded_contradictions(finding: Finding, result: WorkerResult) -> list[str
 
 def _source_packet(evidence: list[Evidence]) -> str:
     blocks: list[str] = []
-    for index, item in enumerate(evidence[:4], start=1):
-        body = (item.excerpt or item.extracted_fact or "").strip()[:1500]
+    # Same 3500 chars per source the worker synthesized from, so a claim drawn
+    # from the middle of a page is not judged "invented".
+    for index, item in enumerate(evidence[:5], start=1):
+        body = (item.excerpt or item.extracted_fact or "").strip()[:3500]
         blocks.append(
             f"[{index}] type={item.source_type.value} "
             f"title={item.source_title or ''} url={item.source_url or ''}\n{body}"
@@ -146,13 +148,10 @@ def _should_call_llm(
     quality: EvidenceQuality,
     strength: str,
 ) -> bool:
-    if _confidence_too_low(finding):
-        return False
-    if quality is EvidenceQuality.LOW:
-        return False
-    if strength == "yes":
-        return False
-    if strength == "no":
+    # Source class and lexical misses never skip the semantic check: the model
+    # decides whether the text supports the claim. Only a clean lexical pass
+    # with adequate worker confidence is accepted without a model call.
+    if strength == "yes" and not _confidence_too_low(finding):
         return False
     return True
 
@@ -175,8 +174,6 @@ def _missing_information(
     )
     if invented:
         missing.append("Claim includes details that are not in the saved source: " + "; ".join(invented))
-    if quality is EvidenceQuality.LOW and evidence:
-        missing.append("Named official, analyst, or news source beyond this URL class.")
     if strength == "no" and evidence and not quantities_missing(finding.statement, evidence):
         missing.append("Saved source does not contain the claim.")
     if strength == "uncertain":
@@ -214,7 +211,7 @@ def _assess_one(
         quality = lift_market_quality(quality, supporting, finding.confidence)
     strength = support_strength(finding.statement, supporting)
     recorded = _recorded_contradictions(finding, result)
-    prices = price_conflicts(supporting)
+    prices = price_conflicts(finding.statement, supporting)
     invented: list[str] = []
     contradictions = list(dict.fromkeys(recorded + prices))
     review = None
@@ -232,15 +229,18 @@ def _assess_one(
 
     complete = _is_complete(finding, evidence, strength)
     missing = _missing_information(finding, evidence, quality, invented, strength)
-    if _confidence_too_low(finding):
+    independently_supported = bool(
+        review
+        and not review["invented"]
+        and review["supported"]
+    )
+    if _confidence_too_low(finding) and not independently_supported:
         complete = False
 
     verified = (
         complete
         and not contradictions
         and not invented
-        and quality is not EvidenceQuality.LOW
-        and not _confidence_too_low(finding)
     )
     status = FindingCheckStatus.VERIFIED if verified else FindingCheckStatus.INSUFFICIENT
     if status is FindingCheckStatus.INSUFFICIENT and not missing and not contradictions:

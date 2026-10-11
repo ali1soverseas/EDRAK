@@ -19,7 +19,7 @@ from edrak.contracts import (
     WorkerType,
 )
 
-MIN_CONFIDENCE = 0.60
+MIN_CONFIDENCE = 0.45
 
 _ANNOUNCE_PATHS = (
     "/docs",
@@ -182,7 +182,11 @@ def quality_from_url(
         if any(marker in path for marker in _ANNOUNCE_PATHS) and vendor_domains:
             if any(host == item or host.endswith("." + item) for item in vendor_domains):
                 return EvidenceQuality.HIGH
-        return EvidenceQuality.LOW
+        # Unknown host: not in the market tiers does not mean untrustworthy.
+        # Quality only lowers the confidence score; it never blocks a claim.
+        if source_type in _TYPE_FALLBACK_HIGH:
+            return EvidenceQuality.HIGH
+        return EvidenceQuality.MEDIUM
     if source_type in _TYPE_FALLBACK_HIGH:
         return EvidenceQuality.HIGH
     if source_type in _TYPE_FALLBACK_MEDIUM:
@@ -238,6 +242,9 @@ def best_quality(
     }
     best = EvidenceQuality.LOW
     for item in evidence:
+        meta = item.metadata or {}
+        if meta.get("first_party"):
+            return EvidenceQuality.HIGH
         quality = quality_from_url(
             item.source_url,
             source_type=item.source_type,
@@ -282,14 +289,42 @@ def content_terms(text: str) -> list[str]:
     return found
 
 
+def _normalise_numbers(text: str) -> str:
+    """Make '10K', '10 000', '1.5M' and number words comparable with digits."""
+    lowered = text.lower()
+    words = {
+        "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+        "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+    }
+    for word, digit in words.items():
+        lowered = re.sub(rf"\b{word}\b", digit, lowered)
+    lowered = re.sub(r"(\d)\s+(\d{3})\b", r"\1\2", lowered)
+    lowered = re.sub(r"(\d+(?:\.\d+)?)\s*k\b", lambda m: str(int(float(m.group(1)) * 1000)), lowered)
+    lowered = re.sub(r"(\d+(?:\.\d+)?)\s*m\b", lambda m: str(int(float(m.group(1)) * 1_000_000)), lowered)
+    return lowered
+
+
+def _hard_quantities(text: str) -> set[str]:
+    """Only prices, percentages and years can fail a claim. Plain integers
+    (version names, counts, 'three plans') are left to the LLM review."""
+    lowered = _normalise_numbers(text)
+    found: set[str] = set()
+    for match in _PRICE_RE.findall(lowered):
+        found.add(match.rstrip("0").rstrip(".") if "." in match else match)
+    for match in _PERCENT_RE.findall(lowered):
+        found.add(match.rstrip("0").rstrip(".") if "." in match else match)
+    for match in _YEAR_RE.findall(lowered):
+        found.add(match)
+    return found
+
+
 def quantities_missing(statement: str, evidence: list[Evidence]) -> list[str]:
-    needed = claim_quantities(statement)
+    needed = _hard_quantities(statement)
     if not needed:
         return []
-    combined = " ".join(source_text(item) for item in evidence)
-    present = claim_quantities(combined)
-    missing = sorted(token for token in needed if token not in present and token.lstrip("$") not in present)
-    return missing
+    present_text = _normalise_numbers(" ".join(source_text(item) for item in evidence))
+    present = set(re.findall(r"\d+(?:\.\d+)?", present_text.replace(",", "")))
+    return sorted(token for token in needed if token not in present)
 
 
 def overlap_terms(statement: str, evidence: list[Evidence]) -> list[str]:
@@ -303,42 +338,37 @@ def support_strength(statement: str, evidence: list[Evidence]) -> str:
         return "no"
     missing = quantities_missing(statement, evidence)
     if missing:
-        return "no"
+        return "uncertain"
     terms = content_terms(statement)
     matched = overlap_terms(statement, evidence)
-    if claim_quantities(statement):
+    if _hard_quantities(statement):
         return "yes"
     if not terms:
         return "uncertain"
     if len(matched) >= min(3, len(terms)) or (len(matched) / max(len(terms), 1) >= 0.5 and matched):
         return "yes"
-    if matched:
-        return "uncertain"
-    return "no"
+    return "uncertain"
 
 
 def extract_prices(text: str) -> set[str]:
     return {f"${match}" for match in _PRICE_RE.findall(text.lower())}
 
 
-def price_conflicts(evidence: list[Evidence]) -> list[str]:
-    """Flag disjoint singleton prices on different URLs, not two SKUs on one page."""
-    by_url: dict[str, set[str]] = {}
-    free_urls: set[str] = set()
-    for item in evidence:
-        url = (item.source_url or item.source_title or item.evidence_id).lower()
-        text = source_text(item)
-        by_url.setdefault(url, set()).update(extract_prices(text))
-        if _FREE_RE.search(text.lower()) and not extract_prices(text):
-            free_urls.add(url)
-    priced = {url: prices for url, prices in by_url.items() if len(prices) == 1}
-    urls = list(priced)
-    for left in range(len(urls)):
-        for right in range(left + 1, len(urls)):
-            if priced[urls[left]] != priced[urls[right]]:
-                return ["Sources report different prices for the same claim."]
-    if priced and free_urls - set(priced):
-        return ["Sources report different pricing or packaging for the same claim."]
+def price_conflicts(statement: str, evidence: list[Evidence]) -> list[str]:
+    """Flag a conflict only when the claim names a price and every source that
+    states prices lacks it while another source does contain it. Unrelated
+    prices elsewhere on a page, and words like 'included' or 'free', are not
+    conflicts."""
+    claim_prices = extract_prices(statement)
+    if not claim_prices or len(evidence) < 2:
+        return []
+    has_price = [item for item in evidence if extract_prices(source_text(item))]
+    if len(has_price) < 2:
+        return []
+    supporting = [item for item in has_price if claim_prices & extract_prices(source_text(item))]
+    contradicting = [item for item in has_price if not (claim_prices & extract_prices(source_text(item)))]
+    if supporting and contradicting and all(len(extract_prices(source_text(i))) == 1 for i in contradicting):
+        return ["A source states a different price for the price named in the claim."]
     return []
 
 

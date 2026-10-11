@@ -183,6 +183,75 @@ def test_verified_official_finding_passes_contract():
     assert official.confidence >= 0.8
 
 
+def test_low_worker_confidence_is_overridden_by_independent_evidence_review():
+    """Strong evidence can verify a claim even if the worker was uncertain."""
+    result = _official_competitor()
+    result.findings[0].confidence = 0.4
+
+    with (
+        patch("edrak.verification.nodes.support_strength", return_value="uncertain"),
+        patch(
+            "edrak.verification.nodes._llm_review",
+            return_value={"supported": True, "contradictions": [], "invented": []},
+        ) as review,
+    ):
+        verified = run(
+            VerificationInput(request=_request(), agent_outputs=[result])
+        )
+
+    finding = verified.findings[0]
+    review.assert_called_once()
+    assert finding.verification_status is FindingCheckStatus.VERIFIED
+    assert finding.evidence_quality is EvidenceQuality.HIGH
+
+
+def test_azure_devops_official_microsoft_docs_can_verify_findings():
+    request = BusinessRequest(
+        goal="Compare GitLab with Azure DevOps.",
+        company_profile=CompanyProfile(name="GitLab"),
+        business_context=BusinessContext(
+            use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+            targets=["Azure DevOps"],
+        ),
+    )
+    evidence = Evidence(
+        evidence_id="ev_azure_devops_official",
+        source_type=SourceType.OFFICIAL_DOCUMENTATION,
+        source_title="Azure DevOps MCP Server",
+        source_url="https://learn.microsoft.com/en-us/azure/devops/mcp-server/mcp-server-overview",
+        publisher="Microsoft",
+        extracted_fact=(
+            "The Azure DevOps MCP Server enables AI agents to access work items, "
+            "pull requests, and builds."
+        ),
+    )
+    result = WorkerResult(
+        task_id="task-azure-devops",
+        worker=WorkerType.COMPETITOR_INTELLIGENCE,
+        status=WorkerStatus.COMPLETED,
+        findings=[
+            Finding(
+                finding_id="azure_devops_mcp",
+                statement=(
+                    "The Azure DevOps MCP Server enables AI agents to access "
+                    "work items, pull requests, and builds."
+                ),
+                category=FindingCategory.PRODUCT_FEATURE,
+                evidence_refs=[EvidenceRef(evidence_id=evidence.evidence_id)],
+                confidence=0.9,
+            )
+        ],
+        evidence=[evidence],
+        error="none",
+    )
+
+    verified = _run(VerificationInput(request=request, agent_outputs=[result]))
+    finding = verified.findings[0]
+
+    assert finding.verification_status is FindingCheckStatus.VERIFIED
+    assert finding.evidence_quality is EvidenceQuality.HIGH
+
+
 def test_insufficient_snippet_and_missing_details_cannot_complete():
     """A snippet-only finding is graded insufficient and the run finalizes.
 

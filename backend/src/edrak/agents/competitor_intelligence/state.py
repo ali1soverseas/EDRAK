@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, field_validator
 # CONFIG
 # ============================================================
 
-MAX_RESULTS_PER_QUERY = 5
+MAX_RESULTS_PER_QUERY = 2
 
 MAX_RESEARCH_STAGES = 6
 
@@ -39,17 +39,22 @@ INCLUDE_RAW_FINDINGS = False
 
 OFFICIAL_DOMAINS = {
     "GitHub": ["docs.github.com", "github.blog", "github.com"],
+    "GitHub Copilot": ["docs.github.com", "github.blog", "github.com"],
+    "Azure DevOps": [
+        "learn.microsoft.com",
+        "azure.microsoft.com",
+        "devblogs.microsoft.com",
+        "visualstudio.microsoft.com",
+    ],
     "Microsoft Azure DevOps": [
         "learn.microsoft.com",
         "azure.microsoft.com",
         "devblogs.microsoft.com",
         "visualstudio.microsoft.com",
     ],
-    "Atlassian Bitbucket": [
-        "bitbucket.org",
-        "atlassian.com",
-        "support.atlassian.com",
-    ],
+    "Bitbucket": ["bitbucket.org", "atlassian.com", "support.atlassian.com"],
+    "Atlassian Bitbucket": ["bitbucket.org", "atlassian.com", "support.atlassian.com"],
+    "AWS": ["docs.aws.amazon.com", "aws.amazon.com", "aboutamazon.com"],
     "Amazon Web Services (AWS)": [
         "docs.aws.amazon.com",
         "aws.amazon.com",
