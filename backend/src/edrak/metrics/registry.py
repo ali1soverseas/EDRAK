@@ -39,6 +39,12 @@ class UseCaseTemplate(BaseModel):
     lens_weights: dict[str, float] = Field(default_factory=dict)
     collapse_below_evidence: int = 2
     headline_framing: str
+    metrics_theme: dict[str, str] = Field(default_factory=lambda: {"title": "Business metrics", "subtitle": ""})
+    signal_emphasis: dict[str, float] = Field(default_factory=dict)
+    decision_framing: str = ""
+
+    def emphasis(self, lens: str) -> float:
+        return self.signal_emphasis.get(lens, self.lens_weights.get(lens, 0.5))
 
 
 class Registry:

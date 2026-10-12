@@ -36,8 +36,8 @@ async def derive(db: aiosqlite.Connection, request_id: str, company: str) -> int
         if not defn or defn.comparator != "company" or r["entity"].lower() == company.lower():
             continue
         base_id = OWN_ID.get(r["metric_id"], r["metric_id"])
-        base = ours.get((base_id, (r["period"] or "").lower())) or next(
-            (v for (m, _), v in ours.items() if m == base_id), None)
+        # Only like with like: the same period and the same unit. A different period is never compared.
+        base = ours.get((base_id, (r["period"] or "").lower()))
         if not base or r["unit"] != base["unit"]:
             continue
         delta = pct_delta(r["value"], base["value"])

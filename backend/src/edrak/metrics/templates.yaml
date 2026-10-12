@@ -8,7 +8,10 @@ templates:
     lens_order: [competitor_intelligence, customer_trends, internal_intelligence, market_intelligence]
     lens_weights: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.7, market_intelligence: 0.5}
     collapse_below_evidence: 2
-    headline_framing: "Say where the company stands against its named competitors on price, customer voice and capability, and the one move that matters most."
+    headline_framing: "Say where the company stands against its named competitors, using only the figures and signals given, and the one move that matters most."
+    metrics_theme: {title: "Us versus them", subtitle: "Our figures next to each competitor's: price, scale, revenue and what customers say."}
+    signal_emphasis: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.6, market_intelligence: 0.5}
+    decision_framing: "Frame each option as a competitive response: how the company positions against the named competitors (for example lead, match, differentiate, or hold and watch)."
   market_entry_expansion:
     kpi_strip: [market_size, market_cagr, adoption_rate, market_concentration, segment_growth, regulation_events, search_interest, price_per_tier, share_of_voice, capacity]
     required: [market_size, market_cagr, adoption_rate, regulation_events, capacity]
@@ -16,7 +19,10 @@ templates:
     lens_order: [market_intelligence, competitor_intelligence, customer_trends, internal_intelligence]
     lens_weights: {market_intelligence: 1.0, competitor_intelligence: 0.7, customer_trends: 0.6, internal_intelligence: 0.8}
     collapse_below_evidence: 2
-    headline_framing: "Say whether the market is large, growing and open enough to enter, what regulation requires, and whether the company can deliver."
+    headline_framing: "Say whether the market looks worth entering, using only the figures and signals given, and the condition that matters most."
+    metrics_theme: {title: "The market", subtitle: "Size, growth, adoption and the rules that apply, with our capacity to deliver."}
+    signal_emphasis: {market_intelligence: 1.0, internal_intelligence: 0.8, competitor_intelligence: 0.7, customer_trends: 0.6}
+    decision_framing: "Frame each option as an entry path: when and how to enter (for example enter now, enter through a partner or a pilot, or wait for a condition)."
   product_launch:
     kpi_strip: [search_interest, top_pain_points, switching_intent, sentiment_split, price_per_tier, own_price, market_size, adoption_rate, capacity, roadmap_items]
     required: [search_interest, top_pain_points, price_per_tier, own_price, capacity]
@@ -24,4 +30,7 @@ templates:
     lens_order: [customer_trends, competitor_intelligence, market_intelligence, internal_intelligence]
     lens_weights: {customer_trends: 1.0, competitor_intelligence: 0.8, market_intelligence: 0.6, internal_intelligence: 0.8}
     collapse_below_evidence: 2
-    headline_framing: "Say whether customers want this offering now, what the price position should be against competitors, and what the company must be ready to ship."
+    headline_framing: "Say whether customers want this offering now, using only the figures and signals given, and what the company must be ready to ship."
+    metrics_theme: {title: "Demand and price room", subtitle: "What customers search for and complain about, and where competitors price."}
+    signal_emphasis: {customer_trends: 1.0, competitor_intelligence: 0.8, internal_intelligence: 0.7, market_intelligence: 0.6}
+    decision_framing: "Frame each option as a launch choice: what to launch, for whom and at what price position (for example launch broadly, launch a narrow first version, or validate demand first)."

@@ -117,6 +117,8 @@ def problems(options: list[DraftOption], valid_signals: set[str], valid_metrics:
             found.append(f"Option '{o.title}' ranks or recommends an option. Describe it neutrally.")
         if not o.risks or not o.opportunities:
             found.append(f"Option '{o.title}' needs its own opportunities and risks.")
+        if len(_words(o.would_change_if or "")) < 3:
+            found.append(f"Option '{o.title}' needs would_change_if: the figure or open gap that would change this choice.")
         for other in options[:i]:
             if similarity(o, other) >= MAX_SIMILARITY:
                 found.append(f"Options '{other.title}' and '{o.title}' are too similar. Make them genuinely different strategies.")
@@ -156,6 +158,13 @@ def to_contract(options: list[DraftOption], valid_signals: set[str], valid_metri
     return out
 
 
+def _framing(req: dict[str, Any]) -> str:
+    from edrak.metrics.registry import get_registry
+
+    use_case = ((req.get("business_context") or {}).get("use_case")) or "competitive_intelligence"
+    return get_registry().template(str(use_case)).decision_framing
+
+
 def _prompt(context: dict[str, Any]) -> str:
     signals = "\n".join(
         f"- id={s.get('signal_id')} | {s.get('title')} | {s.get('signal')} | {s.get('interpretation')}" for s in context.get("signals", [])[:10])
@@ -164,7 +173,9 @@ def _prompt(context: dict[str, Any]) -> str:
     metrics = "\n".join(f"- {m['metric_id']} | {m['entity']} | {m['status']}" for m in (meta.get("metric_context") or [])[:40])
     gaps = "\n".join(f"- {g}" for g in (meta.get("blocking_gaps") or [])[:15])
     req = context.get("business_request") or {}
+    framing = _framing(req)
     return (f"BUSINESS GOAL: {context.get('business_goal')}\n"
+            + (f"DECISION FRAMING: {framing}\n" if framing else "") +
             f"COMPANY: {(req.get('company_profile') or {}).get('name')}\n\nSIGNALS:\n{signals or '- none'}\n\n"
             f"QUESTION-LEVEL DIRECTIONS (inputs, not options):\n{recs or '- none'}\n\n"
             f"METRICS (ids you may reference):\n{metrics or '- none'}\n\nOPEN GAPS:\n{gaps or '- none'}")

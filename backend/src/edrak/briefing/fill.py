@@ -57,6 +57,31 @@ def _table(defn: MetricDef, entity: str, rows: list[dict[str, Any]], caveat: str
     return _card(defn, entity, "table", rows, {"rows": body}, caveat=caveat, key=key)
 
 
+def _norm(s: Optional[str]) -> str:
+    return " ".join((s or "").lower().split())
+
+
+def comparable(rows: list[dict[str, Any]], defn: MetricDef) -> Optional[str]:
+    """None when the rows can share one chart; otherwise why they cannot (period, unit or definition differ)."""
+    periods = {_norm(r.get("period")) for r in rows}
+    if len(periods) > 1:
+        return "Not charted together: the figures cover different periods (" + ", ".join(sorted(p or "unstated" for p in periods)) + ")."
+    units = {r.get("unit") for r in rows}
+    if len(units) > 1:
+        return "Not charted together: the figures are in different units (" + ", ".join(sorted(u or "none" for u in units)) + ")."
+    defs = {_norm(r.get("definition")) for r in rows if r.get("definition") and _norm(r.get("definition")) != _norm(defn.definition)}
+    if len(defs) > 1:
+        return "Not charted together: the sources define the figure differently."
+    return None
+
+
+def _shown(r: dict[str, Any], defn: MetricDef) -> str:
+    """Dates and events read as written in the source; numbers are formatted from the stored value."""
+    if defn.unit_kind in ("date", "text"):
+        return r.get("label") or r.get("value_text") or ""
+    return format_value(r["value"], r["unit"])
+
+
 def _comparators(rows: list[dict[str, Any]], derived: dict[tuple, dict[str, Any]], row: dict[str, Any], defn: MetricDef) -> Optional[dict[str, Any]]:
     d = derived.get((row["metric_id"], row["entity"].lower()))
     if d and defn.comparator == "company":
@@ -104,6 +129,8 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
                     slots["range"] = {"low": format_value(c["low"], head["unit"]), "high": format_value(c["high"], head["unit"]),
                                       "sources": [{"uid": r["uid"], "value": format_value(r["value"], r["unit"]), "refs": _refs([r])} for r in same]}
                 cards.append(_card(defn, entity, "kpi", same, slots, status=status))
+        elif visual == "ladder" and comparable([r for r in group if r["status"] != "conflict"] or group, defn):
+            cards.append(_table(defn, "", group, comparable([r for r in group if r["status"] != "conflict"] or group, defn), key=defn.id))
         elif visual == "ladder":
             by_row: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
             for r in group:
@@ -129,11 +156,12 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
             cards += _lines(defn, group)
         elif visual == "timeline":
             ordered = sorted(group, key=lambda r: (r["period"] or "", r["entity"]))
-            slots = {"events": [{"when": r["period"], "label": r["label"] or r["entity"], "value": format_value(r["value"], r["unit"]),
+            slots = {"events": [{"when": r["period"] or (r["value_text"] if defn.unit_kind == "date" else None),
+                                 "label": r["label"] or r["entity"], "value": _shown(r, defn),
                                  "uid": r["uid"], "refs": _refs([r])} for r in ordered]}
             cards.append(_card(defn, "", "timeline", group, slots, key=defn.id))
         else:
-            slots = {"items": [{"entity": r["entity"], "text": r["label"] or r["value_text"], "uid": r["uid"], "refs": _refs([r])} for r in group]}
+            slots = {"items": [{"entity": r["entity"], "text": r["label"] or r["value_text"] or _shown(r, defn), "uid": r["uid"], "refs": _refs([r])} for r in group]}
             cards.append(_card(defn, "", "text", group, slots, key=defn.id))
 
     cards += _series_cards(trend_series, reg.get("search_interest"))
@@ -142,6 +170,12 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
 
 
 def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Parts of a whole. Checks: enough items behind it, comparable parts, parts that add up.
+
+    A share whose found parts add up to less than 100 shows only the entities found plus
+    "Others and unknown" for the rest, computed here and labelled incomplete. The remainder is never
+    given to a missing name. A single found part is a KPI card, not a pie.
+    """
     out = []
     has_label = any(r["label"] for r in group)
     buckets: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -149,19 +183,39 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
         buckets[r["entity"] if has_label else ""].append(r)
     need = defn.check.get("min_sample")
     for entity, rs in buckets.items():
+        key = f"{defn.id}:{slug(entity)}" if entity else defn.id
         total = sum(r["value"] for r in rs)
         small = need and any((r["sample_size"] or 0) < need for r in rs)
-        parts_ok = (not defn.check.get("parts_sum_100")) or abs(total - 100) <= PARTS_TOLERANCE
+        mismatch = comparable(rs, defn)
         if small:
-            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} items behind it.", key=f"{defn.id}:{slug(entity)}" if entity else defn.id))
-        elif not parts_ok or len(rs) < 2:
-            out.append(_table(defn, entity, rs, "Not shown as a chart: the parts are incomplete or do not add up to 100%.",
-                              key=f"{defn.id}:{slug(entity)}" if entity else defn.id))
-        else:
-            parts = [{"label": r["label"] or r["entity"], "value": r["value"], "display": format_value(r["value"], r["unit"]),
-                      "uid": r["uid"], "refs": _refs([r])} for r in sorted(rs, key=lambda r: -r["value"])]
-            slots = {"parts": parts, "n": min((r["sample_size"] for r in rs if r["sample_size"]), default=None)}
-            out.append(_card(defn, entity, "segmented", rs, slots, key=f"{defn.id}:{slug(entity)}" if entity else defn.id))
+            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} items behind it.", key=key))
+            continue
+        if mismatch:
+            out.append(_table(defn, entity, rs, mismatch, key=key))
+            continue
+        if len(rs) == 1:
+            r = rs[0]
+            label = r["label"] or r["entity"]
+            slots = {"value": format_value(r["value"], r["unit"]), "uid": r["uid"], "period": r["period"], "comparator": None,
+                     "part_of": label}
+            out.append(_card(defn, entity or r["entity"], "kpi", rs, slots, key=key,
+                             caveat="Only this part was found, so it is shown on its own, not as a share of a whole."))
+            continue
+        parts = [{"label": r["label"] or r["entity"], "value": r["value"], "display": format_value(r["value"], r["unit"]),
+                  "uid": r["uid"], "refs": _refs([r])} for r in sorted(rs, key=lambda r: -r["value"])]
+        slots: dict[str, Any] = {"parts": parts, "n": min((r["sample_size"] for r in rs if r["sample_size"]), default=None)}
+        caveat = None
+        if defn.check.get("parts_sum_100") or defn.unit_kind == "percent":
+            if total > 100 + PARTS_TOLERANCE:
+                out.append(_table(defn, entity, rs, "Not shown as a chart: the parts add up to more than 100%.", key=key))
+                continue
+            if total < 100 - PARTS_TOLERANCE:
+                rest = round(100 - total, 1)
+                parts.append({"label": "Others and unknown", "value": rest, "display": format_value(rest, "%"), "uid": None, "refs": [],
+                              "computed": True, "formula": f"100% − {format_value(round(total, 1), '%')} found"})
+                slots["incomplete"] = True
+                caveat = "Incomplete: only the parts found are named. The rest is Others and unknown, computed as 100% minus what was found."
+        out.append(_card(defn, entity, "segmented", rs, slots, key=key, caveat=caveat))
     return out
 
 

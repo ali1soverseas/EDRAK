@@ -90,12 +90,39 @@ def test_sentiment_below_minimum_sample_falls_back_to_a_table():
     assert c["component"] == "table" and "fewer than 30" in c["caveat"]
 
 
-def test_segments_that_do_not_sum_to_100_fall_back():
+def test_partial_share_shows_others_and_unknown_and_is_labelled_incomplete():
     tpl = get_registry().template("competitive_intelligence")
     rows = [_row("a" * 32, "share_of_voice", "Acme", 60.0, sample_size=100, unit="%"),
             _row("b" * 32, "share_of_voice", "Fawry", 20.0, sample_size=100, unit="%")]
     cards, _ = build_cards(rows, [], [], [], tpl, "Acme")
+    c = next(c for c in cards if c["metric_id"] == "share_of_voice")
+    assert c["component"] == "segmented" and c["slots"]["incomplete"] is True
+    parts = {p["label"]: p["value"] for p in c["slots"]["parts"]}
+    assert parts == {"Acme": 60.0, "Fawry": 20.0, "Others and unknown": 20.0}
+    assert "Incomplete" in c["caveat"]
+
+
+def test_parts_over_100_fall_back_to_a_table():
+    tpl = get_registry().template("competitive_intelligence")
+    rows = [_row("a" * 32, "share_of_voice", "Acme", 70.0, sample_size=100, unit="%"),
+            _row("b" * 32, "share_of_voice", "Fawry", 50.0, sample_size=100, unit="%")]
+    cards, _ = build_cards(rows, [], [], [], tpl, "Acme")
     assert next(c for c in cards if c["metric_id"] == "share_of_voice")["component"] == "table"
+
+
+def test_a_single_found_share_is_a_kpi_card_not_a_pie():
+    tpl = get_registry().template("competitive_intelligence")
+    cards, _ = build_cards([_row("a" * 32, "share_of_voice", "Acme", 60.0, sample_size=100, unit="%")], [], [], [], tpl, "Acme")
+    c = next(c for c in cards if c["metric_id"] == "share_of_voice")
+    assert c["component"] == "kpi" and c["slots"]["value"]
+
+
+def test_prices_for_different_periods_are_not_charted_together():
+    tpl = get_registry().template("competitive_intelligence")
+    rows = [_row("a" * 32, "price_per_tier", "Fawry", 19, period="2025"), _row("b" * 32, "price_per_tier", "XPay", 23, period="2026")]
+    cards, _ = build_cards(rows, [], [], [], tpl, "Acme")
+    c = next(c for c in cards if c["metric_id"] == "price_per_tier")
+    assert c["component"] == "table" and "different periods" in c["caveat"]
 
 
 def test_kpi_strip_changes_with_the_use_case():

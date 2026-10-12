@@ -12,6 +12,7 @@ from tests.test_api_and_db import FORM, _account, client, isolated  # noqa: F401
 
 
 def _opt(title, thesis, signals=("s1",), **kw):
+    kw.setdefault("would_change_if", "Fawry price per tier turns out lower than ours")
     return DraftOption(title=title, thesis=thesis, supporting_signal_ids=list(signals),
                        opportunities=[DraftOpportunity(text="Reach SMEs sooner")], risks=[DraftRisk(text="Price war", mitigation="Hold price")], **kw)
 
@@ -26,6 +27,7 @@ def test_options_must_differ_cite_signals_and_carry_no_digits():
     assert any("digit" in p for p in problems([a, _opt("Cut 20% fast", "Aggressive discount to win share quickly")], {"s1"}, set()))
     assert any("ranks" in p for p in problems([a, _opt("Wait", "We recommend waiting for more evidence")], {"s1"}, set()))
     assert similarity(a, b) < 0.5
+    assert any("would_change_if" in p for p in problems([a, _opt("Wait", "Close the evidence gap first", would_change_if="")], {"s1"}, set()))
 
 
 def _draft():
