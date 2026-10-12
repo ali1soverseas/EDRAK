@@ -1,4 +1,6 @@
+import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { BriefToolbar } from "../components/brief/BriefToolbar";
 import { ReportView } from "../components/ReportView";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
@@ -14,9 +16,11 @@ export function Report() {
   const navigate = useNavigate();
   const brief = useAsync(() => api.getBrief(id), [id]);
   const data = brief.data;
+  const container = useRef<HTMLDivElement>(null);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const crumbs = [
-    { label: t("nav.analyses"), to: "/" },
+    { label: t("nav.analyses"), to: "/reports" },
     { label: data?.analysis_title ?? "…" },
     { label: data ? t("brief.no", { no: briefNumber(data.brief_no) }) : t("brief.crumb") },
   ];
@@ -55,7 +59,12 @@ export function Report() {
   return (
     <>
       {chrome}
-      <ReportView brief={data} />
+      <div ref={container} className={`col ${fullscreen ? "brief-fullscreen" : ""}`} style={{ height: "100%", minHeight: 0 }}>
+        <BriefToolbar brief={data as never} container={container} fullscreen={fullscreen} setFullscreen={setFullscreen} />
+        <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+          <ReportView brief={data} />
+        </div>
+      </div>
     </>
   );
 }
