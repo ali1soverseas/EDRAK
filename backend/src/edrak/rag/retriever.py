@@ -89,9 +89,15 @@ class InternalRetriever:
         is_syn = as_bool(meta.get("is_synthetic"), default=False)
         source_type = SourceType.SYNTHETIC_INTERNAL if is_syn else SourceType.INTERNAL_DOCUMENT
 
+        from edrak.guardrails.content import sanitize
+
+        # Chunks indexed before the document scan existed are cleaned when they are read.
+        doc, removed = sanitize(doc)
         extracted_fact = best_fact(doc, query) or f"Internal intelligence finding from {title}"
 
         md: Dict[str, Any] = {**meta, "search_query": query}
+        if removed:
+            md["guardrail_removed_lines"] = removed
         if score is not None:
             md["confidence_score"] = round(score, 2)
             md["relevance_score"] = round(score, 2)

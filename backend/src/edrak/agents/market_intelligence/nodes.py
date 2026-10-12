@@ -769,6 +769,11 @@ def task_executor(state: MarketAgentState) -> dict:
             for scrape_attempt in range(MAX_RETRIES):
                 try:
                     text = scrape_url_content(url)
+                    # Guardrail: page text is data, never instructions.
+                    if text:
+                        from edrak.guardrails.content import is_high_risk, sanitize
+
+                        text = "" if is_high_risk(text) else sanitize(text)[0]
                     break
                 except (ConnectionError, TimeoutError) as exc:
                     if scrape_attempt < MAX_RETRIES - 1:

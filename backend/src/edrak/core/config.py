@@ -82,6 +82,12 @@ class Settings(BaseSettings):
     ORCHESTRATION_CHECKPOINT_PATH: Path = Field(default=Path("data/orchestration_checkpoints.db"))
     MAX_UPLOAD_MB: int = 25
 
+    # Guardrails: the scope check asks a model whether a question is a business question.
+    # Off in tests and when no model is configured; the pattern checks always run.
+    GUARDRAIL_SCOPE_CHECK: bool = True
+    # Evaluation after each run: a model judges a sample of findings (faithfulness, relevance).
+    EVALUATION_JUDGE: bool = True
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.

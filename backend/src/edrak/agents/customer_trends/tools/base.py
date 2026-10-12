@@ -215,18 +215,31 @@ def cap_item_text(
     """The result with every item text cut to `limit` characters, and how many were cut. The cut
     keeps the start of the text as it was, notes the original length, and leaves the content hash
     (of the whole text) alone, so duplicates are still found."""
+    from edrak.guardrails.content import sanitize
+
     cut = 0
+    cleaned = 0
     items: list[Any] = []
     for item in result.items:
+        # Guardrail: posts, comments and pages are data, never instructions.
+        if isinstance(item, EvidenceItem) and item.text:
+            text, removed = sanitize(item.text)
+            if removed:
+                item = item.model_copy(update={"text": text, "metadata": {**item.metadata, "guardrail_removed_lines": removed}})
+                cleaned += 1
         if isinstance(item, EvidenceItem) and len(item.text) > limit:
             metadata = {**item.metadata, "text_cut_from": len(item.text)}
             item = item.model_copy(update={"text": item.text[:limit], "metadata": metadata})
             cut += 1
         items.append(item)
-    if not cut:
+    if not cut and not cleaned:
         return result, 0
-    warning = f"{cut} item(s) were longer than {limit} characters and were cut"
-    return result.model_copy(update={"items": items, "warnings": [*result.warnings, warning]}), cut
+    warnings = list(result.warnings)
+    if cut:
+        warnings.append(f"{cut} item(s) were longer than {limit} characters and were cut")
+    if cleaned:
+        warnings.append(f"{cleaned} item(s) contained instruction-like text, which was removed")
+    return result.model_copy(update={"items": items, "warnings": warnings}), cut
 
 
 def error_response(code: str, message: str, **fields: Any) -> ToolResponse:

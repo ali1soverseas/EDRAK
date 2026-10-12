@@ -39,6 +39,8 @@ from .prompts import (
     synthesis_prompt,
 )
 
+from edrak.guardrails.content import sanitize as sanitize_text
+
 from .sources import (
     best_passage,
     is_official as _is_official_source,
@@ -1516,10 +1518,8 @@ def search_node(state: CompetitorState):
                     "stage": stage,
                     "title": result.get("title", ""),
                     "url": url,
-                    "text": result_text(
-                        result,
-                        MAX_STORE_CHARS,
-                    ),
+                    # Guardrail: page text is data, never instructions.
+                    "text": sanitize_text(result_text(result, MAX_STORE_CHARS))[0],
                     "published_date": result.get(
                         "published_date"
                     ),

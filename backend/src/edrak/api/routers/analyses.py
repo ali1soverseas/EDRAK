@@ -31,6 +31,9 @@ from edrak.api.schemas import (
 )
 from edrak.contracts import UseCase, WorkerType
 from edrak.db.repositories import entities as entities_repo
+from edrak.db.repositories import guardrails as guardrails_repo
+from edrak.core.config import settings
+from edrak.guardrails.query import check_query
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import audit as audit_repo
 from edrak.db.repositories import company as company_repo
@@ -111,6 +114,18 @@ async def draft(
     """Create or re-draft an analysis and write a new plan version awaiting approval."""
     company = await company_repo.get_company(db, workspace_id)
     existing = await analyses_repo.get_request(db, analysis_id, workspace_id) if analysis_id else None
+    # Guardrail: the question is checked before anything is planned or searched.
+    verdict = check_query(
+        form.goal,
+        use_model=settings.GUARDRAIL_SCOPE_CHECK,
+        context=" ".join([*form.competitors, form.market, form.offering, form.target_customers or ""]),
+    )
+    if verdict.blocked:
+        await guardrails_repo.record_checks(db, workspace_id=workspace_id, stage="query", checks=verdict.checks,
+                                            request_id=existing["request_id"] if existing else None)
+        raise HTTPException(status_code=422, detail={"code": verdict.code, "message": verdict.reason})
+    if verdict.action == "redacted":
+        form = form.model_copy(update={"goal": verdict.text})
     if existing and existing["status"] not in ("draft", "awaiting_approval", "planning"):
         raise HTTPException(status_code=409, detail="wrong_state")
     request_id = existing["request_id"] if existing else new_id()
@@ -160,6 +175,8 @@ async def draft(
             allowed_source_types=source_types, repeat_weekly=form.repeat_weekly,
         )
 
+    await guardrails_repo.record_checks(db, workspace_id=workspace_id, stage="query", checks=verdict.checks,
+                                        request_id=request_id)
     plan = plan_for(request, workers_for(source_types))
     await analyses_repo.save_plan(db, plan, est_minutes=estimate_minutes(plan))
     await analyses_repo.set_request_status(db, request_id, "awaiting_approval")
@@ -237,3 +254,13 @@ async def rerun_analysis(
     form = AnalysisForm(**(row["form"] or {"use_case": row["use_case"], "goal": row["goal"]}))
     new_row = await draft(db, form=form, workspace_id=session.workspace.workspace_id, user_id=session.user.user_id)
     return {"analysis_id": new_row["request_id"]}
+
+
+@router.get("/{analysis_id}/guardrails")
+async def analysis_guardrails(
+    analysis_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> list[dict[str, Any]]:
+    await _require(db, session, analysis_id)
+    return await guardrails_repo.list_events(db, session.workspace.workspace_id, request_id=analysis_id)

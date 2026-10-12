@@ -213,6 +213,16 @@ async def index_document(workspace_id: str, document_id: str) -> None:
                     db, document_id, status="indexed", index_progress=100, indexed_at=now_iso(),
                     guardrail_status=status, guardrail_notes=notes,
                 )
+                if flagged:
+                    from edrak.db.repositories import guardrails as guardrails_repo
+
+                    await guardrails_repo.record(
+                        db, workspace_id=workspace_id, stage="document", document_id=document_id,
+                        check_name="document_scan",
+                        severity="high" if excluded else "medium",
+                        action="blocked" if status == "quarantined" else "flagged",
+                        detail={"chunks": len(chunks), "flagged": len(flagged), "excluded": len(excluded), "notes": notes[:10]},
+                    )
             await _after_indexing(workspace_id, document_id)
         except ExtractionError as exc:
             await update(status="failed", error_message=str(exc), index_progress=0)

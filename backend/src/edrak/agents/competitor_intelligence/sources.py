@@ -144,6 +144,10 @@ def judge(result: dict[str, Any], competitor: str, aliases: Iterable[str] = ()) 
     text = result.get("text") or ""
     if not host:
         return False, "no url"
+    from edrak.guardrails.content import is_high_risk
+
+    if is_high_risk(text):
+        return False, "the page tries to instruct the AI"
     if is_official(url, competitor):
         return (True, "official") if len(text.strip()) >= 80 else (False, "official page without text")
     if any(_matches(host, h) for h in LOW_VALUE_HOSTS):

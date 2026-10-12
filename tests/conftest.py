@@ -39,3 +39,12 @@ def sample_research_task() -> ResearchTask:
             focus_areas=["AI-assisted development"],
         ),
     )
+
+
+@pytest.fixture(autouse=True)
+def _no_model_calls_from_guardrails_or_evaluation(monkeypatch):
+    """Tests never reach a real model through the guardrail scope check or the evaluation judge."""
+    from edrak.core.config import settings
+
+    monkeypatch.setattr(settings, "GUARDRAIL_SCOPE_CHECK", False)
+    monkeypatch.setattr(settings, "EVALUATION_JUDGE", False)

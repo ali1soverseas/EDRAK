@@ -33,7 +33,9 @@ from edrak.core import action_log
 from edrak.db.connection import get_db
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import briefs as briefs_repo
+from edrak.db.repositories import guardrails as guardrails_repo
 from edrak.db.repositories import notifications as notifications_repo
+from edrak.guardrails.output import check_brief
 from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
@@ -870,7 +872,8 @@ class RunManager:
             numbers = await results_repo.evidence_numbers(db, analysis_id)
 
             def build(brief_id: str, number: int) -> dict[str, Any]:
-                return build_brief(
+                # Guardrail: the brief is checked before it is saved (citations, numbers, no verdicts).
+                return check_brief(build_brief(
                     brief_id=brief_id,
                     brief_no=number,
                     analysis_id=analysis_id,
@@ -885,12 +888,19 @@ class RunManager:
                     cross_signal=state.get("cross_signal"),
                     decision_analysis=state.get("decision_analysis"),
                     evidence_numbers=numbers,
-                )
+                ))
 
             saved = await briefs_repo.save_brief(
                 db, workspace_id=active.workspace_id or "", request_id=analysis_id,
                 requested_by=active.requested_by_id, build=build,
             )
+            guard = saved["document"].get("guardrails") or {}
+            for check in guard.get("checks", [])[:50]:
+                await guardrails_repo.record(
+                    db, workspace_id=active.workspace_id or "", stage="output", check_name=check.get("check", "output"),
+                    severity="medium" if check.get("check") == "unsupported_number" else "low",
+                    action=check.get("action", "flagged"), detail=check, request_id=analysis_id, commit=False,
+                )
             await runs_repo.update_run(db, analysis_id, status=final_state, current_stage="done", completed_at=now, commit=False)
             await analyses_repo.set_request_status(db, analysis_id, final_state, commit=False)
             await notifications_repo.notify(
@@ -906,6 +916,10 @@ class RunManager:
         run_view.finished_at = now
         run_view.brief_id = saved["id"]
         await self._event(active, kind="info", message="The brief is ready.")
+        # Quality scores are computed in the background; the brief does not wait for them.
+        from edrak.evaluation.run import schedule_evaluation
+
+        schedule_evaluation(analysis_id)
         await active.stream.emit("complete", {"state": final_state, "brief_id": saved["id"]})
         active.stream.close()
         logger.info("Analysis %s run completed (%s)", analysis_id, final_state)
