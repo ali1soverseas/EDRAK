@@ -5,6 +5,7 @@ import { Company } from "./pages/Company";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
 import { Sources } from "./pages/Sources";
+import { Alerts, Decisions, EvidenceExplorer, Monitors, Reports, Settings, Watchlist } from "./pages/Workspace";
 import { LiveRun } from "./pages/LiveRun";
 import { NewAnalysis } from "./pages/NewAnalysis";
 import { Onboarding } from "./pages/Onboarding";
@@ -25,6 +26,15 @@ export function App() {
               <Route index element={<Home />} />
               <Route path="analyses" element={<Dashboard />} />
               <Route path="sources" element={<Sources />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="monitors" element={<Monitors />} />
+              <Route path="alerts" element={<Alerts />} />
+              <Route path="watchlist" element={<Watchlist />} />
+              <Route path="watchlist/:id" element={<Watchlist />} />
+              <Route path="evidence" element={<EvidenceExplorer />} />
+              <Route path="evidence/:briefId" element={<EvidenceExplorer />} />
+              <Route path="decisions" element={<Decisions />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="company" element={<Company />} />
               <Route path="analyses/new" element={<NewAnalysis />} />
               <Route path="analyses/:id/plan" element={<PlanReview />} />
