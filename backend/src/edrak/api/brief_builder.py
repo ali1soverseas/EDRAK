@@ -65,6 +65,27 @@ def evidence_key(worker_val: str, evidence_id: str) -> str:
     return f"{worker_val}:{evidence_id}"
 
 
+def _link_options(options: list[dict[str, Any]], v3: dict[str, Any]) -> None:
+    """Resolve an option's metric references to stored figures, and its signals to evidence numbers."""
+    by_ref: dict[tuple[str, str], str] = {}
+    for uid, m in (v3.get("metrics") or {}).items():
+        if m.get("metric_id") and not m.get("derived"):
+            by_ref.setdefault((m["metric_id"], (m.get("entity") or "").lower()), uid)
+            by_ref.setdefault((m["metric_id"], ""), uid)
+    refs_by_signal = {s["signal_id"]: s.get("refs") or [] for s in v3.get("signals_view") or []}
+
+    def resolve(refs: list[dict[str, Any]]) -> list[str]:
+        return [u for r in refs or [] if (u := by_ref.get((r.get("metric_id"), (r.get("entity") or "").lower())) or by_ref.get((r.get("metric_id"), "")))]
+
+    for o in options:
+        o["metric_uids"] = resolve(o.get("metric_refs"))
+        o["evidence_refs"] = sorted({n for sid in o.get("supporting_signal_ids") or [] for n in refs_by_signal.get(sid, [])})
+        for item in [*(o.get("opportunities") or []), *(o.get("risks") or [])]:
+            if isinstance(item, dict):
+                item["metric_uids"] = resolve(item.get("metric_refs"))
+                item["evidence_refs"] = sorted({n for sid in item.get("signal_ids") or [] for n in refs_by_signal.get(sid, [])})
+
+
 def build_brief(
     brief_id: str,
     brief_no: int,
@@ -230,16 +251,27 @@ def build_brief(
     options: list[dict[str, Any]] = []
     keys = ["A", "B", "C"]
     da = decision_analysis or {}
-    for idx, act in enumerate((da.get("recommended_actions") or [])[:3]):
+    for idx, opt in enumerate((da.get("options") or [])[:3]):
         options.append({
-            "option_id": f"opt-{idx + 1}",
-            "key": keys[idx],
-            "title": act.get("title") or act.get("action") or f"Option {keys[idx]}",
-            "description": act.get("description") or act.get("rationale") or "",
-            "supported_by": act.get("rationale") or "",
-            "would_change_if": act.get("intended_outcome") or "",
-            "time_horizon": act.get("time_horizon"),
+            "option_id": f"opt-{idx + 1}", "key": opt.get("key") or keys[idx], "title": opt.get("title") or f"Option {keys[idx]}",
+            "description": opt.get("thesis") or "", "thesis": opt.get("thesis") or "",
+            "what_we_would_do": opt.get("what_we_would_do") or [], "trade_offs": opt.get("trade_offs") or [],
+            "opportunities": opt.get("opportunities") or [], "risks": opt.get("risks") or [],
+            "would_change_if": opt.get("would_change_if") or "", "cost_of_waiting": opt.get("cost_of_waiting") or "",
+            "supporting_signal_ids": opt.get("supporting_signal_ids") or [], "metric_refs": opt.get("metric_refs") or [],
+            "supported_by": "",
         })
+    if not options:
+        # No distinct options were produced: show each question's direction, not the steps of one recommendation.
+        for idx, qr in enumerate((da.get("question_recommendations") or [])[:3]):
+            rec = qr.get("recommendation") or {}
+            options.append({
+                "option_id": f"opt-{idx + 1}", "key": keys[idx], "title": (rec.get("decision") or f"Option {keys[idx]}")[:120],
+                "description": rec.get("decision") or "", "thesis": rec.get("decision") or "", "supported_by": rec.get("rationale") or "",
+                "would_change_if": "", "opportunities": [{"text": t} for t in rec.get("opportunities") or []],
+                "risks": [{"text": t} for t in rec.get("risks") or []], "what_we_would_do": rec.get("actions") or [],
+                "supporting_signal_ids": rec.get("supporting_signal_ids") or [], "metric_refs": [], "trade_offs": [],
+            })
 
     def _items(rows: Any, kind: str) -> list[dict[str, Any]]:
         out = []
@@ -373,6 +405,7 @@ def build_brief(
         "decision_analysis": decision_analysis,
     }
     if v3:
+        _link_options(options, v3)
         # Typed half of the brief: headline, KPI strip, coverage, cards. The old keys stay so v2 readers still work.
         document.update(v3)
         document["summary_text"] = v3.get("headline") or document["summary_text"]

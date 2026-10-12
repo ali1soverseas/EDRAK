@@ -250,6 +250,50 @@ class RecommendedAction(ContractModel):
 
 
 # ============================================================================
+# DISTINCT STRATEGIC OPTIONS
+# ============================================================================
+
+class MetricRef(ContractModel):
+    """Points at a stored figure by name; the brief resolves it to the value and its source."""
+
+    metric_id: NonBlankStr
+    entity: str = ""
+
+
+class OptionOpportunity(ContractModel):
+    text: NonBlankStr
+    how_to_capture: str = ""
+    signal_ids: list[NonBlankStr] = Field(default_factory=list)
+    metric_refs: list[MetricRef] = Field(default_factory=list)
+
+
+class OptionRisk(ContractModel):
+    text: NonBlankStr
+    likelihood: AssessmentLevel = AssessmentLevel.MODERATE
+    impact: AssessmentLevel = AssessmentLevel.MODERATE
+    early_warning: str = ""
+    mitigation: str = ""
+    signal_ids: list[NonBlankStr] = Field(default_factory=list)
+    metric_refs: list[MetricRef] = Field(default_factory=list)
+
+
+class DecisionOption(ContractModel):
+    """One of a few mutually exclusive ways to act. Options are not ranked."""
+
+    key: NonBlankStr
+    title: NonBlankStr
+    thesis: NonBlankStr
+    what_we_would_do: list[NonBlankStr] = Field(default_factory=list)
+    trade_offs: list[NonBlankStr] = Field(default_factory=list)
+    opportunities: list[OptionOpportunity] = Field(default_factory=list)
+    risks: list[OptionRisk] = Field(default_factory=list)
+    would_change_if: str = ""
+    cost_of_waiting: str = ""
+    supporting_signal_ids: list[NonBlankStr] = Field(default_factory=list)
+    metric_refs: list[MetricRef] = Field(default_factory=list)
+
+
+# ============================================================================
 # FINAL RESULT
 # ============================================================================
 
@@ -286,6 +330,8 @@ class DecisionAnalysisResult(ContractModel):
     recommended_actions: list[RecommendedAction] = Field(
         default_factory=list
     )
+
+    options: list[DecisionOption] = Field(default_factory=list)
 
     decision_questions: list[NonBlankStr] = Field(
         default_factory=list

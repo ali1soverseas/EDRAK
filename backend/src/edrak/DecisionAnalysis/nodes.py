@@ -526,6 +526,35 @@ def make_analyze_node():
 
 
 # ============================================================================
+# NODE 2b: DISTINCT STRATEGIC OPTIONS
+# ============================================================================
+
+def make_options_node():
+    async def options_node(state: DecisionAnalysisState) -> dict[str, Any]:
+        from .options import generate_options
+
+        context = dict(state.get("context") or {})
+        context["recommendation_summaries"] = [
+            {
+                "question": getattr(r, "question", None) or _to_dict(r).get("question"),
+                "decision": (_to_dict(r).get("recommendation") or {}).get("decision", ""),
+                "signal_ids": (_to_dict(r).get("recommendation") or {}).get("supporting_signal_ids", []),
+                "opportunities": (_to_dict(r).get("recommendation") or {}).get("opportunities", []),
+                "risks": (_to_dict(r).get("recommendation") or {}).get("risks", []),
+            }
+            for r in state.get("question_recommendations", [])
+        ]
+        try:
+            options, warnings = await generate_options(context)
+        except Exception as exc:  # noqa: BLE001 - options are an enhancement; the recommendations stand without them
+            logger.warning("Options step failed: %s", exc)
+            options, warnings = [], [f"Options step failed: {type(exc).__name__}"]
+        return {"options": options, "warnings": list(state.get("warnings", [])) + warnings}
+
+    return options_node
+
+
+# ============================================================================
 # NODE 3: VALIDATE AND ASSEMBLE STRUCTURED RESULT
 # ============================================================================
 
@@ -645,102 +674,102 @@ def make_validate_and_assemble_node():
         priorities: list[PriorityAssessment] = []
         actions: list[RecommendedAction] = []
 
+        signals_by_id = {
+            identifier: signal
+            for signal in context.get("signals", [])
+            if (identifier := _signal_id(signal)) is not None
+        }
+        seen_opportunities: dict[str, OpportunityAssessment] = {}
+        seen_risks: dict[str, RiskAssessment] = {}
+
         for item in validated:
             details = item.recommendation
             evidence_ids = details.supporting_signal_ids
             confidence = _confidence_value(details.confidence)
             score = _confidence_score(confidence)
+            fit, impact, urgency, feasibility, likelihood = _levels_for(evidence_ids, signals_by_id, confidence)
+            band = band_of(fit, impact, urgency, feasibility)
 
             # OpportunityAssessment and RiskAssessment require at least one
             # evidence ID. Never create an assessment without valid evidence.
             if evidence_ids:
                 for description in _unique_strings(details.opportunities):
+                    key = _norm_key(description)
+                    if key in seen_opportunities:  # the same point made under several questions is one opportunity
+                        prior = seen_opportunities[key]
+                        prior.supporting_signal_ids = sorted(set(prior.supporting_signal_ids) | set(evidence_ids))
+                        continue
                     opportunity = OpportunityAssessment(
                         title=description[:160],
                         description=description,
                         business_rationale=details.rationale,
                         potential_impact=description,
-                        strategic_fit=AssessmentLevel.UNKNOWN,
-                        feasibility=AssessmentLevel.UNKNOWN,
-                        urgency=AssessmentLevel.UNKNOWN,
+                        strategic_fit=fit,
+                        feasibility=feasibility,
+                        urgency=urgency,
                         supporting_signal_ids=evidence_ids,
                         assumptions=[],
                         evidence_gaps=list(details.limitations),
                         confidence=score,
                     )
+                    seen_opportunities[key] = opportunity
                     opportunities.append(opportunity)
-
                     priorities.append(
                         PriorityAssessment(
-                            item_type="opportunity",
-                            item_id=opportunity.opportunity_id,
-                            priority=PriorityBand.UNDETERMINED,
-                            strategic_fit=AssessmentLevel.UNKNOWN,
-                            impact=AssessmentLevel.UNKNOWN,
-                            urgency=AssessmentLevel.UNKNOWN,
-                            feasibility=AssessmentLevel.UNKNOWN,
-                            rationale=(
-                                "Priority is undetermined because the "
-                                "recommendation does not establish a "
-                                "defensible priority ranking."
-                            ),
+                            item_type="opportunity", item_id=opportunity.opportunity_id, priority=band,
+                            strategic_fit=fit, impact=impact, urgency=urgency, feasibility=feasibility,
+                            rationale="Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
                             key_uncertainties=list(details.limitations),
                         )
                     )
 
                 for description in _unique_strings(details.risks):
+                    key = _norm_key(description)
+                    if key in seen_risks:
+                        prior = seen_risks[key]
+                        prior.supporting_signal_ids = sorted(set(prior.supporting_signal_ids) | set(evidence_ids))
+                        continue
                     risk = RiskAssessment(
                         title=description[:160],
                         description=description,
                         business_rationale=details.rationale,
                         potential_consequences=[description],
-                        likelihood=AssessmentLevel.UNKNOWN,
-                        impact=AssessmentLevel.UNKNOWN,
-                        urgency=AssessmentLevel.UNKNOWN,
+                        likelihood=likelihood,
+                        impact=impact,
+                        urgency=urgency,
                         supporting_signal_ids=evidence_ids,
                         dependencies=[],
                         mitigation_considerations=list(details.actions),
                         evidence_gaps=list(details.limitations),
                         confidence=score,
                     )
+                    seen_risks[key] = risk
                     risks.append(risk)
-
                     priorities.append(
                         PriorityAssessment(
-                            item_type="risk",
-                            item_id=risk.risk_id,
-                            priority=PriorityBand.UNDETERMINED,
-                            strategic_fit=AssessmentLevel.UNKNOWN,
-                            impact=AssessmentLevel.UNKNOWN,
-                            urgency=AssessmentLevel.UNKNOWN,
-                            feasibility=AssessmentLevel.UNKNOWN,
-                            rationale=(
-                                "Priority is undetermined because the "
-                                "evidence does not establish a defensible "
-                                "risk ranking."
-                            ),
+                            item_type="risk", item_id=risk.risk_id, priority=band_of(impact, urgency, likelihood),
+                            strategic_fit=fit, impact=impact, urgency=urgency, feasibility=feasibility,
+                            rationale="Scored from likelihood, impact and urgency taken from the supporting signals.",
                             key_uncertainties=list(details.limitations),
                         )
                     )
 
+            related_opps = [o.opportunity_id for o in opportunities if set(o.supporting_signal_ids) & set(evidence_ids)]
+            related_risks = [r.risk_id for r in risks if set(r.supporting_signal_ids) & set(evidence_ids)]
             for index, description in enumerate(
                 _unique_strings(details.actions),
                 start=1,
             ):
                 action = RecommendedAction(
-                    title=f"{item.question[:90]} — Action {index}",
+                    title=description[:120],
                     description=description,
                     rationale=details.rationale,
                     intended_outcome=details.decision,
-                    priority=(
-                        PriorityBand.UNDETERMINED
-                        if confidence == "low"
-                        else PriorityBand.MEDIUM
-                    ),
-                    time_horizon=ActionTimeHorizon.UNDETERMINED,
+                    priority=PriorityBand.UNDETERMINED if confidence == "low" else band,
+                    time_horizon=horizon_of(urgency),
                     supporting_signal_ids=evidence_ids,
-                    related_opportunity_ids=[],
-                    related_risk_ids=[],
+                    related_opportunity_ids=related_opps,
+                    related_risk_ids=related_risks,
                     prerequisites=list(details.limitations),
                     success_indicators=list(details.success_criteria),
                     confidence=score,
@@ -750,18 +779,9 @@ def make_validate_and_assemble_node():
 
                 priorities.append(
                     PriorityAssessment(
-                        item_type="action",
-                        item_id=action.action_id,
-                        priority=action.priority,
-                        strategic_fit=AssessmentLevel.UNKNOWN,
-                        impact=AssessmentLevel.UNKNOWN,
-                        urgency=AssessmentLevel.UNKNOWN,
-                        feasibility=AssessmentLevel.UNKNOWN,
-                        rationale=(
-                            "The action is derived from the question-level "
-                            "recommendation. Its operational priority and "
-                            "time horizon require business-owner validation."
-                        ),
+                        item_type="action", item_id=action.action_id, priority=action.priority,
+                        strategic_fit=fit, impact=impact, urgency=urgency, feasibility=feasibility,
+                        rationale="Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
                         key_uncertainties=list(details.limitations),
                     )
                 )
@@ -806,15 +826,7 @@ def make_validate_and_assemble_node():
             "Support the business decision defined by the request.",
         )
 
-        executive_summary = (
-            f"Generated {len(validated)} complete recommendation(s) for "
-            f"the business goal: {business_goal}. The analysis produced "
-            f"{len(opportunities)} structured opportunity assessment(s), "
-            f"{len(risks)} structured risk assessment(s), "
-            f"{len(priorities)} priority assessment(s), and "
-            f"{len(actions)} recommended action(s). "
-            f"Evidence status: {status.value}."
-        )
+        executive_summary = _executive_summary(validated, business_goal)
 
         metadata = _to_dict(decision_input.metadata) or {}
         if not isinstance(metadata, dict):
@@ -830,6 +842,7 @@ def make_validate_and_assemble_node():
             risks=risks,
             priorities=priorities,
             recommended_actions=actions,
+            options=list(state.get("options") or []),
             decision_questions=original_questions,
             additional_information_needed=additional_information_needed,
             limitations=limitations,
@@ -867,9 +880,62 @@ def make_validate_and_assemble_node():
     return validate_and_assemble_node
 
 
+def _norm_key(text: str) -> str:
+    return " ".join("".join(ch.lower() if ch.isalnum() else " " for ch in text).split())[:120]
+
+
+_URGENCY = {"immediate": AssessmentLevel.HIGH, "high": AssessmentLevel.HIGH, "medium": AssessmentLevel.MODERATE, "low": AssessmentLevel.LOW}
+
+
+def _levels_for(signal_ids: list[str], signals: dict[str, Any], confidence: str):
+    """(strategic_fit, impact, urgency, feasibility, likelihood) from the supporting signals and the evidence strength."""
+    sigs = [_to_dict(signals[i]) for i in signal_ids if i in signals]
+    order = [AssessmentLevel.HIGH, AssessmentLevel.MODERATE, AssessmentLevel.LOW]
+    urgencies = [_URGENCY[str(getattr(s.get("urgency"), "value", s.get("urgency")) or "").lower()] for s in sigs
+                 if str(getattr(s.get("urgency"), "value", s.get("urgency")) or "").lower() in _URGENCY]
+    urgency = min(urgencies, key=order.index) if urgencies else AssessmentLevel.UNKNOWN
+    confs = [float(s["confidence"]) for s in sigs if isinstance(s.get("confidence"), (int, float))]
+    top = max(confs) if confs else None
+    scaled = AssessmentLevel.UNKNOWN if top is None else AssessmentLevel.HIGH if top >= 0.75 else AssessmentLevel.MODERATE if top >= 0.5 else AssessmentLevel.LOW
+    relevant = any(str(getattr(s.get("decision_relevance"), "value", s.get("decision_relevance"))) != "informational" for s in sigs)
+    fit = AssessmentLevel.HIGH if relevant and scaled is AssessmentLevel.HIGH else AssessmentLevel.MODERATE if relevant else (AssessmentLevel.LOW if sigs else AssessmentLevel.UNKNOWN)
+    feasibility = {"high": AssessmentLevel.HIGH, "medium": AssessmentLevel.MODERATE, "low": AssessmentLevel.LOW}.get(confidence, AssessmentLevel.UNKNOWN)
+    return fit, scaled, urgency, feasibility, scaled
+
+
+def _executive_summary(validated: list[QuestionRecommendation], goal: str) -> str:
+    """The direction the analysis points to, in the analysis's own words. Never a count of generated items."""
+    directions = []
+    for item in validated:
+        d = item.recommendation.decision.strip().rstrip(".")
+        if d and d not in directions:
+            directions.append(d)
+    if not directions:
+        return goal
+    return "; ".join(directions[:2]) + "."
+
+
+_LEVEL_POINTS = {AssessmentLevel.HIGH: 3, AssessmentLevel.MODERATE: 2, AssessmentLevel.LOW: 1}
+
+
+def band_of(*levels: AssessmentLevel) -> PriorityBand:
+    """Priority from the dimensions the analysis already scored. Undetermined only when none is known."""
+    pts = [_LEVEL_POINTS[v] for v in levels if v in _LEVEL_POINTS]
+    if not pts:
+        return PriorityBand.UNDETERMINED
+    avg = sum(pts) / len(pts)
+    return PriorityBand.HIGH if avg >= 2.5 else PriorityBand.MEDIUM if avg >= 1.75 else PriorityBand.LOW
+
+
+def horizon_of(urgency: AssessmentLevel) -> ActionTimeHorizon:
+    return {AssessmentLevel.HIGH: ActionTimeHorizon.IMMEDIATE, AssessmentLevel.MODERATE: ActionTimeHorizon.SHORT_TERM,
+            AssessmentLevel.LOW: ActionTimeHorizon.MEDIUM_TERM}.get(urgency, ActionTimeHorizon.UNDETERMINED)
+
+
 # ============================================================================
 # NODE REFERENCES
 # ============================================================================
 
 analyze_node = make_analyze_node()
+options_node = make_options_node()
 validate_and_assemble_node = make_validate_and_assemble_node()

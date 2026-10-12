@@ -32,6 +32,21 @@ from .state import RESET, OrchestrationState
 logger = logging.getLogger(__name__)
 
 
+def _metric_context(state: OrchestrationState) -> dict[str, Any]:
+    """Which figures exist (by name and status, never their values) and which required ones are missing."""
+    seen: dict[tuple[str, str], str] = {}
+    gaps: list[str] = []
+    for wr in state.get("results") or []:
+        for m in wr.metadata.get("metrics") or []:
+            if m.get("metric_id") and m.get("status") in ("verified", "thin", "conflict"):
+                seen[(m["metric_id"], m.get("entity", ""))] = m["status"]
+        required = {(r.get("metric_id"), str(r.get("entity", "")).lower()): r.get("required", True) for r in wr.metadata.get("requirements") or []}
+        for o in wr.metadata.get("requirement_outcomes") or []:
+            if o.get("status") == "gap" and required.get((o.get("metric_id"), str(o.get("entity", "")).lower()), True):
+                gaps.append(f"{o.get('metric_id')} for {o.get('entity')}: {str(o.get('reason') or 'not_found').replace('_', ' ')}")
+    return {"metric_context": [{"metric_id": k[0], "entity": k[1], "status": v} for k, v in seen.items()], "blocking_gaps": gaps}
+
+
 def make_decision_analysis_node():
     """
     Create the orchestrator's Decision Analysis node.
@@ -97,6 +112,7 @@ def make_decision_analysis_node():
                 metadata={
                     "source_stage": "cross_signal",
                     "orchestrator_stage": "decision_analysis",
+                    **_metric_context(state),
                 },
             )
             print(

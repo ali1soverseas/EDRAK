@@ -3,6 +3,7 @@ from langgraph.graph import END, START, StateGraph
 
 from .nodes import (
     analyze_node,
+    options_node,
     prepare_context_node,
     validate_and_assemble_node,
 )
@@ -14,6 +15,7 @@ def build_decision_analysis_graph():
 
     builder.add_node("prepare_context", prepare_context_node)
     builder.add_node("analyze", analyze_node)
+    builder.add_node("options", options_node)
     builder.add_node(
         "validate_and_assemble",
         validate_and_assemble_node,
@@ -21,7 +23,8 @@ def build_decision_analysis_graph():
 
     builder.add_edge(START, "prepare_context")
     builder.add_edge("prepare_context", "analyze")
-    builder.add_edge("analyze", "validate_and_assemble")
+    builder.add_edge("analyze", "options")
+    builder.add_edge("options", "validate_and_assemble")
     builder.add_edge("validate_and_assemble", END)
 
     return builder.compile()

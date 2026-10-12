@@ -80,6 +80,9 @@ def _apply_additions(path: Path) -> None:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_V3_PATH.read_text(encoding="utf-8"))
         cols = {r[1] for r in conn.execute("PRAGMA table_info(metrics)")}
+        dcols = {r[1] for r in conn.execute("PRAGMA table_info(decisions)")}
+        if dcols and "action_plan_id" not in dcols:
+            conn.execute("ALTER TABLE decisions ADD COLUMN action_plan_id text REFERENCES action_plans(id)")
         if "label" not in cols:  # databases created by an earlier build of this file
             conn.execute("ALTER TABLE metrics ADD COLUMN label text")
         conn.commit()

@@ -73,3 +73,27 @@ CREATE TABLE IF NOT EXISTS brief_cards (
   UNIQUE (brief_id, card_key, version)
 );
 CREATE INDEX IF NOT EXISTS brief_cards_brief_idx ON brief_cards (brief_id, card_key);
+
+-- The action plan that follows a chosen option. Every save is a new version; an approved version is frozen.
+CREATE TABLE IF NOT EXISTS action_plans (
+  id            text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  brief_id      text NOT NULL REFERENCES briefs(id) ON DELETE CASCADE,
+  workspace_id  text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  option_key    text NOT NULL,
+  version       integer NOT NULL DEFAULT 1,
+  status        text NOT NULL DEFAULT 'generating' CHECK (status IN ('generating','draft','approved','superseded','failed')),
+  document      text NOT NULL DEFAULT '{}' CHECK (json_valid(document)),
+  note          text,
+  error         text,
+  created_by    text REFERENCES users(id),
+  approved_by   text REFERENCES users(id),
+  approved_at   text,
+  supersedes_id text REFERENCES action_plans(id),
+  created_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UNIQUE (brief_id, option_key, version)
+);
+CREATE INDEX IF NOT EXISTS action_plans_brief_idx ON action_plans (brief_id, option_key, version);
+
+CREATE TRIGGER IF NOT EXISTS action_plans_approved_frozen BEFORE UPDATE ON action_plans FOR EACH ROW
+WHEN OLD.status = 'approved' AND (NEW.document IS NOT OLD.document OR NEW.status NOT IN ('approved','superseded'))
+BEGIN SELECT RAISE(ABORT, 'an approved action plan cannot be changed'); END;

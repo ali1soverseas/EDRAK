@@ -195,16 +195,21 @@ async def record_decision(
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
     """Record the decision and lock a snapshot of the brief and every source behind it."""
+    return await create_decision(db, session, brief_id, body)
+
+
+async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_id: str, body: DecisionIn,
+                          action_plan_id: Optional[str] = None) -> dict[str, Any]:
     row = await _brief(db, session, brief_id)
     if await _fetch_one(db, "SELECT id FROM decisions WHERE brief_id = ? AND status = 'decided'", (brief_id,)):
         raise HTTPException(status_code=409, detail="already_decided")
     decision_id, snapshot_id = _new_id(), _new_id()
     uid = session.user.user_id
     await db.execute(
-        """INSERT INTO decisions (id, workspace_id, brief_id, option_label, title, rationale, owner_id, review_on, recorded_by)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO decisions (id, workspace_id, brief_id, option_label, title, rationale, owner_id, review_on, recorded_by, action_plan_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (decision_id, session.workspace.workspace_id, brief_id, body.option_label, body.title.strip(), body.rationale,
-         uid, body.review_on.isoformat() if body.review_on else None, uid),
+         uid, body.review_on.isoformat() if body.review_on else None, uid, action_plan_id),
     )
     for i, step in enumerate(s for s in body.next_steps if s.strip()):
         await db.execute("INSERT INTO decision_next_steps (id, decision_id, position, body, owner_id) VALUES (?, ?, ?, ?, ?)",
@@ -242,6 +247,7 @@ async def undo_decision(
     if not d:
         raise HTTPException(status_code=404, detail="no_decision")
     await db.execute("UPDATE decisions SET status = 'superseded' WHERE id = ?", (d["id"],))
+    await db.execute("UPDATE action_plans SET status = 'superseded' WHERE brief_id = ? AND status = 'approved'", (brief_id,))
     await db.execute("UPDATE briefs SET lifecycle = 'reviewed' WHERE id = ?", (brief_id,))
     await db.execute(
         "INSERT INTO brief_reviews (id, brief_id, reviewer_id, action, decision_id) VALUES (?, ?, ?, 'decision_undone', ?)",

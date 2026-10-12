@@ -26,6 +26,9 @@ class DecisionAnalysisState(TypedDict, total=False):
     # Intermediate recommendation pairs
     question_recommendations: list[QuestionRecommendation]
 
+    # Distinct strategic options (A/B/C)
+    options: list[Any]
+
     # Diagnostics and execution status
     warnings: list[str]
     status: DecisionAnalysisStatus
