@@ -233,7 +233,8 @@ async def record_decision(
 
 
 async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_id: str, body: DecisionIn,
-                          action_plan_id: Optional[str] = None) -> dict[str, Any]:
+                          action_plan_id: Optional[str] = None, *, commit: bool = True) -> dict[str, Any]:
+    """Record a decision with a locked evidence snapshot. With commit=False the caller owns the transaction and the audit."""
     row = await _brief(db, session, brief_id)
     if await _fetch_one(db, "SELECT id FROM decisions WHERE brief_id = ? AND status = 'decided'", (brief_id,)):
         raise HTTPException(status_code=409, detail="already_decided")
@@ -262,6 +263,8 @@ async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_i
         (_new_id(), brief_id, uid, decision_id),
     )
     await db.execute("UPDATE briefs SET lifecycle = 'decided' WHERE id = ?", (brief_id,))
+    if not commit:
+        return {"decision_id": decision_id, "sources_locked": len(evidence)}
     await db.commit()
     await audit_repo.record(db, workspace_id=session.workspace.workspace_id, action="decision.recorded",
                             target_type="decision", target_id=decision_id, actor_id=uid,

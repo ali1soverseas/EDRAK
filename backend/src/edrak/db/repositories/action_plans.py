@@ -21,7 +21,8 @@ async def start(db: aiosqlite.Connection, *, brief_id: str, workspace_id: str, o
                 note: Optional[str] = None, supersedes: Optional[dict[str, Any]] = None) -> str:
     """A new version in 'generating'. The previous draft of this option is superseded."""
     plan_id = new_id()
-    version = (supersedes["version"] + 1) if supersedes else 1
+    top = await fetch_one(db, "SELECT MAX(version) AS v FROM action_plans WHERE brief_id = ? AND option_key = ?", (brief_id, option_key))
+    version = int((top or {}).get("v") or 0) + 1  # editing an older approved version still gets the next number
     if supersedes and supersedes["status"] == "draft":
         await db.execute("UPDATE action_plans SET status = 'superseded' WHERE id = ?", (supersedes["id"],))
     await db.execute(
@@ -66,9 +67,10 @@ async def for_brief(db: aiosqlite.Connection, brief_id: str) -> list[dict[str, A
     return [_row(r) for r in rows]  # type: ignore[misc]
 
 
-async def approve(db: aiosqlite.Connection, plan_id: str, user_id: str) -> None:
+async def approve(db: aiosqlite.Connection, plan_id: str, user_id: str, *, commit: bool = True) -> None:
     await db.execute("UPDATE action_plans SET status = 'approved', approved_by = ?, approved_at = ? WHERE id = ?", (user_id, now_iso(), plan_id))
-    await db.commit()
+    if commit:
+        await db.commit()
 
 
 async def supersede_approved(db: aiosqlite.Connection, brief_id: str) -> None:

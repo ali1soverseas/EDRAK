@@ -153,6 +153,43 @@ def test_choose_edit_approve_records_the_decision_and_undo_supersedes_both(clien
     assert all(p["status"] != "approved" for p in plans)
 
 
+def test_plan_states_user_edits_and_a_new_version_after_approval_keep_history(client, monkeypatch):
+    _account(client)
+    brief_id = _seed_brief(client, monkeypatch)
+    plan = assemble(_draft(), BRIEF, {"key": "A", "title": "Premium", "supporting_signal_ids": ["s1"]})
+    monkeypatch.setattr("edrak.api.routers.action_plans.draft_plan", lambda doc, option, note=None: plan)
+    pid = client.post(f"/api/briefs/{brief_id}/action-plan", json={"option_key": "A"}).json()["plan_id"]
+    for _ in range(100):
+        got = client.get(f"/api/action-plans/{pid}").json()
+        if got["status"] != "generating":
+            break
+        time.sleep(0.05)
+    assert got["state"] == "draft"
+    assert all(a["origin"] == "generated" for w in got["document"]["workstreams"] for a in w["actions"])
+
+    doc = got["document"]
+    doc["workstreams"][0]["actions"][0]["owner_role"] = "Head of pricing"
+    edited = client.put(f"/api/action-plans/{pid}", json={"document": doc}).json()
+    acts = [a for w in edited["document"]["workstreams"] for a in w["actions"]]
+    assert edited["state"] == "edited" and acts[0]["origin"] == "user" and acts[1]["origin"] == "generated"
+
+    assert client.post(f"/api/action-plans/{edited['id']}/approve", json={}).status_code == 200
+    log = client.get("/api/decisions").json()
+    assert [d["status"] for d in log] == ["decided"] and log[0]["action_plan_id"] == edited["id"]
+
+    # Changing an approved plan creates a new version; the approved one is kept, unchanged.
+    again = edited["document"]
+    again["workstreams"][0]["actions"][1]["title"] = "Pilot with ten merchants"
+    v3 = client.put(f"/api/action-plans/{edited['id']}", json={"document": again}).json()
+    assert v3["version"] == edited["version"] + 1 and v3["state"] == "edited"
+    assert client.get(f"/api/action-plans/{edited['id']}").json()["status"] == "approved"
+    assert client.post(f"/api/action-plans/{v3['id']}/approve", json={}).status_code == 200
+    log = client.get("/api/decisions").json()
+    assert sorted(d["status"] for d in log) == ["decided", "superseded"]
+    states = {v["version"]: v["status"] for v in client.get(f"/api/action-plans/{v3['id']}").json()["versions"]}
+    assert states[edited["version"]] == "superseded" and states[v3["version"]] == "approved"
+
+
 def test_export_renders_typed_cards_and_the_action_plan():
     from edrak.exports import brief as exporter
 

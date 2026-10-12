@@ -37,6 +37,8 @@ class DAction(BaseModel):
     depends_on: list[str] = Field(default_factory=list, description="refs of actions that must finish first")
     deliverable: str = ""
     success_measure: str = ""
+    validation: str = Field(default="", description="How the team checks this action worked before relying on it.")
+    signal_ids: list[str] = Field(default_factory=list, description="Ids from SUPPORTING SIGNALS this action rests on.")
 
 
 class DWorkstream(BaseModel):
@@ -102,7 +104,7 @@ class PlanDraft(BaseModel):
 SYSTEM = """You write the action plan an executive, a decision maker and an analyst would use after choosing a strategic option.
 
 Make it concrete and sequenced:
-- Group actions into 2 to 4 workstreams. Every action has an owner ROLE (not a person), a start week, a duration in weeks, dependencies, a deliverable and a success measure.
+- Group actions into 2 to 4 workstreams. Every action has an owner ROLE (not a person), a start week, a duration in weeks, dependencies, a deliverable, a success measure, a validation step (how the team checks it worked before relying on it) and the signal ids it rests on.
 - Put the actions that close OPEN GAPS and verify ASSUMPTIONS first. Add 3 to 5 milestones with go and kill criteria (decision gates).
 - Cover every risk and opportunity of the chosen option: each risk needs a mitigation and, where possible, the action refs that carry it out; each opportunity names the actions that capture it.
 - KPIs: choose measures that show whether the option is working. Link a KPI to a metric id from METRICS when one fits; otherwise leave metric_id null (a new measure). Propose a target as a direction and a short target phrase; the person will edit it.
@@ -126,7 +128,7 @@ def _metric_lines(metrics: dict[str, dict[str, Any]]) -> str:
 def _prompt(brief: dict[str, Any], option: dict[str, Any], note: Optional[str], feedback: str) -> str:
     others = [o for o in brief.get("options") or [] if o.get("key") != option.get("key")]
     sig = {s["signal_id"]: s for s in brief.get("signals_view") or []}
-    cited = "\n".join(f"- {sig[i]['title']}: {sig[i].get('signal') or ''}" for i in option.get("supporting_signal_ids") or [] if i in sig)
+    cited = "\n".join(f"- id={i} | {sig[i]['title']}: {sig[i].get('signal') or ''}" for i in option.get("supporting_signal_ids") or [] if i in sig)
     gaps = "\n".join(f"- {g['title']}: {g['explanation']}" for g in (brief.get("gaps_panel") or {}).get("gaps", [])[:15])
     risks = "\n".join(f"- {r.get('text')} (likelihood {r.get('likelihood')}, impact {r.get('impact')}); mitigation idea: {r.get('mitigation')}" for r in option.get("risks") or [])
     opps = "\n".join(f"- {o.get('text')}: {o.get('how_to_capture', '')}" for o in option.get("opportunities") or [])
@@ -161,7 +163,7 @@ def _digit_problems(d: PlanDraft) -> list[str]:
     for w in d.workstreams:
         prose += [w.name, w.objective]
         for a in w.actions:
-            prose += [a.title, a.description, a.deliverable, a.success_measure]
+            prose += [a.title, a.description, a.deliverable, a.success_measure, a.validation]
     for r in d.risks:
         prose += [r.text, r.early_warning, r.mitigation]
     for o in d.opportunities:
@@ -182,6 +184,13 @@ def assemble(draft: PlanDraft, brief: dict[str, Any], option: dict[str, Any]) ->
     """Turn the model's draft into a plan: ids, baselines from the table, repaired schedule."""
     metrics = brief.get("metrics") or {}
     reg = get_registry()
+    sig_refs = {s["signal_id"]: s.get("refs") or [] for s in brief.get("signals_view") or [] if s.get("signal_id")}
+    option_signals = [s for s in option.get("supporting_signal_ids") or [] if s in sig_refs]
+
+    def cites(ids: list[str]) -> tuple[list[str], list[int]]:
+        good = [i for i in ids if i in sig_refs] or option_signals
+        return good, sorted({n for i in good for n in sig_refs.get(i, [])}) or list(option.get("evidence_refs") or [])
+
     ref_to_id: dict[str, str] = {}
     n = 0
     for w in draft.workstreams:
@@ -193,7 +202,9 @@ def assemble(draft: PlanDraft, brief: dict[str, Any], option: dict[str, Any]) ->
         acts = []
         for a in w.actions:
             n += 1
+            a_sigs, a_refs = cites(a.signal_ids)
             acts.append(PlanAction(id=f"A{n}", title=_clean(a.title, metrics), description=_clean(a.description, metrics),
+                                   validation=_clean(a.validation, metrics), signal_ids=a_sigs, evidence_refs=a_refs,
                                    owner_role=a.owner_role.strip(), start_week=max(1, a.start_week), duration_weeks=max(1, a.duration_weeks),
                                    depends_on=[ref_to_id[d] for d in a.depends_on if d in ref_to_id and ref_to_id[d] != f"A{n}"],
                                    deliverable=_clean(a.deliverable, metrics), success_measure=_clean(a.success_measure, metrics)))
@@ -218,9 +229,11 @@ def assemble(draft: PlanDraft, brief: dict[str, Any], option: dict[str, Any]) ->
         risks.append(PlanRisk(id=f"R{i}", text=_clean(r.text, metrics), likelihood=_lvl(r.likelihood), impact=_lvl(r.impact),
                               early_warning=_clean(r.early_warning, metrics), mitigation=_clean(r.mitigation, metrics),
                               mitigation_action_ids=refs, owner_role=r.owner_role.strip(),
-                              evidence_refs=(match or {}).get("evidence_refs") or option.get("evidence_refs") or []))
+                              signal_ids=cites((match or {}).get("signal_ids") or [])[0],
+                              evidence_refs=(match or {}).get("evidence_refs") or cites((match or {}).get("signal_ids") or [])[1]))
     opps = [PlanOpportunity(id=f"O{i}", text=_clean(o.text, metrics), how_to_capture=_clean(o.how_to_capture, metrics),
-                            action_ids=[ref_to_id[x] for x in o.action_refs if x in ref_to_id], evidence_refs=option.get("evidence_refs") or [])
+                            action_ids=[ref_to_id[x] for x in o.action_refs if x in ref_to_id],
+                            signal_ids=cites([])[0], evidence_refs=cites([])[1])
             for i, o in enumerate(draft.opportunities, start=1)]
 
     not_chosen = []

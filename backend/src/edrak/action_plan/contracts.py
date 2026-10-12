@@ -7,6 +7,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 Level = Literal["low", "moderate", "high"]
+Origin = Literal["generated", "user"]
 
 
 class PlanAction(BaseModel):
@@ -19,6 +20,10 @@ class PlanAction(BaseModel):
     depends_on: list[str] = Field(default_factory=list)
     deliverable: str = ""
     success_measure: str = ""
+    validation: str = Field(default="", description="How the team checks this action worked before relying on it.")
+    signal_ids: list[str] = Field(default_factory=list)
+    evidence_refs: list[int] = Field(default_factory=list)
+    origin: Origin = "generated"
 
 
 class Workstream(BaseModel):
@@ -60,6 +65,8 @@ class PlanRisk(BaseModel):
     mitigation_action_ids: list[str] = Field(default_factory=list)
     owner_role: str = ""
     evidence_refs: list[int] = Field(default_factory=list)
+    signal_ids: list[str] = Field(default_factory=list)
+    origin: Origin = "generated"
 
 
 class PlanOpportunity(BaseModel):
@@ -68,6 +75,8 @@ class PlanOpportunity(BaseModel):
     how_to_capture: str = ""
     action_ids: list[str] = Field(default_factory=list)
     evidence_refs: list[int] = Field(default_factory=list)
+    signal_ids: list[str] = Field(default_factory=list)
+    origin: Origin = "generated"
 
 
 class Assumption(BaseModel):
@@ -113,3 +122,4 @@ class ActionPlan(BaseModel):
     review_cadence: str = ""
     total_weeks: int = 0
     notes: list[str] = Field(default_factory=list)
+    edited: bool = Field(default=False, description="True once a person changed this plan; set by the server.")

@@ -52,8 +52,42 @@ async def _brief_doc(db: aiosqlite.Connection, session: SessionOut, brief_id: st
     return doc
 
 
+def plan_state(row: dict[str, Any]) -> str:
+    """draft, edited (a person changed it), approved (locked), or generating / failed / superseded."""
+    if row["status"] == "draft" and (row.get("document") or {}).get("edited"):
+        return "edited"
+    return row["status"]
+
+
+_COMPARE = {
+    "actions": ("title", "description", "owner_role", "validation", "deliverable", "success_measure", "start_week", "duration_weeks", "depends_on"),
+    "risks": ("text", "mitigation", "early_warning", "owner_role", "likelihood", "impact"),
+    "opportunities": ("text", "how_to_capture"),
+}
+
+
+def mark_origins(new: dict[str, Any], old: dict[str, Any]) -> dict[str, Any]:
+    """Items a person added or changed are marked user-edited; untouched ones keep their origin."""
+    def items(doc: dict[str, Any], kind: str) -> list[dict[str, Any]]:
+        if kind == "actions":
+            return [a for w in doc.get("workstreams") or [] for a in w.get("actions") or []]
+        return list(doc.get(kind) or [])
+
+    for kind, fields in _COMPARE.items():
+        before = {i.get("id"): i for i in items(old, kind)}
+        for item in items(new, kind):
+            prev = before.get(item.get("id"))
+            if prev is None or any(item.get(f) != prev.get(f) for f in fields):
+                item["origin"] = "user"
+            else:
+                item["origin"] = prev.get("origin", "generated")
+    new["edited"] = True
+    return new
+
+
 def _present(row: dict[str, Any], versions: Optional[list[dict[str, Any]]] = None) -> dict[str, Any]:
     out = {k: row[k] for k in ("id", "brief_id", "option_key", "version", "status", "note", "error", "created_at", "approved_at", "approved_by")}
+    out["state"] = plan_state(row)
     out["document"] = row["document"]
     if row["document"] and row["status"] in ("draft", "approved"):
         try:
@@ -62,7 +96,8 @@ def _present(row: dict[str, Any], versions: Optional[list[dict[str, Any]]] = Non
         except ValidationError:
             out["issues"] = {"errors": ["The plan could not be read."], "warnings": []}
     if versions is not None:
-        out["versions"] = [{"id": v["id"], "version": v["version"], "status": v["status"], "created_at": v["created_at"], "note": v["note"]} for v in versions]
+        out["versions"] = [{"id": v["id"], "version": v["version"], "status": v["status"], "state": plan_state(v),
+                            "created_at": v["created_at"], "note": v["note"], "approved_at": v.get("approved_at")} for v in versions]
     return out
 
 
@@ -144,8 +179,9 @@ async def edit_plan(plan_id: str, body: EditIn, session: SessionOut = Depends(ge
     row = await plans_repo.get(db, plan_id, session.workspace.workspace_id)
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
-    if row["status"] != "draft":
-        raise HTTPException(status_code=409, detail="only_a_draft_can_be_edited")
+    if row["status"] not in ("draft", "approved"):
+        raise HTTPException(status_code=409, detail="only_a_draft_or_approved_plan_can_be_edited")
+    # Editing an approved plan never changes it: the edit becomes a new draft version and the approved one stays as history.
     try:
         plan = ActionPlan.model_validate(body.document)
     except ValidationError as exc:
@@ -164,7 +200,8 @@ async def edit_plan(plan_id: str, body: EditIn, session: SessionOut = Depends(ge
         before = next((x for x in prev_doc.get("kpis", []) if x.get("id") == k.id), None)
         if before and before.get("target") != k.target:
             k.target_status = "edited"
-    new_id = await plans_repo.save_version(db, row, plan.model_dump(mode="json"), session.user.user_id, body.note)
+    document = mark_origins(plan.model_dump(mode="json"), prev_doc)
+    new_id = await plans_repo.save_version(db, row, document, session.user.user_id, body.note)
     await audit_repo.record(db, workspace_id=session.workspace.workspace_id, action="action_plan.edited", target_type="action_plan",
                             target_id=new_id, actor_id=session.user.user_id)
     saved = await plans_repo.get(db, new_id, session.workspace.workspace_id)
@@ -193,7 +230,6 @@ async def approve_plan(plan_id: str, body: ApproveIn, session: SessionOut = Depe
     problems = check_plan(plan)
     if errors or problems:
         raise HTTPException(status_code=422, detail={"errors": [*errors, *problems]})
-    steps = [a.title for w in plan.workstreams for a in sorted(w.actions, key=lambda a: a.start_week)][:6]
     steps = [a.title for a in sorted((a for w in plan.workstreams for a in w.actions), key=lambda a: (a.start_week, a.id))][:6]
     review_on: Optional[date] = None
     try:
@@ -203,8 +239,23 @@ async def approve_plan(plan_id: str, body: ApproveIn, session: SessionOut = Depe
     decision = briefs_router.DecisionIn(
         option_label=row["option_key"], title=(body.title or plan.chosen_option.title).strip(),
         rationale=body.rationale or plan.chosen_option.why or plan.objective, review_on=review_on, next_steps=steps)
-    result = await briefs_router.create_decision(db, session, row["brief_id"], decision, action_plan_id=plan_id)
-    await plans_repo.approve(db, plan_id, session.user.user_id)
+    # One transaction: the decision, the plan's approval and the earlier approved version's retirement happen together or not at all.
+    try:
+        prior = await db.execute(
+            "SELECT id FROM action_plans WHERE brief_id = ? AND status = 'approved' AND id <> ?", (row["brief_id"], plan_id))
+        if await prior.fetchone():  # approving a newer version: the earlier decision stays in the log as superseded
+            await db.execute("UPDATE decisions SET status = 'superseded' WHERE brief_id = ? AND status = 'decided'", (row["brief_id"],))
+            await db.execute("UPDATE action_plans SET status = 'superseded' WHERE brief_id = ? AND status = 'approved' AND id <> ?",
+                             (row["brief_id"], plan_id))
+        result = await briefs_router.create_decision(db, session, row["brief_id"], decision, action_plan_id=plan_id, commit=False)
+        await plans_repo.approve(db, plan_id, session.user.user_id, commit=False)
+        await db.commit()
+    except BaseException:
+        await db.rollback()
+        raise
+    await audit_repo.record(db, workspace_id=session.workspace.workspace_id, action="decision.recorded", target_type="decision",
+                            target_id=result["decision_id"], actor_id=session.user.user_id,
+                            metadata={"option": row["option_key"], "sources_locked": result["sources_locked"]})
     await audit_repo.record(db, workspace_id=session.workspace.workspace_id, action="action_plan.approved", target_type="action_plan",
                             target_id=plan_id, actor_id=session.user.user_id, metadata={"decision_id": result["decision_id"]})
     return {"plan_id": plan_id, "status": "approved", **result}
