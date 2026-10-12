@@ -3,6 +3,8 @@ import { ShellLayout } from "./components/shell/AppShell";
 import { I18nProvider } from "./i18n";
 import { Company } from "./pages/Company";
 import { Dashboard } from "./pages/Dashboard";
+import { Home } from "./pages/Home";
+import { Sources } from "./pages/Sources";
 import { LiveRun } from "./pages/LiveRun";
 import { NewAnalysis } from "./pages/NewAnalysis";
 import { Onboarding } from "./pages/Onboarding";
@@ -20,7 +22,9 @@ export function App() {
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route element={<ShellLayout />}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<Home />} />
+              <Route path="analyses" element={<Dashboard />} />
+              <Route path="sources" element={<Sources />} />
               <Route path="company" element={<Company />} />
               <Route path="analyses/new" element={<NewAnalysis />} />
               <Route path="analyses/:id/plan" element={<PlanReview />} />
