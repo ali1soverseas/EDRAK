@@ -51,6 +51,20 @@ def test_official_source_is_verified_and_single_third_party_is_thin():
     assert st == {"Fawry": "verified", "XPay": "thin"}
 
 
+def test_number_lower_on_the_page_is_grounded_by_page_text():
+    page = "Pricing overview. " + "Filler text. " * 400 + "Team plan is $19 per user per month."
+    ev = Evidence(evidence_id="e1", source_type=SourceType.PRICING_PAGE, source_url="https://a.com/pricing",
+                  extracted_fact="Pricing overview.", excerpt=page[:1500], page_text=page)
+    fixed, _ = reconcile([_result([ev], [_obs("e1", "$19", 19, scope=MetricScope.OFFICIAL)])])
+    assert fixed[0].metadata["metrics"][0]["status"] == "verified"
+
+
+def test_page_text_is_capped():
+    from edrak.contracts.evidence import PAGE_TEXT_LIMIT
+    ev = Evidence(source_type=SourceType.WEB_PAGE, extracted_fact="x", page_text="a" * (PAGE_TEXT_LIMIT + 50))
+    assert len(ev.page_text) == PAGE_TEXT_LIMIT
+
+
 def _row(uid, metric, entity, value, status="verified", **kw):
     base = dict(uid=uid, metric_id=metric, entity=entity, value=value, value_text=f"${value}", unit="USD", period=None, label=None,
                 status=status, scope="official", sample_size=None, derived=0, formula=None, source_span="", display_no=1,

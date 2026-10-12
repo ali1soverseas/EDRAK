@@ -25,7 +25,7 @@ def _norm(s: Optional[str]) -> str:
 
 
 def _source_text(e: Evidence) -> str:
-    return f"{e.extracted_fact or ''}\n{e.excerpt or ''}"
+    return f"{e.extracted_fact or ''}\n{e.excerpt or ''}\n{e.page_text or ''}"
 
 
 def _host(e: Evidence) -> str:

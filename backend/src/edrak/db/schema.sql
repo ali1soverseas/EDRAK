@@ -551,6 +551,7 @@ CREATE TABLE evidence (
   publisher      text,
   extracted_fact text NOT NULL CHECK (trim(extracted_fact) <> ''),
   excerpt        text,
+  page_text      text,  -- full readable page text (capped), so numbers lower on a page can be found and checked
   retrieved_at   text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   is_synthetic   integer NOT NULL DEFAULT 0 CHECK (is_synthetic IN (0,1)),
   metadata       text NOT NULL DEFAULT '{}' CHECK (json_valid(metadata)),

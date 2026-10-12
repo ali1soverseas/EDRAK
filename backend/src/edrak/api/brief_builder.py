@@ -155,7 +155,7 @@ def build_brief(
             evidence_list.append(
                 {
                     "display_no": display_no,
-                    "evidence": item.model_dump(mode="json"),
+                    "evidence": item.model_dump(mode="json", exclude={"page_text"}),
                     "worker": w_val,
                     "task_id": wr.task_id,
                     "attempt": wr.attempt,
@@ -218,7 +218,7 @@ def build_brief(
         lenses.append(
             {
                 "worker": w_val,
-                "result": wr.model_dump(mode="json") if wr else None,
+                "result": wr.model_dump(mode="json", exclude={"evidence": {"__all__": {"page_text"}}}) if wr else None,
                 "failed": failed,
                 "findings": findings_list,
                 "source_count": len(wr.evidence) if wr else 0,

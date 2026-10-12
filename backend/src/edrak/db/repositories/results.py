@@ -56,14 +56,14 @@ async def write_worker_result(
             await db.execute(
                 """
                 INSERT INTO evidence (task_id, attempt, evidence_id, request_id, source_type, source_title, source_url,
-                                      publisher, extracted_fact, excerpt, retrieved_at, is_synthetic, metadata,
+                                      publisher, extracted_fact, excerpt, page_text, retrieved_at, is_synthetic, metadata,
                                       document_id, chunk_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                         (SELECT id FROM documents WHERE id = ?), (SELECT id FROM document_chunks WHERE id = ?))
                 """,
                 (
                     result.task_id, result.attempt, ev.evidence_id, request_id, ev.source_type.value, ev.source_title,
-                    ev.source_url, ev.publisher, ev.extracted_fact, ev.excerpt, to_iso(ev.retrieved_at),
+                    ev.source_url, ev.publisher, ev.extracted_fact, ev.excerpt, ev.page_text, to_iso(ev.retrieved_at),
                     1 if ev.is_synthetic else 0, dumps(meta), meta.get("document_id"), meta.get("chunk_id"),
                 ),
             )

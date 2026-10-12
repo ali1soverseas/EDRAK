@@ -141,11 +141,13 @@ def _evidence_from_private_item(item: dict, quote: str = "") -> Evidence:
             source_title=source or None,
             extracted_fact=fact,
             excerpt=excerpt,
+            page_text=text or None,
         )
     return Evidence(
         source_type=SourceType.OTHER,
         extracted_fact=fact,
         excerpt=excerpt,
+        page_text=text or None,
         metadata={"endpoint": source} if source else {},
     )
 

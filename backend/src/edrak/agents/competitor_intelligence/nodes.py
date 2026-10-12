@@ -3214,6 +3214,7 @@ def build_worker_result(
             publisher=source.get("publisher") or host_of(key[1]) or None,
             extracted_fact=fact,
             excerpt=text[:1500] or None,
+            page_text=text or None,
             metadata={
                 "first_party": official,
                 "competitor": competitor,
