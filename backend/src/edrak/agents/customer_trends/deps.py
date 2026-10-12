@@ -114,6 +114,7 @@ class WorkerDeps:
                 "until": brief.until,
                 "depth": brief.depth,
                 "entity": brief.entity,
+                "competitors": list(brief.competitors),
             },
             analyst=self.model("analyst"),
         )

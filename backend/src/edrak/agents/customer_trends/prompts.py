@@ -18,6 +18,10 @@ For every item give:
   discusses.
 - language: the two-letter ISO 639-1 code of the item text, for example ar or en.
 - themes: 0 to 3 labels for what the item is about.
+- targets: for each name in the Entities list that the item actually talks about, its stance
+  toward that one entity: {"entity": "<name exactly as listed>", "stance": "positive"}. Stance is
+  positive, neutral, negative or mixed. An item comparing two entities gets one entry for each.
+  Leave targets empty when the item names none of them. Never add a name that is not listed.
 
 Theme labels:
 - Short English noun phrases of 2 to 4 words, for example "slow customer support" or "missing
@@ -36,7 +40,7 @@ Rules:
 - Do not quote, translate or summarize the items.
 - Reply with only a JSON object of this shape, with no prose and no code fences:
 {"items": [{"id": "...", "sentiment": "negative", "themes": ["slow customer support"],
-"language": "en"}], "candidate_themes": [{"label": "slow customer support", "description": "..."}]}
+"language": "en", "targets": [{"entity": "Acme", "stance": "negative"}]}], "candidate_themes": [{"label": "slow customer support", "description": "..."}]}
 """
 
 

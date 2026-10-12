@@ -56,7 +56,7 @@ def source_scope(evidence: Evidence, entity: str) -> MetricScope:
 
 
 def _evidence_text(e: Evidence) -> str:
-    return f"{e.extracted_fact or ''}\n{e.excerpt or ''}"
+    return f"{e.extracted_fact or ''}\n{e.excerpt or ''}\n{e.page_text or ''}"
 
 
 def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Optional[MetricObservation]:

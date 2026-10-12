@@ -307,6 +307,8 @@ async def arun_worker(
                         if s.points
                     ],
                     "official_accounts": [a.model_dump(mode="json") for a in brief.accounts],
+                    # Stance labels per entity, counted in code. The metrics agent reads these.
+                    "stance_counts": deps.store.stance_counts(brief.run_id),
                 },
             )
     except Exception as exc:

@@ -158,7 +158,18 @@ _MIGRATION_1 = """
         );
 """
 
-_MIGRATIONS = (_MIGRATION_1,)
+# Per-item, per-entity stance labels, so code (never a model) counts sentiment for each company.
+_MIGRATION_2 = """
+        CREATE TABLE stances (
+            run_id TEXT NOT NULL REFERENCES runs(run_id),
+            item_id TEXT NOT NULL,
+            entity TEXT NOT NULL,
+            stance TEXT NOT NULL,
+            PRIMARY KEY (run_id, item_id, entity)
+        );
+"""
+
+_MIGRATIONS = (_MIGRATION_1, _MIGRATION_2)
 
 
 class EvidenceStore:
@@ -543,6 +554,29 @@ class EvidenceStore:
         with self._lock:
             rows = self._conn.execute(sql + " ORDER BY rowid", params).fetchall()
         return [TrendSeries.model_validate_json(r["payload_json"]) for r in rows]
+
+    def save_stances(self, run_id: str, stances: Sequence[tuple[str, str, str]]) -> None:
+        """Store (item_id, entity, stance) labels. A later analysis of the same item replaces its labels."""
+        with self._tx() as conn:
+            self._require_run(conn, run_id)
+            conn.executemany(
+                "INSERT OR REPLACE INTO stances(run_id, item_id, entity, stance) VALUES (?,?,?,?)",
+                [(run_id, item, entity, stance) for item, entity, stance in stances],
+            )
+
+    def stance_counts(self, run_id: str) -> dict[str, dict[str, int]]:
+        """Counted in code: {entity: {positive, neutral, negative, mixed, total}}."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT entity, stance, COUNT(*) AS n FROM stances WHERE run_id = ? GROUP BY entity, stance",
+                (run_id,),
+            ).fetchall()
+        out: dict[str, dict[str, int]] = {}
+        for r in rows:
+            entry = out.setdefault(r["entity"], {"positive": 0, "neutral": 0, "negative": 0, "mixed": 0, "total": 0})
+            entry[r["stance"]] = entry.get(r["stance"], 0) + int(r["n"])
+            entry["total"] += int(r["n"])
+        return out
 
     def save_metric(self, run_id: str, record: MetricResult) -> None:
         with self._tx() as conn:

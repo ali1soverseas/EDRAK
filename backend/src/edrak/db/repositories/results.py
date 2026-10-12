@@ -51,22 +51,7 @@ async def write_worker_result(
             ),
         )
         for ev in result.evidence:
-            dumped = ev.model_dump(mode="json")
-            meta = dumped.get("metadata") or {}
-            await db.execute(
-                """
-                INSERT INTO evidence (task_id, attempt, evidence_id, request_id, source_type, source_title, source_url,
-                                      publisher, extracted_fact, excerpt, page_text, retrieved_at, is_synthetic, metadata,
-                                      document_id, chunk_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                        (SELECT id FROM documents WHERE id = ?), (SELECT id FROM document_chunks WHERE id = ?))
-                """,
-                (
-                    result.task_id, result.attempt, ev.evidence_id, request_id, ev.source_type.value, ev.source_title,
-                    ev.source_url, ev.publisher, ev.extracted_fact, ev.excerpt, ev.page_text, to_iso(ev.retrieved_at),
-                    1 if ev.is_synthetic else 0, dumps(meta), meta.get("document_id"), meta.get("chunk_id"),
-                ),
-            )
+            await _insert_evidence(db, request_id, result, ev)
         for f in result.findings:
             await db.execute(
                 """
@@ -271,3 +256,37 @@ async def latest_verification(db: aiosqlite.Connection, request_id: str) -> Opti
         db, "SELECT * FROM finding_verdicts WHERE verification_id = ?", (row["id"],)
     )
     return row
+
+
+async def _insert_evidence(db: Any, request_id: str, result: WorkerResult, ev: Any, *, ignore: bool = False) -> None:
+    dumped = ev.model_dump(mode="json")
+    meta = dumped.get("metadata") or {}
+    await db.execute(
+        f"""
+        INSERT {"OR IGNORE " if ignore else ""}INTO evidence (task_id, attempt, evidence_id, request_id, source_type, source_title,
+                              source_url, publisher, extracted_fact, excerpt, page_text, retrieved_at, is_synthetic,
+                              metadata, document_id, chunk_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                (SELECT id FROM documents WHERE id = ?), (SELECT id FROM document_chunks WHERE id = ?))
+        """,
+        (
+            result.task_id, result.attempt, ev.evidence_id, request_id, ev.source_type.value, ev.source_title,
+            ev.source_url, ev.publisher, ev.extracted_fact, ev.excerpt, ev.page_text, to_iso(ev.retrieved_at),
+            1 if ev.is_synthetic else 0, dumps(meta), meta.get("document_id"), meta.get("chunk_id"),
+        ),
+    )
+
+
+async def add_evidence(db: Any, request_id: str, result: WorkerResult, *, commit: bool = True) -> int:
+    """Evidence added to a stored result after the worker finished (the metrics agent's pages and tallies)."""
+    added = 0
+    for ev in result.evidence:
+        cur = await db.execute("SELECT 1 FROM evidence WHERE task_id = ? AND attempt = ? AND evidence_id = ?",
+                               (result.task_id, result.attempt, ev.evidence_id))
+        if await cur.fetchone():
+            continue
+        await _insert_evidence(db, request_id, result, ev, ignore=True)
+        added += 1
+    if commit:
+        await db.commit()
+    return added

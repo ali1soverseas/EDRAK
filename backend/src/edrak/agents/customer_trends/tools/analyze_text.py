@@ -116,6 +116,20 @@ class AnalyzeTextInput(RunScope):
     )
 
 
+class EntityStance(BaseModel):
+    """The item's stance toward one named company or product it actually talks about."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    entity: NonEmpty
+    stance: Sentiment
+
+    @field_validator("stance", mode="before")
+    @classmethod
+    def _clean(cls, value: Any) -> Any:
+        return value.strip().lower() if isinstance(value, str) else value
+
+
 class ItemLabel(BaseModel):
     """What the model says about one item. Unknown keys are ignored, a bad value is an error."""
 
@@ -125,6 +139,20 @@ class ItemLabel(BaseModel):
     sentiment: Sentiment
     themes: list[NonEmpty] = Field(default_factory=list)
     language: str | None = None
+    targets: list[EntityStance] = Field(default_factory=list)
+
+    @field_validator("targets", mode="before")
+    @classmethod
+    def _clean_targets(cls, value: Any) -> Any:
+        if not isinstance(value, list):
+            return []
+        good = []
+        for t in value:
+            try:
+                good.append(EntityStance.model_validate(t))
+            except Exception:  # noqa: BLE001 - one bad stance never drops the item
+                continue
+        return good
 
     @field_validator("sentiment", mode="before")
     @classmethod
@@ -199,7 +227,10 @@ class Cluster:
 
 
 def _messages(
-    chunk: Sequence[EvidenceItem], taxonomy: Sequence[str] | None, tasks: Sequence[str]
+    chunk: Sequence[EvidenceItem],
+    taxonomy: Sequence[str] | None,
+    tasks: Sequence[str],
+    entities: Sequence[str] = (),
 ) -> list[BaseMessage]:
     items = [
         {"id": item.id, "platform": group_key(item), "text": truncate(item.text, ITEM_TEXT_CHARS)}
@@ -208,6 +239,7 @@ def _messages(
     human = (
         f"Tasks wanted: {', '.join(tasks)}\n"
         f"Taxonomy: {', '.join(taxonomy) if taxonomy else 'none'}\n"
+        f"Entities: {', '.join(entities) if entities else 'none'}\n"
         f"Items:\n{json.dumps(items, ensure_ascii=False)}"
     )
     return [SystemMessage(content=ANALYZE_THEMES), HumanMessage(content=human)]
@@ -218,6 +250,7 @@ async def label_chunks(
     ranked: Sequence[EvidenceItem],
     taxonomy: Sequence[str] | None,
     tasks: Sequence[str],
+    entities: Sequence[str] = (),
 ) -> MapOutcome:
     """The map step. A chunk is tried, repaired once by `structured_call`, and skipped if the
     model still cannot answer; the rest of the analysis goes on without it."""
@@ -226,7 +259,7 @@ async def label_chunks(
     invented = unlabeled = 0
     for number, chunk in enumerate(chunks, start=1):
         try:
-            answer = await structured_call(llm, ChunkAnalysis, _messages(chunk, taxonomy, tasks))
+            answer = await structured_call(llm, ChunkAnalysis, _messages(chunk, taxonomy, tasks, entities))
         except StructuredOutputError:
             reason = "no valid answer"
         except Exception as exc:
@@ -400,6 +433,20 @@ def _overview(counter: Counter[str], total: int) -> dict[str, Any]:
     }
 
 
+def save_stances(ctx: ToolContext, labels: dict[str, ItemLabel], entities: Sequence[str]) -> None:
+    """Keep each item's stance toward each named entity. Only the given entity names are kept,
+    matched case-insensitively, so counts per company are exact and never invented."""
+    canon = {e.casefold(): e for e in entities}
+    rows = []
+    for item_id, label in labels.items():
+        for t in label.targets:
+            name = canon.get(t.entity.strip().casefold())
+            if name:
+                rows.append((item_id, name, t.stance.value))
+    if rows:
+        ctx.store.save_stances(ctx.run_id, rows)
+
+
 async def _analyze(ctx: ToolContext, inp: AnalyzeTextInput) -> ToolResponse | ProcessingResponse:
     known = set(ctx.store.run_summary(ctx.run_id).batch_ids)
     unknown = [batch for batch in inp.batch_ids if batch not in known]
@@ -419,8 +466,11 @@ async def _analyze(ctx: ToolContext, inp: AnalyzeTextInput) -> ToolResponse | Pr
     except LLMConfigError as exc:
         return error_response("llm_unavailable", str(exc))
 
-    outcome = await label_chunks(llm, items, inp.taxonomy, inp.tasks)
+    entities = [e for e in [ctx.defaults.get("entity"), *(ctx.defaults.get("competitors") or [])] if e]
+    outcome = await label_chunks(llm, items, inp.taxonomy, inp.tasks, entities)
     labels = outcome.labels
+    if entities and "sentiment" in inp.tasks:
+        save_stances(ctx, labels, entities)
     warnings = list(outcome.warnings)
     if not labels:
         return error_response(

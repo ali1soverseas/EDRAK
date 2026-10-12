@@ -420,6 +420,7 @@ class RunManager:
         try:
             async with get_db() as db:
                 for wr in node_output.get("results") or []:
+                    await results_repo.add_evidence(db, request_id, wr, commit=False)
                     await self._store_metrics(db, request_id, wr)
                 await db.commit()
                 company = request.company_profile.name if request is not None else ""

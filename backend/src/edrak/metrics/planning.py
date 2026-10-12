@@ -28,7 +28,8 @@ def _entities(defn: MetricDef, company: str, competitors: list[str], markets: li
     return [company]
 
 
-def requirements_for(worker: str, use_case: str, company: str, competitors: list[str], markets: list[str]) -> list[MetricRequirement]:
+def requirements_for(worker: str, use_case: str, company: str, competitors: list[str], markets: list[str],
+                     offering: str = "") -> list[MetricRequirement]:
     """The checklist one worker owns for this use case. Required metrics come first."""
     reg = get_registry()
     tpl = reg.template(use_case)
@@ -42,7 +43,7 @@ def requirements_for(worker: str, use_case: str, company: str, competitors: list
             out.append(MetricRequirement(
                 metric_id=defn.id, entity=entity, required=defn.id in required, definition=defn.definition,
                 preferred_source_types=list(defn.preferred_sources),
-                query_hints=[h.replace("{entity}", entity).replace("{market}", entity).replace("{offering}", "")
+                query_hints=[h.replace("{entity}", entity).replace("{market}", entity).replace("{offering}", offering or "")
                              .replace("  ", " ").strip() for h in defn.query_hints],
                 check_rule=", ".join(f"{k}={v}" for k, v in defn.check.items()) or None,
             ))

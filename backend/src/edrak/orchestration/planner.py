@@ -119,7 +119,7 @@ class LlmPlanner:
                 business_context=ctx,
                 requirements=requirements_for(
                     assignment.worker.value, ctx.use_case.value, request.company_profile.name,
-                    competitors, list(ctx.markets),
+                    competitors, list(ctx.markets), ctx.offering or "",
                 ),
             )
             for assignment in assignments

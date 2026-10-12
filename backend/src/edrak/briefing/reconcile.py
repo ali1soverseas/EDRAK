@@ -76,7 +76,8 @@ def reconcile(results: list[WorkerResult]) -> tuple[list[WorkerResult], list[str
         for _, o, _ in members:
             if disagree and len(sources) > 1:
                 status[id(o)] = MetricStatus.CONFLICT
-            elif o.scope in (MetricScope.OFFICIAL, MetricScope.INTERNAL, MetricScope.PUBLIC_PROXY) or len(sources) > 1:
+            elif (o.scope in (MetricScope.OFFICIAL, MetricScope.INTERNAL, MetricScope.PUBLIC_PROXY) or len(sources) > 1
+                  or (o.derived and o.sample_size)):  # counted in code from labelled items
                 status[id(o)] = MetricStatus.VERIFIED
             else:
                 status[id(o)] = MetricStatus.THIN
@@ -88,7 +89,8 @@ def reconcile(results: list[WorkerResult]) -> tuple[list[WorkerResult], list[str
 
     fixed = []
     for r in results:
-        mets = [o if o.status else o.model_copy(update={"status": status.get(id(o), MetricStatus.UNVERIFIED)}) for o in parsed[r.task_id]]
+        # Recomputed on every pass: after a re-plan, untouched workers' figures must not keep a stale status.
+        mets = [o.model_copy(update={"status": status.get(id(o), MetricStatus.UNVERIFIED)}) for o in parsed[r.task_id]]
         meta = dict(r.metadata)
         meta["metrics"] = [m.model_dump(mode="json") for m in mets]
         fixed.append(r.model_copy(update={"metadata": meta}))
