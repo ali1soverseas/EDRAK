@@ -5,6 +5,7 @@ import { Company } from "./pages/Company";
 import { Dashboard } from "./pages/Dashboard";
 import { LiveRun } from "./pages/LiveRun";
 import { NewAnalysis } from "./pages/NewAnalysis";
+import { Onboarding } from "./pages/Onboarding";
 import { PlanReview } from "./pages/PlanReview";
 import { Report } from "./pages/Report";
 import { SignIn } from "./pages/SignIn";
@@ -17,6 +18,7 @@ export function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route element={<ShellLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="company" element={<Company />} />

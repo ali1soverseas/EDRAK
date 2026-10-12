@@ -96,7 +96,7 @@ export function SignIn() {
         navigate(from && from !== "/sign-in" ? from : "/", { replace: true });
       } else {
         await createAccount(email, password);
-        navigate("/company", { replace: true });
+        navigate("/onboarding", { replace: true });
       }
     } catch (error) {
       if (error instanceof ApiError && error.code === "email_taken") setFormError("signin.error.emailTaken");
