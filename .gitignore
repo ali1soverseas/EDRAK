@@ -22,6 +22,11 @@ graphify-out/
 
 # EDRAK runtime
 data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.v2.tmp*
+# Uploaded originals (company files): never commit
+data/uploads/
 data/profiles/active_profile.json
 data/internal/*.*
 data/vector_store/

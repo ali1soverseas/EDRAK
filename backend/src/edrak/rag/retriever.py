@@ -75,10 +75,10 @@ class InternalRetriever:
     @staticmethod
     def _publisher(is_syn: bool, meta: Dict[str, Any]) -> str:
         if is_syn:
-            return "GitLab Internal Knowledge (Synthetic)"
+            return "Internal knowledge (synthetic)"
         uri = str(meta.get("source_uri", ""))
         if meta.get("doc_type") == "internal_handbook" or uri.startswith("http"):
-            return "GitLab Handbook (public)"
+            return "Public handbook"
         return "Company document"
 
     def _to_evidence(
@@ -144,12 +144,15 @@ class InternalRetriever:
 
         documents = (results.get("documents") or [[]])[0]
         metadatas = (results.get("metadatas") or [[]])[0]
+        ids = (results.get("ids") or [[]])[0]
         distances = (results.get("distances") or [[]])[0] or [0.5] * len(documents)
 
         best: Dict[Tuple[str, str, str], Tuple[float, str, Dict[str, Any]]] = {}
         dropped = 0
         for i, doc in enumerate(documents):
-            meta = metadatas[i] if i < len(metadatas) and metadatas[i] else {}
+            meta = dict(metadatas[i]) if i < len(metadatas) and metadatas[i] else {}
+            if i < len(ids):
+                meta["chunk_id"] = ids[i]  # the passage, so evidence can open it in the file viewer
             score = self._score(distances[i] if i < len(distances) else 0.5)
             if score < threshold:
                 dropped += 1

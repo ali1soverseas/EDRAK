@@ -147,23 +147,27 @@ def test_a_finished_card_and_an_unknown_agent_are_left_alone():
 def test_a_run_interrupted_by_a_restart_is_marked_failed(tmp_path):
     import aiosqlite
 
-    from edrak.db.models import INIT_SCHEMA_SQL
-    from edrak.db.repository import fail_orphaned_runs
+    from edrak.db.connection import schema_sql
+    from edrak.db.repositories.runs import fail_orphaned_runs
 
     async def go() -> None:
         async with aiosqlite.connect(tmp_path / "t.db") as db:
-            await db.executescript(INIT_SCHEMA_SQL)
-            cols = [r[1] for r in await (await db.execute("pragma table_info(analyses)")).fetchall()]
-            assert "status" in cols
+            db.row_factory = aiosqlite.Row
+            await db.executescript(schema_sql())
             await db.execute("PRAGMA foreign_keys = OFF")
-            await db.execute("INSERT INTO analyses (analysis_id, workspace_id, title, status, form_json, request_json, created_at, updated_at) VALUES ('a1','w','T','running','{}','{}','x','x')")
-            await db.execute("INSERT INTO runs (analysis_id, approved_at, approved_by, state, stage) VALUES ('a1','x','me','running','workers')")
-            await db.execute("INSERT INTO runs (analysis_id, approved_at, approved_by, state, stage) VALUES ('a2','x','me','completed','brief')")
+            await db.execute("DROP TRIGGER runs_require_approved_plan")
+            for rid, status in (("a1", "running"), ("a2", "completed"), ("a3", "awaiting_review")):
+                await db.execute(
+                    "INSERT INTO business_requests (request_id, workspace_id, title, goal, company_profile, use_case, status) "
+                    "VALUES (?, 'w', 'T', 'g', '{\"name\": \"A\"}', 'competitive_intelligence', 'running')", (rid,))
+                await db.execute("INSERT INTO runs (request_id, plan_id, status) VALUES (?, 'p', ?)", (rid, status))
             await db.commit()
             assert await fail_orphaned_runs(db) == ["a1"]
-            assert (await (await db.execute("select state from runs where analysis_id='a1'")).fetchone())[0] == "failed"
-            assert (await (await db.execute("select status from analyses where analysis_id='a1'")).fetchone())[0] == "failed"
-            assert (await (await db.execute("select state from runs where analysis_id='a2'")).fetchone())[0] == "completed"
+            assert (await (await db.execute("select status from runs where request_id='a1'")).fetchone())[0] == "failed"
+            assert (await (await db.execute("select status from business_requests where request_id='a1'")).fetchone())[0] == "failed"
+            assert (await (await db.execute("select status from runs where request_id='a2'")).fetchone())[0] == "completed"
+            # A run paused for review keeps waiting: its graph state is checkpointed.
+            assert (await (await db.execute("select status from runs where request_id='a3'")).fetchone())[0] == "awaiting_review"
             assert await fail_orphaned_runs(db) == []
 
     asyncio.run(go())

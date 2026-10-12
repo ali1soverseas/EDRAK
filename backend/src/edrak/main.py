@@ -2,31 +2,37 @@
 
 import logging
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from edrak.agents.market_intelligence import run
-from edrak.api.ingestion import sync_demo_workspace
 from edrak.api.routes import router as api_router
-from edrak.contracts import ResearchTask, WorkerResult
 from edrak.db.connection import get_db, init_db
-from edrak.db.repository import fail_orphaned_runs
+from edrak.db.repositories.auth import purge_expired_sessions
+from edrak.db.repositories.runs import fail_orphaned_runs
+from edrak.db.util import fetch_all
 
 logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Initialize SQLite database schema and seed defaults
+    # Create the database, or migrate a v1 file to the current schema.
     await init_db()
-    # A run that was in flight when the server last stopped can never finish. Say so.
     async with get_db() as db:
+        # A run that was executing when the server last stopped can never finish. Say so.
         orphaned = await fail_orphaned_runs(db)
-    if orphaned:
-        logger.warning("Marked %d interrupted run(s) as failed: %s", len(orphaned), ", ".join(orphaned))
-    # List the pre-loaded GitLab knowledge as indexed documents of the demo workspace.
-    async with get_db() as db:
-        await sync_demo_workspace(db)
+        if orphaned:
+            logger.warning("Marked %d interrupted run(s) as failed: %s", len(orphaned), ", ".join(orphaned))
+        await purge_expired_sessions(db)
+        # Files that were waiting for or in the middle of indexing are queued again.
+        pending = await fetch_all(db, "SELECT id, workspace_id FROM documents WHERE status IN ('uploaded','indexing')")
+    if pending:
+        from edrak.knowledge.pipeline import schedule_indexing
+
+        for doc in pending:
+            schedule_indexing(doc["workspace_id"], doc["id"])
+        logger.info("Re-queued %d document(s) for indexing", len(pending))
     yield
 
 
@@ -36,7 +42,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware for local frontend development
+# CORS for local frontend development. In production the frontend is served from the same origin.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -51,11 +57,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include main API router
 app.include_router(api_router)
 
 
-# Existing agent test endpoint
-@app.post("/agents/market", response_model=WorkerResult)
-def run_market_intelligence(task: ResearchTask) -> WorkerResult:
-    return run(task)
+@app.get("/api/health", tags=["health"])
+async def health() -> dict[str, str]:
+    return {"status": "ok"}

@@ -181,7 +181,7 @@ class InternalIndexer:
         return chunks
 
     # ------------------------------------------------------------------ indexing
-    def index_document(
+    def prepare_chunks(
         self,
         content: str,
         source_uri: str,
@@ -191,8 +191,8 @@ class InternalIndexer:
         is_synthetic: Optional[bool] = None,
         fallback_title: str = "Internal Document",
         workspace_id: Optional[str] = None,
-    ) -> int:
-        """Parse header, chunk by heading, and upsert. Returns number of chunks."""
+    ) -> List[DocumentChunk]:
+        """Parse the header and chunk by heading, without writing anything."""
         fm, body = parse_frontmatter(content)
         header, body = parse_doc_header(body)
 
@@ -210,28 +210,50 @@ class InternalIndexer:
         doc_meta["is_synthetic"] = bool(is_synthetic)
         doc_meta["origin"] = "synthetic_internal" if is_synthetic else doc_meta.get("origin", "internal")
 
-        chunks = self.chunk_text(
+        return self.chunk_text(
             text=body,
             source_uri=source_uri,
             title=resolved_title,
             doc_type=doc_type,
             extra_metadata=doc_meta,
         )
+
+    def upsert_chunks(self, chunks: List[DocumentChunk]) -> int:
+        """Write prepared chunks to the vector store. Returns how many were written."""
         if not chunks:
             return 0
-
         metadatas = []
         for c in chunks:
             md = {k: _meta_value(v) for k, v in c.metadata.items()}
             metadatas.append({k: v for k, v in md.items() if v is not None})
-
         self.collection.upsert(
             ids=[c.chunk_id for c in chunks],
             documents=[c.content for c in chunks],
             metadatas=metadatas,
         )
-        logger.info("Indexed %d chunks for '%s'", len(chunks), source_uri)
+        logger.info("Indexed %d chunks for '%s'", len(chunks), chunks[0].source_uri)
         return len(chunks)
+
+    def index_document(
+        self,
+        content: str,
+        source_uri: str,
+        title: str = "",
+        doc_type: str = "internal_doc",
+        extra_metadata: Optional[Dict[str, Any]] = None,
+        is_synthetic: Optional[bool] = None,
+        fallback_title: str = "Internal Document",
+        workspace_id: Optional[str] = None,
+    ) -> int:
+        """Parse header, chunk by heading, and upsert. Returns number of chunks."""
+        chunks = self.prepare_chunks(
+            content, source_uri, title, doc_type, extra_metadata, is_synthetic, fallback_title, workspace_id
+        )
+        return self.upsert_chunks(chunks)
+
+    def delete_document_chunks(self, chunk_ids: List[str]) -> None:
+        for i in range(0, len(chunk_ids), 500):
+            self.collection.delete(ids=chunk_ids[i : i + 500])
 
     def index_file(
         self,

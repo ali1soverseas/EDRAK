@@ -1,36 +1,34 @@
-"""Authentication and session management helpers."""
+"""Sign in, account creation and sessions. Email and password only; one user per workspace."""
 
 from __future__ import annotations
 
-import secrets
+import re
 from typing import Any, Optional
 
 import aiosqlite
 
-from edrak.db.connection import hash_password
-from edrak.db.repository import (
-    create_session,
-    create_user,
-    create_workspace,
-    delete_session,
-    get_session_user,
-    get_user_by_email,
+from edrak.core.security import (
+    MIN_PASSWORD_LENGTH,
+    hash_password,
+    needs_rehash,
+    new_session_token,
+    verify_password,
 )
+from edrak.db.repositories import auth as auth_repo
+
+_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
-def generate_token() -> str:
-    """Generate a secure session token."""
-    return secrets.token_urlsafe(32)
+class AuthError(ValueError):
+    """Carries an API error code such as email_taken or weak_password."""
 
 
-async def authenticate_user(
-    db: aiosqlite.Connection, email: str, password: str
-) -> Optional[dict[str, Any]]:
-    user = await get_user_by_email(db, email)
-    if not user:
+async def authenticate_user(db: aiosqlite.Connection, email: str, password: str) -> Optional[dict[str, Any]]:
+    user = await auth_repo.get_user_by_email(db, email)
+    if not user or not verify_password(user["password_hash"], password):
         return None
-    if user["password_hash"] != hash_password(password):
-        return None
+    if needs_rehash(user["password_hash"]):
+        await auth_repo.update_password_hash(db, user["id"], hash_password(password))
     return user
 
 
@@ -42,41 +40,34 @@ async def register_user(
     title: Optional[str] = None,
     workspace_name: Optional[str] = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    existing = await get_user_by_email(db, email)
-    if existing:
-        raise ValueError("email_taken")
-
-    ws_id = f"ws-{secrets.token_hex(4)}"
-    ws_name = workspace_name or f"{name or email.split('@')[0]}'s Workspace"
-    workspace = await create_workspace(db, ws_id, ws_name)
-
-    user_id = f"user-{secrets.token_hex(4)}"
-    user_name = name or email.split("@")[0].capitalize()
-    pwd_hash = hash_password(password)
-
-    user = await create_user(
+    email = (email or "").strip().lower()
+    if not _EMAIL.match(email):
+        raise AuthError("invalid_email")
+    if len(password or "") < MIN_PASSWORD_LENGTH:
+        raise AuthError("weak_password")
+    if await auth_repo.get_user_by_email(db, email):
+        raise AuthError("email_taken")
+    full_name = (name or "").strip() or email.split("@")[0].replace(".", " ").title()
+    ws_name = (workspace_name or "").strip() or f"{full_name.split(' ')[0]}'s workspace"
+    return await auth_repo.create_account(
         db,
-        user_id=user_id,
         email=email,
-        password_hash=pwd_hash,
-        name=user_name,
-        title=title,
-        workspace_id=ws_id,
+        password_hash=hash_password(password),
+        full_name=full_name,
+        job_title=(title or "").strip() or None,
+        workspace_name=ws_name,
     )
-    return user, workspace
 
 
-async def start_session(db: aiosqlite.Connection, user_id: str) -> str:
-    token = generate_token()
-    await create_session(db, token, user_id)
+async def start_session(db: aiosqlite.Connection, user_id: str, user_agent: Optional[str] = None) -> str:
+    token = new_session_token()
+    await auth_repo.create_session(db, token, user_id, user_agent)
     return token
 
 
 async def end_session(db: aiosqlite.Connection, token: str) -> None:
-    await delete_session(db, token)
+    await auth_repo.delete_session(db, token)
 
 
-async def resolve_session(
-    db: aiosqlite.Connection, token: str
-) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
-    return await get_session_user(db, token)
+async def resolve_session(db: aiosqlite.Connection, token: str) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
+    return await auth_repo.resolve_session(db, token)

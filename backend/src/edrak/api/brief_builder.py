@@ -79,8 +79,13 @@ def build_brief(
     verification: Optional[VerificationResult] = None,
     cross_signal: Optional[dict[str, Any]] = None,
     decision_analysis: Optional[dict[str, Any]] = None,
+    evidence_numbers: Optional[dict[tuple[str, int, str], int]] = None,
 ) -> dict[str, Any]:
-    """Assemble the frontend-compatible Brief JSON structure."""
+    """Assemble the frontend-compatible Brief JSON structure.
+
+    `evidence_numbers` maps (task_id, attempt, evidence_id) to the E-number the database gave the
+    evidence, so the brief's chips match the evidence explorer. Without it evidence is numbered here.
+    """
     result_by_worker: dict[str, WorkerResult] = {}
     for res in orchestration.results:
         w_val = getattr(res.worker, "value", str(res.worker))
@@ -121,7 +126,8 @@ def build_brief(
             continue
         for item in wr.evidence:
             ekey = evidence_key(w_val, item.evidence_id)
-            display_no = len(evidence_list) + 1
+            stored = (evidence_numbers or {}).get((wr.task_id, wr.attempt, item.evidence_id))
+            display_no = stored or (max((e["display_no"] for e in evidence_list), default=0) + 1)
             numbers[ekey] = display_no
             rel = evidence_reliability.get(ekey, 1)
             evidence_list.append(
@@ -136,6 +142,8 @@ def build_brief(
                     "origin": origin_of(item),
                 }
             )
+
+    evidence_list.sort(key=lambda e: e["display_no"])
 
     # Build lenses per worker
     lenses: list[dict[str, Any]] = []

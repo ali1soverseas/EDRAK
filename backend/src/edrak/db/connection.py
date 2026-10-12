@@ -1,9 +1,16 @@
-"""Async SQLite database connection and initialization."""
+"""Async SQLite connection and schema setup.
+
+The schema lives in schema.sql (v0.2). On first use a database file is created from it. A file
+in the old v1 layout (an `analyses` table) is migrated: copied to edrak.v1.bak.db, then rebuilt
+in the v0.2 layout with its data carried over (see migrate_v1.py).
+"""
 
 from __future__ import annotations
 
-import hashlib
-import json
+import asyncio
+import logging
+import sqlite3
+import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
@@ -11,116 +18,87 @@ from typing import AsyncGenerator
 import aiosqlite
 
 from edrak.core.config import settings
-from edrak.db.models import INIT_SCHEMA_SQL
+
+logger = logging.getLogger(__name__)
+
+SCHEMA_PATH = Path(__file__).with_name("schema.sql")
+SCHEMA_VERSION = 2
+
+_ready: set[str] = set()
+# A thread lock, not an asyncio one: tests run several event loops in one process.
+_init_lock = threading.Lock()
 
 
 def get_db_path() -> Path:
-    """Return path to SQLite database file."""
-    data_dir = settings.BASE_DIR / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    return data_dir / "edrak.db"
+    path = settings.get_db_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def schema_sql() -> str:
+    return SCHEMA_PATH.read_text(encoding="utf-8")
+
+
+def _tables(conn: sqlite3.Connection) -> set[str]:
+    return {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+
+
+def _prepare_file(path: Path) -> None:
+    """Create or migrate the database file so it holds the v0.2 schema. Blocking; runs once per path."""
+    conn = sqlite3.connect(path)
+    try:
+        tables = _tables(conn)
+    finally:
+        conn.close()
+
+    if "analyses" in tables and "business_requests" not in tables:
+        from edrak.db.migrate_v1 import migrate_v1_file
+
+        migrate_v1_file(path)
+        return
+
+    if "business_requests" not in tables:
+        conn = sqlite3.connect(path)
+        try:
+            conn.execute("PRAGMA foreign_keys = ON")
+            conn.executescript(schema_sql())
+            conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
+            conn.execute("PRAGMA journal_mode = WAL")
+            conn.commit()
+        finally:
+            conn.close()
+        logger.info("Created database %s (schema v%d)", path, SCHEMA_VERSION)
+
+
+async def init_db() -> None:
+    """Make sure the database file exists in the current layout."""
+    path = get_db_path()
+    key = str(path)
+    if key in _ready:
+        return
+    def prepare() -> None:
+        with _init_lock:
+            if key not in _ready:
+                _prepare_file(path)
+                _ready.add(key)
+
+    await asyncio.to_thread(prepare)
 
 
 @asynccontextmanager
 async def get_db() -> AsyncGenerator[aiosqlite.Connection, None]:
-    """Provide an asynchronous connection to the SQLite database."""
-    db_path = get_db_path()
-    db = await aiosqlite.connect(str(db_path))
+    """One connection, with the pragmas every connection needs."""
+    await init_db()
+    db = await aiosqlite.connect(str(get_db_path()))
     db.row_factory = aiosqlite.Row
     await db.execute("PRAGMA foreign_keys = ON;")
+    await db.execute("PRAGMA busy_timeout = 5000;")
     try:
         yield db
     finally:
         await db.close()
 
 
-def hash_password(password: str) -> str:
-    """Hash password using sha256."""
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
-
-
-async def init_db() -> None:
-    """Initialize SQLite database tables and seed defaults if empty."""
-    async with get_db() as db:
-        await db.executescript(INIT_SCHEMA_SQL)
-        await db.commit()
-
-        # Check if default workspace exists
-        cursor = await db.execute("SELECT workspace_id FROM workspaces LIMIT 1;")
-        row = await cursor.fetchone()
-        if not row:
-            default_ws_id = "ws-default"
-            default_user_id = "user-default"
-            demo_email = "demo@edrak.ai"
-            demo_password_hash = hash_password("edrak-demo")
-
-            await db.execute(
-                "INSERT INTO workspaces (workspace_id, name) VALUES (?, ?);",
-                (default_ws_id, "Default Workspace"),
-            )
-            await db.execute(
-                """
-                INSERT INTO users (user_id, email, password_hash, name, title, workspace_id)
-                VALUES (?, ?, ?, ?, ?, ?);
-                """,
-                (
-                    default_user_id,
-                    demo_email,
-                    demo_password_hash,
-                    "Strategy Lead",
-                    "Head of Strategy",
-                    default_ws_id,
-                ),
-            )
-            # Also seed Layla demo user if desired
-            layla_user_id = "user-layla"
-            layla_email = "layla@nileledger.example"
-            await db.execute(
-                """
-                INSERT INTO users (user_id, email, password_hash, name, title, workspace_id)
-                VALUES (?, ?, ?, ?, ?, ?);
-                """,
-                (
-                    layla_user_id,
-                    layla_email,
-                    hash_password("edrak-demo"),
-                    "Layla",
-                    "Strategy Director",
-                    default_ws_id,
-                ),
-            )
-
-            # Check if active or gitlab profile exists to seed company profile
-            profile_path = settings.BASE_DIR / "data" / "profiles" / "gitlab_profile.json"
-            initial_fields = {
-                "name": "GitLab",
-                "aliases": ["GitLab Inc.", "GitLab.com"],
-                "industry": "saas",
-                "description": "GitLab is an enterprise AI-powered DevSecOps platform.",
-                "offerings": ["GitLab Duo", "GitLab CI/CD", "GitLab Ultimate"],
-                "markets": ["Global Enterprise DevSecOps"],
-                "strategic_goals": "Expand AI-assisted DevSecOps market share with GitLab Duo.",
-                "website": "https://about.gitlab.com",
-                "socials": [],
-            }
-            if profile_path.exists():
-                try:
-                    with open(profile_path, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        if isinstance(data, dict):
-                            initial_fields["name"] = data.get("name", "GitLab")
-                            initial_fields["aliases"] = data.get("aliases", [])
-                            initial_fields["description"] = data.get("notes", initial_fields["description"])
-                            initial_fields["offerings"] = data.get("products", initial_fields["offerings"])
-                except Exception:
-                    pass
-
-            await db.execute(
-                """
-                INSERT INTO company_profiles (workspace_id, fields_json, completed)
-                VALUES (?, ?, 1);
-                """,
-                (default_ws_id, json.dumps(initial_fields)),
-            )
-
-            await db.commit()
+def reset_ready_cache() -> None:
+    """Forget which files were prepared. Tests call this after pointing EDRAK_DB_PATH elsewhere."""
+    _ready.clear()

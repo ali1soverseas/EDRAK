@@ -34,6 +34,9 @@ class WorkspaceOut(BaseModel):
 class SessionOut(BaseModel):
     user: UserOut
     workspace: WorkspaceOut
+    # The app sends a signed-in user to onboarding until the company profile is complete.
+    onboarding_complete: bool = False
+    onboarding_step: int = 1
 
 
 class SignInRequest(BaseModel):
@@ -70,6 +73,18 @@ class CompanyDocumentOut(BaseModel):
     filename: str
     size: Optional[DocumentSize] = None
     status: str  # "indexed" | "indexing" | "failed"
+    kind: str = "document"  # "document" | "table"
+    mime_type: Optional[str] = None
+    size_bytes: Optional[int] = None
+    index_progress: Optional[int] = None
+    error_message: Optional[str] = None
+    added_by: Optional[str] = None
+    added_at: Optional[str] = None
+    used_in_runs: int = 0
+    guardrail_status: str = "clean"  # "clean" | "flagged" | "quarantined"
+    guardrail_notes: list[str] = Field(default_factory=list)
+    retrievability: Optional[float] = None
+    is_synthetic: bool = False
 
 
 class CompanyFields(BaseModel):
@@ -176,8 +191,8 @@ class RunViewOut(BaseModel):
     analysis_id: str
     title: str
     use_case: UseCase
-    state: str  # "running" | "completed" | "partial" | "failed" | "cancelled"
-    stage: str  # "plan" | "dispatch" | "workers" | "verify" | "synthesize" | "brief"
+    state: str  # "running" | "awaiting_review" | "paused" | "completed" | "partial" | "failed" | "cancelled"
+    stage: str  # "plan" | "dispatch" | "workers" | "verify" | "review" | "synthesize" | "brief"
     approved_at: str
     approved_by: str
     started_at: str

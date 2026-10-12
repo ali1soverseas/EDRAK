@@ -279,7 +279,9 @@ def test_insufficient_snippet_and_missing_details_cannot_complete():
     # checks. This test used to expect two topic strings, "Level of autonomy"
     # and "Enterprise availability", which appear nowhere in the source: no code
     # path ever emitted them, so the assertions could not pass as written.
-    assert "Worker confidence below 60%." in weak.missing_information
+    from edrak.verification.quality import MIN_CONFIDENCE
+
+    assert f"Worker confidence below {MIN_CONFIDENCE:.0%}." in weak.missing_information
     assert "Source overlap is too weak to confirm the claim without a closer read." in (
         weak.missing_information
     )

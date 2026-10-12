@@ -74,6 +74,19 @@ class Settings(BaseSettings):
     # Every other workspace starts with an empty knowledge base.
     DEMO_WORKSPACE_ID: str = "ws-default"
 
+    # Application database. Unset means data/edrak.db; tests point it at a temporary file.
+    EDRAK_DB_PATH: Optional[Path] = None
+    # Uploaded originals live here, one folder per workspace.
+    UPLOADS_PATH: Path = Field(default=Path("data/uploads"))
+    # LangGraph checkpoints for paused runs (the second human checkpoint survives a restart).
+    ORCHESTRATION_CHECKPOINT_PATH: Path = Field(default=Path("data/orchestration_checkpoints.db"))
+    MAX_UPLOAD_MB: int = 25
+
+    # Sessions
+    SESSION_DAYS: int = 30
+    # Send the session cookie over HTTPS only. Defaults to on outside development.
+    COOKIE_SECURE: Optional[bool] = None
+
     # Web scraping
     SCRAPE_TEXT_CHARS: int = 2000
 
@@ -86,6 +99,27 @@ class Settings(BaseSettings):
         if self.VECTOR_STORE_PATH.is_absolute():
             return self.VECTOR_STORE_PATH
         return (self.BASE_DIR / self.VECTOR_STORE_PATH).resolve()
+
+    def _absolute(self, path: Path) -> Path:
+        return path if path.is_absolute() else (self.BASE_DIR / path).resolve()
+
+    def get_db_path(self) -> Path:
+        return self._absolute(self.EDRAK_DB_PATH or Path("data/edrak.db"))
+
+    def get_uploads_path(self) -> Path:
+        return self._absolute(self.UPLOADS_PATH)
+
+    def get_data_path(self) -> Path:
+        return self._absolute(Path("data"))
+
+    def get_checkpoint_path(self) -> Path:
+        return self._absolute(self.ORCHESTRATION_CHECKPOINT_PATH)
+
+    @property
+    def cookie_secure(self) -> bool:
+        if self.COOKIE_SECURE is not None:
+            return self.COOKIE_SECURE
+        return self.EDRAK_ENV.lower() not in ("development", "dev", "test", "local")
 
     def get_absolute_internal_data_path(self) -> Path:
         """Returns the absolute path to internal data directory."""
