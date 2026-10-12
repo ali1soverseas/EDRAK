@@ -6,6 +6,7 @@ import { Icon, type IconName } from "../components/ui/Icon";
 import { Logo } from "../components/ui/Logo";
 import { useI18n, type TKey } from "../i18n";
 import { ApiError } from "../services/api";
+import { DotField } from "../components/ui/DotField";
 import { useAuth } from "../state/auth";
 
 type Mode = "signin" | "create";
@@ -139,13 +140,14 @@ export function SignIn() {
         </div>
       </section>
 
-      <section className="signin-panel">
+      <section className="signin-panel" style={{ position: "relative", overflow: "hidden" }}>
+        <DotField className="signin-dots" />
         <div className="row jb">
           <span className="eyebrow">{t(creating ? "signin.eyebrow.create" : "signin.eyebrow.signin")}</span>
           <LanguageSwitch />
         </div>
 
-        <form className="signin-form" onSubmit={onSubmit} noValidate>
+        <form key={creating ? "create" : "signin"} className="signin-form signin-anim" onSubmit={onSubmit} noValidate>
           <h2 className="disp" style={{ fontSize: 40, margin: "0 0 8px" }}>
             {t(creating ? "signin.title.create" : "signin.title.signin")}
           </h2>

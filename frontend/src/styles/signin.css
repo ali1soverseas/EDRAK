@@ -62,3 +62,22 @@ button.link {
 button.link:hover {
   color: var(--blue-d);
 }
+
+
+/* Motion: the dot grid moves behind the form; the form's parts rise in one after another, and
+   switching between sign in and create account replays it. Off under reduced motion (edrak.css). */
+.signin-dots { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.signin-panel > *:not(.signin-dots) { position: relative; z-index: 1; }
+.signin-anim > * , .signin-anim .col > * { animation: rise .55s var(--ease, cubic-bezier(.2,.8,.2,1)) both; }
+.signin-anim > *:nth-child(1) { animation-delay: .04s }
+.signin-anim > *:nth-child(2) { animation-delay: .1s }
+.signin-anim .col > *:nth-child(1) { animation-delay: .16s }
+.signin-anim .col > *:nth-child(2) { animation-delay: .22s }
+.signin-anim .col > *:nth-child(3) { animation-delay: .28s }
+.signin-anim .col > *:nth-child(4) { animation-delay: .34s }
+.signin-anim > button, .signin-anim > *:last-child { animation-delay: .4s }
+.signin-form .inp { transition: border-color .2s var(--ease), box-shadow .25s var(--ease), transform .2s var(--ease); }
+.signin-form .inp:focus { box-shadow: 0 0 0 4px rgba(10, 60, 240, .12); transform: translateY(-1px); }
+.signin-form .btn.pri { transition: transform .15s var(--ease), box-shadow .2s var(--ease); }
+.signin-form .btn.pri:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(10, 60, 240, .25); }
+.signin-brand h1 .cycle { display: inline-block; animation: cyc 9s infinite; }
