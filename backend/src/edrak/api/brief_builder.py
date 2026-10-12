@@ -225,142 +225,135 @@ def build_brief(
                 seen_gaps.add(norm)
                 gaps.append({"text": clean, "reported_by": "verification"})
 
-    # Build options
+    # Options come only from the decision analysis. Unranked; never invented.
     options: list[dict[str, Any]] = []
     keys = ["A", "B", "C"]
+    da = decision_analysis or {}
+    for idx, act in enumerate((da.get("recommended_actions") or [])[:3]):
+        options.append({
+            "option_id": f"opt-{idx + 1}",
+            "key": keys[idx],
+            "title": act.get("title") or act.get("action") or f"Option {keys[idx]}",
+            "description": act.get("description") or act.get("rationale") or "",
+            "supported_by": act.get("rationale") or "",
+            "would_change_if": act.get("intended_outcome") or "",
+            "time_horizon": act.get("time_horizon"),
+        })
 
-    if decision_analysis and "recommended_actions" in decision_analysis:
-        for idx, act in enumerate(decision_analysis["recommended_actions"][:3]):
-            options.append(
-                {
-                    "option_id": f"opt-{idx + 1}",
-                    "key": keys[idx] if idx < len(keys) else f"Opt{idx+1}",
-                    "title": act.get("action", f"Option {keys[idx]}"),
-                    "description": act.get("rationale", ""),
-                    "supported_by": act.get("expected_impact", "Verified findings"),
-                    "would_change_if": act.get("prerequisites", ["Competitor reaction"])[0]
-                    if isinstance(act.get("prerequisites"), list) and act.get("prerequisites")
-                    else "Market conditions shift",
-                }
-            )
+    def _items(rows: Any, kind: str) -> list[dict[str, Any]]:
+        out = []
+        for r in rows or []:
+            if isinstance(r, dict) and r.get("title"):
+                out.append({"kind": kind, "title": r["title"], "description": r.get("description", ""),
+                            "rationale": r.get("business_rationale", "")})
+        return out
 
-    if not options:
-        options = [
-            {
-                "option_id": "opt-1",
-                "key": "A",
-                "title": "Aggressive Capability Expansion",
-                "description": "Accelerate development and roll out key differentiator features ahead of competitors.",
-                "supported_by": "Strong differentiation in internal capabilities and verified competitor gaps.",
-                "would_change_if": "Key competitors lower pricing significantly.",
-            },
-            {
-                "option_id": "opt-2",
-                "key": "B",
-                "title": "Targeted Enterprise Positioning",
-                "description": "Double down on compliance, security, and privacy as core enterprise value drivers.",
-                "supported_by": "Enterprise customer sentiments and security requirements.",
-                "would_change_if": "Enterprise compliance standards relax or homogenize.",
-            },
-            {
-                "option_id": "opt-3",
-                "key": "C",
-                "title": "Partnership & Ecosystem Play",
-                "description": "Form strategic integrations to expand reach while preserving resource bandwidth.",
-                "supported_by": "Market intelligence indicating rapid platform consolidation.",
-                "would_change_if": "Key platform partners restrict their open APIs.",
-            },
-        ]
+    opportunities = _items(da.get("opportunities"), "opportunity")
+    risks = _items(da.get("risks"), "risk")
+    # Without a decision analysis, findings the workers labelled as opportunities or risks stand in.
+    for lens in lenses:
+        for item in lens["findings"]:
+            cat = (item["finding"] or {}).get("category")
+            entry = {"kind": cat, "title": item["finding"]["statement"], "refs": item["refs"], "worker": lens["worker"]}
+            if cat == "opportunity" and not da.get("opportunities"):
+                opportunities.append(entry)
+            elif cat == "risk" and not da.get("risks"):
+                risks.append(entry)
 
-    # Synthesis
+    # Synthesis (cross-signal)
     synthesis = None
     if cross_signal:
         raw_summary = cross_signal.get("summary")
-        summary_text = ""
-        patterns_list: list[str] = []
-        themes_list: list[str] = []
-        impacts_list: list[str] = []
-
+        patterns = themes = impacts = []
+        statement = ""
         if isinstance(raw_summary, dict):
-            patterns_list = [str(p) for p in (raw_summary.get("dominant_patterns") or []) if str(p).strip()]
-            themes_list = [str(p) for p in (raw_summary.get("strategic_themes") or []) if str(p).strip()]
-            impacts_list = [str(p) for p in (raw_summary.get("business_impacts") or []) if str(p).strip()]
-            combined_items = patterns_list or themes_list or impacts_list
-            if combined_items:
-                summary_text = " ".join(combined_items)
+            patterns = [str(p) for p in (raw_summary.get("dominant_patterns") or []) if str(p).strip()]
+            themes = [str(p) for p in (raw_summary.get("strategic_themes") or []) if str(p).strip()]
+            impacts = [str(p) for p in (raw_summary.get("business_impacts") or []) if str(p).strip()]
+            statement = " ".join(patterns or themes or impacts)
         elif isinstance(raw_summary, str):
-            summary_text = raw_summary
-
+            statement = raw_summary
         signals = cross_signal.get("signals") or []
-        sig_count = len(signals)
-        first_sig_title = ""
-        if signals and isinstance(signals[0], dict):
-            first_sig_title = signals[0].get("title", "")
+        if statement or signals:
+            synthesis = {
+                "statement": statement or f"{len(signals)} pattern(s) connect findings across workers.",
+                "highlight": signals[0].get("title", "") if signals and isinstance(signals[0], dict) else "",
+                "support": f"From {len(evidence_list)} sources.",
+                "patterns": patterns, "themes": themes, "impacts": impacts,
+                "signals": signals[:4] if isinstance(signals, list) else [],
+            }
 
-        synthesis = {
-            "statement": summary_text
-            or (
-                f"Cross-signal analysis identified {sig_count} interconnected pattern(s) across intelligence domains."
-            ),
-            "highlight": first_sig_title or "Strategic Convergence",
-            "support": f"Synthesized from {len(evidence_list)} verified evidence sources.",
-            "patterns": patterns_list,
-            "themes": themes_list,
-            "impacts": impacts_list,
-            "signals": signals[:4] if isinstance(signals, list) else [],
-        }
+    # Card 3: the comparison matrix from the competitor worker, with E-numbers for its evidence.
+    comparison = None
+    comp = result_by_worker.get("competitor_intelligence")
+    matrix = (comp.metadata.get("comparison_matrix") if comp else None) or {}
+    if matrix.get("dimensions"):
+        dims = []
+        for d in matrix["dimensions"]:
+            cells = []
+            for c in d.get("cells", []):
+                refs = [numbers[evidence_key("competitor_intelligence", e)] for e in c.get("evidence_ids", [])
+                        if evidence_key("competitor_intelligence", e) in numbers]
+                cells.append({**c, "refs": refs})
+            dims.append({**d, "cells": cells})
+        comparison = {**matrix, "dimensions": dims}
 
-    # Summary text
-    exec_summary = (
-        decision_analysis.get("executive_summary")
-        if decision_analysis
-        else f"Strategic analysis regarding {request.goal}. Findings synthesize verified cross-domain intelligence."
-    )
+    # Card 3: search-interest series from the customer worker. Real values only.
+    trends = []
+    cust = result_by_worker.get("customer_trends")
+    for series in (cust.metadata.get("trend_series") if cust else None) or []:
+        if series.get("points"):
+            trends.append(series)
 
+    # Summary: only what the run produced.
+    verified_n = sum(1 for v in verdict_by_finding.values()
+                     if getattr(v.verification_status, "value", "") == "verified")
+    total_n = sum(len(l["findings"]) for l in lenses)
+    exec_summary = (da.get("executive_summary") or "").strip()
+    if not exec_summary:
+        top = [item["finding"]["statement"] for l in lenses for item in l["findings"]
+               if item.get("status") == "verified"][:3]
+        exec_summary = " ".join(top) or "The workers did not establish verified findings for this question."
+    matters = [str(i) for i in (synthesis or {}).get("impacts", [])][:3]
     found_segments = [{"t": "text", "text": exec_summary}]
-    matters_segments = [
-        {
-            "t": "text",
-            "text": "Market positioning requires balancing competitive pressure with core differentiators. "
-            "Internal assets provide leverage against competitor capabilities.",
-        }
-    ]
-    options_segments = [
-        {
-            "t": "text",
-            "text": "Review options A through C. Recommended action prioritizes defensible differentiators with highest ROI.",
-        }
-    ]
-
-    summary = {
-        "found": found_segments,
-        "matters": matters_segments,
-        "options": options_segments,
-        "limits": (
-            verification.control_summary.limits_statement
-            if verification and hasattr(verification.control_summary, "limits_statement")
-            else None
-        ),
-    }
-
-    next_steps = (
-        list(verification.control_summary.next_research_targets)
-        if verification and verification.control_summary
-        else ["Monitor upcoming competitor product launches", "Validate customer churn indicators"]
+    matters_segments = [{"t": "text", "text": " ".join(matters)}] if matters else []
+    options_segments = (
+        [{"t": "text", "text": f"{len(options)} option(s) are laid out with the evidence for each. They are not ranked; the decision stays with you."}]
+        if options else [{"t": "text", "text": "No options were drafted for this run. The findings and gaps below are the basis for a decision."}]
     )
+    limits = None
+    if gaps:
+        limits = f"{len(gaps)} information gap(s) remain; they are listed with the comparison."
+    summary = {"found": found_segments, "matters": matters_segments, "options": options_segments, "limits": limits}
+
+    next_steps = list(verification.control_summary.next_research_targets) if verification else []
+    next_steps += [str(q) for q in (da.get("additional_information_needed") or [])]
+    next_steps = list(dict.fromkeys(next_steps))[:8]
 
     is_partial = getattr(orchestration.status, "value", str(orchestration.status)) != "completed"
+    if is_partial:
+        evidence_status = "partial"
+    elif total_n == 0:
+        evidence_status = "insufficient"
+    elif verified_n == 0 and verdict_by_finding:
+        evidence_status = "insufficient"
+    else:
+        evidence_status = "verified"
 
     return {
         "brief_id": brief_id,
         "brief_no": brief_no,
         "analysis_id": analysis_id,
         "analysis_title": analysis_title,
-        "title": f"Strategic Analysis: {request.goal}",
+        "title": title or request.goal,
+        "question": request.goal,
         "use_case": use_case,
         "created_at": created_at,
         "requested_by": requested_by,
         "partial": is_partial,
+        "evidence_status": evidence_status,
+        "summary_text": exec_summary,
+        "counts": {"findings": total_n, "verified": verified_n, "sources": len(evidence_list), "workers": len(workers)},
         "request": request.model_dump(mode="json"),
         "orchestration": orchestration.model_dump(mode="json"),
         "verification": verification.model_dump(mode="json") if verification else {},
@@ -368,6 +361,10 @@ def build_brief(
         "lenses": lenses,
         "evidence": evidence_list,
         "options": options,
+        "opportunities": opportunities[:6],
+        "risks": risks[:6],
+        "comparison": comparison,
+        "trends": trends,
         "gaps": gaps,
         "next_steps": next_steps,
         "synthesis": synthesis,
