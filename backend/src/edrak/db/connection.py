@@ -22,6 +22,7 @@ from edrak.core.config import settings
 logger = logging.getLogger(__name__)
 
 SCHEMA_PATH = Path(__file__).with_name("schema.sql")
+SCHEMA_V3_PATH = Path(__file__).with_name("schema_v3.sql")
 SCHEMA_VERSION = 2
 
 _ready: set[str] = set()
@@ -55,6 +56,7 @@ def _prepare_file(path: Path) -> None:
         from edrak.db.migrate_v1 import migrate_v1_file
 
         migrate_v1_file(path)
+        _apply_additions(path)
         return
 
     if "business_requests" not in tables:
@@ -68,6 +70,18 @@ def _prepare_file(path: Path) -> None:
         finally:
             conn.close()
         logger.info("Created database %s (schema v%d)", path, SCHEMA_VERSION)
+    _apply_additions(path)
+
+
+def _apply_additions(path: Path) -> None:
+    """Tables added after v0.2 (brief v2). Idempotent, so it runs on every start."""
+    conn = sqlite3.connect(path)
+    try:
+        conn.execute("PRAGMA foreign_keys = ON")
+        conn.executescript(SCHEMA_V3_PATH.read_text(encoding="utf-8"))
+        conn.commit()
+    finally:
+        conn.close()
 
 
 async def init_db() -> None:

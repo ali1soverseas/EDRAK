@@ -1,0 +1,27 @@
+# One template per use case: which metrics lead the KPI strip, which are required (a miss becomes a
+# blocking gap), how sections are ordered and weighted, and how the headline is framed.
+templates:
+  competitive_intelligence:
+    kpi_strip: [price_per_tier, effective_price_usage, paid_subscribers, revenue_arr, share_of_voice, sentiment_split, rating, release_cadence, certifications, funding_total, own_price, win_loss]
+    required: [price_per_tier, paid_subscribers, share_of_voice, sentiment_split, own_price]
+    optional: [effective_price_usage, revenue_arr, release_cadence, certifications, funding_total, rating, top_pain_points, switching_intent, win_loss]
+    lens_order: [competitor_intelligence, customer_trends, internal_intelligence, market_intelligence]
+    lens_weights: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.7, market_intelligence: 0.5}
+    collapse_below_evidence: 2
+    headline_framing: "Say where the company stands against its named competitors on price, customer voice and capability, and the one move that matters most."
+  market_entry_expansion:
+    kpi_strip: [market_size, market_cagr, adoption_rate, market_concentration, segment_growth, regulation_events, search_interest, price_per_tier, share_of_voice, capacity]
+    required: [market_size, market_cagr, adoption_rate, regulation_events, capacity]
+    optional: [segment_growth, market_concentration, search_interest, price_per_tier, share_of_voice, sentiment_split, own_price]
+    lens_order: [market_intelligence, competitor_intelligence, customer_trends, internal_intelligence]
+    lens_weights: {market_intelligence: 1.0, competitor_intelligence: 0.7, customer_trends: 0.6, internal_intelligence: 0.8}
+    collapse_below_evidence: 2
+    headline_framing: "Say whether the market is large, growing and open enough to enter, what regulation requires, and whether the company can deliver."
+  product_launch:
+    kpi_strip: [search_interest, top_pain_points, switching_intent, sentiment_split, price_per_tier, own_price, market_size, adoption_rate, capacity, roadmap_items]
+    required: [search_interest, top_pain_points, price_per_tier, own_price, capacity]
+    optional: [switching_intent, sentiment_split, share_of_voice, rating, market_size, adoption_rate, roadmap_items, release_cadence]
+    lens_order: [customer_trends, competitor_intelligence, market_intelligence, internal_intelligence]
+    lens_weights: {customer_trends: 1.0, competitor_intelligence: 0.8, market_intelligence: 0.6, internal_intelligence: 0.8}
+    collapse_below_evidence: 2
+    headline_framing: "Say whether customers want this offering now, what the price position should be against competitors, and what the company must be ready to ship."
