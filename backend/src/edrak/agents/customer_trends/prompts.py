@@ -67,6 +67,9 @@ _TASK_BLOCK = """Task
 - Country (ISO 3166-1 alpha-2): {geo}
 - Languages to cover: {languages}
 - Competitors: {competitors}
+- Offering: {offering}
+- Official accounts (read separately; their posts and the replies under them are in the store):
+  {accounts}
 - Focus: {focus}
 - Period: {since} to {until}
 - Depth: {depth}
@@ -234,6 +237,10 @@ Read the numbers for what they measure:
 - share_of_voice counts the collected items that name each company, and those items were found
   by searching for the names. It shows how the sample is made up, not market share: say so in
   the caveats and do not rank companies by it.
+- account_engagement:<company> is the engagement on that company's own official accounts (its
+  posts and the replies under its most engaged post). Use these to compare how each audience
+  reacts and what customers say to each company directly, citing the metric. They describe the
+  posts that were read, not the company's whole audience.
 - When most evidence comes from one platform or one language, say that in the caveats.
 
 Write 3 to 8 findings that answer the business question from the evidence, covering the focus.

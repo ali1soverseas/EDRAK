@@ -218,6 +218,7 @@ def to_worker_result(
     task: ResearchTask,
     location: str | None = None,
     synthetic: bool = False,
+    extra_metadata: dict[str, Any] | None = None,
 ) -> WorkerResult:
     """The compact result for the orchestrator. `evidence` holds the stored items the findings cite;
     a reference to an item that is not given is left out rather than invented."""
@@ -276,5 +277,6 @@ def to_worker_result(
                 )
                 for a in result.theme_aggregates[:THEMES_IN_METADATA]
             ],
+            **(extra_metadata or {}),
         },
     )

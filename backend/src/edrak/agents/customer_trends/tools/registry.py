@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from edrak.agents.customer_trends.schemas.common import ProcessingResponse, ToolResponse
 from edrak.agents.customer_trends.tools import (
+    account_posts,
     analyze_text,
     compute_metrics,
     evidence_query,
@@ -29,6 +30,7 @@ COLLECTION_SPECS: tuple[ToolSpec, ...] = (
     search_interest.SPEC,
     reviews_fetch.SPEC,
     news_coverage.SPEC,
+    account_posts.SPEC,
 )
 
 COLLECTION_TOOL_NAMES = frozenset(spec.name for spec in COLLECTION_SPECS)

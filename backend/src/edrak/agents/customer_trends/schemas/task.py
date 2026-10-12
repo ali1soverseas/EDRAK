@@ -25,6 +25,15 @@ from edrak.contracts import UseCase as SharedUseCase
 MAX_TREND_KEYWORDS = 5
 
 
+class Account(StrictModel):
+    """One official social account whose posts, and the replies under them, are read."""
+
+    owner: NonEmpty          # the company or competitor it belongs to
+    platform: Platform
+    url: NonEmpty
+    is_entity: bool = False  # True for the company's own account
+
+
 class TaskBrief(ScopeBase):
     task_id: NonEmpty
     run_id: RunId
@@ -33,6 +42,8 @@ class TaskBrief(ScopeBase):
     question: NonEmpty
     market: str | None = None
     competitors: list[NonEmpty] = Field(default_factory=list)
+    accounts: list[Account] = Field(default_factory=list)
+    offering: str | None = None
     focus: list[Focus] = Field(default_factory=list)
     budget: Budget = Field(default_factory=Budget)
     notes: str | None = None
@@ -156,7 +167,30 @@ def brief_from_task(task: ResearchTask, *, today: date | None = None) -> TaskBri
         market=", ".join(markets) or None,
         geo=_COUNTRIES[country.group(1).lower()] if country else None,
         competitors=competitors,
+        accounts=accounts_of(task),
+        offering=context.offering,
         focus=focus,
         since=day - timedelta(days=context.time_window_days) if context.time_window_days else None,
         notes=notes,
     )
+
+
+ACCOUNT_PLATFORMS = (Platform.X, Platform.INSTAGRAM, Platform.FACEBOOK)
+MAX_ACCOUNTS = 9
+
+
+def accounts_of(task: ResearchTask) -> list[Account]:
+    """The company's and the competitors' official X, Instagram and Facebook accounts."""
+    out: list[Account] = []
+    owners = [(task.company_profile.name, task.company_profile.social_accounts, True)]
+    owners += [(c.name, c.social_accounts, False) for c in task.business_context.competitors]
+    for owner, accounts, is_entity in owners:
+        for account in accounts:
+            platform = account.platform.value
+            if platform not in {p.value for p in ACCOUNT_PLATFORMS}:
+                continue
+            if any(a.owner == owner and a.platform.value == platform for a in out):
+                continue
+            out.append(Account(owner=owner, platform=Platform(platform), url=account.url, is_entity=is_entity))
+    # The company first, then competitors, within the cap.
+    return out[:MAX_ACCOUNTS]

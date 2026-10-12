@@ -35,6 +35,8 @@ CAPABILITY_VARIANTS: dict[str, frozenset[str] | None] = {
     "search_interest": None,
     "social_search": _PLATFORMS,
     "social_comments": _PLATFORMS,
+    # Posts of one named account (the company's or a competitor's official profile).
+    "account_posts": frozenset({"x", "instagram", "facebook"}),
     "reviews": frozenset(s.value for s in ReviewStore),
     "news": frozenset({"gdelt", "google_news"}),
 }

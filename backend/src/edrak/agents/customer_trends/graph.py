@@ -1,6 +1,6 @@
 """Wiring of the worker graph (SPEC section 10): which node runs after which.
 
-START -> intake -> plan_queries -> [social, demand, reviews] -> join -> analyze -> gap_check
+START -> intake -> plan_queries -> [social, demand, reviews, accounts] -> join -> analyze -> gap_check
 gap_check -> plan_queries   (a critical gap, no replan yet, budget left)
 gap_check -> write_findings -> submit -> END
 """
@@ -32,13 +32,14 @@ NODES: dict[str, nodes.NodeFn] = {
     "social": nodes.social,
     "demand": nodes.demand,
     "reviews": nodes.reviews,
+    "accounts": nodes.accounts,
     "join": nodes.join,
     "analyze": nodes.analyze,
     "gap_check": nodes.gap_check,
     "write_findings": nodes.write_findings,
     "submit": nodes.submit,
 }
-COLLECTION_BRANCHES = ("social", "demand", "reviews")
+COLLECTION_BRANCHES = ("social", "demand", "reviews", "accounts")
 
 
 def budget_remains(budget: BudgetTracker) -> bool:

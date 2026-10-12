@@ -182,8 +182,40 @@ providers:
             maxItems: "{max_results}"
           requires: [keywords]
           cost_per_item_usd: 0.003
-          timeout_s: 60
-          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240. It is cut off at 60 so that SocialCrawl, about 20 seconds, serves the call within the branch's time.
+          timeout_s: 150
+          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240. The worker now calls it once by itself before the demand branch starts, outside the branch's clock, so it gets 150 seconds before SocialCrawl takes over.
+        # The posts of one official account. `target` is the X handle, or the full profile URL for
+        # Instagram and Facebook. The same mappers as the search actors read the output.
+        account_posts:x:
+          actor: apidojo/tweet-scraper
+          mapper: x_post
+          input:
+            twitterHandles: ["{target}"]
+            maxItems: "{max_results}"
+            sort: Latest
+            start: "{since}"
+          requires: [target]
+          cost_per_item_usd: 0.0004
+        account_posts:instagram:
+          actor: apify/instagram-scraper
+          mapper: instagram_post
+          input:
+            directUrls: ["{target_url}"]
+            resultsType: posts
+            resultsLimit: "{max_results}"
+            onlyPostsNewerThan: "{since}"
+          requires: [target]
+          cost_per_item_usd: 0.0027
+        account_posts:facebook:
+          actor: apify/facebook-posts-scraper
+          mapper: facebook_post
+          input:
+            startUrls: [{url: "{target_url}"}]
+            resultsLimit: "{max_results}"
+            onlyPostsNewerThan: "{since}"
+          requires: [target]
+          cost_per_item_usd: 0.002
+          cost_per_run_usd: 0.001
         reviews:app_store:
           actor: thewolves/appstore-reviews-scraper
           mapper: app_store_review
@@ -350,6 +382,9 @@ routing:
   social_comments:reddit: [socialcrawl, apify]
   social_comments:youtube: [youtube_api, socialcrawl, apify]
   search_interest: [apify, socialcrawl, google_trends_api]
+  account_posts:x: [apify]
+  account_posts:instagram: [apify]
+  account_posts:facebook: [apify]
   reviews:app_store: [apify]
   reviews:google_play: [apify]
   reviews:amazon: [apify]

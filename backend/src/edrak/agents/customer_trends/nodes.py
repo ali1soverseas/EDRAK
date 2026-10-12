@@ -7,6 +7,7 @@ previews and aggregates.
 """
 
 import asyncio
+from datetime import UTC, datetime
 import json
 import time
 from collections.abc import Awaitable, Callable, Mapping
@@ -138,6 +139,8 @@ def _prompt_values(brief: TaskBrief, deps: WorkerDeps) -> dict[str, Any]:
         "geo": brief.geo,
         "languages": brief.languages,
         "competitors": brief.competitors,
+        "offering": brief.offering,
+        "accounts": "; ".join(f"{a.owner} on {a.platform.value}" for a in brief.accounts) or "none",
         "focus": brief.focus,
         "since": brief.since,
         "until": brief.until,
@@ -248,6 +251,57 @@ async def plan_queries(state: WorkerState, deps: WorkerDeps) -> Update:
 # the three collection branches
 
 
+def trend_timeframe(brief: TaskBrief) -> str:
+    """The Google Trends period that covers the task's time window."""
+    if brief.since is None:
+        return "today 12-m"
+    days = ((brief.until or datetime.now(UTC).date()) - brief.since).days
+    if days <= 31:
+        return "today 1-m"
+    if days <= 93:
+        return "today 3-m"
+    if days <= 366:
+        return "today 12-m"
+    return "today 5-y"
+
+
+def trend_keywords(brief: TaskBrief, plan: QueryPlan | None) -> list[str]:
+    """The planner's trend keywords, or the company, the offering and the competitors."""
+    if plan and plan.trend_keywords:
+        return list(plan.trend_keywords)[:5]
+    names = [brief.entity, *([brief.offering] if brief.offering else []), *brief.competitors]
+    return list(dict.fromkeys(n for n in names if n))[:5]
+
+
+TREND_TIMEOUT_S = 170
+
+
+async def collect_search_interest(brief: TaskBrief, plan: QueryPlan | None, deps: WorkerDeps, capture: Any) -> str:
+    """Search interest over time, always, through Apify Google Trends first.
+
+    Run by the worker itself before the demand branch's model starts, so demand data never depends
+    on the model choosing the tool, and with its own clock, because the browser actor is slow.
+    """
+    keywords = trend_keywords(brief, plan)
+    if not keywords:
+        return "no trend keywords"
+    tools = build_tools(replace(deps.tool_context(brief), emit=capture).for_branch("demand"))
+    try:
+        async with asyncio.timeout(TREND_TIMEOUT_S):
+            answer = await call_tool(
+                tools["search_interest"],
+                {"keywords": keywords, "timeframe": trend_timeframe(brief), "geo": brief.geo},
+            )
+    except TimeoutError:
+        return f"search interest for {', '.join(keywords)} did not arrive in {TREND_TIMEOUT_S} s"
+    if answer.get("status") == "error":
+        return f"search interest failed: {'; '.join(answer.get('gaps', [])) or answer.get('error_code', '')}"
+    return (
+        f"search interest for {', '.join(keywords)} is already collected via {answer.get('provider_used', 'a provider')} "
+        f"(timeframe {trend_timeframe(brief)}); do not call search_interest again for these keywords"
+    )
+
+
 def plan_slice(branch: str, plan: QueryPlan) -> dict[str, Any]:
     """The part of the plan one branch works from; empty when it has nothing to do."""
     keys = {
@@ -324,6 +378,8 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
         }
     capture = BranchCapture(deps)
     ctx = replace(deps.tool_context(brief), emit=capture)
+    if name == "demand":
+        work = {**work, "already_collected": await collect_search_interest(brief, plan, deps, capture)}
     steps = deps.settings.branch_max_steps
     system = render(BRANCH_PROMPTS[name], {**_prompt_values(brief, deps), "max_steps": steps})
     request = "Collect evidence for this task, working from this plan:\n" + json.dumps(
@@ -377,6 +433,79 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
     return update
 
 
+ACCOUNT_POSTS = 15
+ACCOUNT_REPLIES = 20
+ACCOUNT_PARALLEL = 3
+
+
+@traced("accounts")
+async def accounts(state: WorkerState, deps: WorkerDeps) -> Update:
+    """Read the official accounts of the company and its competitors, and the replies under each
+    account's most engaged post. Deterministic: every account in the brief is read."""
+    brief = brief_of(state)
+    if state.get("account_batches"):
+        return {}  # read once per run; a replan does not read the same accounts again
+    if not brief.accounts:
+        return {
+            "batches": {"accounts": []},
+            "branch_notes": {"accounts": "no official accounts were given"},
+            "branch_errors": {"accounts": ""},
+        }
+    capture = BranchCapture(deps)
+    tools = build_tools(replace(deps.tool_context(brief), emit=capture).for_branch("accounts"))
+    gate = asyncio.Semaphore(ACCOUNT_PARALLEL)
+    by_owner: dict[str, list[str]] = {}
+    read: list[str] = []
+
+    async def one(account: Any) -> None:
+        async with gate:
+            if deps.budget.collection_seconds_left() < MIN_BRANCH_S:
+                return
+            answer = await call_tool(
+                tools["account_posts"],
+                {"platform": account.platform.value, "account_url": account.url, "owner": account.owner,
+                 "max_results": ACCOUNT_POSTS},
+            )
+            batch = answer.get("batch_id")
+            if not batch:
+                return
+            by_owner.setdefault(account.owner, []).append(batch)
+            read.append(f"{account.owner} on {account.platform.value}")
+            top = await call_tool(
+                tools["evidence_query"], {"filters": {"batch_ids": [batch]}, "limit": 1, "sample": "top"}
+            )
+            post = next((i.get("url") for i in top.get("items", []) if i.get("url")), None)
+            if post:
+                replies = await call_tool(
+                    tools["social_comments"],
+                    {"platform": account.platform.value, "post_url": post, "sort": "top",
+                     "max_results": ACCOUNT_REPLIES},
+                )
+                if replies.get("batch_id"):
+                    by_owner[account.owner].append(replies["batch_id"])
+
+    allowed = min(deps.settings.branch_timeout_s * 1.5, deps.budget.collection_seconds_left())
+    reason = ""
+    try:
+        if allowed < MIN_BRANCH_S:
+            raise TimeoutError
+        async with asyncio.timeout(allowed):
+            await asyncio.gather(*(one(a) for a in brief.accounts))
+    except TimeoutError:
+        reason = "the official accounts could not all be read in time"
+    if not read and not reason:
+        reason = capture.failure()
+    return {
+        "batches": {"accounts": [b for ids in by_owner.values() for b in ids]},
+        "account_batches": by_owner,
+        "branch_notes": {
+            "accounts": f"read {len(read)} official account(s): {', '.join(read)}" if read
+            else "no posts came back from the official accounts"
+        },
+        "branch_errors": {"accounts": reason},
+    }
+
+
 @traced("social")
 async def social(state: WorkerState, deps: WorkerDeps) -> Update:
     return await run_branch("social", state, deps)
@@ -410,7 +539,9 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
     brief = brief_of(state)
     tools = build_tools(deps.tool_context(brief))
     batches = state.get("batches", {})
-    text_batches = list(dict.fromkeys([*batches.get("social", []), *batches.get("reviews", [])]))
+    text_batches = list(dict.fromkeys(
+        [*batches.get("social", []), *batches.get("reviews", []), *batches.get("accounts", [])]
+    ))
     if not text_batches:
         # A run started again over stored evidence collects only duplicates, so its branches
         # name no batch; the run's own batches are still there to analyze.
@@ -445,6 +576,13 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
                 "competitors": brief.competitors[:MAX_SHARE_OF_VOICE_NAMES],
             },
         }
+    # Engagement on each company's own accounts, so findings can compare them with numbers.
+    for owner, ids in (state.get("account_batches") or {}).items():
+        if ids:
+            requests[f"account_engagement:{owner}"] = {
+                "metric": "engagement_stats",
+                "params": {"filters": {"batch_ids": ids}},
+            }
     metric_ids = dict(state.get("metric_ids", {}))
     for name, arguments in requests.items():
         answer = await call_tool(tools["compute_metrics"], arguments)

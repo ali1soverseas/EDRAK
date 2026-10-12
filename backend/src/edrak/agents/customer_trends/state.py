@@ -44,6 +44,8 @@ class WorkerState(TypedDict, total=False):
     brief: dict[str, Any]
     plan: dict[str, Any] | None
     batches: Annotated[dict[str, list[str]], merge_batches]
+    # owner (company or competitor) -> batch ids of its official accounts' posts and replies
+    account_batches: Annotated[dict[str, list[str]], merge_batches]
     branch_notes: Annotated[dict[str, str], merge_by_key]
     branch_errors: Annotated[dict[str, str], merge_by_key]
     gaps: Annotated[list[dict[str, Any]], union_gaps]

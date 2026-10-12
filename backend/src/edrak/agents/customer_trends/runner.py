@@ -292,6 +292,22 @@ async def arun_worker(
                 task=task,
                 location=deps.store.result_location(brief.run_id),
                 synthetic=settings.edrak_provider_mode == "fixture",
+                extra_metadata={
+                    # The full search-interest series, for the brief's trend chart (real values only).
+                    "trend_series": [
+                        {
+                            "keyword": s.keyword,
+                            "geo": s.geo,
+                            "timeframe": s.timeframe,
+                            "granularity": s.granularity,
+                            "source": s.source,
+                            "points": [[d.isoformat(), v] for d, v in s.points],
+                        }
+                        for s in deps.store.get_trend_series(brief.run_id)
+                        if s.points
+                    ],
+                    "official_accounts": [a.model_dump(mode="json") for a in brief.accounts],
+                },
             )
     except Exception as exc:
         log.error(
