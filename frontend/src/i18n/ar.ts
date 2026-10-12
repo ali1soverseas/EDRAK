@@ -342,6 +342,8 @@ export const ar: Record<TKey, string> & Record<string, string> = {
   "run.title.partial": "الموجز جاهز، بأدلة جزئية.",
   "run.title.failed": "توقف التشغيل قبل أي موجز.",
   "run.title.cancelled": "أُلغي هذا التشغيل.",
+  "run.title.review": "المراجعة مطلوبة منك.",
+  "run.title.paused": "التشغيل متوقف مؤقتًا.",
   "run.cancel": "إلغاء التشغيل",
   "run.cancel.title": "إلغاء هذا التشغيل؟",
   "run.cancel.body": "يتوقف الوكلاء الآن. ولا يتحول ما وجدوه حتى الآن إلى موجز.",

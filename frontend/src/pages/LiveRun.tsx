@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StageTracker } from "../components/RunStatus";
 import { PageChrome } from "../components/shell/AppShell";
+import { useL } from "../lib/useL";
+import { edrak } from "../services/edrak";
 import { Chip, StatusChip } from "../components/ui/Chip";
 import { Icon } from "../components/ui/Icon";
 import { Overlay } from "../components/ui/Overlay";
@@ -36,6 +38,10 @@ function titleKey(run: RunView): { key: TKey; params?: Record<string, number> } 
       return { key: "run.title.failed" };
     case "cancelled":
       return { key: "run.title.cancelled" };
+    case "awaiting_review":
+      return { key: "run.title.review" };
+    case "paused":
+      return { key: "run.title.paused" };
     case "running":
       if (run.stage === "verify") return { key: "run.title.verify" };
       if (run.stage === "synthesize") return { key: "run.title.synthesize" };
@@ -293,8 +299,70 @@ function CancelDialog({ onConfirm, onClose, busy }: { onConfirm: () => void; onC
   );
 }
 
+/** Checkpoint 2: what verification concluded, and the person's decision. */
+function ReviewPanel({ run, onDone }: { run: RunView; onDone: () => void }) {
+  const L = useL();
+  const review = run.review!;
+  const [tasks, setTasks] = useState(review.proposed_tasks);
+  const [note, setNote] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const decide = async (decision: "continue" | "replan" | "stop") => {
+    setBusy(true);
+    setError(null);
+    try {
+      await edrak.review(run.analysis_id, decision, decision === "replan" ? tasks : [], note || undefined);
+      onDone();
+    } catch (e) {
+      setError((e as Error).message);
+      setBusy(false);
+    }
+  };
+  const recommended = (d: string) => (review.recommended === d ? " · " + L("suggested", "مقترح") : "");
+  return (
+    <section className="panel ink stack gap12" aria-label={L("Review", "مراجعة")}>
+      <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <span className="eyebrow" style={{ color: "#9aa0d0" }}>{L(`Checkpoint 2 of 2 · round ${review.round}`, `نقطة المراجعة 2 من 2 · الجولة ${review.round}`)}</span>
+        <span className="s13" style={{ opacity: 0.8 }}>{L(`${review.findings_verified} of ${review.findings_total} findings verified`, `${review.findings_verified} من ${review.findings_total} نتيجة موثقة`)}</span>
+      </div>
+      <h2 className="disp" style={{ margin: 0, fontSize: 24 }}>{L("Review what was found before the brief is written.", "راجع ما وُجد قبل كتابة الموجز.")}</h2>
+      <p style={{ margin: 0, opacity: 0.85 }} dir="auto">{review.summary}</p>
+      {(review.conflicts.length > 0 || review.missing_information.length > 0) && (
+        <div className="grid2" style={{ gridTemplateColumns: "1fr 1fr" }}>
+          {review.conflicts.length > 0 && <div className="stack gap4"><b className="s13">{L("Conflicts", "تعارضات")}</b>{review.conflicts.slice(0, 5).map((c) => <span key={c} className="s13" style={{ opacity: 0.85 }} dir="auto">· {c}</span>)}</div>}
+          {review.missing_information.length > 0 && <div className="stack gap4"><b className="s13">{L("Still missing", "ما زال ناقصًا")}</b>{review.missing_information.slice(0, 5).map((c) => <span key={c} className="s13" style={{ opacity: 0.85 }} dir="auto">· {c}</span>)}</div>}
+        </div>
+      )}
+      {tasks.length > 0 && (
+        <div className="stack gap8">
+          <div className="row g8"><b className="s13">{L("Proposed re-plan", "إعادة التخطيط المقترحة")}</b>
+            <button type="button" className="btn ghost" style={{ height: 28, color: "inherit" }} onClick={() => setEditing((v) => !v)}>{editing ? L("Done", "تم") : L("Edit tasks", "عدّل المهام")}</button></div>
+          {tasks.map((task, i) => (
+            <div key={task.task_id} className="stack gap4" style={{ background: "rgba(255,255,255,.06)", borderRadius: 10, padding: 10 }}>
+              <span className="s12" style={{ opacity: 0.7 }}>{task.worker.replace("_", " ")}</span>
+              {editing ? (
+                <textarea className="textarea" style={{ minHeight: 60 }} value={task.goal} onChange={(e) => setTasks(tasks.map((x, j) => (j === i ? { ...x, goal: e.target.value } : x)))} dir="auto" />
+              ) : <span className="s13" dir="auto">{task.goal}</span>}
+              {editing && <button type="button" className="btn ghost" style={{ alignSelf: "flex-start", color: "inherit" }} onClick={() => setTasks(tasks.filter((_, j) => j !== i))}>{L("Remove task", "احذف المهمة")}</button>}
+            </div>
+          ))}
+        </div>
+      )}
+      <input className="input" placeholder={L("Note (optional)", "ملاحظة (اختياري)")} value={note} onChange={(e) => setNote(e.target.value)} dir="auto" />
+      {error && <span className="s13" style={{ color: "#ffb4a8" }}>{error}</span>}
+      <div className="row g8 wrap">
+        <button type="button" className="btn" style={{ background: "var(--gold, #f5d547)", color: "var(--ink)" }} disabled={busy} onClick={() => void decide("continue")}>{L("Continue to the brief", "تابع إلى الموجز") + recommended("continue")}</button>
+        {review.can_replan && <button type="button" className="btn" disabled={busy || tasks.length === 0} onClick={() => void decide("replan")}>{L("Send workers out again", "أرسل العمال مجددًا") + recommended("replan")}</button>}
+        <button type="button" className="btn ghost" style={{ color: "inherit" }} disabled={busy} onClick={() => void decide("stop")}>{L("Stop and write the brief", "توقف واكتب الموجز") + recommended("stop")}</button>
+      </div>
+    </section>
+  );
+}
+
 export function LiveRun() {
   const { t } = useI18n();
+  const L = useL();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const run = usePolled(() => api.getRun(id), [id], {
@@ -417,8 +485,21 @@ export function LiveRun() {
           </div>
           <StatusChip status={data.state} />
           {data.state === "running" && (
-            <button type="button" className="btn" onClick={() => setCancelling(true)}>
-              {t("run.cancel")}
+            <>
+              <button type="button" className="btn ghost" onClick={() => void edrak.notifyInstead(data.analysis_id).then(() => navigate("/"))}>
+                {L("Notify me instead", "أبلغني لاحقًا")}
+              </button>
+              <button type="button" className="btn ghost" onClick={() => void edrak.pause(data.analysis_id).then(() => run.reload())}>
+                <Icon name="pause" size={14} /> {L("Pause", "إيقاف مؤقت")}
+              </button>
+              <button type="button" className="btn" onClick={() => setCancelling(true)}>
+                {t("run.cancel")}
+              </button>
+            </>
+          )}
+          {data.state === "paused" && (
+            <button type="button" className="btn pri" onClick={() => void edrak.resume(data.analysis_id).then(() => run.reload())}>
+              <Icon name="play" size={14} /> {L("Resume", "استئناف")}
             </button>
           )}
           {data.brief_id && (
@@ -434,6 +515,8 @@ export function LiveRun() {
           )}
         </div>
       </div>
+
+      {data.state === "awaiting_review" && data.review && <ReviewPanel run={data} onDone={() => run.reload()} />}
 
       <StageTracker run={data} />
 

@@ -56,8 +56,9 @@ export function NewAnalysis() {
       return;
     }
     const useCase = asUseCase(params.get("use_case")) ?? "competitive_intelligence";
-    const text = t(GOAL_DEFAULT[useCase], { company: companyName });
-    suggested.current = text;
+    const typed = params.get("goal");
+    const text = typed ?? t(GOAL_DEFAULT[useCase], { company: companyName });
+    suggested.current = typed ? "" : text;
     setForm({ ...defaultForm(useCase), goal: text });
   }, [form, company.loading, draft.loading, draft.data, params, t, companyName]);
 

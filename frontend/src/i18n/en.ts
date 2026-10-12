@@ -323,6 +323,8 @@ export const en = {
   "run.title.partial": "The brief is ready, with partial evidence.",
   "run.title.failed": "The run stopped before any brief.",
   "run.title.cancelled": "This run was cancelled.",
+  "run.title.review": "Your review is needed.",
+  "run.title.paused": "The run is paused.",
   "run.cancel": "Cancel run",
   "run.cancel.title": "Cancel this run?",
   "run.cancel.body": "The workers stop now. What they have found so far is not turned into a brief.",
