@@ -245,3 +245,22 @@ def test_impact_and_feasibility_are_never_copied_from_confidence():
     assert impact is feas is likelihood is AssessmentLevel.UNKNOWN and urgency is AssessmentLevel.HIGH
     _, impact, _, feas, _ = _levels_for(["s1"], sig, SimpleNamespace(impact="low", feasibility="high"))
     assert (impact, feas) == (AssessmentLevel.LOW, AssessmentLevel.HIGH)
+
+
+def test_deck_has_five_slides_in_fixed_order_and_an_empty_metrics_slide_collapses():
+    from edrak.briefing.deck import build_deck
+    doc = {"use_case": "competitive_intelligence", "template": {"use_case": "competitive_intelligence"}, "question": "Q?",
+           "headline": "Globex undercuts Acme", "request": {"company_profile": {"name": "Acme"}},
+           "lenses": [{"worker": "competitor_intelligence", "source_count": 2, "findings": [
+               {"finding": {"statement": "Globex cut prices", "finding_id": "f1"}, "status": "verified", "refs": [{"display_no": 4}], "reliability": 3}]}],
+           "cards": {"gap:price_per_tier:": {"card_key": "gap:price_per_tier:", "component": "gap", "section": "competitor_intelligence"}},
+           "kpis": [], "signals_view": [], "options": [{"key": "A"}, {"key": "B"}], "evidence": [{"origin": "external", "reliability": 3}],
+           "gaps_panel": {"gaps": [{"title": "Price per tier", "reason": "not_publicly_disclosed", "card_key": "gap:price_per_tier:"}], "collapsed_lenses": []},
+           "coverage": {"score": 0, "met": 0, "required": 1, "items": []}, "metrics": {}, "gaps": []}
+    deck = build_deck(doc)
+    assert deck["order"] == ["summary", "business_metrics", "signals", "decisions", "evidence_gaps"]
+    s = {x["id"]: x for x in deck["slides"]}
+    assert s["summary"]["key_findings"][0]["refs"] == [4]
+    assert s["business_metrics"]["collapsed"] and "business_metrics" in s["evidence_gaps"]["collapsed"]
+    assert s["evidence_gaps"]["gaps"][0]["action"] == "provide_data"
+    assert s["decisions"]["options"] == ["A", "B"] and s["decisions"]["framing"]

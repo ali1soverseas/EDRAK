@@ -410,4 +410,7 @@ def build_brief(
         # Typed half of the brief: headline, KPI strip, coverage, cards. The old keys stay so v2 readers still work.
         document.update(v3)
         document["summary_text"] = v3.get("headline") or document["summary_text"]
+        from edrak.briefing.deck import build_deck
+
+        document["deck"] = build_deck(document)
     return document

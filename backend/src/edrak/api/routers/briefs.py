@@ -33,6 +33,13 @@ async def get_brief(
     document["evidence_status"] = row["evidence_status"]
     document["document_version"] = row["document_version"]
     await merge_live(db, row["id"], document)
+    if document.get("cards") is not None and not document.get("deck"):
+        from edrak.briefing.deck import build_deck
+
+        try:  # briefs frozen before the five-slide deck existed get one built from their own content
+            document["deck"] = build_deck(document)
+        except Exception:  # noqa: BLE001 - the frontend falls back to the document's own fields
+            pass
     return document
 
 
