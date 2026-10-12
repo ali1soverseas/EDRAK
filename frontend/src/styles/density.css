@@ -1,0 +1,15 @@
+/* Denser layout than the handoff's 1440 px mockups: same tokens, tighter spacing. */
+.page { padding: 28px 32px 48px; }
+.top { height: 56px; }
+.side { padding: 16px 12px; gap: 12px; }
+.nav a { padding: 7px 10px; font-size: 14px; }
+.card { padding: 16px; }
+h1, .h1 { font-size: 32px; line-height: 1.12; }
+table td, table th { padding-top: 9px; padding-bottom: 9px; }
+.btn { height: 38px; }
+@media (max-width: 640px) { .page { padding: 18px 16px 40px; } }
+
+/* The moving dot grid sits behind the beige surfaces. */
+.dotfield { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.app > .main, .app > .side { position: relative; z-index: 1; }
+.main { background: transparent; }

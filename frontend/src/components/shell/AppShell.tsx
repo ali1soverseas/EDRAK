@@ -16,6 +16,9 @@ import { useMediaQuery } from "../../lib/useMediaQuery";
 import { Icon } from "../ui/Icon";
 import { Logo } from "../ui/Logo";
 import { Segmented } from "../ui/Controls";
+import { DotField } from "../ui/DotField";
+import { AskEdrak, GlobalSearch, NotificationBell } from "./TopTools";
+import { useL } from "../../lib/useL";
 
 export interface Crumb {
   label: string;
@@ -104,7 +107,9 @@ function TopBar({ crumbs, menuOpen, onMenu }: { crumbs: Crumb[]; menuOpen: boole
         })}
       </nav>
       <div className="grow" />
+      <GlobalSearch />
       <LanguageSwitch />
+      <NotificationBell />
     </header>
   );
 }
@@ -114,15 +119,22 @@ function Sidebar({ rail, open }: { rail: boolean; open: boolean }) {
   const { session, signOut } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const L = useL();
   if (!session) return null;
 
-  const onAnalyses = pathname === "/" || pathname.startsWith("/analyses") || pathname.startsWith("/briefs");
-  const onCompany = pathname.startsWith("/company");
   const { user, workspace } = session;
-
+  const at = (prefix: string) => pathname === prefix || pathname.startsWith(prefix + "/");
   const links = [
-    { to: "/", icon: "home" as const, label: t("nav.analyses"), on: onAnalyses },
-    { to: "/company", icon: "building" as const, label: t("nav.company"), on: onCompany },
+    { to: "/", icon: "home" as const, label: L("Home", "الرئيسية"), on: pathname === "/" || at("/analyses") },
+    { to: "/reports", icon: "fileLines" as const, label: L("Reports", "التقارير"), on: at("/reports") || at("/briefs") },
+    { to: "/monitors", icon: "activity" as const, label: L("Monitors", "المراقبة"), on: at("/monitors") },
+    { to: "/alerts", icon: "warning" as const, label: L("Alerts", "التنبيهات"), on: at("/alerts") },
+  ];
+  const knowledge = [
+    { to: "/watchlist", icon: "target" as const, label: L("Watchlist", "قائمة المتابعة"), on: at("/watchlist") },
+    { to: "/evidence", icon: "layers" as const, label: L("Evidence", "الأدلة"), on: at("/evidence") },
+    { to: "/decisions", icon: "checks" as const, label: L("Decision log", "سجل القرارات"), on: at("/decisions") },
+    { to: "/sources", icon: "building" as const, label: L("Data sources", "مصادر البيانات"), on: at("/sources") || at("/company") },
   ];
 
   return (
@@ -162,6 +174,18 @@ function Sidebar({ rail, open }: { rail: boolean; open: boolean }) {
             {!rail && <span>{link.label}</span>}
           </Link>
         ))}
+        {!rail && <div className="eyebrow" style={{ margin: "14px 10px 6px" }}>{L("Knowledge", "المعرفة")}</div>}
+        {knowledge.map((link) => (
+          <Link key={link.to} to={link.to} className={link.on ? "on" : ""} title={link.label} aria-current={link.on ? "page" : undefined}>
+            <Icon name={link.icon} size={19} />
+            {!rail && <span>{link.label}</span>}
+          </Link>
+        ))}
+        <div style={{ flex: 1 }} />
+        <Link to="/settings" className={at("/settings") ? "on" : ""} title={L("Settings", "الإعدادات")}>
+          <Icon name="shield" size={19} />
+          {!rail && <span>{L("Settings", "الإعدادات")}</span>}
+        </Link>
       </nav>
 
       {rail ? (
@@ -233,10 +257,13 @@ export function ShellLayout(): ReactNode {
 
   if (session === undefined) return <div className="boot" aria-busy="true" />;
   if (session === null) return <Navigate to="/sign-in" replace state={{ from: `${location.pathname}${location.search}` }} />;
+  // Nothing works well without the company profile: finish onboarding first.
+  if (session.onboarding_complete === false) return <Navigate to="/onboarding" replace />;
 
   return (
     <ChromeContext.Provider value={context}>
       <div className={`app ${rail ? "rail" : ""} ${navOpen ? "nav-open" : ""}`.trim()}>
+        <DotField />
         <Sidebar rail={rail} open={navOpen} />
         {navOpen && <div className="nav-scrim" onClick={() => setNavOpen(false)} aria-hidden="true" />}
         <div className="main">
@@ -245,6 +272,7 @@ export function ShellLayout(): ReactNode {
             <Outlet />
           </main>
         </div>
+        <AskEdrak />
       </div>
     </ChromeContext.Provider>
   );

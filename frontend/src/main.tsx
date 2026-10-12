@@ -12,6 +12,8 @@ import "./styles/analysis.css";
 import "./styles/run.css";
 import "./styles/brief.css";
 import "./styles/responsive.css";
+import "./styles/density.css";
+import "./styles/product.css";
 
 const root = document.getElementById("root");
 
