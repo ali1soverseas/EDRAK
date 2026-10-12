@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BriefToolbar } from "../components/brief/BriefToolbar";
 import { ReportView } from "../components/ReportView";
-import { BriefDashboard } from "./BriefDashboard";
+import { BriefDeck } from "../components/deck/BriefDeck";
 import type { BriefV3 } from "../types/brief3";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
@@ -22,7 +22,7 @@ export function Report() {
   const [fullscreen, setFullscreen] = useState(false);
 
   const crumbs = [
-    { label: t("nav.analyses"), to: "/reports" },
+    { label: t("nav.analyses"), to: "/analyses" },
     { label: data?.analysis_title ?? "…" },
     { label: data ? t("brief.no", { no: briefNumber(data.brief_no) }) : t("brief.crumb") },
   ];
@@ -59,7 +59,7 @@ export function Report() {
   }
 
   if ((data as unknown as { document_version?: number }).document_version! >= 3 && (data as unknown as BriefV3).cards) {
-    return <>{chrome}<div style={{ height: "100%", minHeight: 0, overflow: "auto" }}><BriefDashboard key={data.brief_id} initial={data as unknown as BriefV3} /></div></>;
+    return <>{chrome}<BriefDeck key={data.brief_id} initial={data as unknown as BriefV3} /></>;
   }
 
   return (

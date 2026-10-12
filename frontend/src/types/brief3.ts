@@ -39,7 +39,11 @@ export interface KpiItem {
 
 export interface SectionInfo { lens: string; label: string; weight: number; cards: string[]; gap_cards: string[]; evidence_count: number; collapsed: boolean }
 export interface GapItem { card_key: string; metric_id: string; entity: string; title: string; blocking: boolean; reason: string; explanation: string }
-export interface SignalView { signal_id: string; title: string; signal: string; interpretation: string; why_it_matters: string | null; refs: number[]; domains: string[] }
+export interface SignalView {
+  signal_id: string; title: string; signal: string; interpretation: string | null; why_it_matters: string | null; refs: number[]; domains: string[];
+  type?: string | null; urgency?: string | null; emphasis?: number; confidence?: number | null; evidence_gaps?: string[];
+  sides?: { value: string; uid: string; ref: number | null }[];
+}
 
 export interface OptionItem { text: string; how_to_capture?: string; likelihood?: string; impact?: string; early_warning?: string; mitigation?: string; metric_uids?: string[]; evidence_refs?: number[] }
 export interface BriefOption {
@@ -67,19 +71,53 @@ export interface BriefV3 {
   signals_view: SignalView[];
   evidence: BriefEvidenceItem[];
   options: BriefOption[];
-  template: { use_case: string; kpi_strip: string[]; required: string[] };
+  template: { use_case: string; kpi_strip: string[]; required: string[]; metrics_theme?: { title: string; subtitle: string }; decision_framing?: string };
   verification?: { control_summary?: { missing_information: string[]; conflicts: string[] } };
+  deck?: Deck;
+  counts?: { findings: number; verified: number; sources: number; workers: number };
+  summary?: { limits?: string | null };
 }
+
+/* ------------------------------------------------------------ the five slides */
+
+export interface KeyFinding { text: string; lens: string; finding_id: string; refs: number[]; reliability: number }
+export interface ComparisonCell { entity: string; value: string; label: string | null; period: string | null; uid: string; ref: number | null; status: string }
+export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null }
+export interface LensCoverage { lens: string; label: string; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
+export interface DeckGap { kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null; blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string }
+
+export interface SummarySlideData {
+  id: "summary"; title: string; headline: string; question: string; use_case: string; key_findings: KeyFinding[];
+  top_signals: string[]; kpis: string[]; coverage: BriefV3["coverage"]; limits: string | null;
+  counts?: BriefV3["counts"]; unmet: string[];
+}
+export interface MetricsSlideData {
+  id: "business_metrics"; title: string; subtitle: string; kpis: string[]; cards: string[]; gap_cards: string[];
+  comparison: ComparisonRow[]; company: string; collapsed: boolean; collapsed_reason: string | null;
+}
+export interface SignalsSlideData { id: "signals"; title: string; items: string[]; lenses: { lens: string; label: string }[]; emphasis: Record<string, number> }
+export interface DecisionsSlideData { id: "decisions"; title: string; framing: string; options: string[]; priorities_known: boolean }
+export interface EvidenceSlideData {
+  id: "evidence_gaps"; title: string; coverage: BriefV3["coverage"]; by_lens: LensCoverage[];
+  source_mix: { total: number; internal: number; external: number; by_reliability: Record<string, number>; by_kind: Record<string, number> };
+  conflicts: string[]; gaps: DeckGap[]; collapsed: string[];
+}
+export type DeckSlide = SummarySlideData | MetricsSlideData | SignalsSlideData | DecisionsSlideData | EvidenceSlideData;
+export interface Deck { version: number; order: DeckSlide["id"][]; slides: DeckSlide[] }
 
 /* ------------------------------------------------------------ action plan */
 
 export type Level = "low" | "moderate" | "high";
-export interface PlanAction { id: string; title: string; description: string; owner_role: string; start_week: number; duration_weeks: number; depends_on: string[]; deliverable: string; success_measure: string }
+export type Origin = "generated" | "user";
+export interface PlanAction {
+  id: string; title: string; description: string; owner_role: string; start_week: number; duration_weeks: number; depends_on: string[];
+  deliverable: string; success_measure: string; validation?: string; signal_ids?: string[]; evidence_refs?: number[]; origin?: Origin;
+}
 export interface Workstream { id: string; name: string; objective: string; actions: PlanAction[] }
 export interface Milestone { id: string; week: number; title: string; go_criteria: string; kill_criteria: string }
 export interface PlanKpi { id: string; name: string; metric_id: string | null; entity: string; new_measure: boolean; baseline_uid: string | null; baseline: string; direction: "increase" | "decrease" | "maintain"; target: string; target_status: "proposed" | "accepted" | "edited"; cadence: string }
-export interface PlanRisk { id: string; text: string; likelihood: Level; impact: Level; early_warning: string; mitigation: string; mitigation_action_ids: string[]; owner_role: string; evidence_refs: number[] }
-export interface PlanOpportunity { id: string; text: string; how_to_capture: string; action_ids: string[]; evidence_refs: number[] }
+export interface PlanRisk { id: string; text: string; likelihood: Level; impact: Level; early_warning: string; mitigation: string; mitigation_action_ids: string[]; owner_role: string; evidence_refs: number[]; signal_ids?: string[]; origin?: Origin }
+export interface PlanOpportunity { id: string; text: string; how_to_capture: string; action_ids: string[]; evidence_refs: number[]; signal_ids?: string[]; origin?: Origin }
 export interface ActionPlanDoc {
   objective: string;
   chosen_option: { key: string; title: string; why: string; signal_ids: string[]; evidence_refs: number[] };
@@ -87,13 +125,14 @@ export interface ActionPlanDoc {
   assumptions: { id: string; text: string; metric_uid: string | null; gap: string }[];
   open_questions: { id: string; text: string; close_by_week: number | null }[];
   workstreams: Workstream[]; milestones: Milestone[]; kpis: PlanKpi[]; risks: PlanRisk[]; opportunities: PlanOpportunity[];
-  resources: string[]; review_date: string | null; review_cadence: string; total_weeks: number; notes: string[];
+  resources: string[]; review_date: string | null; review_cadence: string; total_weeks: number; notes: string[]; edited?: boolean;
 }
 export interface ActionPlanRow {
   id: string; brief_id: string; option_key: string; version: number; status: "generating" | "draft" | "approved" | "superseded" | "failed";
+  state?: "generating" | "draft" | "edited" | "approved" | "superseded" | "failed";
   note: string | null; error: string | null; created_at: string; approved_at: string | null; document: ActionPlanDoc | Record<string, never>;
   issues?: { errors: string[]; warnings: string[] };
-  versions?: { id: string; version: number; status: string; created_at: string; note: string | null }[];
+  versions?: { id: string; version: number; status: string; state?: string; created_at: string; note: string | null; approved_at?: string | null }[];
 }
 
 export interface ChallengeResult {

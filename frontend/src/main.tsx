@@ -14,7 +14,7 @@ import "./styles/brief.css";
 import "./styles/responsive.css";
 import "./styles/density.css";
 import "./styles/product.css";
-import "./styles/brief3.css";
+import "./styles/deck.css";
 
 const root = document.getElementById("root");
 

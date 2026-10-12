@@ -18,7 +18,8 @@ const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [ta
 /**
  * A scrim and a panel. Esc and a click on the scrim close it. Focus moves into the panel
  * and comes back to where it was. It renders in a portal so the brief's blur and parallax
- * transforms do not become its containing block.
+ * transforms do not become its containing block. In full screen it portals into the full-screen
+ * element, because nothing outside that element is painted.
  */
 export function Overlay({ variant, onClose, label, children }: OverlayProps) {
   const [shown, setShown] = useState(false);
@@ -89,6 +90,6 @@ export function Overlay({ variant, onClose, label, children }: OverlayProps) {
         {typeof children === "function" ? children(requestClose) : children}
       </div>
     </div>,
-    document.body,
+    (document.fullscreenElement as HTMLElement | null) ?? document.body,
   );
 }

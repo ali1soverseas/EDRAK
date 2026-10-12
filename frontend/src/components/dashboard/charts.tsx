@@ -3,7 +3,9 @@ import { useL } from "../../lib/useL";
 
 /** The closed set of card bodies. The same metric type always renders as the same component. */
 
-const PALETTE = ["#0742ED", "#6A3DDB", "#08807A", "#A85F00", "#C0331F", "#4A4868"];
+// Categorical hues in fixed order, validated for light mode on --card (lightness band, chroma,
+// colour-blind separation, contrast). Status colours (--ok, --warn, --bad) are never series colours.
+export const PALETTE = ["#0742ED", "#00897B", "#7B3FE4", "#C2185B", "#8D6E00"];
 
 export function KpiBody({ card }: { card: BriefCard }) {
   const s = card.slots;
@@ -12,6 +14,7 @@ export function KpiBody({ card }: { card: BriefCard }) {
     <div className="stack gap4">
       <div className="kpi-value">{s.range ? `${s.range.low} – ${s.range.high}` : s.value}</div>
       <div className="row g8 wrap s12 muted">
+        {s.part_of && <span>{s.part_of}</span>}
         {s.period && <span>{s.period}</span>}
         {cmp && <span className={`cmp ${cmp.direction > 0 ? "up" : cmp.direction < 0 ? "down" : ""}`}>{cmp.direction > 0 ? "▲" : cmp.direction < 0 ? "▼" : "■"} {cmp.value} {cmp.label}</span>}
       </div>
@@ -37,17 +40,23 @@ export function LadderBody({ card }: { card: BriefCard }) {
 }
 
 export function SegmentedBody({ card }: { card: BriefCard }) {
-  const parts = (card.slots.parts ?? []) as { label: string; value: number; display: string }[];
+  const L = useL();
+  const parts = (card.slots.parts ?? []) as { label: string; value: number; display: string; computed?: boolean }[];
   const total = parts.reduce((a, p) => a + p.value, 0) || 1;
+  let hue = 0;
+  const colors = parts.map((p) => (p.computed ? "var(--sunk)" : PALETTE[hue++ % PALETTE.length]));
   return (
     <div className="stack gap8">
       <div className="seg-bar" role="img" aria-label={parts.map((p) => `${p.label} ${p.display}`).join(", ")}>
-        {parts.map((p, i) => <i key={p.label} style={{ width: `${(p.value / total) * 100}%`, background: PALETTE[i % PALETTE.length] }} title={`${p.label} ${p.display}`} />)}
+        {parts.map((p, i) => <i key={p.label} className={p.computed ? "hatch" : ""} style={{ width: `${(p.value / total) * 100}%`, background: p.computed ? undefined : colors[i] }} title={`${p.label} ${p.display}`} />)}
       </div>
       <div className="row g12 wrap s12">
-        {parts.map((p, i) => <span key={p.label} className="row g4"><i className="dot" style={{ background: PALETTE[i % PALETTE.length] }} />{p.label} <b>{p.display}</b></span>)}
+        {parts.map((p, i) => <span key={p.label} className="row g4"><i className={`dot ${p.computed ? "hatch dot-line" : ""}`} style={{ background: p.computed ? undefined : colors[i] }} />{p.label} <b>{p.display}</b></span>)}
       </div>
-      {card.slots.n ? <span className="s12 muted">n = {card.slots.n}</span> : null}
+      <div className="row g8 s12 muted">
+        {card.slots.n ? <span>n = {card.slots.n}</span> : null}
+        {card.slots.incomplete ? <span className="chip c-ins">{L("Incomplete", "غير مكتمل")}</span> : null}
+      </div>
     </div>
   );
 }
@@ -66,8 +75,8 @@ export function LineBody({ card }: { card: BriefCard }) {
     <div className="stack gap4">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label={card.title}>
         <line x1={P} y1={H - P} x2={W - P} y2={H - P} stroke="currentColor" opacity=".15" />
-        <polyline fill="none" stroke={PALETTE[0]} strokeWidth="2" points={pts.map((p, i) => `${X(i)},${Y(p.y)}`).join(" ")} />
-        {pts.map((p, i) => <circle key={i} cx={X(i)} cy={Y(p.y)} r="2.5" fill={PALETTE[0]}><title>{`${p.x}: ${p.display}`}</title></circle>)}
+        <polyline fill="none" stroke={PALETTE[0]} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" points={pts.map((p, i) => `${X(i)},${Y(p.y)}`).join(" ")} />
+        {pts.map((p, i) => <circle key={i} cx={X(i)} cy={Y(p.y)} r="4" fill={PALETTE[0]} stroke="var(--card)" strokeWidth="2"><title>{`${p.x}: ${p.display}`}</title></circle>)}
       </svg>
       <div className="row g8 s12 muted wrap"><span>{pts[0]?.x} → {pts[pts.length - 1]?.x}</span>{src?.name && <span>· {src.name}{src.geo ? ` (${src.geo})` : ""}</span>}</div>
     </div>

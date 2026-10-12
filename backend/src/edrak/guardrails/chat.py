@@ -18,7 +18,9 @@ from edrak.metrics.numbers import parse_numbers
 
 LABELS = ("brief", "web_unverified", "not_covered")
 _CITE = re.compile(r"\[E(\d+)\]")
-_NUMBER = re.compile(r"[$€£]?\s?\d[\d,]*(?:\.\d+)?\s?(?:%|[kKmMbB]\b)?")
+# A figure stands on its own: digits glued to letters are part of a name ("3.5D XDSiP", "Q2", "H100") and are left alone.
+_NUMBER = re.compile(r"(?<![A-Za-z0-9.])[$€£]?\s?\d[\d,]*(?:\.\d+)?(?:\s?%|\s?[kKmMbB]\b)?(?![A-Za-z0-9]|[.,]\d)")
+_BARE_CITE = re.compile(r"(?<![\[\w])E(\d{1,3})\b")
 
 
 @dataclass
@@ -47,6 +49,8 @@ def check_answer(answer: str, label: str, *, evidence_nos: list[int], metric_uid
                  brief_metrics: dict[str, dict[str, Any]], evidence_text: dict[int, str], web_text: str = "") -> ChatCheck:
     notes: list[str] = []
     label = label if label in LABELS else "not_covered"
+    # "E8" written without brackets is still a citation of this brief's source 8.
+    answer = _BARE_CITE.sub(lambda m: f"[E{m.group(1)}]" if int(m.group(1)) in brief_evidence_nos else m.group(0), answer)
     cited_nos = sorted({n for n in evidence_nos if n in brief_evidence_nos} | {int(n) for n in _CITE.findall(answer) if int(n) in brief_evidence_nos})
     uids = [u for u in metric_uids if u in brief_metrics]
     if len(cited_nos) != len(set(evidence_nos)) and evidence_nos:
@@ -71,7 +75,7 @@ def check_answer(answer: str, label: str, *, evidence_nos: list[int], metric_uid
         if v in allowed or v in in_source or round(parsed[0].value, 1) in allowed or (v == int(v) and 1900 <= v <= 2100):
             return match.group(0)
         removed.append(match.group(0).strip())
-        return "[figure not in the brief]"
+        return "(figure removed)"
 
     # Citations like [E12] are digits too; hide them (digits become letters) while the numbers are checked.
     masked = _CITE.sub(lambda m: "\x00" + "".join(chr(97 + int(d)) for d in m.group(1)) + "\x01", answer)

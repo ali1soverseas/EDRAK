@@ -191,7 +191,9 @@ async def _brief_context(db: aiosqlite.Connection, session: SessionOut, brief_id
 
 
 async def _guarded_question(db: aiosqlite.Connection, session: SessionOut, content: str) -> str:
-    verdict = check_query(content, use_model=settings.GUARDRAIL_SCOPE_CHECK)
+    """A question inside a brief or card chat is about that brief by construction, so the off-topic model check is
+    skipped there ("what is the main takeaway?" has no business words of its own). Injection, harm and PII checks stay."""
+    verdict = check_query(content, use_model=False)
     await guardrails_repo.record_checks(db, workspace_id=session.workspace.workspace_id, stage="chat", checks=verdict.checks)
     if verdict.blocked:
         raise HTTPException(status_code=422, detail={"code": verdict.code, "message": verdict.reason})

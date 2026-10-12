@@ -46,13 +46,10 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
   const [menu, setMenu] = useState(false);
   const [extras, setExtras] = useState(false);
   const [deciding, setDeciding] = useState(false);
-  const [quality, setQuality] = useState<Dict | null>(null);
   const [decision, setDecision] = useState({ option_label: "", title: "", rationale: "", review_on: "", next_steps: "" });
   const [error, setError] = useState<string | null>(null);
   const id = brief.brief_id as string;
   const options: Dict[] = brief.options ?? [];
-
-  useEffect(() => { void edrak.quality(id).then(setQuality).catch(() => undefined); }, [id]);
 
   const toggleFullscreen = async () => {
     const el = container.current;
@@ -91,26 +88,19 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
       });
       setLifecycle("decided");
       setDeciding(false);
+      onChanged?.();
     } catch (e) {
       setError((e as Error).message);
     }
   };
 
-  const q = quality?.metrics ?? {};
-  const score = q.quality_score?.value as number | undefined;
-
   return (
     <>
-      <div className="row g8 wrap" style={{ padding: "10px 24px", borderBottom: "1px solid var(--line)", background: "var(--paper)", position: "relative", zIndex: 3 }}>
+      <div className="row g8 wrap" style={{ padding: "10px 24px", borderBottom: "1px solid var(--hair)", background: "var(--paper)", position: "relative", zIndex: 3 }}>
         <span className={`chip ${lifecycle === "decided" ? "c-dec" : lifecycle === "reviewed" ? "c-rev" : "c-line"}`}>
           {lifecycle === "decided" ? L("Decided", "تم القرار") : lifecycle === "reviewed" ? L("Reviewed", "تمت المراجعة") : L("Not yet reviewed", "لم تُراجع بعد")}
         </span>
         <span className={`chip ${brief.evidence_status === "verified" ? "c-ok" : "c-ins"}`}>{brief.evidence_status}</span>
-        {score !== undefined && (
-          <span className="chip c-line" title={Object.entries(q).map(([k, v]) => `${k}: ${(v as Dict).value}`).join("\n")}>
-            {L("Quality", "الجودة")} {Math.round(score * 100)}%
-          </span>
-        )}
         <div className="grow" />
         <button type="button" className="btn ghost" onClick={() => setExtras((v) => !v)}><Icon name="layers" size={14} /> {L("Compared and trends", "المقارنة والاتجاهات")}</button>
         <button type="button" className="btn ghost" onClick={() => navigate(`/evidence/${id}`)}><Icon name="link" size={14} /> {L("Evidence", "الأدلة")}</button>

@@ -4,6 +4,9 @@ import { edrak, type Dict } from "../../services/edrak";
 import { useL } from "../../lib/useL";
 import { useI18n } from "../../i18n";
 import { Icon } from "../ui/Icon";
+import { ThinkingMark } from "../ui/ThinkingMark";
+import { ChatPanel } from "../chat/ChatPanel";
+import { modKey } from "../../lib/platform";
 
 /** Cmd+K search across briefs, analyses, watchlist, documents, decisions and sources. */
 export function GlobalSearch() {
@@ -67,7 +70,7 @@ export function GlobalSearch() {
           aria-label={L("Search", "بحث")}
           style={{ border: 0, background: "transparent", outline: "none", flex: 1, font: "inherit" }}
         />
-        <span className="kbd">⌘K</span>
+        <span className="kbd">{modKey()}K</span>
       </label>
       {open && q.trim().length >= 2 && (
         <div className="popover search-results">
@@ -164,161 +167,35 @@ export function NotificationBell() {
   );
 }
 
-interface AskMsg {
-  role: "user" | "assistant";
-  content: string;
-  label?: "brief" | "web_unverified" | "not_covered";
-  cited?: number[];
-  notes?: string[];
-  proposal?: string | null;
-  steps?: string[];
-  addedNote?: string;
-}
-
-/** Text with [E12] turned into small chips that jump to the evidence row when the brief is open. */
-function WithChips({ text }: { text: string }) {
-  const parts = text.split(/(\[E\d+\])/g);
-  return (
-    <>
-      {parts.map((p, i) => {
-        const m = p.match(/^\[E(\d+)\]$/);
-        if (!m) return <span key={i}>{p}</span>;
-        const no = +m[1];
-        return (
-          <button key={i} type="button" className="ev" onClick={() => { const el = document.getElementById(`ev-${no}`); el?.scrollIntoView({ behavior: "smooth", block: "center" }); el?.classList.add("flash"); window.setTimeout(() => el?.classList.remove("flash"), 1600); }}>{`E${no}`}</button>
-        );
-      })}
-    </>
-  );
-}
-
-/** Ask Edrak: a chat panel over the workspace, an open brief, or one card of it. Cmd+J opens it. */
+/** Ask Edrak over the workspace, from anywhere in the app. On a brief, the brief's own docked chat is used instead. */
 export function AskEdrak() {
   const L = useL();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const [thread, setThread] = useState<string | null>(null);
-  const [scopeKey, setScopeKey] = useState("");
-  const [msgs, setMsgs] = useState<AskMsg[]>([]);
-  const [text, setText] = useState("");
-  const [busy, setBusy] = useState<string | null>(null);
-  const [override, setOverride] = useState<{ briefId: string; cardKey?: string } | null>(null);
-  const routeBrief = pathname.match(/^\/briefs\/([^/]+)/)?.[1];
-  const briefId = override?.briefId ?? routeBrief;
-  const cardKey = override?.cardKey;
+  const onBrief = /^\/briefs\/[^/]+/.test(pathname);
 
   useEffect(() => {
+    if (onBrief) return;
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") {
         e.preventDefault();
         setOpen((o) => !o);
       }
     };
-    const onAsk = (e: Event) => {
-      const d = (e as CustomEvent<{ briefId: string; cardKey?: string }>).detail;
-      setOverride(d);
-      setOpen(true);
-    };
     document.addEventListener("keydown", onKey);
-    window.addEventListener("edrak:ask", onAsk);
-    return () => { document.removeEventListener("keydown", onKey); window.removeEventListener("edrak:ask", onAsk); };
-  }, []);
-  // Leaving the brief ends a brief or card chat.
-  useEffect(() => { if (!routeBrief) setOverride(null); }, [routeBrief]);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onBrief]);
 
-  const send = async () => {
-    const content = text.trim();
-    if (!content || busy) return;
-    setBusy(L("Reading the brief…", "جارٍ قراءة الموجز…"));
-    setText("");
-    setMsgs((m) => [...m, { role: "user", content }]);
-    try {
-      let id = thread;
-      const key = briefId ? `${briefId}:${cardKey ?? ""}` : "workspace";
-      if (!id || key !== scopeKey) {
-        id = (await edrak.newThread(briefId ? (cardKey ? { scope: "card", brief_id: briefId, card_key: cardKey } : { scope: "brief", brief_id: briefId }) : { scope: "workspace" })).thread_id;
-        setThread(id);
-        setScopeKey(key);
-        if (key !== scopeKey) setMsgs((m) => m.slice(-1));
-      }
-      if (briefId) {
-        const steps: string[] = [];
-        await edrak.streamAsk(id, content, (e) => {
-          if (e.type === "step") {
-            steps.push(`${e.data.tool}${e.data.input ? `: ${String(e.data.input).slice(0, 40)}` : ""}`);
-            setBusy(e.data.tool === "web_search" ? L("Searching the web…", "جارٍ البحث في الويب…") : e.data.tool === "get_metric" ? L("Reading the figures…", "جارٍ قراءة الأرقام…") : L("Searching the brief…", "جارٍ البحث في الموجز…"));
-          } else if (e.type === "answer") {
-            setMsgs((m) => [...m, { role: "assistant", content: e.data.answer, label: e.data.label, cited: e.data.cited, notes: e.data.notes, proposal: e.data.proposal, steps }]);
-          } else if (e.type === "error") {
-            setMsgs((m) => [...m, { role: "assistant", content: e.data.message }]);
-          }
-        });
-      } else {
-        const reply = await edrak.ask(id, content);
-        setMsgs((m) => [...m, { role: "assistant", content: reply.content }]);
-      }
-    } catch (e) {
-      setMsgs((m) => [...m, { role: "assistant", content: (e as Error).message || L("Something went wrong.", "حدث خطأ.") }]);
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const addToBrief = async (idx: number) => {
-    if (!briefId || !cardKey) return;
-    try {
-      const r = await edrak.challengeCard(briefId, cardKey, { source: "web", text: msgs[idx].content });
-      setMsgs((all) => all.map((m, i) => (i === idx ? { ...m, addedNote: r.changed ? L(`Added as card version ${r.version}.`, `أُضيف كنسخة ${r.version}.`) : r.message ?? "" } : m)));
-    } catch (e) {
-      setMsgs((all) => all.map((m, i) => (i === idx ? { ...m, addedNote: (e as Error).message } : m)));
-    }
-  };
-
-  const labelChip = (l?: AskMsg["label"]) => l === "brief" ? <span className="chip c-ok">{L("From the brief", "من الموجز")}</span>
-    : l === "web_unverified" ? <span className="chip c-ins">{L("From the web, unverified", "من الويب، غير موثّق")}</span>
-    : l === "not_covered" ? <span className="chip c-draft">{L("Not covered", "غير مغطّى")}</span> : null;
-
+  if (onBrief) return null;
   return (
     <>
-      <button type="button" className="btn ink ask-fab" style={{ position: "fixed", insetInlineEnd: 24, bottom: 22, zIndex: 40, borderRadius: 999 }} onClick={() => setOpen(true)}>
-        <Icon name="sparkle" size={16} /> {L("Ask Edrak", "اسأل إدراك")} <span className="kbd">⌘J</span>
-      </button>
-      {open && (
-        <div className="ask-panel" role="dialog" aria-label="Ask Edrak">
-          <div className="row" style={{ justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--line)" }}>
-            <div className="stack">
-              <b>{L("Ask Edrak", "اسأل إدراك")}</b>
-              <span className="s12 muted">{cardKey ? L("About one card, then the brief, then the web", "عن بطاقة، ثم الموجز، ثم الويب") : briefId ? L("About this brief", "عن هذا الموجز") : L("About your workspace", "عن مساحة العمل")}</span>
-            </div>
-            <button type="button" className="iconbtn" onClick={() => setOpen(false)} aria-label={L("Close", "إغلاق")}><Icon name="x" size={16} /></button>
-          </div>
-          <div className="ask-msgs">
-            {msgs.length === 0 && (
-              <div className="stack gap8">
-                {(briefId ? [L("Which figures here rest on one source?", "أي الأرقام هنا تعتمد على مصدر واحد؟"), L("Why do these sources disagree?", "لماذا تتعارض هذه المصادر؟"), L("What is missing before we decide?", "ما الناقص قبل أن نقرر؟")]
-                  : [L("What changed with our competitors this month?", "ما الذي تغيّر لدى المنافسين هذا الشهر؟"), L("What do customers complain about most?", "ما أكثر ما يشتكي منه العملاء؟")]).map((s) => (
-                  <button key={s} type="button" className="pill" style={{ justifyContent: "flex-start" }} onClick={() => setText(s)}>{s}</button>
-                ))}
-              </div>
-            )}
-            {msgs.map((m, i) => (
-              <div key={i} className={`msg ${m.role}`} dir="auto">
-                {m.role === "assistant" && m.label && <div className="row g4 wrap" style={{ marginBottom: 6 }}>{labelChip(m.label)}</div>}
-                <WithChips text={m.content} />
-                {m.notes?.map((n) => <div key={n} className="s12 muted" style={{ marginTop: 4 }}>{n}</div>)}
-                {m.proposal && <div className="s12" style={{ marginTop: 6 }}>{L("Suggested follow-up research", "بحث مقترح للمتابعة")}: {m.proposal}</div>}
-                {m.label === "web_unverified" && cardKey && !m.addedNote && <button type="button" className="btn ghost sm" style={{ marginTop: 6 }} onClick={() => void addToBrief(i)}>{L("Add to brief (checks it first)", "أضف إلى الموجز (بعد التحقق)")}</button>}
-                {m.addedNote && <div className="s12" style={{ marginTop: 4 }}>{m.addedNote}</div>}
-              </div>
-            ))}
-            {busy && <div className="msg assistant muted">{busy}</div>}
-          </div>
-          <form className="row g8" style={{ padding: 12, borderTop: "1px solid var(--line)" }} onSubmit={(e) => { e.preventDefault(); void send(); }}>
-            <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder={briefId ? L("Ask about this brief", "اسأل عن هذا الموجز") : L("Ask about your briefs and sources", "اسأل عن الموجزات والمصادر")} dir="auto" />
-            <button type="submit" className="btn blue" disabled={!!busy || !text.trim()}>{L("Ask", "اسأل")}</button>
-          </form>
-        </div>
+      {!open && (
+        <button type="button" className="ask ask-fab" onClick={() => setOpen(true)}>
+          <span className="ask-fab-mark"><ThinkingMark size={16} live={false} color="#F4F3EE" /></span>
+          {L("Ask Edrak", "اسأل إدراك")} <span className="kbd dark">{modKey()}J</span>
+        </button>
       )}
+      {open && <ChatPanel variant="floating" scope={{}} onClose={() => setOpen(false)} />}
     </>
   );
 }

@@ -230,7 +230,7 @@ button.ev {
 .ovl {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 90; /* above the brief's CSS full-screen fallback (.brief-fullscreen, 70) */
   --slide: 100%;
 }
 [dir="rtl"] .ovl {

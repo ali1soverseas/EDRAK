@@ -1,0 +1,97 @@
+import { useL } from "../../../lib/useL";
+import type { BriefCard, ComparisonCell, MetricsSlideData } from "../../../types/brief3";
+import { Icon } from "../../ui/Icon";
+import { EvChips, InsightCard, StatusBadge } from "../InsightCard";
+import { useDeck } from "../context";
+import { SlideHead } from "./SlideHead";
+
+function Cell({ cells, empty }: { cells: ComparisonCell[]; empty: string }) {
+  if (!cells.length) return <span className="s13 t3">{empty}</span>;
+  return (
+    <span className="stack gap4">
+      {cells.map((c) => (
+        <span key={c.uid} className="row g6 wrap">
+          <b className="s14">{c.value}</b>
+          {c.label && <span className="s12 t3">{c.label}</span>}
+          {c.period && <span className="s12 t3">· {c.period}</span>}
+          {c.ref ? <EvChips refs={[c.ref]} /> : null}
+          {c.status !== "verified" && <StatusBadge status={c.status} />}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/** 02 Business metrics: the metrics agent's typed figures. Our numbers against theirs, then every chart card. */
+export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
+  const L = useL();
+  const { brief, openCard, goTo, ask } = useDeck();
+  const cards = slide.cards.map((k) => brief.cards[k]).filter(Boolean) as BriefCard[];
+  const gaps = slide.gap_cards.map((k) => brief.cards[k]).filter(Boolean) as BriefCard[];
+  const kpis = slide.kpis.map((k) => brief.kpis.find((x) => x.card_key === k)).filter(Boolean);
+  const cardFor = (metricId: string) => cards.find((c) => c.metric_id === metricId)?.card_key;
+
+  return (
+    <div className="slide">
+      <SlideHead no={2} name={L("Business metrics", "مقاييس الأعمال")} title={slide.title} sub={slide.subtitle}
+        aside={<button type="button" className="btn ghost sm" onClick={() => ask({ title: slide.title })}><Icon name="sparkle" size={13} /> {L("Ask about these figures", "اسأل عن هذه الأرقام")}</button>} />
+      <div className="slide-body">
+        {slide.collapsed ? (
+          <div className="collapsed-note hatch">
+            <Icon name="info" size={18} />
+            <div className="stack gap4 grow">
+              <b className="s14">{slide.collapsed_reason}</b>
+              <span className="s13 t2">{L("Every required figure is listed with the reason it is missing, and you can re-run or provide the data.", "كل رقم مطلوب مذكور مع سبب غيابه، ويمكنك إعادة التشغيل أو تزويد البيانات.")}</span>
+            </div>
+            <button type="button" className="btn sm" onClick={() => goTo("evidence_gaps")}>{L("See the gaps", "اعرض الفجوات")} <Icon name="chevron" size={12} flip /></button>
+          </div>
+        ) : (
+          <div className="stack gap16">
+            {kpis.length > 0 && (
+              <div className="kpi-strip" role="list">
+                {kpis.map((k) => k && (
+                  <button key={k.card_key} type="button" role="listitem" className={`kpi-tile st-${k.status}`} onClick={() => openCard(k.card_key)}>
+                    <span className="eyebrow ellip">{L(k.label.en, k.label.ar ?? k.label.en)}</span>
+                    <b className="kpi-value">{k.value}</b>
+                    <span className="row g6 s12 t3 wrap">
+                      {k.entity && <span className="ellip">{k.entity}</span>}
+                      {k.comparator && <span className={`cmp ${k.comparator.direction > 0 ? "up" : "down"}`}>{k.comparator.direction > 0 ? "▲" : "▼"} {k.comparator.value} {k.comparator.label}</span>}
+                    </span>
+                    {k.status !== "verified" && <StatusBadge status={k.status} />}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {slide.comparison.length > 0 && (
+              <section className="vs-table" aria-label={L("Our figures against theirs", "أرقامنا مقابل أرقامهم")}>
+                <div className="vs-row vs-head"><span className="eyebrow">{L("Figure", "الرقم")}</span><span className="eyebrow">{slide.company || L("Us", "نحن")}</span><span className="eyebrow">{L("Competitors", "المنافسون")}</span></div>
+                {slide.comparison.map((r) => {
+                  const key = cardFor(r.metric_id);
+                  return (
+                    <div key={r.metric_id} className={`vs-row ${key ? "tap-lite" : ""}`} role={key ? "button" : undefined} tabIndex={key ? 0 : undefined}
+                      onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
+                      <span className="stack gap4"><b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>{r.note && <span className="s12 warn-text">{r.note}</span>}</span>
+                      <Cell cells={r.ours} empty={L("Not found", "غير موجود")} />
+                      <Cell cells={r.theirs} empty="—" />
+                    </div>
+                  );
+                })}
+              </section>
+            )}
+
+            <div className="card-grid">
+              {cards.map((c) => <InsightCard key={c.card_key} card={c} />)}
+            </div>
+          </div>
+        )}
+        {gaps.length > 0 && (
+          <section className="stack gap8" style={{ marginTop: 18 }}>
+            <span className="eyebrow">{L("Required figures still missing", "أرقام مطلوبة ما زالت مفقودة")}</span>
+            <div className="card-grid">{gaps.map((c) => <InsightCard key={c.card_key} card={c} compact />)}</div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

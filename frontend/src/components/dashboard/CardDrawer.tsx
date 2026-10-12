@@ -5,7 +5,8 @@ import type { BriefCard, BriefEvidenceItem, BriefV3, ChallengeResult } from "../
 import { Overlay } from "../ui/Overlay";
 import { Icon } from "../ui/Icon";
 import { CardBody } from "./charts";
-import { StatusBadge } from "./CardFrame";
+import { useDeck } from "../deck/context";
+import { StatusBadge } from "../deck/InsightCard";
 
 const WORKER: Record<string, [string, string]> = {
   competitor_intelligence: ["Competitors", "المنافسون"], customer_trends: ["Customers and trends", "العملاء والاتجاهات"],
@@ -14,6 +15,7 @@ const WORKER: Record<string, [string, string]> = {
 
 export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3; card: BriefCard; onClose: () => void; onChanged: () => void }) {
   const L = useL();
+  const { ask, openEvidence } = useDeck();
   const [table, setTable] = useState(false);
   const [versions, setVersions] = useState<Dict[]>([]);
   const [challenge, setChallenge] = useState({ text: "", url: "", entity: "", open: false });
@@ -46,12 +48,17 @@ export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3
   return (
     <Overlay variant="drawer" label={card.title} onClose={onClose}>
       {(close) => (
-        <div className="stack gap16" style={{ padding: 24, overflow: "auto", height: "100%" }}>
+        <div className="drawer-body">
           <div className="row g8">
             <div className="stack grow"><span className="eyebrow">{card.title}</span><h3 style={{ margin: 0 }}>{card.headline ?? card.title}</h3></div>
             <StatusBadge status={card.status} />
             <button type="button" className="iconbtn" data-autofocus onClick={close} aria-label={L("Close", "إغلاق")}><Icon name="x" size={16} /></button>
           </div>
+          {card.component !== "gap" && (
+            <button type="button" className="btn ink" onClick={() => { close(); ask({ cardKey: card.card_key, title: card.title }); }}>
+              <Icon name="sparkle" size={14} /> {L("Ask Edrak about this card", "اسأل إدراك عن هذه البطاقة")}
+            </button>
+          )}
 
           <div className="panel">{table ? <table className="tbl compact"><tbody>{metrics.map((m) => <tr key={m.uid}><td>{m.entity}{m.label ? ` · ${m.label}` : ""}</td><td className="muted">{m.period ?? ""}</td><td><b>{m.value_text}</b></td><td className="muted">{m.status}</td></tr>)}</tbody></table> : <CardBody card={card} />}</div>
           {card.component !== "gap" && <button type="button" className="btn ghost sm" onClick={() => setTable((v) => !v)}><Icon name="layers" size={14} /> {table ? L("Show as chart", "اعرض كرسم") : L("Show as table", "اعرض كجدول")}</button>}
@@ -85,7 +92,7 @@ export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3
               <span className="eyebrow">{L("Evidence", "الأدلة")}</span>
               {evidence.map((e) => (
                 <div key={e.display_no} className="panel stack gap4" style={{ padding: 10 }}>
-                  <div className="row g8"><span className="ev" style={{ margin: 0 }}>{`E${e.display_no}`}</span><b className="s13 grow ellip">{e.evidence.source_title ?? e.evidence.publisher}</b>{e.evidence.source_url && <a href={e.evidence.source_url} target="_blank" rel="noreferrer" className="s12">{L("Open", "فتح")}</a>}</div>
+                  <div className="row g8"><button type="button" className="ev" style={{ margin: 0 }} onClick={() => openEvidence(e.display_no)}>{`E${e.display_no}`}</button><b className="s13 grow ellip">{e.evidence.source_title ?? e.evidence.publisher}</b>{e.evidence.source_url && <a href={e.evidence.source_url} target="_blank" rel="noreferrer" className="s12">{L("Open", "فتح")}</a>}</div>
                   <q className="s13" dir="auto">{(e.evidence.excerpt || e.evidence.extracted_fact).slice(0, 420)}</q>
                 </div>
               ))}
@@ -105,10 +112,10 @@ export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3
               {challenge.open && (
                 <div className="stack gap8">
                   <p className="s12 muted">{L("Paste what you know or a web page's text. It goes back through extraction and verification. If it checks out, this card gets a new version; the old one is kept.", "الصق ما تعرفه أو نص صفحة ويب. يمر عبر الاستخراج والتحقق. إن صح، تحصل البطاقة على نسخة جديدة وتبقى القديمة.")}</p>
-                  {needsEntity && <input className="input" placeholder={L("Which company is this about?", "عن أي شركة هذا؟")} value={challenge.entity} onChange={(e) => setChallenge({ ...challenge, entity: e.target.value })} />}
-                  <textarea className="textarea" rows={4} value={challenge.text} onChange={(e) => setChallenge({ ...challenge, text: e.target.value })} placeholder={L("e.g. Their team plan costs $23 per user", "مثال: باقة الفريق تكلف 23 دولارًا")} dir="auto" />
-                  <input className="input" placeholder={L("Source link (optional)", "رابط المصدر (اختياري)")} value={challenge.url} onChange={(e) => setChallenge({ ...challenge, url: e.target.value })} />
-                  <button type="button" className="btn blue" disabled={busy || challenge.text.trim().length < 3} onClick={() => void send()}>{busy ? L("Checking…", "جارٍ التحقق…") : L("Check and add", "تحقق وأضف")}</button>
+                  {needsEntity && <input className="inp" placeholder={L("Which company is this about?", "عن أي شركة هذا؟")} value={challenge.entity} onChange={(e) => setChallenge({ ...challenge, entity: e.target.value })} />}
+                  <textarea className="inp area" rows={4} value={challenge.text} onChange={(e) => setChallenge({ ...challenge, text: e.target.value })} placeholder={L("e.g. Their team plan costs $23 per user", "مثال: باقة الفريق تكلف 23 دولارًا")} dir="auto" />
+                  <input className="inp" placeholder={L("Source link (optional)", "رابط المصدر (اختياري)")} value={challenge.url} onChange={(e) => setChallenge({ ...challenge, url: e.target.value })} />
+                  <button type="button" className="btn pri" disabled={busy || challenge.text.trim().length < 3} onClick={() => void send()}>{busy ? L("Checking…", "جارٍ التحقق…") : L("Check and add", "تحقق وأضف")}</button>
                   {error && <div className="chip c-bad" style={{ whiteSpace: "normal" }}>{error}</div>}
                   {result && <div className={`chip ${result.changed ? (result.conflict ? "c-bad" : "c-ok") : "c-line"}`} style={{ whiteSpace: "normal" }}>{result.changed ? (result.conflict ? L(`Sources now disagree. Card version ${result.version} shows both.`, `المصادر متعارضة الآن. النسخة ${result.version} تعرض الاثنين.`) : L(`Added as a second source. Card version ${result.version}.`, `أُضيف كمصدر ثانٍ. النسخة ${result.version}.`)) : result.message}</div>}
                 </div>
