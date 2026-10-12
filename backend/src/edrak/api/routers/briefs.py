@@ -32,8 +32,26 @@ async def get_brief(
     document["lifecycle"] = row["lifecycle"]
     document["evidence_status"] = row["evidence_status"]
     document["document_version"] = row["document_version"]
-    if document.get("cards"):
-        document["cards"] = await merge_card_versions(db, row["id"], dict(document["cards"]))
+    await merge_live(db, row["id"], document)
+    return document
+
+
+async def merge_live(db: aiosqlite.Connection, brief_id: str, document: dict[str, Any]) -> dict[str, Any]:
+    """Overlay what changed since the brief was frozen: newer card versions and the figures they use."""
+    if not document.get("cards"):
+        return document
+    document["cards"] = await merge_card_versions(db, brief_id, dict(document["cards"]))
+    metrics = dict(document.get("metrics") or {})
+    missing = {u for c in document["cards"].values() for u in c.get("metric_uids") or [] if u not in metrics}
+    if missing:
+        from edrak.db.repositories import metrics as metrics_repo
+
+        for uid in missing:
+            m = await metrics_repo.get_metric(db, uid)
+            if m and m["status"] != "unverified":
+                metrics[uid] = {k: m.get(k) for k in ("uid", "metric_id", "entity", "value", "value_text", "unit", "period", "label", "status", "scope",
+                                                      "sample_size", "derived", "formula", "source_span", "display_no", "inputs", "worker")}
+        document["metrics"] = metrics
     return document
 
 

@@ -126,3 +126,33 @@ def extract_observations(task: ResearchTask, result: WorkerResult) -> list[Metri
         seen.add(key)
         out.append(obs)
     return out
+
+
+class _Pack:
+    def __init__(self, evidence: list[Evidence]) -> None:
+        self.evidence = evidence
+
+
+def extract_from_evidence(evidence: Evidence, entity: str, metric_id: str) -> list[MetricObservation]:
+    """Observations in one piece of text a person supplied, for one named metric. Empty on any failure."""
+    from edrak.core.llm import get_structured, schema_instruction
+
+    reg = get_registry()
+    defn = reg.get(metric_id)
+    if not defn:
+        return []
+    allowed = {defn.id: defn.definition}
+    req = [MetricRequirement(metric_id=defn.id, entity=entity, definition=defn.definition)]
+    try:
+        model = get_structured(Candidates, agent="orchestrator", temperature=0)
+        got = model.invoke([_prompt(_Pack([evidence]), req, allowed), schema_instruction(Candidates)])  # type: ignore[arg-type]
+    except Exception as exc:  # noqa: BLE001
+        logger.info("Challenge extraction failed: %s", exc)
+        return []
+    out = []
+    for c in (got.metrics if got else []):
+        c.entity = entity or c.entity
+        obs = to_observation(c, evidence, allowed={defn.id})
+        if obs is not None:
+            out.append(obs)
+    return out

@@ -960,6 +960,12 @@ class RunManager:
                 from edrak.db.repositories import cards as cards_repo
 
                 await cards_repo.insert_initial(db, saved["id"], list(saved["document"]["cards"].values()), commit=False)
+            try:
+                from edrak.briefing.index import index_brief
+
+                await index_brief(db, saved["id"], saved["document"])
+            except Exception:  # noqa: BLE001 - chat falls back to the evidence tables if indexing fails
+                logger.exception("Could not index brief %s", saved["id"])
             guard = saved["document"].get("guardrails") or {}
             for check in guard.get("checks", [])[:50]:
                 await guardrails_repo.record(

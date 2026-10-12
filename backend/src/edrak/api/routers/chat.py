@@ -12,6 +12,7 @@ from typing import Any, Optional
 
 import aiosqlite
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from edrak.api.deps import get_current_session, get_db_conn
@@ -38,6 +39,7 @@ class ThreadIn(BaseModel):
     brief_id: Optional[str] = None
     entity_id: Optional[str] = None
     request_id: Optional[str] = None
+    card_key: Optional[str] = None       # with scope=brief: the chat is about one card
 
 
 class MessageIn(BaseModel):
@@ -49,9 +51,10 @@ async def create_thread(body: ThreadIn, session: SessionOut = Depends(get_curren
                         db: aiosqlite.Connection = Depends(get_db_conn)) -> dict[str, Any]:
     tid = new_id()
     await db.execute(
-        """INSERT INTO chat_threads (id, workspace_id, user_id, kind, scope, brief_id, entity_id, request_id)
-           VALUES (?, ?, ?, 'ask_edrak', ?, ?, ?, ?)""",
-        (tid, session.workspace.workspace_id, session.user.user_id, body.scope, body.brief_id, body.entity_id, body.request_id),
+        """INSERT INTO chat_threads (id, workspace_id, user_id, kind, scope, brief_id, entity_id, request_id, card_key)
+           VALUES (?, ?, ?, 'ask_edrak', ?, ?, ?, ?, ?)""",
+        (tid, session.workspace.workspace_id, session.user.user_id, "brief" if body.scope == "card" else body.scope, body.brief_id,
+         body.entity_id, body.request_id, body.card_key if body.brief_id else None),
     )
     await db.commit()
     return {"thread_id": tid}
@@ -126,6 +129,16 @@ async def ask(thread_id: str, body: MessageIn, session: SessionOut = Depends(get
               db: aiosqlite.Connection = Depends(get_db_conn)) -> dict[str, Any]:
     thread = await _thread(db, session, thread_id)
     ws = session.workspace.workspace_id
+    if thread.get("brief_id"):
+        question = await _guarded_question(db, session, body.content)
+        answer: dict[str, Any] = {}
+        request_id = ""
+        async for event, request_id in _agent_result(db, thread, session, question):
+            if event["type"] == "answer":
+                answer = event
+        mid = await _save_exchange(db, thread_id, request_id, question, answer)
+        return {"message_id": mid, "content": answer["answer"], "cited": answer["cited"], "label": answer["label"],
+                "metric_uids": answer["metric_uids"], "notes": answer["notes"], "proposal": answer.get("proposal")}
     verdict = check_query(body.content, use_model=settings.GUARDRAIL_SCOPE_CHECK)
     await guardrails_repo.record_checks(db, workspace_id=ws, stage="chat", checks=verdict.checks)
     if verdict.blocked:
@@ -159,3 +172,74 @@ async def ask(thread_id: str, body: MessageIn, session: SessionOut = Depends(get
     await db.execute("UPDATE chat_threads SET title = coalesce(title, ?) WHERE id = ?", (question[:80], thread_id))
     await db.commit()
     return {"message_id": mid, "content": text, "cited": sorted(cited)}
+
+
+# ---------------------------------------------------------------- chat about one brief (brief-level and card-level)
+
+
+async def _brief_context(db: aiosqlite.Connection, session: SessionOut, brief_id: str):
+    from edrak.api.routers.briefs import merge_live
+    from edrak.chat.agent import BriefContext
+    from edrak.db.repositories import briefs as briefs_repo
+
+    row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="not_found")
+    doc = dict(row["document"])
+    await merge_live(db, brief_id, doc)
+    return BriefContext(brief_id, doc), row
+
+
+async def _guarded_question(db: aiosqlite.Connection, session: SessionOut, content: str) -> str:
+    verdict = check_query(content, use_model=settings.GUARDRAIL_SCOPE_CHECK)
+    await guardrails_repo.record_checks(db, workspace_id=session.workspace.workspace_id, stage="chat", checks=verdict.checks)
+    if verdict.blocked:
+        raise HTTPException(status_code=422, detail={"code": verdict.code, "message": verdict.reason})
+    return verdict.text
+
+
+async def _save_exchange(db: aiosqlite.Connection, thread_id: str, request_id: str, question: str, result: dict[str, Any]) -> str:
+    await db.execute("INSERT INTO chat_messages (id, thread_id, role, content) VALUES (?, ?, 'user', ?)", (new_id(), thread_id, question))
+    mid = new_id()
+    meta = [{"kind": "meta", "label": result["label"], "metric_uids": result["metric_uids"], "notes": result["notes"], "proposal": result.get("proposal")}]
+    await db.execute("INSERT INTO chat_messages (id, thread_id, role, content, cards) VALUES (?, ?, 'assistant', ?, ?)",
+                     (mid, thread_id, result["answer"], dumps(meta)))
+    for no in result["cited"]:
+        row = await fetch_one(db, "SELECT uid FROM evidence WHERE request_id = ? AND display_no = ?", (request_id, no))
+        if row:
+            await db.execute("INSERT OR IGNORE INTO chat_message_evidence (message_id, evidence_uid) VALUES (?, ?)", (mid, row["uid"]))
+    await db.execute("UPDATE chat_threads SET title = coalesce(title, ?), updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?", (question[:80], thread_id))
+    await db.commit()
+    return mid
+
+
+async def _agent_result(db: aiosqlite.Connection, thread: dict[str, Any], session: SessionOut, question: str):
+    from edrak.chat.agent import run_agent
+
+    ctx, row = await _brief_context(db, session, thread["brief_id"])
+    history = await fetch_all(db, "SELECT role, content FROM chat_messages WHERE thread_id = ? ORDER BY created_at DESC LIMIT 6", (thread["id"],))
+    async for event in run_agent(db, ctx, question, history=list(reversed(history)), card_key=thread.get("card_key")):
+        yield event, row["request_id"]
+
+
+@router.post("/threads/{thread_id}/stream")
+async def stream_message(thread_id: str, body: MessageIn, session: SessionOut = Depends(get_current_session),
+                         db: aiosqlite.Connection = Depends(get_db_conn)) -> StreamingResponse:
+    """Server-sent events: `step` while the agent uses a tool, then one `answer`."""
+    from edrak.api.streaming import format_sse_event
+
+    thread = await _thread(db, session, thread_id)
+    if not thread.get("brief_id"):
+        raise HTTPException(status_code=400, detail="streaming_needs_a_brief_thread")
+    question = await _guarded_question(db, session, body.content)
+
+    async def events():
+        try:
+            async for event, request_id in _agent_result(db, thread, session, question):
+                if event["type"] == "answer":
+                    event["message_id"] = await _save_exchange(db, thread_id, request_id, question, event)
+                yield format_sse_event(event["type"], event)
+        except Exception:  # noqa: BLE001
+            yield format_sse_event("error", {"message": "Ask Edrak could not answer right now."})
+
+    return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})

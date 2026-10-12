@@ -97,3 +97,22 @@ CREATE INDEX IF NOT EXISTS action_plans_brief_idx ON action_plans (brief_id, opt
 CREATE TRIGGER IF NOT EXISTS action_plans_approved_frozen BEFORE UPDATE ON action_plans FOR EACH ROW
 WHEN OLD.status = 'approved' AND (NEW.document IS NOT OLD.document OR NEW.status NOT IN ('approved','superseded'))
 BEGIN SELECT RAISE(ABORT, 'an approved action plan cannot be changed'); END;
+
+-- Keyword half of the brief's hybrid search (the vector half lives in Chroma, one collection per brief).
+CREATE VIRTUAL TABLE IF NOT EXISTS brief_search USING fts5(
+  brief_id UNINDEXED, kind UNINDEXED, ref_id UNINDEXED, card_version UNINDEXED, text, tokenize = 'unicode61'
+);
+
+-- A challenge: something a person typed, or a web result they chose to add, sent back through extract and verify.
+CREATE TABLE IF NOT EXISTS card_challenges (
+  id         text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  brief_id   text NOT NULL REFERENCES briefs(id) ON DELETE CASCADE,
+  card_key   text NOT NULL,
+  source     text NOT NULL CHECK (source IN ('user','web')),
+  text       text NOT NULL,
+  url        text,
+  title      text,
+  outcome    text,
+  created_by text REFERENCES users(id),
+  created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);

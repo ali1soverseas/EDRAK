@@ -105,11 +105,24 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
                                       "sources": [{"uid": r["uid"], "value": format_value(r["value"], r["unit"]), "refs": _refs([r])} for r in same]}
                 cards.append(_card(defn, entity, "kpi", same, slots, status=status))
         elif visual == "ladder":
-            ordered = sorted(group, key=lambda r: r["value"], reverse=True)
-            slots = {"rows": [{"label": (r["label"] or r["entity"]), "entity": r["entity"], "value": format_value(r["value"], r["unit"]),
-                               "raw": r["value"], "uid": r["uid"], "refs": _refs([r]), "status": r["status"],
-                               "comparator": _comparators(rows, derived, r, defn)} for r in ordered]}
-            cards.append(_card(defn, "", "ladder", group, slots, key=defn.id))
+            by_row: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
+            for r in group:
+                by_row[(r["entity"], r["label"] or "", r["period"] or "")].append(r)
+            rows_out = []
+            for members in by_row.values():
+                head = max(members, key=lambda r: r["value"])
+                row = {"label": (head["label"] or head["entity"]), "entity": head["entity"], "value": format_value(head["value"], head["unit"]),
+                       "raw": head["value"], "uid": head["uid"], "refs": _refs(members), "status": _worst(members),
+                       "comparator": _comparators(rows, derived, head, defn)}
+                if len({m["value"] for m in members}) > 1:  # sources disagree: show the range and each source, not a pick
+                    lo = min(members, key=lambda r: r["value"])
+                    row["range"] = {"low": format_value(lo["value"], lo["unit"]), "high": format_value(head["value"], head["unit"]),
+                                    "sources": [{"uid": m["uid"], "value": format_value(m["value"], m["unit"]), "refs": _refs([m])} for m in members]}
+                    row["value"] = f"{row['range']['low']}–{row['range']['high']}"
+                    row["status"] = "conflict"
+                rows_out.append(row)
+            rows_out.sort(key=lambda r: r["raw"], reverse=True)
+            cards.append(_card(defn, "", "ladder", group, {"rows": rows_out}, key=defn.id))
         elif visual == "segmented":
             cards += _segmented(defn, group, conflicts)
         elif visual == "line":

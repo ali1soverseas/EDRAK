@@ -48,8 +48,7 @@ async def _brief_doc(db: aiosqlite.Connection, session: SessionOut, brief_id: st
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
     doc = dict(row["document"])
-    if doc.get("cards"):
-        doc["cards"] = await briefs_router.merge_card_versions(db, brief_id, dict(doc["cards"]))
+    await briefs_router.merge_live(db, brief_id, doc)
     return doc
 
 
