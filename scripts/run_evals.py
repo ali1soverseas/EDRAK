@@ -46,6 +46,20 @@ def run(with_model: bool = False) -> list[tuple[str, str, bool, str]]:
         risky = is_high_risk(case["text"])
         ok = (removed >= 1) == (case["removed_lines"] >= 1) and risky == case["high_risk"]
         outcomes.append(("web", case["text"][:60].replace("\n", " "), ok, f"removed={removed} high_risk={risky}"))
+    from edrak.guardrails.chat import check_answer
+    from edrak.guardrails.plan import check_free_text
+
+    metrics = {"u1": {"uid": "u1", "value": 19.0, "unit": "USD"}}
+    for case in cases.get("chat", []):
+        got = check_answer(case["answer"], case["label"], evidence_nos=case["evidence"], metric_uids=case["uids"],
+                           brief_evidence_nos={1, 2}, brief_metrics=metrics, evidence_text={1: "Team plan is $19 per user"},
+                           web_text=case.get("web", ""))
+        ok = got.label == case["expect_label"] and got.removed_numbers == case["expect_removed"]
+        ok = ok and (case.get("expect_text", "") in got.answer.lower()) and (case.get("expect_absent", "\0") not in got.answer.lower())
+        outcomes.append(("chat", case["name"], ok, f"label={got.label} removed={got.removed_numbers}"))
+    for case in cases.get("notes", []):
+        blocked = check_free_text(case["text"]) is not None
+        outcomes.append(("note", case["text"][:60], blocked == case["blocked"], f"blocked={blocked}"))
     return outcomes
 
 

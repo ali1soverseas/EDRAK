@@ -61,6 +61,66 @@ def _evidence_text(document: dict[str, Any]) -> dict[int, str]:
     return out
 
 
+def _metric_numbers(document: dict[str, Any]) -> set[float]:
+    """Every figure the stored metrics hold, in the forms the screen may show them."""
+    vals: set[float] = set()
+    for m in (document.get("metrics") or {}).values():
+        v = m.get("value")
+        if isinstance(v, (int, float)):
+            vals.add(round(float(v), 2))
+            for scale in (1e3, 1e6, 1e9, 1e12):
+                if abs(v) >= scale:
+                    vals.add(round(float(v) / scale, 1))
+    return vals
+
+
+def _check_typed(document: dict[str, Any], checks: list[dict[str, Any]]) -> None:
+    """Cards, headline and signal text: every number must be a stored metric, every card must be sourced,
+    and nothing may sound like a verdict."""
+    if document.get("cards") is None:
+        return
+    from edrak.metrics.numbers import parse_numbers
+
+    known = _metric_numbers(document)
+
+    def stray(text: str) -> list[str]:
+        out = []
+        for p in parse_numbers(text or ""):
+            if round(p.value, 2) in known or round(p.value, 1) in known or (re.fullmatch(r"(19|20)\d{2}", str(int(p.value))) if p.value == int(p.value) else False):
+                continue
+            out.append(p.text)
+        return out
+
+    for key, card in (document.get("cards") or {}).items():
+        if card.get("component") != "gap" and not (card.get("refs") or card.get("metric_uids") or (card.get("slots") or {}).get("data_source")):
+            card["caveat"] = card.get("caveat") or "No source is attached to this card."
+            card["status"] = "thin" if card.get("status") == "verified" else card.get("status")
+            checks.append({"check": "uncited_card", "action": "flagged", "card": key})
+        for field in ("headline", "why_visual"):
+            text = card.get(field) or ""
+            bad = stray(text)
+            if bad:
+                card[field] = card.get("title") if field == "headline" else None
+                checks.append({"check": "card_number_not_in_table", "action": "redacted", "card": key, "numbers": bad[:4]})
+            found = verdict_language(text)
+            if found:
+                card[field] = _strip_phrases(text, found) or card.get("title")
+                checks.append({"check": "verdict_language", "action": "redacted", "where": f"card {key}", "phrases": found})
+
+    headline = document.get("headline") or ""
+    bad = stray(headline)
+    if bad or verdict_language(headline):
+        checks.append({"check": "headline_rewritten", "action": "redacted", "numbers": bad[:4]})
+        sig = next((s.get("title") for s in document.get("signals_view") or [] if s.get("title")), None)
+        document["headline"] = sig or document.get("question") or headline
+        document["summary_text"] = document["headline"]
+    for sig in document.get("signals_view") or []:
+        text = sig.get("why_it_matters") or ""
+        if text and (stray(text) or verdict_language(text)):
+            sig["why_it_matters"] = None
+            checks.append({"check": "why_it_matters_dropped", "action": "redacted", "signal": sig.get("signal_id")})
+
+
 def check_brief(document: dict[str, Any]) -> dict[str, Any]:
     """Check (and minimally correct) a brief document. Returns the same document."""
     checks: list[dict[str, Any]] = []
@@ -91,7 +151,10 @@ def check_brief(document: dict[str, Any]) -> dict[str, Any]:
                                "numbers": missing[:5], "text": statement[:160]})
 
     for option in document.get("options") or []:
-        for field in ("title", "description", "body"):
+        if option.get("key") and not option.get("supporting_signal_ids") and document.get("cards") is not None:
+            checks.append({"check": "uncited_option", "action": "flagged", "where": f"option {option.get('key')}"})
+            option["guardrail"] = "uncited"
+        for field in ("title", "description", "body", "thesis", "would_change_if", "cost_of_waiting"):
             text = option.get(field)
             if not isinstance(text, str):
                 continue
@@ -117,6 +180,8 @@ def check_brief(document: dict[str, Any]) -> dict[str, Any]:
                     continue
                 kept.append(seg)
             summary[part] = kept
+
+    _check_typed(document, checks)
 
     document["guardrails"] = {
         "checked": True,

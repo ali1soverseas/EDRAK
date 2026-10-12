@@ -7,6 +7,9 @@ Deterministic metrics, always computed:
   source_diversity         distinct web hosts per external source (1.0: every source a different site)
   internal_relevance       mean retrieval score of the internal evidence used
   guardrail_issues         issues the output guardrail found in the brief (a count)
+  metric_grounding         share of typed numbers that survived reconciliation (matched their saved source)
+  required_coverage        share of the use case's required figures that are verified (the brief's coverage score)
+  conflicts_open           number of figures whose sources disagree (a count, not scored)
 
 Model-judged, on a small sample, when EVALUATION_JUDGE is on:
   judge_faithfulness       does the cited evidence support each sampled finding (1, 0.5 or 0, averaged)
@@ -100,6 +103,23 @@ def deterministic_metrics(
     return out
 
 
+async def metric_scores(db: Any, request_id: str, document: dict[str, Any]) -> dict[str, tuple[float, dict[str, Any]]]:
+    from edrak.db.util import fetch_all
+
+    rows = await fetch_all(db, "SELECT status, derived FROM metrics WHERE request_id = ?", (request_id,))
+    base = [r for r in rows if not r["derived"]]
+    out: dict[str, tuple[float, dict[str, Any]]] = {}
+    if base:
+        ok = sum(1 for r in base if r["status"] in ("verified", "thin", "conflict"))
+        out["metric_grounding"] = (round(ok / len(base), 3), {"numbers": len(base), "matched_source": ok})
+    cov = document.get("coverage") or {}
+    if cov.get("score") is not None:
+        out["required_coverage"] = (float(cov["score"]), {"met": cov.get("met"), "required": cov.get("required")})
+    conflicts = await fetch_all(db, "SELECT 1 FROM metric_conflicts WHERE request_id = ?", (request_id,))
+    out["conflicts_open"] = (float(len(conflicts)), {})
+    return out
+
+
 def _judge_faithfulness(results: list[WorkerResult]) -> Optional[tuple[float, dict[str, Any]]]:
     from edrak.core.llm import get_structured, schema_instruction
 
@@ -185,6 +205,11 @@ async def evaluate_run(request_id: str) -> dict[str, float]:
         request = await fetch_one(db, "SELECT goal FROM business_requests WHERE request_id = ?", (request_id,))
     document = brief["document"] if brief else {}
     metrics = deterministic_metrics(results, (verification or {}).get("verdicts", []), document)
+    try:
+        async with get_db() as db:
+            metrics.update(await metric_scores(db, request_id, document))
+    except Exception:  # noqa: BLE001 - older databases may not have the metrics tables yet
+        logger.info("Metric scores skipped for %s", request_id)
 
     if settings.EVALUATION_JUDGE:
         faithful = await asyncio.to_thread(_judge_faithfulness, results)
@@ -194,9 +219,10 @@ async def evaluate_run(request_id: str) -> dict[str, float]:
         if relevant:
             metrics["judge_answer_relevance"] = relevant
 
-    scored = [v for k, (v, _) in metrics.items() if k != "guardrail_issues"]
+    counts = {"guardrail_issues", "conflicts_open"}
+    scored = [v for k, (v, _) in metrics.items() if k not in counts]
     if scored:
-        metrics["quality_score"] = (round(sum(scored) / len(scored), 3), {"from": sorted(k for k in metrics if k != "guardrail_issues")})
+        metrics["quality_score"] = (round(sum(scored) / len(scored), 3), {"from": sorted(k for k in metrics if k not in counts)})
 
     async with get_db() as db:
         for metric, (value, detail) in metrics.items():
