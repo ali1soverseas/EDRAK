@@ -920,6 +920,13 @@ class RunManager:
         from edrak.evaluation.run import schedule_evaluation
 
         schedule_evaluation(analysis_id)
+        # A monitor run is compared with the monitor's previous run, which raises alerts.
+        from edrak.monitoring.scheduler import after_monitor_run
+
+        try:
+            await after_monitor_run(analysis_id, saved["id"])
+        except Exception:  # noqa: BLE001 - alerts never fail a run
+            logger.exception("Change detection failed for %s", analysis_id)
         await active.stream.emit("complete", {"state": final_state, "brief_id": saved["id"]})
         active.stream.close()
         logger.info("Analysis %s run completed (%s)", analysis_id, final_state)

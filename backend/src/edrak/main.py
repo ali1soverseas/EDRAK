@@ -33,7 +33,14 @@ async def lifespan(app: FastAPI):
         for doc in pending:
             schedule_indexing(doc["workspace_id"], doc["id"])
         logger.info("Re-queued %d document(s) for indexing", len(pending))
+    # Monitors run on their schedule while the app is up.
+    import asyncio
+
+    from edrak.monitoring.scheduler import run_forever
+
+    scheduler = asyncio.create_task(run_forever())
     yield
+    scheduler.cancel()
 
 
 app = FastAPI(
