@@ -1,0 +1,186 @@
+{
+  "checks": [
+    {
+      "check": "every finding traces to evidence",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "every signal traces to a finding",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "signals only rest on verified findings",
+      "passed": true,
+      "detail": "0 signals",
+      "severity": "warn"
+    },
+    {
+      "check": "every recommendation traces to signal -> finding",
+      "passed": true,
+      "detail": "6/6",
+      "severity": "error"
+    },
+    {
+      "check": "verifier covers all worker findings",
+      "passed": true,
+      "detail": "0 missing",
+      "severity": "error"
+    },
+    {
+      "check": "verification, cross-signal and decision share one research_run_id",
+      "passed": true,
+      "detail": "261fc72cfbbbb4b1000d4155230883c9",
+      "severity": "error"
+    },
+    {
+      "check": "re-run of customer_trends keeps finding ids stable only for unchanged statements",
+      "passed": false,
+      "detail": "5 of 5 reused ids now carry a different statement",
+      "severity": "warn"
+    },
+    {
+      "check": "second verification pass does not downgrade previously verified findings",
+      "passed": true,
+      "detail": "0 downgraded",
+      "severity": "warn"
+    }
+  ],
+  "detail": {
+    "findings_without_resolvable_evidence": [],
+    "signals_without_findings": [],
+    "signals_resting_on_unverified_findings": [],
+    "recommendations_fully_traceable_pct": 100.0,
+    "synthetic_evidence_pct_overall": 0.0,
+    "agents_evaluated": [
+      "competitor_intelligence",
+      "cross_signal",
+      "customer_trends",
+      "decision",
+      "internal_intelligence",
+      "market_intelligence",
+      "verification"
+    ],
+    "worker_attempts_used_by_final_state": {
+      "competitor_intelligence": 1,
+      "customer_trends": 2,
+      "internal_intelligence": 1,
+      "market_intelligence": 1
+    },
+    "stage_inputs": [
+      {
+        "file": "verification.json",
+        "agent": "verification",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification.json",
+        "cross_signal_seen": ""
+      },
+      {
+        "file": "verification_2.json",
+        "agent": "verification",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 2,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_2.json",
+        "cross_signal_seen": ""
+      },
+      {
+        "file": "cross_signal.json",
+        "agent": "cross_signal",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 2,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_2.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "decision_analysis.json",
+        "agent": "decision",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 2,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_2.json",
+        "cross_signal_seen": "cross_signal.json"
+      }
+    ],
+    "not_evaluated": []
+  },
+  "reruns": {
+    "workers": [
+      {
+        "worker": "customer_trends",
+        "before": {
+          "file": "customer_trends.json",
+          "attempt": 1,
+          "status": "partial",
+          "findings": 7,
+          "evidence": 9,
+          "gaps": 2,
+          "agent_confidence": 0.3,
+          "avg_finding_confidence": 0.3857
+        },
+        "after": {
+          "file": "customer_trends_2.json",
+          "attempt": 2,
+          "status": "partial",
+          "findings": 5,
+          "evidence": 6,
+          "gaps": 1,
+          "agent_confidence": 0.6,
+          "avg_finding_confidence": 0.48
+        },
+        "statements_kept": 0,
+        "statements_new": 5,
+        "statements_dropped": 7,
+        "ids_reused": 5,
+        "ids_reused_with_changed_statement": 5
+      }
+    ],
+    "verification": [
+      {
+        "before": {
+          "status": "replan_required",
+          "findings": 36,
+          "verified": 29,
+          "conflicts": 1,
+          "gaps": 42,
+          "avg_confidence": 0.7408,
+          "file": "verification.json",
+          "verified_pct": 80.56
+        },
+        "after": {
+          "status": "verified",
+          "findings": 34,
+          "verified": 30,
+          "conflicts": 0,
+          "gaps": 35,
+          "avg_confidence": 0.7871,
+          "file": "verification_2.json",
+          "verified_pct": 88.24
+        },
+        "findings_dropped": 2,
+        "findings_added": 0,
+        "ids_reused_with_changed_statement": 5,
+        "insufficient_to_verified": 0,
+        "verified_to_insufficient": 0
+      }
+    ]
+  }
+}

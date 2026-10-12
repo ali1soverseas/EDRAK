@@ -1,0 +1,297 @@
+{
+  "agent": "competitor_intelligence",
+  "generated_at_utc": "2026-10-12T19:49:26.737898+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "competitor_intelligence.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "actionability",
+        "context_relevancy"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "partial",
+        "error": null,
+        "findings": 11,
+        "evidence_in_file": 14,
+        "evidence_collected": 24,
+        "evidence_sample_pct": 58.33,
+        "evidence_cited": 14,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 6,
+        "top_domain_share_pct": 64.29,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": 0.8,
+        "requirements_total": 30,
+        "requirement_coverage_pct": 23.33,
+        "profiles": 6,
+        "matrix_cells": 36,
+        "matrix_cells_with_evidence_pct": 19.44,
+        "matrix_cells_not_established_pct": 88.89,
+        "gaps": 23,
+        "conflicts": 0,
+        "queries_executed": 24,
+        "agent_confidence": 0.863,
+        "avg_finding_confidence": 0.8627,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 3,
+        "units": 83,
+        "units_flagged": 14,
+        "faithfulness_tested": 31,
+        "faithfulness_avg": 0.9677,
+        "faithfulness_pass_pct": 90.32,
+        "relevancy_tested": 60,
+        "relevancy_avg": 0.9649,
+        "relevancy_pass_pct": 98.33,
+        "specificity_tested": 11,
+        "specificity_avg": 0.6666,
+        "specificity_pass_pct": 90.91,
+        "insight_tested": 11,
+        "insight_avg": 0.4493,
+        "insight_pass_pct": 27.27,
+        "actionability_tested": 11,
+        "actionability_avg": 0.6361,
+        "actionability_pass_pct": 72.73,
+        "context_relevancy_tested": 11,
+        "context_relevancy_avg": 0.6727,
+        "context_relevancy_pass_pct": 81.82,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every fulfilled requirement maps to at least one finding",
+          "passed": true,
+          "detail": "0 unlinked",
+          "severity": "error"
+        },
+        {
+          "check": "fulfilled requirements: every claimed 'N grounded findings' is backed",
+          "passed": true,
+          "detail": "0 mismatches",
+          "severity": "warn"
+        },
+        {
+          "check": "every missing requirement states a reason",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no requirement is 'missing' while a grounded finding exists",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every named competitor has a profile",
+          "passed": true,
+          "detail": "Amazon, Jarir.com, Jumia, Keeta, Namshi, Desertcart",
+          "severity": "error"
+        },
+        {
+          "check": "matrix claims rest on evidence",
+          "passed": true,
+          "detail": "0 cells",
+          "severity": "warn"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.0",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": false,
+          "detail": "3 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "db10ab62-e81e-48b9-87aa-8b67c9de6b51",
+          "statement": "Amazon does not charge a monthly subscription fee for third‑party sellers in the UAE and Saudi Arabia as a limited‑time offer, and applies referral fees of 8 % on items with a total sales price of $10.00 or less and 15 % on items priced above $10.00.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "e68b776c-32be-4b66-8432-666b1137d184",
+          "statement": "Amazon provides the Amazon Pay payment gateway in the MENA region, enabling online merchants in the UAE, Saudi Arabia, Egypt, Jordan, Lebanon, Qatar, Kuwait and Oman to accept local payments at checkout.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "24ebb3f0-48ad-45f4-a083-c38976c9b306",
+          "statement": "Jarir.com: Jarir positions its online shopping platform as the market leader in the Middle East for consumer IT products, electronics, office supplies and books, emphasizing service quality leadership and affordable, superior‑quality products across Saudi Arabia, the UAE and Egypt.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "3bf5098e-f828-483f-b8b1-e7868f1e9f50",
+          "statement": "Jarir.com: Jarir offers a Jarir Discount Card that provides a 10% instant discount on most school and office supplies, arts & crafts, books and computer bags, and runs a rewards program (Woow Loyalty) where points or vouchers can be redeemed for purchases; no subscription tiers are mentioned.",
+          "flags": [
+            "unfaithful",
+            "no_added_insight",
+            "absence_claim"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "15052bde-1bd5-453f-b6f2-8da430da231c",
+          "statement": "Jarir.com: Jarir’s delivery options include in‑store showroom pickup with orders ready within one hour, a services centre in each showroom offering product installation, and a return/exchange process that can be completed at any showroom.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "e86f1c93-6f30-43e6-97a1-e0061361fd45",
+          "statement": "Jumia charges sellers a commission based on the product category; for example, a 5 % commission is applied to a 1,000 LE item in category X, resulting in a 50 LE fee to Jumia.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "8f3c6534-109b-44b6-91ef-7c4f0c4431e2",
+          "statement": "Jumia offers consumer price reductions through discount vouchers and promotional codes, promoting low prices during its \"amazing discounts and offers\" campaigns and providing discount codes for categories such as home furniture and groceries.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "9cd86e43-f5d5-4321-90f0-cb3172b8558d",
+          "statement": "Offering and localisation for those markets: compared with noon, Amazon is comparable. Amazon offers a marketplace with Amazon Pay, local‑language support and same‑day delivery options, delivering a comparable but globally‑focused catalog.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "6f663d12-f391-4d24-99a2-f8c35939786b",
+          "statement": "Target customers and positioning: compared with noon, Jarir.com is different approach. Jarir positions itself as the market leader in consumer IT, electronics, office supplies and books, emphasizing service‑quality leadership.",
+          "flags": [
+            "generic_statement",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "84edd2ce-34e0-466c-85e7-0eeefcba7517",
+          "statement": "Partnerships and distribution: compared with noon, Jarir.com is different approach. Jarir offers in‑store showroom pickup within an hour, installation services at its showrooms, and a return/exchange process at any showroom.",
+          "flags": [
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "requirement",
+          "unit_id": "R7",
+          "statement": "Jarir offers a Jarir Discount Card that gives a 10% instant discount on most school and office supplies, arts & crafts, books and computer bags, and runs a Woow Loyalty rewards program where points or vouchers can be redeemed for purchases; no subscription tiers are mentioned.",
+          "flags": [
+            "absence_claim",
+            "unfaithful"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Pricing and packaging in those markets | Jarir.com",
+          "statement": "Jarir offers a 10 % instant discount via its Discount Card and a Woow Loyalty rewards program, without any subscription tiers.",
+          "flags": [
+            "unfaithful"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Target customers and positioning | Amazon",
+          "statement": "Branding and positioning statements for Amazon’s Middle‑East marketplace are not provided in the evidence.",
+          "flags": [
+            "absence_claim"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Partnerships and distribution | Jarir.com",
+          "statement": "Jarir offers in‑store showroom pickup within an hour, installation services at its showrooms, and a return/exchange process at any showroom.",
+          "flags": [
+            "low_relevancy"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2917 @@
+{
+  "task_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1",
+      "statement": "Noon accounts for 81.9% of brand mentions in the collected sample, and its search interest shows a modest increase of 2.3% over the recent period.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "99f59378a3154161",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Share of voice reflects the sample composition, not market share.",
+        "Trend based on search interest may not capture all user activity.",
+        "Evidence limited to a single trend data point.",
+        "single_source",
+        "gap: branch_demand",
+        "gap: branch_social"
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2",
+      "statement": "Arabic‑language shoppers frequently warn about fraudulent installment offers and fake WhatsApp numbers, as seen in an Instagram post that received 1,358 likes and 1,185 replies.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "3d3d91689e6fbd6e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Based on a single high‑engagement post; may not represent broader sentiment.",
+        "Only Arabic Instagram content is captured.",
+        "single_source",
+        "gap: branch_social"
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3",
+      "statement": "Price sensitivity is evident, with posts promoting smartphones starting at 329 SAR and discounts up to 350 SAR, attracting strong engagement (e.g., 1,113 likes on a Facebook post).",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "841a74c32fca1703",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "e3ea7f83791faaa9",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Posts are from competitor Jarir.com, not Noon.",
+        "Price figures are promotional and may not reflect average market pricing."
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4",
+      "statement": "Arabic content represents 33.9% of the collected evidence, underscoring the importance of Arabic language messaging for Middle‑East shoppers.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "3d3d91689e6fbd6e",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "d669a220b0a44322",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "d222735a9c3ee93f",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Language mix is derived from the sampled items, not the entire market.",
+        "English dominates the overall sample."
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5",
+      "statement": "Retailers emphasize trade‑in programs, offering up to 50% savings on new devices, suggesting a demand for flexible payment and upgrade options.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "664d30cef75dacca",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Single Facebook post from Jarir.com; may not reflect Noon’s own offerings.",
+        "single_source",
+        "gap: branch_social"
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f6",
+      "statement": "Interest in the Noon mobile app has fallen sharply, with a 90.9% decline in the measured search metric over the last 13 weeks.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "78218268c1eccd22",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Trend based on search interest; does not capture app download or usage statistics.",
+        "Only weekly granularity is available.",
+        "single_source",
+        "gap: branch_demand"
+      ]
+    },
+    {
+      "finding_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f7",
+      "statement": "Search interest for Amazon UAE dropped 85.7% in the same period, indicating a broader contraction in the regional e‑commerce search volume.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "94b7e1cba36429cd",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Reflects search interest only; may be influenced by seasonal factors.",
+        "Does not differentiate between product categories.",
+        "single_source",
+        "gap: branch_demand"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "99f59378a3154161",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'noon' over today 12-m is up: from 63 to 69 (relative scale), peak 100 on 2026-04-26.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T18:01:16.007558Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "3d3d91689e6fbd6e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.instagram.com/p/DNLGaNMNyTf/",
+      "publisher": "instagram",
+      "extracted_fact": "تنبيه مهم لعملائنا الأعزاء فيما يخص خدمات وعروض التقسيط التي يتم تداولها في وسائل التواصل الاجتماعي أو من خلال الأرقام الوهمية في الواتساب⚠️",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:22.333079Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "instagram",
+        "language": "ar",
+        "published_at": "2025-08-10T11:50:28+00:00",
+        "engagement": {
+          "likes": 1358,
+          "replies": 1185
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "841a74c32fca1703",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.facebook.com/jarirbookstore/posts/pfbid0mSZBvc1b9S46UikWGHdJMvJrzNaJMBd5UJVkrZK8zAQnhfSQaPcqhfBs5f3WUoZpl",
+      "publisher": "facebook",
+      "extracted_fact": "وصلت حديثًا.. هواتف بأسعار مميزة 🤩\nاكتشف هواتف Itel الذكية ابتداءً من 329 ريال حصريًا على الموقع الإلكتروني \nيسري العرض حتى 20 أكتوبر 2026\n\n🤩 New Arrival.. Smartphones at affordable prices\n Discover Itel smartphones starting from SR 329.. exclusively at Jarir.com \nOffer valid un…",
+      "excerpt": "وصلت حديثًا.. هواتف بأسعار مميزة 🤩\nاكتشف هواتف Itel الذكية ابتداءً من 329 ريال حصريًا على الموقع الإلكتروني \nيسري العرض حتى 20 أكتوبر 2026\n\n🤩 New Arrival.. Smartphones at affordable prices\n Discover Itel smartphones starting from SR 329.. exclusively at Jarir.com \nOffer valid until 20 Oct, 2026\nhttps://jarir.sa/itel-Smartphones",
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:22.331249Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "facebook",
+        "language": "en",
+        "published_at": "2026-10-11T09:00:27+00:00",
+        "engagement": {
+          "likes": 1113,
+          "replies": 11,
+          "shares": 8
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "e3ea7f83791faaa9",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.facebook.com/jarirbookstore/posts/pfbid0zBgxkG4GMTFuwjBEoESxmHCpJB8GSq5qkNdXimezK14vFpZasAsCCSqZ1aZzgTz9l",
+      "publisher": "facebook",
+      "extracted_fact": "أفضل العروض على أجهزة Samsung 🤩\nخصم يصل حتى 350 ريال على هاتف Samsung Galaxy A57\nيسري العرض حتى 21 أكتوبر 2026\n\nBest deals on Samsung devices 🤩\nSave up to SR 350 on Samsung Galaxy A57 smartphone\nOffer valid until 21 Oct, 2026\nhttps://jarir.sa/SamsungA57-Offer",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:22.331249Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "facebook",
+        "language": "en",
+        "published_at": "2026-10-11T12:00:08+00:00",
+        "engagement": {
+          "likes": 829,
+          "replies": 10,
+          "shares": 4
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "d669a220b0a44322",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.instagram.com/p/Cwm79gDtnyn/",
+      "publisher": "instagram",
+      "extracted_fact": "هام للمعرفه، يرجى توخي الحذر.\n\n#jumia #jumiaegypt #onlineshopping #shopping",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:43.740353Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "instagram",
+        "language": "ar",
+        "published_at": "2023-08-31T12:07:29+00:00",
+        "engagement": {
+          "likes": 547,
+          "replies": 180
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "d222735a9c3ee93f",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.instagram.com/p/DdOgt_0uANc/",
+      "publisher": "instagram",
+      "extracted_fact": "املأوا الأرض فرحًا وبهجة في اليوم الوطني السعودي 96 🇸🇦",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:22.333079Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "instagram",
+        "language": "ar",
+        "published_at": "2026-09-13T12:01:26+00:00",
+        "engagement": {
+          "likes": 424,
+          "replies": 93,
+          "views": 9442
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "664d30cef75dacca",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.facebook.com/jarirbookstore/posts/pfbid0ahBdSYLvB4Bn8CfN958ivz44VZkCKvpSZTNp8mbvVnfbYBfRCiSYpiYcux1zVgAdl",
+      "publisher": "facebook",
+      "extracted_fact": "استبدل هاتفك القديم ووفّر حتى 50% على هاتف Galaxy S26 Ultra📱\nيسري العرض حتى 21 أكتوبر 2026\nتطبّق الشروط والأحكام\n\n📱Trade in your old smartphone and save up to 50% on Galaxy S26 Ultra\nOffer valid until 21 Oct, 2026\nT&C Apply\nhttps://jarir.sa/Tradein-S26",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T15:58:22.331249Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "facebook",
+        "language": "so",
+        "published_at": "2026-10-09T12:00:14+00:00",
+        "engagement": {
+          "likes": 806,
+          "replies": 76,
+          "shares": 13
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "78218268c1eccd22",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'noon app' over today 12-m is down: from 0 to 0 (relative scale), peak 2 on 2026-05-24.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T18:01:16.025741Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "94b7e1cba36429cd",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'Amazon UAE' over today 12-m is down: from 5 to 1 (relative scale), peak 15 on 2026-03-01.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T18:01:16.031884Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    }
+  ],
+  "gaps": [
+    "the demand branch reported an error: no time was left for collection before the time kept for the findings",
+    "the social branch reported an error: the branch did not finish in 25.8 s"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-10-12T18:00:01.117247Z",
+  "completed_at": "2026-10-12T18:04:18.067247Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "237 items across Instagram (87), Facebook (46) and web (71) show English (149) and Arabic (76) dominate discussion, but no clear thematic clusters emerged; Noon accounts for 82% of mentions while other retailers are under 3%, and data gaps remain in demand and social branches.",
+      "overall_confidence": "low",
+      "findings_count": 7,
+      "evidence_count": 237,
+      "coverage": {
+        "by_platform": {
+          "unknown": 104,
+          "instagram": 87,
+          "facebook": 46
+        },
+        "by_source_type": {
+          "social_post": 75,
+          "web": 71,
+          "social_comment": 58,
+          "news": 20,
+          "trend_point": 13
+        },
+        "by_language": {
+          "en": 149,
+          "ar": 76,
+          "unknown": 6,
+          "af": 2,
+          "nl": 2,
+          "es": 1,
+          "so": 1
+        }
+      },
+      "gaps": [
+        "the demand branch reported an error: no time was left for collection before the time kept for the findings",
+        "the social branch reported an error: the branch did not finish in 25.8 s"
+      ],
+      "warnings": [
+        "theme analysis failed: analyze_text failed unexpectedly: ResponseError"
+      ],
+      "budget_used": {
+        "tool_calls": 38.0,
+        "cost_usd": 0.4935999999999999,
+        "seconds": 256.95
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\hanas\\EDRAK\\artifacts\\runs\\d097f1f0-35fc-4ada-bff7-b5083c4528ec.a1\\customer_trends\\result.json",
+      "evidence_store": "C:\\Users\\hanas\\EDRAK\\backend\\data\\evidence.db",
+      "evidence_count": 237,
+      "batch_ids": [
+        "b_919fb8b54bd4",
+        "b_847498e46f4b",
+        "b_11389a4407fa",
+        "b_aafd47d09ed3",
+        "b_d9f94b95e899",
+        "b_f29629e20740",
+        "b_bcd1e881aac8",
+        "b_fb8b005728aa",
+        "b_fbbde3dd8ab7",
+        "b_11c6dc0e8975",
+        "b_2a68cd76334c",
+        "b_ef5ddb169499",
+        "b_818cbd7261e2",
+        "b_44bb32ef33fb",
+        "b_233799703535",
+        "b_e638a24ba2da",
+        "b_cb34a0a8c851",
+        "b_2df1810edf6c",
+        "b_b46ba1c7619b",
+        "b_53584229c8f4",
+        "b_2471f6f70588",
+        "b_08a72744c7ef",
+        "b_73add6d65786",
+        "b_c731405224c3",
+        "b_dfdf672f29c1",
+        "b_5d4d7265efa5",
+        "b_5f48331df2a3",
+        "b_b664f65ad591",
+        "b_0ce7a70266d8",
+        "b_347ae192b308",
+        "b_e58d950768b9",
+        "b_540e213115b4",
+        "b_1795bedef812",
+        "b_59bcc52f0d98"
+      ]
+    },
+    "finding_metrics": {
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1": {
+        "share_pct": 81.9,
+        "percent_change": 2.3,
+        "metric_id_share": "m_38cd57b9778f",
+        "metric_id_trend": "m_a3d81a21528e"
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2": {
+        "likes": 1358,
+        "replies": 1185
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3": {
+        "price_start_SAR": 329,
+        "discount_SAR": 350,
+        "likes_facebook": 1113
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4": {
+        "arabic_pct": 33.9,
+        "metric_id": "m_e83f55283437"
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5": {
+        "savings_pct": 50
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f6": {
+        "percent_change": -90.9,
+        "decline_pct": 90.9,
+        "metric_id": "m_06ccaf252f72"
+      },
+      "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f7": {
+        "percent_change": -85.7,
+        "decline_pct": 85.7,
+        "metric_id": "m_1f25120e85eb"
+      }
+    },
+    "themes": [],
+    "trend_series": [
+      {
+        "keyword": "noon",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            63.0
+          ],
+          [
+            "2025-10-19",
+            59.0
+          ],
+          [
+            "2025-10-26",
+            62.0
+          ],
+          [
+            "2025-11-02",
+            70.0
+          ],
+          [
+            "2025-11-09",
+            65.0
+          ],
+          [
+            "2025-11-16",
+            60.0
+          ],
+          [
+            "2025-11-23",
+            66.0
+          ],
+          [
+            "2025-11-30",
+            61.0
+          ],
+          [
+            "2025-12-07",
+            58.0
+          ],
+          [
+            "2025-12-14",
+            69.0
+          ],
+          [
+            "2025-12-21",
+            59.0
+          ],
+          [
+            "2025-12-28",
+            84.0
+          ],
+          [
+            "2026-01-04",
+            55.0
+          ],
+          [
+            "2026-01-11",
+            57.0
+          ],
+          [
+            "2026-01-18",
+            56.0
+          ],
+          [
+            "2026-01-25",
+            58.0
+          ],
+          [
+            "2026-02-01",
+            61.0
+          ],
+          [
+            "2026-02-08",
+            57.0
+          ],
+          [
+            "2026-02-15",
+            62.0
+          ],
+          [
+            "2026-02-22",
+            64.0
+          ],
+          [
+            "2026-03-01",
+            64.0
+          ],
+          [
+            "2026-03-08",
+            65.0
+          ],
+          [
+            "2026-03-15",
+            69.0
+          ],
+          [
+            "2026-03-22",
+            62.0
+          ],
+          [
+            "2026-03-29",
+            72.0
+          ],
+          [
+            "2026-04-05",
+            69.0
+          ],
+          [
+            "2026-04-12",
+            77.0
+          ],
+          [
+            "2026-04-19",
+            64.0
+          ],
+          [
+            "2026-04-26",
+            100.0
+          ],
+          [
+            "2026-05-03",
+            90.0
+          ],
+          [
+            "2026-05-10",
+            83.0
+          ],
+          [
+            "2026-05-17",
+            82.0
+          ],
+          [
+            "2026-05-24",
+            86.0
+          ],
+          [
+            "2026-05-31",
+            83.0
+          ],
+          [
+            "2026-06-07",
+            88.0
+          ],
+          [
+            "2026-06-14",
+            83.0
+          ],
+          [
+            "2026-06-21",
+            82.0
+          ],
+          [
+            "2026-06-28",
+            91.0
+          ],
+          [
+            "2026-07-05",
+            72.0
+          ],
+          [
+            "2026-07-12",
+            64.0
+          ],
+          [
+            "2026-07-19",
+            62.0
+          ],
+          [
+            "2026-07-26",
+            62.0
+          ],
+          [
+            "2026-08-02",
+            64.0
+          ],
+          [
+            "2026-08-09",
+            58.0
+          ],
+          [
+            "2026-08-16",
+            59.0
+          ],
+          [
+            "2026-08-23",
+            69.0
+          ],
+          [
+            "2026-08-30",
+            65.0
+          ],
+          [
+            "2026-09-06",
+            70.0
+          ],
+          [
+            "2026-09-13",
+            62.0
+          ],
+          [
+            "2026-09-20",
+            61.0
+          ],
+          [
+            "2026-09-27",
+            74.0
+          ],
+          [
+            "2026-10-04",
+            75.0
+          ],
+          [
+            "2026-10-11",
+            69.0
+          ]
+        ]
+      },
+      {
+        "keyword": "online shopping Middle East",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-11-30",
+            0.0
+          ],
+          [
+            "2025-12-07",
+            0.0
+          ],
+          [
+            "2026-01-25",
+            0.0
+          ],
+          [
+            "2026-02-15",
+            0.0
+          ],
+          [
+            "2026-02-22",
+            0.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            0.0
+          ],
+          [
+            "2026-03-22",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "noon app",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            0.0
+          ],
+          [
+            "2025-10-19",
+            0.0
+          ],
+          [
+            "2025-10-26",
+            1.0
+          ],
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            1.0
+          ],
+          [
+            "2025-11-16",
+            1.0
+          ],
+          [
+            "2025-11-23",
+            1.0
+          ],
+          [
+            "2025-11-30",
+            1.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-21",
+            1.0
+          ],
+          [
+            "2025-12-28",
+            1.0
+          ],
+          [
+            "2026-01-04",
+            1.0
+          ],
+          [
+            "2026-01-11",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            1.0
+          ],
+          [
+            "2026-02-08",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            1.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            1.0
+          ],
+          [
+            "2026-04-12",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            1.0
+          ],
+          [
+            "2026-05-03",
+            1.0
+          ],
+          [
+            "2026-05-10",
+            1.0
+          ],
+          [
+            "2026-05-17",
+            1.0
+          ],
+          [
+            "2026-05-24",
+            2.0
+          ],
+          [
+            "2026-05-31",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            2.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-21",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            0.0
+          ],
+          [
+            "2026-07-26",
+            0.0
+          ],
+          [
+            "2026-08-02",
+            0.0
+          ],
+          [
+            "2026-08-09",
+            0.0
+          ],
+          [
+            "2026-08-16",
+            0.0
+          ],
+          [
+            "2026-08-23",
+            0.0
+          ],
+          [
+            "2026-08-30",
+            0.0
+          ],
+          [
+            "2026-09-06",
+            0.0
+          ],
+          [
+            "2026-09-13",
+            0.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Amazon UAE",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            5.0
+          ],
+          [
+            "2025-10-19",
+            2.0
+          ],
+          [
+            "2025-10-26",
+            5.0
+          ],
+          [
+            "2025-11-02",
+            12.0
+          ],
+          [
+            "2025-11-09",
+            10.0
+          ],
+          [
+            "2025-11-16",
+            10.0
+          ],
+          [
+            "2025-11-23",
+            14.0
+          ],
+          [
+            "2025-11-30",
+            14.0
+          ],
+          [
+            "2025-12-07",
+            13.0
+          ],
+          [
+            "2025-12-14",
+            13.0
+          ],
+          [
+            "2025-12-21",
+            10.0
+          ],
+          [
+            "2025-12-28",
+            9.0
+          ],
+          [
+            "2026-01-04",
+            9.0
+          ],
+          [
+            "2026-01-11",
+            8.0
+          ],
+          [
+            "2026-01-18",
+            8.0
+          ],
+          [
+            "2026-01-25",
+            8.0
+          ],
+          [
+            "2026-02-01",
+            6.0
+          ],
+          [
+            "2026-02-08",
+            5.0
+          ],
+          [
+            "2026-02-15",
+            5.0
+          ],
+          [
+            "2026-02-22",
+            6.0
+          ],
+          [
+            "2026-03-01",
+            15.0
+          ],
+          [
+            "2026-03-08",
+            8.0
+          ],
+          [
+            "2026-03-15",
+            9.0
+          ],
+          [
+            "2026-03-22",
+            6.0
+          ],
+          [
+            "2026-03-29",
+            6.0
+          ],
+          [
+            "2026-04-05",
+            6.0
+          ],
+          [
+            "2026-04-12",
+            5.0
+          ],
+          [
+            "2026-04-19",
+            5.0
+          ],
+          [
+            "2026-04-26",
+            5.0
+          ],
+          [
+            "2026-05-03",
+            4.0
+          ],
+          [
+            "2026-05-10",
+            4.0
+          ],
+          [
+            "2026-05-17",
+            6.0
+          ],
+          [
+            "2026-05-24",
+            5.0
+          ],
+          [
+            "2026-05-31",
+            6.0
+          ],
+          [
+            "2026-06-07",
+            6.0
+          ],
+          [
+            "2026-06-14",
+            5.0
+          ],
+          [
+            "2026-06-21",
+            6.0
+          ],
+          [
+            "2026-06-28",
+            8.0
+          ],
+          [
+            "2026-07-05",
+            6.0
+          ],
+          [
+            "2026-07-12",
+            3.0
+          ],
+          [
+            "2026-07-19",
+            3.0
+          ],
+          [
+            "2026-07-26",
+            2.0
+          ],
+          [
+            "2026-08-02",
+            2.0
+          ],
+          [
+            "2026-08-09",
+            2.0
+          ],
+          [
+            "2026-08-16",
+            2.0
+          ],
+          [
+            "2026-08-23",
+            1.0
+          ],
+          [
+            "2026-08-30",
+            1.0
+          ],
+          [
+            "2026-09-06",
+            1.0
+          ],
+          [
+            "2026-09-13",
+            1.0
+          ],
+          [
+            "2026-09-20",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            1.0
+          ],
+          [
+            "2026-10-11",
+            1.0
+          ]
+        ]
+      },
+      {
+        "keyword": "نون",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            0.0
+          ],
+          [
+            "2025-10-19",
+            1.0
+          ],
+          [
+            "2025-10-26",
+            1.0
+          ],
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            1.0
+          ],
+          [
+            "2025-11-16",
+            2.0
+          ],
+          [
+            "2025-11-23",
+            2.0
+          ],
+          [
+            "2025-11-30",
+            1.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-21",
+            1.0
+          ],
+          [
+            "2025-12-28",
+            1.0
+          ],
+          [
+            "2026-01-04",
+            1.0
+          ],
+          [
+            "2026-01-11",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            1.0
+          ],
+          [
+            "2026-02-08",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            1.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            1.0
+          ],
+          [
+            "2026-04-12",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            1.0
+          ],
+          [
+            "2026-05-03",
+            1.0
+          ],
+          [
+            "2026-05-10",
+            1.0
+          ],
+          [
+            "2026-05-17",
+            1.0
+          ],
+          [
+            "2026-05-24",
+            1.0
+          ],
+          [
+            "2026-05-31",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            1.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-21",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            0.0
+          ],
+          [
+            "2026-07-26",
+            1.0
+          ],
+          [
+            "2026-08-02",
+            1.0
+          ],
+          [
+            "2026-08-09",
+            1.0
+          ],
+          [
+            "2026-08-16",
+            0.0
+          ],
+          [
+            "2026-08-23",
+            1.0
+          ],
+          [
+            "2026-08-30",
+            1.0
+          ],
+          [
+            "2026-09-06",
+            1.0
+          ],
+          [
+            "2026-09-13",
+            1.0
+          ],
+          [
+            "2026-09-20",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Jumia",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            6.0
+          ],
+          [
+            "2025-10-19",
+            5.0
+          ],
+          [
+            "2025-10-26",
+            10.0
+          ],
+          [
+            "2025-11-02",
+            17.0
+          ],
+          [
+            "2025-11-09",
+            18.0
+          ],
+          [
+            "2025-11-16",
+            15.0
+          ],
+          [
+            "2025-11-23",
+            17.0
+          ],
+          [
+            "2025-11-30",
+            16.0
+          ],
+          [
+            "2025-12-07",
+            14.0
+          ],
+          [
+            "2025-12-14",
+            13.0
+          ],
+          [
+            "2025-12-21",
+            8.0
+          ],
+          [
+            "2025-12-28",
+            8.0
+          ],
+          [
+            "2026-01-04",
+            9.0
+          ],
+          [
+            "2026-01-11",
+            9.0
+          ],
+          [
+            "2026-01-18",
+            9.0
+          ],
+          [
+            "2026-01-25",
+            12.0
+          ],
+          [
+            "2026-02-01",
+            15.0
+          ],
+          [
+            "2026-02-08",
+            21.0
+          ],
+          [
+            "2026-02-15",
+            13.0
+          ],
+          [
+            "2026-02-22",
+            22.0
+          ],
+          [
+            "2026-03-01",
+            25.0
+          ],
+          [
+            "2026-03-08",
+            21.0
+          ],
+          [
+            "2026-03-15",
+            100.0
+          ],
+          [
+            "2026-03-22",
+            29.0
+          ],
+          [
+            "2026-03-29",
+            14.0
+          ],
+          [
+            "2026-04-05",
+            14.0
+          ],
+          [
+            "2026-04-12",
+            14.0
+          ],
+          [
+            "2026-04-19",
+            12.0
+          ],
+          [
+            "2026-04-26",
+            23.0
+          ],
+          [
+            "2026-05-03",
+            23.0
+          ],
+          [
+            "2026-05-10",
+            10.0
+          ],
+          [
+            "2026-05-17",
+            12.0
+          ],
+          [
+            "2026-05-24",
+            15.0
+          ],
+          [
+            "2026-05-31",
+            13.0
+          ],
+          [
+            "2026-06-07",
+            17.0
+          ],
+          [
+            "2026-06-14",
+            16.0
+          ],
+          [
+            "2026-06-21",
+            18.0
+          ],
+          [
+            "2026-06-28",
+            25.0
+          ],
+          [
+            "2026-07-05",
+            18.0
+          ],
+          [
+            "2026-07-12",
+            10.0
+          ],
+          [
+            "2026-07-19",
+            7.0
+          ],
+          [
+            "2026-07-26",
+            5.0
+          ],
+          [
+            "2026-08-02",
+            6.0
+          ],
+          [
+            "2026-08-09",
+            7.0
+          ],
+          [
+            "2026-08-16",
+            5.0
+          ],
+          [
+            "2026-08-23",
+            4.0
+          ],
+          [
+            "2026-08-30",
+            5.0
+          ],
+          [
+            "2026-09-06",
+            3.0
+          ],
+          [
+            "2026-09-13",
+            4.0
+          ],
+          [
+            "2026-09-20",
+            3.0
+          ],
+          [
+            "2026-09-27",
+            3.0
+          ],
+          [
+            "2026-10-04",
+            4.0
+          ],
+          [
+            "2026-10-11",
+            3.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Namshi",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            1.0
+          ],
+          [
+            "2025-11-02",
+            2.0
+          ],
+          [
+            "2025-11-09",
+            2.0
+          ],
+          [
+            "2025-11-16",
+            1.0
+          ],
+          [
+            "2025-11-23",
+            2.0
+          ],
+          [
+            "2025-11-30",
+            2.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-28",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            1.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            1.0
+          ],
+          [
+            "2026-05-03",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            1.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-21",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Desertcart",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            1.0
+          ],
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            2.0
+          ],
+          [
+            "2025-11-16",
+            1.0
+          ],
+          [
+            "2025-11-23",
+            1.0
+          ],
+          [
+            "2025-11-30",
+            1.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-21",
+            1.0
+          ],
+          [
+            "2026-01-04",
+            1.0
+          ],
+          [
+            "2026-01-11",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            2.0
+          ],
+          [
+            "2026-02-08",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            2.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            2.0
+          ],
+          [
+            "2026-04-12",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            1.0
+          ],
+          [
+            "2026-05-03",
+            1.0
+          ],
+          [
+            "2026-05-10",
+            1.0
+          ],
+          [
+            "2026-05-17",
+            1.0
+          ],
+          [
+            "2026-05-24",
+            1.0
+          ],
+          [
+            "2026-05-31",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            2.0
+          ],
+          [
+            "2026-06-14",
+            2.0
+          ],
+          [
+            "2026-06-21",
+            2.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            1.0
+          ],
+          [
+            "2026-07-26",
+            1.0
+          ],
+          [
+            "2026-08-02",
+            1.0
+          ],
+          [
+            "2026-08-09",
+            1.0
+          ],
+          [
+            "2026-08-30",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "noon UAE",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            4.0
+          ],
+          [
+            "2025-11-02",
+            10.0
+          ],
+          [
+            "2025-11-09",
+            12.0
+          ],
+          [
+            "2025-11-16",
+            6.0
+          ],
+          [
+            "2025-11-23",
+            11.0
+          ],
+          [
+            "2025-11-30",
+            7.0
+          ],
+          [
+            "2025-12-07",
+            7.0
+          ],
+          [
+            "2025-12-14",
+            8.0
+          ],
+          [
+            "2025-12-21",
+            5.0
+          ],
+          [
+            "2025-12-28",
+            6.0
+          ],
+          [
+            "2026-01-04",
+            4.0
+          ],
+          [
+            "2026-01-11",
+            5.0
+          ],
+          [
+            "2026-01-18",
+            5.0
+          ],
+          [
+            "2026-01-25",
+            5.0
+          ],
+          [
+            "2026-02-01",
+            4.0
+          ],
+          [
+            "2026-02-08",
+            4.0
+          ],
+          [
+            "2026-02-15",
+            3.0
+          ],
+          [
+            "2026-02-22",
+            3.0
+          ],
+          [
+            "2026-03-01",
+            6.0
+          ],
+          [
+            "2026-03-08",
+            5.0
+          ],
+          [
+            "2026-03-15",
+            5.0
+          ],
+          [
+            "2026-03-22",
+            5.0
+          ],
+          [
+            "2026-03-29",
+            5.0
+          ],
+          [
+            "2026-04-05",
+            5.0
+          ],
+          [
+            "2026-04-12",
+            4.0
+          ],
+          [
+            "2026-04-19",
+            5.0
+          ],
+          [
+            "2026-04-26",
+            4.0
+          ],
+          [
+            "2026-05-03",
+            3.0
+          ],
+          [
+            "2026-05-10",
+            3.0
+          ],
+          [
+            "2026-05-17",
+            6.0
+          ],
+          [
+            "2026-05-24",
+            3.0
+          ],
+          [
+            "2026-05-31",
+            6.0
+          ],
+          [
+            "2026-06-07",
+            7.0
+          ],
+          [
+            "2026-06-14",
+            6.0
+          ],
+          [
+            "2026-06-21",
+            5.0
+          ],
+          [
+            "2026-06-28",
+            9.0
+          ],
+          [
+            "2026-07-05",
+            5.0
+          ],
+          [
+            "2026-07-12",
+            4.0
+          ],
+          [
+            "2026-07-19",
+            3.0
+          ],
+          [
+            "2026-07-26",
+            1.0
+          ],
+          [
+            "2026-08-02",
+            3.0
+          ],
+          [
+            "2026-08-09",
+            3.0
+          ],
+          [
+            "2026-09-06",
+            2.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            1.0
+          ]
+        ]
+      },
+      {
+        "keyword": "noon Saudi",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            4.0
+          ],
+          [
+            "2025-11-02",
+            8.0
+          ],
+          [
+            "2025-11-09",
+            10.0
+          ],
+          [
+            "2025-11-16",
+            5.0
+          ],
+          [
+            "2025-11-23",
+            7.0
+          ],
+          [
+            "2025-11-30",
+            9.0
+          ],
+          [
+            "2025-12-07",
+            8.0
+          ],
+          [
+            "2025-12-14",
+            8.0
+          ],
+          [
+            "2025-12-21",
+            4.0
+          ],
+          [
+            "2025-12-28",
+            4.0
+          ],
+          [
+            "2026-01-04",
+            2.0
+          ],
+          [
+            "2026-01-11",
+            4.0
+          ],
+          [
+            "2026-01-18",
+            5.0
+          ],
+          [
+            "2026-01-25",
+            6.0
+          ],
+          [
+            "2026-02-01",
+            5.0
+          ],
+          [
+            "2026-02-08",
+            4.0
+          ],
+          [
+            "2026-02-15",
+            4.0
+          ],
+          [
+            "2026-02-22",
+            4.0
+          ],
+          [
+            "2026-03-01",
+            5.0
+          ],
+          [
+            "2026-03-08",
+            3.0
+          ],
+          [
+            "2026-03-15",
+            8.0
+          ],
+          [
+            "2026-03-22",
+            7.0
+          ],
+          [
+            "2026-03-29",
+            5.0
+          ],
+          [
+            "2026-04-05",
+            4.0
+          ],
+          [
+            "2026-04-12",
+            4.0
+          ],
+          [
+            "2026-04-19",
+            3.0
+          ],
+          [
+            "2026-04-26",
+            5.0
+          ],
+          [
+            "2026-05-03",
+            3.0
+          ],
+          [
+            "2026-05-10",
+            2.0
+          ],
+          [
+            "2026-05-17",
+            3.0
+          ],
+          [
+            "2026-05-24",
+            3.0
+          ],
+          [
+            "2026-05-31",
+            7.0
+          ],
+          [
+            "2026-06-07",
+            6.0
+          ],
+          [
+            "2026-06-14",
+            5.0
+          ],
+          [
+            "2026-06-21",
+            5.0
+          ],
+          [
+            "2026-06-28",
+            7.0
+          ],
+          [
+            "2026-07-05",
+            5.0
+          ],
+          [
+            "2026-07-12",
+            2.0
+          ],
+          [
+            "2026-07-19",
+            2.0
+          ],
+          [
+            "2026-07-26",
+            1.0
+          ],
+          [
+            "2026-08-09",
+            1.0
+          ],
+          [
+            "2026-09-06",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "online shopping UAE",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            1.0
+          ],
+          [
+            "2025-11-23",
+            4.0
+          ],
+          [
+            "2025-11-30",
+            5.0
+          ],
+          [
+            "2025-12-07",
+            4.0
+          ],
+          [
+            "2025-12-14",
+            2.0
+          ],
+          [
+            "2025-12-21",
+            3.0
+          ],
+          [
+            "2025-12-28",
+            2.0
+          ],
+          [
+            "2026-01-04",
+            2.0
+          ],
+          [
+            "2026-01-11",
+            2.0
+          ],
+          [
+            "2026-01-18",
+            2.0
+          ],
+          [
+            "2026-01-25",
+            3.0
+          ],
+          [
+            "2026-02-01",
+            2.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            2.0
+          ],
+          [
+            "2026-03-01",
+            3.0
+          ],
+          [
+            "2026-03-08",
+            2.0
+          ],
+          [
+            "2026-03-15",
+            3.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            2.0
+          ],
+          [
+            "2026-04-05",
+            2.0
+          ],
+          [
+            "2026-04-12",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            2.0
+          ],
+          [
+            "2026-05-03",
+            1.0
+          ],
+          [
+            "2026-05-31",
+            2.0
+          ],
+          [
+            "2026-06-07",
+            3.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            2.0
+          ],
+          [
+            "2026-07-19",
+            2.0
+          ],
+          [
+            "2026-08-09",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "ecommerce UAE",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            2.0
+          ],
+          [
+            "2025-11-02",
+            4.0
+          ],
+          [
+            "2025-11-09",
+            3.0
+          ],
+          [
+            "2025-11-16",
+            4.0
+          ],
+          [
+            "2025-11-23",
+            3.0
+          ],
+          [
+            "2025-11-30",
+            5.0
+          ],
+          [
+            "2025-12-07",
+            4.0
+          ],
+          [
+            "2025-12-14",
+            4.0
+          ],
+          [
+            "2025-12-21",
+            3.0
+          ],
+          [
+            "2025-12-28",
+            3.0
+          ],
+          [
+            "2026-01-04",
+            3.0
+          ],
+          [
+            "2026-01-11",
+            4.0
+          ],
+          [
+            "2026-01-18",
+            4.0
+          ],
+          [
+            "2026-01-25",
+            5.0
+          ],
+          [
+            "2026-02-01",
+            3.0
+          ],
+          [
+            "2026-02-08",
+            2.0
+          ],
+          [
+            "2026-02-15",
+            5.0
+          ],
+          [
+            "2026-02-22",
+            9.0
+          ],
+          [
+            "2026-03-01",
+            16.0
+          ],
+          [
+            "2026-03-08",
+            14.0
+          ],
+          [
+            "2026-03-15",
+            10.0
+          ],
+          [
+            "2026-03-22",
+            4.0
+          ],
+          [
+            "2026-03-29",
+            3.0
+          ],
+          [
+            "2026-04-05",
+            5.0
+          ],
+          [
+            "2026-04-12",
+            5.0
+          ],
+          [
+            "2026-04-19",
+            4.0
+          ],
+          [
+            "2026-04-26",
+            4.0
+          ],
+          [
+            "2026-05-03",
+            4.0
+          ],
+          [
+            "2026-05-10",
+            4.0
+          ],
+          [
+            "2026-05-17",
+            5.0
+          ],
+          [
+            "2026-05-24",
+            5.0
+          ],
+          [
+            "2026-05-31",
+            7.0
+          ],
+          [
+            "2026-06-07",
+            8.0
+          ],
+          [
+            "2026-06-14",
+            4.0
+          ],
+          [
+            "2026-06-21",
+            5.0
+          ],
+          [
+            "2026-06-28",
+            6.0
+          ],
+          [
+            "2026-07-05",
+            5.0
+          ],
+          [
+            "2026-07-12",
+            3.0
+          ],
+          [
+            "2026-07-19",
+            3.0
+          ],
+          [
+            "2026-07-26",
+            2.0
+          ],
+          [
+            "2026-08-02",
+            1.0
+          ],
+          [
+            "2026-08-16",
+            1.0
+          ],
+          [
+            "2026-09-06",
+            1.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Amazon Saudi",
+        "geo": null,
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-12",
+            3.0
+          ],
+          [
+            "2025-10-19",
+            5.0
+          ],
+          [
+            "2025-10-26",
+            31.0
+          ],
+          [
+            "2025-11-02",
+            62.0
+          ],
+          [
+            "2025-11-09",
+            52.0
+          ],
+          [
+            "2025-11-16",
+            68.0
+          ],
+          [
+            "2025-11-23",
+            90.0
+          ],
+          [
+            "2025-11-30",
+            100.0
+          ],
+          [
+            "2025-12-07",
+            89.0
+          ],
+          [
+            "2025-12-14",
+            73.0
+          ],
+          [
+            "2025-12-21",
+            43.0
+          ],
+          [
+            "2025-12-28",
+            45.0
+          ],
+          [
+            "2026-01-04",
+            36.0
+          ],
+          [
+            "2026-01-11",
+            39.0
+          ],
+          [
+            "2026-01-18",
+            46.0
+          ],
+          [
+            "2026-01-25",
+            48.0
+          ],
+          [
+            "2026-02-01",
+            42.0
+          ],
+          [
+            "2026-02-08",
+            32.0
+          ],
+          [
+            "2026-02-15",
+            28.0
+          ],
+          [
+            "2026-02-22",
+            35.0
+          ],
+          [
+            "2026-03-01",
+            65.0
+          ],
+          [
+            "2026-03-08",
+            42.0
+          ],
+          [
+            "2026-03-15",
+            50.0
+          ],
+          [
+            "2026-03-22",
+            36.0
+          ],
+          [
+            "2026-03-29",
+            36.0
+          ],
+          [
+            "2026-04-05",
+            36.0
+          ],
+          [
+            "2026-04-12",
+            28.0
+          ],
+          [
+            "2026-04-19",
+            26.0
+          ],
+          [
+            "2026-04-26",
+            27.0
+          ],
+          [
+            "2026-05-03",
+            24.0
+          ],
+          [
+            "2026-05-10",
+            24.0
+          ],
+          [
+            "2026-05-17",
+            37.0
+          ],
+          [
+            "2026-05-24",
+            30.0
+          ],
+          [
+            "2026-05-31",
+            37.0
+          ],
+          [
+            "2026-06-07",
+            44.0
+          ],
+          [
+            "2026-06-14",
+            46.0
+          ],
+          [
+            "2026-06-21",
+            63.0
+          ],
+          [
+            "2026-06-28",
+            42.0
+          ],
+          [
+            "2026-07-05",
+            30.0
+          ],
+          [
+            "2026-07-12",
+            17.0
+          ],
+          [
+            "2026-07-19",
+            21.0
+          ],
+          [
+            "2026-07-26",
+            16.0
+          ],
+          [
+            "2026-08-02",
+            12.0
+          ],
+          [
+            "2026-08-09",
+            14.0
+          ],
+          [
+            "2026-08-16",
+            9.0
+          ],
+          [
+            "2026-08-23",
+            5.0
+          ],
+          [
+            "2026-08-30",
+            5.0
+          ],
+          [
+            "2026-09-06",
+            9.0
+          ],
+          [
+            "2026-09-13",
+            6.0
+          ],
+          [
+            "2026-09-20",
+            7.0
+          ],
+          [
+            "2026-09-27",
+            3.0
+          ],
+          [
+            "2026-10-04",
+            3.0
+          ],
+          [
+            "2026-10-11",
+            5.0
+          ]
+        ]
+      }
+    ],
+    "official_accounts": [
+      {
+        "owner": "Jarir.com",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/jarirbookstore",
+        "is_entity": false
+      },
+      {
+        "owner": "Jarir.com",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/jarirbookstore",
+        "is_entity": false
+      },
+      {
+        "owner": "Jarir.com",
+        "platform": "x",
+        "url": "https://x.com/jarirbookstore",
+        "is_entity": false
+      },
+      {
+        "owner": "Jumia",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/people",
+        "is_entity": false
+      },
+      {
+        "owner": "Jumia",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/jumiaegypt",
+        "is_entity": false
+      },
+      {
+        "owner": "Jumia",
+        "platform": "x",
+        "url": "https://x.com/JUMIAEgypt",
+        "is_entity": false
+      },
+      {
+        "owner": "Desertcart",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/desertcart",
+        "is_entity": false
+      },
+      {
+        "owner": "Desertcart",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/desertcart",
+        "is_entity": false
+      },
+      {
+        "owner": "Desertcart",
+        "platform": "x",
+        "url": "https://x.com/desertcartmena",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {}
+  }
+}

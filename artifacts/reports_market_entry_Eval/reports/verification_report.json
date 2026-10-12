@@ -1,0 +1,573 @@
+{
+  "agent": "verification",
+  "generated_at_utc": "2026-10-12T19:49:26.745915+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5
+  },
+  "files": [
+    {
+      "file": "verification.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy"
+      ],
+      "metrics": {
+        "decision_status": "replan_required",
+        "targeted_actions": 14,
+        "findings": 36,
+        "verified": 29,
+        "not_verified": 7,
+        "verified_pct": 80.56,
+        "false_verification_pct": 3.45,
+        "verified_but_unfaithful": 1,
+        "missed_valid_pct": 85.71,
+        "rejected_but_faithful": 6,
+        "confidence_distinct_values": 10,
+        "confidence_stdev": 0.2411,
+        "avg_confidence": 0.7408,
+        "avg_confidence_verified": 0.8524,
+        "avg_confidence_not_verified": 0.2786,
+        "avg_confidence_high_quality": 0.9021,
+        "avg_confidence_medium_quality": 0.7294,
+        "avg_confidence_low_quality": 0.328,
+        "verified_on_synthetic_only": 0,
+        "near_duplicate_findings": 0,
+        "rewritten_vs_worker": 0,
+        "findings_with_contradictions": 1,
+        "control_gaps": 42,
+        "control_conflicts": 1,
+        "control_failures": 1,
+        "units": 36,
+        "units_flagged": 17,
+        "faithfulness_tested": 36,
+        "faithfulness_avg": 0.9699,
+        "faithfulness_pass_pct": 94.44,
+        "relevancy_tested": 36,
+        "relevancy_avg": 0.7194,
+        "relevancy_pass_pct": 72.22,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=36 actual=36",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.verified_count matches verified findings",
+          "passed": true,
+          "detail": "metadata=29 actual=29",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.insufficient_count matches insufficient findings",
+          "passed": true,
+          "detail": "metadata=7 actual=7",
+          "severity": "error"
+        },
+        {
+          "check": "replan_required comes with targeted actions; verified comes without",
+          "passed": true,
+          "detail": "status=replan_required targeted_actions=14",
+          "severity": "error"
+        },
+        {
+          "check": "decision.summary numbers match the findings",
+          "passed": true,
+          "detail": "summary='1 of 36 findings have conflicting sources and need a revised research ' findings=36 verified=29 with_contradictions=1",
+          "severity": "error"
+        },
+        {
+          "check": "every worker finding was verified",
+          "passed": true,
+          "detail": "0 missing",
+          "severity": "error"
+        },
+        {
+          "check": "no unknown finding ids",
+          "passed": true,
+          "detail": "0 ids not in worker output",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "verified findings have no open contradictions/gaps",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no finding is verified on low-quality evidence",
+          "passed": false,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence discriminates between findings (>=3 distinct values)",
+          "passed": true,
+          "detail": "10 distinct, stdev=0.2411",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence is calibrated to the label (verified > not verified)",
+          "passed": true,
+          "detail": "verified=0.8524 not_verified=0.2786",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence follows evidence quality (high >= medium >= low)",
+          "passed": true,
+          "detail": "{'high': 0.9021, 'medium': 0.7294, 'low': 0.328}",
+          "severity": "warn"
+        },
+        {
+          "check": "no finding's confidence contradicts its label",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "control conflicts match findings with contradictions",
+          "passed": true,
+          "detail": "control=1 findings=1",
+          "severity": "warn"
+        },
+        {
+          "check": "control gaps are not just a copy of next_research_targets",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no near-duplicate findings",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "5010ecad-adbd-497c-951f-a9287edf365b",
+          "statement": "Ticket MKT‑2081 (Improve Repeat Purchases) is high priority, open, and targets a 15% increase in repeat purchases by year‑end and a 15% reduction in late deliveries within eight weeks.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "4118b888-3cbb-4933-92a6-023438a59776",
+          "statement": "European Union's General Data Protection Regulation (GDPR) is a key data protection framework.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "a4992353-fcfc-4d14-9ba5-aa319484e41c",
+          "statement": "Major data breaches occurred between 2018 and 2024.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "3bf5098e-f828-483f-b8b1-e7868f1e9f50",
+          "statement": "Jarir.com: Jarir offers a Jarir Discount Card that provides a 10% instant discount on most school and office supplies, arts & crafts, books and computer bags, and runs a rewards program (Woow Loyalty) where points or vouchers can be redeemed for purchases; no subscription tiers are mentioned.",
+          "flags": [
+            "unfaithful",
+            "low_relevancy",
+            "verified_but_unfaithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "15052bde-1bd5-453f-b6f2-8da430da231c",
+          "statement": "Jarir.com: Jarir’s delivery options include in‑store showroom pickup with orders ready within one hour, a services centre in each showroom offering product installation, and a return/exchange process that can be completed at any showroom.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "e86f1c93-6f30-43e6-97a1-e0061361fd45",
+          "statement": "Jumia charges sellers a commission based on the product category; for example, a 5 % commission is applied to a 1,000 LE item in category X, resulting in a 50 LE fee to Jumia.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "8f3c6534-109b-44b6-91ef-7c4f0c4431e2",
+          "statement": "Jumia offers consumer price reductions through discount vouchers and promotional codes, promoting low prices during its \"amazing discounts and offers\" campaigns and providing discount codes for categories such as home furniture and groceries.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "9cd86e43-f5d5-4321-90f0-cb3172b8558d",
+          "statement": "Offering and localisation for those markets: compared with noon, Amazon is comparable. Amazon offers a marketplace with Amazon Pay, local‑language support and same‑day delivery options, delivering a comparable but globally‑focused catalog.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "6e36c30f-89df-4bc5-bf25-53b7fda56d77",
+          "statement": "Partnerships and distribution: compared with noon, Amazon is different approach. Amazon integrates Amazon Pay, a local‑payment gateway covering the UAE, Saudi Arabia, Egypt, Jordan, Lebanon, Qatar, Kuwait and Oman.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "84edd2ce-34e0-466c-85e7-0eeefcba7517",
+          "statement": "Partnerships and distribution: compared with noon, Jarir.com is different approach. Jarir offers in‑store showroom pickup within an hour, installation services at its showrooms, and a return/exchange process at any showroom.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1",
+          "statement": "Noon accounts for 81.9% of brand mentions in the collected sample, and its search interest shows a modest increase of 2.3% over the recent period.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2",
+          "statement": "Arabic‑language shoppers frequently warn about fraudulent installment offers and fake WhatsApp numbers, as seen in an Instagram post that received 1,358 likes and 1,185 replies.",
+          "flags": [
+            "unfaithful",
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3",
+          "statement": "Price sensitivity is evident, with posts promoting smartphones starting at 329 SAR and discounts up to 350 SAR, attracting strong engagement (e.g., 1,113 likes on a Facebook post).",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4",
+          "statement": "Arabic content represents 33.9% of the collected evidence, underscoring the importance of Arabic language messaging for Middle‑East shoppers.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5",
+          "statement": "Retailers emphasize trade‑in programs, offering up to 50% savings on new devices, suggesting a demand for flexible payment and upgrade options.",
+          "flags": [
+            "verified_on_low_quality_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f6",
+          "statement": "Interest in the Noon mobile app has fallen sharply, with a 90.9% decline in the measured search metric over the last 13 weeks.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f7",
+          "statement": "Search interest for Amazon UAE dropped 85.7% in the same period, indicating a broader contraction in the regional e‑commerce search volume.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "verification_2.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy"
+      ],
+      "metrics": {
+        "decision_status": "verified",
+        "targeted_actions": 0,
+        "findings": 34,
+        "verified": 30,
+        "not_verified": 4,
+        "verified_pct": 88.24,
+        "false_verification_pct": 3.33,
+        "verified_but_unfaithful": 1,
+        "missed_valid_pct": 100.0,
+        "rejected_but_faithful": 4,
+        "confidence_distinct_values": 7,
+        "confidence_stdev": 0.1914,
+        "avg_confidence": 0.7871,
+        "avg_confidence_verified": 0.8507,
+        "avg_confidence_not_verified": 0.31,
+        "avg_confidence_high_quality": 0.9021,
+        "avg_confidence_medium_quality": 0.7544,
+        "avg_confidence_low_quality": 0.515,
+        "verified_on_synthetic_only": 0,
+        "near_duplicate_findings": 0,
+        "rewritten_vs_worker": 0,
+        "findings_with_contradictions": 0,
+        "control_gaps": 35,
+        "control_conflicts": 0,
+        "control_failures": 1,
+        "units": 34,
+        "units_flagged": 15,
+        "faithfulness_tested": 34,
+        "faithfulness_avg": 0.9828,
+        "faithfulness_pass_pct": 97.06,
+        "relevancy_tested": 34,
+        "relevancy_avg": 0.6873,
+        "relevancy_pass_pct": 67.65,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=34 actual=34",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.verified_count matches verified findings",
+          "passed": true,
+          "detail": "metadata=30 actual=30",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.insufficient_count matches insufficient findings",
+          "passed": true,
+          "detail": "metadata=4 actual=4",
+          "severity": "error"
+        },
+        {
+          "check": "replan_required comes with targeted actions; verified comes without",
+          "passed": true,
+          "detail": "status=verified targeted_actions=0",
+          "severity": "error"
+        },
+        {
+          "check": "decision.summary numbers match the findings",
+          "passed": true,
+          "detail": "summary='30 of 34 findings are evidence-backed; 4 were insufficient and recorde' findings=34 verified=30 with_contradictions=0",
+          "severity": "error"
+        },
+        {
+          "check": "every worker finding was verified",
+          "passed": true,
+          "detail": "0 missing",
+          "severity": "error"
+        },
+        {
+          "check": "no unknown finding ids",
+          "passed": true,
+          "detail": "0 ids not in worker output",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "verified findings have no open contradictions/gaps",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no finding is verified on low-quality evidence",
+          "passed": false,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence discriminates between findings (>=3 distinct values)",
+          "passed": true,
+          "detail": "7 distinct, stdev=0.1914",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence is calibrated to the label (verified > not verified)",
+          "passed": true,
+          "detail": "verified=0.8507 not_verified=0.31",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence follows evidence quality (high >= medium >= low)",
+          "passed": true,
+          "detail": "{'high': 0.9021, 'medium': 0.7544, 'low': 0.515}",
+          "severity": "warn"
+        },
+        {
+          "check": "no finding's confidence contradicts its label",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "control conflicts match findings with contradictions",
+          "passed": true,
+          "detail": "control=0 findings=0",
+          "severity": "warn"
+        },
+        {
+          "check": "control gaps are not just a copy of next_research_targets",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no near-duplicate findings",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "5010ecad-adbd-497c-951f-a9287edf365b",
+          "statement": "Ticket MKT‑2081 (Improve Repeat Purchases) is high priority, open, and targets a 15% increase in repeat purchases by year‑end and a 15% reduction in late deliveries within eight weeks.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "4118b888-3cbb-4933-92a6-023438a59776",
+          "statement": "European Union's General Data Protection Regulation (GDPR) is a key data protection framework.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "a4992353-fcfc-4d14-9ba5-aa319484e41c",
+          "statement": "Major data breaches occurred between 2018 and 2024.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "3bf5098e-f828-483f-b8b1-e7868f1e9f50",
+          "statement": "Jarir.com: Jarir offers a Jarir Discount Card that provides a 10% instant discount on most school and office supplies, arts & crafts, books and computer bags, and runs a rewards program (Woow Loyalty) where points or vouchers can be redeemed for purchases; no subscription tiers are mentioned.",
+          "flags": [
+            "unfaithful",
+            "low_relevancy",
+            "verified_but_unfaithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "15052bde-1bd5-453f-b6f2-8da430da231c",
+          "statement": "Jarir.com: Jarir’s delivery options include in‑store showroom pickup with orders ready within one hour, a services centre in each showroom offering product installation, and a return/exchange process that can be completed at any showroom.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "e86f1c93-6f30-43e6-97a1-e0061361fd45",
+          "statement": "Jumia charges sellers a commission based on the product category; for example, a 5 % commission is applied to a 1,000 LE item in category X, resulting in a 50 LE fee to Jumia.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "8f3c6534-109b-44b6-91ef-7c4f0c4431e2",
+          "statement": "Jumia offers consumer price reductions through discount vouchers and promotional codes, promoting low prices during its \"amazing discounts and offers\" campaigns and providing discount codes for categories such as home furniture and groceries.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "9cd86e43-f5d5-4321-90f0-cb3172b8558d",
+          "statement": "Offering and localisation for those markets: compared with noon, Amazon is comparable. Amazon offers a marketplace with Amazon Pay, local‑language support and same‑day delivery options, delivering a comparable but globally‑focused catalog.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "6e36c30f-89df-4bc5-bf25-53b7fda56d77",
+          "statement": "Partnerships and distribution: compared with noon, Amazon is different approach. Amazon integrates Amazon Pay, a local‑payment gateway covering the UAE, Saudi Arabia, Egypt, Jordan, Lebanon, Qatar, Kuwait and Oman.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "84edd2ce-34e0-466c-85e7-0eeefcba7517",
+          "statement": "Partnerships and distribution: compared with noon, Jarir.com is different approach. Jarir offers in‑store showroom pickup within an hour, installation services at its showrooms, and a return/exchange process at any showroom.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1",
+          "statement": "Shoppers frequently mention using coupons and seeking lower prices on Noon, highlighting price sensitivity in the market.",
+          "flags": [
+            "verified_on_low_quality_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2",
+          "statement": "Consumers express concern about fraudulent installment offers circulating on social media and WhatsApp.",
+          "flags": [
+            "low_relevancy",
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3",
+          "statement": "Noon dominates conversation with 49% share of voice but also receives negative comments about pricing and service.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4",
+          "statement": "Jarir promotes trade‑in programs and price‑focused smartphone deals, indicating retailers rely on promotions to attract online shoppers.",
+          "flags": [
+            "low_relevancy",
+            "verified_on_low_quality_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5",
+          "statement": "Arabic language dominates online shopping discourse (51.3% of items) with English close behind (44.2%).",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,395 @@
+{
+  "agent": "customer_trends",
+  "generated_at_utc": "2026-10-12T19:49:26.743227+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "customer_trends.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "actionability",
+        "context_relevancy"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "partial",
+        "error": null,
+        "findings": 7,
+        "evidence_in_file": 9,
+        "evidence_collected": 237,
+        "evidence_sample_pct": 3.8,
+        "evidence_cited": 9,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 2,
+        "top_domain_share_pct": 50.0,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": null,
+        "requirements_total": 0,
+        "requirement_coverage_pct": null,
+        "profiles": 0,
+        "matrix_cells": 0,
+        "matrix_cells_with_evidence_pct": null,
+        "matrix_cells_not_established_pct": null,
+        "gaps": 2,
+        "conflicts": 0,
+        "queries_executed": null,
+        "agent_confidence": 0.3,
+        "avg_finding_confidence": 0.3857,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 0,
+        "units": 7,
+        "units_flagged": 7,
+        "faithfulness_tested": 7,
+        "faithfulness_avg": 0.9286,
+        "faithfulness_pass_pct": 85.71,
+        "relevancy_tested": 7,
+        "relevancy_avg": 0.9714,
+        "relevancy_pass_pct": 100.0,
+        "specificity_tested": 7,
+        "specificity_avg": 0.715,
+        "specificity_pass_pct": 85.71,
+        "insight_tested": 7,
+        "insight_avg": 0.3883,
+        "insight_pass_pct": 0.0,
+        "actionability_tested": 7,
+        "actionability_avg": 0.4335,
+        "actionability_pass_pct": 28.57,
+        "context_relevancy_tested": 7,
+        "context_relevancy_avg": 0.6414,
+        "context_relevancy_pass_pct": 57.14,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "control_summary.findings_count matches findings",
+          "passed": true,
+          "detail": "summary=7 actual=7",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.086",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1",
+          "statement": "Noon accounts for 81.9% of brand mentions in the collected sample, and its search interest shows a modest increase of 2.3% over the recent period.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2",
+          "statement": "Arabic‑language shoppers frequently warn about fraudulent installment offers and fake WhatsApp numbers, as seen in an Instagram post that received 1,358 likes and 1,185 replies.",
+          "flags": [
+            "unfaithful",
+            "no_added_insight",
+            "not_actionable",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3",
+          "statement": "Price sensitivity is evident, with posts promoting smartphones starting at 329 SAR and discounts up to 350 SAR, attracting strong engagement (e.g., 1,113 likes on a Facebook post).",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4",
+          "statement": "Arabic content represents 33.9% of the collected evidence, underscoring the importance of Arabic language messaging for Middle‑East shoppers.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5",
+          "statement": "Retailers emphasize trade‑in programs, offering up to 50% savings on new devices, suggesting a demand for flexible payment and upgrade options.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f6",
+          "statement": "Interest in the Noon mobile app has fallen sharply, with a 90.9% decline in the measured search metric over the last 13 weeks.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f7",
+          "statement": "Search interest for Amazon UAE dropped 85.7% in the same period, indicating a broader contraction in the regional e‑commerce search volume.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "customer_trends_2.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "actionability",
+        "context_relevancy"
+      ],
+      "metrics": {
+        "attempt": 2,
+        "status": "partial",
+        "error": null,
+        "findings": 5,
+        "evidence_in_file": 6,
+        "evidence_collected": 272,
+        "evidence_sample_pct": 2.21,
+        "evidence_cited": 6,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 3,
+        "top_domain_share_pct": 40.0,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": null,
+        "requirements_total": 0,
+        "requirement_coverage_pct": null,
+        "profiles": 0,
+        "matrix_cells": 0,
+        "matrix_cells_with_evidence_pct": null,
+        "matrix_cells_not_established_pct": null,
+        "gaps": 1,
+        "conflicts": 0,
+        "queries_executed": null,
+        "agent_confidence": 0.6,
+        "avg_finding_confidence": 0.48,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 0,
+        "units": 5,
+        "units_flagged": 5,
+        "faithfulness_tested": 5,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 5,
+        "relevancy_avg": 1.0,
+        "relevancy_pass_pct": 100.0,
+        "specificity_tested": 5,
+        "specificity_avg": 0.4991,
+        "specificity_pass_pct": 40.0,
+        "insight_tested": 5,
+        "insight_avg": 0.3426,
+        "insight_pass_pct": 0.0,
+        "actionability_tested": 5,
+        "actionability_avg": 0.3865,
+        "actionability_pass_pct": 20.0,
+        "context_relevancy_tested": 5,
+        "context_relevancy_avg": 0.5632,
+        "context_relevancy_pass_pct": 60.0,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "control_summary.findings_count matches findings",
+          "passed": true,
+          "detail": "summary=5 actual=5",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.12",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f1",
+          "statement": "Shoppers frequently mention using coupons and seeking lower prices on Noon, highlighting price sensitivity in the market.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f2",
+          "statement": "Consumers express concern about fraudulent installment offers circulating on social media and WhatsApp.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f3",
+          "statement": "Noon dominates conversation with 49% share of voice but also receives negative comments about pricing and service.",
+          "flags": [
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f4",
+          "statement": "Jarir promotes trade‑in programs and price‑focused smartphone deals, indicating retailers rely on promotions to attract online shoppers.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d097f1f0-35fc-4ada-bff7-b5083c4528ec:f5",
+          "statement": "Arabic language dominates online shopping discourse (51.3% of items) with English close behind (44.2%).",
+          "flags": [
+            "no_added_insight",
+            "not_actionable",
+            "irrelevant_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

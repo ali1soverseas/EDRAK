@@ -1,0 +1,223 @@
+{
+  "agent": "internal_intelligence",
+  "generated_at_utc": "2026-10-12T19:49:26.739839+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "internal_intelligence.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "actionability",
+        "context_relevancy"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "completed",
+        "error": null,
+        "findings": 8,
+        "evidence_in_file": 5,
+        "evidence_collected": 5,
+        "evidence_sample_pct": 100.0,
+        "evidence_cited": 5,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 1,
+        "top_domain_share_pct": 100.0,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": 0.4412,
+        "requirements_total": 0,
+        "requirement_coverage_pct": null,
+        "profiles": 0,
+        "matrix_cells": 0,
+        "matrix_cells_with_evidence_pct": null,
+        "matrix_cells_not_established_pct": null,
+        "gaps": 3,
+        "conflicts": 0,
+        "queries_executed": 6,
+        "agent_confidence": 0.79,
+        "avg_finding_confidence": 0.795,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 0,
+        "units": 8,
+        "units_flagged": 8,
+        "faithfulness_tested": 8,
+        "faithfulness_avg": 0.9688,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 8,
+        "relevancy_avg": 0.7771,
+        "relevancy_pass_pct": 87.5,
+        "specificity_tested": 8,
+        "specificity_avg": 0.4343,
+        "specificity_pass_pct": 37.5,
+        "insight_tested": 8,
+        "insight_avg": 0.2827,
+        "insight_pass_pct": 0.0,
+        "actionability_tested": 8,
+        "actionability_avg": 0.4311,
+        "actionability_pass_pct": 37.5,
+        "context_relevancy_tested": 8,
+        "context_relevancy_avg": 0.9509,
+        "context_relevancy_pass_pct": 100.0,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=8 actual=8",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.evidence_count matches evidence",
+          "passed": true,
+          "detail": "metadata=5 actual=5",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.005",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": true,
+          "detail": "completed",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "8b7b86cb-95e0-4a02-a4fa-207244f34634",
+          "statement": "Noon is an e‑commerce and digital services company operating in Egypt, Saudi Arabia, and the UAE.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "b26341a7-d36d-4eb3-b81f-2dcac040f6ad",
+          "statement": "Noon connects consumers with retailers and brands through online shopping, grocery delivery, and logistics services.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "62bf876b-6464-4de3-a8bb-b46394d0be4a",
+          "statement": "Strategic Goal: Increase active customers by 20% and reduce delivery times by 10% across current markets by the end of 2026.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "89362f8f-2bbd-458c-840b-bab870ac48af",
+          "statement": "Ticket OPS‑1042 (Reduce Late Deliveries) is high priority, in progress, and cites delivery delays in selected Egyptian cities with a need to investigate warehouse bottlenecks and courier allocation.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "5010ecad-adbd-497c-951f-a9287edf365b",
+          "statement": "Ticket MKT‑2081 (Improve Repeat Purchases) is high priority, open, and targets a 15% increase in repeat purchases by year‑end and a 15% reduction in late deliveries within eight weeks.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "5037d638-3f81-4e37-aeac-17ca02d37b9d",
+          "statement": "Mock pricing sheet (hypothetical) lists average order values of EGP 4,500 (Electronics), EGP 1,200 (Fashion), and EGP 2,000 (Home & Kitchen) with average discounts of 10%, 15%, and 8% and delivery fees of EGP 60, 45, and 50 respectively.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "c26e9f64-f364-4da1-b4bc-daf282e4990d",
+          "statement": "Mock performance snapshot (hypothetical) shows an on‑time delivery rate of 88% and a repeat purchase rate of 34%.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "1d49d911-658d-4615-a21e-01f15f484064",
+          "statement": "Key strategic risks identified include competitors increasing discounts and promotional spending, delivery costs rising faster than order volume, and customer churn caused by inconsistent delivery experiences.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "not_actionable"
+          ]
+        }
+      ]
+    }
+  ]
+}
