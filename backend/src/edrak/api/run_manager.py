@@ -381,9 +381,36 @@ class RunManager:
                 except Exception:  # noqa: BLE001 - keep the run going; the brief still has the result in memory
                     logger.exception("Could not store the result of task %s", wr.task_id)
                 await analyses_repo.update_task_fields(db, wr.task_id, attempt=wr.attempt)
+                try:
+                    await self._store_metrics(db, request_id, wr)
+                except Exception:  # noqa: BLE001 - typed metrics are additive; never fail the run for them
+                    logger.exception("Could not store metrics of task %s", wr.task_id)
                 if workspace_id and wr.worker == WorkerType.COMPETITOR_INTELLIGENCE:
                     await self._remember_competitors(db, workspace_id, wr)
             await db.commit()
+
+    @staticmethod
+    async def _store_metrics(db: Any, request_id: str, wr: WorkerResult) -> None:
+        """Typed observations and the checklist outcomes a worker reported."""
+        from edrak.db.repositories import metrics as metrics_repo
+        from edrak.metrics.contracts import RequirementOutcome
+        from edrak.metrics.requirements import observations_of
+
+        await db.execute("DELETE FROM metrics WHERE request_id = ? AND worker = ? AND method = 'worker'",
+                         (request_id, wr.worker.value))
+        for obs in observations_of(wr):
+            await metrics_repo.insert_metric(db, request_id, obs, worker=wr.worker.value, task_id=wr.task_id,
+                                             attempt=wr.attempt, commit=False)
+        required = {(r.get("metric_id"), str(r.get("entity", "")).lower()): bool(r.get("required", True))
+                    for r in wr.metadata.get("requirements") or []}
+        outcomes = []
+        for raw in wr.metadata.get("requirement_outcomes") or []:
+            try:
+                o = RequirementOutcome.model_validate(raw)
+            except Exception:  # noqa: BLE001
+                continue
+            outcomes.append((o, required.get((o.metric_id, o.entity.lower()), True)))
+        await metrics_repo.write_outcomes(db, request_id, wr.task_id, outcomes, commit=False)
 
     @staticmethod
     async def _remember_competitors(db: Any, workspace_id: str, wr: WorkerResult) -> None:
@@ -411,6 +438,12 @@ class RunManager:
         for wr in results:
             for g in wr.gaps:
                 gaps.append({"worker": wr.worker.value, "subject": g, "suggested_action": "investigate"})
+        for wr in results:
+            for raw in wr.metadata.get("requirement_outcomes") or []:
+                if isinstance(raw, dict) and raw.get("status") == "gap":
+                    why = (raw.get("reason") or "not_found").replace("_", " ")
+                    gaps.append({"worker": wr.worker.value, "subject": f"{raw.get('metric_id')} for {raw.get('entity')}",
+                                 "description": f"Not established: {why}.", "suggested_action": "investigate"})
         for m in verification.control_summary.missing_information:
             gaps.append({"subject": m, "suggested_action": "investigate"})
         try:

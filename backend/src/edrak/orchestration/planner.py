@@ -13,6 +13,7 @@ from ..contracts import (
 )
 from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
+from ..metrics.planning import requirements_for
 from .prompts import PLANNER_SYSTEM_PROMPT
 
 MAX_REPAIR_ATTEMPTS = 1
@@ -106,6 +107,8 @@ class LlmPlanner:
         for assignment in reply.assignments:
             if assignment.worker not in {a.worker for a in assignments}:
                 assignments.append(assignment)
+        ctx = request.business_context
+        competitors = [c.name for c in ctx.competitors] or list(ctx.targets)
         tasks = [
             ResearchTask(
                 parent_request_id=request.request_id,
@@ -113,7 +116,11 @@ class LlmPlanner:
                 goal=assignment.goal,
                 focus=assignment.focus,
                 company_profile=request.company_profile,
-                business_context=request.business_context,
+                business_context=ctx,
+                requirements=requirements_for(
+                    assignment.worker.value, ctx.use_case.value, request.company_profile.name,
+                    competitors, list(ctx.markets),
+                ),
             )
             for assignment in assignments
         ]

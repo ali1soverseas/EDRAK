@@ -158,12 +158,61 @@ def run_task(task: ResearchTask, registry: WorkerRegistry) -> WorkerResult:
         return _failed(task, str(exc))
 
     try:
-        return WorkerResult.model_validate(worker.run(task))
+        result = WorkerResult.model_validate(worker.run(task))
     except ValidationError as exc:
         return _failed(task, f"worker returned an invalid WorkerResult: {exc}")
     # A worker is third-party code. Any failure is contained, not propagated.
     except Exception as exc:  # noqa: BLE001
         return _failed(task, f"worker raised {type(exc).__name__}: {exc}")
+    return _check_requirements(task, result, worker)
+
+
+def _with_metrics(task: ResearchTask, result: WorkerResult) -> WorkerResult:
+    """Make sure the result carries typed metrics: keep the worker's own, add what extraction finds."""
+    from ..briefing.extract import extract_observations
+    from ..metrics.requirements import observations_of
+
+    have = observations_of(result)
+    found = extract_observations(task, result) if task.requirements and result.evidence else []
+    known = {(o.metric_id, o.entity.lower(), o.value, o.evidence_id) for o in have}
+    merged = [*have] + [o for o in found if (o.metric_id, o.entity.lower(), o.value, o.evidence_id) not in known]
+    if task.worker.value == "customer_trends":
+        # Customer figures are only as good as the sample behind them.
+        total = ((result.metadata.get("control_summary") or {}).get("coverage") or {}).get("total")
+        if isinstance(total, int):
+            merged = [o if o.sample_size else o.model_copy(update={"sample_size": total}) for o in merged]
+    meta = dict(result.metadata)
+    meta["metrics"] = [o.model_dump(mode="json") for o in merged]
+    return result.model_copy(update={"metadata": meta})
+
+
+def _check_requirements(task: ResearchTask, result: WorkerResult, worker: Any) -> WorkerResult:
+    """After a worker: extract typed metrics, check the task's checklist, retry only what is missing."""
+    if not task.requirements or result.status is WorkerStatus.FAILED:
+        return result
+    from ..metrics import requirements as req
+    from ..metrics.contracts import OutcomeStatus
+
+    try:
+        result = _with_metrics(task, result)
+        outcomes = req.check(task, result)
+        retry = req.needs_retry(outcomes)
+        if retry:
+            second = req.retry_task(task, retry)
+            try:
+                again = _with_metrics(second, WorkerResult.model_validate(worker.run(second)))
+                result = req.merge_results(result, again)
+                outcomes = req.check(second.model_copy(update={"requirements": task.requirements}), result)
+            except Exception as exc:  # noqa: BLE001 - the retry is best effort; the first result stands
+                logger.info("Retry for %s failed: %s", task.worker.value, exc)
+        outcomes = [o.model_copy(update={"status": OutcomeStatus.GAP}) if o.status is OutcomeStatus.RETRY else o for o in outcomes]
+        meta = dict(result.metadata)
+        meta["requirement_outcomes"] = [o.model_dump(mode="json") for o in outcomes]
+        meta["requirements"] = [r.model_dump(mode="json") for r in task.requirements]
+        return result.model_copy(update={"metadata": meta})
+    except Exception as exc:  # noqa: BLE001 - never lose a worker's findings to the checklist
+        logger.warning("Requirement check failed for %s: %s", task.worker.value, exc)
+        return result
 
 
 def make_dispatch_worker(

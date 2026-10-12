@@ -217,7 +217,8 @@ class CompetitorState(TypedDict, total=False):
 
     research_stage: int
     research_strategy: str
-    research_requirements: List[Dict[str, str]]  # each has id/competitor/requirement
+    research_requirements: List[Dict[str, str]]  # each has id/competitor/requirement (+ metric_id when seeded)
+    metric_requirements: List[Dict[str, Any]]    # typed figures the planner asked for (MetricRequirement dumps)
 
     search_queries: List[Dict[str, str]]
     executed_queries: List[Dict[str, Any]]

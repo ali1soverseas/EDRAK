@@ -64,6 +64,14 @@ def review_payload(state: OrchestrationState) -> dict[str, Any]:
                     "goal": f"{task.goal} {action.reason}",
                     "focus": task.focus,
                 })
+    missing_metrics = []
+    for wr in state.get("results") or []:
+        required = {(r.get("metric_id"), str(r.get("entity", "")).lower()): r.get("required", True)
+                    for r in wr.metadata.get("requirements") or []}
+        for o in wr.metadata.get("requirement_outcomes") or []:
+            if o.get("status") == "gap" and required.get((o.get("metric_id"), str(o.get("entity", "")).lower()), True):
+                missing_metrics.append({"worker": wr.worker.value, "metric_id": o.get("metric_id"),
+                                        "entity": o.get("entity"), "reason": o.get("reason")})
     status = decision.status.value if decision is not None else "cannot_complete"
     recommended = "continue"
     if status in ("replan_required", "retry_required") and proposed and replans < settings.MAX_REPLANS:
@@ -79,6 +87,7 @@ def review_payload(state: OrchestrationState) -> dict[str, Any]:
         "missing_information": list(getattr(summary, "missing_information", []) or [])[:20],
         "conflicts": list(getattr(summary, "conflicts", []) or [])[:20],
         "failures": list(getattr(summary, "failures", []) or [])[:20],
+        "missing_metrics": missing_metrics[:30],
         "proposed_tasks": proposed,
         "replan_reasons": reasons,
         "replans_done": replans,

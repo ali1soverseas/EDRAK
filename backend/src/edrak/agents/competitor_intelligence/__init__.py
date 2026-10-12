@@ -117,6 +117,7 @@ def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
         "research_focus": task.focus,
         "competitors": competitors,
         "competitor_info": info,
+        "metric_requirements": [r.model_dump(mode="json") for r in task.requirements],
         "research_stage": 1,
         "search_results": [],
         "executed_queries": [],

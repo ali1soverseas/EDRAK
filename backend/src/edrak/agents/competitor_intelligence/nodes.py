@@ -1114,6 +1114,19 @@ def identify_research_requirements_node(
     per_competitor: Dict[str, int] = {}
     seen_text = set()
 
+    # The typed figures the planner asked for come first and take the budget before open exploration.
+    for mr in state.get("metric_requirements") or []:
+        competitor = canonical.get(str(mr.get("entity", "")).strip().lower())
+        if not competitor or per_competitor.get(competitor, 0) >= MAX_REQUIREMENTS_PER_COMPETITOR:
+            continue
+        text = f"{mr.get('definition') or mr.get('metric_id')} ({mr.get('metric_id')})"
+        per_competitor[competitor] = per_competitor.get(competitor, 0) + 1
+        seen_text.add((competitor, text.lower()))
+        requirements.append({
+            "id": f"R{len(requirements) + 1}", "competitor": competitor, "requirement": text,
+            "metric_id": mr.get("metric_id"), "required": bool(mr.get("required", True)),
+        })
+
     for item in result.requirements:
         competitor = canonical.get(
             item.competitor.strip().lower()
@@ -1964,18 +1977,27 @@ def check_research_requirements_node(
 
     verified = state.get("verified_findings", [])
     checks = []
+    from edrak.metrics.registry import get_registry
+
     for r in state.get("research_requirements", []):
         found = [
             f for f in verified
             if f.get("competitor") == r["competitor"] and f.get("requirement_id") == r["id"]
         ]
+        reason = "No source found yet that establishes this."
+        defn = get_registry().get(r.get("metric_id"))
+        # A figure that must come from the company itself is not met by a third party's page.
+        if found and defn and defn.check.get("official_source_required") and not any(
+            is_official(e.get("source_url", ""), r["competitor"]) for f in found for e in (f.get("evidence") or [])
+        ):
+            found, reason = [], "Only third-party sources so far; this figure needs the company's own page."
         checks.append({
             "requirement_id": r["id"],
             "competitor": r["competitor"],
             "requirement": r["requirement"],
             "status": "fulfilled" if found else "missing",
             "evidence_found": f"{len(found)} grounded finding(s)" if found else "",
-            "missing_reason": "" if found else "No source found yet that establishes this.",
+            "missing_reason": "" if found else reason,
             "confidence": requirement_confidence(found, r["id"]),
             "evidence_quality": requirement_evidence_quality(found, r["id"]),
         })
