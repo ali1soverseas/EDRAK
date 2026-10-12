@@ -76,11 +76,12 @@ def docs_from_document(document: dict[str, Any]) -> list[IndexDoc]:
                                      {"lens": lens.get("worker") or "", "status": f.get("status") or ""}))
     for card in (document.get("cards") or {}).values():
         docs.append(card_doc(card))
-    for g in (document.get("gaps_panel") or {}).get("gaps", []):
-        docs.append(IndexDoc("gap", g.get("card_key") or g.get("metric_id") or "gap", f"{g.get('title')}: {g.get('explanation')}", 1,
+    for idx, g in enumerate((document.get("gaps_panel") or {}).get("gaps", [])):
+        key = g.get("card_key") or g.get("metric_id") or f"gap-panel-{idx}"
+        docs.append(IndexDoc("gap", key, f"{g.get('title')}: {g.get('explanation')}", 1,
                              {"entity": g.get("entity") or ""}))
-    for g in document.get("gaps") or []:
-        docs.append(IndexDoc("gap", (g.get("text") or "")[:40], g.get("text") or "", 1, {"lens": g.get("reported_by") or ""}))
+    for idx, g in enumerate(document.get("gaps") or []):
+        docs.append(IndexDoc("gap", f"gap-{idx}", g.get("text") or "", 1, {"lens": g.get("reported_by") or ""}))
     ctl = ((document.get("verification") or {}).get("control_summary") or {})
     for kind_key in ("missing_information", "conflicts", "failures"):
         for i, t in enumerate(ctl.get(kind_key) or []):
@@ -90,7 +91,14 @@ def docs_from_document(document: dict[str, Any]) -> list[IndexDoc]:
     for s in document.get("signals_view") or []:
         docs.append(IndexDoc("signal", s.get("signal_id") or "", f"{s.get('title')}. {s.get('signal')} {s.get('why_it_matters') or ''}"[:MAX_TEXT], 1,
                              {"lens": ",".join(map(str, s.get("domains") or []))}))
-    return [d for d in docs if d.text.strip()]
+    # Ensure doc_ids are strictly unique to satisfy ChromaDB requirements
+    seen_ids: set[str] = set()
+    unique_docs: list[IndexDoc] = []
+    for d in docs:
+        if d.text.strip() and d.doc_id not in seen_ids:
+            seen_ids.add(d.doc_id)
+            unique_docs.append(d)
+    return unique_docs
 
 
 # ---------------------------------------------------------------------------- stores
