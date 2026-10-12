@@ -42,6 +42,8 @@ export interface Workspace {
 export interface Session {
   user: User;
   workspace: Workspace;
+  onboarding_complete?: boolean;
+  onboarding_step?: number;
 }
 
 /* ------------------------------------------------------------ company setup */
@@ -130,8 +132,11 @@ export interface AnalysisForm {
 
 export type AnalysisStatus =
   | "draft"
+  | "planning"
   | "awaiting_approval"
   | "running"
+  | "awaiting_review"
+  | "paused"
   | "completed"
   | "partial"
   | "failed"
@@ -171,9 +176,9 @@ export interface AnalysisDetail {
 
 /* ---------------------------------------------------------------- live run */
 
-export type RunStage = "plan" | "dispatch" | "workers" | "verify" | "synthesize" | "brief";
+export type RunStage = "plan" | "dispatch" | "workers" | "verify" | "review" | "synthesize" | "brief";
 
-export type RunState = "running" | "completed" | "partial" | "failed" | "cancelled";
+export type RunState = "running" | "awaiting_review" | "paused" | "completed" | "partial" | "failed" | "cancelled";
 
 export type TaskState = "queued" | "running" | "done" | "failed";
 
@@ -216,11 +221,31 @@ export interface RunView {
   tasks: RunTaskView[];
   events: RunEvent[];
   verification: "waiting" | "running" | "done";
-  /** What verification is doing while it runs. The backend sends these, the mock does not. */
+  /** What verification is doing while it runs. The backend sends these. */
   verification_activity?: string;
   verification_progress?: number;
   verification_log?: Array<{ at: string; text: string }>;
   brief_id: string | null;
+  /** Checkpoint 2: what the person reviews while the run waits. */
+  review?: RunReview | null;
+  notify_instead?: boolean;
+}
+
+export interface RunReview {
+  review_id: string;
+  round: number;
+  verification_status: string;
+  summary: string;
+  findings_total: number;
+  findings_verified: number;
+  findings_weak: number;
+  missing_information: string[];
+  conflicts: string[];
+  failures: string[];
+  proposed_tasks: Array<{ task_id: string; worker: string; goal: string; focus: string }>;
+  replans_done: number;
+  can_replan: boolean;
+  recommended: "continue" | "replan" | "stop";
 }
 
 /* ------------------------------------------------------------------- brief */

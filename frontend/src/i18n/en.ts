@@ -51,6 +51,9 @@ export const en = {
   /* status */
   "status.draft": "Draft",
   "status.awaiting": "Awaiting plan approval",
+  "status.planning": "Planning",
+  "status.reviewWaiting": "Waiting for your review",
+  "status.paused": "Paused",
   "status.running": "Running",
   "status.verified": "Verified",
   "status.partial": "Partial evidence",

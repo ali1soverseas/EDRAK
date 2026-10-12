@@ -74,6 +74,9 @@ export const ar: Record<TKey, string> & Record<string, string> = {
   /* status */
   "status.draft": "مسودة",
   "status.awaiting": "بانتظار اعتماد الخطة",
+  "status.planning": "جارٍ التخطيط",
+  "status.reviewWaiting": "بانتظار مراجعتك",
+  "status.paused": "متوقف مؤقتًا",
   "status.running": "قيد التشغيل",
   "status.verified": "تم التحقق",
   "status.partial": "أدلة جزئية",

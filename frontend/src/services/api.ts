@@ -1,11 +1,6 @@
 /**
- * The frontend's whole view of the backend.
- *
- * Every screen talks to `api`, never to fetch directly. Today `api` is the mock in
- * ./mock/mockApi, because the backend has no run, plan or brief endpoints yet. When
- * they exist, write an `HttpApi` that implements `EdrakApi` and export it here. No
- * screen changes. edrak-ui-handoff/docs/mvp_screens_to_tables.md lists what each
- * screen reads and writes, which is the endpoint list.
+ * The MVP screens' view of the backend (sign in, company, analyses, plan, run, brief).
+ * Product screens added later call ./edrak.ts. Both talk to the FastAPI backend only.
  */
 import type {
   AnalysisDetail,
@@ -18,7 +13,6 @@ import type {
   RunView,
   Session,
 } from "../types/app";
-import { mockApi } from "./mock/mockApi";
 
 export type ApiErrorCode =
   | "invalid_credentials"
@@ -74,5 +68,4 @@ export interface EdrakApi {
 
 import { httpApi } from "./httpApi";
 
-export const api: EdrakApi =
-  import.meta.env.VITE_USE_MOCK === "true" ? mockApi : httpApi;
+export const api: EdrakApi = httpApi;

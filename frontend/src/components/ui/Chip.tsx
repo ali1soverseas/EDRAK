@@ -33,7 +33,10 @@ export function Chip({ tone, icon, iconSize = 13, spinning = false, style, child
 
 const STATUS: Record<AnalysisStatus, { tone: ChipProps["tone"]; icon: IconName; label: TKey; spinning?: boolean }> = {
   draft: { tone: "draft", icon: "file", label: "status.draft" },
+  planning: { tone: "run", icon: "refresh", label: "status.planning", spinning: true },
   awaiting_approval: { tone: "await", icon: "pause", label: "status.awaiting" },
+  awaiting_review: { tone: "await", icon: "shield", label: "status.reviewWaiting" },
+  paused: { tone: "draft", icon: "pause", label: "status.paused" },
   running: { tone: "run", icon: "refresh", label: "status.running", spinning: true },
   completed: { tone: "ok", icon: "check", label: "status.verified" },
   partial: { tone: "ins", icon: "warning", label: "status.partial" },
