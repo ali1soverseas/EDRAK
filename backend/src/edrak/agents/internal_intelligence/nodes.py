@@ -99,6 +99,10 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     workspace_id = task.company_profile.workspace_id if task else None
     candidates: List[Evidence] = []
     seen_keys: Set[str] = set()
+    if not workspace_id:
+        # Never search the shared store without a workspace: that would read other companies' documents.
+        logger.warning("Internal retrieval skipped: the task carries no workspace_id.")
+        queries = []
 
     for q in queries:
         try:

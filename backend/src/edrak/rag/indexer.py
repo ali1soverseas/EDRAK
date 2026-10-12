@@ -193,6 +193,8 @@ class InternalIndexer:
         workspace_id: Optional[str] = None,
     ) -> List[DocumentChunk]:
         """Parse the header and chunk by heading, without writing anything."""
+        if not workspace_id:
+            raise ValueError("workspace_id is required: every indexed chunk must belong to one workspace.")
         fm, body = parse_frontmatter(content)
         header, body = parse_doc_header(body)
 
@@ -210,13 +212,19 @@ class InternalIndexer:
         doc_meta["is_synthetic"] = bool(is_synthetic)
         doc_meta["origin"] = "synthetic_internal" if is_synthetic else doc_meta.get("origin", "internal")
 
-        return self.chunk_text(
+        chunks = self.chunk_text(
             text=body,
             source_uri=source_uri,
             title=resolved_title,
             doc_type=doc_type,
             extra_metadata=doc_meta,
         )
+        # The same file indexed for two workspaces must not overwrite one another's chunks. The demo
+        # workspace keeps its original ids so chunks indexed before this change are still addressed.
+        if workspace_id != settings.DEMO_WORKSPACE_ID:
+            for c in chunks:
+                c.chunk_id = f"{workspace_id}_{c.chunk_id}"
+        return chunks
 
     def upsert_chunks(self, chunks: List[DocumentChunk]) -> int:
         """Write prepared chunks to the vector store. Returns how many were written."""

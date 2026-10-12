@@ -26,8 +26,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("ingest_internal_data")
 
 
-def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
-    """Loads pre-chunked JSON files and inserts them into ChromaDB."""
+def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path, workspace_id: str) -> int:
+    """Loads pre-chunked JSON files and inserts them into ChromaDB, all owned by `workspace_id`."""
     if not chunk_dir.exists():
         logger.warning("Handbook chunk directory not found: %s", chunk_dir)
         return 0
@@ -57,6 +57,10 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
                     continue
 
                 chunk_id = chunk["chunk_id"]
+                # The demo workspace keeps the original ids; any other workspace gets its own, so two
+                # workspaces ingesting the same handbook never overwrite one another.
+                if workspace_id != settings.DEMO_WORKSPACE_ID:
+                    chunk_id = f"{workspace_id}_{chunk_id}"
                 if chunk_id in seen_ids:
                     chunk_id = f"{chunk_id}_{len(seen_ids)}"
                 seen_ids.add(chunk_id)
@@ -77,7 +81,7 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
                     "doc_type": "internal_handbook",
                     "is_synthetic": "false",
                     "origin": "public_handbook",
-                    "workspace_id": settings.DEMO_WORKSPACE_ID,
+                    "workspace_id": workspace_id,
                 }
                 all_ids.append(chunk_id)
                 all_documents.append(content)
@@ -104,9 +108,12 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path) -> int:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Ingest internal data and handbook chunks into ChromaDB.")
-    parser.add_argument("--reset", action="store_true", help="Reset ChromaDB collection before ingestion")
+    parser = argparse.ArgumentParser(description="Ingest internal data and handbook chunks into ChromaDB for ONE workspace.")
+    parser.add_argument("--workspace", required=True, help="Workspace id that will own the ingested chunks (the GitLab demo uses %s)" % settings.DEMO_WORKSPACE_ID)
+    parser.add_argument("--reset", action="store_true", help="Delete this workspace's chunks first (other workspaces are untouched)")
+    parser.add_argument("--reset-all", action="store_true", help="Delete the ENTIRE collection, every workspace included (asks to confirm)")
     args = parser.parse_args()
+    workspace_id = args.workspace.strip()
 
     logger.info("==================================================================")
     logger.info("EDRAK Internal Knowledge Ingestion (ChromaDB + Local HuggingFace)")
@@ -114,21 +121,29 @@ def main():
     logger.info("Embedding Model: %s (Dimension: %d)", settings.EMBEDDING_MODEL_NAME, settings.EMBEDDING_DIMENSION)
     logger.info("Vector Store Path: %s", settings.get_absolute_vector_store_path())
 
+    logger.info("Workspace: %s", workspace_id)
+
     indexer = InternalIndexer()
-    if args.reset:
+    if args.reset_all:
+        if input("This deletes EVERY workspace's documents from the vector store. Type 'delete everything' to continue: ").strip() != "delete everything":
+            logger.info("Cancelled.")
+            return
         logger.info("Resetting collection '%s'...", settings.CHROMA_COLLECTION_NAME)
         indexer.reset_collection()
+    elif args.reset:
+        logger.info("Removing workspace %s's chunks from '%s'...", workspace_id, settings.CHROMA_COLLECTION_NAME)
+        indexer.delete_workspace_documents(workspace_id)
 
     # 1. Ingest internal markdown documents (Synthetic internal data)
     internal_data_dir = settings.get_absolute_internal_data_path()
     logger.info("Indexing internal documents from %s...", internal_data_dir)
     internal_chunks_count = indexer.index_directory(
-        internal_data_dir, is_synthetic=True, workspace_id=settings.DEMO_WORKSPACE_ID
+        internal_data_dir, is_synthetic=True, workspace_id=workspace_id
     )
 
     # 2. Ingest handbook chunks
     chunk_dir = settings.get_absolute_chunked_handbook_path()
-    handbook_chunks_count = ingest_chunked_handbook(indexer, chunk_dir)
+    handbook_chunks_count = ingest_chunked_handbook(indexer, chunk_dir, workspace_id)
 
     total_chunks = handbook_chunks_count + internal_chunks_count
     logger.info("Ingestion completed! Total chunks indexed: %d (Internal Docs: %d, Handbook: %d)",
@@ -144,7 +159,7 @@ def main():
     ]
     for query in test_queries:
         logger.info("\n--- Query: '%s' ---", query)
-        results = retriever.retrieve(query=query, top_k=2)
+        results = retriever.retrieve(query=query, top_k=2, workspace_id=workspace_id)
         if not results:
             logger.warning("  No evidence retrieved.")
         for i, ev in enumerate(results, 1):

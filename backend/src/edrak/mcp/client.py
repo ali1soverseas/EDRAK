@@ -22,13 +22,14 @@ class InternalDataToolClient:
     def search_internal_knowledge(
         self,
         query: str,
+        workspace_id: str,
         top_k: int = 4,
         doc_type: Optional[str] = None,
     ) -> List[Evidence]:
-        """Queries the internal knowledge base and returns typed Evidence items."""
+        """Queries one workspace's internal knowledge and returns typed Evidence items."""
         where_filter = {"doc_type": doc_type} if doc_type else None
-        return self._retriever.retrieve(query=query, top_k=top_k, where_filter=where_filter)
+        return self._retriever.retrieve(query=query, top_k=top_k, where_filter=where_filter, workspace_id=workspace_id)
 
-    def get_document_by_id(self, chunk_id: str) -> Optional[Evidence]:
-        """Fetches a specific document chunk by its ID."""
-        return self._retriever.get_document_by_id(chunk_id)
+    def get_document_by_id(self, chunk_id: str, workspace_id: str) -> Optional[Evidence]:
+        """Fetches a specific chunk by its ID, if it belongs to the workspace."""
+        return self._retriever.get_document_by_id(chunk_id, workspace_id)

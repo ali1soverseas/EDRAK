@@ -85,7 +85,7 @@ class CompanyProfile(ContractModel):
     workspace_id: str | None = Field(
         default=None,
         description="Workspace whose uploaded documents the Internal worker may search. "
-        "When unset the whole knowledge base is searched.",
+        "When unset no internal documents are searched (a search never spans workspaces).",
     )
 
 

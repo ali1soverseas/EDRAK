@@ -83,7 +83,7 @@ def test_full_internal_flow():
     logger.info("\n>>> [STEP 4/5] Testing Semantic Retrieval via InternalRetriever...")
     retriever = InternalRetriever()
     test_query = "GitLab Duo Enterprise pricing and seat cost"
-    evidence_results = retriever.retrieve(query=test_query, top_k=3)
+    evidence_results = retriever.retrieve(query=test_query, top_k=3, allow_all_workspaces=True)
 
     logger.info("Query: '%s' returned %d evidence items:", test_query, len(evidence_results))
     for i, ev in enumerate(evidence_results, 1):

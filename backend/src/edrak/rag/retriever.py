@@ -121,11 +121,17 @@ class InternalRetriever:
         where_filter: Optional[Dict[str, Any]] = None,
         min_score: Optional[float] = None,
         workspace_id: Optional[str] = None,
+        allow_all_workspaces: bool = False,
     ) -> List[Evidence]:
         """Semantic search -> thresholded, de-duplicated Evidence (best first).
 
-        With `workspace_id`, only that workspace's chunks are searched."""
+        Only `workspace_id`'s chunks are searched. Without one nothing is returned: a lost id must never
+        widen a search to every workspace. Maintenance scripts that really mean "the whole store" pass
+        `allow_all_workspaces=True`."""
         if not query.strip():
+            return []
+        if not workspace_id and not allow_all_workspaces:
+            logger.warning("Internal retrieval refused: no workspace_id given.")
             return []
         threshold = self.min_score if min_score is None else min_score
 
@@ -175,12 +181,16 @@ class InternalRetriever:
         )
         return [self._to_evidence(doc, meta, query, score) for score, doc, meta in ranked]
 
-    def get_document_by_id(self, chunk_id: str) -> Optional[Evidence]:
-        """Retrieves an exact chunk by its ID."""
+    def get_document_by_id(self, chunk_id: str, workspace_id: Optional[str] = None) -> Optional[Evidence]:
+        """Retrieves an exact chunk by its ID, only if it belongs to `workspace_id`."""
+        if not workspace_id:
+            return None
         try:
             res = self.collection.get(ids=[chunk_id])
-            if res and res.get("documents"):
+            if res and res.get("documents") and res["documents"]:
                 meta = res["metadatas"][0] if res.get("metadatas") else {}
+                if (meta or {}).get("workspace_id") != workspace_id:
+                    return None
                 return self._to_evidence(res["documents"][0], meta)
         except Exception as e:
             logger.error("Error retrieving chunk %s: %s", chunk_id, e)

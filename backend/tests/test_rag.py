@@ -30,7 +30,7 @@ def test_internal_indexer_and_retriever():
         assert chunks_indexed > 0
 
         retriever = InternalRetriever(persist_dir=tmp_path, collection_name=collection_name)
-        results = retriever.retrieve(query="How much does GitLab Duo Pro cost?", top_k=2)
+        results = retriever.retrieve(query="How much does GitLab Duo Pro cost?", top_k=2, allow_all_workspaces=True)
 
         assert len(results) > 0
         assert "19" in (results[0].excerpt or results[0].extracted_fact)
