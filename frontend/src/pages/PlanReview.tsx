@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
+import { useL } from "../lib/useL";
 import { StatusChip } from "../components/ui/Chip";
 import { Icon } from "../components/ui/Icon";
 import { Overlay } from "../components/ui/Overlay";
@@ -155,6 +156,7 @@ export function PlanReview() {
   const [rejecting, setRejecting] = useState(false);
   const [error, setError] = useState(false);
 
+  const L = useL();
   const detail = analysis.data;
   const crumbs = [
     { label: t("nav.analyses"), to: "/" },
@@ -236,9 +238,17 @@ export function PlanReview() {
       {chrome}
       <div className="analysis-grid">
         <div className="col grow" style={{ minWidth: 0, gap: 18 }}>
+          {(detail?.request.business_context.competitors ?? []).length > 0 && (
+            <div className="row g8 wrap" style={{ order: 2 }}>
+              <span className="s13 muted">{L("Competitors to research", "المنافسون المستهدفون")}:</span>
+              {detail!.request.business_context.competitors.map((c) => (
+                <span key={c.name} className="pill"><bdi>{c.name}</bdi>{c.discovered_by === "agent" && <span className="tag-agent">{L("Found by Edrak", "وجده إدراك")}</span>}</span>
+              ))}
+            </div>
+          )}
           <div className="row jb ae plan-head">
             <div>
-              <div className="eyebrow">{t("plan.eyebrow")}</div>
+              <div className="eyebrow">{t("plan.eyebrow")} · {L("Checkpoint 1 of 2", "نقطة المراجعة 1 من 2")}</div>
               <h1 className="disp plan-title" style={{ fontSize: 32, margin: "8px 0 0" }}>
                 {t("plan.title")}
               </h1>
