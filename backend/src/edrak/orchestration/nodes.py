@@ -244,6 +244,29 @@ def _failed(task: ResearchTask, detail: str) -> WorkerResult:
     )
 
 
+def metrics_node(state: OrchestrationState) -> OrchestrationState:
+    """Check every typed number against its saved source and against the other sources.
+
+    Runs after verification so checkpoint 2 can show conflicts. Deterministic: no model call.
+    """
+    print("\n[metrics] NODE: reconcile")
+    from ..briefing.reconcile import reconcile
+
+    results = list(state.get("results") or [])
+    try:
+        fixed, conflicts = reconcile(results)
+    except Exception as exc:  # noqa: BLE001 - reconciliation never stops a run
+        logger.warning("Metric reconciliation failed: %s", exc)
+        return state
+    update: dict[str, Any] = {"results": fixed}
+    vr = state.get("verification_result")
+    if vr is not None and conflicts:
+        cs = vr.control_summary
+        merged = list(dict.fromkeys([*cs.conflicts, *conflicts]))
+        update["verification_result"] = vr.model_copy(update={"control_summary": cs.model_copy(update={"conflicts": merged})})
+    return update
+
+
 def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
     print("\n[verification] NODE: verify")
     from ..contracts.verification import VerificationInput

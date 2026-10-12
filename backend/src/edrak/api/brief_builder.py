@@ -80,6 +80,7 @@ def build_brief(
     cross_signal: Optional[dict[str, Any]] = None,
     decision_analysis: Optional[dict[str, Any]] = None,
     evidence_numbers: Optional[dict[tuple[str, int, str], int]] = None,
+    v3: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     """Assemble the frontend-compatible Brief JSON structure.
 
@@ -340,7 +341,7 @@ def build_brief(
     else:
         evidence_status = "verified"
 
-    return {
+    document = {
         "brief_id": brief_id,
         "brief_no": brief_no,
         "analysis_id": analysis_id,
@@ -371,3 +372,8 @@ def build_brief(
         "cross_signal": cross_signal,
         "decision_analysis": decision_analysis,
     }
+    if v3:
+        # Typed half of the brief: headline, KPI strip, coverage, cards. The old keys stay so v2 readers still work.
+        document.update(v3)
+        document["summary_text"] = v3.get("headline") or document["summary_text"]
+    return document

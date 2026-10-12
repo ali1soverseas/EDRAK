@@ -79,6 +79,9 @@ def _apply_additions(path: Path) -> None:
     try:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_V3_PATH.read_text(encoding="utf-8"))
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(metrics)")}
+        if "label" not in cols:  # databases created by an earlier build of this file
+            conn.execute("ALTER TABLE metrics ADD COLUMN label text")
         conn.commit()
     finally:
         conn.close()

@@ -8,7 +8,8 @@ import aiosqlite
 
 from edrak.db.util import dumps, fetch_all, fetch_one, fetch_value, loads, new_id
 
-DOCUMENT_VERSION = 2
+DOCUMENT_VERSION = 2  # briefs without typed metrics
+TYPED_DOCUMENT_VERSION = 3
 
 
 async def reserve_brief_number(db: aiosqlite.Connection, workspace_id: str) -> int:
@@ -34,13 +35,14 @@ async def save_brief(
     build: Callable[[str, int], dict[str, Any]],
     brief_id: Optional[str] = None,
     number: Optional[int] = None,
-    document_version: int = DOCUMENT_VERSION,
+    document_version: Optional[int] = None,
 ) -> dict[str, Any]:
     """Number and store a brief. `build(brief_id, number)` returns the document."""
     brief_id = brief_id or new_id()
     if number is None:
         number = await reserve_brief_number(db, workspace_id)
     document = build(brief_id, number)
+    document_version = document_version or (TYPED_DOCUMENT_VERSION if document.get("cards") is not None else DOCUMENT_VERSION)
     evidence_status = document.get("evidence_status") or ("partial" if document.get("partial") else "verified")
     if evidence_status not in ("verified", "partial", "insufficient", "failed"):
         evidence_status = "partial"

@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from edrak.api.deps import get_current_session, get_db_conn
 from edrak.api.schemas import SessionOut
 from edrak.db.repositories import briefs as briefs_repo
+from edrak.db.repositories import cards as cards_repo
 from edrak.db.util import loads
 
 router = APIRouter(prefix="/briefs", tags=["briefs"])
@@ -31,7 +32,22 @@ async def get_brief(
     document["lifecycle"] = row["lifecycle"]
     document["evidence_status"] = row["evidence_status"]
     document["document_version"] = row["document_version"]
+    if document.get("cards"):
+        document["cards"] = await merge_card_versions(db, row["id"], dict(document["cards"]))
     return document
+
+
+async def merge_card_versions(db: aiosqlite.Connection, brief_id: str, cards: dict[str, Any]) -> dict[str, Any]:
+    """The brief document is frozen; a challenged card has newer versions in brief_cards. Show the latest."""
+    for key, row in (await cards_repo.latest(db, brief_id)).items():
+        base = cards.get(key, {})
+        labels = row["labels"] or {}
+        cards[key] = {**base, "card_key": key, "component": row["component"], "headline": row["headline"] or base.get("headline"),
+                      "why_visual": row["why_visual"], "slots": row["slots"], "status": row["status"],
+                      "title": labels.get("title") or base.get("title"), "caveat": labels.get("caveat"),
+                      "refs": labels.get("refs") or base.get("refs") or [], "metric_uids": labels.get("metric_uids") or base.get("metric_uids") or [],
+                      "version": row["version"], "origin": row["origin"]}
+    return cards
 
 
 @router.get("/{brief_id}/quality")

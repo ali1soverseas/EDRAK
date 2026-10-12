@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS metrics (
   scope          text NOT NULL DEFAULT 'third_party'
                    CHECK (scope IN ('official','third_party','internal','public_proxy_for_internal')),
   sample_size    integer,
+  label          text,
   status         text NOT NULL DEFAULT 'unverified' CHECK (status IN ('verified','thin','conflict','unverified')),
   derived        integer NOT NULL DEFAULT 0 CHECK (derived IN (0,1)),
   formula        text,
@@ -50,3 +51,25 @@ CREATE TABLE IF NOT EXISTS requirement_outcomes (
   updated_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   PRIMARY KEY (request_id, task_id, metric_id, entity)
 );
+
+-- Live versions of the cards on a brief. The brief document is frozen; a challenge adds a new version here.
+CREATE TABLE IF NOT EXISTS brief_cards (
+  id            text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  brief_id      text NOT NULL REFERENCES briefs(id) ON DELETE CASCADE,
+  card_key      text NOT NULL,
+  version       integer NOT NULL DEFAULT 1,
+  section       text,
+  component     text NOT NULL,
+  headline      text,
+  why_visual    text,
+  slots         text NOT NULL DEFAULT '{}' CHECK (json_valid(slots)),
+  labels        text NOT NULL DEFAULT '{}' CHECK (json_valid(labels)),
+  status        text,
+  origin        text NOT NULL DEFAULT 'pipeline' CHECK (origin IN ('pipeline','challenge')),
+  supersedes_id text REFERENCES brief_cards(id),
+  note          text,
+  created_by    text,
+  created_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UNIQUE (brief_id, card_key, version)
+);
+CREATE INDEX IF NOT EXISTS brief_cards_brief_idx ON brief_cards (brief_id, card_key);

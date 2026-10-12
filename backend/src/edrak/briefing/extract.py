@@ -35,6 +35,7 @@ class Candidate(BaseModel):
     source_span: str = Field(description="Copy the exact words from the source that state the number.")
     period: Optional[str] = None
     definition: Optional[str] = None
+    label: Optional[str] = Field(default=None, description="For parts of a whole (sentiment, share): the part, e.g. 'positive'.")
 
 
 class Candidates(BaseModel):
@@ -73,7 +74,7 @@ def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Op
         unit = "%"
     return MetricObservation(
         metric_id=metric_id, entity=c.entity.strip() or "unknown", value_text=parsed.text, value=parsed.value,
-        unit=unit, period=c.period, definition=c.definition or (defn.definition if defn else None),
+        unit=unit, period=c.period, label=c.label, definition=c.definition or (defn.definition if defn else None),
         evidence_id=evidence.evidence_id, source_span=c.source_span.strip(),
         scope=source_scope(evidence, c.entity),
     )

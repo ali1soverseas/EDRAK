@@ -6,7 +6,7 @@ from enum import Enum
 from pydantic import Field, model_validator
 
 from .base import ContractModel, NonBlankStr, new_id, utcnow
-from ..metrics.contracts import MetricRequirement
+from .metrics import MetricRequirement
 from .request import BusinessContext, CompanyProfile
 
 

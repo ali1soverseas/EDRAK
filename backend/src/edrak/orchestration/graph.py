@@ -11,6 +11,7 @@ from .nodes import (
     finalize_node,
     make_decision_analysis_node,
     make_dispatch_worker,
+    metrics_node,
     plan_node,
     replan_node,
     verification_gate_node,
@@ -37,6 +38,7 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
     graph.add_node("plan", plan_node)
     graph.add_node("dispatch", make_dispatch_worker(registry))
     graph.add_node("verify", verification_gate_node)
+    graph.add_node("metrics", metrics_node)
     graph.add_node("human_review", human_review_node)
     graph.add_node("cross_signal", cross_signal_node)
     graph.add_node("decision_analysis", make_decision_analysis_node())
@@ -54,7 +56,8 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
 
     graph.add_edge("dispatch", "verify")
 
-    graph.add_edge("verify", "human_review")
+    graph.add_edge("verify", "metrics")
+    graph.add_edge("metrics", "human_review")
     graph.add_conditional_edges(
         "human_review",
         route_after_review,

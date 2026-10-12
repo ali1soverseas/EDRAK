@@ -27,10 +27,10 @@ async def insert_metric(
     ev_uid = await evidence_uid(db, task_id, attempt, obs.evidence_id) if task_id else None
     await db.execute(
         "INSERT INTO metrics (uid, request_id, metric_id, entity, entity_id, value, value_text, unit, period, definition,"
-        " evidence_uid, source_span, scope, sample_size, status, derived, formula, inputs, worker, method)"
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        " evidence_uid, source_span, scope, sample_size, label, status, derived, formula, inputs, worker, method)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (uid, request_id, obs.metric_id, obs.entity, entity_id, obs.value, obs.value_text, obs.unit, obs.period,
-         obs.definition, ev_uid, obs.source_span, obs.scope.value, obs.sample_size, status, int(obs.derived),
+         obs.definition, ev_uid, obs.source_span, obs.scope.value, obs.sample_size, obs.label, status, int(obs.derived),
          obs.formula, dumps(inputs or []), worker, method),
     )
     if commit:

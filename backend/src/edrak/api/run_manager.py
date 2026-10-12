@@ -400,7 +400,7 @@ class RunManager:
                          (request_id, wr.worker.value))
         for obs in observations_of(wr):
             await metrics_repo.insert_metric(db, request_id, obs, worker=wr.worker.value, task_id=wr.task_id,
-                                             attempt=wr.attempt, commit=False)
+                                             attempt=wr.attempt, status=(obs.status.value if obs.status else 'unverified'), commit=False)
         required = {(r.get("metric_id"), str(r.get("entity", "")).lower()): bool(r.get("required", True))
                     for r in wr.metadata.get("requirements") or []}
         outcomes = []
@@ -411,6 +411,23 @@ class RunManager:
                 continue
             outcomes.append((o, required.get((o.metric_id, o.entity.lower()), True)))
         await metrics_repo.write_outcomes(db, request_id, wr.task_id, outcomes, commit=False)
+
+    async def _store_reconciled(self, request_id: str, node_output: dict[str, Any], request: Any = None) -> None:
+        """After reconciliation: store each number's final status, then the derived figures and conflicts."""
+        from edrak.briefing.derive import derive, record_conflicts
+        from edrak.db.repositories import metrics as metrics_repo
+
+        try:
+            async with get_db() as db:
+                for wr in node_output.get("results") or []:
+                    await self._store_metrics(db, request_id, wr)
+                await db.commit()
+                company = request.company_profile.name if request is not None else ""
+                await derive(db, request_id, company)
+                await record_conflicts(db, request_id)
+                await metrics_repo.write_metric_points(db, request_id)
+        except Exception:  # noqa: BLE001
+            logger.exception("Could not store reconciled metrics for %s", request_id)
 
     @staticmethod
     async def _remember_competitors(db: Any, workspace_id: str, wr: WorkerResult) -> None:
@@ -737,6 +754,10 @@ class RunManager:
         stream = active.stream
         now = now_iso()
 
+        if node_name == "metrics":
+            await self._store_reconciled(analysis_id, node_output, request=state.get("request"))
+            return
+
         if node_name == "dispatch":
             results: list[WorkerResult] = list(node_output.get("results") or [])
             await self._store_results(results, analysis_id, active.workspace_id)
@@ -903,6 +924,13 @@ class RunManager:
                 user = await fetch_one(db, "SELECT full_name FROM users WHERE id = ?", (active.requested_by_id,))
                 requested_by = user["full_name"] if user else None
             numbers = await results_repo.evidence_numbers(db, analysis_id)
+            v3 = None
+            try:
+                from edrak.briefing.build import build_v3
+
+                v3 = await build_v3(db, request, list(results), state.get("cross_signal"), numbers, goal=request.goal)
+            except Exception:  # noqa: BLE001 - the brief still saves without typed cards; the gap is logged
+                logger.exception("Typed brief cards failed for %s", analysis_id)
 
             def build(brief_id: str, number: int) -> dict[str, Any]:
                 # Guardrail: the brief is checked before it is saved (citations, numbers, no verdicts).
@@ -921,12 +949,17 @@ class RunManager:
                     cross_signal=state.get("cross_signal"),
                     decision_analysis=state.get("decision_analysis"),
                     evidence_numbers=numbers,
+                    v3=v3,
                 ))
 
             saved = await briefs_repo.save_brief(
                 db, workspace_id=active.workspace_id or "", request_id=analysis_id,
                 requested_by=active.requested_by_id, build=build,
             )
+            if saved["document"].get("cards"):
+                from edrak.db.repositories import cards as cards_repo
+
+                await cards_repo.insert_initial(db, saved["id"], list(saved["document"]["cards"].values()), commit=False)
             guard = saved["document"].get("guardrails") or {}
             for check in guard.get("checks", [])[:50]:
                 await guardrails_repo.record(
