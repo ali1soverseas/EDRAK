@@ -136,9 +136,9 @@ def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
         fake_run_cross_signal,
     )
 
-    state = asyncio.run(
-        orchestration_graph.build_graph(registry).ainvoke({"request": request})
-    )
+    # Checkpoint 2 pauses the run after verification; a person answers it.
+    state, reviews = _run_with_reviews(orchestration_graph, registry, request, [{"decision": "continue"}])
+    assert reviews >= 1
 
     assert len(cross_signal_inputs) == 1
     assert cross_signal_inputs[0].research_run_id == request.request_id
@@ -149,3 +149,23 @@ def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
         "status": "completed",
         "signals": [],
     }
+
+
+def _run_with_reviews(graph_module, registry, request, answers):
+    """Run the graph through checkpoint 2, answering each review in turn (the last answer repeats)."""
+    from langgraph.checkpoint.memory import InMemorySaver
+    from langgraph.types import Command
+
+    graph = graph_module.build_graph(registry, checkpointer=InMemorySaver())
+    config = {"configurable": {"thread_id": request.request_id}}
+
+    async def go():
+        result = await graph.ainvoke({"request": request}, config)
+        reviews = 0
+        while "__interrupt__" in result:
+            answer = answers[min(reviews, len(answers) - 1)]
+            reviews += 1
+            result = await graph.ainvoke(Command(resume=answer), config)
+        return result, reviews
+
+    return asyncio.run(go())

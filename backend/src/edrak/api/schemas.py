@@ -206,3 +206,6 @@ class RunViewOut(BaseModel):
     verification_progress: int = 0
     verification_log: list[dict[str, str]] = Field(default_factory=list)
     brief_id: Optional[str] = None
+    # Checkpoint 2: what the person reviews while the run waits (None when nothing is pending).
+    review: Optional[dict[str, Any]] = None
+    notify_instead: bool = False

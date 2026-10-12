@@ -367,9 +367,9 @@ def test_graph_redispatches_only_the_conflicting_worker(monkeypatch):
         _noop_cross_signal,
     )
 
-    state = asyncio.run(
-        orchestration_graph.build_graph(registry).ainvoke({"request": request})
-    )
+    # Checkpoint 2 pauses the run after verification; a person answers it.
+    state, reviews = _run_with_reviews(orchestration_graph, registry, request, [{"decision": "replan"}, {"decision": "continue"}])
+    assert reviews >= 1
 
     assert dispatched.count(WorkerType.COMPETITOR_INTELLIGENCE) == 2
     assert dispatched.count(WorkerType.MARKET_INTELLIGENCE) == 1
@@ -377,3 +377,23 @@ def test_graph_redispatches_only_the_conflicting_worker(monkeypatch):
     assert len(dispatched) == 4
     # Every worker's findings survive: three results, not one.
     assert len(state["orchestration_result"].results) == 3
+
+
+def _run_with_reviews(graph_module, registry, request, answers):
+    """Run the graph through checkpoint 2, answering each review in turn (the last answer repeats)."""
+    from langgraph.checkpoint.memory import InMemorySaver
+    from langgraph.types import Command
+
+    graph = graph_module.build_graph(registry, checkpointer=InMemorySaver())
+    config = {"configurable": {"thread_id": request.request_id}}
+
+    async def go():
+        result = await graph.ainvoke({"request": request}, config)
+        reviews = 0
+        while "__interrupt__" in result:
+            answer = answers[min(reviews, len(answers) - 1)]
+            reviews += 1
+            result = await graph.ainvoke(Command(resume=answer), config)
+        return result, reviews
+
+    return asyncio.run(go())

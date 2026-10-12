@@ -210,10 +210,12 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
                 )
             )
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+        # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
+        # here can. The person at the review checkpoint decides whether to re-plan.
         return {
             **state,
             "verification": VerificationDecision(
-                status=VerificationStatus.REPLAN_REQUIRED,
+                status=VerificationStatus.CANNOT_COMPLETE,
                 summary=f"verification stage raised {type(exc).__name__}: {exc}",
             ),
         }

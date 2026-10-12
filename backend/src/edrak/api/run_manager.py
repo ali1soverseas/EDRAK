@@ -33,10 +33,14 @@ from edrak.core import action_log
 from edrak.db.connection import get_db
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import briefs as briefs_repo
+from edrak.db.repositories import notifications as notifications_repo
 from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
+from edrak.core.config import settings
 from edrak.orchestration.graph import build_graph
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.types import Command
 from edrak.orchestration.registry import get_default_registry
 
 logger = logging.getLogger(__name__)
@@ -60,6 +64,7 @@ class ActiveRun:
         self.verification_dirty = False
         self.requested_by_id: Optional[str] = None
         self.workspace_id: Optional[str] = None
+        self.pause_requested = False
 
 
 class RunManager:
@@ -128,6 +133,7 @@ class RunManager:
                     )
                 )
         approver = "auto-approved" if plan.get("auto_approved") else (plan.get("approved_by_name") or "")
+        pending = await runs_repo.pending_review(db, analysis_id)
         return RunViewOut(
             analysis_id=analysis_id,
             title=request["title"],
@@ -157,6 +163,8 @@ class RunManager:
             verification_progress=run["verification_progress"],
             verification_log=verification_log[-self._MAX_LOG_LINES:],
             brief_id=brief["id"] if brief else None,
+            review={**pending["payload"], "review_id": pending["id"], "round": pending["round"]} if pending else None,
+            notify_instead=bool(run.get("notify_instead")),
         )
 
     # ------------------------------------------------------------------ live activity
@@ -428,13 +436,26 @@ class RunManager:
                     position += 1
             await db.commit()
 
+    @staticmethod
+    def _graph_config(request_id: str) -> dict[str, Any]:
+        return {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+
     async def _execute_run(
         self,
         analysis_id: str,
         request: BusinessRequest,
         plan: ResearchPlan,
         analysis_title: str,
+        *,
+        resume: Any = None,
+        from_checkpoint: bool = False,
     ) -> None:
+        """Drive the graph until it finishes, stops for review, is paused, cancelled or fails.
+
+        The graph is checkpointed by request id. A fresh run starts from the approved plan; a
+        resumed one continues from its checkpoint, with the person's review answer if it stopped at
+        checkpoint 2.
+        """
         active = self._runs.get(analysis_id)
         if not active:
             return
@@ -443,27 +464,23 @@ class RunManager:
         stream = active.stream
         sub_token = None
         flusher = asyncio.create_task(self._flusher(active))
+        resuming = resume is not None or from_checkpoint
 
         try:
-            run_view.stage = "dispatch"
-            await stream.emit("stage_change", {"stage": "dispatch"})
-            now = now_iso()
-            for tv in run_view.tasks:
-                tv.state = "running"
-                tv.progress = 25
-                tv.activity = f"Connecting to data sources for {tv.worker.value.replace('_', ' ')}"
-                tv.log.append({"at": now, "text": "Worker dispatched"})
-                active.pending_lines.append(("worker_feed", tv.task_id, tv.worker.value, "Worker dispatched"))
-                active.dirty_cards.add(tv.task_id)
-                await stream.emit("task_update", tv.model_dump(mode="json"))
-
-            run_view.stage = "workers"
-            await stream.emit("stage_change", {"stage": "workers"})
-
-            graph = build_graph(get_default_registry())
-            logger.info("Starting orchestration graph execution for analysis %s", analysis_id)
-            # Run the plan that was approved. Without it the graph plans again by itself.
-            state: dict[str, Any] = {"request": request, "plan": plan}
+            if not resuming:
+                run_view.stage = "dispatch"
+                await stream.emit("stage_change", {"stage": "dispatch"})
+                now = now_iso()
+                for tv in run_view.tasks:
+                    tv.state = "running"
+                    tv.progress = 25
+                    tv.activity = f"Connecting to data sources for {tv.worker.value.replace('_', ' ')}"
+                    tv.log.append({"at": now, "text": "Worker dispatched"})
+                    active.pending_lines.append(("worker_feed", tv.task_id, tv.worker.value, "Worker dispatched"))
+                    active.dirty_cards.add(tv.task_id)
+                    await stream.emit("task_update", tv.model_dump(mode="json"))
+                run_view.stage = "workers"
+                await stream.emit("stage_change", {"stage": "workers"})
 
             # From here until the run ends, every line a worker logs also reaches its card.
             loop = asyncio.get_running_loop()
@@ -471,20 +488,47 @@ class RunManager:
                 analysis_id,
                 lambda agent, message: loop.call_soon_threadsafe(self._apply_activity, active, agent, message),
             )
-            async for chunk in graph.astream({"request": request, "plan": plan}, stream_mode="updates"):
-                for node_name, node_output in chunk.items():
-                    logger.info("LangGraph node [%s] completed", node_name)
-                    if not isinstance(node_output, dict):
-                        continue
-                    for k, v in node_output.items():
-                        if k in ("results", "outcomes"):
-                            from edrak.orchestration.state import merge_by_task_id
-                            state[k] = merge_by_task_id(state.get(k) or [], v)
-                        else:
-                            state[k] = v
-                    await self._on_node(active, node_name, node_output, state, plan, analysis_id)
+            config = self._graph_config(analysis_id)
+            async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
+                graph = build_graph(get_default_registry(), checkpointer=saver)
+                if resuming:
+                    snapshot = await graph.aget_state(config)
+                    state: dict[str, Any] = dict(snapshot.values or {})
+                    stream_input: Any = Command(resume=resume) if resume is not None else None
+                else:
+                    # Run the plan that was approved. Without it the graph plans again by itself.
+                    state = {"request": request, "plan": plan}
+                    stream_input = {"request": request, "plan": plan}
+                logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)
 
-            await self._finish(active, request, plan, analysis_title, state)
+                async for chunk in graph.astream(stream_input, config, stream_mode="updates"):
+                    if "__interrupt__" in chunk:
+                        interrupts = chunk["__interrupt__"]
+                        payload = interrupts[0].value if interrupts else {}
+                        await self._pause_for_review(active, payload if isinstance(payload, dict) else {})
+                        return
+                    for node_name, node_output in chunk.items():
+                        logger.info("LangGraph node [%s] completed", node_name)
+                        if not isinstance(node_output, dict):
+                            continue
+                        for k, v in node_output.items():
+                            if k in ("results", "outcomes"):
+                                from edrak.orchestration.state import merge_by_task_id
+                                state[k] = merge_by_task_id(state.get(k) or [], v)
+                            else:
+                                state[k] = v
+                        await self._on_node(active, node_name, node_output, state, plan, analysis_id)
+                    if active.pause_requested:
+                        await self._mark_paused(active)
+                        return
+
+                final = await graph.aget_state(config)
+                state = dict(final.values or state)
+                await self._finish(active, request, state.get("plan") or plan, analysis_title, state)
+                try:
+                    await saver.adelete_thread(analysis_id)
+                except Exception:  # noqa: BLE001 - a stale checkpoint is harmless
+                    logger.debug("Could not delete the checkpoint of %s", analysis_id)
 
         except asyncio.CancelledError:
             logger.info("Analysis %s run cancelled", analysis_id)
@@ -511,6 +555,139 @@ class RunManager:
             flusher.cancel()
             await self._flush(active)
             action_log.unsubscribe(analysis_id, sub_token)
+
+    # ------------------------------------------------------------------ checkpoint 2 and pausing
+
+    async def _pause_for_review(self, active: ActiveRun, payload: dict[str, Any]) -> None:
+        """The graph stopped at checkpoint 2. Record what the person must review and tell them."""
+        view = active.run_view
+        request_id = view.analysis_id
+        async with get_db() as db:
+            latest = await results_repo.latest_verification(db, request_id)
+            review = await runs_repo.open_review(
+                db, request_id, verification_id=latest["id"] if latest else None, payload=payload,
+            )
+            await runs_repo.update_run(db, request_id, status="awaiting_review", current_stage="review", commit=False)
+            await analyses_repo.set_request_status(db, request_id, "awaiting_review", commit=False)
+            await notifications_repo.notify(
+                db, workspace_id=active.workspace_id or "", kind="run_awaiting_review",
+                title=f"Review what was found: {view.title}",
+                body=payload.get("summary"), request_id=request_id, commit=False,
+            )
+            await db.commit()
+        view.state = "awaiting_review"
+        view.stage = "review"
+        view.review = {**payload, "review_id": review["id"], "round": review["round"]}
+        found = f"{payload.get('findings_verified', 0)} of {payload.get('findings_total', 0)} findings verified"
+        await self._event(
+            active, kind="review",
+            message=f"Checkpoint 2: verification is done ({found}). The run waits for your review.",
+            callout=RunEventCallout(text=str(payload.get("summary") or ""), highlight=None),
+        )
+        await active.stream.emit("review_required", view.review)
+
+    async def submit_review(
+        self,
+        analysis_id: str,
+        *,
+        decision: str,
+        tasks: list[dict[str, Any]],
+        note: Optional[str],
+        user_id: Optional[str],
+        user_name: str,
+    ) -> None:
+        """Resume a run waiting at checkpoint 2 with the person's decision."""
+        if decision not in ("continue", "replan", "stop"):
+            raise ValueError("invalid_decision")
+        async with get_db() as db:
+            review = await runs_repo.pending_review(db, analysis_id)
+            if review is None:
+                raise ValueError("no_pending_review")
+            if not await runs_repo.resolve_review(
+                db, review["id"], decision=decision, edited_tasks=tasks, note=note, decided_by=user_id,
+            ):
+                raise ValueError("no_pending_review")
+            await runs_repo.update_run(db, analysis_id, status="running", commit=False)
+            await analyses_repo.set_request_status(db, analysis_id, "running", commit=False)
+            await db.commit()
+        active = await self._active_for(analysis_id)
+        words = {"continue": "continue to synthesis", "replan": "send workers out again", "stop": "stop and write the brief"}
+        active.run_view.state = "running"
+        active.run_view.review = None
+        await self._event(active, source="user", kind="decision", message=f"{user_name} chose to {words[decision]}." + (f" Note: {note}" if note else ""))
+        request, plan = await self._request_and_plan(analysis_id)
+        active.task = asyncio.create_task(
+            self._execute_run(analysis_id, request, plan, active.run_view.title,
+                              resume={"decision": decision, "tasks": tasks, "note": note})
+        )
+
+    async def pause_run(self, analysis_id: str) -> bool:
+        active = self._runs.get(analysis_id)
+        if not active or not active.task or active.task.done() or active.run_view.state != "running":
+            return False
+        active.pause_requested = True
+        await self._event(active, source="user", kind="info", message="Pause requested. The run stops after the current step.")
+        return True
+
+    async def _mark_paused(self, active: ActiveRun) -> None:
+        active.pause_requested = False
+        active.run_view.state = "paused"
+        async with get_db() as db:
+            await runs_repo.update_run(db, active.run_view.analysis_id, status="paused", commit=False)
+            await analyses_repo.set_request_status(db, active.run_view.analysis_id, "paused", commit=False)
+            await db.commit()
+        await self._event(active, kind="info", message="The run is paused. Resume it to continue from this step.")
+        await active.stream.emit("paused", {"state": "paused"})
+
+    async def resume_run(self, analysis_id: str) -> None:
+        async with get_db() as db:
+            run = await runs_repo.get_run(db, analysis_id)
+            if not run or run["status"] != "paused":
+                raise ValueError("not_paused")
+            await runs_repo.update_run(db, analysis_id, status="running", commit=False)
+            await analyses_repo.set_request_status(db, analysis_id, "running", commit=False)
+            await db.commit()
+        active = await self._active_for(analysis_id)
+        active.run_view.state = "running"
+        await self._event(active, source="user", kind="info", message="Run resumed.")
+        request, plan = await self._request_and_plan(analysis_id)
+        active.task = asyncio.create_task(
+            self._execute_run(analysis_id, request, plan, active.run_view.title, from_checkpoint=True)
+        )
+
+    async def _request_and_plan(self, analysis_id: str) -> tuple[BusinessRequest, ResearchPlan]:
+        async with get_db() as db:
+            row = await analyses_repo.get_request(db, analysis_id)
+            run = await runs_repo.get_run(db, analysis_id)
+            if not row or not run:
+                raise ValueError("not_found")
+            request = analyses_repo.request_contract(row)
+            plan_row = await fetch_one(db, "SELECT * FROM research_plans WHERE plan_id = ?", (run["plan_id"],))
+            plan = await analyses_repo.plan_contract(db, request, plan_row or {"plan_id": run["plan_id"], "created_at": run["created_at"]})
+        return request, plan
+
+    async def _active_for(self, analysis_id: str) -> ActiveRun:
+        """The in-memory run, rebuilt from the database after a restart."""
+        active = self._runs.get(analysis_id)
+        if active is not None:
+            return active
+        async with get_db() as db:
+            view = await self.view_from_db(db, analysis_id, None)
+            row = await analyses_repo.get_request(db, analysis_id)
+        if view is None or row is None:
+            raise ValueError("not_found")
+        active = ActiveRun(run_view=view, stream=EventStream())
+        active.workspace_id = row["workspace_id"]
+        active.requested_by_id = row.get("created_by")
+        self._runs[analysis_id] = active
+        return active
+
+    async def notify_instead(self, analysis_id: str) -> None:
+        async with get_db() as db:
+            await runs_repo.update_run(db, analysis_id, notify_instead=1)
+        active = self._runs.get(analysis_id)
+        if active:
+            active.run_view.notify_instead = True
 
     async def _on_node(
         self,
@@ -596,37 +773,23 @@ class RunManager:
                 message=f"Verification completed: {findings_count} findings evaluated ({status_val.replace('_', ' ')}).",
             )
             if status_val in ("replan_required", "retry_required"):
-                # Verification wants some workers to go again. Put them back to
-                # work on screen now, so their new activity shows up as it happens.
                 actions = list(v_dec.targeted_actions) if v_dec else []
-                run_view.stage = "workers"
-                run_view.verification = "waiting"
-                await stream.emit("stage_change", {"stage": "workers"})
-                reasons_by_worker: dict[WorkerType, list[str]] = {}
-                for action in actions:
-                    reasons_by_worker.setdefault(action.worker, []).append(action.reason)
-                for tv in run_view.tasks:
-                    reasons = reasons_by_worker.get(tv.worker)
-                    if reasons:
-                        more = f" (and {len(reasons) - 1} more)" if len(reasons) > 1 else ""
-                        self._restart_card(active, tv, f"Going again: {reasons[0]}{more}", now)
-                        await stream.emit("task_update", tv.model_dump(mode="json"))
-                names = ", ".join(w.value.replace("_", " ") for w in reasons_by_worker)
+                names = ", ".join(sorted({a.worker.value.replace("_", " ") for a in actions}))
                 await self._event(
                     active, kind="replan",
-                    message=v_dec.summary if v_dec else "Verification asked for more research.",
+                    message=v_dec.summary if v_dec else "Verification suggests more research.",
                     callout=RunEventCallout(
-                        text=f"Re-running {len(reasons_by_worker)} worker(s) on {len(actions)} point(s): {names}.",
+                        text=f"The Supervisor proposes sending {names or 'some workers'} out again. You decide at the review.",
                         highlight=None,
                     ),
                 )
-            else:
-                run_view.stage = "synthesize"
-                await stream.emit("stage_change", {"stage": "synthesize"})
-                await self._event(active, kind="info", message="Looking for patterns across the workers' findings.")
+            run_view.stage = "review"
+            await stream.emit("stage_change", {"stage": "review"})
 
         elif node_name == "replan":
-            replan_tasks = node_output.get("replan_tasks") or []
+            replan_tasks = node_output.get("replan_tasks") or (
+                node_output["plan"].tasks if node_output.get("plan") is not None else []
+            )
             v_dec = state.get("verification")
             reasons = {a.worker.value: a.reason for a in (v_dec.targeted_actions if v_dec else [])}
             await self._store_replan_tasks(plan.plan_id, analysis_id, list(replan_tasks), reasons)
@@ -637,6 +800,34 @@ class RunManager:
                 if any(rt.worker == tv.worker for rt in replan_tasks):
                     self._restart_card(active, tv, "Re-dispatched for targeted refinement", now)
                     await stream.emit("task_update", tv.model_dump(mode="json"))
+            known = {tv.worker for tv in run_view.tasks}
+            for rt in replan_tasks:
+                if rt.worker not in known:
+                    card = RunTaskView(task_id=rt.task_id, worker=rt.worker, state="running", progress=30,
+                                       activity="Added by the re-plan", log=[{"at": now, "text": "Added by the re-plan"}])
+                    run_view.tasks.append(card)
+                    active.round_base[card.task_id] = 1
+                    await stream.emit("task_update", card.model_dump(mode="json"))
+
+        elif node_name == "human_review":
+            choice = node_output.get("review_decision") or "continue"
+            if choice == "replan" and node_output.get("replan_tasks"):
+                # The person edited the tasks: those go out directly.
+                tasks = list(node_output["replan_tasks"])
+                await self._store_replan_tasks(plan.plan_id, analysis_id, tasks, {})
+                run_view.stage = "workers"
+                run_view.verification = "waiting"
+                await stream.emit("stage_change", {"stage": "workers"})
+                for tv in run_view.tasks:
+                    if any(t.worker == tv.worker for t in tasks):
+                        self._restart_card(active, tv, "Going again on your instructions", now)
+                        await stream.emit("task_update", tv.model_dump(mode="json"))
+            elif choice == "stop":
+                run_view.stage = "brief"
+                await stream.emit("stage_change", {"stage": "brief"})
+            else:
+                run_view.stage = "synthesize" if choice == "continue" else run_view.stage
+                await stream.emit("stage_change", {"stage": run_view.stage})
 
         elif node_name == "cross_signal":
             run_view.stage = "synthesize"
@@ -666,7 +857,8 @@ class RunManager:
         orchestration_result: OrchestrationResult = state.get("orchestration_result") or OrchestrationResult(
             request_id=request.request_id, status=RunStatus.COMPLETED, plan=plan, results=results,
         )
-        is_partial = orchestration_result.status == RunStatus.PARTIAL
+        # Stopping at the review ends the run early: what was found is kept, marked partial.
+        is_partial = orchestration_result.status == RunStatus.PARTIAL or state.get("review_decision") == "stop"
         final_state = "partial" if is_partial else "completed"
         now = now_iso()
 
@@ -701,6 +893,12 @@ class RunManager:
             )
             await runs_repo.update_run(db, analysis_id, status=final_state, current_stage="done", completed_at=now, commit=False)
             await analyses_repo.set_request_status(db, analysis_id, final_state, commit=False)
+            await notifications_repo.notify(
+                db, workspace_id=active.workspace_id or "", kind="brief_ready",
+                title=f"Brief {saved['number']:04d} is ready: {analysis_title}",
+                body="Verified with gaps marked." if final_state == "partial" else "Verified.",
+                brief_id=saved["id"], commit=False,
+            )
             await db.commit()
 
         run_view.state = final_state

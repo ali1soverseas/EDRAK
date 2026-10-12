@@ -62,3 +62,8 @@ class OrchestrationState(TypedDict, total=False):
     error: str | None
     orchestration_result: OrchestrationResult
     attempts_exceeded: bool
+    # Checkpoint 2: the person's decision after verification ("continue", "replan" or "stop"),
+    # an optional note, and whether the re-plan tasks are the person's own edits.
+    review_decision: str | None
+    review_note: str | None
+    human_tasks: bool
