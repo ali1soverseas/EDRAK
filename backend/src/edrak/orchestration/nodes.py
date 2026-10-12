@@ -221,11 +221,28 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
     """
     print("\n[metrics] NODE: metrics agent")
     from ..agents.metrics import run as run_metrics_agent
+    from ..metrics.planning import requirements_for
 
     results = list(state.get("results") or [])
     plan = state.get("plan")
+    raw_tasks = list(plan.tasks) if plan else []
+    req = state["request"]
+    ctx = req.business_context
+    comps = [c.name for c in ctx.competitors] or list(ctx.targets)
+    tasks = []
+    for t in raw_tasks:
+        if not t.requirements:
+            t = t.model_copy(update={"requirements": requirements_for(
+                t.worker.value if hasattr(t.worker, "value") else str(t.worker),
+                ctx.use_case.value if hasattr(ctx.use_case, "value") else str(ctx.use_case),
+                req.company_profile.name,
+                comps,
+                list(ctx.markets),
+                ctx.offering or "",
+            )})
+        tasks.append(t)
     try:
-        fixed, conflicts = run_metrics_agent(state["request"], list(plan.tasks) if plan else [], results)
+        fixed, conflicts = run_metrics_agent(req, tasks, results)
     except Exception as exc:  # noqa: BLE001 - the brief still renders gap cards without figures
         logger.warning("Metrics agent failed: %s", exc)
         return state

@@ -20,6 +20,7 @@ import logging
 import re
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
+from datetime import date
 from typing import Any, Optional
 from urllib.parse import urlparse
 
@@ -45,11 +46,11 @@ from .state import Cell, MetricsState
 logger = logging.getLogger(__name__)
 
 AGENT = "metrics"
-MAX_HUNTS = 2  # targeted searches per (metric, entity) after the harvest
+MAX_HUNTS = 3  # targeted searches per (metric, entity) after the harvest
 WINDOW = 600  # characters each side of a metric mention
-MAX_WINDOWS = 14  # passages per model call
-MAX_HUNT_CELLS = 12  # cells hunted per round, required ones first
-PAGES_PER_HUNT = 2
+MAX_WINDOWS = 16  # passages per model call
+MAX_HUNT_CELLS = 20  # cells hunted per round, required ones first
+PAGES_PER_HUNT = 3
 PARALLEL = 4
 _STANCES = ("positive", "neutral", "negative", "mixed")
 _OFFICIAL_TYPES = {SourceType.PRICING_PAGE, SourceType.OFFICIAL_DOCUMENTATION, SourceType.RELEASE_NOTES, SourceType.ANNOUNCEMENT}
@@ -104,13 +105,13 @@ def _default_search(query: str) -> list[dict[str, str]]:
             for r in b.get("organic", []) if isinstance(b, dict) else []:
                 out.append({"url": r.get("link", ""), "title": r.get("title", ""), "snippet": r.get("snippet", "")})
     except Exception as exc:  # noqa: BLE001
-        logger.info("Serper search failed: %s", exc)
+        logger.warning("Serper search failed: %s", exc)
     if not out:
         try:
             items, _ = fetch_web_search([query])
             out = [{"url": i.get("url", ""), "title": i.get("title", ""), "snippet": i.get("snippet", "")} for i in items]
         except Exception as exc:  # noqa: BLE001
-            logger.info("Tavily search failed: %s", exc)
+            logger.warning("Tavily search failed: %s", exc)
     return [r for r in out if r.get("url", "").startswith("http")]
 
 
@@ -120,7 +121,11 @@ def _default_fetch(url: str) -> str:
     ensure_repo_on_path()
     from mcp_servers.web.scrapers import scrape_url_content
 
-    text = scrape_url_content(url) or ""
+    try:
+        text = scrape_url_content(url) or ""
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Fetch failed for %s: %s", url, exc)
+        return ""
     return "" if text.startswith("Error:") else text
 
 
@@ -153,38 +158,66 @@ def _terms(defn: MetricDef) -> list[str]:
     return [w.lower() for w in dict.fromkeys(w for w in found if w and (len(w) >= 3 or not w.isalnum()))]
 
 
-def windows_for(defn: MetricDef, entities: list[str], evidence: list[Evidence]) -> list[tuple[Evidence, str]]:
-    """Passages around a mention of the metric that hold a digit and concern one of the entities.
+# What a figure of each kind looks like, so a passage holding "$245 billion" beats one that only says "market".
+_UNIT_RX = {
+    "currency": re.compile(r"[$€£]\s?\d|\d[\d,.]*\s?(?:usd|egp|sar|aed|eur|gbp|billion|million|bn|mn)\b|\b(?:usd|egp|sar|aed)\s?\d", re.I),
+    "percent": re.compile(r"\d\s?%|\d\s?percent", re.I),
+    "count": re.compile(r"\d[\d,.]*\s?(?:k|m|million|thousand)?\+?\s*(?:customers|users|subscribers|merchants|employees|engineers|people)", re.I),
+    "index": re.compile(r"\d(?:\.\d)?\s?(?:/\s?\d+|out of \d+|stars?)", re.I),
+    "date": re.compile(r"\b(?:19|20)\d\d\b|\bq[1-4]\b", re.I),
+}
 
-    The entity's own pages come first, then passages that name the entity.
+
+def _best_chunks(text: str, terms: list[str], unit_rx: Optional[re.Pattern], limit: int = 6) -> list[tuple[int, str]]:
+    """The passages most likely to state the figure.
+
+    The text is cut into overlapping tiles. A tile scores by how many of the metric's terms it holds, plus a bonus when a
+    figure of the right shape (a currency amount, a percentage) sits in it. Common words such as "market" can no longer
+    use up the slots, and a long page can no longer collapse into one giant passage.
+    """
+    if not text:
+        return []
+    size, step = 2 * WINDOW, WINDOW
+    low = text.lower()
+    tiles: list[tuple[int, int, str]] = []
+    for a in range(0, max(1, len(text) - WINDOW), step):
+        chunk = text[a:a + size]
+        if not re.search(r"\d", chunk):
+            continue
+        hits = sum(1 for t in terms if t in low[a:a + size])
+        if not hits:
+            continue
+        tiles.append((hits + (4 if unit_rx is not None and unit_rx.search(chunk) else 0), a, chunk))
+    tiles.sort(key=lambda x: (-x[0], x[1]))
+    picked: list[tuple[int, int, str]] = []
+    for tile in tiles:
+        if all(abs(tile[1] - p[1]) >= size for p in picked):
+            picked.append(tile)
+        if len(picked) >= limit:
+            break
+    return [(score, chunk) for score, _, chunk in picked]
+
+
+def windows_for(defn: MetricDef, entities: list[str], evidence: list[Evidence]) -> list[tuple[Evidence, str]]:
+    """Passages that hold a digit, mention the metric and concern one of the entities.
+
+    The entity's own pages come first, then passages that name the entity; within those, the passages that look most
+    like the figure being asked for.
     """
     terms = _terms(defn)
-    toks = [(e, _token(e)) for e in entities]
-    scored: list[tuple[int, Evidence, str]] = []
+    unit_rx = _UNIT_RX.get(defn.unit_kind)
+    scored: list[tuple[int, int, Evidence, str]] = []
     for ev in evidence:
         text = _text(ev)
-        low = text.lower()
         about = " ".join([ev.source_title or "", ev.source_url or "", str(ev.metadata.get("competitor", ""))]).lower()
-        spans: list[tuple[int, int]] = []
-        for t in terms:
-            for m in re.finditer(re.escape(t), low):
-                a, b = max(0, m.start() - WINDOW), min(len(text), m.end() + WINDOW)
-                if spans and a <= spans[-1][1]:
-                    spans[-1] = (spans[-1][0], max(spans[-1][1], b))
-                else:
-                    spans.append((a, b))
-        spans.sort()
-        for a, b in spans[:6]:
-            chunk = text[a:b]
-            if not re.search(r"\d", chunk):
-                continue
-            named = any(e.lower() in chunk.lower() or e.lower() in about for e, _ in toks)
-            own = any(is_own_site(ev.source_url, e) for e, _ in toks)
+        own = any(is_own_site(ev.source_url, e) for e in entities)
+        for quality, chunk in _best_chunks(text, terms, unit_rx):
+            named = any(e.lower() in chunk.lower() or e.lower() in about for e in entities)
             if not named and not own:
                 continue
-            scored.append((2 * own + named, ev, chunk))
-    scored.sort(key=lambda x: -x[0])
-    return [(ev, chunk) for _, ev, chunk in scored[:MAX_WINDOWS]]
+            scored.append((2 * own + named, quality, ev, chunk))
+    scored.sort(key=lambda x: (-x[0], -x[1]))
+    return [(ev, chunk) for _, _, ev, chunk in scored[:MAX_WINDOWS]]
 
 
 def point(defn: MetricDef, entities: list[str], windows: list[tuple[Evidence, str]]) -> list[MetricObservation]:
@@ -361,13 +394,44 @@ def missing_cells(state: MetricsState) -> list[tuple[Cell, RequirementOutcome]]:
     return out
 
 
-def _queries(r: MetricRequirement, defn: MetricDef, offering: str, attempt: int) -> list[str]:
-    hints = [h.replace("{offering}", offering).strip() for h in r.query_hints if h.strip()]
-    if not hints:
-        hints = [f"{r.entity} {defn.name.get('en', defn.id)}"]
-    if attempt > 1:  # the second hunt widens: the metric's other names
-        hints = [f"{r.entity} {a}" for a in defn.aliases[:2]] or hints
-    return hints[:2]
+def _market(request: Any) -> str:
+    bc = getattr(request, "business_context", None) if request else None
+    if bc is not None:
+        markets = getattr(bc, "markets", None)
+        if isinstance(markets, list) and markets:
+            return ", ".join(str(m).strip() for m in markets if str(m).strip())
+        for name in ("target_market", "market", "region", "country", "geography"):
+            v = getattr(bc, name, None)
+            if isinstance(v, str) and v.strip():
+                return v.strip()
+    return ""
+
+
+def _clean(q: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"\{[a-z_]+\}", "", q)).strip()
+
+
+def _queries(r: MetricRequirement, defn: MetricDef, offering: str, attempt: int, market: str = "") -> list[str]:
+    name = defn.name.get("en", defn.id)
+    registry_hints = list(getattr(defn, "query_hints", None) or [])
+    bare_registry = bool(registry_hints) and not any("{" in h for h in registry_hints)
+    out: list[str] = []
+    for h in r.query_hints:
+        h = h.strip()
+        if not h:
+            continue
+        filled = h.replace("{offering}", offering).replace("{entity}", r.entity).replace("{market}", market)
+        # A bare hint such as "capacity plan" or "headcount" means nothing to a web search without the company.
+        if "{" not in h and r.entity.casefold() not in h.casefold() and (bare_registry or len(h.split()) <= 3):
+            filled = f"{r.entity} {h}"
+        out.append(_clean(filled))
+    if not out:
+        out = [_clean(f"{r.entity} {name}")]
+    if attempt == 2:  # the second hunt widens: the metric's other names
+        out = [_clean(f"{r.entity} {a}") for a in defn.aliases[:2]] or out
+    elif attempt >= 3:  # the third asks for a recent report on the figure
+        out = [_clean(f"{r.entity} {name} {date.today().year}"), _clean(f"{market} {offering} {name} report")]
+    return list(dict.fromkeys(q for q in out if q))[:2]
 
 
 def hunt(state: MetricsState) -> MetricsState:
@@ -384,43 +448,59 @@ def hunt(state: MetricsState) -> MetricsState:
     seen_urls = {e.source_url for r in results.values() for e in r.evidence if e.source_url}
     found = {k: list(v) for k, v in (state.get("observations") or {}).items()}
 
-    def one(cell: Cell) -> tuple[Cell, list[Evidence], list[MetricObservation], bool]:
+    market = _market(request)
+
+    def one(cell: Cell) -> tuple[Cell, list[Evidence], list[MetricObservation], bool, dict[str, Any]]:
         r = cell["requirement"]
         defn = reg.get(r.metric_id)
         key = cell_key(r.metric_id, r.entity)
         attempt = hunts.get(key, 0) + 1
+        queries = _queries(r, defn, offering, attempt, market)
         hits: list[dict[str, str]] = []
-        for q in _queries(r, defn, offering, attempt):
+        for q in queries:
             hits.extend(_seams["search"](q))
         official_first = "official" in (r.preferred_source_types or defn.preferred_sources)
         hits.sort(key=lambda h: not is_own_site(h.get("url"), r.entity) if official_first else 0)
         evs: list[Evidence] = []
         own = False
+        pages = snippets = 0
         for h in hits:
             url = h.get("url", "")
             if not url or url in seen_urls or any(e.source_url == url for e in evs):
                 continue
             text = _seams["fetch"](url)
+            from_snippet = False
             if not text.strip():
-                continue
+                # Paywalled or blocked page (market-research sites often are): the search result itself may state the figure.
+                snippet = f"{h.get('title') or ''}. {h.get('snippet') or ''}".strip(" .")
+                if not re.search(r"\d", snippet):
+                    continue
+                text, from_snippet = snippet, True
+                snippets += 1
+            else:
+                pages += 1
             official = is_own_site(url, r.entity)
             own = own or official
             st = SourceType.PRICING_PAGE if official and "pric" in url.lower() else (SourceType.OFFICIAL_DOCUMENTATION if official else SourceType.WEB_PAGE)
             evs.append(Evidence(source_type=st, source_title=h.get("title") or None, source_url=url, publisher=_host(url) or None,
                                 extracted_fact=(h.get("snippet") or text[:300]).strip() or "Page fetched by the metrics agent.",
                                 excerpt=text[:1500], page_text=text,
-                                metadata={"found_by": AGENT, "metric_id": r.metric_id, "competitor": r.entity, "first_party": official}))
+                                metadata={"found_by": AGENT, "metric_id": r.metric_id, "competitor": r.entity, "first_party": official,
+                                          "snippet_only": from_snippet}))
             if len(evs) >= PAGES_PER_HUNT:
                 break
         obs = point(defn, [r.entity], windows_for(defn, [r.entity], evs)) if evs else []
-        return cell, evs, obs, own
+        diag = {"queries": queries, "results": len(hits), "pages": pages, "snippets": snippets}
+        return cell, evs, obs, own, diag
 
     with ThreadPoolExecutor(max_workers=PARALLEL) as pool:
         done = list(pool.map(one, [c for c, _ in todo]))
     added = 0
-    for cell, evs, obs, own in done:
+    for cell, evs, obs, own, diag in done:
         key = cell_key(cell["requirement"].metric_id, cell["requirement"].entity)
         hunts[key] = hunts.get(key, 0) + 1
+        log_action(AGENT, f"hunt {key} try {hunts[key]}: {len(diag['queries'])} queries {diag['queries']}, {diag['results']} results, "
+                          f"{diag['pages']} pages read, {diag['snippets']} from snippets, {len(obs)} figures")
         if own:
             read_official.add(key)
         owner = results.get(cell["task_id"])
@@ -430,6 +510,8 @@ def hunt(state: MetricsState) -> MetricsState:
         seen_urls.update(e.source_url for e in evs if e.source_url)
         found.setdefault(owner.task_id, []).extend(obs)
         added += len(obs)
+    if done and not any(d[4]["results"] for d in done):
+        log_action(AGENT, "hunt: the web search returned nothing for every query; check the search provider keys and network")
     log_action(AGENT, f"hunt: searched for {len(todo)} missing figures, found {added}")
     return {"results": list(results.values()), "observations": found, "hunts": hunts, "read_official": sorted(read_official)}
 

@@ -65,7 +65,7 @@ def test_harvest_finds_a_price_far_down_the_saved_page():
     assert fixed[0].metadata["requirement_outcomes"][0]["status"] == "found"
 
 
-def test_hunt_runs_at_most_twice_and_ends_in_a_gap_with_a_reason():
+def test_hunt_runs_up_to_max_hunts_and_ends_in_a_gap_with_a_reason():
     calls = []
     task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
     res = WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1)
@@ -77,8 +77,8 @@ def test_hunt_runs_at_most_twice_and_ends_in_a_gap_with_a_reason():
     agent.use(find=lambda p: Candidates(metrics=[]), search=search, fetch=lambda u: "An article with no price at all.")
     fixed, _ = run(_request(), [task], [res])
     out = fixed[0].metadata["requirement_outcomes"][0]
-    assert out["status"] == "gap" and out["reason"] == "not_found" and out["attempts"] == 3
-    assert 1 <= len(calls) <= 4  # two hunts, at most two queries each
+    assert out["status"] == "gap" and out["reason"] == "not_found" and out["attempts"] == agent.MAX_HUNTS + 1
+    assert 1 <= len(calls) <= agent.MAX_HUNTS * 2  # up to MAX_HUNTS rounds, at most two queries each
 
 
 def test_reading_the_entitys_own_pages_without_a_figure_is_not_publicly_disclosed():
@@ -156,3 +156,94 @@ def test_customer_stances_keep_only_the_listed_entities():
         {"entity": "Acme", "stance": "furious"}]})}
     save_stances(ctx, labels, ["Acme", "Globex"])
     assert saved == [("i1", "Acme", "positive"), ("i1", "Globex", "negative")]
+
+
+def test_order_independence_returns_passage_with_figure():
+    reg = agent.get_registry()
+    defn = reg.get("price_per_tier")
+    page = "The plan price per user is $45. " + "Lots of general text about software products and tools. " * 200 + "More pricing and plans discussion."
+    ev = Evidence(evidence_id="e1", source_type=SourceType.PRICING_PAGE, source_url="https://www.globex.com/pricing",
+                  extracted_fact="Pricing", excerpt=page[:1000], page_text=page)
+    windows = agent.windows_for(defn, ["Globex"], [ev])
+    assert any("$45" in chunk for _, chunk in windows)
+
+
+def test_common_word_flood_retains_figure_sentence_and_caps_chunk_size():
+    reg = agent.get_registry()
+    defn = reg.get("market_size")
+    page = "market " * 500 + "The global market size reached $12 billion in 2025."
+    ev = Evidence(evidence_id="e1", source_type=SourceType.WEB_PAGE, source_url="https://analysts.example.com/report",
+                  extracted_fact="Report", excerpt=page[:1000], page_text=page, metadata={"competitor": "Acme"})
+    windows = agent.windows_for(defn, ["Acme"], [ev])
+    assert any("$12 billion" in chunk for _, chunk in windows)
+    assert all(len(chunk) <= 2 * agent.WINDOW for _, chunk in windows)
+
+
+def test_placeholders_are_filled_and_no_braces_remain():
+    reg = agent.get_registry()
+    defn = reg.get("market_size")
+    req = MetricRequirement(metric_id="market_size", entity="Acme",
+                            query_hints=["{market} {offering} market size", "{entity} {unfilled_param} market"])
+    queries = agent._queries(req, defn, offering="Cloud AI", attempt=1, market="Europe")
+    assert queries
+    for q in queries:
+        assert "{" not in q and "}" not in q
+    assert "Europe Cloud AI market size" in queries
+
+
+def test_bare_hints_are_prefixed_with_entity():
+    reg = agent.get_registry()
+    defn = reg.get("capacity")
+    custom_entity = "SyntheticCorp"
+    req = MetricRequirement(metric_id="capacity", entity=custom_entity, query_hints=["capacity plan", "headcount"])
+    queries = agent._queries(req, defn, offering="Ops", attempt=1)
+    assert queries
+    assert all(q.startswith(custom_entity) for q in queries)
+    assert f"{custom_entity} capacity plan" in queries
+
+
+def test_hunt_snippet_fallback():
+    task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
+    res = WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1)
+
+    seen_prompts = []
+
+    def find(prompt):
+        seen_prompts.append(prompt)
+        if "$99" in prompt:
+            eid = prompt[prompt.rindex("[") + 1: prompt.rindex("]")]
+            return Candidates(metrics=[Candidate(metric_id="price_per_tier", entity="Globex", evidence_id=eid, source_span="costs $99 per user")])
+        return Candidates(metrics=[])
+
+    search_res = [{"url": "https://www.globex.com/paywalled", "title": "Globex Pricing", "snippet": "The Enterprise plan costs $99 per user per month."}]
+    agent.use(find=find, search=lambda q: search_res, fetch=lambda u: "")
+    fixed, _ = run(_request(), [task], [res])
+
+    snippet_evs = [e for e in fixed[0].evidence if e.metadata.get("snippet_only")]
+    assert len(snippet_evs) == 1
+    assert any("$99" in p for p in seen_prompts)
+    m = fixed[0].metadata["metrics"][0]
+    assert m["value"] == 99.0 and m["status"] == "verified"
+
+
+def test_termination_when_all_searches_return_nothing():
+    task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
+    res = WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1)
+    agent.use(find=lambda p: Candidates(metrics=[]), search=lambda q: [], fetch=lambda u: "")
+    fixed, _ = run(_request(), [task], [res])
+    out = fixed[0].metadata["requirement_outcomes"][0]
+    assert out["status"] == "gap"
+    assert out["attempts"] == agent.MAX_HUNTS + 1
+
+
+def test_no_regression_official_source_required_remains_gap_for_third_party():
+    task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
+    ev = Evidence(evidence_id="e1", source_type=SourceType.NEWS_ARTICLE, source_url="https://thirdparty.example.com/pricing-review",
+                  extracted_fact="Globex costs $49", excerpt="Globex pricing review. Globex costs $49 per user.",
+                  page_text="Globex pricing review. Globex costs $49 per user.")
+    res = WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1, evidence=[ev])
+    agent.use(find=_finder_for("Globex costs $49 per user", "Globex", "e1"), search=lambda q: [], fetch=lambda u: "")
+    fixed, _ = run(_request(), [task], [res])
+    out = fixed[0].metadata["requirement_outcomes"][0]
+    assert out["status"] == "gap"
+

@@ -157,7 +157,7 @@ metrics:
     period: upcoming_and_recent
     owner: market_intelligence
     preferred_sources: [official]
-    query_hints: ["{market} regulation {offering} central bank"]
+    query_hints: ["{market} {offering} regulation law", "{market} {offering} export control licensing"]
     check: {official_source_required: true}
     visual: timeline
     comparator: none
@@ -237,7 +237,7 @@ metrics:
   # ---- Internal agent ----
   - id: own_price
     name: {en: "Our price", ar: "سعرنا"}
-    aliases: [our pricing, list price]
+    aliases: [our pricing, list price, internal price, target asp]
     definition: "The company's own price for the offering, from internal documents."
     unit_kind: currency
     period: point_in_time
@@ -249,7 +249,7 @@ metrics:
     comparator: none
   - id: win_loss
     name: {en: "Win/loss rate", ar: "معدل الفوز والخسارة"}
-    aliases: [win rate, loss rate]
+    aliases: [win rate, loss rate, win/loss, deal win rate]
     definition: "Share of competitive deals won."
     unit_kind: percent
     period: quarter
@@ -261,7 +261,7 @@ metrics:
     comparator: prior
   - id: capacity
     name: {en: "Delivery capacity", ar: "الطاقة التشغيلية"}
-    aliases: [headcount, capacity]
+    aliases: [headcount, capacity, team capacity, delivery capacity, headcount capacity]
     definition: "Team or delivery capacity available for the initiative."
     unit_kind: count
     period: point_in_time
@@ -273,7 +273,7 @@ metrics:
     comparator: none
   - id: roadmap_items
     name: {en: "Roadmap commitments", ar: "التزامات خارطة الطريق"}
-    aliases: [roadmap]
+    aliases: [roadmap, milestone, release target]
     definition: "Dated roadmap commitments relevant to the decision."
     unit_kind: date
     period: upcoming

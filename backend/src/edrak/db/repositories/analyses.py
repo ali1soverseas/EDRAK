@@ -278,7 +278,11 @@ async def plan_tasks(db: aiosqlite.Connection, plan_id: str, enabled_only: bool 
 async def plan_contract(
     db: aiosqlite.Connection, request: BusinessRequest, plan_row: dict[str, Any], enabled_only: bool = True
 ) -> ResearchPlan:
+    from edrak.metrics.planning import requirements_for
+
     tasks = await plan_tasks(db, plan_row["plan_id"], enabled_only=enabled_only)
+    ctx = request.business_context
+    competitors = [c.name for c in ctx.competitors] or list(ctx.targets)
     return ResearchPlan(
         plan_id=plan_row["plan_id"],
         request_id=request.request_id,
@@ -294,6 +298,14 @@ async def plan_contract(
                 attempt=t["attempt"],
                 company_profile=request.company_profile,
                 business_context=request.business_context,
+                requirements=requirements_for(
+                    t["worker"].value if hasattr(t["worker"], "value") else str(t["worker"]),
+                    ctx.use_case.value if hasattr(ctx.use_case, "value") else str(ctx.use_case),
+                    request.company_profile.name,
+                    competitors,
+                    list(ctx.markets),
+                    ctx.offering or "",
+                ),
             )
             for t in tasks
         ],

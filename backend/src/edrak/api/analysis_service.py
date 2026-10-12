@@ -184,6 +184,9 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
         WorkerType.CUSTOMER_TRENDS: ("What do customers say and search for?",
                                      "Read reviews, social posts and search interest for demand and complaints."),
     }
+    from edrak.metrics.planning import requirements_for
+    ctx = request.business_context
+    competitors = [c.name for c in ctx.competitors] or list(ctx.targets)
     tasks = [
         ResearchTask(
             parent_request_id=request.request_id,
@@ -192,6 +195,10 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
             focus=f"{goals[w][1]} Focus on {focus}.",
             company_profile=request.company_profile,
             business_context=request.business_context,
+            requirements=requirements_for(
+                w.value, ctx.use_case.value, request.company_profile.name,
+                competitors, list(ctx.markets), ctx.offering or "",
+            ),
         )
         for w in allowed_workers
     ]
