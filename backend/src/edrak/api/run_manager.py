@@ -363,7 +363,7 @@ class RunManager:
 
     # ------------------------------------------------------------------ the run itself
 
-    async def _store_results(self, results: list[WorkerResult], request_id: str) -> None:
+    async def _store_results(self, results: list[WorkerResult], request_id: str, workspace_id: Optional[str]) -> None:
         async with get_db() as db:
             for wr in results:
                 try:
@@ -371,7 +371,30 @@ class RunManager:
                 except Exception:  # noqa: BLE001 - keep the run going; the brief still has the result in memory
                     logger.exception("Could not store the result of task %s", wr.task_id)
                 await analyses_repo.update_task_fields(db, wr.task_id, attempt=wr.attempt)
+                if workspace_id and wr.worker == WorkerType.COMPETITOR_INTELLIGENCE:
+                    await self._remember_competitors(db, workspace_id, wr)
             await db.commit()
+
+    @staticmethod
+    async def _remember_competitors(db: Any, workspace_id: str, wr: WorkerResult) -> None:
+        """Put the competitors the worker researched, with their official site and socials, on the watchlist."""
+        from edrak.db.repositories import entities as entities_repo
+
+        for c in wr.metadata.get("competitors") or []:
+            if not isinstance(c, dict) or not (c.get("name") or "").strip():
+                continue
+            domains = c.get("official_domains") or []
+            entity = await entities_repo.upsert_entity(
+                db, workspace_id, kind="competitor", name=c["name"],
+                website=c.get("website") or (f"https://{domains[0]}" if domains else None),
+                discovered_by=c.get("discovered_by") or "user", discovery_reason=c.get("discovery_reason"),
+                discovery_confidence=c.get("discovery_confidence"),
+            )
+            for link in c.get("social_accounts") or []:
+                await entities_repo.add_entity_link(
+                    db, entity["id"], link.get("platform", ""), link.get("url", ""),
+                    verified=bool(link.get("verified")), found_on_url=link.get("found_on_url"),
+                )
 
     async def _store_verification(self, verification: VerificationResult, results: list[WorkerResult], request_id: str) -> Optional[str]:
         gaps: list[dict[str, Any]] = []
@@ -504,7 +527,7 @@ class RunManager:
 
         if node_name == "dispatch":
             results: list[WorkerResult] = list(node_output.get("results") or [])
-            await self._store_results(results, analysis_id)
+            await self._store_results(results, analysis_id, active.workspace_id)
             for wr in results:
                 for tv in run_view.tasks:
                     if tv.worker != wr.worker:

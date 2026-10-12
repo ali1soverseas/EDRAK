@@ -517,3 +517,76 @@ def test_brief_builder():
     assert len(brief["lenses"]) == 1
     assert brief["evidence"][0]["display_no"] == 7
     assert "summary" in brief and "options" in brief
+
+
+# ------------------------------------------------------------------ competitor discovery
+
+
+FOUND = [{
+    "name": "Kanz Pay", "website": "https://kanzpay.example", "reason": "Sells SME invoicing in Egypt.",
+    "confidence": 0.8, "evidence_urls": ["https://news.example/a"],
+    "links": [{"platform": "x", "url": "https://x.com/kanzpay", "verified": True, "found_on_url": "https://kanzpay.example"}],
+}]
+
+
+def _complete_profile(client):
+    client.put("/api/onboarding", json={
+        "name": "Nile Ledger", "description": "Invoicing for SMEs", "offerings": ["Invoicing"],
+        "markets": [{"name": "Egypt", "relation": "serves"}],
+    })
+
+
+def test_discover_suggests_competitors_without_saving_them(client, monkeypatch):
+    from edrak.agents.competitor_intelligence import discovery
+
+    seen = {}
+
+    def fake(**kwargs):
+        seen.update(kwargs)
+        return FOUND
+
+    monkeypatch.setattr(discovery, "discover_competitors", fake)
+    _account(client)
+    _complete_profile(client)
+    got = client.post("/api/entities/discover", json={"limit": 3}).json()
+    assert got[0]["name"] == "Kanz Pay" and got[0]["links"][0]["platform"] == "x"
+    assert seen["company"] == "Nile Ledger" and seen["markets"] == ["Egypt"]
+    assert client.get("/api/entities?kind=competitor").json() == []
+
+    # Accepting one in onboarding saves it with its official socials.
+    client.put("/api/onboarding", json={"competitors": [{**got[0], "discovered_by": "agent"}]})
+    tracked = client.get("/api/entities?kind=competitor").json()
+    assert tracked[0]["discovered_by"] == "agent"
+    links = {l["platform"]: l["url"] for l in tracked[0]["links"]}
+    assert links == {"website": "https://kanzpay.example", "x": "https://x.com/kanzpay"}
+
+
+def test_a_plan_uses_tracked_competitors_and_discovers_only_when_there_are_none(client, monkeypatch):
+    from edrak.api import analysis_service
+    from edrak.api.routers import analyses as analyses_router
+
+    calls = []
+
+    def fake_discover(company, markets, offering):
+        calls.append(markets)
+        return [{**{k: FOUND[0][k] for k in ("name", "website")}, "entity_id": None,
+                 "social_accounts": [{"platform": "x", "url": "https://x.com/kanzpay"}], "discovered_by": "agent",
+                 "discovery_reason": FOUND[0]["reason"], "discovery_confidence": 0.8, "links": FOUND[0]["links"]}]
+
+    monkeypatch.setattr(analyses_router, "discover_for", fake_discover)
+    _account(client)
+    _complete_profile(client)
+    form = {**FORM, "competitors": [], "market": ""}
+
+    draft = client.post("/api/analyses/draft", json={"form": form}).json()
+    ctx = draft["request"]["business_context"]
+    assert calls == [["Egypt"]]
+    assert ctx["targets"] == ["Kanz Pay"] and ctx["competitors"][0]["discovered_by"] == "agent"
+    assert ctx["competitors"][0]["social_accounts"] == [{"platform": "x", "url": "https://x.com/kanzpay"}]
+    assert ctx["markets"] == ["Egypt"]
+    assert client.get("/api/entities?kind=competitor").json()[0]["name"] == "Kanz Pay"
+
+    # Now that one is tracked, the next plan uses it without searching again.
+    again = client.post("/api/analyses/draft", json={"form": form}).json()
+    assert again["request"]["business_context"]["targets"] == ["Kanz Pay"]
+    assert len(calls) == 1

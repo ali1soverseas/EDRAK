@@ -10,93 +10,35 @@ from pydantic import BaseModel, Field, field_validator
 # CONFIG
 # ============================================================
 
-MAX_RESULTS_PER_QUERY = 2
+MAX_RESULTS_PER_QUERY = 3
 
-MAX_RESEARCH_STAGES = 6
-
+# The loop is bounded three ways: stages, queries, and progress.
+MAX_RESEARCH_STAGES = 3
 MAX_QUERIES_PER_REQUIREMENT = 2
+MAX_QUERIES_TOTAL = 24
+MAX_REQUIREMENTS_PER_COMPETITOR = 5
+# A further stage runs only if the last one added at least this many grounded findings.
+MIN_NEW_FINDINGS_TO_CONTINUE = 2
 
 MAX_STORE_CHARS = 6000
 
-# One value for BOTH synthesis and verification (they used to differ: 3500 vs 3000)
+# One value for synthesis and grounding.
 SOURCE_CHARS = 3500
 
 # Evidence size per LLM call. Results are split into batches, never truncated.
 MAX_EVIDENCE_CHARS = 60000
 
-VERIFY_BATCH_SIZE = 5
-
 MAX_EVIDENCE_PER_FINDING = 3
 
 DUPLICATE_SIMILARITY = 0.85
 
-# A requirement only counts as fulfilled once at least one finding is backed
-# by a first-party source (official docs, pricing, announcement, release notes).
-REQUIRE_OFFICIAL_SOURCE = True
-
 # Also dump the raw per-finding list into the final JSON (without source text).
 INCLUDE_RAW_FINDINGS = False
-
-OFFICIAL_DOMAINS = {
-    "GitHub": ["docs.github.com", "github.blog", "github.com"],
-    "GitHub Copilot": ["docs.github.com", "github.blog", "github.com"],
-    "Azure DevOps": [
-        "learn.microsoft.com",
-        "azure.microsoft.com",
-        "devblogs.microsoft.com",
-        "visualstudio.microsoft.com",
-    ],
-    "Microsoft Azure DevOps": [
-        "learn.microsoft.com",
-        "azure.microsoft.com",
-        "devblogs.microsoft.com",
-        "visualstudio.microsoft.com",
-    ],
-    "Bitbucket": ["bitbucket.org", "atlassian.com", "support.atlassian.com"],
-    "Atlassian Bitbucket": ["bitbucket.org", "atlassian.com", "support.atlassian.com"],
-    "AWS": ["docs.aws.amazon.com", "aws.amazon.com", "aboutamazon.com"],
-    "Amazon Web Services (AWS)": [
-        "docs.aws.amazon.com",
-        "aws.amazon.com",
-        "aboutamazon.com",
-    ],
-    "Google": [
-        "cloud.google.com",
-        "developers.google.com",
-        "blog.google",
-        "ai.google.dev",
-        "developers.googleblog.com",
-    ],
-}
-
-# Keys MUST match the names in the competitors list.
-COMPETITOR_SCOPE = {
-    "GitHub": (
-        "GitHub, GitHub Copilot, repositories, issues, pull requests, code "
-        "review, coding agents and developer workflows."
-    ),
-    "Microsoft Azure DevOps": (
-        "Azure DevOps, Azure Repos, Azure Boards, Azure Pipelines, Azure Test "
-        "Plans and AI explicitly connected to Azure DevOps. Do NOT transfer "
-        "capabilities from unrelated Microsoft products."
-    ),
-    "Atlassian Bitbucket": (
-        "Bitbucket and AI capabilities explicitly connected to Bitbucket."
-    ),
-    "Amazon Web Services (AWS)": (
-        "AWS software-development and developer-assistance products relevant "
-        "to the research goal, not unrelated AWS services."
-    ),
-    "Google": (
-        "Google's relevant developer and software-development products, not "
-        "unrelated consumer AI products."
-    ),
-}
 
 STAGE_STRATEGY = {
     1: "discovery",
     2: "official_sources",
-    3: "deep_verification",
+    3: "targeted_missing_requirements",
 }
 
 # ============================================================
@@ -104,6 +46,11 @@ STAGE_STRATEGY = {
 # ============================================================
 
 OUTPUT_DIR = Path("edrak_competitor_outputs")
+
+FindingCategoryName = Literal[
+    "product_feature", "pricing_packaging", "positioning", "target_customer", "strength", "gap",
+    "market_signal", "customer_sentiment", "risk", "opportunity", "other",
+]
 
 
 # ============================================================
@@ -148,6 +95,11 @@ class LLMFinding(BaseModel):
     competitor: str
     requirement_id: str = Field(description="The id (e.g. R3) of the requirement this finding supports")
     finding: str
+    category: FindingCategoryName = Field(
+        default="other",
+        description="The dimension this fact speaks to: product_feature, pricing_packaging, positioning, "
+        "target_customer, market_signal, customer_sentiment, risk, opportunity, strength, gap or other.",
+    )
     competitive_area: str = ""
     business_relevance: str = ""
     evidence_source_ids: List[str] = Field(
@@ -163,10 +115,6 @@ class LLMFinding(BaseModel):
 
 class FindingList(BaseModel):
     findings: List[LLMFinding]
-
-
-class BatchVerification(BaseModel):
-    verified_findings: List[LLMFinding]
 
 
 # ---- Target-vs-competitors comparison ----------------------
@@ -251,34 +199,21 @@ class CompetitorProfile(BaseModel):
         return _coerce_str_list(v)
 
 
-# ---- Completeness ------------------------------------------
-class RequirementCheck(BaseModel):
-    requirement_id: str
-    status: Literal["fulfilled", "missing"]
-    evidence_found: str = ""
-    missing_reason: str = Field(
-        default="",
-        description=(
-            "REQUIRED when status is 'missing': exactly which sub-facts are "
-            "not yet established by the verified findings."
-        ),
-    )
-
-
-class RequirementCheckList(BaseModel):
-    checks: List[RequirementCheck]
-
-
 # ============================================================
 # STATE
 # ============================================================
 
 class CompetitorState(TypedDict, total=False):
     task_id: str
+    attempt: int
     company: str
-    company_context: Dict[str, Any]
+    company_profile: Dict[str, Any]
+    business_context: Dict[str, Any]
     competitors: List[str]
+    competitor_info: Dict[str, Dict[str, Any]]   # name -> {website, aliases, discovered_by, reason, links}
     research_goal: str
+    research_focus: str
+    today: str
 
     research_stage: int
     research_strategy: str
@@ -297,6 +232,7 @@ class CompetitorState(TypedDict, total=False):
 
     new_sources_this_stage: int
     new_verified_this_stage: int
+    dropped_sources: List[Dict[str, Any]]
 
     final_report: Dict[str, Any]
 
@@ -307,15 +243,39 @@ class CompetitorState(TypedDict, total=False):
 
 CONFIDENCE_RANK = {"low": 0, "medium": 1, "high": 2}
 
-COMPARISON_DIMENSIONS = [
-    "AI capabilities and software-development lifecycle coverage",
-    "Degree of autonomy and human approval points",
-    "Integration with existing development workflows",
-    "Availability (plans, deployment models, GA vs preview vs announced)",
-    "Pricing and packaging",
-    "Recent evolution (2026 changes)",
-    "Customer adoption and market traction",
-    "Developer experience and ease of use",
-    "Security, privacy, and compliance",
-    "Support and documentation quality",
-]
+# The comparison is made on the dimensions of the user's focus, plus these defaults per use case.
+COMPARISON_DIMENSIONS_BY_USE_CASE = {
+    "competitive_intelligence": [
+        "Core capabilities relevant to the goal",
+        "Pricing and packaging",
+        "Target customers and positioning",
+        "Availability (plans, regions, generally available vs preview vs announced)",
+        "Integrations and ecosystem",
+        "Recent changes",
+    ],
+    "market_entry_expansion": [
+        "Presence in the target markets",
+        "Offering and localisation for those markets",
+        "Pricing and packaging in those markets",
+        "Target customers and positioning",
+        "Partnerships and distribution",
+        "Recent changes",
+    ],
+    "product_launch": [
+        "How each competitor addresses the problem the offering solves",
+        "Pricing and packaging of comparable offerings",
+        "Target customers and positioning",
+        "Gaps and limitations people point out",
+        "Availability (generally available vs preview vs announced)",
+        "Recent changes",
+    ],
+}
+COMPARISON_DIMENSIONS = COMPARISON_DIMENSIONS_BY_USE_CASE["competitive_intelligence"]
+
+
+def comparison_dimensions(use_case: str, focus_areas: List[str]) -> List[str]:
+    dims = list(COMPARISON_DIMENSIONS_BY_USE_CASE.get(use_case, COMPARISON_DIMENSIONS))
+    for area in focus_areas:
+        if area and not any(area.lower() in d.lower() or d.lower().startswith(area.lower()) for d in dims):
+            dims.insert(1, area)
+    return dims[:8]

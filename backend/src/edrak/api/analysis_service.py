@@ -76,10 +76,15 @@ def derive_title(form: AnalysisForm) -> str:
 
 
 def standard_inputs(form: AnalysisForm, company: dict[str, Any]) -> dict[str, Any]:
-    """Competitors, markets, offering and target customers, under one set of names for every use case."""
+    """Competitors, markets, offering and target customers, under one set of names for every use case.
+
+    Competitors come from the form; when the form names none, the competitors the company tracks
+    (from onboarding or the watchlist) are used.
+    """
     competitors = []
     known = {c["name"].lower(): c for c in company.get("competitors") or []}
-    for name in form.competitors:
+    names = [n for n in form.competitors if n.strip()] or [c["name"] for c in company.get("competitors") or []]
+    for name in names:
         name = name.strip()
         if not name or name.lower() in {c["name"].lower() for c in competitors}:
             continue
@@ -87,7 +92,9 @@ def standard_inputs(form: AnalysisForm, company: dict[str, Any]) -> dict[str, An
         competitors.append({
             "name": name,
             "entity_id": entity["entity_id"] if entity else None,
-            "website": next((l["url"] for l in (entity or {}).get("links", []) if l["platform"] == "website"), None),
+            "website": (entity or {}).get("website")
+            or next((l["url"] for l in (entity or {}).get("links", []) if l["platform"] == "website"), None)
+            or (f"https://{entity['website_domain']}" if (entity or {}).get("website_domain") else None),
             "social_accounts": [
                 {"platform": l["platform"], "url": l["url"]}
                 for l in (entity or {}).get("links", []) if l["platform"] != "website"
@@ -95,6 +102,9 @@ def standard_inputs(form: AnalysisForm, company: dict[str, Any]) -> dict[str, An
             "discovered_by": (entity or {}).get("discovered_by", "user"),
         })
     markets = [m.strip() for m in form.market.replace(";", ",").split(",") if m.strip()]
+    if not markets and form.use_case != UseCase.MARKET_ENTRY_EXPANSION:
+        # Without a market named, the analysis is about where the company already sells.
+        markets = [m["name"] for m in company.get("markets") or [] if m.get("relation") == "serves"]
     return {
         "competitors": competitors,
         "markets": markets,
@@ -195,3 +205,32 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
 def estimate_minutes(plan: ResearchPlan) -> int:
     """Rough wall time: workers run in parallel, then verification and synthesis."""
     return 6 + 2 * len({t.worker for t in plan.tasks})
+
+
+def discover_for(company: dict[str, Any], markets: list[str], offering: Optional[str]) -> list[dict[str, Any]]:
+    """Competitors found on the web for an analysis that named none (blocking; run in a thread)."""
+    from edrak.agents.competitor_intelligence.discovery import discover_competitors
+
+    found = discover_competitors(
+        company=company.get("name") or "",
+        description=company.get("description") or None,
+        offerings=[*(company.get("offerings") or []), *([offering] if offering else [])],
+        industry=company.get("industry_other") or company.get("industry"),
+        markets=markets,
+        target_customers=company.get("target_customers") or None,
+        exclude=company.get("aliases") or [],
+        limit=4,
+    )
+    return [
+        {
+            "name": c["name"],
+            "entity_id": None,
+            "website": c.get("website"),
+            "social_accounts": [{"platform": l["platform"], "url": l["url"]} for l in c.get("links", [])],
+            "discovered_by": "agent",
+            "discovery_reason": c.get("reason"),
+            "discovery_confidence": c.get("confidence"),
+            "links": c.get("links", []),
+        }
+        for c in found
+    ]

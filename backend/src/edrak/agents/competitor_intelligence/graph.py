@@ -32,7 +32,9 @@ graph.add_node("search", search_node)
 
 graph.add_node("synthesize", synthesize_node)
 
-graph.add_node("verify", verify_node)
+# Grounding: findings must be supported by the sources they cite (no second model pass;
+# the pipeline's verification stage reviews every worker's findings).
+graph.add_node("ground", verify_node)
 
 graph.add_node("check_requirements", check_research_requirements_node)
 
@@ -55,9 +57,9 @@ graph.add_conditional_edges(
 
 graph.add_edge("search", "synthesize")
 
-graph.add_edge("synthesize", "verify")
+graph.add_edge("synthesize", "ground")
 
-graph.add_edge("verify", "check_requirements")
+graph.add_edge("ground", "check_requirements")
 
 graph.add_conditional_edges(
     "check_requirements",

@@ -32,18 +32,21 @@ from edrak.contracts.task import WorkerType
 
 from .prompts import (
     STAGE_SYNTH_GUIDANCE,
-    check_prompt,
     comparison_prompt,
     consolidation_prompt,
     queries_prompt,
     requirements_prompt,
     synthesis_prompt,
-    verification_prompt,
+)
+
+from .sources import (
+    best_passage,
+    is_official as _is_official_source,
+    judge as judge_source,
+    official_domains,
 )
 
 from .state import (
-    BatchVerification,
-    COMPETITOR_SCOPE,
     CONFIDENCE_RANK,
     ComparisonReport,
     CompetitorProfile,
@@ -54,17 +57,17 @@ from .state import (
     MAX_EVIDENCE_CHARS,
     MAX_EVIDENCE_PER_FINDING,
     MAX_QUERIES_PER_REQUIREMENT,
+    MAX_QUERIES_TOTAL,
+    MAX_REQUIREMENTS_PER_COMPETITOR,
     MAX_RESEARCH_STAGES,
     MAX_RESULTS_PER_QUERY,
     MAX_STORE_CHARS,
-    OFFICIAL_DOMAINS,
-    REQUIRE_OFFICIAL_SOURCE,
-    RequirementCheckList,
+    MIN_NEW_FINDINGS_TO_CONTINUE,
     ResearchRequirements,
     SOURCE_CHARS,
     STAGE_STRATEGY,
     SearchQueryList,
-    VERIFY_BATCH_SIZE,
+    comparison_dimensions,
 )
 
 
@@ -174,8 +177,13 @@ def llm_strong():
 # OUTPUT
 # ============================================================
 
-COMPETITOR_DIR = Path(__file__).resolve().parent
-OUTPUT_DIR = COMPETITOR_DIR / "outputs"
+from edrak.core.config import settings as _settings
+
+# Intermediate stage files are a debugging aid. They are written only with EDRAK_DEBUG on, and
+# under artifacts/ (which is not committed), never inside the package.
+OUTPUT_DIR = (
+    _settings.ARTIFACTS_PATH if _settings.ARTIFACTS_PATH.is_absolute() else _settings.BASE_DIR / _settings.ARTIFACTS_PATH
+) / "competitor_runs"
 
 
 def save_node_output(
@@ -183,6 +191,8 @@ def save_node_output(
     output: Dict[str, Any],
     research_stage: int = 1,
 ):
+    if not _settings.EDRAK_DEBUG:
+        return
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     file_path = OUTPUT_DIR / f"stage_{research_stage}_{node_name}.json"
@@ -265,27 +275,6 @@ def host_matches(
         host == d or host.endswith("." + d)
         for d in domains
     )
-
-
-def belongs_to_other_competitor(
-    url: str,
-    competitor: str,
-) -> bool:
-    """
-    True if the URL is on another competitor's official domain.
-    """
-
-    own = OFFICIAL_DOMAINS.get(competitor, [])
-    host = host_of(url)
-
-    if host_matches(host, own):
-        return False
-
-    for other, domains in OFFICIAL_DOMAINS.items():
-        if other != competitor and host_matches(host, domains):
-            return True
-
-    return False
 
 
 def result_text(
@@ -1085,32 +1074,8 @@ def is_official(
     url: str,
     competitor: str,
 ) -> bool:
-    """Return whether the URL matches a configured official domain."""
-    host = host_of(url)
-    domains = OFFICIAL_DOMAINS.get(competitor, [])
-    return host_matches(host, domains)
-
-def has_official_evidence(
-    verified: List[Dict[str, Any]],
-    competitor: str,
-    requirement_id: str,
-) -> bool:
-    for f in verified:
-        if (
-            f["competitor"] != competitor
-            or f.get("requirement_id")
-            != requirement_id
-        ):
-            continue
-
-        for e in f.get("evidence", []):
-            if is_official(
-                e.get("source_url", ""),
-                competitor,
-            ):
-                return True
-
-    return False
+    """The URL is on the competitor's own site (domains registered per run; see sources.py)."""
+    return _is_official_source(url, competitor)
 
 
 # ============================================================
@@ -1144,6 +1109,8 @@ def identify_research_requirements_node(
     }
 
     requirements = []
+    per_competitor: Dict[str, int] = {}
+    seen_text = set()
 
     for item in result.requirements:
         competitor = canonical.get(
@@ -1156,6 +1123,13 @@ def identify_research_requirements_node(
                 f"unknown competitor: {item.competitor}"
             )
             continue
+
+        # A bounded number of narrow requirements per competitor keeps the loop short.
+        key = (competitor, item.requirement.strip().lower())
+        if key in seen_text or per_competitor.get(competitor, 0) >= MAX_REQUIREMENTS_PER_COMPETITOR:
+            continue
+        seen_text.add(key)
+        per_competitor[competitor] = per_competitor.get(competitor, 0) + 1
 
         requirements.append(
             {
@@ -1295,11 +1269,19 @@ def generate_queries_node(
         in target_competitors
     ][-150:]
 
-    scope_text = "\n".join(
-        f"- {c}: "
-        f"{COMPETITOR_SCOPE.get(c, 'Research the competitor broadly according to the specific requirement.')}"
-        for c in sorted(target_competitors)
-    )
+    info = state.get("competitor_info", {})
+
+    def scope_of(c: str) -> str:
+        details = info.get(c, {})
+        domains = official_domains(c)
+        parts = [f"the company {c}"]
+        if domains:
+            parts.append(f"official site {', '.join(domains)}")
+        if details.get("reason"):
+            parts.append(f"known for: {details['reason']}")
+        return "; ".join(parts) + f". Only facts about {c}'s own products; do not credit it with a parent or partner company's products."
+
+    scope_text = "\n".join(f"- {c}: {scope_of(c)}" for c in sorted(target_competitors))
 
     prompt = queries_prompt(
         state,
@@ -1332,6 +1314,8 @@ def generate_queries_node(
     queries = []
     seen = set()
     per_req = {}
+    # The whole run has a query budget; later stages get what is left.
+    budget = max(0, MAX_QUERIES_TOTAL - len(executed))
 
     for q in (
         result.queries
@@ -1370,6 +1354,9 @@ def generate_queries_node(
             >= MAX_QUERIES_PER_REQUIREMENT
         ):
             continue
+
+        if len(queries) >= budget:
+            break
 
         seen.add(key)
 
@@ -1459,15 +1446,11 @@ def run_tavily(
         include_raw_content=True,
         chunks_per_source=3,
     )
-
-    # No time_range filter: evergreen pricing, docs and product pages often
-    # carry no recent date and were being filtered out of discovery.
-
-    # if domains:
-    #     params["include_domains"] = domains
-
+    # No time_range filter: evergreen pricing, docs and product pages often carry no recent date.
+    if domains:
+        # The official-sources stage reads the competitor's own site first.
+        params["include_domains"] = domains
     return tavily().search(**params)
-
 
 
 def search_node(state: CompetitorState):
@@ -1497,14 +1480,17 @@ def search_node(state: CompetitorState):
         print(f"\n[{competitor}] Query: {query}")
 
         try:
-            # Search the web without restricting domains.
+            domains = official_domains(competitor) if strategy == "official_sources" else []
             response = run_tavily(
                 query,
                 stage,
-                None,
+                domains or None,
             )
 
             tavily_results = response.get("results", [])
+            if domains and not tavily_results:
+                # Nothing on the official site for this query: search the open web instead.
+                tavily_results = run_tavily(query, stage, None).get("results", [])
 
             print(f"Tavily results: {len(tavily_results)}")
 
@@ -1643,6 +1629,28 @@ def search_node(state: CompetitorState):
             }
         )
 
+    # Keep only sources worth reading: about this competitor, with text, not a content farm.
+    aliases_by = {
+        name: (info.get("aliases") or [])
+        for name, info in state.get("competitor_info", {}).items()
+    }
+    dropped = list(state.get("dropped_sources", []))
+    for key, item in list(known.items()):
+        if item.get("stage") != stage or item.get("judged"):
+            continue
+        keep, reason = judge_source(item, item["competitor"], aliases_by.get(item["competitor"], []))
+        if keep:
+            item["judged"] = True
+            item["source_class"] = reason
+        else:
+            del known[key]
+            added -= 1
+            dropped.append({"competitor": item["competitor"], "url": item["url"], "reason": reason})
+    log_action(
+        "competitor_intelligence",
+        f"kept {added} relevant source(s), set aside {len(dropped) - len(state.get('dropped_sources', []))}",
+    )
+
     results = list(known.values())
 
     print(f"\nAdded {added} new results.")
@@ -1662,7 +1670,8 @@ def search_node(state: CompetitorState):
     return {
         "search_results": results,
         "executed_queries": executed,
-        "new_sources_this_stage": added,
+        "new_sources_this_stage": max(0, added),
+        "dropped_sources": dropped[-300:],
     }
 
 # ============================================================
@@ -1863,377 +1872,78 @@ def synthesize_node(
 # Only NEW findings, grouped by competitor
 # ============================================================
 
-def verify_batch(
-    state: CompetitorState,
-    competitor: str,
-    batch: List[Dict[str, Any]],
-    index,
-):
-    cited = {}
+_STOPWORDS = {
+    "that", "this", "with", "from", "have", "been", "were", "their", "about", "into", "over",
+    "than", "such", "also", "only", "does", "each", "when", "which", "while", "where", "after",
+    "before", "between", "without", "including", "across", "offers", "provides", "supports", "using",
+}
+_NUMBER = re.compile(r"\d+(?:[.,]\d+)*")
 
-    for finding in batch:
-        for ev in finding.get(
-            "evidence",
-            [],
-        ):
-            url = normalize_url(
-                ev.get(
-                    "source_url",
-                    "",
-                )
-            )
 
-            if url in index:
-                cited[url] = index[url]
+def grounding_problem(statement: str, source_text: str) -> str | None:
+    """Why a finding is not supported by the text it cites, or None when it is.
 
-    if not cited:
-        return []
-
-    id_map = {
-        f"S{i + 1}": src
-        for i, src in enumerate(
-            cited.values()
-        )
-    }
-
-    url_to_id = {
-        normalize_url(src["url"]): sid
-        for sid, src in id_map.items()
-    }
-
-    sources = "\n\n---\n\n".join(
-        f"SOURCE ID: {sid}\n"
-        f"URL: {src['url']}\n"
-        f"TITLE: {src['title']}\n"
-        f"SOURCE TEXT:\n"
-        f"{(src.get('text') or '')[:SOURCE_CHARS]}"
-        for sid, src in id_map.items()
-    )
-
-    proposed = [
-        {
-            "competitor": f["competitor"],
-            "requirement_id": f[
-                "requirement_id"
-            ],
-            "finding": f["finding"],
-            "competitive_area": f[
-                "competitive_area"
-            ],
-            "business_relevance": f[
-                "business_relevance"
-            ],
-            "evidence_source_ids": [
-                url_to_id[
-                    normalize_url(
-                        e["source_url"]
-                    )
-                ]
-                for e in f.get(
-                    "evidence",
-                    [],
-                )
-                if normalize_url(
-                    e["source_url"]
-                ) in url_to_id
-            ],
-        }
-        for f in batch
-    ]
-
-    prompt = verification_prompt(
-        state,
-        competitor,
-        proposed,
-        sources,
-    )
-
-    result = call_structured(
-        prompt,
-        BatchVerification,
-        strong=True,
-    )
-
-    if result is None:
-        print(
-            "WARNING: verification failed for "
-            f"a {competitor} batch; findings "
-            "not accepted"
-        )
-        return []
-
-    allowed_ids = {
-        f["requirement_id"]
-        for f in batch
-    }
-
-    returned_keys = {
-        (
-            f.requirement_id.strip(),
-            (f.finding or "")[:40].lower(),
-        )
-        for f in result.verified_findings
-    }
-
-    for f in batch:
-        if (
-            f["requirement_id"],
-            f["finding"][:40].lower(),
-        ) not in returned_keys:
-            # The verifier may have rewritten the text, so this is a hint,
-            # not proof of rejection.
-            print(
-                f"POSSIBLY REJECTED [{competitor}] "
-                f"({f['requirement_id']}) {f['finding'][:140]} "
-                f"| cited: {[e['source_url'] for e in f.get('evidence', [])]}"
-            )
-
-    verified = []
-
-    for f in result.verified_findings:
-        item = f.model_dump()
-
-        item["competitor"] = competitor
-
-        if (
-            item.get("requirement_id")
-            not in allowed_ids
-        ):
-            print(
-                "WARNING: verifier returned unknown "
-                f"requirement_id "
-                f"{item.get('requirement_id')}"
-            )
-            continue
-
-        item = attach_evidence(
-            [item],
-            id_map,
-        )[0]
-
-        if not item.get("evidence"):
-            print(
-                "WARNING: verifier accepted a finding "
-                "without resolvable evidence; "
-                "finding discarded."
-            )
-            continue
-
-        # ----------------------------------------------------
-        # IMPORTANT:
-        # Establish confidence HERE, at verification time.
-        #
-        # The verifier's confidence is preserved when valid,
-        # but it is constrained by the actual evidence.
-        #
-        # Third-party sources are valid and can receive
-        # strong confidence when they directly support
-        # the finding.
-        # ----------------------------------------------------
-
-        item = ensure_finding_confidence(
-            item,
-            index,
-        )
-
-        if item.get("confidence") is None:
-            print(
-                "WARNING: verified finding has no "
-                "usable confidence; evidence was present "
-                "but confidence could not be calculated."
-            )
-
-        print(
-            f"\nVerified finding: "
-            f"{item.get('finding', '')[:160]}"
-        )
-
-        print(
-            f"Confidence: "
-            f"{item.get('confidence')}"
-        )
-
-        print(
-            f"Evidence quality: "
-            f"{item.get('evidence_quality')}"
-        )
-
-        verified.append(item)
-
-    return verified
+    Deterministic on purpose: the pipeline's verification stage does the careful review, so the
+    worker only refuses what is plainly unsupported. Every number in the statement must appear in
+    the sources, and most of its key words must too.
+    """
+    text = (source_text or "").lower()
+    if not text.strip():
+        return "cited sources have no text"
+    flat = text.replace(",", "")
+    for number in _NUMBER.findall(statement):
+        if number.replace(",", "") not in flat:
+            return f"the number {number} is not in the cited sources"
+    words = {w for w in re.findall(r"[a-z][a-z0-9]{3,}", statement.lower()) if w not in _STOPWORDS}
+    if not words:
+        return None
+    present = sum(1 for w in words if w in text or w[:-1] in text)
+    if present / len(words) < 0.45:
+        return "the cited sources do not say this"
+    return None
 
 
 def verify_node(
     state: CompetitorState,
 ):
-    log_action("competitor_intelligence", "checking findings against sources")
-    stage = state.get(
-        "research_stage",
-        1,
+    """Keep the new findings that their cited sources support, and score their confidence.
+
+    There is no second model pass here any more: the pipeline's verification stage reviews every
+    finding from every worker, so a review inside this worker only doubled the cost and the time.
+    """
+    log_action("competitor_intelligence", "checking each finding against the sources it cites")
+    stage = state.get("research_stage", 1)
+    _banner(f"NODE: ground  STAGE {stage}")
+
+    previously_verified = state.get("verified_findings", [])
+    accepted: List[Dict[str, Any]] = []
+    rejected = 0
+    for f in state.get("new_findings", []):
+        competitor = f["competitor"]
+        index = source_index_for(state.get("search_results", []), competitor)
+        evidence = [
+            e for e in f.get("evidence", [])
+            if normalize_url(e.get("source_url", "")) in index
+        ]
+        if not evidence:
+            rejected += 1
+            continue
+        joined = "\n".join(index[normalize_url(e["source_url"])].get("text") or "" for e in evidence)
+        problem = grounding_problem(f.get("finding", ""), joined)
+        if problem:
+            rejected += 1
+            print(f"NOT GROUNDED [{competitor}] {f.get('finding', '')[:120]} ({problem})")
+            continue
+        accepted.append(ensure_finding_confidence({**f, "evidence": evidence}, index))
+
+    verified = merge_findings(previously_verified, accepted)
+    added = len(verified) - len(previously_verified)
+    log_action(
+        "competitor_intelligence",
+        f"{added} finding(s) grounded in their sources this stage, {rejected} set aside",
     )
-
-    _banner(f"NODE: verify  STAGE {stage}")
-
-    previously_verified = state.get(
-        "verified_findings",
-        [],
-    )
-
-    new_findings = state.get(
-        "new_findings",
-        [],
-    )
-
-    newly_verified = []
-
-    for competitor in state["competitors"]:
-        index = source_index_for(
-            state.get(
-                "search_results",
-                [],
-            ),
-            competitor,
-        )
-
-        comp_new = []
-
-        for f in new_findings:
-            if f["competitor"] != competitor:
-                continue
-
-            evidence = [
-                e
-                for e in f.get(
-                    "evidence",
-                    [],
-                )
-                if normalize_url(
-                    e.get(
-                        "source_url",
-                        "",
-                    )
-                ) in index
-            ]
-
-            if evidence:
-                comp_new.append(
-                    {
-                        **f,
-                        "evidence": evidence,
-                    }
-                )
-
-        for i in range(
-            0,
-            len(comp_new),
-            VERIFY_BATCH_SIZE,
-        ):
-            batch = comp_new[
-                i:i + VERIFY_BATCH_SIZE
-            ]
-
-            newly_verified.extend(
-                verify_batch(
-                    state,
-                    competitor,
-                    batch,
-                    index,
-                )
-            )
-
-    verified = merge_findings(
-        previously_verified,
-        newly_verified,
-    )
-
-    # --------------------------------------------------------
-    # Normalize old findings too.
-    #
-    # This matters when the graph resumes or when findings
-    # were produced before the confidence logic existed.
-    # --------------------------------------------------------
-
-    normalized_verified = []
-
-    for finding in verified:
-        competitor = finding.get(
-            "competitor",
-            "",
-        )
-
-        index = source_index_for(
-            state.get(
-                "search_results",
-                [],
-            ),
-            competitor,
-        )
-
-        finding = ensure_finding_confidence(
-            finding,
-            index,
-        )
-
-        normalized_verified.append(
-            finding
-        )
-
-    verified = normalized_verified
-
-    added = (
-        len(verified)
-        - len(previously_verified)
-    )
-
-    print(
-        f"Newly verified this stage: {added}"
-    )
-
-    print(
-        f"Total verified findings: "
-        f"{len(verified)}"
-    )
-
-    for f in verified[
-        len(previously_verified):
-    ]:
-        print(
-            f"\n[{f['competitor']}] "
-            f"({f['requirement_id']}) "
-            f"{f['finding']}"
-        )
-
-        print(
-            f"  Confidence: "
-            f"{f.get('confidence')}"
-        )
-
-        print(
-            f"  Evidence quality: "
-            f"{f.get('evidence_quality')}"
-        )
-
-        for e in f.get(
-            "evidence",
-            [],
-        ):
-            print(
-                f"  - {e['source_url']}"
-            )
-
-    save_node_output(
-        "verified_findings",
-        {
-            "verified_findings": verified,
-            "new_this_stage": added,
-        },
-        stage,
-    )
-
-    return {
-        "verified_findings": verified,
-        "new_verified_this_stage": added,
-    }
+    save_node_output("verified_findings", {"verified_findings": verified, "new_this_stage": added}, stage)
+    return {"verified_findings": verified, "new_verified_this_stage": added}
 
 
 # ============================================================
@@ -2243,296 +1953,42 @@ def verify_node(
 def check_research_requirements_node(
     state: CompetitorState,
 ):
-    log_action("competitor_intelligence", "checking which requirements are still open")
-    stage = state.get(
-        "research_stage",
-        1,
-    )
+    """Which requirements are established. Deterministic: met once a grounded finding maps to it.
 
+    This used to be a model call that kept finding new \"missing sub-facts\", which is what kept the
+    loop running for six stages. A requirement is now open only while nothing grounded covers it.
+    """
+    log_action("competitor_intelligence", "checking which requirements are still open")
+    stage = state.get("research_stage", 1)
     _banner(f"NODE: check_requirements  STAGE {stage}")
 
-    requirements = state.get(
-        "research_requirements",
-        [],
-    )
-
-    verified = state.get(
-        "verified_findings",
-        [],
-    )
-
-    prev_checks = {
-        c["requirement_id"]: c
-        for c in state.get(
-            "requirement_checks",
-            [],
-        )
-    }
-
-    checks_by_id = {
-        rid: c
-        for rid, c in prev_checks.items()
-        if c["status"] == "fulfilled"
-    }
-
-    pending = [
-        r
-        for r in requirements
-        if r["id"] not in checks_by_id
-    ]
-
-    if pending:
-        pending_ids = {
-            r["id"]
-            for r in pending
-        }
-
-        pending_comps = {
-            r["competitor"]
-            for r in pending
-        }
-
-        verified_view = [
-            finding_view(
-                f,
-                600,
-            )
-            for f in verified
-            if f["competitor"]
-            in pending_comps
+    verified = state.get("verified_findings", [])
+    checks = []
+    for r in state.get("research_requirements", []):
+        found = [
+            f for f in verified
+            if f.get("competitor") == r["competitor"] and f.get("requirement_id") == r["id"]
         ]
-
-        prompt = check_prompt(
-            state,
-            stage,
-            pending,
-            verified_view,
-        )
-
-        result = call_structured(
-            prompt,
-            RequirementCheckList,
-            strong=True,
-        )
-
-        returned: Dict[
-            str,
-            Dict[str, Any],
-        ] = {}
-
-        for c in (
-            result.checks
-            if result
-            else []
-        ):
-            if (
-                c.requirement_id
-                in pending_ids
-                and c.requirement_id
-                not in returned
-            ):
-                returned[
-                    c.requirement_id
-                ] = c.model_dump()
-
-        verified_ids = {
-            (
-                f["competitor"],
-                f.get(
-                    "requirement_id"
-                ),
-            )
-            for f in verified
-        }
-
-        for r in pending:
-            c = returned.get(
-                r["id"]
-            )
-
-            if c is None:
-                c = {
-                    "requirement_id": r["id"],
-                    "status": "missing",
-                    "evidence_found": "",
-                    "missing_reason": (
-                        "Not evaluated by checker."
-                    ),
-                }
-
-            if (
-                c["status"] == "fulfilled"
-                and (
-                    r["competitor"],
-                    r["id"],
-                )
-                not in verified_ids
-            ):
-                c["status"] = "missing"
-
-                c["missing_reason"] = (
-                    "Checker claimed fulfilled but "
-                    "no verified finding maps to "
-                    "this requirement."
-                )
-
-            # ------------------------------------------------
-            # IMPORTANT:
-            #
-            # Third-party evidence IS VALID.
-            #
-            # There is intentionally NO requirement here
-            # that evidence must come from the competitor.
-            # ------------------------------------------------
-
-            requirement_findings = [
-                f
-                for f in verified
-                if f.get(
-                    "competitor"
-                ) == r["competitor"]
-                and f.get(
-                    "requirement_id"
-                ) == r["id"]
-            ]
-
-            confidence = requirement_confidence(
-                requirement_findings,
-                r["id"],
-            )
-
-            evidence_quality = requirement_evidence_quality(
-                requirement_findings,
-                r["id"],
-            )
-
-            c["confidence"] = confidence
-            c["evidence_quality"] = evidence_quality
-
-            if (
-                c["status"] == "missing"
-                and not (
-                    c.get(
-                        "missing_reason"
-                    )
-                    or ""
-                ).strip()
-            ):
-                c["missing_reason"] = (
-                    "Checker gave no reason; "
-                    "treat the whole requirement "
-                    "as not yet established."
-                )
-
-            c["competitor"] = r[
-                "competitor"
-            ]
-
-            c["requirement"] = r[
-                "requirement"
-            ]
-
-            checks_by_id[
-                r["id"]
-            ] = c
-
-    checks = [
-        checks_by_id[r["id"]]
-        for r in requirements
-    ]
-
-    # Normalize confidence for requirements that were
-    # already fulfilled in previous stages.
-    for c in checks:
-        if c.get("confidence") is None:
-            requirement_findings = [
-                f
-                for f in verified
-                if f.get(
-                    "competitor"
-                ) == c.get(
-                    "competitor"
-                )
-                and f.get(
-                    "requirement_id"
-                ) == c.get(
-                    "requirement_id"
-                )
-            ]
-
-            c["confidence"] = requirement_confidence(
-                requirement_findings,
-                c["requirement_id"],
-            )
-
-            c["evidence_quality"] = requirement_evidence_quality(
-                requirement_findings,
-                c["requirement_id"],
-            )
-
+        checks.append({
+            "requirement_id": r["id"],
+            "competitor": r["competitor"],
+            "requirement": r["requirement"],
+            "status": "fulfilled" if found else "missing",
+            "evidence_found": f"{len(found)} grounded finding(s)" if found else "",
+            "missing_reason": "" if found else "No source found yet that establishes this.",
+            "confidence": requirement_confidence(found, r["id"]),
+            "evidence_quality": requirement_evidence_quality(found, r["id"]),
+        })
     missing = [
-        {
-            "requirement_id": c[
-                "requirement_id"
-            ],
-            "competitor": c[
-                "competitor"
-            ],
-            "requirement": c[
-                "requirement"
-            ],
-            "missing_reason": c.get(
-                "missing_reason",
-                "",
-            ),
-        }
-        for c in checks
-        if c["status"] != "fulfilled"
+        {k: c[k] for k in ("requirement_id", "competitor", "requirement", "missing_reason")}
+        for c in checks if c["status"] != "fulfilled"
     ]
-
-    print("\nREQUIREMENT STATUS:")
-
-    for c in checks:
-        print(
-            f'[{c["competitor"]}] '
-            f'{c["requirement_id"]}: '
-            f'{c["status"]}'
-        )
-
-        print(
-            f'   Confidence: '
-            f'{c.get("confidence")}'
-        )
-
-        print(
-            f'   Evidence quality: '
-            f'{c.get("evidence_quality", "none")}'
-        )
-
-        if c["status"] == "missing":
-            print(
-                f'   Reason: '
-                f'{c.get("missing_reason", "")}'
-            )
-
-    print(
-        f"\nTotal missing requirements: "
-        f"{len(missing)} / {len(checks)}"
+    log_action(
+        "competitor_intelligence",
+        f"{len(checks) - len(missing)} of {len(checks)} requirement(s) established",
     )
-
-    save_node_output(
-        "requirement_check",
-        {
-            "checks": checks,
-            "missing_information": missing,
-        },
-        stage,
-    )
-
-    return {
-        "requirement_checks": checks,
-        "missing_information": missing,
-    }
+    save_node_output("requirement_check", {"checks": checks, "missing_information": missing}, stage)
+    return {"requirement_checks": checks, "missing_information": missing}
 
 
 # ============================================================
@@ -2581,55 +2037,20 @@ def prepare_next_stage_node(
 def research_router(
     state: CompetitorState,
 ):
-    stage = state.get(
-        "research_stage",
-        1,
-    )
-
-    missing = state.get(
-        "missing_information",
-        [],
-    )
-
+    """Continue only while it is worth it: open requirements, stages and queries left, and progress."""
+    stage = state.get("research_stage", 1)
+    missing = state.get("missing_information", [])
     if not missing:
-        print(
-            "\nAll requirements fulfilled."
-        )
         return "finish"
-
     if stage >= MAX_RESEARCH_STAGES:
-        print(
-            f"\nReached max stages. "
-            f"Unresolved requirements: "
-            f"{len(missing)}"
-        )
+        log_action("competitor_intelligence", f"stopping after {stage} stages with {len(missing)} open requirement(s)")
         return "finish"
-
-    if (
-        stage > 1
-        and state.get(
-            "new_sources_this_stage",
-            0,
-        )
-        == 0
-        and state.get(
-            "new_verified_this_stage",
-            0,
-        )
-        == 0
-    ):
-        print(
-            f"\nNo progress this stage. "
-            f"Unresolved requirements: "
-            f"{len(missing)}"
-        )
+    if len(state.get("executed_queries", [])) >= MAX_QUERIES_TOTAL:
+        log_action("competitor_intelligence", "stopping: the search budget for this run is used")
         return "finish"
-
-    print(
-        f"\nResearch incomplete. "
-        f"Continuing to stage {stage + 1}."
-    )
-
+    if stage > 1 and state.get("new_verified_this_stage", 0) < MIN_NEW_FINDINGS_TO_CONTINUE:
+        log_action("competitor_intelligence", "stopping: the last stage added too little to justify another")
+        return "finish"
     return "research_again"
 
 
@@ -3338,17 +2759,10 @@ def final_report_node(
         ),
     )
 
-    md_path = (
-        OUTPUT_DIR
-        / "final_report.md"
-    )
-
-    md_path.write_text(
-        render_markdown(
-            final_report
-        ),
-        encoding="utf-8",
-    )
+    md_path = OUTPUT_DIR / "final_report.md"
+    if _settings.EDRAK_DEBUG:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        md_path.write_text(render_markdown(final_report), encoding="utf-8")
 
     print(
         f"Saved markdown report -> "
@@ -3457,13 +2871,9 @@ def comparison_node(
             ),
         )
 
-        (
-            OUTPUT_DIR
-            / "final_report.md"
-        ).write_text(
-            render_markdown(report),
-            encoding="utf-8",
-        )
+        if _settings.EDRAK_DEBUG:
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
 
         return output
 
@@ -3710,18 +3120,9 @@ def comparison_node(
         ),
     )
 
-    (
-        OUTPUT_DIR
-        / "final_report.md"
-    ).write_text(
-        render_markdown(report),
-        encoding="utf-8",
-    )
-
-    print(
-        f"Saved markdown report -> "
-        f"{OUTPUT_DIR / 'final_report.md'}"
-    )
+    if _settings.EDRAK_DEBUG:
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
 
     return output
 
@@ -3730,326 +3131,202 @@ def comparison_node(
 # WORKER RESULT ADAPTER
 # ============================================================
 
+def _source_type_for(url: str, official: bool) -> SourceType:
+    path = (urlparse(url).path or "").lower()
+    if official:
+        if "pric" in path or "plans" in path:
+            return SourceType.PRICING_PAGE
+        if any(k in path for k in ("release", "changelog", "whats-new", "what-s-new", "updates")):
+            return SourceType.RELEASE_NOTES
+        if any(k in path for k in ("blog", "news", "press", "announc")):
+            return SourceType.ANNOUNCEMENT
+        return SourceType.OFFICIAL_DOCUMENTATION
+    if any(k in path for k in ("/news", "/article", "/story", "/press")):
+        return SourceType.NEWS_ARTICLE
+    return SourceType.WEB_PAGE
+
+
+def _numeric_confidence(value: Any) -> float | None:
+    if isinstance(value, str):
+        return {"high": 0.85, "medium": 0.65, "low": 0.4}.get(value.lower())
+    return normalize_confidence_value(value)
+
+
 def build_worker_result(
     state: CompetitorState,
 ) -> WorkerResult:
+    """The shared WorkerResult: grounded findings, the sources they cite, and the comparison.
+
+    Only cited sources become evidence, and each one's fact is the passage that supports the
+    finding, not the whole page. The comparison with the user's company is returned twice: as
+    positioning findings (so verification checks them like any other claim) and as a structured
+    matrix in metadata, which the brief's "Alternatives compared" card draws.
     """
-    Convert the competitor graph state into the shared WorkerResult contract.
+    verified_findings = state.get("verified_findings", [])
+    search_results = state.get("search_results", [])
+    unresolved = state.get("missing_information", [])
+    company = state.get("company", "")
+    report = state.get("final_report", {}) or {}
 
-    The graph's final_report remains an internal rich report.
-    WorkerResult is the standardized output returned to the orchestrator.
+    by_key = {
+        (r.get("competitor", ""), normalize_url(r.get("url", ""))): r
+        for r in search_results
+        if normalize_url(r.get("url", ""))
+    }
+    evidence_for: Dict[tuple, Evidence] = {}
 
-    Confidence should already have been established during verification.
-    This function only normalizes/uses that value as a final safety layer.
-    """
-
-    verified_findings = state.get(
-        "verified_findings",
-        [],
-    )
-
-    search_results = state.get(
-        "search_results",
-        [],
-    )
-
-    unresolved = state.get(
-        "missing_information",
-        [],
-    )
-
-    # --------------------------------------------------------
-    # 1. Build unique Evidence objects
-    # --------------------------------------------------------
-
-    evidence_by_url: Dict[tuple, Evidence] = {}
-
-    for result in search_results:
-        url = normalize_url(
-            result.get("url", "")
-        )
-
-        if not url:
-            continue
-
-        ev_key = (result.get("competitor", ""), url)
-
-        if ev_key in evidence_by_url:
-            continue
-
-        source_type = (
-            SourceType.OFFICIAL_DOCUMENTATION
-            if is_official(
-                url,
-                result.get("competitor", ""),
-            )
-            else SourceType.WEB_PAGE
-        )
-
-        evidence_by_url[ev_key] = Evidence(
-            source_type=source_type,
-            source_title=result.get("title") or None,
-            source_url=url,
-            publisher=result.get("publisher"),
-            extracted_fact=(
-                result.get("text")
-                or "Evidence retrieved from the source."
-            )[:SOURCE_CHARS],
-            excerpt=(
-                result.get("text") or ""
-            )[:SOURCE_CHARS],
+    def evidence_item(competitor: str, url: str, statement: str) -> Evidence | None:
+        key = (competitor, normalize_url(url))
+        if key in evidence_for:
+            return evidence_for[key]
+        source = by_key.get(key)
+        if not source:
+            return None
+        text = source.get("text") or ""
+        official = is_official(key[1], competitor)
+        fact = best_passage(text, statement) or source.get("title") or "Source retrieved by the competitor worker."
+        evidence_for[key] = Evidence(
+            source_type=_source_type_for(key[1], official),
+            source_title=source.get("title") or None,
+            source_url=key[1],
+            publisher=source.get("publisher") or host_of(key[1]) or None,
+            extracted_fact=fact,
+            excerpt=text[:1500] or None,
             metadata={
-                "first_party": is_official(
-                    url,
-                    result.get("competitor", ""),
-                ),
-                "competitor": result.get(
-                    "competitor",
-                    "",
-                ),
-                "requirement_id": result.get(
-                    "requirement_id",
-                    "",
-                ),
-                "query": result.get(
-                    "query",
-                    "",
-                ),
-                "search_type": result.get(
-                    "search_type",
-                    "",
-                ),
-                "stage": result.get(
-                    "stage",
-                    1,
-                ),
-                "provider": result.get(
-                    "provider",
-                    "",
-                ),
-                "published_date": result.get(
-                    "published_date"
-                ),
-                "score": result.get(
-                    "score"
-                ),
+                "first_party": official,
+                "competitor": competitor,
+                "requirement_id": source.get("requirement_id", ""),
+                "query": source.get("query", ""),
+                "stage": source.get("stage", 1),
+                "provider": source.get("provider", ""),
+                "published_date": source.get("published_date"),
+                "score": source.get("score"),
             },
         )
+        return evidence_for[key]
 
-    # --------------------------------------------------------
-    # 2. Convert verified findings
-    # --------------------------------------------------------
-
-    worker_findings = []
-
-    for raw_finding in verified_findings:
-        statement = (
-            raw_finding.get("finding")
-            or ""
-        ).strip()
-
+    worker_findings: List[Finding] = []
+    for raw in verified_findings:
+        statement = (raw.get("finding") or "").strip()
+        competitor = raw.get("competitor", "")
         if not statement:
             continue
-
-        category = map_finding_category(
-            raw_finding.get(
-                "competitive_area",
-                "",
-            )
-        )
-
-        evidence_refs = []
-
-        for evidence in raw_finding.get(
-            "evidence",
-            [],
-        ):
-            url = normalize_url(
-                evidence.get(
-                    "source_url",
-                    "",
-                )
-            )
-
-            source = evidence_by_url.get(
-                (raw_finding.get("competitor", ""), url)
-            )
-
-            if not source:
-                continue
-
-            evidence_refs.append(
-                EvidenceRef(
-                    evidence_id=source.evidence_id,
-                    relation=EvidenceRelation.SUPPORTS,
-                )
-            )
-
-        if not evidence_refs:
+        if competitor and competitor.lower() not in statement.lower():
+            statement = f"{competitor}: {statement}"
+        refs = []
+        for e in raw.get("evidence", []):
+            ev = evidence_item(competitor, e.get("source_url", ""), statement)
+            if ev and ev.evidence_id not in {r.evidence_id for r in refs}:
+                refs.append(EvidenceRef(evidence_id=ev.evidence_id, relation=EvidenceRelation.SUPPORTS))
+        if not refs:
             continue
-
-        # Confidence was established during verification.
-        confidence = normalize_confidence_value(
-            raw_finding.get("confidence")
-        )
-
-        # Safety fallback only.
-        #
-        # Normally this should already exist because verify_batch()
-        # calls ensure_finding_confidence().
+        try:
+            category = FindingCategory(raw.get("category") or "other")
+        except ValueError:
+            category = FindingCategory.OTHER
+        if category is FindingCategory.OTHER:
+            category = map_finding_category(raw.get("competitive_area", ""))
+        confidence = normalize_confidence_value(raw.get("confidence"))
         if confidence is None:
-            competitor = raw_finding.get(
-                "competitor",
-                "",
-            )
-
-            index = source_index_for(
-                search_results,
-                competitor,
-            )
-
-            confidence = calculate_finding_confidence(
-                raw_finding,
-                index,
-            )
-
+            confidence = calculate_finding_confidence(raw, source_index_for(search_results, competitor))
         worker_findings.append(
-            Finding(
-                statement=statement,
-                category=category,
-                evidence_refs=evidence_refs,
-                confidence=confidence,
-                limitations=[],
-            )
+            Finding(statement=statement, category=category, evidence_refs=refs, confidence=confidence)
         )
 
-    # --------------------------------------------------------
-    # 3. Determine worker status
-    # --------------------------------------------------------
+    # The comparison: one positioning finding per established cell, plus the matrix itself.
+    comparison = report.get("comparison") or {}
+    matrix_dims = []
+    for dim in comparison.get("dimensions", []):
+        cells = []
+        for a in dim.get("assessments", []):
+            competitor = a.get("competitor", "")
+            ids = []
+            for url in a.get("sources", []):
+                ev = evidence_item(competitor, url, a.get("summary", ""))
+                if ev and ev.evidence_id not in ids:
+                    ids.append(ev.evidence_id)
+            relative = a.get("relative_to_target", "not_established")
+            cells.append({
+                "competitor": competitor,
+                "relative_to_target": relative,
+                "summary": a.get("summary", ""),
+                "confidence": _numeric_confidence(a.get("confidence")),
+                "evidence_ids": ids,
+            })
+            if relative != "not_established" and ids and a.get("summary"):
+                worker_findings.append(
+                    Finding(
+                        statement=f"{dim.get('dimension')}: compared with {company}, {competitor} is "
+                        f"{relative.replace('_', ' ')}. {a['summary'].strip()}",
+                        category=FindingCategory.POSITIONING,
+                        evidence_refs=[EvidenceRef(evidence_id=i) for i in ids[:MAX_EVIDENCE_PER_FINDING]],
+                        confidence=_numeric_confidence(a.get("confidence")),
+                        limitations=["Compares documented facts only; absence of evidence is not absence of a capability."],
+                    )
+                )
+        matrix_dims.append({
+            "dimension": dim.get("dimension", ""),
+            "target_position": dim.get("target_position", ""),
+            "takeaway": dim.get("takeaway", ""),
+            "cells": cells,
+        })
 
     if worker_findings:
-        if unresolved:
-            status = WorkerStatus.PARTIAL
-        else:
-            status = WorkerStatus.COMPLETED
-
+        status = WorkerStatus.PARTIAL if unresolved else WorkerStatus.COMPLETED
     else:
         status = WorkerStatus.NO_EVIDENCE
 
-    # --------------------------------------------------------
-    # 4. Convert unresolved requirements into gaps
-    # --------------------------------------------------------
-
     gaps = []
-
     for item in unresolved:
-        competitor = item.get(
-            "competitor",
-            "",
+        gaps.append(f"[{item.get('competitor', '')}] {item.get('requirement', '')}")
+    if not worker_findings and state.get("dropped_sources"):
+        gaps.append(
+            f"{len(state['dropped_sources'])} search result(s) were set aside as off-topic or low quality, "
+            "and no usable source remained."
         )
 
-        requirement = item.get(
-            "requirement",
-            "",
-        )
-
-        reason = item.get(
-            "missing_reason",
-            "",
-        )
-
-        gap = (
-            f"[{competitor}] "
-            f"{requirement}"
-        )
-
-        if reason:
-            gap += f" — {reason}"
-
-        gaps.append(gap)
-
-    # --------------------------------------------------------
-    # 5. Overall confidence
-    # --------------------------------------------------------
-
-    overall_confidence = calculate_overall_confidence(
-        worker_findings
-    )
-
-    # --------------------------------------------------------
-    # 6. WorkerResult
-    # --------------------------------------------------------
-
+    info = state.get("competitor_info", {})
     output = WorkerResult(
         task_id=state["task_id"],
         worker=WorkerType.COMPETITOR_INTELLIGENCE,
         status=status,
-        attempt=1,
+        attempt=state.get("attempt", 1),
         findings=worker_findings,
-        evidence=list(
-            evidence_by_url.values()
-        ),
+        evidence=list(evidence_for.values()),
         gaps=gaps,
         conflicts=[],
-        confidence=overall_confidence,
+        confidence=calculate_overall_confidence(worker_findings),
         metadata={
-            "company": state.get(
-                "company",
-                "",
-            ),
-            "competitors": state.get(
-                "competitors",
-                [],
-            ),
-            "research_goal": state.get(
-                "research_goal",
-                "",
-            ),
-            "research_focus": state.get(
-                "research_focus",
-                "",
-            ),
-            "research_stages_completed": state.get(
-                "research_stage",
-                1,
-            ),
-            "queries_executed": len(
-                state.get(
-                    "executed_queries",
-                    [],
-                )
-            ),
-            "total_sources": len(
-                search_results
-            ),
-            "total_verified_findings": len(
-                verified_findings
-            ),
-            "requirement_checks": state.get(
-                "requirement_checks",
-                [],
-            ),
-            "competitor_profiles": (
-                state.get(
-                    "final_report",
-                    {}
-                ).get(
-                    "competitor_profiles",
-                    {},
-                )
-            ),
+            "company": company,
+            "competitors": [
+                {
+                    "name": name,
+                    "website": (info.get(name) or {}).get("website"),
+                    "official_domains": official_domains(name),
+                    "social_accounts": (info.get(name) or {}).get("links", []),
+                    "discovered_by": (info.get(name) or {}).get("discovered_by", "user"),
+                    "discovery_reason": (info.get(name) or {}).get("reason"),
+                    "discovery_confidence": (info.get(name) or {}).get("confidence"),
+                }
+                for name in state.get("competitors", [])
+            ],
+            "research_stages_completed": state.get("research_stage", 1),
+            "queries_executed": len(state.get("executed_queries", [])),
+            "sources_read": len(search_results),
+            "sources_set_aside": len(state.get("dropped_sources", [])),
+            "requirement_checks": state.get("requirement_checks", []),
+            "comparison_matrix": {
+                "company": company,
+                "executive_summary": comparison.get("executive_summary", ""),
+                "dimensions": matrix_dims,
+                "areas_where_target_appears_ahead": comparison.get("areas_where_target_appears_ahead", []),
+                "areas_where_competitors_appear_ahead": comparison.get("areas_where_competitors_appear_ahead", []),
+                "limitations": comparison.get("limitations", []),
+            },
+            "competitor_profiles": report.get("competitor_profiles", {}),
         },
     )
-
-    save_node_output(
-        "worker_result",
-        output.model_dump(mode="json"),
-        state.get(
-            "research_stage",
-            1,
-        ),
-    )
-
+    save_node_output("worker_result", output.model_dump(mode="json"), state.get("research_stage", 1))
     return output
 
 

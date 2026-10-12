@@ -3,8 +3,9 @@
 import json
 
 from .state import (
-    COMPARISON_DIMENSIONS,
     MAX_QUERIES_PER_REQUIREMENT,
+    MAX_REQUIREMENTS_PER_COMPETITOR,
+    comparison_dimensions,
 )
 
 
@@ -53,9 +54,8 @@ RULES (apply strictly):
   it.
 
 - Attribute capabilities to the EXACT product the source names. Do not
-  transfer capabilities between a parent company and its products
-  (e.g. Microsoft / Microsoft 365 Copilot / Azure AI are NOT Azure DevOps;
-  GitHub Copilot is NOT every GitHub product).
+  transfer capabilities between a parent company and its products, or
+  between two products of the same company.
 
 - Distinguish announced / preview-beta / generally available / planned.
   Never describe an announcement or preview as generally available.
@@ -65,6 +65,10 @@ RULES (apply strictly):
 
 - Do not state strategic conclusions (advantage, leadership, threat, ranking,
   switching, adoption, revenue). Only documented facts.
+
+- `category`: the one dimension the fact speaks to (product_feature,
+  pricing_packaging, positioning, target_customer, market_signal,
+  customer_sentiment, risk, opportunity, strength, gap, other).
 
 - `evidence_source_ids`: 1-3 source IDs (e.g. S1, S4) copied from the
   "SOURCE ID" labels of the supplied evidence. IDs only, never URLs or titles.
@@ -84,10 +88,10 @@ STAGE_INSTRUCTIONS = {
     "discovery": """
 STAGE 1 - DISCOVERY
 
-Discover what actually exists in 2026. Product and feature names are not known yet.
+Discover what actually exists today. Product and feature names are not known yet.
 
 Generate broad but focused queries that can reveal relevant products,
-capabilities, workflows, pricing/packaging, availability and 2026 changes.
+capabilities, workflows, pricing/packaging, availability and recent changes.
 
 Do NOT assume the competitor has an equivalent to the target company's
 products. The goal is to learn real product/feature terminology.
@@ -100,9 +104,9 @@ Do NOT repeat broad discovery. Reuse the concrete product/feature/plan names
 found in the known findings and previous queries. Target first-party sources:
 official product pages, documentation, announcements, blogs, pricing pages.
 
-Example: "GitHub Copilot coding agent official documentation", NOT
-"GitHub AI capabilities 2026". If no concrete entity was discovered yet, use
-a focused capability query without inventing a product name.
+Example: "<competitor> <exact product name> pricing plans", NOT
+"<competitor> features". If no concrete entity was discovered yet, use a
+focused capability query without inventing a product name.
 """,
 
     "deep_verification": """
@@ -114,11 +118,11 @@ code modification, pull requests, human approval, autonomy, permissions,
 supported IDEs, integrations, pricing, usage limits, plans, availability
 (preview/beta/GA), supported models, limitations.
 
-Example: "GitHub Copilot coding agent repository permissions documentation".
+Example: "<competitor> <exact product name> usage limits documentation".
 """,
 
     "targeted_missing_requirements": """
-STAGE 4+ - TARGETED GAP RESEARCH
+STAGE 3 - TARGETED GAP RESEARCH
 
 Search ONLY for what is still missing. Each query must be built from:
 competitor + the incomplete requirement + its missing_reason + what is already
@@ -158,6 +162,7 @@ def _company_context(state) -> dict:
     """
 
     return {
+        "today": state.get("today", ""),
         "company_profile": state.get("company_profile", {}),
         "business_context": state.get("business_context", {}),
     }
@@ -201,14 +206,14 @@ HOW TO WRITE REQUIREMENTS
 
 - Derive them from the goal AND the concrete {company} baseline. Consider
   capabilities, workflows, pricing structure, availability, integrations,
-  customer adoption, security, support, and 2026 changes only when relevant
+  customer adoption, security, support, and recent changes only when relevant
   to the actual research goal and focus. Do not use a generic template.
 
 - A requirement is a FACTUAL INFORMATION NEED, never a conclusion.
 
   GOOD:
-  "Current agentic software-development capabilities, including the tasks
-  agents can execute and the human approval required."
+  "The plans the competitor sells to small businesses and what each plan
+  includes."
 
   BAD:
   "Whether the competitor has superior AI."
@@ -223,16 +228,12 @@ HOW TO WRITE REQUIREMENTS
 - Pricing: ask for the competitor's ACTUAL pricing structure; do not assume
   it uses credits, seats, or add-ons.
 
-- Recency: fold currency and 2026 changes into the relevant requirement; do
+- Recency: fold currency and recent changes into the relevant requirement; do
   NOT create a generic "recent developments" requirement. Later stages must
   separate announced / preview / GA / planned.
 
-- Scope: stay inside the named competitor's real scope.
-
-  GitHub -> GitHub and GitHub Copilot.
-  Azure DevOps -> only AI actually tied to Azure DevOps.
-  AWS -> AWS developer AI offerings, not all of AWS.
-  Google -> Google's developer AI offerings, not consumer AI.
+- Scope: stay inside the named competitor's real scope: its own products that
+  overlap with {company}'s offering, not everything a large group sells.
 
 - Every requirement must be answerable from reliable evidence.
 
@@ -243,8 +244,8 @@ SIZE AND SHAPE
 - Do NOT pack long "including A, B, C, D, E" lists into one requirement.
   Split a distinct dimension into its own requirement instead.
 
-- Typically 4-8 requirements per competitor. Counts may differ per
-  competitor; do not force symmetry.
+- At most {MAX_REQUIREMENTS_PER_COMPETITOR} requirements per competitor; 3-4 is usually enough.
+  Counts may differ per competitor; do not force symmetry.
 
 - Requirements must not overlap.
 
@@ -398,7 +399,7 @@ FINDING CONTENT
 - About 3-5 sentences; factual precision beats length.
 
 - When supported say: what the capability is, which exact product provides
-  it, what it does, and how it fits the software-development workflow. Skip
+  it, what it does, and how customers use it. Skip
   points the evidence does not support.
 
 - Do NOT mention {company} inside `finding`. Any documented overlap with
@@ -413,162 +414,6 @@ FINDING CONTENT
 - If the evidence does not support a requirement, produce no finding for it.
 
 - `competitor` must be exactly: {competitor}
-
-"""
-
-
-def verification_prompt(state, competitor, proposed, sources) -> str:
-    """Verification Agent: strict fact-check of proposed findings against sources."""
-
-    return f"""
-
-You are the Evidence Verification Agent for Edrak: a STRICT fact-checking
-layer between synthesis and trusted findings. You do not research and do not
-improve findings with your own knowledge. You only check proposed findings
-against the ORIGINAL SOURCE MATERIAL below.
-
-TARGET COMPANY: {state["company"]}
-
-RESEARCH GOAL: {state["research_goal"]}
-
-RESEARCH FOCUS: {state.get("research_focus", "")}
-
-COMPETITOR: {competitor}
-
-PROPOSED FINDINGS:
-
-{json.dumps(proposed, indent=2, ensure_ascii=False)}
-
-ORIGINAL SOURCE MATERIAL (the ONLY authority):
-
-{sources}
-
-VERIFY AT CLAIM LEVEL
-
-1. Identify each factual claim in a finding.
-
-2. Mark it fully supported, partially supported, or unsupported.
-
-3. Remove or conservatively rewrite unsupported claims; keep only the part
-   directly supported by the source.
-
-4. If the CORE claim is unsupported, reject the whole finding.
-
-CHECK
-
-- Competitor and exact product attribution: the source must explicitly tie the
-  capability to the product named. No inference from parent companies.
-
-- Dates and status: do not turn announced into available, preview into GA,
-  planned into released. If unclear, remove the temporal claim.
-
-- Pricing: keep only explicitly supported pricing; do not infer or calculate.
-
-- Availability: plan/tier, geography, preview vs GA, self-managed vs cloud.
-
-- Technical claims (autonomy, agents, MCP, repository access, code
-  modification) must not be strengthened beyond the source wording.
-
-- Reject strategic or competitive conclusions (advantage, leadership, threat,
-  adoption, revenue) unless the sources explicitly state them.
-
-- Reject findings irrelevant to the research goal or about the wrong product.
-
-- Never treat missing evidence as evidence of absence.
-
-- Merge duplicate findings only when the evidence supports every merged claim.
-
-OUTPUT RULES
-
-- Keep requirement_id unchanged. Keep competitor = {competitor}.
-
-- `evidence_source_ids`: 1-3 SOURCE IDs (e.g. S1, S2) from the source
-  material, each of which supports the final wording. IDs only; never invent
-  an ID that is not listed.
-
-- Return ONLY accepted findings, rewritten conservatively if needed.
-  Do not explain rejections.
-
-"""
-
-
-def check_prompt(state, stage, pending, verified_view) -> str:
-    """Completeness Agent: decide whether pending requirements are established."""
-
-    return f"""
-
-You are the Research Completeness Agent inside Edrak.
-
-Decide, for each pending requirement, whether the VERIFIED FINDINGS contain
-enough evidence-backed information to establish it. You do not research,
-generate findings, or use outside knowledge.
-
-TARGET COMPANY: {state["company"]}
-
-RESEARCH GOAL: {state["research_goal"]}
-
-RESEARCH FOCUS: {state.get("research_focus", "")}
-
-STAGE: {stage}
-
-PENDING REQUIREMENTS (evaluate EACH ONE; return exactly one check per id):
-
-{json.dumps(pending, indent=2, ensure_ascii=False)}
-
-VERIFIED FINDINGS:
-
-{json.dumps(verified_view, indent=2, ensure_ascii=False)}
-
-STATUS (exactly one per requirement):
-
-- "fulfilled": one or more verified findings with the SAME competitor (and
-  correct product) establish the core of the requirement with explicit,
-  credible evidence.
-
-  The evidence may be first-party, third-party, or a combination of both.
-
-  A requirement can be fulfilled using third-party evidence when that source
-  directly establishes the requested fact and is sufficiently credible for
-  the claim.
-
-  First-party evidence is preferred when available, but first-party sourcing
-  is NOT a prerequisite for fulfillment.
-
-- "missing": no relevant verified finding, the finding is about the wrong
-  competitor/product, the evidence is vague or inferential.
-
-  Do NOT mark a requirement "missing" solely because the available evidence
-  is third-party.
-
-- If a credible third-party source directly establishes the requested fact,
-  treat the requirement as fulfilled.
-
-- Only mark third-party evidence insufficient when there is a concrete
-  evidence-quality problem, such as speculation, unclear product attribution,
-  unsupported claims, outdated information for a time-sensitive requirement,
-  obvious promotional/SEO content without factual support, or insufficient
-  detail to establish the requirement.
-
-RULES
-
-- Judge each competitor independently. Evidence for one competitor never
-  satisfies another.
-
-- Evidence about a related product does not count unless a finding explicitly
-  ties it to the competitor/product in scope.
-
-- Do not mark fulfilled merely because a related finding exists.
-
-- Missing evidence means "missing", never "the competitor lacks it".
-
-- For every "missing" you MUST fill missing_reason with the specific
-  sub-facts still not established. This drives the next search round.
-
-- For "fulfilled", briefly summarise in evidence_found.
-
-- Do not create, alter, merge or split requirements. Use the ids as given.
-
-- Return one check for EVERY pending id.
 
 """
 
@@ -676,7 +521,7 @@ requirement has status, release_status and evidence_quality):
 
 DIMENSIONS (use exactly these, in this order):
 
-{json.dumps(COMPARISON_DIMENSIONS, indent=2)}
+{json.dumps(comparison_dimensions(state.get("business_context", {}).get("use_case", ""), state.get("business_context", {}).get("focus_areas", [])), indent=2)}
 
 HOW TO COMPARE
 

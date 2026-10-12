@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any, Optional
 
@@ -10,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from edrak.api.analysis_service import (
     TOGGLE_TO_SOURCE_TYPES,
+    discover_for,
     allowed_source_types,
     build_request,
     derive_title,
@@ -27,7 +29,8 @@ from edrak.api.schemas import (
     RejectPlanRequest,
     SessionOut,
 )
-from edrak.contracts import UseCase
+from edrak.contracts import UseCase, WorkerType
+from edrak.db.repositories import entities as entities_repo
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import audit as audit_repo
 from edrak.db.repositories import company as company_repo
@@ -111,11 +114,36 @@ async def draft(
     if existing and existing["status"] not in ("draft", "awaiting_approval", "planning"):
         raise HTTPException(status_code=409, detail="wrong_state")
     request_id = existing["request_id"] if existing else new_id()
+    source_types = allowed_source_types(form)
     request, inputs = build_request(
         request_id=request_id, form=form, company=company, workspace_id=workspace_id,
         rejection_feedback=existing.get("rejection_reason") if existing else None,
     )
-    source_types = allowed_source_types(form)
+    needs_competitors = form.use_case in (UseCase.COMPETITIVE_INTELLIGENCE, UseCase.PRODUCT_LAUNCH)
+    if needs_competitors and not inputs["competitors"] and WorkerType.COMPETITOR_INTELLIGENCE in workers_for(source_types):
+        # Nobody was named or tracked: find them now, so the plan shows who will be researched.
+        found = await asyncio.to_thread(discover_for, company, inputs["markets"], inputs["offering"])
+        if found:
+            for c in found:
+                entity = await entities_repo.upsert_entity(
+                    db, workspace_id, kind="competitor", name=c["name"], created_by=user_id, website=c["website"],
+                    discovered_by="agent", discovery_reason=c["discovery_reason"],
+                    discovery_confidence=c["discovery_confidence"],
+                )
+                c["entity_id"] = entity["id"]
+                for link in c["links"]:
+                    await entities_repo.add_entity_link(
+                        db, entity["id"], link["platform"], link["url"], verified=True, found_on_url=link.get("found_on_url"),
+                    )
+            await db.commit()
+            company = {**company, "competitors": [
+                {"entity_id": c["entity_id"], "name": c["name"], "website": c["website"], "links": c["links"],
+                 "discovered_by": "agent"} for c in found
+            ]}
+            request, inputs = build_request(
+                request_id=request_id, form=form, company=company, workspace_id=workspace_id,
+                rejection_feedback=existing.get("rejection_reason") if existing else None,
+            )
     title = derive_title(form)
     app_fields = dict(
         title=title, form=form.model_dump(mode="json"), competitors=inputs["competitors"], markets=inputs["markets"],
