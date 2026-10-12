@@ -29,8 +29,106 @@ def _seg_text(segments: Any) -> str:
     return str(segments or "").strip()
 
 
+def _card_line(card: dict[str, Any]) -> str:
+    """One card as a sentence. Every number here was already rendered from the metrics table."""
+    s = card.get("slots") or {}
+    comp = card.get("component")
+    if comp == "kpi":
+        body = (f"{s['range']['low']} to {s['range']['high']} (sources disagree)" if s.get("range") else str(s.get("value", "")))
+        if s.get("period"):
+            body += f", {s['period']}"
+        if s.get("comparator"):
+            body += f"; {s['comparator']['value']} {s['comparator']['label']}"
+    elif comp == "ladder":
+        body = "; ".join(f"{r['label']} {r['value']}" for r in s.get("rows", []))
+    elif comp == "segmented":
+        body = ", ".join(f"{p['label']} {p['display']}" for p in s.get("parts", []))
+    elif comp == "line":
+        pts = s.get("points", [])
+        body = f"{pts[0]['x']} {pts[0]['display']} → {pts[-1]['x']} {pts[-1]['display']}" if pts else ""
+    elif comp == "timeline":
+        body = "; ".join(f"{e.get('when') or ''} {e['label']}".strip() for e in s.get("events", []))
+    elif comp == "text":
+        body = "; ".join(f"{i['entity']} {i['text']}" for i in s.get("items", []))
+    elif comp == "gap":
+        body = f"not established. {s.get('explanation', '')}"
+    else:
+        body = "; ".join(f"{r['entity']} {r['value']}" for r in s.get("rows", []))
+    refs = " ".join(f"[E{n}]" for n in card.get("refs") or [])
+    caveat = f" Note: {card['caveat']}" if card.get("caveat") else ""
+    return f"{card.get('title')}: {body} {refs} ({card.get('status')}).{caveat}".replace("  ", " ").strip()
+
+
+def _plan_sections(plan: dict[str, Any]) -> list[tuple[str, list[str]]]:
+    out: list[tuple[str, list[str]]] = []
+    opt = plan.get("chosen_option") or {}
+    out.append((f"Action plan: option {opt.get('key', '')}. {opt.get('title', '')}", [
+        f"Objective: {plan.get('objective', '')}", f"Why this option: {opt.get('why', '')}",
+        *[f"Not chosen, option {a['key']} ({a.get('title', '')}): {a.get('why_not', '')}" for a in plan.get("alternatives_not_chosen", [])],
+        f"Length: {plan.get('total_weeks', 0)} weeks. Review on {plan.get('review_date') or 'a date to be set'}."]))
+    if plan.get("assumptions") or plan.get("open_questions"):
+        out.append(("Assumptions and open questions", [*[f"Assumption: {a['text']}" for a in plan.get("assumptions", [])],
+                                                       *[f"Open question: {q['text']}" for q in plan.get("open_questions", [])]]))
+    for w in plan.get("workstreams", []):
+        out.append((f"Workstream {w['id']}: {w['name']}", [
+            f"{a['id']} (weeks {a['start_week']}-{a['start_week'] + a['duration_weeks'] - 1}, {a.get('owner_role') or 'owner to be set'}"
+            f"{', after ' + ', '.join(a['depends_on']) if a.get('depends_on') else ''}): {a['title']}."
+            f"{' Deliverable: ' + a['deliverable'] + '.' if a.get('deliverable') else ''}"
+            f"{' Success: ' + a['success_measure'] + '.' if a.get('success_measure') else ''}" for a in w.get("actions", [])]))
+    if plan.get("milestones"):
+        out.append(("Milestones and decision gates", [f"Week {m['week']}: {m['title']}. Go if: {m.get('go_criteria') or '-'}. Stop if: {m.get('kill_criteria') or '-'}."
+                                                       for m in plan["milestones"]]))
+    if plan.get("kpis"):
+        out.append(("KPIs", [f"{k['name']}{' (' + k['entity'] + ')' if k.get('entity') else ''}: baseline {k.get('baseline') or 'new measure'}; "
+                             f"target {k.get('target') or 'to be set'} ({k.get('target_status')}); {k.get('cadence') or ''}".strip() for k in plan["kpis"]]))
+    if plan.get("risks"):
+        out.append(("Risk register", [f"{r['id']} ({r['likelihood']} likelihood, {r['impact']} impact): {r['text']} Early warning: {r.get('early_warning') or '-'}. "
+                                      f"Mitigation: {r.get('mitigation') or '-'}{' (' + ', '.join(r['mitigation_action_ids']) + ')' if r.get('mitigation_action_ids') else ''}." for r in plan["risks"]]))
+    if plan.get("opportunities"):
+        out.append(("Opportunities to capture", [f"{o['text']} How: {o.get('how_to_capture') or '-'}" for o in plan["opportunities"]]))
+    if plan.get("resources"):
+        out.append(("Resources", list(plan["resources"])))
+    return out
+
+
+def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool) -> list[tuple[str, list[str]]]:
+    cards = doc.get("cards") or {}
+    out: list[tuple[str, list[str]]] = [("Headline", [doc.get("headline") or doc.get("summary_text") or ""])]
+    kpis = doc.get("kpis") or []
+    if kpis:
+        out.append(("Key figures", [f"{(k.get('label') or {}).get('en', k.get('metric_id'))}{' · ' + k['entity'] if k.get('entity') else ''}: {k['value']} ({k['status']})" for k in kpis]))
+    cov = doc.get("coverage") or {}
+    if cov.get("required"):
+        out.append(("Coverage", [f"{cov['met']} of {cov['required']} required figures are verified ({round((cov.get('score') or 0) * 100)}%)."]))
+    if doc.get("signals_view"):
+        out.append(("What this means", [f"{s.get('title')}: {s.get('signal') or ''}{' Why it matters: ' + s['why_it_matters'] if s.get('why_it_matters') else ''}"
+                                         f"{' ' + ' '.join('[E%s]' % n for n in s.get('refs') or []) if s.get('refs') else ''}" for s in doc["signals_view"]]))
+    for sec in doc.get("sections") or []:
+        rows = [_card_line(cards[k]) for k in [*sec.get("cards", []), *sec.get("gap_cards", [])] if k in cards]
+        if rows:
+            out.append((sec.get("label") or sec.get("lens"), rows))
+    if include_limitations and (doc.get("gaps_panel") or {}).get("gaps"):
+        out.append(("Gaps", [f"{g['title']}: {g['explanation']}" for g in doc["gaps_panel"]["gaps"]]))
+    if doc.get("options"):
+        rows = []
+        for o in doc["options"]:
+            rows.append(f"{o['key']}. {o['title']}: {o.get('thesis') or o.get('description', '')}")
+            rows += [f"   Opportunity: {x['text']}" for x in o.get("opportunities", [])] + [f"   Risk: {x['text']}" for x in o.get("risks", [])]
+            if o.get("would_change_if"):
+                rows.append(f"   Would change if: {o['would_change_if']}")
+        out.append(("Options (not ranked)", rows))
+    if doc.get("action_plan"):
+        out += _plan_sections(doc["action_plan"])
+    if include_sources and doc.get("evidence"):
+        out.append(("Sources", [f"E{e.get('display_no')}: {(e.get('evidence') or {}).get('source_title') or 'Source'}"
+                                f"{' - ' + e['evidence']['source_url'] if ((e.get('evidence') or {}).get('source_url') or '').startswith('http') else ''}" for e in doc["evidence"]]))
+    return out
+
+
 def _sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool) -> list[tuple[str, list[str]]]:
     """The brief as (heading, paragraphs) sections, shared by every format."""
+    if doc.get("cards") is not None:
+        return _typed_sections(doc, include_sources, include_limitations)
     summary = doc.get("summary") or {}
     out: list[tuple[str, list[str]]] = []
     out.append(("Summary", [p for p in (

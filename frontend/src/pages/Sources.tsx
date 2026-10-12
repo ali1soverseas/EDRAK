@@ -136,7 +136,7 @@ export function Sources() {
                     </button>
                   </td>
                   <td style={{ minWidth: 140 }}>
-                    {d.status === "indexing" ? (<div className="stack gap4"><span className="s12">{L("Indexing", "فهرسة")} {d.index_progress ?? 0}%</span><ProgressBar value={d.index_progress ?? 0} /></div>)
+                    {d.status === "indexing" ? (<div className="stack gap4"><span className="s12">{L("Indexing", "فهرسة")} {d.index_progress ?? 0}%</span><ProgressBar value={d.index_progress ?? 0} color="var(--blue)" /></div>)
                       : d.status === "failed" ? <span className="chip c-bad" title={d.error_message ?? ""}>{L("Failed to parse", "تعذرت القراءة")}</span>
                       : <span className="chip c-ok">{L("Indexed", "مفهرس")}</span>}
                   </td>

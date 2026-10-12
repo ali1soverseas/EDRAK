@@ -697,6 +697,76 @@
       "title": "FindingVerdict",
       "type": "object"
     },
+    "MetricRequirement": {
+      "additionalProperties": false,
+      "description": "What the planner asks a worker to find.",
+      "properties": {
+        "check_rule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Check Rule"
+        },
+        "definition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Definition"
+        },
+        "entity": {
+          "minLength": 1,
+          "title": "Entity",
+          "type": "string"
+        },
+        "metric_id": {
+          "minLength": 1,
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "preferred_source_types": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preferred Source Types",
+          "type": "array"
+        },
+        "query_hints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Query Hints",
+          "type": "array"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "check_rule",
+        "definition",
+        "entity",
+        "metric_id",
+        "preferred_source_types",
+        "query_hints",
+        "required"
+      ],
+      "title": "MetricRequirement",
+      "type": "object"
+    },
     "OrchestrationResult": {
       "additionalProperties": false,
       "description": "Terminal output of one orchestrator run.\n\nCarries worker results through to verification unchanged. The orchestrator\nitself reads only the control fields of each WorkerResult.",
@@ -883,6 +953,14 @@
           "title": "Parent Request Id",
           "type": "string"
         },
+        "requirements": {
+          "description": "Typed figures this worker must look for. Filled by code from the use-case template.",
+          "items": {
+            "$ref": "#/$defs/MetricRequirement"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
         "task_id": {
           "description": "Unique task identifier.",
           "minLength": 1,
@@ -901,6 +979,7 @@
         "focus",
         "goal",
         "parent_request_id",
+        "requirements",
         "task_id",
         "worker"
       ],

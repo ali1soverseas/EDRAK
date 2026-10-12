@@ -338,6 +338,7 @@ export const en = {
   "run.step.verify": "Verify",
   "run.step.synthesize": "Synthesize",
   "run.step.brief": "Brief",
+  "run.step.review": "Your review",
   "run.step.approved": "Approved {time}",
   "run.step.workersDone": "{done} of {total} done",
   "run.step.workersMixed": "{done} done, {failed} failed",

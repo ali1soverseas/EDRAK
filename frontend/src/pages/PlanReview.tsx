@@ -286,6 +286,18 @@ export function PlanReview() {
                   <div className="s13 t2 lh14" dir="auto" style={{ maxWidth: 640 }}>
                     {task.focus}
                   </div>
+                  {task.requirements.length > 0 && (
+                    <div className="stack gap4">
+                      <span className="eyebrow">{L("Figures to find", "الأرقام المطلوبة")}</span>
+                      <div className="row g4 wrap">
+                        {task.requirements.slice(0, 12).map((r) => (
+                          <span key={`${r.metric_id}-${r.entity}`} className={`chip ${r.required ? "c-blue" : "c-line"}`} title={r.definition ?? ""}>
+                            {r.metric_id.replace(/_/g, " ")} · {r.entity}{r.required ? " ●" : ""}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="row g6 wrap">
                     {tagsFor(task.worker, detail.allowed_sources).map((key) => (
                       <span key={key} className="tag tag-sm">

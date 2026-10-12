@@ -69,6 +69,17 @@ run, the four-card Brief (full screen, download as PDF, Word or Markdown), Repor
 comparison, Monitors (scheduled runs) and Alerts, Watchlist, Evidence explorer, Decision log, Data
 sources with an in-app file viewer, Notifications, Ask Edrak, Settings. English and Arabic (RTL).
 
+## The brief: typed numbers, options and an action plan
+
+Every number on the brief comes from a stored, typed metric linked to its evidence. The language model picks components and writes headlines; it never writes or computes a figure.
+
+- **Metric registry** (`backend/src/edrak/metrics/registry.yaml`) lists each metric: definition, unit, owner agent, preferred source types and how it is drawn. **Use-case templates** (`templates.yaml`) choose the KPI strip, the required figures and the section order, so the same data under another use case reads differently.
+- **Planner and workers.** Each worker receives a checklist of figures to find. After it reports, code checks the checklist (found, retry once, or gap with a reason: not found, not publicly disclosed, only a third-party source, too little data). A figure that must come from the company itself is not met by a third party's page.
+- **After the agents.** Extract (the model points at the exact words, code parses the value) → reconcile (the number must be in its saved source; different values from different sources become a conflict with a range) → derive (deltas computed in code, with their formula) → propose (headlines with `{m:uid}` tokens, no digits) → fill (values from the table, with chart checks and gap cards).
+- **Dashboard.** KPI strip, coverage and gaps, signals, lens sections, a card drawer (evidence, verifier note, why this visual, table toggle, version history) and an executive / analyst / PM view that changes order and density only.
+- **Options and the action plan.** Decision analysis produces two or three genuinely different options with their own opportunities and risks. Choosing one drafts an editable action plan: workstreams, owners, timeline and dependencies, decision gates, KPIs (baselines read from the stored metrics), a risk register and opportunities. You edit it, then approve it; approving records the decision. Every save is a new version.
+- **Chat.** Ask Edrak answers about a brief or one card from a hybrid (keyword + vector) index, reads exact numbers from the metrics table, and labels each answer: from the brief, from the web (unverified), or not covered. A number it cannot find in the table or cited evidence is removed. "Challenge this" sends new text back through extraction and verification and creates a new card version; the old one is kept.
+
 ## Technology
 
 | Layer | Tools |

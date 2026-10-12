@@ -32,6 +32,8 @@ function destination(row: AnalysisSummary): string {
       return `/briefs/${row.brief_id}`;
     case "draft":
       return `/analyses/new?draft=${row.analysis_id}`;
+    default:
+      return `/analyses/${row.analysis_id}/run`;
   }
 }
 
@@ -39,7 +41,7 @@ function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: ()
   const { t, tn, formatWhen, formatClock } = useI18n();
   const meta = USE_CASE_META[row.use_case];
 
-  let when: string;
+  let when = "";
   let result: React.ReactNode;
   let action: React.ReactNode;
   const go = destination(row);

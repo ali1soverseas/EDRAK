@@ -4,6 +4,7 @@
  */
 const PATHS = {
   plus: "M12 5v14M5 12h14",
+  search: "M11 4a7 7 0 100 14 7 7 0 000-14M20 20l-4.2-4.2",
   menu: "M4 7h16M4 12h16M4 17h16",
   home: "M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6",
   building: "M4 21V5l8-2v18M12 9l8 2v10M4 21h16M8 8h.01M8 12h.01M8 16h.01M16 14h.01M16 17h.01",

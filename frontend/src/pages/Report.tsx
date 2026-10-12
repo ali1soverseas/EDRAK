@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BriefToolbar } from "../components/brief/BriefToolbar";
 import { ReportView } from "../components/ReportView";
+import { BriefDashboard } from "./BriefDashboard";
+import type { BriefV3 } from "../types/brief3";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
 import { useI18n } from "../i18n";
@@ -54,6 +56,10 @@ export function Report() {
         </div>
       </>
     );
+  }
+
+  if ((data as unknown as { document_version?: number }).document_version! >= 3 && (data as unknown as BriefV3).cards) {
+    return <>{chrome}<div style={{ height: "100%", minHeight: 0, overflow: "auto" }}><BriefDashboard key={data.brief_id} initial={data as unknown as BriefV3} /></div></>;
   }
 
   return (

@@ -328,6 +328,16 @@ function ReviewPanel({ run, onDone }: { run: RunView; onDone: () => void }) {
       </div>
       <h2 className="disp" style={{ margin: 0, fontSize: 24 }}>{L("Review what was found before the brief is written.", "راجع ما وُجد قبل كتابة الموجز.")}</h2>
       <p style={{ margin: 0, opacity: 0.85 }} dir="auto">{review.summary}</p>
+      {((review as { missing_metrics?: { metric_id: string; entity: string; reason: string | null }[] }).missing_metrics ?? []).length > 0 && (
+        <div className="stack gap4">
+          <b className="s13">{L("Required figures still missing", "أرقام مطلوبة ما زالت ناقصة")}</b>
+          <div className="row g4 wrap">
+            {((review as { missing_metrics?: { metric_id: string; entity: string; reason: string | null }[] }).missing_metrics ?? []).slice(0, 12).map((m) => (
+              <span key={`${m.metric_id}-${m.entity}`} className="chip c-draft" title={(m.reason ?? "not_found").replace(/_/g, " ")}>{m.metric_id.replace(/_/g, " ")} · {m.entity}</span>
+            ))}
+          </div>
+        </div>
+      )}
       {(review.conflicts.length > 0 || review.missing_information.length > 0) && (
         <div className="grid2" style={{ gridTemplateColumns: "1fr 1fr" }}>
           {review.conflicts.length > 0 && <div className="stack gap4"><b className="s13">{L("Conflicts", "تعارضات")}</b>{review.conflicts.slice(0, 5).map((c) => <span key={c} className="s13" style={{ opacity: 0.85 }} dir="auto">· {c}</span>)}</div>}

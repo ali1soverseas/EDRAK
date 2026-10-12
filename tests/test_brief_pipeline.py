@@ -11,6 +11,7 @@ from edrak.contracts import Evidence, WorkerResult, WorkerStatus, WorkerType
 from edrak.contracts.evidence import SourceType
 from edrak.metrics.contracts import MetricObservation, MetricScope
 from edrak.metrics.registry import get_registry
+from tests.test_api_and_db import isolated  # noqa: F401
 
 
 def _ev(eid, fact, url="https://blog.example.com/x"):
@@ -107,3 +108,48 @@ def test_generic_why_it_matters_is_dropped():
     copy = ProposedCopy(headline="Fawry leads on price", cards=[], signals=[SignalCopy(signal_id="s1", why_it_matters="This is important.")])
     headline, _ = apply_copy(copy, cards, sig, {}, ["Fawry"])
     assert sig[0]["why_it_matters"] is None and headline == "Fawry leads on price"
+
+
+def test_every_number_on_the_dashboard_resolves_to_evidence(isolated, monkeypatch):
+    """Workers -> reconcile -> stored metrics -> typed brief: each figure traces to an evidence number."""
+    from edrak.api.run_manager import RunManager
+    from edrak.briefing.build import build_v3
+    from edrak.contracts import BusinessContext, BusinessRequest, CompanyProfile, UseCase
+    from edrak.db.repositories import results as results_repo
+    from edrak.guardrails.output import check_brief
+    from tests.test_api_and_db import _seed_run
+
+    monkeypatch.setattr("edrak.briefing.build.propose_copy", lambda *a, **k: None)
+    ws, request_id, task_id = _seed_run(isolated / "edrak.db")
+    evs = [_ev("e1", "Team plan is $19 per user", "https://fawry.com/pricing"), _ev("e2", "Team plan costs $23 per user", "https://blog.example.com/p")]
+    wr = WorkerResult(task_id=task_id, worker=WorkerType.COMPETITOR_INTELLIGENCE, status=WorkerStatus.COMPLETED, attempt=1, evidence=evs,
+                      metadata={"metrics": [_obs("e1", "$19", 19, scope=MetricScope.OFFICIAL).model_dump(mode="json"),
+                                            _obs("e2", "$23", 23).model_dump(mode="json")]})
+    wr, conflicts = reconcile([wr])[0][0], reconcile([wr])[1]
+    request = BusinessRequest(request_id=request_id, goal="Compare us with Fawry", company_profile=CompanyProfile(name="Acme"),
+                              business_context=BusinessContext(use_case=UseCase.COMPETITIVE_INTELLIGENCE, targets=["Fawry"]))
+
+    async def go():
+        from edrak.db import connection
+        async with connection.get_db() as db:
+            await results_repo.write_worker_result(db, request_id, wr)
+            await RunManager._store_metrics(db, request_id, wr)
+            await db.commit()
+            numbers = await results_repo.evidence_numbers(db, request_id)
+            from edrak.briefing.derive import derive, record_conflicts
+            await derive(db, request_id, "Acme")
+            await record_conflicts(db, request_id)
+            return await build_v3(db, request, [wr], None, numbers)
+
+    v3 = asyncio.run(go())
+    ladder = v3["cards"]["price_per_tier"]
+    row = ladder["slots"]["rows"][0]
+    assert ladder["component"] == "ladder" and row["status"] == "conflict" and row["range"]["low"] == "$19" and row["range"]["high"] == "$23"
+    assert v3["conflicts"] and "price_per_tier" in {c["metric_id"] for c in v3["conflicts"]}
+    gap_ids = {c["metric_id"] for c in v3["cards"].values() if c["component"] == "gap"}
+    assert {"paid_subscribers", "own_price"} <= gap_ids                       # required figures nobody found are gap cards
+    assert v3["coverage"]["score"] is not None and v3["coverage"]["score"] < 1
+    for uid, m in v3["metrics"].items():                                    # every shown figure traces to evidence
+        assert m["display_no"] is not None, uid
+    doc = check_brief({**v3, "evidence": [], "lenses": [], "options": []})
+    assert not [c for c in doc["guardrails"]["checks"] if c["check"] in ("card_number_not_in_table", "uncited_card")]

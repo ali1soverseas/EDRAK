@@ -137,6 +137,15 @@ async def export_brief(
     inc_sources = bool(defaults.get("export_include_sources", 1)) if sources is None else sources
     inc_limits = bool(defaults.get("export_include_limitations", 1)) if limitations is None else limitations
     doc = {**row["document"], "brief_no": row["number"], "evidence_status": row["evidence_status"]}
+    if doc.get("cards") is not None:
+        await merge_live(db, brief_id, doc)
+        from edrak.db.repositories import action_plans as plans_repo
+
+        plans = [p for p in await plans_repo.for_brief(db, brief_id) if p["status"] in ("approved", "draft")]
+        plans.sort(key=lambda p: (p["status"] != "approved", -p["version"]))  # an approved plan first, else the newest draft
+        if plans:
+            doc["action_plan"] = plans[0]["document"]
+            doc["action_plan_status"] = plans[0]["status"]
     try:
         if fmt == "pdf":
             body = await exporter.to_pdf(doc, include_sources=inc_sources, include_limitations=inc_limits)

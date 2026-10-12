@@ -1,4 +1,6 @@
 /** Typed calls to the product endpoints beyond the MVP screens. Same cookie session as httpApi. */
+import type { ActionPlanDoc, ActionPlanRow, ChallengeResult } from "../types/brief3";
+
 const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
 
 export class HttpError extends Error {
@@ -61,6 +63,8 @@ export interface Preview {
 }
 export type Dict = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
+export interface StreamEvent { type: "step" | "answer" | "error"; data: Dict }
+
 /* ---------------------------------------------------------------- endpoints */
 
 export const edrak = {
@@ -116,6 +120,51 @@ export const edrak = {
   undoDecision: (briefId: string) => req("DELETE", `/briefs/${briefId}/decision`),
   evidence: (briefId: string) => req<Dict[]>("GET", `/briefs/${briefId}/evidence`),
   annotate: (briefId: string, body: Dict) => req("POST", `/briefs/${briefId}/annotations`, body),
+
+  actionPlans: (briefId: string) => req<ActionPlanRow[]>("GET", `/briefs/${briefId}/action-plans`),
+  createActionPlan: (briefId: string, optionKey: string, note?: string) =>
+    req<{ plan_id: string; status: string }>("POST", `/briefs/${briefId}/action-plan`, { option_key: optionKey, note }),
+  actionPlan: (planId: string) => req<ActionPlanRow>("GET", `/action-plans/${planId}`),
+  saveActionPlan: (planId: string, document: ActionPlanDoc, note?: string) => req<ActionPlanRow>("PUT", `/action-plans/${planId}`, { document, note }),
+  regenerateActionPlan: (planId: string, optionKey: string, note?: string) =>
+    req<{ plan_id: string; status: string }>("POST", `/action-plans/${planId}/regenerate`, { option_key: optionKey, note }),
+  approveActionPlan: (planId: string, body: { title?: string; rationale?: string } = {}) =>
+    req<Dict>("POST", `/action-plans/${planId}/approve`, body),
+
+  cardVersions: (briefId: string, cardKey: string) => req<Dict[]>("GET", `/briefs/${briefId}/cards/${encodeURIComponent(cardKey)}/versions`),
+  challengeCard: (briefId: string, cardKey: string, body: { source: "user" | "web"; text: string; url?: string; title?: string; entity?: string }) =>
+    req<ChallengeResult>("POST", `/briefs/${briefId}/cards/${encodeURIComponent(cardKey)}/challenge`, body),
+
+  /** Streams an answer about a brief: `step` events while tools run, then one `answer`. */
+  streamAsk: async (thread: string, content: string, onEvent: (e: StreamEvent) => void): Promise<void> => {
+    const res = await fetch(apiUrl(`/chat/threads/${thread}/stream`), {
+      method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }),
+    });
+    if (!res.ok || !res.body) {
+      let detail: unknown = res.statusText;
+      try { detail = (await res.json()).detail; } catch { /* not JSON */ }
+      throw new HttpError(res.status, detail);
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let cut: number;
+      while ((cut = buffer.indexOf("\n\n")) >= 0) {
+        const block = buffer.slice(0, cut);
+        buffer = buffer.slice(cut + 2);
+        const data = block.split("\n").find((l) => l.startsWith("data: "));
+        if (!data) continue;
+        try {
+          const parsed = JSON.parse(data.slice(6)) as { type: StreamEvent["type"]; data: Dict };
+          onEvent({ type: parsed.type, data: parsed.data });
+        } catch { /* skip a malformed block */ }
+      }
+    }
+  },
 
   newThread: (scope: Dict) => req<{ thread_id: string }>("POST", "/chat/threads", scope),
   messages: (thread: string) => req<Dict[]>("GET", `/chat/threads/${thread}/messages`),

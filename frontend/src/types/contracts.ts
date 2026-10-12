@@ -238,10 +238,26 @@ export interface ResearchTask {
    */
   parent_request_id: string;
   /**
+   * Typed figures this worker must look for. Filled by code from the use-case template.
+   */
+  requirements: MetricRequirement[];
+  /**
    * Unique task identifier.
    */
   task_id: string;
   worker: WorkerType;
+}
+/**
+ * What the planner asks a worker to find.
+ */
+export interface MetricRequirement {
+  check_rule: string | null;
+  definition: string | null;
+  entity: string;
+  metric_id: string;
+  preferred_source_types: string[];
+  query_hints: string[];
+  required: boolean;
 }
 /**
  * The single contract every worker returns for a ResearchTask.

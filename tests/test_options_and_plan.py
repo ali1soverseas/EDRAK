@@ -149,3 +149,18 @@ def test_choose_edit_approve_records_the_decision_and_undo_supersedes_both(clien
     assert client.delete(f"/api/briefs/{brief_id}/decision").status_code == 200
     plans = client.get(f"/api/briefs/{brief_id}/action-plans").json()
     assert all(p["status"] != "approved" for p in plans)
+
+
+def test_export_renders_typed_cards_and_the_action_plan():
+    from edrak.exports import brief as exporter
+
+    plan = assemble(_draft(), BRIEF, {"key": "A", "title": "Premium"}).model_dump(mode="json")
+    doc = {"brief_no": 1, "title": "T", "evidence_status": "verified", "headline": "Fawry leads on price", "cards": {
+        "price_per_tier": {"card_key": "price_per_tier", "title": "Price per tier", "component": "ladder", "status": "conflict", "refs": [1],
+                           "section": "competitor_intelligence", "slots": {"rows": [{"label": "Fawry", "value": "$19–$23"}]}, "caveat": "Sources disagree."}},
+        "sections": [{"lens": "competitor_intelligence", "label": "Competitors", "cards": ["price_per_tier"], "gap_cards": []}],
+        "kpis": [], "coverage": {"required": 2, "met": 1, "score": 0.5}, "options": [{"key": "A", "title": "Premium", "thesis": "Hold price"}],
+        "action_plan": plan, "evidence": []}
+    md = exporter.to_markdown(doc).decode()
+    assert "Fawry $19–$23" in md and "Action plan: option A" in md and "Risk register" in md and "baseline $19" in md
+    assert exporter.to_docx(doc)[:2] == b"PK"

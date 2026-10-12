@@ -35,7 +35,9 @@ const CELL: Record<string, [string, string, string]> = {
   different_approach: ["Different approach", "نهج مختلف", "c-blue"], not_established: ["Not found", "غير موجود", "c-draft"],
 };
 
-export function BriefToolbar({ brief, container, fullscreen, setFullscreen }: {
+export function BriefToolbar({ brief, container, fullscreen, setFullscreen, typed, onChanged }: {
+  typed?: boolean;
+  onChanged?: () => void;
   brief: BriefDoc; container: RefObject<HTMLDivElement | null>; fullscreen: boolean; setFullscreen: (v: boolean) => void;
 }) {
   const L = useL();
@@ -129,10 +131,10 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen }: {
           <>
             {lifecycle === "ready" && <button type="button" className="btn ghost" onClick={() => void edrak.reviewBrief(id, "accepted_as_reviewed").then(() => setLifecycle("reviewed"))}>{L("Accept as reviewed", "اعتمد كمراجَع")}</button>}
             <button type="button" className="btn ghost" onClick={() => void edrak.reviewBrief(id, "requested_investigation").then((r) => r.follow_up_analysis_id && navigate(`/analyses/new?draft=${r.follow_up_analysis_id}`))}>{L("More investigation", "مزيد من التحقيق")}</button>
-            <button type="button" className="btn" style={{ background: "var(--gold, #f5d547)" }} onClick={() => setDeciding(true)}>{L("Record decision", "سجّل القرار")}</button>
+            {!typed && <button type="button" className="btn" style={{ background: "var(--gold, #f5d547)" }} onClick={() => setDeciding(true)}>{L("Record decision", "سجّل القرار")}</button>}
           </>
         ) : (
-          <button type="button" className="btn ghost" onClick={() => void edrak.undoDecision(id).then(() => setLifecycle("reviewed"))}>{L("Undo decision", "تراجع عن القرار")}</button>
+          <button type="button" className="btn ghost" onClick={() => void edrak.undoDecision(id).then(() => { setLifecycle("reviewed"); onChanged?.(); })}>{L("Undo decision", "تراجع عن القرار")}</button>
         )}
       </div>
 

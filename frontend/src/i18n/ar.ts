@@ -357,6 +357,7 @@ export const ar: Record<TKey, string> & Record<string, string> = {
   "run.step.verify": "التحقق",
   "run.step.synthesize": "التركيب",
   "run.step.brief": "الموجز",
+  "run.step.review": "مراجعتك",
   "run.step.approved": "اعتُمدت {time}",
   "run.step.workersDone": "اكتمل {done} من {total}",
   "run.step.workersMixed": "اكتمل {done}، فشل {failed}",

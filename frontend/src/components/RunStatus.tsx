@@ -11,13 +11,14 @@ import { Icon } from "./ui/Icon";
 
 type StepState = "done" | "current" | "pending" | "failed" | "stopped";
 
-const STAGES: readonly RunStage[] = ["plan", "dispatch", "workers", "verify", "synthesize", "brief"];
+const STAGES: readonly RunStage[] = ["plan", "dispatch", "workers", "verify", "review", "synthesize", "brief"];
 
 const LABEL: Record<RunStage, TKey> = {
   plan: "run.step.plan",
   dispatch: "run.step.dispatch",
   workers: "run.step.workers",
   verify: "run.step.verify",
+  review: "run.step.review",
   synthesize: "run.step.synthesize",
   brief: "run.step.brief",
 };
@@ -32,7 +33,7 @@ function stepStates(run: RunView): StepState[] {
       return STAGES.map((_, i) => (i < 2 ? "done" : i === 2 ? "failed" : "pending"));
     case "cancelled":
       return STAGES.map((_, i) => (i < index ? "done" : i === index ? "stopped" : "pending"));
-    case "running":
+    default:
       return STAGES.map((_, i) => (i < index ? "done" : i === index ? "current" : "pending"));
   }
 }
