@@ -1,7 +1,7 @@
 import { useL } from "../../../lib/useL";
 import type { BriefCard, ComparisonCell, MetricsSlideData } from "../../../types/brief3";
 import { Icon } from "../../ui/Icon";
-import { EvChips, InsightCard, StatusBadge } from "../InsightCard";
+import { EvChips, InsightCard } from "../InsightCard";
 import { useDeck } from "../context";
 import { SlideHead } from "./SlideHead";
 
@@ -22,7 +22,6 @@ function Cell({ cells, empty, showEntity }: { cells: ComparisonCell[]; empty: st
             {hasDistinctLabel && <span className="s12 t3">({c.label})</span>}
             {c.period && <span className="s12 t3">· {c.period}</span>}
             {c.ref ? <EvChips refs={[c.ref]} /> : null}
-            {c.status !== "verified" && <StatusBadge status={c.status} />}
           </span>
         );
       })}
@@ -58,14 +57,13 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
             {kpis.length > 0 && (
               <div className="kpi-strip" role="list">
                 {kpis.map((k) => k && (
-                  <button key={k.card_key} type="button" role="listitem" className={`kpi-tile st-${k.status}`} onClick={() => openCard(k.card_key)}>
+                  <button key={k.card_key} type="button" role="listitem" className="kpi-tile" onClick={() => openCard(k.card_key)}>
                     <span className="eyebrow ellip">{L(k.label.en, k.label.ar ?? k.label.en)}</span>
                     <b className="kpi-value">{k.value}</b>
                     <span className="row g6 s12 t3 wrap">
                       {k.entity && <span className="ellip">{k.entity}</span>}
                       {k.comparator && <span className={`cmp ${k.comparator.direction > 0 ? "up" : "down"}`}>{k.comparator.direction > 0 ? "▲" : "▼"} {k.comparator.value} {k.comparator.label}</span>}
                     </span>
-                    {k.status !== "verified" && <StatusBadge status={k.status} />}
                   </button>
                 ))}
               </div>

@@ -6,15 +6,16 @@ import { Icon } from "../ui/Icon";
 import { useDeck } from "./context";
 
 export function StatusBadge({ status }: { status: CardStatus | string }) {
+  if (status === "thin" || status === "conflict") return null;
   const L = useL();
   const map: Record<string, [string, string, string]> = {
     verified: [L("Verified", "موثّق"), "c-ok", "check"],
-    thin: [L("Thin: one source", "ضعيف: مصدر واحد"), "c-ins", "warning"],
-    conflict: [L("Sources disagree", "المصادر متعارضة"), "c-bad", "warning"],
     gap: [L("Gap", "فجوة"), "c-draft", "info"],
     fallback: [L("Table", "جدول"), "c-line", "layers"],
   };
-  const [label, cls] = map[status] ?? map.fallback;
+  const item = map[status];
+  if (!item) return null;
+  const [label, cls] = item;
   return <span className={`chip ${cls}`}>{label}</span>;
 }
 
