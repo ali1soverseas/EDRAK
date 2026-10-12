@@ -4,6 +4,14 @@
       "additionalProperties": false,
       "description": "Context that frames how the business goal should be analyzed.",
       "properties": {
+        "competitors": {
+          "description": "Companies to compare against, the same idea in every use case.",
+          "items": {
+            "$ref": "#/$defs/CompetitorRef"
+          },
+          "title": "Competitors",
+          "type": "array"
+        },
         "constraints": {
           "description": "Explicit analysis constraints or requirements.",
           "items": {
@@ -22,8 +30,43 @@
           "title": "Focus Areas",
           "type": "array"
         },
+        "markets": {
+          "description": "Places the analysis is about: countries, regions or cities.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Markets",
+          "type": "array"
+        },
+        "offering": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The product or service being assessed or launched.",
+          "title": "Offering"
+        },
+        "target_customers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who the offering is for.",
+          "title": "Target Customers"
+        },
         "targets": {
-          "description": "Competitors, markets, products, or other analysis targets.",
+          "description": "Names of the competitors to compare against. Same names as `competitors`; kept for workers that read a plain list.",
           "items": {
             "minLength": 1,
             "type": "string"
@@ -56,8 +99,12 @@
         }
       },
       "required": [
+        "competitors",
         "constraints",
         "focus_areas",
+        "markets",
+        "offering",
+        "target_customers",
         "targets",
         "time_window_days",
         "trigger",
@@ -116,7 +163,7 @@
     },
     "CompanyProfile": {
       "additionalProperties": false,
-      "description": "Minimal baseline describing the company under analysis.\n\nProvisional. This field set is intentionally minimal and is expected to be\nreplaced once the internal-knowledge baseline is derived from\nhttps://handbook.gitlab.com/handbook/ . Kept small on purpose so that\nextraction can reshape it without breaking workers already built on it.",
+      "description": "Baseline describing the company under analysis (the user's own company).",
       "properties": {
         "aliases": {
           "description": "Alternative names or commonly used company names.",
@@ -155,6 +202,27 @@
           "title": "Products",
           "type": "array"
         },
+        "social_accounts": {
+          "description": "The company's own social accounts. The Customer worker reads what people say there.",
+          "items": {
+            "$ref": "#/$defs/SocialAccount"
+          },
+          "title": "Social Accounts",
+          "type": "array"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company's official website.",
+          "title": "Website"
+        },
         "workspace_id": {
           "anyOf": [
             {
@@ -174,9 +242,72 @@
         "name",
         "notes",
         "products",
+        "social_accounts",
+        "website",
         "workspace_id"
       ],
       "title": "CompanyProfile",
+      "type": "object"
+    },
+    "CompetitorRef": {
+      "additionalProperties": false,
+      "description": "A company to compare against, with what is known about where it publishes.",
+      "properties": {
+        "discovered_by": {
+          "default": "user",
+          "description": "'user' when the person named it, 'agent' when Edrak found it.",
+          "title": "Discovered By",
+          "type": "string"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watchlist entity id in the app.",
+          "title": "Entity Id"
+        },
+        "name": {
+          "description": "The competitor's name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "social_accounts": {
+          "description": "Official social accounts, read from the competitor's own website.",
+          "items": {
+            "$ref": "#/$defs/SocialAccount"
+          },
+          "title": "Social Accounts",
+          "type": "array"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Official website, when known.",
+          "title": "Website"
+        }
+      },
+      "required": [
+        "discovered_by",
+        "entity_id",
+        "name",
+        "social_accounts",
+        "website"
+      ],
+      "title": "CompetitorRef",
       "type": "object"
     },
     "Conflict": {
@@ -783,6 +914,41 @@
         "failed"
       ],
       "title": "RunStatus",
+      "type": "string"
+    },
+    "SocialAccount": {
+      "additionalProperties": false,
+      "description": "One official account of a company, e.g. its X or Instagram profile.",
+      "properties": {
+        "platform": {
+          "$ref": "#/$defs/SocialPlatform",
+          "description": "Where the account lives."
+        },
+        "url": {
+          "description": "Full URL of the account or page.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "platform",
+        "url"
+      ],
+      "title": "SocialAccount",
+      "type": "object"
+    },
+    "SocialPlatform": {
+      "enum": [
+        "website",
+        "x",
+        "facebook",
+        "instagram",
+        "linkedin",
+        "youtube",
+        "tiktok"
+      ],
+      "title": "SocialPlatform",
       "type": "string"
     },
     "SourceType": {

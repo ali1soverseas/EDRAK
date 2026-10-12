@@ -33,7 +33,7 @@ The response holds a batch_id, how many new posts were stored, a preview of up t
 language, gaps (for example when only snippets could be collected) and warnings. The full
 records, with likes, replies, shares and views, stay in the evidence store.
 
-Example: {"platform": "reddit", "query": "GitLab Duo vs Copilot", "sort": "top",
+Example: {"platform": "reddit", "query": "Acme Pay vs Rival Pay", "sort": "top",
 "max_results": 30}"""
 
 COMMENTS_DESCRIPTION = """Read the comments or replies under one specific public post.

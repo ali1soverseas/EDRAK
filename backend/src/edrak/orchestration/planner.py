@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from typing import Protocol
 
@@ -11,6 +11,7 @@ from ..contracts import (
     ResearchTask,
     WorkerType,
 )
+from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
 from .prompts import PLANNER_SYSTEM_PROMPT
 
@@ -53,6 +54,7 @@ class PlannerPlan(BaseModel):
     """The reply shape: one entry per worker assignment."""
 
     assignments: list[WorkerAssignment]
+    rationale: str | None = None
 
 
 class LlmPlanner:
@@ -63,18 +65,18 @@ class LlmPlanner:
         context = self._build_context(request)
 
         try:
-            assignments = self._invoke(context)
+            reply = self._invoke(context)
         except PlanningError as exc:
             if self.max_repair_attempts < 1:
                 raise
-            assignments = self._invoke(
+            reply = self._invoke(
                 f"{context}\n\nYour previous reply was rejected: {exc.reason}\n"
                 "Return a corrected plan covering the relevant workers."
             )
 
-        return self._build_plan(request, assignments)
+        return self._build_plan(request, reply)
 
-    def _invoke(self, prompt: str) -> list[WorkerAssignment]:
+    def _invoke(self, prompt: str) -> PlannerPlan:
         """Ask for a plan, validated against the assignment schema.
 
         json_mode rather than function_calling. This is the one call site that
@@ -91,13 +93,19 @@ class LlmPlanner:
 
         if plan is None or not plan.assignments:
             raise PlanningError("model returned no usable plan", "")
-        return list(plan.assignments)
+        return plan
 
     def _build_plan(
         self,
         request: BusinessRequest,
-        assignments: list[WorkerAssignment],
+        reply: PlannerPlan,
     ) -> ResearchPlan:
+        # One task per worker: the dispatcher runs workers in parallel and a second task for
+        # the same worker would collide with the first.
+        assignments: list[WorkerAssignment] = []
+        for assignment in reply.assignments:
+            if assignment.worker not in {a.worker for a in assignments}:
+                assignments.append(assignment)
         tasks = [
             ResearchTask(
                 parent_request_id=request.request_id,
@@ -112,15 +120,21 @@ class LlmPlanner:
         return ResearchPlan(
             request_id=request.request_id,
             tasks=tasks,
-            rationale=f"LLM-generated plan from {len(tasks)} assignment(s).",
+            rationale=(reply.rationale or "").strip()
+            or f"{len(tasks)} workers investigate in parallel; verification then checks what they found.",
         )
 
     def _build_context(self, request: BusinessRequest) -> str:
-        return (
-            f"Business objective: {request.goal}\n"
-            f"Company: {request.company_profile.name}\n"
-            f"Use case: {request.business_context.use_case.value}\n"
-            f"Targets: {', '.join(request.business_context.targets) or '(none)'}\n"
-            f"Focus areas: {', '.join(request.business_context.focus_areas) or '(none)'}\n"
-            f"Constraints: {'; '.join(request.business_context.constraints) or '(none)'}"
-        )
+        lines = [
+            f"Business objective: {request.goal}",
+            describe_context(request.company_profile, request.business_context),
+        ]
+        if request.business_context.constraints:
+            lines.append(f"Constraints: {'; '.join(request.business_context.constraints)}")
+        allowed = request.extras.get("allowed_source_types")
+        if allowed:
+            lines.append(f"Sources the user allowed: {', '.join(allowed)}")
+        feedback = request.extras.get("rejected_plan_feedback")
+        if feedback:
+            lines.append(f"The user rejected the previous plan with this feedback: {feedback}")
+        return "\n".join(lines)

@@ -45,7 +45,7 @@ For each keyword the response preview gives the first and last value, the peak a
 direction (up, flat or down), and the top related queries. The full series is stored. A
 trend_point item per keyword is stored as evidence so findings can cite it.
 
-Example: {"keywords": ["gitlab duo", "github copilot"], "timeframe": "today 12-m", "geo": "US"}"""
+Example: {"keywords": ["acme pay", "rival pay"], "timeframe": "today 12-m", "geo": "US"}"""
 
 
 class SearchInterestInput(RequestBase):

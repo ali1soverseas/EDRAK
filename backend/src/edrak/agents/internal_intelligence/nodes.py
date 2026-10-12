@@ -15,6 +15,7 @@ from edrak.agents.internal_intelligence.state import InternalAgentState
 from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation, SourceType
 from edrak.contracts.result import Conflict, Finding, FindingCategory, WorkerResult, WorkerStatus
 from edrak.contracts.task import ResearchTask, WorkerType
+from edrak.contracts.vocabulary import competitor_names, describe_context
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_json_object
@@ -32,8 +33,8 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
     if not task:
         return {"queries": [], "started_at": started_at, "error": "No task provided in state"}
 
-    company = (task.company_profile.name if task.company_profile else "GitLab").strip()
-    targets = task.business_context.targets if task.business_context else []
+    company = (task.company_profile.name if task.company_profile else "our company").strip()
+    targets = competitor_names(task.business_context) if task.business_context else []
     focus_areas = task.business_context.focus_areas if task.business_context else []
 
     queries: List[str] = []
@@ -41,11 +42,9 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
 
     try:
         user_prompt = (
-            f"Company Context: {company}\n"
+            f"{describe_context(task.company_profile, task.business_context)}\n"
             f"Research Goal: {task.goal}\n"
-            f"Focus Areas: {task.focus}\n"
-            f"Target Competitors: {', '.join(targets) if targets else 'None'}\n"
-            f"Domain Focus Areas: {', '.join(focus_areas) if focus_areas else 'None'}\n\n"
+            f"Task Focus: {task.focus}\n\n"
             "Formulate up to 6 precise natural-language queries covering the checklist topics as JSON."
         )
         resp = get_json_object(
@@ -198,7 +197,7 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
         rank = ev.metadata.get("rank", "-")
         rel_score = ev.metadata.get("relevance_score", 0.70)
         if ev.metadata.get("origin") == "public_handbook":
-            doc_type_label = "Public GitLab Handbook"
+            doc_type_label = "Public handbook"
         elif ev.is_synthetic:
             doc_type_label = "Synthetic Internal Strategic Doc"
         else:
@@ -377,31 +376,10 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             f"- Analyzed {len(evidence_list)} internal evidence sources covering: {', '.join(covered_cats)}."
         )
 
-    # Check for implicit tension if Intelligent Model Selection handbook page and AI Gateway doc both retrieved
-    ims_eids = [ev.evidence_id for ev in evidence_list if "intelligent model selection" in (ev.source_title or "").lower()]
-    gw_eids = [ev.evidence_id for ev in evidence_list if "ai gateway" in (ev.source_title or "").lower()]
-    if ims_eids and gw_eids and not conflicts and findings:
-        conflicts.append(
-            Conflict(
-                finding_id=findings[0].finding_id,
-                contradicting_evidence_ids=[ims_eids[0], gw_eids[0]],
-                description="Tension between operational status and strategic architecture: Official Handbook notes model selection is currently static per feature, while AI Gateway architecture documentation describes automated multi-model routing under active rollout.",
-            )
-        )
-
-    # Ensure required domain gaps are present
-    standard_gaps = [
-        "GitHub Copilot pricing and capability claims are sourced from internal battlecards and are not independently verified or directly like-for-like with GitLab's seat+credits structure.",
-        "Absence of quantitative latency, throughput, or hardware performance benchmarks for self-hosted LLM deployments.",
-        "No credit overage or hard cap enforcement mechanisms documented beyond base promotional allowances.",
-        "GA date and pricing model lack non-synthetic external corroboration.",
-        "External GitHub Copilot comparison is delegated to the Competitor worker.",
-    ]
-    # These gaps describe the seeded GitLab demo documents, so only they trigger them.
-    demo_gaps = standard_gaps if any(ev.metadata.get("origin") == "synthetic_internal" for ev in evidence_list) else []
-    for sg in demo_gaps:
-        if not any(sg.lower()[:30] in g.lower() for g in gaps):
-            gaps.append(sg)
+    if any(ev.is_synthetic for ev in evidence_list):
+        note = "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+        if note not in gaps:
+            gaps.append(note)
 
     return {
         "findings": findings,
@@ -479,13 +457,13 @@ def _classify_category(text: str) -> FindingCategory:
     if re.search(r"\b(okrs?|strategic okrs|key results?|arr|nrr|growth metrics)\b", text, re.I):
         return FindingCategory.MARKET_SIGNAL
 
-    if re.search(r"\b(copilot|competitor|battlecard|vs\.?|versus|differentiat\w+)\b", text, re.I):
+    if re.search(r"\b(competitors?|battlecard|vs\.?|versus|differentiat\w+|alternatives?)\b", text, re.I):
         return FindingCategory.POSITIONING
 
-    if re.search(r"\b(gitlab credits|per-seat|seat|sku|subscription|add-on|pricing|price[sd]?|premium|ultimate|consumption-based|metered|billing)\b", text, re.I):
+    if re.search(r"\b(credits|per-seat|seat|sku|subscription|add-on|pricing|price[sd]?|tiers?|plans?|consumption-based|metered|billing)\b", text, re.I):
         return FindingCategory.PRICING_PACKAGING
 
-    if re.search(r"\b(ai gateway|agent platform|duo|self-hosted|air-gapped|privacy|retention|model|routing|workflow)\b", text, re.I):
+    if re.search(r"\b(features?|capabilit\w+|platform|integration|self-hosted|privacy|retention|architecture|workflow|api)\b", text, re.I):
         return FindingCategory.PRODUCT_FEATURE
 
     if re.search(r"\b(market|adoption|customers?|demand|competition|revenue|telemetry)\b", text, re.I):

@@ -35,7 +35,7 @@ class UseCaseConfig(StrictModel):
 
 class UseCases(StrictModel):
     competitive_intelligence: UseCaseConfig
-    market_entry: UseCaseConfig
+    market_entry_expansion: UseCaseConfig
     product_launch: UseCaseConfig
 
     def for_use_case(self, use_case: UseCase) -> UseCaseConfig:

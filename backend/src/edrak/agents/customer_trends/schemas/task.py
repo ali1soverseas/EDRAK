@@ -19,6 +19,7 @@ from edrak.agents.customer_trends.schemas.common import (
     UseCase,
 )
 from edrak.contracts import ResearchTask
+from edrak.contracts.vocabulary import competitor_names
 from edrak.contracts import UseCase as SharedUseCase
 
 MAX_TREND_KEYWORDS = 5
@@ -72,7 +73,7 @@ _RUN_ID_UNSAFE = re.compile(r"[^A-Za-z0-9_.-]+")
 _RUN_ID_MAX = 128
 _USE_CASES = {
     SharedUseCase.COMPETITIVE_INTELLIGENCE: UseCase.COMPETITIVE_INTELLIGENCE,
-    SharedUseCase.MARKET_ENTRY_EXPANSION: UseCase.MARKET_ENTRY,
+    SharedUseCase.MARKET_ENTRY_EXPANSION: UseCase.MARKET_ENTRY_EXPANSION,
     SharedUseCase.PRODUCT_LAUNCH: UseCase.PRODUCT_LAUNCH,
 }
 _FOCUS_WORDS: dict[Focus, re.Pattern[str]] = {
@@ -122,15 +123,17 @@ def run_id_for(task: ResearchTask) -> str:
 def brief_from_task(task: ResearchTask, *, today: date | None = None) -> TaskBrief:
     """Turn the shared task into the worker's brief.
 
-    The entity is the company, the question is the goal, the targets are the competitors (for a
-    market entry they describe the market instead). The focus comes from the words of the task
-    and is left empty, to take the use case defaults, when none match. The country is read from
-    the task text, and `time_window_days` becomes `since`.
+    The entity is the company, the question is the goal, the competitors are the competitors in
+    every use case, and the market is the context's markets. The focus comes from the words of the
+    task and is left empty, to take the use case defaults, when none match. The country is read
+    from the markets first, then the task text, and `time_window_days` becomes `since`.
     """
     context = task.business_context
     use_case = _USE_CASES[context.use_case]
+    competitors = competitor_names(context)
+    markets = list(context.markets)
     text = " ".join(
-        [task.goal, task.focus, *context.focus_areas, *context.targets, *context.constraints]
+        [*markets, task.goal, task.focus, *context.focus_areas, *competitors, *context.constraints]
     )
     focus_text = " ".join([task.focus, *context.focus_areas])
     focus: list[Focus] = [
@@ -138,17 +141,21 @@ def brief_from_task(task: ResearchTask, *, today: date | None = None) -> TaskBri
     ]
     country = _COUNTRY_PATTERN.search(text)
     day = today or datetime.now(UTC).date()
-    market_entry = use_case is UseCase.MARKET_ENTRY
-    notes = "; ".join([f"Focus: {task.focus}", *context.constraints])
+    notes = "; ".join(
+        [f"Focus: {task.focus}"]
+        + ([f"Offering: {context.offering}"] if context.offering else [])
+        + ([f"Target customers: {context.target_customers}"] if context.target_customers else [])
+        + list(context.constraints)
+    )
     return TaskBrief(
         task_id=task.task_id,
         run_id=run_id_for(task),
         use_case=use_case,
         entity=task.company_profile.name,
         question=task.goal,
-        market=", ".join(context.targets) if market_entry and context.targets else None,
+        market=", ".join(markets) or None,
         geo=_COUNTRIES[country.group(1).lower()] if country else None,
-        competitors=[] if market_entry else list(context.targets),
+        competitors=competitors,
         focus=focus,
         since=day - timedelta(days=context.time_window_days) if context.time_window_days else None,
         notes=notes,

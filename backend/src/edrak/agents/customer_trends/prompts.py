@@ -104,7 +104,7 @@ PLAN_QUERIES = (
 Return a query plan (JSON):
 - social_queries: for each platform worth searching (x, reddit, tiktok, instagram, facebook,
   youtube), 1 to 4 short queries of 2 to 4 words, the way people search: a product name plus one
-  word ("GitLab Duo review"). Long sentences match nothing on a keyword search. Write each idea
+  word ("Acme Pay review"). Long sentences match nothing on a keyword search. Write each idea
   in every requested language, and when a country is set add the local-dialect wording people
   use there.
 - hashtags: per platform, only hashtags people really use.

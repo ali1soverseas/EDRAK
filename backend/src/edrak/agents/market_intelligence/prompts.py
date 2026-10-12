@@ -44,14 +44,14 @@ def task_planner_prompt(goal: str, context: str, tool_catalog: str, scope_note: 
         '      "description": "Identify current market size and growth of agentic AI coding tools",\n'
         '      "tool_hint": "tool_serper",\n'
         '      "queries": [\n'
-        '        {"q": "agentic AI coding tools market size", "language": "en", "recency": "year"}\n'
+        '        {"q": "SME invoicing software market size Egypt", "language": "en", "recency": "year"}\n'
         "      ]\n"
         "    },\n"
         "    {\n"
-        '      "description": "Map GitHub Copilot and Amazon Q Developer pricing models",\n'
+        '      "description": "Map how the named competitors price their offerings",\n'
         '      "tool_hint": "tool_serper",\n'
         '      "queries": [\n'
-        '        {"q": "GitHub Copilot Business pricing", "language": "en", "recency": "year"}\n'
+        '        {"q": "<competitor name> pricing plans", "language": "en", "recency": "year"}\n'
         "      ]\n"
         "    }\n"
         "  ]\n"
@@ -92,7 +92,7 @@ def tool_arg_prompt(
         "- Search this task only. If the task is competition or pricing, "
         "do not search market size or growth.\n"
         "- Put named products from the task in the queries "
-        "(for example GitHub Copilot, Amazon Q Developer, Cursor).\n"
+        "(the competitors, the offering and the markets named in the context).\n"
         "- Keywords only. Do not paste the task sentence.\n"
         "- Do not put the country or region in q; it is already in gl.\n"
         "- Do not add tickers, series IDs, or indicator codes.\n"
@@ -112,7 +112,7 @@ def usefulness_prompt(task_description: str, result_str: str) -> str:
         "USEFUL if at least one hit states a fact that answers this task: "
         "a named product, price, competitor, customer need, rule, or figure.\n"
         "Ignore other topics from a broader research program. "
-        "A GitHub Copilot or Amazon Q pricing page is useful for a competition/pricing task "
+        "A competitor's pricing page is useful for a competition/pricing task "
         "even if it does not mention our company.\n"
         "NOT_USEFUL only when none of the hits answer this task "
         "(empty, a different industry, or only an unrelated market-size overview).\n\n"

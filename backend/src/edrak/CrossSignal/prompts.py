@@ -296,9 +296,9 @@ Keep these separate.
 Example:
 
 Signal:
-"GitLab's agentic development capabilities and its enterprise
-deployment controls reinforce a differentiated enterprise AI
-development position."
+"The company's in-house Arabic language pipeline and its existing
+SME customer base reinforce a differentiated position in
+Arabic-first customer support."
 
 Interpretation:
 "The combination may matter for organizations where AI development
@@ -858,10 +858,10 @@ Example:
 
 Good:
 "What product areas require prioritization to maintain competitive
-positioning as AI-assisted development capabilities expand?"
+positioning as competitors add automated support features?"
 
 Bad:
-"GitLab should prioritize AI coding agents."
+"The company should prioritize an AI support agent."
 
 ============================================================
 STRICT RESTRICTIONS

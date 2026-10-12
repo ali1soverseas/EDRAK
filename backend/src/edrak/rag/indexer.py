@@ -355,5 +355,5 @@ class InternalIndexer:
                     files[name] = files.get(name, 0) + 1
         docs = [{"filename": name, "chunks": n, "kind": "file"} for name, n in sorted(files.items())]
         if handbook_pages:
-            docs.append({"filename": "GitLab handbook", "chunks": len(handbook_pages), "kind": "handbook"})
+            docs.append({"filename": "Public handbook", "chunks": len(handbook_pages), "kind": "handbook"})
         return docs

@@ -118,13 +118,16 @@ def _is_target_market(text: str, place: PlaceScope) -> bool:
         escaped = re.escape(name)
         if re.search(rf"enter(?:ing)?(?: the)? {escaped}", lowered):
             return True
+        # The standard "Markets: Egypt, Saudi Arabia" line of the task context.
+        if re.search(rf"^markets?:[^\n]*\b{escaped}\b", lowered, re.M):
+            return True
         if f"{name} market" in lowered or f"market in {name}" in lowered:
             return True
         if re.search(rf"\bin {escaped}\b", lowered):
             return True
         if f"among {name}" in lowered or f"{name} enterprises" in lowered:
             return True
-        if f"{name} devops" in lowered or f"{name} news" in lowered:
+        if f"{name} news" in lowered or f"{name} customers" in lowered:
             return True
         if f"conditions in {name}" in lowered or f"demand in {name}" in lowered:
             return True

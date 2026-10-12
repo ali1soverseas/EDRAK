@@ -34,10 +34,14 @@ describe("formToRequest", () => {
       aliases: ["NL Pay"],
       products: ["Invoicing platform"],
       notes: "Invoicing software.",
+      website: company.website.trim() || null,
+      social_accounts: company.socials.map((s) => ({ platform: s.platform, url: s.url })),
+      workspace_id: null,
     });
     expect(request.business_context.use_case).toBe("competitive_intelligence");
-    // Duplicates are dropped ignoring case, and the market is a target too.
-    expect(request.business_context.targets).toEqual(["Misr Pay", "Delta Invoice", "Egypt"]);
+    // Duplicates are dropped ignoring case. The market is a place, not a competitor.
+    expect(request.business_context.targets).toEqual(["Misr Pay", "Delta Invoice"]);
+    expect(request.business_context.markets).toEqual(["Egypt"]);
     expect(request.business_context.focus_areas).toEqual(["Pricing and packaging", "Product features"]);
     expect(request.business_context.time_window_days).toBe(90);
     expect(request.business_context.trigger).toBe("on_demand");

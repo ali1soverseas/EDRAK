@@ -10,6 +10,7 @@ from edrak.agents.market_intelligence.nodes import (
 from edrak.agents.market_intelligence.state import MarketAgentState, empty_market_state
 from datetime import datetime
 
+from edrak.contracts.vocabulary import competitor_names
 from edrak.contracts import (
     Evidence,
     EvidenceRef,
@@ -110,8 +111,15 @@ def format_task_context(task: ResearchTask) -> str:
     if profile.notes:
         lines.append(profile.notes)
     lines.append(f"Use case: {ctx.use_case.value}")
-    if ctx.targets:
-        lines.append(f"Targets: {', '.join(ctx.targets)}")
+    competitors = competitor_names(ctx)
+    if competitors:
+        lines.append(f"Competitors: {', '.join(competitors)}")
+    if ctx.markets:
+        lines.append(f"Markets: {', '.join(ctx.markets)}")
+    if ctx.offering:
+        lines.append(f"Offering: {ctx.offering}")
+    if ctx.target_customers:
+        lines.append(f"Target customers: {ctx.target_customers}")
     if ctx.focus_areas:
         lines.append(f"Focus areas: {', '.join(ctx.focus_areas)}")
     lines.append(f"Task focus: {task.focus}")

@@ -30,7 +30,7 @@ The response holds a batch_id, how many new articles were stored, a preview of u
 by language including a volume summary (days covered, total, peak day), gaps and warnings. The
 day-by-day counts are stored with the batch.
 
-Example: {"query": "GitLab AI", "source": "gdelt", "languages": ["en"]}"""
+Example: {"query": "Acme Pay", "source": "gdelt", "languages": ["en"]}"""
 
 
 class NewsCoverageInput(RequestBase):

@@ -5,6 +5,7 @@
  * Regenerate: .venv/bin/python scripts/export_contract_schemas.py && npm run gen:types
  */
 
+export type SocialPlatform = "website" | "x" | "facebook" | "instagram" | "linkedin" | "youtube" | "tiktok";
 export type TriggerType = "on_demand" | "scheduled";
 export type UseCase = "competitive_intelligence" | "market_entry_expansion" | "product_launch";
 export type WorkerType =
@@ -81,6 +82,10 @@ export interface BusinessRequest {
  */
 export interface BusinessContext {
   /**
+   * Companies to compare against, the same idea in every use case.
+   */
+  competitors: CompetitorRef[];
+  /**
    * Explicit analysis constraints or requirements.
    */
   constraints: string[];
@@ -89,7 +94,19 @@ export interface BusinessContext {
    */
   focus_areas: string[];
   /**
-   * Competitors, markets, products, or other analysis targets.
+   * Places the analysis is about: countries, regions or cities.
+   */
+  markets: string[];
+  /**
+   * The product or service being assessed or launched.
+   */
+  offering: string | null;
+  /**
+   * Who the offering is for.
+   */
+  target_customers: string | null;
+  /**
+   * Names of the competitors to compare against. Same names as `competitors`; kept for workers that read a plain list.
    */
   targets: string[];
   /**
@@ -100,12 +117,42 @@ export interface BusinessContext {
   use_case: UseCase;
 }
 /**
- * Minimal baseline describing the company under analysis.
- *
- * Provisional. This field set is intentionally minimal and is expected to be
- * replaced once the internal-knowledge baseline is derived from
- * https://handbook.gitlab.com/handbook/ . Kept small on purpose so that
- * extraction can reshape it without breaking workers already built on it.
+ * A company to compare against, with what is known about where it publishes.
+ */
+export interface CompetitorRef {
+  /**
+   * 'user' when the person named it, 'agent' when Edrak found it.
+   */
+  discovered_by: string;
+  /**
+   * Watchlist entity id in the app.
+   */
+  entity_id: string | null;
+  /**
+   * The competitor's name.
+   */
+  name: string;
+  /**
+   * Official social accounts, read from the competitor's own website.
+   */
+  social_accounts: SocialAccount[];
+  /**
+   * Official website, when known.
+   */
+  website: string | null;
+}
+/**
+ * One official account of a company, e.g. its X or Instagram profile.
+ */
+export interface SocialAccount {
+  platform: SocialPlatform;
+  /**
+   * Full URL of the account or page.
+   */
+  url: string;
+}
+/**
+ * Baseline describing the company under analysis (the user's own company).
  */
 export interface CompanyProfile {
   /**
@@ -124,6 +171,14 @@ export interface CompanyProfile {
    * Known products or offerings relevant to the analysis.
    */
   products: string[];
+  /**
+   * The company's own social accounts. The Customer worker reads what people say there.
+   */
+  social_accounts: SocialAccount[];
+  /**
+   * The company's official website.
+   */
+  website: string | null;
   /**
    * Workspace whose uploaded documents the Internal worker may search. When unset the whole knowledge base is searched.
    */

@@ -70,7 +70,7 @@ class Settings(BaseSettings):
     CHUNKED_HANDBOOK_PATH: Path = Field(default=Path("data/handbook/chunked"))
     ARTIFACTS_PATH: Path = Field(default=Path("artifacts"))
     CHROMA_COLLECTION_NAME: str = "edrak_internal_knowledge"
-    # The workspace that owns the pre-loaded GitLab demo data (data/internal and the handbook).
+    # The workspace that owned the pre-loaded demo data (data/internal and the handbook) in v1.
     # Every other workspace starts with an empty knowledge base.
     DEMO_WORKSPACE_ID: str = "ws-default"
 

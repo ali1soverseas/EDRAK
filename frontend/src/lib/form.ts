@@ -79,6 +79,8 @@ export function toCompanyProfile(company: CompanyFields): CompanyProfile {
     aliases: company.aliases,
     products: company.offerings,
     notes: company.description.trim() || null,
+    website: company.website.trim() || null,
+    social_accounts: company.socials.map((s) => ({ platform: s.platform, url: s.url })),
     workspace_id: null,
   };
 }
@@ -114,7 +116,18 @@ export function formToRequest(
     company_profile: toCompanyProfile(company),
     business_context: {
       use_case: form.use_case,
-      targets: unique([...form.competitors, form.market]),
+      // targets names the competitors only; the market is a place, not a competitor.
+      targets: unique(form.competitors),
+      competitors: unique(form.competitors).map((name) => ({
+        name,
+        website: null,
+        social_accounts: [],
+        entity_id: null,
+        discovered_by: "user",
+      })),
+      markets: unique(form.market.split(",")),
+      offering: form.offering.trim() || null,
+      target_customers: form.target_customers?.trim() || null,
       focus_areas: form.focus.map((key) => FOCUS_PHRASE[key]),
       trigger: "on_demand",
       time_window_days: form.time_window_days,

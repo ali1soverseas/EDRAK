@@ -65,12 +65,6 @@ _NEWS_HOSTS = (
     "forbes.com",
 )
 _PUBLICATION_HOSTS = ("arxiv.org", "doi.org", "acm.org", "ieee.org", "ssrn.com")
-_KNOWN_VENDOR_HOSTS = {
-    "github": ("github.com", "github.blog", "docs.github.com"),
-    "gitlab": ("gitlab.com", "about.gitlab.com", "docs.gitlab.com"),
-    "microsoft": ("microsoft.com", "learn.microsoft.com", "azure.microsoft.com"),
-    "atlassian": ("atlassian.com", "bitbucket.org"),
-}
 _TYPE_FALLBACK_HIGH = {
     SourceType.OFFICIAL_DOCUMENTATION,
     SourceType.PRICING_PAGE,
@@ -119,7 +113,7 @@ _STOP = {
 }
 _TOPIC_OWNERS = (
     (("tam", "growth", "spend", "cagr", "demand", "buyer", "barrier", "regulat", "residenc", "packag", "pric", "category", "lifecycle"), WorkerType.MARKET_INTELLIGENCE),
-    (("competitor", "github", "copilot", "atlassian", "azure devops"), WorkerType.COMPETITOR_INTELLIGENCE),
+    (("competitor", "rival", "alternative", "incumbent"), WorkerType.COMPETITOR_INTELLIGENCE),
     (("customer", "sentiment", "buyer need", "win/loss", "adoption"), WorkerType.CUSTOMER_TRENDS),
     (("internal", "architecture", "telemetry", "self-hosted", "ai gateway"), WorkerType.INTERNAL_INTELLIGENCE),
 )
@@ -133,21 +127,32 @@ _FREE_RE = re.compile(r"\b(included|no extra cost|at no extra|free)\b")
 def vendor_hosts(request: BusinessRequest | None) -> tuple[str, ...]:
     if request is None:
         return ()
-    names = [
-        request.company_profile.name,
-        *request.company_profile.aliases,
-        *request.business_context.targets,
-        *request.company_profile.products,
-    ]
     hosts: list[str] = []
     seen: set[str] = set()
+
+    def add(host: str) -> None:
+        host = host.lower().removeprefix("www.")
+        if host and host not in seen:
+            seen.add(host)
+            hosts.append(host)
+
+    # Real domains first: the company's own website and each competitor's official site.
+    known = [request.company_profile.website, *(c.website for c in request.business_context.competitors)]
+    for url in known:
+        if url:
+            add(host_of(url if "://" in url else "https://" + url))
+    # Otherwise guess <name>.com for names without a known site.
+    with_site = {c.name.lower() for c in request.business_context.competitors if c.website}
+    own = [] if request.company_profile.website else [
+        request.company_profile.name,
+        *request.company_profile.aliases,
+        *request.company_profile.products,
+    ]
+    names = [*own, *(t for t in request.business_context.targets if t.lower() not in with_site)]
     for name in names:
-        first = re.sub(r"[^a-z0-9]+", "", name.lower().split()[0]) if name else ""
-        extra = _KNOWN_VENDOR_HOSTS.get(first, (f"{first}.com",) if first else ())
-        for host in extra:
-            if host not in seen:
-                seen.add(host)
-                hosts.append(host)
+        first = re.sub(r"[^a-z0-9]+", "", name.lower().split()[0]) if name and name.split() else ""
+        if first:
+            add(f"{first}.com")
     return tuple(hosts)
 
 
@@ -398,8 +403,12 @@ def research_topics(request: BusinessRequest) -> list[str]:
     return []
 
 
-def topic_owner(topic: str, default: WorkerType | None = None) -> WorkerType | None:
+def topic_owner(
+    topic: str, default: WorkerType | None = None, competitors: tuple[str, ...] = ()
+) -> WorkerType | None:
     lowered = topic.lower()
+    if any(name.lower() in lowered for name in competitors if name):
+        return WorkerType.COMPETITOR_INTELLIGENCE
     for markers, worker in _TOPIC_OWNERS:
         if any(marker in lowered for marker in markers):
             return worker
@@ -420,8 +429,9 @@ def coverage_gaps(
         for result in outputs
     }
     gaps: dict[WorkerType, list[str]] = {}
+    competitors = tuple(c.name for c in request.business_context.competitors) + tuple(request.business_context.targets)
     for topic in topics:
-        owner = topic_owner(topic, next(iter(present), None))
+        owner = topic_owner(topic, next(iter(present), None), competitors)
         if owner is None or owner not in present:
             continue
         haystack = statements_by_worker.get(owner, "")

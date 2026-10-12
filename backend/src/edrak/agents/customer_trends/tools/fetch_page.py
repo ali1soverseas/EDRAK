@@ -33,7 +33,7 @@ The text is stored in full in the evidence store. The response holds a batch_id,
 a preview (title and the start of the text), and warnings when the page was refused, empty or
 not a text page.
 
-Example: {"url": "https://about.gitlab.com/blog/example-post/", "max_chars": 20000}"""
+Example: {"url": "https://www.example.com/blog/example-post/", "max_chars": 20000}"""
 
 
 class FetchPageInput(StrictModel):

@@ -52,13 +52,13 @@ Metrics (set `metric`; options go in `params`):
   points to the mean of its last points. params {"keyword": "..."} for one series, every stored
   series when left out. A series under 8 points answers `insufficient_data: true`.
 - share_of_voice: how many items mention the entity and each competitor, and each name's share of
-  all mentions. params {"entity": "GitLab Duo", "competitors": ["GitHub Copilot"]}. Case and
+  all mentions. params {"entity": "Acme Pay", "competitors": ["Rival Pay"]}. Case and
   Arabic spelling variants are ignored.
 - platform_mix and language_mix: item counts and percent by platform (news, web and review items
   are listed under their type) and by language.
 
 `batch_ids` limits the batches (default: the whole run). The evidence metrics also take params
-{"filters": {"platform": "reddit", "language": "ar", "text_contains": "copilot"}} to count a part
+{"filters": {"platform": "reddit", "language": "ar", "text_contains": "rival"}} to count a part
 of the evidence.
 
 The response carries a `metric_id`. To cite a result in a finding, put that id in the finding's

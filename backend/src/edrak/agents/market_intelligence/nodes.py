@@ -139,7 +139,7 @@ def keyword_queries(task: str, goal: str, attempt: int) -> list[str]:
     ]
     words = [word for word in pools[attempt % len(pools)] if word]
     if not words:
-        words = content_terms(goal)[:6] or ["devops"]
+        words = content_terms(goal)[:6] or ["market", "trends"]
     return [" ".join(words[:8])]
 
 

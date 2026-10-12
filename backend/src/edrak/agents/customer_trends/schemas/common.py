@@ -20,7 +20,7 @@ from edrak.agents.customer_trends.utils.text import truncate
 
 class UseCase(StrEnum):
     COMPETITIVE_INTELLIGENCE = "competitive_intelligence"
-    MARKET_ENTRY = "market_entry"
+    MARKET_ENTRY_EXPANSION = "market_entry_expansion"
     PRODUCT_LAUNCH = "product_launch"
 
 

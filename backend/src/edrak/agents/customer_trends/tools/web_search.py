@@ -25,7 +25,7 @@ Results are search snippets only (title and a short excerpt), not full pages. Th
 a batch_id, how many new items were stored, a preview of up to 5, coverage by language, gaps and
 warnings. The full records stay in the evidence store.
 
-Example: {"query": "GitLab Duo vs GitHub Copilot review", "search_type": "web", "num": 10}"""
+Example: {"query": "Acme Pay vs Rival Pay review", "search_type": "web", "num": 10}"""
 
 
 class WebSearchInput(RequestBase):
