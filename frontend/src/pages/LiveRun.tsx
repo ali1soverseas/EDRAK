@@ -344,6 +344,89 @@ function ReviewPanel({ run, onDone }: { run: RunView; onDone: () => void }) {
           {review.missing_information.length > 0 && <div className="stack gap4"><b className="s13">{L("Still missing", "ما زال ناقصًا")}</b>{review.missing_information.slice(0, 5).map((c) => <span key={c} className="s13" style={{ opacity: 0.85 }} dir="auto">· {c}</span>)}</div>}
         </div>
       )}
+      {/* Finding Cards */}
+      {review.findings && review.findings.length > 0 && (
+        <div className="stack gap8" style={{ marginTop: 4 }}>
+          <div className="row jb" style={{ alignItems: "center" }}>
+            <b className="s13" style={{ color: "#fff" }}>{L("Findings discovered", "النتائج التي وُجدت")}</b>
+            <span className="s12" style={{ opacity: 0.7 }}>{L(`${review.findings.length} findings`, `${review.findings.length} نتيجة`)}</span>
+          </div>
+          <div className="stack gap8" style={{ maxHeight: 380, overflowY: "auto", paddingInlineEnd: 4 }}>
+            {review.findings.map((f) => (
+              <div key={f.finding_id} style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 8,
+                padding: "10px 12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 6
+              }}>
+                <div className="row jb" style={{ alignItems: "flex-start", gap: 8 }}>
+                  <div className="row g6 wrap" style={{ alignItems: "center" }}>
+                    <span className="chip" style={{ fontSize: 11, padding: "2px 6px", background: "rgba(255,255,255,0.12)", color: "#fff" }}>
+                      {f.worker.replace("_", " ")}
+                    </span>
+                    <span className={`chip ${f.verification_status === "verified" ? "c-verified" : "c-draft"}`} style={{ fontSize: 11, padding: "2px 6px" }}>
+                      {f.verification_status === "verified" ? L("Verified", "موثق") : L("Insufficient", "غير كافٍ")}
+                    </span>
+                  </div>
+                  {/* Top right: Strategic goal impact */}
+                  <span className="chip" style={{
+                    fontSize: 11,
+                    padding: "2px 8px",
+                    fontWeight: 600,
+                    background: f.strategic_impact === "high" ? "rgba(245,213,71,0.2)" : f.strategic_impact === "medium" ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.08)",
+                    color: f.strategic_impact === "high" ? "var(--gold, #f5d547)" : f.strategic_impact === "medium" ? "#a5b4fc" : "#94a3b8",
+                    border: `1px solid ${f.strategic_impact === "high" ? "rgba(245,213,71,0.4)" : f.strategic_impact === "medium" ? "rgba(99,102,241,0.4)" : "rgba(255,255,255,0.12)"}`
+                  }}>
+                    {f.strategic_impact === "high" ? L("High strategic impact", "أثر استراتيجي مرتفع") :
+                     f.strategic_impact === "medium" ? L("Medium strategic impact", "أثر استراتيجي متوسط") :
+                     L("Low strategic impact", "أثر استراتيجي منخفض")}
+                  </span>
+                </div>
+
+                <div className="s13 b6" style={{ color: "#fff", lineHeight: 1.35 }} dir="auto">
+                  {f.claim}
+                </div>
+
+                {f.why_it_matters && (
+                  <div className="s12" style={{ color: "#cbd5e1", lineHeight: 1.3 }} dir="auto">
+                    <span style={{ opacity: 0.7, marginInlineEnd: 4 }}>{L("Why it matters:", "أهميته:")}</span>
+                    {f.why_it_matters}
+                  </div>
+                )}
+
+                {f.evidence && f.evidence.length > 0 && (
+                  <div style={{ marginTop: 2, paddingTop: 6, borderTop: "1px dashed rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", gap: 4 }}>
+                    {f.evidence.slice(0, 1).map((ev, i) => (
+                      <div key={i} className="s11" style={{ color: "#94a3b8", lineHeight: 1.3 }}>
+                        <div className="row g6 wrap" style={{ alignItems: "center" }}>
+                          {ev.source_url ? (
+                            <a href={ev.source_url} target="_blank" rel="noopener noreferrer" style={{ color: "#60a5fa", textDecoration: "underline", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {ev.source_title || ev.source_url}
+                            </a>
+                          ) : (
+                            <span>{ev.source_title || L("Internal document", "مستند داخلي")}</span>
+                          )}
+                          {ev.published_at && <span>· {ev.published_at.slice(0, 10)}</span>}
+                          <span>· <span style={{ color: ev.verification_status === "verified" ? "#4ade80" : "#fbbf24" }}>{ev.verification_status}</span></span>
+                        </div>
+                        {ev.excerpt && (
+                          <div style={{ marginTop: 2, color: "#cbd5e1", fontStyle: "italic", maxHeight: 36, overflow: "hidden", textOverflow: "ellipsis" }} dir="auto">
+                            "{ev.excerpt.slice(0, 140)}..."
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {tasks.length > 0 && (
         <div className="stack gap8">
           <div className="row g8"><b className="s13">{L("Proposed re-plan", "إعادة التخطيط المقترحة")}</b>
@@ -359,12 +442,11 @@ function ReviewPanel({ run, onDone }: { run: RunView; onDone: () => void }) {
           ))}
         </div>
       )}
-      <input className="input" placeholder={L("Note (optional)", "ملاحظة (اختياري)")} value={note} onChange={(e) => setNote(e.target.value)} dir="auto" />
+      <input className="input" style={{ color: "var(--ink, #111)", background: "#fff" }} placeholder={L("Note (optional)", "ملاحظة (اختياري)")} value={note} onChange={(e) => setNote(e.target.value)} dir="auto" />
       {error && <span className="s13" style={{ color: "#ffb4a8" }}>{error}</span>}
       <div className="row g8 wrap">
         <button type="button" className="btn" style={{ background: "var(--gold, #f5d547)", color: "var(--ink)" }} disabled={busy} onClick={() => void decide("continue")}>{L("Continue to the brief", "تابع إلى الموجز") + recommended("continue")}</button>
-        {review.can_replan && <button type="button" className="btn" disabled={busy || tasks.length === 0} onClick={() => void decide("replan")}>{L("Send workers out again", "أرسل العمال مجددًا") + recommended("replan")}</button>}
-        <button type="button" className="btn ghost" style={{ color: "inherit" }} disabled={busy} onClick={() => void decide("stop")}>{L("Stop and write the brief", "توقف واكتب الموجز") + recommended("stop")}</button>
+        {review.can_replan && <button type="button" className="btn" disabled={busy} onClick={() => void decide("replan")}>{L("Send workers out again", "أرسل العمال مجددًا") + recommended("replan")}</button>}
       </div>
     </section>
   );

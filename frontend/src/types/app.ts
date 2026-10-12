@@ -232,6 +232,22 @@ export interface RunView {
   notify_instead?: boolean;
 }
 
+export interface FindingReviewCard {
+  finding_id: string;
+  claim: string;
+  worker: string;
+  why_it_matters: string;
+  strategic_impact: "high" | "medium" | "low";
+  verification_status: string;
+  evidence: Array<{
+    source_url?: string;
+    source_title?: string;
+    published_at?: string;
+    excerpt?: string;
+    verification_status?: string;
+  }>;
+}
+
 export interface RunReview {
   review_id: string;
   round: number;
@@ -247,6 +263,7 @@ export interface RunReview {
   replans_done: number;
   can_replan: boolean;
   recommended: "continue" | "replan" | "stop";
+  findings?: FindingReviewCard[];
 }
 
 /* ------------------------------------------------------------------- brief */

@@ -42,14 +42,18 @@ export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
           <section className="ev-panel">
             <span className="eyebrow">{L("Coverage by lens", "التغطية حسب العدسة")}</span>
             {slide.by_lens.map((l) => {
-              // Required figures when the template asks for some; otherwise the share of findings that passed verification.
-              const pct = l.required ? Math.round((l.met / l.required) * 100) : l.findings ? Math.round((l.verified / l.findings) * 100) : 0;
+              // Primary progress is verified findings share, aligning bar and ratio with the subtitle.
+              const pct = l.findings ? Math.round((l.verified / l.findings) * 100) : (l.required ? Math.round((l.met / l.required) * 100) : 0);
               return (
                 <div key={l.lens} className={`lens-cov ${l.collapsed ? "collapsed" : ""}`}>
                   <span className="row g6"><span className={`lens-dot ${LENS[l.lens]?.css ?? ""}`} /><b className="s13">{L(LENS[l.lens]?.en ?? l.label, LENS[l.lens]?.ar ?? l.label)}</b></span>
                   <span className="bar"><i style={{ width: `${pct}%` }} /></span>
-                  <span className="s12 t2 mono" title={l.required ? L("Required figures verified", "أرقام مطلوبة موثقة") : L("Findings verified", "نتائج موثقة")}>{l.required ? `${l.met}/${l.required}` : `${l.verified}/${l.findings}`}</span>
-                  <span className="s12 t3">{L(`${l.sources} sources · ${l.verified}/${l.findings} verified`, `${l.sources} مصدر · ${l.verified}/${l.findings} موثّق`)}{l.collapsed ? L(" · too little evidence for its own section", " · أدلة أقل من أن تُعرض كقسم") : ""}</span>
+                  <span className="s12 t2 mono" title={L("Findings verified", "نتائج موثقة")}>{`${l.verified}/${l.findings}`}</span>
+                  <span className="s12 t3">
+                    {L(`${l.sources} sources · ${l.verified}/${l.findings} verified`, `${l.sources} مصدر · ${l.verified}/${l.findings} موثّق`)}
+                    {l.required > 0 ? L(` (${l.met}/${l.required} required figures)`, ` (${l.met}/${l.required} أرقام مطلوبة)`) : ""}
+                    {l.collapsed ? L(" · too little evidence for its own section", " · أدلة أقل من أن تُعرض كقسم") : ""}
+                  </span>
                 </div>
               );
             })}

@@ -78,6 +78,66 @@ def review_payload(state: OrchestrationState) -> dict[str, Any]:
         recommended = "replan"
     elif status == "cannot_complete" and verified == 0:
         recommended = "replan" if proposed else "stop"
+
+    # Extract company strategic goals for impact matching
+    req = state.get("request")
+    company_goals = []
+    if req and getattr(req, "company_profile", None):
+        company_goals = [str(g).lower() for g in (getattr(req.company_profile, "goals", None) or [])]
+        if not company_goals and getattr(req.company_profile, "notes", None):
+            company_goals = [req.company_profile.notes.lower()]
+
+    verdict_by_id = {v.finding_id: v for v in verdicts}
+    evidence_by_id = {ev.evidence_id: ev for wr in (state.get("results") or []) for ev in wr.evidence}
+
+    finding_cards = []
+    for wr in state.get("results") or []:
+        w_val = getattr(wr.worker, "value", str(wr.worker))
+        for f in wr.findings:
+            v = verdict_by_id.get(f.finding_id)
+            v_status = v.verification_status.value if v else "unverified"
+
+            ev_items = []
+            for ref in f.evidence_refs:
+                ev = evidence_by_id.get(ref.evidence_id)
+                if ev:
+                    pub = ev.metadata.get("published_at") or ev.metadata.get("date") or ev.metadata.get("last_updated") or ""
+                    ev_items.append({
+                        "source_url": ev.source_url or "",
+                        "source_title": ev.source_title or "",
+                        "published_at": str(pub),
+                        "excerpt": ev.excerpt or ev.extracted_fact or "",
+                        "verification_status": v_status,
+                    })
+
+            stmt_lower = f.statement.lower()
+            cat = getattr(f.category, "value", str(f.category))
+            impact = "medium"
+            if company_goals and any(any(word in stmt_lower for word in g.split() if len(word) > 4) for g in company_goals):
+                impact = "high"
+            elif cat in ("opportunity", "risk", "pricing_packaging", "strength"):
+                impact = "high"
+            elif cat in ("other", "gap"):
+                impact = "low"
+
+            why_it_matters = ""
+            if cat and cat != "other":
+                why_it_matters = f"Category: {cat.replace('_', ' ').capitalize()}"
+            if f.limitations:
+                why_it_matters = (why_it_matters + f" · Caveat: {f.limitations[0]}") if why_it_matters else f.limitations[0]
+            if not why_it_matters:
+                why_it_matters = "Directly informs strategic positioning and competitive response."
+
+            finding_cards.append({
+                "finding_id": f.finding_id,
+                "claim": f.statement,
+                "worker": w_val,
+                "why_it_matters": why_it_matters,
+                "strategic_impact": impact,
+                "verification_status": v_status,
+                "evidence": ev_items,
+            })
+
     return {
         "verification_status": status,
         "summary": decision.summary if decision is not None else "Verification did not run.",
@@ -93,6 +153,7 @@ def review_payload(state: OrchestrationState) -> dict[str, Any]:
         "replans_done": replans,
         "can_replan": replans < MAX_HUMAN_REPLANS,
         "recommended": recommended,
+        "findings": finding_cards,
     }
 
 
