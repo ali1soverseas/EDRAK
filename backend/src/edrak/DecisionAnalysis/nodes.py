@@ -101,7 +101,13 @@ RULES
 9. Make the recommendation specific to the question.
    Do not repeat generic opportunities and risks just to fill fields.
 
-10. Return only the structured response.
+10. impact and feasibility are separate judgements from confidence.
+    impact: how much the outcome changes if the recommendation is right.
+    feasibility: how achievable it is given what the evidence shows about the
+    company's own capability. Use "unknown" whenever the evidence does not say.
+    Strong evidence does not make something high impact or easy.
+
+11. Return only the structured response.
 """
 
 
@@ -687,7 +693,7 @@ def make_validate_and_assemble_node():
             evidence_ids = details.supporting_signal_ids
             confidence = _confidence_value(details.confidence)
             score = _confidence_score(confidence)
-            fit, impact, urgency, feasibility, likelihood = _levels_for(evidence_ids, signals_by_id, confidence)
+            fit, impact, urgency, feasibility, likelihood = _levels_for(evidence_ids, signals_by_id, details)
             band = band_of(fit, impact, urgency, feasibility)
 
             # OpportunityAssessment and RiskAssessment require at least one
@@ -887,20 +893,27 @@ def _norm_key(text: str) -> str:
 _URGENCY = {"immediate": AssessmentLevel.HIGH, "high": AssessmentLevel.HIGH, "medium": AssessmentLevel.MODERATE, "low": AssessmentLevel.LOW}
 
 
-def _levels_for(signal_ids: list[str], signals: dict[str, Any], confidence: str):
-    """(strategic_fit, impact, urgency, feasibility, likelihood) from the supporting signals and the evidence strength."""
+_JUDGED = {"high": AssessmentLevel.HIGH, "medium": AssessmentLevel.MODERATE, "low": AssessmentLevel.LOW}
+
+
+def _levels_for(signal_ids: list[str], signals: dict[str, Any], details: Any):
+    """(strategic_fit, impact, urgency, feasibility, likelihood).
+
+    Only real judgements: urgency from the signals, impact and feasibility from the analysis's own
+    assessment. Evidence confidence is never copied into them; what nobody assessed stays unknown,
+    and the brief then shows an ordered list instead of a priority matrix.
+    """
     sigs = [_to_dict(signals[i]) for i in signal_ids if i in signals]
     order = [AssessmentLevel.HIGH, AssessmentLevel.MODERATE, AssessmentLevel.LOW]
     urgencies = [_URGENCY[str(getattr(s.get("urgency"), "value", s.get("urgency")) or "").lower()] for s in sigs
                  if str(getattr(s.get("urgency"), "value", s.get("urgency")) or "").lower() in _URGENCY]
     urgency = min(urgencies, key=order.index) if urgencies else AssessmentLevel.UNKNOWN
-    confs = [float(s["confidence"]) for s in sigs if isinstance(s.get("confidence"), (int, float))]
-    top = max(confs) if confs else None
-    scaled = AssessmentLevel.UNKNOWN if top is None else AssessmentLevel.HIGH if top >= 0.75 else AssessmentLevel.MODERATE if top >= 0.5 else AssessmentLevel.LOW
-    relevant = any(str(getattr(s.get("decision_relevance"), "value", s.get("decision_relevance"))) != "informational" for s in sigs)
-    fit = AssessmentLevel.HIGH if relevant and scaled is AssessmentLevel.HIGH else AssessmentLevel.MODERATE if relevant else (AssessmentLevel.LOW if sigs else AssessmentLevel.UNKNOWN)
-    feasibility = {"high": AssessmentLevel.HIGH, "medium": AssessmentLevel.MODERATE, "low": AssessmentLevel.LOW}.get(confidence, AssessmentLevel.UNKNOWN)
-    return fit, scaled, urgency, feasibility, scaled
+    relevance = {str(getattr(s.get("decision_relevance"), "value", s.get("decision_relevance"))) for s in sigs}
+    fit = (AssessmentLevel.HIGH if relevance & {"both"} else AssessmentLevel.MODERATE if relevance - {"informational", "None"}
+           else AssessmentLevel.LOW if sigs else AssessmentLevel.UNKNOWN)
+    impact = _JUDGED.get(str(getattr(details, "impact", "unknown")), AssessmentLevel.UNKNOWN)
+    feasibility = _JUDGED.get(str(getattr(details, "feasibility", "unknown")), AssessmentLevel.UNKNOWN)
+    return fit, impact, urgency, feasibility, AssessmentLevel.UNKNOWN
 
 
 def _executive_summary(validated: list[QuestionRecommendation], goal: str) -> str:

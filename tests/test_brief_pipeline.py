@@ -194,3 +194,54 @@ def test_every_number_on_the_dashboard_resolves_to_evidence(isolated, monkeypatc
         assert m["display_no"] is not None, uid
     doc = check_brief({**v3, "evidence": [], "lenses": [], "options": []})
     assert not [c for c in doc["guardrails"]["checks"] if c["check"] in ("card_number_not_in_table", "uncited_card")]
+
+
+def test_headline_claiming_a_dimension_with_no_figure_is_rejected():
+    from edrak.briefing.propose import unmet_dimensions
+    signals = [{"title": "Broadcom launches a low-power ASIC", "signal": "Broadcom ships an inference chip", "interpretation": ""}]
+    unmet = unmet_dimensions(set(), ["price_per_tier", "sentiment_split", "paid_subscribers"], signals)
+    assert unmet == ["price", "customer voice", "customer base"]
+    copy = ProposedCopy(headline="Nvidia trails on price and hears mixed customer sentiment as Broadcom ships", cards=[], signals=[])
+    headline, _ = apply_copy(copy, [], [], {}, ["Nvidia", "Broadcom"], unmet)
+    assert headline is None
+    ok = ProposedCopy(headline="Broadcom's low-power ASIC puts Nvidia's inference lead under pressure", cards=[], signals=[])
+    assert apply_copy(ok, [], [], {}, ["Nvidia", "Broadcom"], unmet)[0]
+
+
+def test_a_signal_that_mentions_the_dimension_grounds_it():
+    from edrak.briefing.propose import unmet_dimensions
+    signals = [{"title": "Fawry cuts its pricing for merchants", "signal": "", "interpretation": ""}]
+    assert "price" not in unmet_dimensions(set(), ["price_per_tier"], signals)
+
+
+def test_why_it_matters_that_repeats_the_implication_is_replaced():
+    sig = {"signal_id": "s1", "title": "Intel launches a new GPU", "signal": "Intel's new GPU targets inference",
+           "interpretation": "Inference buyers get a cheaper second supplier", "implications": ["Nvidia faces heightened competitive pressure from Intel"]}
+    copy = ProposedCopy(headline="x", cards=[], signals=[SignalCopy(signal_id="s1", why_it_matters="Nvidia faces heightened competitive pressure from Intel")])
+    apply_copy(copy, [], [sig], {}, ["Nvidia", "Intel"])
+    assert sig["why_it_matters"] == "Inference buyers get a cheaper second supplier"
+
+
+def test_signals_follow_use_case_emphasis_drop_duplicates_and_show_conflicts_first():
+    from edrak.briefing.build import conflict_signals, rank_signals
+    tpl = get_registry().template("competitive_intelligence")
+    sigs = [{"signal_id": "m", "title": "Market demand is rising fast", "domains": ["market_intelligence"], "confidence": 0.9},
+            {"signal_id": "c", "title": "Broadcom launches an inference chip", "domains": ["competitor_intelligence"], "confidence": 0.6},
+            {"signal_id": "c2", "title": "Broadcom launches an inference chip now", "domains": ["competitor_intelligence"], "confidence": 0.5}]
+    rows = {"a": {"uid": "a", "value": 19.0, "unit": "USD", "display_no": 3}, "b": {"uid": "b", "value": 23.0, "unit": "USD", "display_no": 7}}
+    conf = conflict_signals([{"metric_id": "price_per_tier", "entity": "Fawry", "period": None, "low": 19.0, "high": 23.0, "metric_uids": ["a", "b"]}], rows)
+    ranked = rank_signals([*conf, *sigs], tpl)
+    assert [s["signal_id"] for s in ranked] == ["conflict:price_per_tier:fawry", "c", "m"]
+    assert ranked[0]["refs"] == [3, 7] and len(ranked[0]["sides"]) == 2
+
+
+def test_impact_and_feasibility_are_never_copied_from_confidence():
+    from types import SimpleNamespace
+
+    from edrak.DecisionAnalysis.nodes import _levels_for
+    from edrak.contracts.DecisionAnalysis import AssessmentLevel
+    sig = {"s1": {"signal_id": "s1", "confidence": 0.95, "urgency": "high", "decision_relevance": "risk_relevant"}}
+    fit, impact, urgency, feas, likelihood = _levels_for(["s1"], sig, SimpleNamespace(confidence="high", impact="unknown", feasibility="unknown"))
+    assert impact is feas is likelihood is AssessmentLevel.UNKNOWN and urgency is AssessmentLevel.HIGH
+    _, impact, _, feas, _ = _levels_for(["s1"], sig, SimpleNamespace(impact="low", feasibility="high"))
+    assert (impact, feas) == (AssessmentLevel.LOW, AssessmentLevel.HIGH)

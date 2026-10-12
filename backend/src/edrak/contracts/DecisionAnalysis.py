@@ -106,6 +106,22 @@ class RecommendationDetails(ContractModel):
         description="Confidence based on the strength and completeness of evidence."
     )
 
+    impact: Literal["low", "medium", "high", "unknown"] = Field(
+        default="unknown",
+        description=(
+            "How much the business outcome changes if this is right, judged from the evidence. "
+            "'unknown' when the evidence does not say. Never derived from confidence."
+        ),
+    )
+
+    feasibility: Literal["low", "medium", "high", "unknown"] = Field(
+        default="unknown",
+        description=(
+            "How achievable this is with what the evidence shows about the company's own capability. "
+            "'unknown' when internal evidence is missing. Never derived from confidence."
+        ),
+    )
+
 
 class QuestionRecommendation(ContractModel):
     """Pairs the original decision question with its recommendation."""

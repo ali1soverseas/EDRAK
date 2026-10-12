@@ -342,11 +342,9 @@ def build_brief(
     verified_n = sum(1 for v in verdict_by_finding.values()
                      if getattr(v.verification_status, "value", "") == "verified")
     total_n = sum(len(l["findings"]) for l in lenses)
-    exec_summary = (da.get("executive_summary") or "").strip()
-    if not exec_summary:
-        top = [item["finding"]["statement"] for l in lenses for item in l["findings"]
-               if item.get("status") == "verified"][:3]
-        exec_summary = " ".join(top) or "The workers did not establish verified findings for this question."
+    # What was found, in the workers' verified words. The decision analysis's directions are advice, not findings.
+    top = [item["finding"]["statement"] for l in lenses for item in l["findings"] if item.get("status") == "verified"][:3]
+    exec_summary = " ".join(top) or (da.get("executive_summary") or "").strip() or "The workers did not establish verified findings for this question."
     matters = [str(i) for i in (synthesis or {}).get("impacts", [])][:3]
     found_segments = [{"t": "text", "text": exec_summary}]
     matters_segments = [{"t": "text", "text": " ".join(matters)}] if matters else []
@@ -355,8 +353,11 @@ def build_brief(
         if options else [{"t": "text", "text": "No options were drafted for this run. The findings and gaps below are the basis for a decision."}]
     )
     limits = None
-    if gaps:
-        limits = f"{len(gaps)} information gap(s) remain; they are listed with the comparison."
+    n_conflicts = len((v3 or {}).get("conflicts") or [])
+    if gaps or n_conflicts:
+        bits = [f"{len(gaps)} information gap(s) remain"] if gaps else []
+        bits += [f"{n_conflicts} figure(s) where sources disagree"] if n_conflicts else []
+        limits = "; ".join(bits) + ". Both are listed under Evidence and gaps."
     summary = {"found": found_segments, "matters": matters_segments, "options": options_segments, "limits": limits}
 
     next_steps = list(verification.control_summary.next_research_targets) if verification else []
