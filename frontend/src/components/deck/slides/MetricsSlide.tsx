@@ -5,19 +5,27 @@ import { EvChips, InsightCard, StatusBadge } from "../InsightCard";
 import { useDeck } from "../context";
 import { SlideHead } from "./SlideHead";
 
-function Cell({ cells, empty }: { cells: ComparisonCell[]; empty: string }) {
+function Cell({ cells, empty, showEntity }: { cells: ComparisonCell[]; empty: string; showEntity?: boolean }) {
   if (!cells.length) return <span className="s13 t3">{empty}</span>;
   return (
     <span className="stack gap4">
-      {cells.map((c) => (
-        <span key={c.uid} className="row g6 wrap">
-          <b className="s14">{c.value}</b>
-          {c.label && <span className="s12 t3">{c.label}</span>}
-          {c.period && <span className="s12 t3">· {c.period}</span>}
-          {c.ref ? <EvChips refs={[c.ref]} /> : null}
-          {c.status !== "verified" && <StatusBadge status={c.status} />}
-        </span>
-      ))}
+      {cells.map((c) => {
+        const hasDistinctLabel = c.label && (!c.entity || c.label.toLowerCase() !== c.entity.toLowerCase());
+        return (
+          <span key={c.uid} className="row g6 wrap" style={{ alignItems: "baseline" }}>
+            <b className="s14">{c.value}</b>
+            {showEntity && c.entity && (
+              <span className="s12" style={{ fontWeight: 600, color: "var(--t1, inherit)" }}>
+                · {c.entity}
+              </span>
+            )}
+            {hasDistinctLabel && <span className="s12 t3">({c.label})</span>}
+            {c.period && <span className="s12 t3">· {c.period}</span>}
+            {c.ref ? <EvChips refs={[c.ref]} /> : null}
+            {c.status !== "verified" && <StatusBadge status={c.status} />}
+          </span>
+        );
+      })}
     </span>
   );
 }
@@ -63,22 +71,93 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
               </div>
             )}
 
-            {slide.comparison.length > 0 && (
-              <section className="vs-table" aria-label={L("Our figures against theirs", "أرقامنا مقابل أرقامهم")}>
-                <div className="vs-row vs-head"><span className="eyebrow">{L("Figure", "الرقم")}</span><span className="eyebrow">{slide.company || L("Us", "نحن")}</span><span className="eyebrow">{L("Competitors", "المنافسون")}</span></div>
-                {slide.comparison.map((r) => {
-                  const key = cardFor(r.metric_id);
-                  return (
-                    <div key={r.metric_id} className={`vs-row ${key ? "tap-lite" : ""}`} role={key ? "button" : undefined} tabIndex={key ? 0 : undefined}
-                      onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
-                      <span className="stack gap4"><b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>{r.note && <span className="s12 warn-text">{r.note}</span>}</span>
-                      <Cell cells={r.ours} empty={L("Not found", "غير موجود")} />
-                      <Cell cells={r.theirs} empty="—" />
-                    </div>
-                  );
-                })}
-              </section>
-            )}
+            {slide.comparison.length > 0 && (() => {
+              const MARKET_METRIC_IDS = new Set([
+                "market_size",
+                "market_cagr",
+                "market_concentration",
+                "adoption_rate",
+                "segment_growth",
+                "regulation_events",
+              ]);
+              const marketRows = slide.comparison.filter((r) => MARKET_METRIC_IDS.has(r.metric_id));
+              const competitiveRows = slide.comparison.filter((r) => !MARKET_METRIC_IDS.has(r.metric_id));
+
+              return (
+                <div className="stack gap16">
+                  {marketRows.length > 0 && (
+                    <section className="stack gap8">
+                      <div className="row items-center g8">
+                        <span className="eyebrow" style={{ color: "var(--accent, #6366f1)", fontWeight: 700 }}>
+                          {L("Market Dynamics · Target Regions", "ديناميكيات السوق · المناطق المستهدفة")}
+                        </span>
+                        <span className="s12 t3">
+                          · {L("Macro size, growth and adoption across targeted markets", "الحجم والنمو والتبني في الأسواق المستهدفة")}
+                        </span>
+                      </div>
+                      <div className="vs-table" aria-label={L("Market dynamics across target regions", "ديناميكيات السوق في المناطق المستهدفة")}>
+                        <div className="vs-row vs-head">
+                          <span className="eyebrow">{L("Metric", "المؤشر")}</span>
+                          <span className="eyebrow">
+                            {slide.company ? `${slide.company} (${L("Our presence", "حضورنا")})` : L("Our presence", "حضورنا")}
+                          </span>
+                          <span className="eyebrow">{L("Target Region / Market Data", "بيانات المنطقة / السوق المستهدف")}</span>
+                        </div>
+                        {marketRows.map((r) => {
+                          const key = cardFor(r.metric_id);
+                          return (
+                            <div key={r.metric_id} className={`vs-row ${key ? "tap-lite" : ""}`} role={key ? "button" : undefined} tabIndex={key ? 0 : undefined}
+                              onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
+                              <span className="stack gap4">
+                                <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
+                                <span className="s11 t3">{L("Regional macro figure", "رقم إقليمي كلي")}</span>
+                                {r.note && <span className="s12 warn-text">{r.note}</span>}
+                              </span>
+                              <Cell cells={r.ours} empty="—" />
+                              <Cell cells={r.theirs} empty="—" showEntity />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+
+                  {competitiveRows.length > 0 && (
+                    <section className="stack gap8">
+                      <div className="row items-center g8">
+                        <span className="eyebrow" style={{ color: "var(--accent, #6366f1)", fontWeight: 700 }}>
+                          {L("Competitive Benchmark · Rivals", "المقارنة التنافسية · المنافسون")}
+                        </span>
+                        <span className="s12 t3">
+                          · {L("Our offering against direct competitor products", "عرضنا مقارنة بمنتجات المنافسين المباشرين")}
+                        </span>
+                      </div>
+                      <div className="vs-table" aria-label={L("Competitive benchmark", "المقارنة التنافسية")}>
+                        <div className="vs-row vs-head">
+                          <span className="eyebrow">{L("Offering Feature / Pricing", "الميزة / التسعير")}</span>
+                          <span className="eyebrow">{slide.company || L("Us", "نحن")}</span>
+                          <span className="eyebrow">{L("Competitors (AWS, Google, AMD, etc.)", "المنافسون (AWS، Google، AMD، إلخ)")}</span>
+                        </div>
+                        {competitiveRows.map((r) => {
+                          const key = cardFor(r.metric_id);
+                          return (
+                            <div key={r.metric_id} className={`vs-row ${key ? "tap-lite" : ""}`} role={key ? "button" : undefined} tabIndex={key ? 0 : undefined}
+                              onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
+                              <span className="stack gap4">
+                                <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
+                                {r.note && <span className="s12 warn-text">{r.note}</span>}
+                              </span>
+                              <Cell cells={r.ours} empty={L("Not found", "غير موجود")} />
+                              <Cell cells={r.theirs} empty="—" showEntity />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+                </div>
+              );
+            })()}
 
             <div className="card-grid">
               {cards.map((c) => <InsightCard key={c.card_key} card={c} />)}

@@ -56,7 +56,7 @@ def _comparison(doc: dict[str, Any], template: Any, company: str) -> list[dict[s
         own_id = OWN_IDS.get(metric_id, metric_id)
         ours = [m for m in usable if m["metric_id"] == own_id and m["entity"].casefold() == company.casefold()]
         theirs = [m for m in usable if m["metric_id"] == metric_id and m["entity"].casefold() != company.casefold()]
-        if not theirs:
+        if not theirs and not ours:
             continue
         cell = lambda m: {"entity": m["entity"], "value": m["value_text"], "label": m.get("label"), "period": m.get("period"),
                           "uid": m["uid"], "ref": m.get("display_no"), "status": m["status"]}
