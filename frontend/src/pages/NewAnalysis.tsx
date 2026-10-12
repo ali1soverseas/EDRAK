@@ -9,6 +9,7 @@ import { useI18n, type TKey } from "../i18n";
 import { USE_CASES, defaultForm, enabledSources, FOCUS_BY_USE_CASE } from "../lib/form";
 import { useAsync } from "../lib/hooks";
 import { api } from "../services/api";
+import { edrak, type Profile } from "../services/edrak";
 import type { AnalysisForm, SourceToggle } from "../types/app";
 import type { UseCase, WorkerType } from "../types/contracts";
 
@@ -25,6 +26,20 @@ const GOAL_DEFAULT: Record<UseCase, TKey> = {
   product_launch: "form.goal.default.pl",
 };
 
+/** What the company profile already says for a use case: competitors, markets, offering, customers. */
+export function prefillFor(useCase: UseCase, p: Profile | null | undefined): Partial<AnalysisForm> {
+  if (!p) return {};
+  const serves = p.markets.filter((m) => m.relation === "serves").map((m) => m.name);
+  const considers = p.markets.filter((m) => m.relation === "considers").map((m) => m.name);
+  const markets = useCase === "market_entry_expansion" ? (considers.length ? considers : serves) : serves;
+  return {
+    competitors: p.competitors.map((c) => c.name),
+    market: markets.join(", "),
+    offering: useCase === "product_launch" ? "" : (p.offerings[0] ?? ""),
+    target_customers: (p.target_customer_groups ?? []).join(", ") || null,
+  };
+}
+
 function asUseCase(value: string | null): UseCase | null {
   return USE_CASES.find((useCase) => useCase === value) ?? null;
 }
@@ -36,6 +51,9 @@ export function NewAnalysis() {
   const draftId = params.get("draft");
   const company = useAsync(() => api.getCompany(), []);
   const draft = useAsync(() => (draftId ? api.getAnalysis(draftId) : Promise.resolve(null)), [draftId]);
+  const profile = useAsync(() => edrak.onboarding().then((o) => o.profile).catch(() => null), []);
+  // The values the profile filled in, per field, so a use-case switch only replaces what the person has not changed.
+  const filled = useRef<Partial<AnalysisForm>>({});
 
   const [form, setForm] = useState<AnalysisForm | null>(null);
   const [reason, setReason] = useState<string | null>(null);
@@ -49,7 +67,7 @@ export function NewAnalysis() {
 
   // Build the form once the company, and the draft if there is one, have loaded.
   useEffect(() => {
-    if (form || company.loading || draft.loading) return;
+    if (form || company.loading || draft.loading || profile.loading) return;
     if (draft.data) {
       setForm(draft.data.form);
       setReason(draft.data.rejection_reason);
@@ -59,13 +77,14 @@ export function NewAnalysis() {
     const typed = params.get("goal");
     const text = typed ?? t(GOAL_DEFAULT[useCase], { company: companyName });
     suggested.current = typed ? "" : text;
-    setForm({ ...defaultForm(useCase), goal: text });
-  }, [form, company.loading, draft.loading, draft.data, params, t, companyName]);
+    filled.current = prefillFor(useCase, profile.data);
+    setForm({ ...defaultForm(useCase), ...filled.current, goal: text });
+  }, [form, company.loading, draft.loading, draft.data, profile.loading, profile.data, params, t, companyName]);
 
   if (company.error || draft.error) {
     return (
       <>
-        <PageChrome crumbs={[{ label: t("nav.analyses"), to: "/" }, { label: t("nav.newAnalysis") }]} title={t("nav.newAnalysis")} />
+        <PageChrome crumbs={[{ label: t("nav.analyses"), to: "/analyses" }, { label: t("nav.newAnalysis") }]} title={t("nav.newAnalysis")} />
         <div className="form-error" role="alert">
           <Icon name="warning" size={16} />
           <span>{t("common.error.load")}</span>
@@ -77,7 +96,7 @@ export function NewAnalysis() {
     );
   }
 
-  const chrome = <PageChrome crumbs={[{ label: t("nav.analyses"), to: "/" }, { label: t("nav.newAnalysis") }]} title={t("nav.newAnalysis")} />;
+  const chrome = <PageChrome crumbs={[{ label: t("nav.analyses"), to: "/analyses" }, { label: t("nav.newAnalysis") }]} title={t("nav.newAnalysis")} />;
 
   if (!form) {
     return (
@@ -85,11 +104,11 @@ export function NewAnalysis() {
         {chrome}
         <div className="analysis-grid" aria-busy="true">
           <div className="col g16 grow">
-            <div className="shim" style={{ height: 52, width: 440 }} />
+            <div className="shim shim-title" />
             <div className="shim" style={{ height: 120 }} />
             <div className="shim" style={{ height: 320 }} />
           </div>
-          <div className="shim" style={{ width: 380, height: 520 }} />
+          <div className="shim shim-side" />
         </div>
       </>
     );
@@ -104,7 +123,13 @@ export function NewAnalysis() {
     const untouched = form.goal.trim() === "" || form.goal === suggested.current;
     const text = untouched ? t(GOAL_DEFAULT[useCase], { company: companyName }) : form.goal;
     if (untouched) suggested.current = text;
-    patch({ use_case: useCase, goal: text, focus: form.focus.filter((key) => keep.has(key)) });
+    const next = prefillFor(useCase, profile.data);
+    const swap: Partial<AnalysisForm> = {};
+    (Object.keys(next) as (keyof AnalysisForm)[]).forEach((k) => {
+      if (JSON.stringify(form[k]) === JSON.stringify(filled.current[k])) (swap as Record<string, unknown>)[k] = next[k];
+    });
+    filled.current = { ...filled.current, ...next };
+    patch({ use_case: useCase, goal: text, focus: form.focus.filter((key) => keep.has(key)), ...swap });
   };
 
   const sourcesOn = enabledSources(form).length;
@@ -134,7 +159,7 @@ export function NewAnalysis() {
         <div className="col grow" style={{ minWidth: 0, gap: 18 }}>
           <div>
             <div className="eyebrow">{t("nav.newAnalysis")}</div>
-            <h1 className="disp" style={{ fontSize: 34, margin: "6px 0 0" }}>
+            <h1 className="disp page-h1">
               {t("form.title")}
             </h1>
           </div>
@@ -148,7 +173,11 @@ export function NewAnalysis() {
             </div>
           )}
 
-          <RequestForm form={form} onChange={patch} onUseCaseChange={switchUseCase} showGoalError={attempted && goalMissing} />
+          <RequestForm form={form} onChange={patch} onUseCaseChange={switchUseCase} showGoalError={attempted && goalMissing}
+            fromProfile={(["competitors", "market", "offering", "target_customers"] as const).filter((k) => {
+              const v = form[k];
+              return (Array.isArray(v) ? v.length > 0 : !!v) && JSON.stringify(v) === JSON.stringify(filled.current[k]);
+            })} />
         </div>
 
         <aside className="col analysis-side">
@@ -170,16 +199,6 @@ export function NewAnalysis() {
                 </div>
               ))}
               {attempted && sourcesOn === 0 && <div className="field-error">{t("form.sourcesRequired")}</div>}
-            </div>
-            <hr className="rule" />
-            <div className="row g12 as">
-              <div className="grow">
-                <div className="b6 s14">{t("form.weekly")}</div>
-                <div className="s12 t3 lh14" style={{ marginTop: 2 }}>
-                  {t("form.weeklyHelp")}
-                </div>
-              </div>
-              <Toggle label={t("form.weekly")} on={form.repeat_weekly} onChange={(next) => patch({ repeat_weekly: next })} />
             </div>
             <hr className="rule" />
             <div className="col" style={{ gap: 0 }}>

@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ShellLayout } from "./components/shell/AppShell";
 import { I18nProvider } from "./i18n";
-import { Company } from "./pages/Company";
+import { CompanyProfile } from "./pages/CompanyProfile";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
 import { Sources } from "./pages/Sources";
@@ -35,7 +35,7 @@ export function App() {
               <Route path="evidence/:briefId" element={<EvidenceExplorer />} />
               <Route path="decisions" element={<Decisions />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="company" element={<Company />} />
+              <Route path="company" element={<CompanyProfile />} />
               <Route path="analyses/new" element={<NewAnalysis />} />
               <Route path="analyses/:id/plan" element={<PlanReview />} />
               <Route path="analyses/:id/run" element={<LiveRun />} />

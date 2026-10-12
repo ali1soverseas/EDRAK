@@ -132,7 +132,7 @@ async def discover(
         company=company["name"],
         description=company["description"] or None,
         offerings=company["offerings"],
-        industry=company["industry_other"] or company["industry"],
+        industry=company_repo.industry_text(company) or None,
         markets=body.markets or [m["name"] for m in company["markets"]],
         target_customers=company["target_customers"] or None,
         exclude=company["aliases"],

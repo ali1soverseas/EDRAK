@@ -3,7 +3,7 @@
  * case. Which fields show, and what they ask, depends on the use case.
  */
 import type { UseCase } from "../types/contracts";
-import type { AnalysisForm, FocusKey, TargetCustomers } from "../types/app";
+import type { AnalysisForm, FocusKey } from "../types/app";
 import { useI18n, type TKey } from "../i18n";
 import { FOCUS_BY_USE_CASE, TIME_WINDOWS, USE_CASES } from "../lib/form";
 import { USE_CASE_META } from "../lib/usecases";
@@ -27,11 +27,13 @@ const WINDOW_LABEL: Record<number, TKey> = {
   365: "form.window.365",
 };
 
-const CUSTOMER_LABEL: Record<TargetCustomers, TKey> = {
-  smes: "form.customers.smes",
-  enterprise: "form.customers.enterprise",
-  both: "form.customers.both",
+const HELP: Record<UseCase, { competitors: TKey; markets: TKey }> = {
+  competitive_intelligence: { competitors: "form.competitorsHelp.ci", markets: "form.marketsHelp.ci" },
+  market_entry_expansion: { competitors: "form.competitorsHelp.me", markets: "form.marketsHelp.me" },
+  product_launch: { competitors: "form.competitorsHelp.pl", markets: "form.marketsHelp.pl" },
 };
+
+const split = (text: string | null | undefined) => (text ?? "").split(",").map((x) => x.trim()).filter(Boolean);
 
 interface UseCaseSwitchProps {
   value: UseCase;
@@ -80,9 +82,11 @@ interface RequestFormProps {
   onUseCaseChange: (useCase: UseCase) => void;
   /** Show the "write a question" error. */
   showGoalError: boolean;
+  /** Fields still holding what the company profile filled in. */
+  fromProfile?: ReadonlyArray<"competitors" | "market" | "offering" | "target_customers">;
 }
 
-export function RequestForm({ form, onChange, onUseCaseChange, showGoalError }: RequestFormProps) {
+export function RequestForm({ form, onChange, onUseCaseChange, showGoalError, fromProfile = [] }: RequestFormProps) {
   const { t } = useI18n();
   const useCase = form.use_case;
 
@@ -146,74 +150,36 @@ export function RequestForm({ form, onChange, onUseCaseChange, showGoalError }: 
           </div>
 
           {useCase === "product_launch" && (
-            <>
-              <div>
-                <label className="lbl" htmlFor="offering">
-                  {t("form.offering")}
-                </label>
-                <input id="offering" className="inp" value={form.offering} onChange={(event) => onChange({ offering: event.target.value })} />
-              </div>
-              <div className="row g16 as split">
-                <div className="grow">
-                  <div className="lbl">{t("form.customers")}</div>
-                  <ChoiceChips<TargetCustomers>
-                    label={t("form.customers")}
-                    options={(["smes", "enterprise", "both"] as const).map((value) => ({ value, label: t(CUSTOMER_LABEL[value]) }))}
-                    selected={form.target_customers ? [form.target_customers] : []}
-                    onToggle={(value) => onChange({ target_customers: form.target_customers === value ? null : value })}
-                  />
-                </div>
-                <div className="grow">
-                  <label className="lbl" htmlFor="market">
-                    {t("form.market")}
-                  </label>
-                  <input id="market" className="inp" value={form.market} onChange={(event) => onChange({ market: event.target.value })} />
-                </div>
-              </div>
-              <div>
-                <div className="lbl">{t("form.alternatives")}</div>
-                <TagInput values={form.competitors} onChange={(values) => onChange({ competitors: values })} label={t("form.alternatives")} />
-                <div className="help">{t("form.alternativesHelp")}</div>
-              </div>
-            </>
+            <div>
+              <label className="lbl row g8" htmlFor="offering">{t("form.offering")}</label>
+              <input id="offering" className="inp" value={form.offering} onChange={(event) => onChange({ offering: event.target.value })} dir="auto" />
+            </div>
           )}
 
-          {useCase === "competitive_intelligence" && (
-            <>
-              <div>
-                <div className="lbl">{t("form.competitors")}</div>
-                <TagInput values={form.competitors} onChange={(values) => onChange({ competitors: values })} label={t("form.competitors")} />
-                <div className="help">{t("form.alternativesHelp")}</div>
-              </div>
-              <div>
-                <label className="lbl" htmlFor="market">
-                  {t("form.marketOptional")}
-                </label>
-                <input id="market" className="inp" value={form.market} onChange={(event) => onChange({ market: event.target.value })} />
-              </div>
-              <div className="row g16 as split">
-                <div className="grow">{focusChips}</div>
-                <div className="grow">{timeWindow}</div>
-              </div>
-            </>
-          )}
+          <div>
+            <div className="lbl row g8">{t("form.competitors")}{fromProfile.includes("competitors") && <span className="chip c-blue from-profile">{t("form.fromProfile")}</span>}</div>
+            <TagInput values={form.competitors} onChange={(values) => onChange({ competitors: values })} label={t("form.competitors")} addLabel={t("form.addCompetitor")} />
+            <div className="help">{t(HELP[useCase].competitors)}</div>
+          </div>
 
-          {useCase === "market_entry_expansion" && (
-            <>
-              <div>
-                <label className="lbl" htmlFor="market">
-                  {t("form.marketTarget")}
-                </label>
-                <input id="market" className="inp" value={form.market} onChange={(event) => onChange({ market: event.target.value })} />
-              </div>
-              {focusChips}
-              <div>
-                <div className="lbl">{t("form.players")}</div>
-                <TagInput values={form.competitors} onChange={(values) => onChange({ competitors: values })} label={t("form.players")} />
-                <div className="help">{t("form.alternativesHelp")}</div>
-              </div>
-              {timeWindow}
-            </>
+          <div className="row g16 as split">
+            <div className="grow">
+              <div className="lbl row g8">{t("form.markets")}{fromProfile.includes("market") && <span className="chip c-blue from-profile">{t("form.fromProfile")}</span>}</div>
+              <TagInput values={split(form.market)} onChange={(values) => onChange({ market: values.join(", ") })} label={t("form.markets")} addLabel={t("form.addMarket")} />
+              <div className="help">{t(HELP[useCase].markets)}</div>
+            </div>
+            <div className="grow">
+              <div className="lbl row g8">{t("form.customers")}{fromProfile.includes("target_customers") && <span className="chip c-blue from-profile">{t("form.fromProfile")}</span>}</div>
+              <TagInput values={split(form.target_customers)} onChange={(values) => onChange({ target_customers: values.join(", ") || null })} label={t("form.customers")} addLabel={t("form.addCustomer")} />
+              <div className="help">{t("form.customersHelp")}</div>
+            </div>
+          </div>
+
+          {useCase !== "product_launch" && (
+            <div className="row g16 as split">
+              <div className="grow">{focusChips}</div>
+              <div className="grow">{timeWindow}</div>
+            </div>
           )}
         </div>
       </section>

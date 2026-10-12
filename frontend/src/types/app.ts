@@ -115,13 +115,14 @@ export type FocusKey =
 export interface AnalysisForm {
   use_case: UseCase;
   goal: string;
-  /** Competitors to compare, known players, or known alternatives. */
+  /** Competitors: the same field and name in every use case. */
   competitors: string[];
-  /** Target market (market entry, product launch). */
+  /** Target markets, comma separated. */
   market: string;
   /** Proposed offering (product launch). */
   offering: string;
-  target_customers: TargetCustomers | null;
+  /** Customer groups, comma separated (the same words as the company profile). */
+  target_customers: string | null;
   focus: FocusKey[];
   time_window_days: number | null;
   sources: Record<SourceToggle, boolean>;

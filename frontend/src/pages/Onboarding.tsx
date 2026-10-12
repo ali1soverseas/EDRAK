@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { LanguageSwitch } from "../components/shell/AppShell";
-import { TagInput } from "../components/ui/Controls";
+import { ChoiceChips, TagInput } from "../components/ui/Controls";
 import { DotField } from "../components/ui/DotField";
 import { Icon } from "../components/ui/Icon";
 import { Logo } from "../components/ui/Logo";
@@ -9,14 +9,15 @@ import { useL } from "../lib/useL";
 import { edrak, type Candidate, type Doc, type Link as SocialLink, type Profile } from "../services/edrak";
 import { useAuth } from "../state/auth";
 
-const INDUSTRIES = [
+export const INDUSTRIES = [
   ["fintech", "Fintech", "تقنية مالية"], ["saas", "SaaS", "برمجيات كخدمة"], ["retail", "Retail", "تجزئة"],
-  ["logistics", "Logistics", "لوجستيات"], ["health", "Health", "صحة"], ["other", "Something else", "مجال آخر"],
+  ["technology", "Technology", "تقنية"], ["healthcare", "Healthcare", "رعاية صحية"], ["manufacturing", "Manufacturing", "تصنيع"],
+  ["logistics", "Logistics", "لوجستيات"], ["education", "Education", "تعليم"], ["other", "Other", "أخرى"],
 ] as const;
 const PLATFORMS = ["x", "facebook", "instagram", "linkedin", "youtube", "tiktok"] as const;
 const STEPS = 8;
 
-type Draft = Pick<Profile, "name" | "aliases" | "industry" | "industry_other" | "description" | "offerings" | "target_customers" | "goals" | "website"> & {
+type Draft = Pick<Profile, "name" | "aliases" | "industries" | "industry_other" | "description" | "offerings" | "target_customer_groups" | "goals" | "website"> & {
   serves: string[];
   considers: string[];
   links: Record<string, string>;
@@ -25,8 +26,8 @@ type Draft = Pick<Profile, "name" | "aliases" | "industry" | "industry_other" | 
 
 function fromProfile(p: Profile): Draft {
   return {
-    name: p.name, aliases: p.aliases, industry: p.industry, industry_other: p.industry_other, description: p.description,
-    offerings: p.offerings, target_customers: p.target_customers, goals: p.goals, website: p.website,
+    name: p.name, aliases: p.aliases, industries: p.industries ?? (p.industry ? [p.industry] : []), industry_other: p.industry_other,
+    description: p.description, offerings: p.offerings, target_customer_groups: p.target_customer_groups ?? [], goals: p.goals, website: p.website,
     serves: p.markets.filter((m) => m.relation === "serves").map((m) => m.name),
     considers: p.markets.filter((m) => m.relation === "considers").map((m) => m.name),
     links: Object.fromEntries(p.links.filter((l) => l.platform !== "website").map((l) => [l.platform, l.url])),
@@ -49,11 +50,15 @@ export function Onboarding() {
   const [finding, setFinding] = useState(false);
   const [docs, setDocs] = useState<Doc[]>([]);
   const [compName, setCompName] = useState("");
+  // Opened from the company profile to change one part: start at that step, come back when done.
+  const [params] = useSearchParams();
+  const back = params.get("return");
+  const editStep = Number(params.get("step")) || null;
 
   useEffect(() => {
     void edrak.onboarding().then((o) => {
       setD(fromProfile(o.profile));
-      setStep(Math.min(Math.max(o.step, 1), STEPS));
+      setStep(Math.min(Math.max(editStep ?? o.step, 1), STEPS));
     });
     void edrak.documents().then(setDocs).catch(() => undefined);
   }, []);
@@ -63,8 +68,8 @@ export function Onboarding() {
   const payload = useMemo(() => {
     if (!d) return {};
     return {
-      name: d.name, aliases: d.aliases, industry: d.industry, industry_other: d.industry_other, description: d.description,
-      offerings: d.offerings, target_customers: d.target_customers, goals: d.goals, website: d.website,
+      name: d.name, aliases: d.aliases, industries: d.industries, industry_other: d.industry_other, description: d.description,
+      offerings: d.offerings, target_customer_groups: d.target_customer_groups, goals: d.goals, website: d.website,
       markets: [...d.serves.map((name) => ({ name, relation: "serves" })), ...d.considers.map((name) => ({ name, relation: "considers" }))],
       links: Object.entries(d.links).filter(([, url]) => url.trim()).map(([platform, url]) => ({ platform, url })),
       competitors: d.competitors,
@@ -76,7 +81,7 @@ export function Onboarding() {
 
   const canNext = [
     true,
-    d.name.trim().length > 1 && !!d.industry,
+    d.name.trim().length > 1 && d.industries.length > 0 && (!d.industries.includes("other") || !!d.industry_other?.trim()),
     d.description.trim().length > 5 && d.offerings.length > 0,
     d.serves.length + d.considers.length > 0,
     true, true, true, true, true,
@@ -89,6 +94,19 @@ export function Onboarding() {
       await edrak.saveOnboarding({ ...payload, step: next });
       setStep(next);
       window.scrollTo({ top: 0 });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveAndReturn = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await edrak.saveOnboarding({ ...payload });
+      navigate(back ?? "/company");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -159,14 +177,14 @@ export function Onboarding() {
             <div className="stack gap16">
               <label className="field"><span>{L("Company name", "اسم الشركة")}</span>
                 <input className="input" autoFocus value={d.name} onChange={(e) => set("name", e.target.value)} dir="auto" /></label>
-              <TagInput values={d.aliases} onChange={(v) => set("aliases", v)} label={L("Also known as", "يُعرف أيضًا باسم")} addLabel={L("Add a name", "أضف اسمًا")} />
-              <div className="field"><span>{L("Industry", "المجال")}</span>
-                <div className="row g8 wrap">
-                  {INDUSTRIES.map(([key, en, ar]) => (
-                    <button key={key} type="button" className={`pill ${d.industry === key ? "b6" : ""}`} style={d.industry === key ? { borderColor: "var(--blue)", color: "var(--blue)" } : undefined} onClick={() => set("industry", key)}>{L(en, ar)}</button>
-                  ))}
-                </div>
-                {d.industry === "other" && <input className="input" placeholder={L("Which industry?", "أي مجال؟")} value={d.industry_other ?? ""} onChange={(e) => set("industry_other", e.target.value)} />}
+              <TagInput values={d.aliases} onChange={(v) => set("aliases", v)} label={L("Also known as", "يُعرف أيضًا باسم")} showLabel
+                hint={L("Other names people use for the company, so Edrak recognises it in sources.", "أسماء أخرى للشركة حتى يتعرف عليها إدراك في المصادر.")} addLabel={L("Add a name", "أضف اسمًا")} />
+              <div className="field"><span>{L("Industries", "المجالات")}</span>
+                <span className="s12 t3 field-hint">{L("Choose every one that applies.", "اختر كل ما ينطبق.")}</span>
+                <ChoiceChips label={L("Industries", "المجالات")} selected={d.industries}
+                  options={INDUSTRIES.map(([key, en, ar]) => ({ value: key, label: L(en, ar) }))}
+                  onToggle={(key) => set("industries", d.industries.includes(key) ? d.industries.filter((x) => x !== key) : [...d.industries, key])} />
+                {d.industries.includes("other") && <input className="input" placeholder={L("Which industry?", "أي مجال؟")} value={d.industry_other ?? ""} onChange={(e) => set("industry_other", e.target.value)} dir="auto" />}
               </div>
             </div>
           )}
@@ -175,16 +193,27 @@ export function Onboarding() {
             <div className="stack gap16">
               <label className="field"><span>{L("What does the company do?", "ماذا تفعل الشركة؟")}</span>
                 <textarea className="textarea" value={d.description} onChange={(e) => set("description", e.target.value)} dir="auto" /></label>
-              <TagInput values={d.offerings} onChange={(v) => set("offerings", v)} label={L("Products and services", "المنتجات والخدمات")} addLabel={L("Add an offering", "أضف منتجًا")} />
-              <label className="field"><span>{L("Target customers", "العملاء المستهدفون")}</span>
-                <input className="input" value={d.target_customers} onChange={(e) => set("target_customers", e.target.value)} placeholder={L("e.g. SMEs in Egypt", "مثال: الشركات الصغيرة في مصر")} dir="auto" /></label>
+              <TagInput values={d.offerings} onChange={(v) => set("offerings", v)} label={L("Products and services", "المنتجات والخدمات")} showLabel addLabel={L("Add an offering", "أضف منتجًا")} />
+              <TagInput values={d.target_customer_groups} onChange={(v) => set("target_customer_groups", v)} label={L("Target customers", "العملاء المستهدفون")} showLabel
+                hint={L("Each group you sell to, for example “SMEs in Egypt” or “Freelancers”.", "كل فئة تبيع لها، مثل «الشركات الصغيرة في مصر» أو «المستقلون».")}
+                addLabel={L("Add a customer group", "أضف فئة عملاء")} />
             </div>
           )}
 
           {step === 3 && (
-            <div className="stack gap16">
-              <TagInput values={d.serves} onChange={(v) => set("serves", v)} label={L("Markets you serve", "الأسواق التي تخدمها")} addLabel={L("Add a market", "أضف سوقًا")} />
-              <TagInput values={d.considers} onChange={(v) => set("considers", v)} label={L("Markets you are considering", "أسواق تفكر فيها")} addLabel={L("Add a market", "أضف سوقًا")} />
+            <div className="market-panels">
+              <section className="market-panel serves">
+                <div className="row g10"><span className="market-icon"><Icon name="check" size={15} stroke={2.4} /></span>
+                  <div className="stack"><b>{L("Where you sell today", "أين تبيع اليوم")}</b><span className="s13 t2">{L("Markets where you already have customers.", "أسواق لديك فيها عملاء الآن.")}</span></div></div>
+                <TagInput values={d.serves} tone="ok" onChange={(v) => set("serves", v.filter((m) => !d.considers.some((c) => c.toLowerCase() === m.toLowerCase())))}
+                  label={L("Markets you sell in today", "أسواق تبيع فيها اليوم")} addLabel={L("Add a market you sell in", "أضف سوقًا تبيع فيه")} />
+              </section>
+              <section className="market-panel considers">
+                <div className="row g10"><span className="market-icon"><Icon name="target" size={15} /></span>
+                  <div className="stack"><b>{L("Where you are considering", "أين تفكر في التوسع")}</b><span className="s13 t2">{L("Markets you might enter. Edrak treats these as expansion questions.", "أسواق قد تدخلها. يعاملها إدراك كأسئلة توسع.")}</span></div></div>
+                <TagInput values={d.considers} tone="blue" onChange={(v) => set("considers", v.filter((m) => !d.serves.some((c) => c.toLowerCase() === m.toLowerCase())))}
+                  label={L("Markets you are considering", "أسواق تفكر فيها")} addLabel={L("Add a market you are considering", "أضف سوقًا تفكر فيه")} />
+              </section>
             </div>
           )}
 
@@ -195,7 +224,7 @@ export function Onboarding() {
                   onKeyDown={(e) => { if (e.key === "Enter" && compName.trim()) { e.preventDefault(); set("competitors", [...d.competitors, { name: compName.trim() }]); setCompName(""); } }} />
                 <button type="button" className="btn" disabled={!compName.trim()} onClick={() => { set("competitors", [...d.competitors, { name: compName.trim() }]); setCompName(""); }}><Icon name="plus" size={15} /> {L("Add", "أضف")}</button>
               </div>
-              <button type="button" className="btn blue" disabled={finding} onClick={() => void discover()} style={{ alignSelf: "flex-start" }}>
+              <button type="button" className="btn pri" disabled={finding} onClick={() => void discover()} style={{ alignSelf: "flex-start" }}>
                 <Icon name="sparkle" size={15} /> {finding ? L("Searching the web…", "جارٍ البحث…") : L("Find competitors for me", "ابحث عن المنافسين لي")}
               </button>
               {found && found.length === 0 && <div className="empty">{L("No clear competitors found. Add them by name.", "لم نجد منافسين واضحين. أضفهم بالاسم.")}</div>}
@@ -238,7 +267,8 @@ export function Onboarding() {
           )}
 
           {step === 6 && (
-            <TagInput values={d.goals} onChange={(v) => set("goals", v)} label={L("Goals", "الأهداف")} addLabel={L("Add a goal", "أضف هدفًا")} />
+            <TagInput values={d.goals} onChange={(v) => set("goals", v)} label={L("Goals", "الأهداف")} showLabel wrap
+              hint={L("One goal per entry. Press Enter to add it.", "هدف واحد لكل إدخال. اضغط Enter لإضافته.")} addLabel={L("Add a goal", "أضف هدفًا")} />
           )}
 
           {step === 7 && (
@@ -257,8 +287,9 @@ export function Onboarding() {
 
           {step === 8 && (
             <div className="stack gap8">
-              {[[L("Company", "الشركة"), d.name], [L("Offerings", "المنتجات"), d.offerings.join(", ")], [L("Target customers", "العملاء"), d.target_customers],
-                [L("Markets", "الأسواق"), [...d.serves, ...d.considers].join(", ")], [L("Competitors", "المنافسون"), d.competitors.map((c) => c.name).join(", ")],
+              {[[L("Company", "الشركة"), d.name], [L("Industries", "المجالات"), d.industries.map((k) => { const i = INDUSTRIES.find((x) => x[0] === k); return k === "other" ? d.industry_other || L("Other", "أخرى") : i ? L(i[1], i[2]) : k; }).join(", ")],
+                [L("Offerings", "المنتجات"), d.offerings.join(", ")], [L("Target customers", "العملاء"), d.target_customer_groups.join(", ")],
+                [L("Sell today in", "تبيع اليوم في"), d.serves.join(", ")], [L("Considering", "تفكر في"), d.considers.join(", ")], [L("Competitors", "المنافسون"), d.competitors.map((c) => c.name).join(", ")],
                 [L("Goals", "الأهداف"), d.goals.join("; ")], [L("Documents", "المستندات"), String(docs.length)]].map(([k, v]) => (
                 <div key={k} className="list-row"><span className="muted" style={{ width: 150 }}>{k}</span><bdi className="grow">{v || "—"}</bdi></div>
               ))}
@@ -269,11 +300,12 @@ export function Onboarding() {
           <div className="onb-actions">
             <button type="button" className="btn ghost" disabled={step === 1 || saving} onClick={() => void save(step - 1)}>{L("Back", "رجوع")}</button>
             <div className="row g8">
+              {back && <button type="button" className="btn pri" disabled={!canNext || saving} onClick={() => void saveAndReturn()}><Icon name="check" size={15} /> {L("Save and return", "احفظ وارجع")}</button>}
               {step >= 5 && step < STEPS && <button type="button" className="btn ghost" onClick={() => void save(step + 1)}>{L("Skip", "تخطَّ")}</button>}
               {step < STEPS ? (
                 <button type="button" className="btn ink" disabled={!canNext || saving} onClick={() => void save(step + 1)}>{L("Continue", "متابعة")} <Icon name="arrow" size={15} flip /></button>
               ) : (
-                <button type="button" className="btn blue" disabled={saving} onClick={() => void finish()}>{L("Finish setup", "إنهاء الإعداد")}</button>
+                <button type="button" className="btn pri" disabled={saving} onClick={() => void finish()}>{L("Finish setup", "إنهاء الإعداد")}</button>
               )}
             </div>
           </div>
@@ -285,7 +317,8 @@ export function Onboarding() {
             <b style={{ fontSize: 20 }} dir="auto">{d.name || L("Your company", "شركتك")}</b>
             {d.description && <span className="s13" dir="auto" style={{ opacity: .85 }}>{d.description}</span>}
             {d.offerings.length > 0 && <span className="s13">{L("Offers", "يقدم")}: {d.offerings.join(", ")}</span>}
-            {d.serves.length > 0 && <span className="s13">{L("Sells in", "يبيع في")}: {d.serves.join(", ")}</span>}
+            {d.serves.length > 0 && <span className="s13">{L("Sells today in", "يبيع اليوم في")}: {d.serves.join(", ")}</span>}
+            {d.considers.length > 0 && <span className="s13">{L("Considering", "يفكر في")}: {d.considers.join(", ")}</span>}
             {d.competitors.length > 0 && <span className="s13">{L("Compared with", "يُقارن مع")}: {d.competitors.map((c) => c.name).join(", ")}</span>}
             <span className="s12" style={{ opacity: .6, marginTop: 8 }}>{L("Baseline for the Internal worker and every comparison.", "الأساس لعامل البيانات الداخلية ولكل مقارنة.")}</span>
           </div>

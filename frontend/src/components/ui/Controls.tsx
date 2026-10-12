@@ -104,21 +104,34 @@ export function ChoiceChips<T extends string>({ options, selected, onToggle, lab
 interface TagInputProps {
   values: string[];
   onChange: (values: string[]) => void;
-  /** Name for the group, read by screen readers. */
+  /** Name for the group. Read by screen readers; shown above the tags when `showLabel` is set. */
   label: string;
   addLabel?: string;
+  showLabel?: boolean;
+  /** One line under the label saying what goes here. */
+  hint?: string;
+  /** Long entries (goals): tags wrap onto several lines and the field grows while typing. */
+  wrap?: boolean;
+  /** Colour of the tags, to tell two lists apart (markets you sell in vs. markets you consider). */
+  tone?: "ok" | "blue";
 }
 
 /** A list of removable tags with an "Add" tag that turns into an input. */
-export function TagInput({ values, onChange, label, addLabel }: TagInputProps) {
+export function TagInput({ values, onChange, label, addLabel, showLabel = false, hint, wrap = false, tone }: TagInputProps) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (editing) inputRef.current?.focus();
   }, [editing]);
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!wrap || !el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [draft, wrap, editing]);
 
   const commit = () => {
     const value = draft.trim();
@@ -129,8 +142,8 @@ export function TagInput({ values, onChange, label, addLabel }: TagInputProps) {
     setEditing(false);
   };
 
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" || event.key === ",") {
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (event.key === "Enter" || (event.key === "," && !wrap)) {
       event.preventDefault();
       commit();
     } else if (event.key === "Escape") {
@@ -140,11 +153,11 @@ export function TagInput({ values, onChange, label, addLabel }: TagInputProps) {
     }
   };
 
-  return (
-    <div className="row g8 wrap" role="group" aria-label={label}>
+  const group = (
+    <div className={`row g8 wrap tag-group ${wrap ? "wrap-tags" : ""} ${tone ? `tone-${tone}` : ""}`.trim()} role="group" aria-label={label}>
       {values.map((value) => (
         <span key={value} className="tag tag-item">
-          {value}
+          <span className="tag-text" dir="auto">{value}</span>
           <button
             type="button"
             className="tag-x"
@@ -157,15 +170,13 @@ export function TagInput({ values, onChange, label, addLabel }: TagInputProps) {
       ))}
       {editing ? (
         <span className="tag tag-item add editing">
-          <input
-            ref={inputRef}
-            className="tag-field"
-            value={draft}
-            aria-label={label}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={onKeyDown}
-            onBlur={commit}
-          />
+          {wrap ? (
+            <textarea ref={inputRef} rows={1} className="tag-field" value={draft} aria-label={label} dir="auto"
+              onChange={(event) => setDraft(event.target.value)} onKeyDown={onKeyDown} onBlur={commit} />
+          ) : (
+            <input ref={inputRef} className="tag-field" value={draft} aria-label={label} dir="auto"
+              onChange={(event) => setDraft(event.target.value)} onKeyDown={onKeyDown} onBlur={commit} />
+          )}
         </span>
       ) : (
         <button type="button" className="tag tag-item add" onClick={() => setEditing(true)}>
@@ -173,6 +184,15 @@ export function TagInput({ values, onChange, label, addLabel }: TagInputProps) {
           {addLabel ?? t("common.add")}
         </button>
       )}
+    </div>
+  );
+
+  if (!showLabel && !hint) return group;
+  return (
+    <div className="field tag-input">
+      {showLabel && <span>{label}</span>}
+      {hint && <span className="s12 t3 field-hint">{hint}</span>}
+      {group}
     </div>
   );
 }

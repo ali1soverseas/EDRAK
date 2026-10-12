@@ -56,3 +56,28 @@
 .popover { position: absolute; top: 52px; inset-inline-end: 12px; width: 380px; max-height: 520px; overflow: auto; z-index: 50; background: var(--card); border: 1px solid var(--hair); border-radius: 14px; box-shadow: 0 20px 50px rgba(11, 13, 56, .16); animation: rise .15s var(--ease, ease) both; }
 .search-box { position: relative; }
 .search-results { position: absolute; top: 44px; inset-inline-start: 0; width: 420px; z-index: 50; }
+
+/* Onboarding, markets step: two clearly separate lists. */
+.market-panels { display: grid; gap: 14px; }
+.market-panel { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--hair); }
+.market-panel.serves { border-inline-start: 4px solid var(--ok); }
+.market-panel.considers { border: 1px dashed var(--blue-line); border-inline-start: 4px solid var(--blue); background: linear-gradient(var(--blue-soft), var(--card) 55%); }
+.market-icon { width: 30px; height: 30px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.serves .market-icon { background: var(--ok-bg); color: var(--ok); }
+.considers .market-icon { background: var(--blue-soft); color: var(--blue); }
+.onb-slide, .onb-slide .field, .onb-slide .tag-input { min-width: 0; }
+
+/* Company profile */
+.page-pad { display: flex; flex-direction: column; gap: 16px; max-width: 1180px; }
+.profile-hero { display: flex; gap: 20px; align-items: flex-start; }
+.profile-mark { width: 64px; height: 64px; border-radius: 18px; background: var(--ink); color: var(--paper); display: inline-flex; align-items: center; justify-content: center;
+  font: 700 28px 'Bricolage Grotesque', sans-serif; flex: none; }
+.profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.profile-sec { display: flex; flex-direction: column; gap: 8px; }
+.profile-sec.wide { grid-column: 1 / -1; }
+.comp-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+.comp-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--hair); border-radius: 12px; background: var(--paper); }
+.comp-sq { width: 34px; height: 34px; border-radius: 10px; background: var(--paper2); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; flex: none; }
+.profile .tag { height: auto; min-height: 28px; padding-block: 4px; white-space: normal; max-width: 100%; overflow-wrap: anywhere; }
+.goal-list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.45; }
+@media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } .profile-hero { flex-direction: column; } }

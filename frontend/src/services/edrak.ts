@@ -39,11 +39,11 @@ export interface Competitor {
   discovered_by?: string; discovery_reason?: string | null; discovery_confidence?: number | null; links: Link[];
 }
 export interface Profile {
-  name: string; aliases: string[]; industry: string | null; industry_other: string | null; description: string;
-  offerings: string[]; target_customers: string; goals: string[];
+  name: string; aliases: string[]; industry: string | null; industries: string[]; industry_other: string | null; description: string;
+  offerings: string[]; target_customers: string; target_customer_groups: string[]; goals: string[];
   markets: { entity_id?: string; name: string; relation: "serves" | "considers" }[];
   website: string; links: { id?: string; platform: string; url: string }[]; competitors: Competitor[];
-  onboarding_step: number; completed: boolean;
+  onboarding_step: number; completed: boolean; completed_at?: string | null; updated_at?: string | null;
 }
 export interface Onboarding { step: number; total_steps: number; completed: boolean; missing: string[]; profile: Profile }
 export interface Candidate {

@@ -59,16 +59,20 @@ async def save_company(
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> CompanySetupOut:
     ws = session.workspace.workspace_id
+    current = await company_repo.get_company(db, ws)
+    relation = {m["name"].strip().lower(): m.get("relation") or "serves" for m in current["markets"]}
     await company_repo.save_company(
         db,
         ws,
         {
             "name": fields.name,
             "aliases": fields.aliases,
-            "industry": fields.industry,
+            # One industry from the older form: keep the full list when it is already one of them.
+            **({} if fields.industry in current["industries"] else {"industry": fields.industry}),
             "description": fields.description,
             "offerings": fields.offerings,
-            "markets": [{"name": m, "relation": "serves"} for m in fields.markets],
+            # Keep each market's relation: a market the person is only considering must not become "serves".
+            "markets": [{"name": m, "relation": relation.get(m.strip().lower(), "serves")} for m in fields.markets],
             "goals": fields.strategic_goals,
             "links": [{"platform": "website", "url": fields.website}] + [
                 {"platform": s.platform, "url": s.url} for s in fields.socials
@@ -110,10 +114,12 @@ class OnboardingUpdate(BaseModel):
     name: Optional[str] = None
     aliases: Optional[list[str]] = None
     industry: Optional[str] = None
+    industries: Optional[list[str]] = None
     industry_other: Optional[str] = None
     description: Optional[str] = None
     offerings: Optional[list[str]] = None
     target_customers: Optional[str] = None
+    target_customer_groups: Optional[list[str]] = None
     markets: Optional[list[MarketIn]] = None
     competitors: Optional[list[CompetitorIn]] = None
     website: Optional[str] = None

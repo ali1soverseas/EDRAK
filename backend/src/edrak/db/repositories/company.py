@@ -25,6 +25,33 @@ SOCIAL_PLATFORMS = ("website", "facebook", "instagram", "x", "youtube", "linkedi
 TOTAL_ONBOARDING_STEPS = 8
 
 
+INDUSTRY_LABELS = {
+    "fintech": "Fintech", "saas": "SaaS", "retail": "Retail", "technology": "Technology", "healthcare": "Healthcare",
+    "health": "Healthcare", "manufacturing": "Manufacturing", "logistics": "Logistics", "education": "Education", "other": "Other",
+}
+
+
+def as_list(raw: Any) -> list[str]:
+    """A column that used to hold one value and now holds a JSON list. Reads both."""
+    if raw is None or raw == "":
+        return []
+    if isinstance(raw, list):
+        return _clean_list(raw)
+    text = str(raw).strip()
+    if text.startswith("["):
+        return _clean_list(loads(text, []))
+    # Older profiles typed one sentence: "SMEs in Egypt, freelancers". Each part is a group.
+    return _clean_list([part for part in text.replace(";", ",").split(",")])
+
+
+def industry_text(company: dict[str, Any]) -> str:
+    """The industries in words, for search queries: "Fintech, SaaS" (with the free text for Other)."""
+    names = [INDUSTRY_LABELS.get(i, i) for i in company.get("industries") or [] if i != "other"]
+    if company.get("industry_other"):
+        names.append(company["industry_other"])
+    return ", ".join(names)
+
+
 def _clean_list(values: Any) -> list[str]:
     if not values:
         return []
@@ -77,11 +104,13 @@ async def get_company(db: aiosqlite.Connection, workspace_id: str) -> dict[str, 
     return {
         "name": row["name"] or "",
         "aliases": loads(row["aliases"], []),
-        "industry": row["industry"],
+        "industries": [("healthcare" if i == "health" else i) for i in as_list(row["industry"])],
+        "industry": (as_list(row["industry"]) or [None])[0],  # the first one, for older readers
         "industry_other": row["industry_other"],
         "description": row["notes"] or "",
         "offerings": loads(row["products"], []),
-        "target_customers": row["target_customers"] or "",
+        "target_customer_groups": as_list(row["target_customers"]),
+        "target_customers": ", ".join(as_list(row["target_customers"])),
         "goals": loads(row["goals"], []),
         "markets": markets,
         "website": website,
@@ -118,9 +147,15 @@ async def save_company(
         put("products", dumps(_clean_list(fields["offerings"])))
     if "description" in fields:
         put("notes", (fields["description"] or "").strip() or None)
-    if "target_customers" in fields:
+    if "target_customer_groups" in fields:
+        groups = _clean_list(fields["target_customer_groups"])
+        put("target_customers", dumps(groups) if groups else None)
+    elif "target_customers" in fields:
         put("target_customers", (fields["target_customers"] or "").strip() or None)
-    if "industry" in fields:
+    if "industries" in fields:
+        chosen = _clean_list(fields["industries"])
+        put("industry", dumps(chosen) if chosen else None)
+    elif "industry" in fields:
         put("industry", fields["industry"] or None)
     if "industry_other" in fields:
         put("industry_other", (fields["industry_other"] or "").strip() or None)

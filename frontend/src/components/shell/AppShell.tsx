@@ -125,16 +125,18 @@ function Sidebar({ rail, open }: { rail: boolean; open: boolean }) {
   const { user, workspace } = session;
   const at = (prefix: string) => pathname === prefix || pathname.startsWith(prefix + "/");
   const links = [
-    { to: "/", icon: "home" as const, label: L("Home", "الرئيسية"), on: pathname === "/" || at("/analyses") },
+    { to: "/", icon: "home" as const, label: L("Home", "الرئيسية"), on: pathname === "/" },
+    { to: "/analyses", icon: "branch" as const, label: L("Analyses", "التحليلات"), on: at("/analyses") && !at("/analyses/new") },
     { to: "/reports", icon: "fileLines" as const, label: L("Reports", "التقارير"), on: at("/reports") || at("/briefs") },
     { to: "/monitors", icon: "activity" as const, label: L("Monitors", "المراقبة"), on: at("/monitors") },
     { to: "/alerts", icon: "warning" as const, label: L("Alerts", "التنبيهات"), on: at("/alerts") },
   ];
   const knowledge = [
+    { to: "/company", icon: "building" as const, label: L("Company", "الشركة"), on: at("/company") },
     { to: "/watchlist", icon: "target" as const, label: L("Watchlist", "قائمة المتابعة"), on: at("/watchlist") },
     { to: "/evidence", icon: "layers" as const, label: L("Evidence", "الأدلة"), on: at("/evidence") },
     { to: "/decisions", icon: "checks" as const, label: L("Decision log", "سجل القرارات"), on: at("/decisions") },
-    { to: "/sources", icon: "building" as const, label: L("Data sources", "مصادر البيانات"), on: at("/sources") || at("/company") },
+    { to: "/sources", icon: "file" as const, label: L("Data sources", "مصادر البيانات"), on: at("/sources") },
   ];
 
   return (

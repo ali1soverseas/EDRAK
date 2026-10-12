@@ -211,6 +211,15 @@ button.ev {
   font-weight: 500;
   color: var(--ink);
 }
+/* Long entries (goals) wrap instead of running off the card, and the field grows while typing. */
+.tag-group.wrap-tags { width: 100%; }
+.wrap-tags .tag.tag-item { height: auto; min-height: 32px; padding-block: 6px; white-space: normal; max-width: 100%; align-items: flex-start; }
+.wrap-tags .tag-text { overflow-wrap: anywhere; line-height: 1.4; }
+.wrap-tags .tag.add.editing { flex: 1 1 100%; padding: 6px 10px; }
+.wrap-tags .tag-field { width: 100%; resize: none; overflow: hidden; line-height: 1.4; font: inherit; font-size: 13px; padding: 0; }
+.tag-group.tone-ok .tag.tag-item:not(.add) { background: var(--ok-bg); border-color: #b9dcc7; color: #0f5132; }
+.tag-group.tone-blue .tag.tag-item:not(.add) { background: var(--blue-soft); border-color: var(--blue-line); color: var(--blue-d); }
+.field-hint { margin-top: -2px; font-weight: 400 !important; }
 .tag-x {
   display: inline-flex;
   padding: 2px;

@@ -16,7 +16,7 @@ from edrak.contracts import (
     UseCase,
     WorkerType,
 )
-from edrak.db.repositories.company import profile_contract_fields
+from edrak.db.repositories.company import industry_text, profile_contract_fields
 
 logger = logging.getLogger(__name__)
 
@@ -215,7 +215,7 @@ def discover_for(company: dict[str, Any], markets: list[str], offering: Optional
         company=company.get("name") or "",
         description=company.get("description") or None,
         offerings=[*(company.get("offerings") or []), *([offering] if offering else [])],
-        industry=company.get("industry_other") or company.get("industry"),
+        industry=industry_text(company) or None,
         markets=markets,
         target_customers=company.get("target_customers") or None,
         exclude=company.get("aliases") or [],

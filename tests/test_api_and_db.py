@@ -127,6 +127,21 @@ def test_passwords_are_argon2_and_sessions_are_stored_hashed(client, isolated):
 # ------------------------------------------------------------------ onboarding and company
 
 
+def test_several_industries_and_customer_groups_and_markets_keep_their_relation(client):
+    _account(client)
+    client.put("/api/onboarding", json={
+        "step": 3, "name": "Nile Ledger", "industries": ["fintech", "saas"], "target_customer_groups": ["SMEs in Egypt", "Freelancers"],
+        "markets": [{"name": "Egypt", "relation": "serves"}, {"name": "Saudi Arabia", "relation": "considers"}]})
+    p = client.get("/api/onboarding").json()["profile"]
+    assert p["industries"] == ["fintech", "saas"] and p["industry"] == "fintech"
+    assert p["target_customer_groups"] == ["SMEs in Egypt", "Freelancers"] and p["target_customers"] == "SMEs in Egypt, Freelancers"
+    # The older company form sends market names only; "considering" must survive it.
+    client.put("/api/company", json={"name": "Nile Ledger", "industry": "fintech", "markets": ["Egypt", "Saudi Arabia"]})
+    p = client.get("/api/onboarding").json()["profile"]
+    assert {m["name"]: m["relation"] for m in p["markets"]} == {"Egypt": "serves", "Saudi Arabia": "considers"}
+    assert p["industries"] == ["fintech", "saas"]
+
+
 def test_onboarding_saves_step_by_step_and_completes_only_when_ready(client):
     _account(client)
     got = client.get("/api/onboarding").json()
