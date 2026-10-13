@@ -159,7 +159,7 @@ export function PlanReview() {
   const L = useL();
   const detail = analysis.data;
   const crumbs = [
-    { label: t("nav.analyses"), to: "/" },
+    { label: t("nav.analyses"), to: "/analyses" },
     { label: detail?.title ?? "…" },
     { label: t("plan.crumb") },
   ];

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { QuickAnalysisDrawer } from "../components/QuickAnalysisDrawer";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
 import { useI18n } from "../i18n";
@@ -227,6 +228,7 @@ export function Watchlist() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<Dict[]>([]);
   const [name, setName] = useState("");
+  const [quick, setQuick] = useState(false);
   const load = () => void edrak.entities().then(setRows).catch(() => setRows([]));
   useEffect(load, []);
   const current = rows.find((r) => r.id === id) ?? null;
@@ -261,13 +263,14 @@ export function Watchlist() {
               <span className="s13 muted">{L(`Appears in ${current.appears_in_reports} report(s).`, `يظهر في ${current.appears_in_reports} تقرير.`)}</span>
               <div className="row g8 wrap">
                 {current.website_domain && <button type="button" className="btn ghost" onClick={() => void edrak.refreshLinks(current.id).then(load)}>{L("Find official accounts", "ابحث عن الحسابات الرسمية")}</button>}
-                <button type="button" className="btn ghost" onClick={() => navigate(`/analyses/new?use_case=competitive_intelligence&goal=${encodeURIComponent(`What is ${current.name} doing, and what does it mean for us?`)}`)}>{L("New analysis", "تحليل جديد")}</button>
+                <button type="button" className="btn ink" onClick={() => setQuick(true)}><Icon name="plus" size={14} /> {L("New analysis", "تحليل جديد")}</button>
                 <button type="button" className="btn ghost" onClick={() => void edrak.track(current.id, false).then(() => { navigate("/watchlist"); load(); })}>{L("Stop tracking", "أوقف المتابعة")}</button>
               </div>
             </>
           )}
         </div>
       </div>
+      {quick && current && <QuickAnalysisDrawer entity={current} onClose={() => setQuick(false)} />}
     </>
   );
 }

@@ -489,7 +489,7 @@ export function LiveRun() {
   }, [data?.state, data?.brief_id, navigate]);
 
   const crumbs = [
-    { label: t("nav.analyses"), to: "/" },
+    { label: t("nav.analyses"), to: "/analyses" },
     { label: data?.title ?? "…" },
     { label: t("run.crumb") },
   ];
