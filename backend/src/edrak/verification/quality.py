@@ -304,6 +304,9 @@ def _normalise_numbers(text: str) -> str:
     for word, digit in words.items():
         lowered = re.sub(rf"\b{word}\b", digit, lowered)
     lowered = re.sub(r"(\d)\s+(\d{3})\b", r"\1\2", lowered)
+    # Thousands separators: "$25,000" is 25000, not 25 (the price pattern stops at a comma).
+    while re.search(r"(\d),(\d{3})\b", lowered):
+        lowered = re.sub(r"(\d),(\d{3})\b", r"\1\2", lowered)
     lowered = re.sub(r"(\d+(?:\.\d+)?)\s*k\b", lambda m: str(int(float(m.group(1)) * 1000)), lowered)
     lowered = re.sub(r"(\d+(?:\.\d+)?)\s*m\b", lambda m: str(int(float(m.group(1)) * 1_000_000)), lowered)
     return lowered

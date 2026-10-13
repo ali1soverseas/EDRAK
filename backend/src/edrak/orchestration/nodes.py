@@ -49,6 +49,9 @@ def _metric_context(state: OrchestrationState) -> dict[str, Any]:
     return {"metric_context": [{"metric_id": k[0], "entity": k[1], "status": v} for k, v in seen.items()], "blocking_gaps": gaps}
 
 
+CROSS_SIGNAL_ATTEMPTS = 3
+
+
 def make_decision_analysis_node():
     """
     Create the orchestrator's Decision Analysis node.
@@ -77,7 +80,7 @@ def make_decision_analysis_node():
 
             return {
                 "decision_analysis": None,
-                "error": message,
+                "synthesis_error": state.get("synthesis_error") or message,
             }
 
         if request is None:
@@ -143,10 +146,7 @@ def make_decision_analysis_node():
 
             return {
                 "decision_analysis": None,
-                "error": (
-                    "Decision Analysis failed: "
-                    f"{type(exc).__name__}: {exc}"
-                ),
+                "synthesis_error": f"Decision analysis failed: {type(exc).__name__}: {exc}"[:400],
             }
 
     return decision_analysis_node
@@ -311,6 +311,8 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
         print("  [cross_signal] skipped: no verification result")
         return {**state, "cross_signal": None}
 
+    output = None
+    last_error = ""
     try:
         payload = (
             raw
@@ -329,10 +331,21 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
             }
         )
         cs_input = build_cross_signal_input(verified_only, state["request"])
-        output = await run_cross_signal(cs_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
-        return {**state, "cross_signal": None}
+        return {**state, "cross_signal": None, "synthesis_error": f"Cross-signal could not start: {type(exc).__name__}: {exc}"[:400]}
+    # A model reply that fails validation is usually a one-off: try again before giving up on synthesis.
+    for attempt in range(1, CROSS_SIGNAL_ATTEMPTS + 1):
+        try:
+            output = await run_cross_signal(cs_input)
+            break
+        except Exception as exc:  # noqa: BLE001
+            last_error = f"{type(exc).__name__}: {exc}"
+            print(f"  [cross_signal] attempt {attempt} failed: {last_error}")
+            logger.warning("Cross-signal attempt %d failed: %s", attempt, last_error)
+    if output is None:
+        return {**state, "cross_signal": None,
+                "synthesis_error": f"Cross-signal failed {CROSS_SIGNAL_ATTEMPTS} times: {last_error}"[:400]}
 
     dumped = output.model_dump(mode="json")
     print("\n" + "=" * 72)
@@ -343,7 +356,7 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
         f"  [cross_signal] {dumped.get('status', 'unknown')} "
         f"({len(dumped.get('signals') or [])} signals)"
     )
-    return {**state, "cross_signal": dumped}
+    return {**state, "cross_signal": dumped, "synthesis_error": None}
 
 
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:

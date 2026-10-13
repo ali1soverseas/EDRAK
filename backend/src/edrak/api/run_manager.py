@@ -767,7 +767,11 @@ class RunManager:
             return
 
         if node_name == "dispatch":
-            results: list[WorkerResult] = list(node_output.get("results") or [])
+            # Store what the state holds after merging: a second round's result already includes the first
+            # round's findings and sources (orchestration.state.combine_rounds), so nothing earlier is lost.
+            dispatched = {r.task_id for r in node_output.get("results") or []}
+            results: list[WorkerResult] = [r for r in state.get("results") or [] if r.task_id in dispatched] \
+                or list(node_output.get("results") or [])
             await self._store_results(results, analysis_id, active.workspace_id)
             for wr in results:
                 for tv in run_view.tasks:
@@ -896,11 +900,22 @@ class RunManager:
         elif node_name == "cross_signal":
             run_view.stage = "synthesize"
             await stream.emit("stage_change", {"stage": "synthesize"})
-            await self._event(active, source="synthesis", kind="info",
-                              message="Cross-domain signals identified. Preparing the decision analysis.")
+            cs = node_output.get("cross_signal")
+            if not cs:
+                await self._event(active, source="synthesis", kind="failure",
+                                  message=f"No cross-domain signals: {node_output.get('synthesis_error') or 'the step returned nothing'}")
+            else:
+                n = len(cs.get("signals") or [])
+                await self._event(active, source="synthesis", kind="info",
+                                  message=f"{n} cross-domain signal(s) identified. Preparing the decision analysis.")
 
         elif node_name == "decision_analysis":
-            await self._event(active, source="synthesis", kind="info", message="Decision analysis written. Building the brief.")
+            da = node_output.get("decision_analysis")
+            if not da:
+                await self._event(active, source="synthesis", kind="failure",
+                                  message=f"No options drafted: {node_output.get('synthesis_error') or state.get('synthesis_error') or 'the step returned nothing'}")
+            else:
+                await self._event(active, source="synthesis", kind="info", message="Decision analysis written. Building the brief.")
 
         elif node_name == "finalize":
             run_view.stage = "brief"
@@ -956,6 +971,7 @@ class RunManager:
                     verification=verification,
                     cross_signal=state.get("cross_signal"),
                     decision_analysis=state.get("decision_analysis"),
+                    synthesis_error=state.get("synthesis_error"),
                     evidence_numbers=numbers,
                     v3=v3,
                 ))

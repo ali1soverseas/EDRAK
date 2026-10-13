@@ -38,8 +38,32 @@ def merge_by_task_id(left: list[T], right: list[T] | str) -> list[T]:
     if isinstance(right, str) and right == RESET:
         return []
     merged = {item.task_id: item for item in left}
-    merged.update({item.task_id: item for item in right})
+    for item in right:
+        old = merged.get(item.task_id)
+        merged[item.task_id] = combine_rounds(old, item) if old is not None else item
     return list(merged.values())
+
+
+def combine_rounds(old: Any, new: Any) -> Any:
+    """A later round of the same task adds to the earlier one instead of replacing it.
+
+    When a person (or verification) sends a worker out again, the new round's attempt is higher. Its
+    findings and sources are added to what the first round found, so a weaker second round cannot erase a
+    good first one. The same attempt (a stage enriching a result, such as the metrics agent) still replaces.
+    """
+    if not isinstance(new, WorkerResult) or not isinstance(old, WorkerResult) or new.attempt <= old.attempt:
+        return new
+    from ..metrics.requirements import merge_results
+
+    merged = merge_results(old, new)
+    seen: set[str] = set()
+    findings = []
+    for f in merged.findings:  # the same statement found twice is kept once (the earlier one)
+        key = " ".join(f.statement.lower().split())
+        if key not in seen:
+            seen.add(key)
+            findings.append(f)
+    return merged.model_copy(update={"attempt": new.attempt, "findings": findings})
 
 
 class OrchestrationState(TypedDict, total=False):
@@ -57,6 +81,8 @@ class OrchestrationState(TypedDict, total=False):
     cross_signal: dict[str, Any] | None
     decision_analysis: dict[str, Any] | None
     replan_count: int
+    # Why synthesis (cross-signal or decision analysis) produced nothing, shown on the run screen and the brief.
+    synthesis_error: str | None
     status: str | None
     error: str | None
     orchestration_result: OrchestrationResult

@@ -66,8 +66,12 @@ CONFIDENCE CALIBRATION (0.0 to 1.0)
 - Differences must reflect true evidence quality.
 
 CONFLICT DETECTION
-Carefully inspect evidence for contradictions or roadmap tensions between documents.
-For example, if one document says a capability is live while another describes it as still planned, record this as a Conflict linking the relevant evidence_ids.
+Record a Conflict only when two documents state facts that cannot both be true about the same thing.
+For example, one document says a capability is live while another says it is still planned; or two price lists
+give different prices for the same product and tier. Link the relevant evidence_ids.
+NOT conflicts: a risk next to a goal that addresses it ("supply shortfall may delay the ramp" and "cut lead time to
+24 weeks"), a plan next to the current state, different products, tiers or segments, or a forecast next to a fact.
+Those can all be true at once; mention them in a finding's limitations instead.
 
 LIMITATIONS
 State meaningful caveats:

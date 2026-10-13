@@ -100,6 +100,7 @@ def build_brief(
     verification: Optional[VerificationResult] = None,
     cross_signal: Optional[dict[str, Any]] = None,
     decision_analysis: Optional[dict[str, Any]] = None,
+    synthesis_error: Optional[str] = None,
     evidence_numbers: Optional[dict[tuple[str, int, str], int]] = None,
     v3: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
@@ -350,7 +351,9 @@ def build_brief(
     matters_segments = [{"t": "text", "text": " ".join(matters)}] if matters else []
     options_segments = (
         [{"t": "text", "text": f"{len(options)} option(s) are laid out with the evidence for each. They are not ranked; the decision stays with you."}]
-        if options else [{"t": "text", "text": "No options were drafted for this run. The findings and gaps below are the basis for a decision."}]
+        if options else [{"t": "text", "text": "No options were drafted for this run"
+                          + (f" ({synthesis_error})" if synthesis_error else "")
+                          + ". The findings and gaps below are the basis for a decision."}]
     )
     limits = None
     n_conflicts = len((v3 or {}).get("conflicts") or [])
