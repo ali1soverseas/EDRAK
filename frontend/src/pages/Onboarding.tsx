@@ -6,6 +6,7 @@ import { DotField } from "../components/ui/DotField";
 import { Icon } from "../components/ui/Icon";
 import { Logo } from "../components/ui/Logo";
 import { useL } from "../lib/useL";
+import { DocumentList } from "../components/DocumentList";
 import { edrak, type Candidate, type Doc, type Link as SocialLink, type Profile } from "../services/edrak";
 import { useAuth } from "../state/auth";
 
@@ -279,9 +280,7 @@ export function Onboarding() {
                 <input type="file" multiple hidden accept=".pdf,.docx,.xlsx,.csv,.md,.txt,.json"
                   onChange={(e) => { const files = Array.from(e.target.files ?? []); if (files.length) void edrak.upload(files).then(() => edrak.documents().then(setDocs)); }} />
               </label>
-              {docs.map((doc) => (
-                <div key={doc.document_id} className="list-row"><Icon name="file" size={16} /><bdi className="grow ellip">{doc.filename}</bdi><span className="s12 muted">{doc.status}</span></div>
-              ))}
+              <DocumentList docs={docs} onChange={setDocs} />
             </div>
           )}
 

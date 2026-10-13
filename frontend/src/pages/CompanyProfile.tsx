@@ -1,10 +1,11 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import { DocumentList } from "../components/DocumentList";
 import { Link, useNavigate } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
 import { useAsync } from "../lib/hooks";
 import { useL } from "../lib/useL";
-import { edrak } from "../services/edrak";
+import { edrak, type Doc } from "../services/edrak";
 import { INDUSTRIES } from "./Onboarding";
 
 /** One part of the profile, with an Edit link that opens that onboarding step and returns here. */
@@ -30,6 +31,8 @@ export function CompanyProfile() {
   const navigate = useNavigate();
   const data = useAsync(() => edrak.onboarding(), []);
   const docs = useAsync(() => edrak.documents(), []);
+  const [list, setList] = useState<Doc[]>([]);
+  useEffect(() => { if (docs.data) setList(docs.data); }, [docs.data]);
   const p = data.data?.profile;
   const chrome = <PageChrome crumbs={[{ label: L("Company profile", "ملف الشركة") }]} title={L("Company profile", "ملف الشركة")} />;
 
@@ -109,9 +112,8 @@ export function CompanyProfile() {
           </Section>
 
           <Section title={L("Your documents", "مستنداتك")} step={7}>
-            {(docs.data ?? []).length === 0 ? <span className="s13 t3">{L("No documents uploaded.", "لا مستندات مرفوعة.")}</span> : (
-              <div className="stack gap4">{(docs.data ?? []).slice(0, 6).map((d) => <div key={d.document_id} className="row g8 s13"><Icon name="file" size={14} /><bdi className="grow ellip">{d.filename}</bdi><span className="s12 t3">{d.status}</span></div>)}</div>
-            )}
+            {list.length === 0 ? <span className="s13 t3">{L("No documents uploaded.", "لا مستندات مرفوعة.")}</span>
+              : <DocumentList docs={list} onChange={setList} limit={8} />}
             <Link className="s13" to="/sources">{L("Manage data sources", "إدارة مصادر البيانات")}</Link>
           </Section>
         </div>

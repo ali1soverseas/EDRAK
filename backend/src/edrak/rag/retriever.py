@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import chromadb
+
+from edrak.rag.client import WRITE_LOCK, get_client
 from chromadb.config import Settings as ChromaSettings
 
 from edrak.contracts.evidence import Evidence, SourceType
@@ -49,16 +51,14 @@ class InternalRetriever:
         self.embedding_fn = get_embedding_function()
         logger.info("Retriever embedding function: %s", type(self.embedding_fn).__name__)
 
-        self._client = chromadb.PersistentClient(
-            path=str(self.persist_dir),
-            settings=ChromaSettings(anonymized_telemetry=False),
-        )
+        self._client = get_client(self.persist_dir)  # shared: parallel clients on one folder race inside Chroma
         try:
-            self.collection = self._client.get_or_create_collection(
-                name=self.collection_name,
-                embedding_function=self.embedding_fn,
-                metadata=COLLECTION_METADATA,
-            )
+            with WRITE_LOCK:  # creating the collection while an indexer does races inside Chroma
+                self.collection = self._client.get_or_create_collection(
+                    name=self.collection_name,
+                    embedding_function=self.embedding_fn,
+                    metadata=COLLECTION_METADATA,
+                )
         except ValueError as e:
             # Do NOT delete the persisted index from a read path.
             raise RuntimeError(

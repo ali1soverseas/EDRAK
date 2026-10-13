@@ -21,6 +21,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import chromadb
+
+from edrak.rag.client import WRITE_LOCK, get_client
 from chromadb.config import Settings as ChromaSettings
 
 from edrak.core.config import settings
@@ -76,16 +78,14 @@ class InternalIndexer:
         logger.info("Embedding function in use: %s", type(self.embedding_fn).__name__)
 
         self.persist_dir.mkdir(parents=True, exist_ok=True)
-        self._client = chromadb.PersistentClient(
-            path=str(self.persist_dir),
-            settings=ChromaSettings(anonymized_telemetry=False),
-        )
+        self._client = get_client(self.persist_dir)  # shared: parallel clients on one folder race inside Chroma
         try:
-            self.collection = self._client.get_or_create_collection(
-                name=self.collection_name,
-                embedding_function=self.embedding_fn,
-                metadata=COLLECTION_METADATA,
-            )
+            with WRITE_LOCK:  # two threads creating the collection at once also race
+                self.collection = self._client.get_or_create_collection(
+                    name=self.collection_name,
+                    embedding_function=self.embedding_fn,
+                    metadata=COLLECTION_METADATA,
+                )
         except ValueError:
             logger.warning(
                 "Embedding function mismatch on '%s'. Resetting collection...",
@@ -234,11 +234,12 @@ class InternalIndexer:
         for c in chunks:
             md = {k: _meta_value(v) for k, v in c.metadata.items()}
             metadatas.append({k: v for k, v in md.items() if v is not None})
-        self.collection.upsert(
-            ids=[c.chunk_id for c in chunks],
-            documents=[c.content for c in chunks],
-            metadatas=metadatas,
-        )
+        with WRITE_LOCK:
+            self.collection.upsert(
+                ids=[c.chunk_id for c in chunks],
+                documents=[c.content for c in chunks],
+                metadatas=metadatas,
+            )
         logger.info("Indexed %d chunks for '%s'", len(chunks), chunks[0].source_uri)
         return len(chunks)
 
@@ -260,8 +261,9 @@ class InternalIndexer:
         return self.upsert_chunks(chunks)
 
     def delete_document_chunks(self, chunk_ids: List[str]) -> None:
-        for i in range(0, len(chunk_ids), 500):
-            self.collection.delete(ids=chunk_ids[i : i + 500])
+        with WRITE_LOCK:
+            for i in range(0, len(chunk_ids), 500):
+                self.collection.delete(ids=chunk_ids[i : i + 500])
 
     def index_file(
         self,
@@ -333,7 +335,8 @@ class InternalIndexer:
         """Remove one workspace's chunks, narrowed by metadata such as filename=... or origin=..."""
         clauses: List[Dict[str, Any]] = [{"workspace_id": workspace_id}]
         clauses.extend({k: v} for k, v in match.items())
-        self.collection.delete(where={"$and": clauses} if len(clauses) > 1 else clauses[0])
+        with WRITE_LOCK:
+            self.collection.delete(where={"$and": clauses} if len(clauses) > 1 else clauses[0])
 
     def backfill_workspace(self, workspace_id: str) -> int:
         """Give chunks indexed before workspaces existed to `workspace_id`. Returns how many."""
