@@ -14,10 +14,10 @@ templates:
     decision_framing: "Frame each option as a competitive response: how the company positions against the named competitors (for example lead, match, differentiate, or hold and watch)."
     variants:
       hardware_infrastructure:
-        kpi_strip: [unit_price, own_price, market_concentration, release_cadence, supply_capacity, win_loss, certifications, funding_total]
-        required: [unit_price, own_price, supply_capacity]
-        optional: [market_concentration, release_cadence, certifications, win_loss, funding_total, revenue_arr]
-        metrics_theme: {title: "Us versus them", subtitle: "Our price and supply next to each competitor's: unit price, share and release pace."}
+        kpi_strip: [unit_price, own_price, hourly_price, dc_revenue, market_concentration, win_loss, supply_capacity, roadmap_items]
+        required: [unit_price, own_price, dc_revenue]
+        optional: [hourly_price, market_concentration, win_loss, supply_capacity, roadmap_items]
+        metrics_theme: {title: "Us versus them", subtitle: "Our prices next to each rival's, the size of their business in this offering, market share and the deals we win."}
       financial_services:
         kpi_strip: [fee_rate, own_price, transaction_volume, active_users, funding_total, sentiment_split, share_of_voice, rating, certifications]
         required: [fee_rate, own_price, transaction_volume]
@@ -62,8 +62,8 @@ templates:
     variants:
       hardware_infrastructure:
         kpi_strip: [market_size, market_cagr, infra_investment, deal_size, dc_capacity, adoption_rate, market_concentration, regulation_events, unit_price, supply_capacity]
-        required: [market_size, market_cagr, infra_investment, regulation_events, supply_capacity]
-        optional: [deal_size, dc_capacity, adoption_rate, market_concentration, unit_price, own_price]
+        required: [market_size, market_cagr, infra_investment, regulation_events]
+        optional: [deal_size, dc_capacity, adoption_rate, market_concentration, unit_price, own_price, supply_capacity]
         metrics_theme: {title: "The market", subtitle: "Size, growth, committed spending and the rules that apply, with our capacity to supply."}
       financial_services:
         kpi_strip: [market_size, market_cagr, adoption_rate, regulation_events, fee_rate, transaction_volume, market_concentration, capacity]
@@ -108,9 +108,9 @@ templates:
     decision_framing: "Frame each option as a launch choice: what to launch, for whom and at what price position (for example launch broadly, launch a narrow first version, or validate demand first)."
     variants:
       hardware_infrastructure:
-        kpi_strip: [unit_price, own_price, market_size, adoption_rate, deal_size, supply_capacity, roadmap_items, top_pain_points]
-        required: [unit_price, own_price, supply_capacity]
-        optional: [market_size, adoption_rate, deal_size, roadmap_items, top_pain_points, sentiment_split]
+        kpi_strip: [unit_price, own_price, hourly_price, market_size, adoption_rate, deal_size, supply_capacity, roadmap_items]
+        required: [unit_price, own_price]
+        optional: [hourly_price, market_size, adoption_rate, deal_size, supply_capacity, roadmap_items, top_pain_points]
         metrics_theme: {title: "Demand and price room", subtitle: "What buyers pay per unit, what they commit to, and what we can supply."}
       financial_services:
         kpi_strip: [fee_rate, own_price, adoption_rate, active_users, top_pain_points, sentiment_split, capacity, roadmap_items]

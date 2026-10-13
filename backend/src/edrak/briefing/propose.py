@@ -96,6 +96,23 @@ class ProposedCopy(BaseModel):
     signals: list[SignalCopy] = Field(default_factory=list)
 
 
+STATUS_WORDS = re.compile(r"\b(?:thin|unverified|verified|conflict|gap)\b", re.I)
+
+
+def misattributed(text: str, metrics: dict[str, dict[str, Any]], names: list[str]) -> bool:
+    """True when a figure is credited to the wrong company: "NVIDIA's unit price {m:x}" where x is AMD's.
+
+    A figure is misattributed when other companies are named just before it and its own entity is not.
+    """
+    for m in TOKEN.finditer(text):
+        entity = str((metrics.get(m.group(1)) or {}).get("entity") or "").lower()
+        before = text[max(0, m.start() - 80):m.start()].lower()
+        others = [n.lower() for n in names if n and n.lower() in before and n.lower() not in entity and entity not in n.lower()]
+        if entity and others and entity not in before:
+            return True
+    return False
+
+
 def render_text(text: str, metrics: dict[str, dict[str, Any]], names: list[str], *, need_entity: bool = False) -> Optional[str]:
     """Replace tokens with stored values. None when the text is not allowed."""
     text = (text or "").strip()
@@ -105,7 +122,9 @@ def render_text(text: str, metrics: dict[str, dict[str, Any]], names: list[str],
         if uid not in metrics:
             return None
     bare = TOKEN.sub("", text)
-    if DIGIT.search(bare):
+    if DIGIT.search(bare) or STATUS_WORDS.search(bare):
+        return None  # numbers only come from tokens; evidence labels ("thin") are not prose
+    if misattributed(text, metrics, names):
         return None
     if need_entity and not (TOKEN.search(text) or any(n and n.lower() in text.lower() for n in names)):
         return None

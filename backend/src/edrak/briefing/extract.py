@@ -35,6 +35,7 @@ class Candidate(BaseModel):
     evidence_id: str
     source_span: str = Field(description="Copy the exact words from the source that state the number.")
     value_text: Optional[str] = Field(default=None, description="The number itself exactly as written in the span, with its unit, e.g. '$4.5 billion' or '21.3%'.")
+    sample_size: Optional[int] = Field(default=None, description="Items or deals behind a share or rate, when the passage gives it.")
     period: Optional[str] = None
     definition: Optional[str] = None
     label: Optional[str] = Field(default=None, description="For parts of a whole (sentiment, share): the part, e.g. 'positive'.")
@@ -92,6 +93,23 @@ def pick_number(span: str, unit_kind: Optional[str], value_text: Optional[str] =
     return found[0] if found else None
 
 
+# Product and model codes ("H100", "MI300X", "B200", "Gaudi 3"): when the model gives no label, the code in the
+# span tells two prices apart, so an H100 price and an H200 price are not read as sources disagreeing.
+_MODEL_CODE = re.compile(r"\b(?:[A-Z]{1,4}\d{2,4}[A-Z]{0,3}|Gaudi\s?\d|TPU\s?v?\d\w*|Trainium\s?\d?|Inferentia\s?\d?)\b")
+_LABELLED = {"price_per_tier", "unit_price", "hourly_price", "own_price", "win_loss", "market_concentration", "share_of_voice"}
+
+
+def _names_entity(entity: str, span: str, evidence: Evidence) -> bool:
+    """The span, the page title or the page's own site names the entity (whole words; short names such as AMD too)."""
+    low = f"{span} {evidence.source_title or ''}".lower()
+    words = [w for w in re.findall(r"[a-z0-9]+", (entity or "").lower()) if len(w) >= 2]
+    if words and all(re.search(rf"\b{re.escape(w)}\b", low) for w in words):
+        return True
+    host = (urlparse(evidence.source_url or "").hostname or "").lower().replace("-", "")
+    token = "".join(words)
+    return bool(token) and len(token) >= 3 and token in host
+
+
 def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Optional[MetricObservation]:
     """Validate one candidate against its saved source. None when it cannot be trusted."""
     text = _evidence_text(evidence)
@@ -102,6 +120,17 @@ def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Op
     parsed = pick_number(c.source_span, defn.unit_kind if defn else None, c.value_text)
     if parsed is None:
         return None
+    scope = source_scope(evidence, c.entity)
+    if defn and defn.preferred_sources == ["internal"] and scope not in (MetricScope.INTERNAL, MetricScope.OFFICIAL):
+        return None  # "our price" and our capacity come from our documents or our own site, never a reseller blog
+    if defn and defn.owner == "competitor_intelligence" and scope is MetricScope.THIRD_PARTY \
+            and not _names_entity(c.entity, c.source_span, evidence):
+        return None  # a third-party table cell that does not name the competitor is not that competitor's figure
+    label = (c.label or "").strip() or None
+    if label is None and defn and defn.id in _LABELLED:
+        codes = _MODEL_CODE.findall(c.source_span)
+        label = codes[0] if codes else None
+    sample = c.sample_size if c.sample_size and re.search(rf"\b{c.sample_size}\b", c.source_span) else None
     unit = parsed.unit
     if defn and defn.unit_kind == "percent":
         unit = "%"
@@ -112,9 +141,9 @@ def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Op
         unit = power.group(1).upper()
     return MetricObservation(
         metric_id=metric_id, entity=c.entity.strip() or "unknown", value_text=parsed.text, value=parsed.value,
-        unit=unit, period=c.period, label=c.label, definition=c.definition or (defn.definition if defn else None),
-        evidence_id=evidence.evidence_id, source_span=c.source_span.strip(),
-        scope=source_scope(evidence, c.entity),
+        unit=unit, period=c.period, label=label, definition=c.definition or (defn.definition if defn else None),
+        evidence_id=evidence.evidence_id, source_span=c.source_span.strip(), sample_size=sample,
+        scope=scope,
     )
 
 

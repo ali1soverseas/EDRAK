@@ -30,9 +30,20 @@ def normalize_digits(text: str) -> str:
     return text.translate(_ARABIC)
 
 
+# "$7–8 billion" and "70-73%": the scale or percent sign written once after a range applies to both ends.
+_RANGE = re.compile(
+    r"(?P<a>\d+(?:\.\d+)?)(?P<sep>\s*(?:–|—|-|to)\s*)(?P<b>[$€£]?\s*\d+(?:\.\d+)?)\s*(?P<s>thousand|million|billion|trillion|bn|mn|%)",
+    re.IGNORECASE,
+)
+
+
+def _spread_range_unit(text: str) -> str:
+    return _RANGE.sub(lambda m: f"{m['a']} {m['s']}{m['sep']}{m['b']} {m['s']}", text)
+
+
 def parse_numbers(text: str) -> list[ParsedNumber]:
     out: list[ParsedNumber] = []
-    for m in _NUM.finditer(normalize_digits(text or "")):
+    for m in _NUM.finditer(_spread_range_unit(normalize_digits(text or ""))):
         raw = m.group("num").replace(",", "")
         try:
             value = float(raw)

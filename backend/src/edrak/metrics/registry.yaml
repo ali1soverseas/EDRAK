@@ -278,7 +278,7 @@ metrics:
     preferred_sources: [internal]
     query_hints: ["win loss analysis"]
     check: {min_sample: 10}
-    visual: segmented
+    visual: ladder
     comparator: prior
   - id: capacity
     name: {en: "Delivery capacity", ar: "الطاقة التشغيلية"}
@@ -310,13 +310,13 @@ metrics:
   - id: unit_price
     name: {en: "Price per unit", ar: "السعر لكل وحدة"}
     aliases: [price per gpu, price per accelerator, system price, price per hour, gpu hour price]
-    definition: "Reported price of one unit of the offering: one product, one system, one course, one service, or one hour of use."
-    reads_as: "Where each supplier prices one unit. Only units of the same kind are compared."
+    definition: "Purchase price of one unit of the offering: one product, system, device, course or service. Not a rental or per-hour price, not a total cost of ownership."
+    reads_as: "What one unit costs to buy from each supplier. Only the same kind of unit is compared."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
     preferred_sources: [official, third_party]
-    query_hints: ["{entity} {offering} price per unit", "{entity} {offering} price per hour"]
+    query_hints: ["{entity} {offering} price per unit", "{entity} {offering} list price"]
     check: {}
     visual: ladder
     comparator: company
@@ -585,3 +585,29 @@ metrics:
     check: {}
     visual: kpi
     comparator: prior
+  - id: hourly_price
+    name: {en: "Price per hour", ar: "السعر بالساعة"}
+    aliases: [price per hour, hourly rate, rental price, on-demand price, gpu hour]
+    definition: "On-demand price for one hour of use of one unit in a cloud, for example one accelerator-hour."
+    reads_as: "What renting one unit for an hour costs. Compared only for the same unit and pricing model."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} {offering} price per hour", "{entity} on-demand instance pricing {offering}"]
+    check: {}
+    visual: ladder
+    comparator: company
+  - id: dc_revenue
+    name: {en: "Segment revenue", ar: "إيرادات القطاع"}
+    aliases: [data center revenue, data centre revenue, ai revenue, segment revenue, accelerator revenue]
+    definition: "Revenue of the business unit that sells the offering (for example the data-centre or AI accelerator segment) in a fiscal period."
+    reads_as: "How big each rival's business in this offering is, and how fast it grows."
+    unit_kind: currency
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} data center segment revenue", "{entity} {offering} revenue quarter"]
+    check: {}
+    visual: kpi
+    comparator: company
