@@ -13,16 +13,15 @@ from ..contracts import (
 from ..contracts.verification import VerificationDecision, VerificationResult
 
 
-class _Reset:
-    """Sentinel telling a reducer channel to discard its current value."""
-
-
-RESET = _Reset()
+# Sentinel telling a reducer channel to discard its current value. A plain string, not an object: the
+# checkpointer serialises every write with msgpack, and a custom class made the save fail ("Type is not
+# msgpack serializable: _Reset"), which surfaced later and failed the run at the review checkpoint.
+RESET = "__edrak_reset_channel__"
 
 T = TypeVar("T")
 
 
-def merge_by_task_id(left: list[T], right: list[T] | _Reset) -> list[T]:
+def merge_by_task_id(left: list[T], right: list[T] | str) -> list[T]:
     """Reducer for parallel dispatch.
 
     LangGraph merges the simultaneous writes from every dispatched worker
@@ -36,7 +35,7 @@ def merge_by_task_id(left: list[T], right: list[T] | _Reset) -> list[T]:
     previous value intact. A node that genuinely needs to clear the channel (a
     replan, whose new plan carries new task ids) must write :data:`RESET`.
     """
-    if isinstance(right, _Reset):
+    if isinstance(right, str) and right == RESET:
         return []
     merged = {item.task_id: item for item in left}
     merged.update({item.task_id: item for item in right})

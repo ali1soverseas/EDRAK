@@ -600,6 +600,13 @@ export function LiveRun() {
               <Icon name="arrow" size={16} flip />
             </button>
           )}
+          {data.state === "failed" && (
+            <button type="button" className="btn pri" disabled={busy}
+              title={L("Continue from the last step that was saved. Work already done is not repeated.", "تابع من آخر خطوة محفوظة. لا يُعاد ما أُنجز.")}
+              onClick={() => void edrak.resume(data.analysis_id).then(() => run.reload()).catch((e: Error) => window.alert(e.message))}>
+              <Icon name="play" size={14} /> {L("Resume from last step", "استئناف من آخر خطوة")}
+            </button>
+          )}
           {(data.state === "failed" || data.state === "cancelled") && (
             <button type="button" className="btn" disabled={busy} onClick={() => void again()}>
               {t("home.action.rerun")}

@@ -693,10 +693,13 @@ class RunManager:
         await active.stream.emit("paused", {"state": "paused"})
 
     async def resume_run(self, analysis_id: str) -> None:
+        """Continue a paused run, or a failed one, from its last saved step. Nothing already done is run again."""
         async with get_db() as db:
             run = await runs_repo.get_run(db, analysis_id)
-            if not run or run["status"] != "paused":
+            if not run or run["status"] not in ("paused", "failed"):
                 raise ValueError("not_paused")
+            if run["status"] == "failed" and not await self._has_checkpoint(analysis_id):
+                raise ValueError("no_checkpoint")
             await runs_repo.update_run(db, analysis_id, status="running", commit=False)
             await analyses_repo.set_request_status(db, analysis_id, "running", commit=False)
             await db.commit()
@@ -707,6 +710,10 @@ class RunManager:
         active.task = asyncio.create_task(
             self._execute_run(analysis_id, request, plan, active.run_view.title, from_checkpoint=True)
         )
+
+    async def _has_checkpoint(self, analysis_id: str) -> bool:
+        async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
+            return await saver.aget_tuple(self._graph_config(analysis_id)) is not None
 
     async def _request_and_plan(self, analysis_id: str) -> tuple[BusinessRequest, ResearchPlan]:
         async with get_db() as db:
