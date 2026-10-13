@@ -96,13 +96,25 @@ def _key(name: str, scope: str | None = None) -> tuple[str, str]:
       does not depend on the backend package, so it keeps working on its own.
       The two must agree on the naming rule, so change them together.
       """
-      names = [f"{name}_{scope.upper()}"] if scope else []
-      names.append(name)
+      names = [f"{name}_{scope.upper()}", f"{name}_{scope.upper()}_BACKUP"] if scope else []
+      names += [name, f"{name}_BACKUP"]
       for candidate in names:
           value = os.getenv(candidate, "").strip()
-          if value:
+          if value and candidate not in _REJECTED:
               return value, candidate
       return "", names[0]
+
+
+# Key variables a provider refused (401 invalid, 432/433 out of credits). The next call uses the next key in line:
+# the worker's own key, its _BACKUP, then the shared key. Without this one dead key failed every search silently.
+_REJECTED: set[str] = set()
+_REJECT_STATUSES = {401, 432, 433}
+
+
+def reject_key(key_name: str, status: int) -> None:
+    if key_name not in _REJECTED:
+        _REJECTED.add(key_name)
+        print(f"[SCRAPER]  {key_name} was refused (status {status}); switching to the next key")
 
 
 def _query_spec(item) -> dict:
@@ -693,6 +705,16 @@ def fetch_serper(queries):
                     data=json.dumps(_serper_body(spec, with_domains=with_domains)),
                     timeout=30,
                 )
+                if resp is not None and resp.status_code in (401, 403) and key_name:
+                    reject_key(key_name, resp.status_code)
+                    api_key, key_name = _key("SERPER_API_KEY", "market")
+                    if not api_key:
+                        return all_items, queries_run
+                    resp = _request(
+                        "post", "https://google.serper.dev/search",
+                        headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
+                        data=json.dumps(_serper_body(spec, with_domains=with_domains)), timeout=30,
+                    )
                 data = resp.json() if resp is not None else {}
             except Exception as exc:
                 print(f"[SCRAPER]  SKIP query '{spec['q']}' ({type(exc).__name__}: {exc})")
@@ -731,6 +753,12 @@ def _tavily_body(spec: dict, api_key: str, *, with_domains: bool) -> dict:
     return body
 
 
+class _KeyRefused(Exception):
+    def __init__(self, status: int) -> None:
+        super().__init__(status)
+        self.status = status
+
+
 def _fetch_tavily_search(query: str, api_key: str, spec: dict | None = None) -> list[dict]:
     spec = spec or {"q": query}
 
@@ -745,8 +773,10 @@ def _fetch_tavily_search(query: str, api_key: str, spec: dict | None = None) -> 
         except requests.RequestException as exc:
             print(f"[SCRAPER]  SKIP tavily '{spec['q'][:40]}' ({type(exc).__name__})")
             return []
+        if resp is not None and resp.status_code in _REJECT_STATUSES:
+            raise _KeyRefused(resp.status_code)
         if resp is None or resp.status_code != 200:
-            print(f"[SCRAPER]  SKIP tavily '{spec['q'][:40]}' (status {resp.status_code})")
+            print(f"[SCRAPER]  SKIP tavily '{spec['q'][:40]}' (status {getattr(resp, 'status_code', 'none')})")
             return []
         items = []
         for hit in resp.json().get("results", []):
@@ -787,7 +817,14 @@ def fetch_web_search(queries):
         if not spec["q"]:
             continue
 
-        items = _fetch_tavily_search(spec["q"], api_key, spec)
+        items = []
+        while api_key:
+            try:
+                items = _fetch_tavily_search(spec["q"], api_key, spec)
+                break
+            except _KeyRefused as refused:
+                reject_key(key_name, refused.status)
+                api_key, key_name = _key("TAVILY_API_KEY", "market")
 
         if items:
             all_items.extend(items)
@@ -798,16 +835,82 @@ def fetch_web_search(queries):
     return all_items, queries_run
 
 
-def scrape_url_content(url):
-    headers = {"User-Agent": "Mozilla/5.0"}
-    response = _request("get", url, headers=headers, timeout=TIMEOUT)
-    if response is None or response.status_code != 200:
-        status = getattr(response, "status_code", "none")
-        return f"Error: Failed to retrieve page (Status {status})"
-    soup = BeautifulSoup(response.text, "html.parser")
-    for script in soup(["script", "style"]):
+# What a browser sends. A bare "Mozilla/5.0" is refused (403) by most sites with bot protection.
+BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/129.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+}
+MIN_PAGE_CHARS = 200
+
+
+def _page_text(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    for script in soup(["script", "style", "noscript"]):
         script.extract()
     return soup.get_text(separator="\n", strip=True)
+
+
+def _tavily_extract(url: str, scope: str | None = None) -> str:
+    """The page through Tavily's extract service, which gets past many bot walls. "" when it cannot.
+
+    Turned off with SCRAPER_EXTRACT_FALLBACK=0. Costs Tavily credits (about one per five pages).
+    """
+    if os.getenv("SCRAPER_EXTRACT_FALLBACK", "1") == "0":
+        return ""
+    resp = None
+    for _ in range(4):  # the scoped key, its backup, the shared key, its backup
+        api_key, key_name = _key("TAVILY_API_KEY", scope)
+        if not api_key:
+            return ""
+        try:
+            resp = _request("post", "https://api.tavily.com/extract", json={"urls": [url]},
+                            headers={"Authorization": f"Bearer {api_key}"}, timeout=40)
+        except requests.RequestException as exc:
+            print(f"[SCRAPER]  extract fallback failed for {url[:60]} ({type(exc).__name__})")
+            return ""
+        if resp is not None and resp.status_code in _REJECT_STATUSES:
+            reject_key(key_name, resp.status_code)
+            continue
+        break
+    if resp is None or resp.status_code != 200:
+        print(f"[SCRAPER]  extract fallback failed for {url[:60]} (status {getattr(resp, 'status_code', 'none')}, key {key_name})")
+        return ""
+    results = resp.json().get("results") or []
+    return str((results[0] or {}).get("raw_content") or "").strip() if results else ""
+
+
+def scrape_url_content(url, scope: str | None = None):
+    """The readable text of a page, or a string starting with "Error:" that says why it could not be read.
+
+    A direct request first, with browser headers. When the site refuses it, times out, or sends back almost no text
+    (pages built by JavaScript), Tavily's extract service is tried before giving up.
+    """
+    reason = ""
+    try:
+        response = _request("get", url, headers=BROWSER_HEADERS, timeout=TIMEOUT, allow_redirects=True)
+    except requests.RequestException as exc:
+        response = None
+        reason = "timed out" if isinstance(exc, requests.Timeout) else f"could not connect ({type(exc).__name__})"
+    if response is not None and response.status_code == 200:
+        text = _page_text(response.text)
+        if len(text) >= MIN_PAGE_CHARS:
+            return text
+        reason = "the page had almost no text (it is probably built by JavaScript)"
+    elif response is not None:
+        code = response.status_code
+        reason = f"blocked by the site (status {code})" if code in (401, 403, 406, 429, 451) else f"status {code}"
+    text = _tavily_extract(url, scope)
+    if len(text) >= MIN_PAGE_CHARS:
+        return text
+    return f"Error: {reason or 'no response'}" + ("; the extract fallback could not read it either" if os.getenv("SCRAPER_EXTRACT_FALLBACK", "1") != "0" else "")
 
 
 def serialize_items(items: list) -> str:

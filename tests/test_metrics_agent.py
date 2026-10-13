@@ -247,3 +247,40 @@ def test_no_regression_official_source_required_remains_gap_for_third_party():
     out = fixed[0].metadata["requirement_outcomes"][0]
     assert out["status"] == "gap"
 
+
+
+def test_a_snippet_that_states_the_figure_is_used_without_reading_the_page():
+    task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
+    res = WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1)
+    hits = [{"url": f"https://blog{i}.example.com/a", "title": "Overview", "snippet": "General words"} for i in range(6)]
+    hits.append({"url": "https://reviews.example.com/globex", "title": "Globex pricing", "snippet": "Globex Team plan costs $19 per user."})
+    fetched: list[str] = []
+    agent.use(find=_finder_for("Globex Team plan costs $19 per user", "Globex"), search=lambda q: hits,
+              fetch=lambda u: fetched.append(u) or "")
+    fixed, _ = run(_request(), [task], [res])
+    assert any(m["value"] == 19.0 for m in fixed[0].metadata["metrics"])
+    # the ranked result with the figure in its snippet was tried first, not the six overview pages
+    assert fetched and fetched[0] == "https://reviews.example.com/globex"
+
+
+def test_each_retry_looks_somewhere_else():
+    from edrak.metrics.registry import get_registry
+    reg = get_registry()
+    r = MetricRequirement(metric_id="dc_revenue", entity="AMD", query_hints=["AMD data center segment revenue"])
+    q1 = agent._queries(r, reg.get("dc_revenue"), "Data center GPUs", 1)
+    q2 = agent._queries(r, reg.get("dc_revenue"), "Data center GPUs", 2)
+    q3 = agent._queries(r, reg.get("dc_revenue"), "Data center GPUs", 3)
+    assert any("investor relations" in q for q in q2) and any("10-K" in q or "quarterly results" in q for q in q3)
+    assert not set(q1) & set(q2) and not set(q2) & set(q3)
+
+
+def test_a_second_round_does_not_repeat_searches_already_used_up():
+    task = _task(WorkerType.COMPETITOR_INTELLIGENCE, [_price("Globex")], "t1")
+    queries: list[str] = []
+    agent.use(find=lambda p: Candidates(metrics=[]), search=lambda q: queries.append(q) or [], fetch=lambda u: "")
+    first, _ = run(_request(), [task], [WorkerResult(task_id="t1", worker=task.worker, status=WorkerStatus.COMPLETED, attempt=1)])
+    n = len(queries)
+    assert n > 0 and first[0].metadata["metrics_hunts"]
+    again = first[0].model_copy(update={"attempt": 2})
+    run(_request(), [task], [again])
+    assert len(queries) == n  # nothing searched again; the gap stands with its reason

@@ -51,7 +51,9 @@ MAX_HUNTS = 3  # targeted searches per (metric, entity) after the harvest
 WINDOW = 600  # characters each side of a metric mention
 MAX_WINDOWS = 16  # passages per model call
 MAX_HUNT_CELLS = 20  # cells hunted per round, required ones first
-PAGES_PER_HUNT = 3
+PAGES_PER_HUNT = 3  # pages read per try for an optional figure
+PAGES_REQUIRED = 5  # and for a required one
+SNIPPETS_PER_HUNT = 5  # search snippets with a number, passed to the extractor without fetching the page
 PARALLEL = 4
 _STANCES = ("positive", "neutral", "negative", "mixed")
 _OFFICIAL_TYPES = {SourceType.PRICING_PAGE, SourceType.OFFICIAL_DOCUMENTATION, SourceType.RELEASE_NOTES, SourceType.ANNOUNCEMENT}
@@ -381,8 +383,18 @@ def build_grid(state: MetricsState) -> MetricsState:
                 seen.add(k)
                 grid.append({"task_id": t.task_id, "requirement": r})
     topic = topic_of(state)
-    log_action(AGENT, f"grid: {len(grid)} figures for {len({c['requirement'].entity for c in grid})} entities, about {topic or 'no named topic'}")
-    return {"grid": grid, "observations": {}, "hunts": {}, "read_official": [], "log": [], "topic": topic}
+    # Searches an earlier round already ran for a figure count here too: a second round does not repeat them. It still
+    # reads the new round's sources for every figure (harvest), so a figure the new round found is still picked up.
+    hunts: dict[str, int] = {}
+    read_official: set[str] = set()
+    for r in state.get("results") or []:
+        for k, n in (r.metadata.get("metrics_hunts") or {}).items():
+            hunts[k] = max(hunts.get(k, 0), int(n))
+        read_official.update(r.metadata.get("metrics_read_official") or [])
+    carried = sum(1 for c in grid if hunts.get(cell_key(c["requirement"].metric_id, c["requirement"].entity), 0) >= MAX_HUNTS)
+    log_action(AGENT, f"grid: {len(grid)} figures for {len({c['requirement'].entity for c in grid})} entities, about {topic or 'no named topic'}"
+                      + (f"; {carried} already searched {MAX_HUNTS} times in an earlier round" if carried else ""))
+    return {"grid": grid, "observations": {}, "hunts": hunts, "read_official": sorted(read_official), "log": [], "topic": topic}
 
 
 def topic_of(state: MetricsState) -> str:
@@ -520,12 +532,56 @@ def _queries(r: MetricRequirement, defn: MetricDef, offering: str, attempt: int,
         out.append(_clean(filled))
     if not out:
         out = [_clean(f"{r.entity} {name}")]
-    if attempt == 2:  # the second hunt widens: the metric's other names (never a short acronym such as "tam")
-        out = [_clean(f"{r.entity} {a}") for a in defn.aliases if len(a) >= 5][:2] or out
-    elif attempt >= 3:  # the third asks for a recent report on the figure
-        out = [_clean(f"{r.entity} {name} {date.today().year}"), _clean(f"{r.entity} {name} report")]
+    alias = next((a for a in defn.aliases if len(a) >= 5), name.lower())
+    year = date.today().year
+    if attempt == 2:
+        # The second try looks where the entity speaks for itself: a company's investor and product pages, a market's
+        # government and statistics bodies.
+        if defn.owner == "market_intelligence":
+            out = [_clean(f"{r.entity} {alias} official statistics"), _clean(f"{r.entity} government {alias} {year}")]
+        else:
+            out = [_clean(f"{r.entity} investor relations {alias}"), _clean(f"{r.entity} official {alias}")]
+    elif attempt >= 3:
+        # The third looks at filings and established research rather than rewording the same question.
+        if defn.owner == "market_intelligence":
+            out = [_clean(f"{r.entity} {alias} industry report {year}"), _clean(f"{r.entity} {alias} market research analyst estimate")]
+        else:
+            out = [_clean(f"{r.entity} annual report 10-K {alias}"), _clean(f"{r.entity} quarterly results {alias} {year}")]
     out = [_clean(_with_topic(q, offering, defn)) for q in out]
     return list(dict.fromkeys(q for q in out if q))[:2]
+
+
+def rank_hits(hits: list[dict[str, str]], entity: str, defn: MetricDef, topic: str, official_first: bool) -> list[dict[str, str]]:
+    """Search results most likely to state the figure first.
+
+    A result scores for a number in its snippet, for naming the entity, for the metric's own words and the topic, and
+    (when the metric wants it) for being the entity's own site. Before this the first three results were read in
+    search order, often an overview page with no figure, while the result whose snippet stated it went unread.
+    """
+    terms = _terms(defn)
+    words = topic_words(topic)
+    ent = [w for w in re.findall(r"[a-z0-9]+", entity.lower()) if len(w) >= 2]
+
+    def score(h: dict[str, str]) -> float:
+        text = f"{h.get('title') or ''} {h.get('snippet') or ''}".lower()
+        s = 0.0
+        if re.search(r"\d", h.get("snippet") or ""):
+            s += 2
+        unit_rx = _UNIT_RX.get(defn.unit_kind)
+        if unit_rx is not None and unit_rx.search(h.get("snippet") or ""):
+            s += 2
+        if ent and all(re.search(rf"\b{re.escape(w)}\b", text) for w in ent):
+            s += 2
+        s += min(2, sum(1 for t in terms if t in text) * 0.5)
+        if words and on_topic(text, words):
+            s += 1
+        if official_first and is_own_site(h.get("url"), entity):
+            s += 3
+        return s
+
+    seen: set[str] = set()
+    unique = [h for h in hits if h.get("url") and not (h["url"] in seen or seen.add(h["url"]))]
+    return sorted(unique, key=score, reverse=True)
 
 
 def hunt(state: MetricsState) -> MetricsState:
@@ -554,7 +610,9 @@ def hunt(state: MetricsState) -> MetricsState:
         for q in queries:
             hits.extend(_seams["search"](q))
         official_first = "official" in (r.preferred_source_types or defn.preferred_sources)
-        hits.sort(key=lambda h: not is_own_site(h.get("url"), r.entity) if official_first else 0)
+        hits = [h for h in rank_hits(hits, r.entity, defn, offering, official_first)
+                if not is_noise(h.get("url"), h.get("title")) and not is_explainer(h.get("title"))]
+        budget = PAGES_REQUIRED if r.required else PAGES_PER_HUNT
         evs: list[Evidence] = []
         own = False
         pages = snippets = 0
@@ -562,8 +620,8 @@ def hunt(state: MetricsState) -> MetricsState:
             url = h.get("url", "")
             if not url or url in seen_urls or any(e.source_url == url for e in evs):
                 continue
-            if is_noise(url, h.get("title")) or is_explainer(h.get("title")):
-                continue
+            if pages + snippets >= budget:
+                break
             text = _seams["fetch"](url)
             from_snippet = False
             if not text.strip():
@@ -583,8 +641,22 @@ def hunt(state: MetricsState) -> MetricsState:
                                 excerpt=text[:1500], page_text=text,
                                 metadata={"found_by": AGENT, "metric_id": r.metric_id, "competitor": r.entity, "first_party": official,
                                           "snippet_only": from_snippet}))
-            if len(evs) >= PAGES_PER_HUNT:
+        # The snippets of the results not read still often state the figure ("AMD's data center revenue was $3.9
+        # billion"), and they cost no extra search: up to SNIPPETS_PER_HUNT of them go to the extractor as well.
+        read = {e.source_url for e in evs}
+        for h in hits:
+            if sum(1 for e in evs if e.metadata.get("snippet_only")) >= SNIPPETS_PER_HUNT:
                 break
+            url = h.get("url", "")
+            snippet = f"{h.get('title') or ''}. {h.get('snippet') or ''}".strip(" .")
+            if not url or url in read or url in seen_urls or not re.search(r"\d", h.get("snippet") or ""):
+                continue
+            read.add(url)
+            snippets += 1
+            evs.append(Evidence(source_type=SourceType.WEB_PAGE, source_title=h.get("title") or None, source_url=url,
+                                publisher=_host(url) or None, extracted_fact=snippet, excerpt=snippet, page_text=snippet,
+                                metadata={"found_by": AGENT, "metric_id": r.metric_id, "competitor": r.entity,
+                                          "first_party": is_own_site(url, r.entity), "snippet_only": True}))
         obs = point(defn, [r.entity], windows_for(defn, [r.entity], evs, offering), offering) if evs else []
         diag = {"queries": queries, "results": len(hits), "pages": pages, "snippets": snippets}
         return cell, evs, obs, own, diag
@@ -649,6 +721,10 @@ def finish(state: MetricsState) -> MetricsState:
             mine.append(o.model_copy(update={"status": None}))
         meta = dict(r.metadata)
         meta["metrics"] = [o.model_dump(mode="json") for o in mine]
+        mine_keys = {cell_key(c["requirement"].metric_id, c["requirement"].entity) for c in state.get("grid") or []
+                     if c["task_id"] == r.task_id}
+        meta["metrics_hunts"] = {k: n for k, n in hunts.items() if k in mine_keys}
+        meta["metrics_read_official"] = sorted(k for k in read_official if k in mine_keys)
         task = next((t for t in state.get("tasks") or [] if t.task_id == r.task_id), None)
         if task is not None:
             meta["requirements"] = [q.model_dump(mode="json") for q in task.requirements]

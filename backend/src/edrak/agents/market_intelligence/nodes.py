@@ -767,14 +767,20 @@ def task_executor(state: MarketAgentState) -> dict:
                 break
             print(f"  Scraping: {url[:80]}")
             text = ""
+            why_not = ""
             for scrape_attempt in range(MAX_RETRIES):
                 try:
                     text = scrape_url_content(url)
+                    if isinstance(text, str) and text.startswith("Error:"):
+                        why_not, text = text[len("Error:"):].strip(), ""
                     # Guardrail: page text is data, never instructions.
                     if text:
                         from edrak.guardrails.content import is_high_risk, sanitize
 
-                        text = "" if is_high_risk(text) else sanitize(text)[0]
+                        if is_high_risk(text):
+                            why_not, text = "the page text was flagged by the prompt-injection guardrail", ""
+                        else:
+                            text = sanitize(text)[0]
                     break
                 except (ConnectionError, TimeoutError) as exc:
                     if scrape_attempt < MAX_RETRIES - 1:
@@ -785,10 +791,12 @@ def task_executor(state: MarketAgentState) -> dict:
                         print(f"    FAILED after {MAX_RETRIES} attempts")
                 except Exception as exc:
                     print(f"    FAILED: {exc}")
+                    why_not = f"the request failed ({type(exc).__name__})"
                     break
             if not isinstance(text, str) or len(text) < 100:
-                print("    -> too short or error")
-                log_block("market_intelligence", f"SCRAPED URL  {url}", "skipped: too short or error")
+                why_not = why_not or "the page had almost no text"
+                print(f"    -> skipped: {why_not}")
+                log_action("market_intelligence", f"could not read {url[:90]}: {why_not}")
                 continue
             excerpt = relevant_excerpt(text, task["description"], goal, settings.SCRAPE_TEXT_CHARS)
             page_ok, page_why = source_is_relevant(task["description"], goal, excerpt)
