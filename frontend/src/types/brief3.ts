@@ -24,6 +24,8 @@ export interface BriefCard {
   blocking?: boolean;
   version?: number;
   origin?: "pipeline" | "challenge";
+  reads_as?: string | null;
+  definition?: string;
 }
 
 export interface MetricRow {
@@ -35,6 +37,7 @@ export interface MetricRow {
 export interface KpiItem {
   card_key: string; metric_id: string; label: { en: string; ar?: string }; entity: string; value: string; status: CardStatus;
   comparator: Comparator | null; uid: string | null;
+  period?: string | null; reads_as?: string | null; definition?: string;
 }
 
 export interface SectionInfo { lens: string; label: string; weight: number; cards: string[]; gap_cards: string[]; evidence_count: number; collapsed: boolean }
@@ -82,7 +85,7 @@ export interface BriefV3 {
 
 export interface KeyFinding { text: string; lens: string; finding_id: string; refs: number[]; reliability: number }
 export interface ComparisonCell { entity: string; value: string; label: string | null; period: string | null; uid: string; ref: number | null; status: string }
-export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null }
+export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; lens?: string; reads_as?: string | null; definition?: string; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null }
 export interface LensCoverage { lens: string; label: string; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
 export interface DeckGap { kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null; blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string }
 

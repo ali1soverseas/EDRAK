@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..metrics.profile import business_model
+
 import contextlib
 import io
 import json
@@ -238,7 +240,7 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
                 req.company_profile.name,
                 comps,
                 list(ctx.markets),
-                ctx.offering or "",
+                ctx.offering or "", business_model(req.company_profile, offering=ctx.offering, goal=req.goal),
             )})
         tasks.append(t)
     try:

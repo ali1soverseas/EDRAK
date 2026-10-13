@@ -81,13 +81,14 @@ def test_missing_required_metric_is_a_gap_card_never_a_blank():
     assert all(c["slots"]["reason"] for c in cards)
 
 
-def test_sentiment_below_minimum_sample_falls_back_to_a_table():
+def test_sentiment_below_minimum_sample_is_a_gap_not_a_number():
     tpl = get_registry().template("competitive_intelligence")
     rows = [_row("a" * 32, "sentiment_split", "Acme", 60.0, label="positive", sample_size=12, unit="%"),
             _row("b" * 32, "sentiment_split", "Acme", 40.0, label="negative", sample_size=12, unit="%")]
-    cards, _ = build_cards(rows, [], [], [], tpl, "Acme")
-    c = next(c for c in cards if c["metric_id"] == "sentiment_split")
-    assert c["component"] == "table" and "fewer than 30" in c["caveat"]
+    cards, gaps = build_cards(rows, [], [], [], tpl, "Acme")
+    assert not any(c["metric_id"] == "sentiment_split" and c["component"] != "gap" for c in cards)
+    g = next(g for g in gaps if g["metric_id"] == "sentiment_split")
+    assert g["slots"]["reason"] == "below_min_sample"
 
 
 def test_partial_share_shows_others_and_unknown_and_is_labelled_incomplete():
@@ -102,12 +103,39 @@ def test_partial_share_shows_others_and_unknown_and_is_labelled_incomplete():
     assert "Incomplete" in c["caveat"]
 
 
-def test_parts_over_100_fall_back_to_a_table():
+def test_parts_over_100_are_a_gap_not_a_table():
     tpl = get_registry().template("competitive_intelligence")
     rows = [_row("a" * 32, "share_of_voice", "Acme", 70.0, sample_size=100, unit="%"),
             _row("b" * 32, "share_of_voice", "Fawry", 50.0, sample_size=100, unit="%")]
-    cards, _ = build_cards(rows, [], [], [], tpl, "Acme")
-    assert next(c for c in cards if c["metric_id"] == "share_of_voice")["component"] == "table"
+    cards, gaps = build_cards(rows, [], [], [], tpl, "Acme")
+    assert not any(c["metric_id"] == "share_of_voice" and c["component"] != "gap" for c in cards)
+    assert next(g for g in gaps if g["metric_id"] == "share_of_voice")["slots"]["reason"] == "inconsistent"
+
+
+def test_one_search_interest_value_is_a_gap():
+    tpl = get_registry().template("market_entry_expansion")
+    cards, gaps = build_cards([_row("a" * 32, "search_interest", "NVIDIA", 30.0, period="2026")], [], [], [], tpl, "NVIDIA")
+    assert not any(c["metric_id"] == "search_interest" and c["component"] != "gap" for c in cards)
+    assert any(g["metric_id"] == "search_interest" and g["slots"]["reason"] == "below_min_sample" for g in gaps)
+
+
+def test_change_vs_prior_needs_one_source_and_dated_periods():
+    from edrak.briefing.fill import same_series
+    a = {"period": "2031", "unit": None, "evidence_uid": "e1"}
+    assert same_series(a, {"period": "2026", "unit": None, "evidence_uid": "e1"})
+    assert not same_series(a, {"period": "2026", "unit": None, "evidence_uid": "e2"})
+    assert not same_series({"period": "per pod", "unit": "USD", "evidence_uid": "e1"},
+                           {"period": "per node per month", "unit": "USD", "evidence_uid": "e1"})
+
+
+def test_cards_and_kpis_say_how_to_read_the_figure():
+    from edrak.briefing.layout import kpi_strip
+    tpl = get_registry().template("market_entry_expansion")
+    cards, _ = build_cards([_row("a" * 32, "market_size", "Egypt", 2.0e9, unit="USD", period="2025")], [], [], [], tpl, "Acme")
+    c = next(c for c in cards if c["metric_id"] == "market_size")
+    assert c["reads_as"] and c["definition"]
+    k = kpi_strip(cards, tpl)[0]
+    assert k["reads_as"] and k["period"] == "2025"
 
 
 def test_a_single_found_share_is_a_kpi_card_not_a_pie():

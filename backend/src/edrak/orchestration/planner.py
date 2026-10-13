@@ -14,6 +14,7 @@ from ..contracts import (
 from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
 from ..metrics.planning import requirements_for
+from ..metrics.profile import business_model
 from .prompts import PLANNER_SYSTEM_PROMPT
 
 MAX_REPAIR_ATTEMPTS = 1
@@ -56,6 +57,8 @@ class PlannerPlan(BaseModel):
 
     assignments: list[WorkerAssignment]
     rationale: str | None = None
+    # What is being assessed, as a short search phrase ("sovereign AI infrastructure"), when the form named no offering.
+    topic: str | None = None
 
 
 class LlmPlanner:
@@ -108,6 +111,12 @@ class LlmPlanner:
             if assignment.worker not in {a.worker for a in assignments}:
                 assignments.append(assignment)
         ctx = request.business_context
+        topic = " ".join((reply.topic or "").split()[:6]).strip(" .")
+        if not (ctx.offering or "").strip() and topic:
+            # Every worker and the metrics agent search for this, so "Latin America market size" becomes
+            # "sovereign AI infrastructure Latin America market size".
+            ctx = ctx.model_copy(update={"offering": topic})
+        model = business_model(request.company_profile, offering=ctx.offering, goal=request.goal)
         competitors = [c.name for c in ctx.competitors] or list(ctx.targets)
         tasks = [
             ResearchTask(
@@ -119,7 +128,7 @@ class LlmPlanner:
                 business_context=ctx,
                 requirements=requirements_for(
                     assignment.worker.value, ctx.use_case.value, request.company_profile.name,
-                    competitors, list(ctx.markets), ctx.offering or "",
+                    competitors, list(ctx.markets), ctx.offering or "", model,
                 ),
             )
             for assignment in assignments

@@ -77,7 +77,7 @@ def reconcile(results: list[WorkerResult]) -> tuple[list[WorkerResult], list[str
             if disagree and len(sources) > 1:
                 status[id(o)] = MetricStatus.CONFLICT
             elif (o.scope in (MetricScope.OFFICIAL, MetricScope.INTERNAL, MetricScope.PUBLIC_PROXY) or len(sources) > 1
-                  or (o.derived and o.sample_size)):  # counted in code from labelled items
+                  or (o.formula and o.sample_size)):  # counted in code from labelled items
                 status[id(o)] = MetricStatus.VERIFIED
             else:
                 status[id(o)] = MetricStatus.THIN

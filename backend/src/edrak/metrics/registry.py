@@ -17,6 +17,8 @@ class MetricDef(BaseModel):
     name: dict[str, str]
     aliases: list[str] = Field(default_factory=list)
     definition: str
+    # One line telling a reader what the figure means for the decision ("How big the prize is in this market").
+    reads_as: str = ""
     unit_kind: str
     period: str
     owner: str
@@ -42,6 +44,10 @@ class UseCaseTemplate(BaseModel):
     metrics_theme: dict[str, str] = Field(default_factory=lambda: {"title": "Business metrics", "subtitle": ""})
     signal_emphasis: dict[str, float] = Field(default_factory=dict)
     decision_framing: str = ""
+    # Other metric sets for other kinds of business, e.g. hardware_infrastructure: {kpi_strip, required, optional}.
+    variants: dict[str, dict] = Field(default_factory=dict)
+    # The use case, plus "@<business model>" when a variant was applied.
+    key: str = ""
 
     def emphasis(self, lens: str) -> float:
         return self.signal_emphasis.get(lens, self.lens_weights.get(lens, 0.5))
@@ -55,8 +61,18 @@ class Registry:
     def get(self, metric_id: Optional[str]) -> Optional[MetricDef]:
         return self.metrics.get(metric_id or "")
 
-    def template(self, use_case: str) -> UseCaseTemplate:
-        return self.templates.get(use_case) or self.templates["competitive_intelligence"]
+    def template(self, use_case: str, business_model: Optional[str] = None) -> UseCaseTemplate:
+        """The use case's template, with the metric set for the kind of business when one is defined.
+
+        `use_case` may also be a saved key such as "market_entry_expansion@hardware_infrastructure".
+        """
+        use_case, _, saved = (use_case or "").partition("@")
+        base = self.templates.get(use_case) or self.templates["competitive_intelligence"]
+        model = business_model or saved
+        variant = base.variants.get(model or "")
+        if not variant:
+            return base.model_copy(update={"key": base.use_case})
+        return base.model_copy(update={**variant, "key": f"{base.use_case}@{model}"})
 
     def owned_by(self, worker: str) -> list[MetricDef]:
         return [m for m in self.metrics.values() if m.owner == worker]
@@ -85,7 +101,9 @@ def get_registry() -> Registry:
     templates = {k: UseCaseTemplate(use_case=k, **v) for k, v in tpl_raw.items()}
     reg = Registry(metrics, templates)
     for t in templates.values():
-        for mid in [*t.kpi_strip, *t.required, *t.optional]:
+        ids = [*t.kpi_strip, *t.required, *t.optional]
+        ids += [m for v in t.variants.values() for k in ("kpi_strip", "required", "optional") for m in v.get(k, [])]
+        for mid in ids:
             if mid not in reg.metrics:
                 raise ValueError(f"template {t.use_case} references unknown metric {mid}")
     return reg

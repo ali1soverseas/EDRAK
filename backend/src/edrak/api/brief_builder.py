@@ -371,6 +371,9 @@ def build_brief(
         evidence_status = "insufficient"
     elif verified_n == 0 and verdict_by_finding:
         evidence_status = "insufficient"
+    elif (((v3 or {}).get("coverage") or {}).get("score") is not None and v3["coverage"]["score"] < 0.5):
+        # The findings passed, but fewer than half of the figures this decision needs were found and checked.
+        evidence_status = "partial"
     else:
         evidence_status = "verified"
 

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from edrak.metrics.profile import business_model
+
 import logging
+import re
 from typing import Any, Optional
 
 from edrak.api.schemas import AnalysisForm
@@ -75,6 +78,56 @@ def derive_title(form: AnalysisForm) -> str:
     return (form.goal.strip() or "Untitled analysis")[:64]
 
 
+_GROUP = re.compile(r"^(?P<head>[^()]*?)\s*\((?P<inner>[^()]+)\)\s*$")
+_FILLER = re.compile(r"\b(?:emerging|new|key|target|markets?|regions?|countries|the)\b", re.I)
+
+
+def _balance(name: str) -> str:
+    """Drop a bracket left open or closed by a bad split, keep a balanced one: "Egypt (Cairo)"."""
+    name = name.strip()
+    while name.count("(") > name.count(")"):
+        i = name.rfind("(")
+        name = (name[:i] + name[i + 1:]).strip()
+    while name.count(")") > name.count("("):
+        i = name.find(")")
+        name = (name[:i] + name[i + 1:]).strip()
+    return name
+
+
+def split_markets(text: str) -> tuple[list[str], str]:
+    """Markets named on the form, and the topic phrase around them when there is one.
+
+    Commas inside brackets do not split: "Sovereign AI markets (Southeast Asia, Latin America, Africa)" is
+    three markets, Southeast Asia, Latin America and Africa, about "Sovereign AI". A plain list splits on
+    commas and semicolons. Stray brackets never end up in a market name.
+    """
+    text = (text or "").replace(";", ",").strip()
+    if not text:
+        return [], ""
+    parts, depth, cur = [], 0, ""
+    for ch in text:
+        depth += ch == "("
+        depth -= ch == ")" and depth > 0
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    parts.append(cur)
+    markets: list[str] = []
+    topic = ""
+    for part in (p.strip() for p in parts):
+        group = _GROUP.match(part)
+        if group and "," in group["inner"]:
+            markets += [m.strip() for m in group["inner"].split(",")]
+            head = re.sub(r"\s+", " ", _FILLER.sub(" ", group["head"])).strip(" -:")
+            topic = topic or head
+        else:
+            markets.append(part)
+    markets = [_balance(m) for m in markets]
+    return list(dict.fromkeys(m for m in markets if m)), topic
+
+
 def standard_inputs(form: AnalysisForm, company: dict[str, Any]) -> dict[str, Any]:
     """Competitors, markets, offering and target customers, under one set of names for every use case.
 
@@ -101,14 +154,14 @@ def standard_inputs(form: AnalysisForm, company: dict[str, Any]) -> dict[str, An
             ],
             "discovered_by": (entity or {}).get("discovered_by", "user"),
         })
-    markets = [m.strip() for m in form.market.replace(";", ",").split(",") if m.strip()]
+    markets, topic = split_markets(form.market)
     if not markets and form.use_case != UseCase.MARKET_ENTRY_EXPANSION:
         # Without a market named, the analysis is about where the company already sells.
         markets = [m["name"] for m in company.get("markets") or [] if m.get("relation") == "serves"]
     return {
         "competitors": competitors,
         "markets": markets,
-        "offering": form.offering.strip() or None,
+        "offering": form.offering.strip() or topic or None,
         "target_customers": (form.target_customers or "").strip() or None,
     }
 
@@ -197,7 +250,7 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
             business_context=request.business_context,
             requirements=requirements_for(
                 w.value, ctx.use_case.value, request.company_profile.name,
-                competitors, list(ctx.markets), ctx.offering or "",
+                competitors, list(ctx.markets), ctx.offering or "", business_model(request.company_profile, offering=ctx.offering, goal=request.goal),
             ),
         )
         for w in allowed_workers

@@ -72,9 +72,11 @@ export function InsightCard({ card, compact = false }: { card: BriefCard; compac
         <StatusBadge status={card.status} />
       </header>
       <div className="icard-body"><CardBody card={card} /></div>
+      {!gap && !compact && card.reads_as && <p className="icard-reads" dir="auto">{card.reads_as}</p>}
       {card.caveat && <p className="icard-caveat"><Icon name="info" size={12} /> <span>{card.caveat}</span></p>}
       <footer className="icard-foot">
         <EvChips refs={card.refs} max={compact ? 3 : 5} />
+        {card.status === "thin" && <span className="chip c-ins" title={L("Only one independent source reports this figure.", "مصدر مستقل واحد فقط يذكر هذا الرقم.")}>{L("One source", "مصدر واحد")}</span>}
         {card.derived && <span className="chip c-line" title={L("Computed by Edrak from stored figures. Open the card for the formula.", "حُسب من الأرقام المخزنة. افتح البطاقة لرؤية المعادلة.")}>ƒ {L("derived", "مشتق")}</span>}
         {card.version && card.version > 1 ? <span className="chip c-blue">v{card.version}</span> : null}
         <span className="grow" />

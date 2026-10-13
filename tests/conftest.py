@@ -48,3 +48,14 @@ def _no_model_calls_from_guardrails_or_evaluation(monkeypatch):
 
     monkeypatch.setattr(settings, "GUARDRAIL_SCOPE_CHECK", False)
     monkeypatch.setattr(settings, "EVALUATION_JUDGE", False)
+
+
+@pytest.fixture(autouse=True)
+def _offline_metrics_agent():
+    """The metrics agent never reaches the web or a model in tests unless a test plugs in its own seams."""
+    from edrak.agents.metrics import nodes as agent
+    from edrak.briefing.extract import Candidates
+
+    agent.use(find=lambda p: Candidates(metrics=[]), search=lambda q: [], fetch=lambda u: "")
+    yield
+    agent.use(find=lambda p: Candidates(metrics=[]), search=lambda q: [], fetch=lambda u: "")

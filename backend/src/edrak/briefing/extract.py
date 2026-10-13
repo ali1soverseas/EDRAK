@@ -8,6 +8,7 @@ A number the model "remembers" but the source does not contain is dropped.
 from __future__ import annotations
 
 import logging
+import re
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -18,7 +19,7 @@ from edrak.contracts.base import ContractModel
 from edrak.contracts.task import ResearchTask
 from edrak.guardrails.content import sanitize
 from edrak.metrics.contracts import MetricObservation, MetricRequirement, MetricScope
-from edrak.metrics.numbers import parse_value, span_in_source
+from edrak.metrics.numbers import ParsedNumber, parse_numbers, span_in_source
 from edrak.metrics.registry import get_registry
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class Candidate(BaseModel):
     entity: str
     evidence_id: str
     source_span: str = Field(description="Copy the exact words from the source that state the number.")
+    value_text: Optional[str] = Field(default=None, description="The number itself exactly as written in the span, with its unit, e.g. '$4.5 billion' or '21.3%'.")
     period: Optional[str] = None
     definition: Optional[str] = None
     label: Optional[str] = Field(default=None, description="For parts of a whole (sentiment, share): the part, e.g. 'positive'.")
@@ -59,19 +61,55 @@ def _evidence_text(e: Evidence) -> str:
     return f"{e.extracted_fact or ''}\n{e.excerpt or ''}\n{e.page_text or ''}"
 
 
+_MULTIPLIER = re.compile(r"\d\s*(?:thousand|million|billion|trillion|mn|bn|[kmbt])\b", re.I)
+
+
+def _is_year(p: ParsedNumber) -> bool:
+    return p.unit is None and p.value.is_integer() and 1900 <= p.value <= 2100 and not _MULTIPLIER.search(p.text)
+
+
+def pick_number(span: str, unit_kind: Optional[str], value_text: Optional[str] = None) -> Optional[ParsedNumber]:
+    """The number in the span that can state a figure of this kind, or None.
+
+    A span often holds several numbers ("In 2024 the market reached $2.3 billion"). The first one is not the answer:
+    a year is never a currency or percentage figure, a currency figure must carry a currency or a scale word, and a
+    percentage must carry a percent sign. When the model named the number, that one is used if it is in the span.
+    """
+    found = parse_numbers(span)
+    if value_text:
+        named = parse_numbers(value_text)
+        if named:
+            found = [p for p in found if round(p.value, 6) == round(named[0].value, 6)] or []
+    if unit_kind == "date":
+        return found[0] if found else None
+    found = [p for p in found if not _is_year(p)]
+    if unit_kind == "currency":
+        found = [p for p in found if (p.unit not in (None, "%")) or _MULTIPLIER.search(p.text)]
+    elif unit_kind == "percent":
+        found = [p for p in found if p.unit == "%"]
+    elif unit_kind in ("count", "quantity"):
+        found = [p for p in found if p.unit != "%"]
+    return found[0] if found else None
+
+
 def to_observation(c: Candidate, evidence: Evidence, *, allowed: set[str]) -> Optional[MetricObservation]:
     """Validate one candidate against its saved source. None when it cannot be trusted."""
     text = _evidence_text(evidence)
     if not span_in_source(c.source_span, text):
         return None
-    parsed = parse_value(c.source_span)
-    if parsed is None:
-        return None
     metric_id = c.metric_id if c.metric_id in allowed else None
     defn = get_registry().get(metric_id)
+    parsed = pick_number(c.source_span, defn.unit_kind if defn else None, c.value_text)
+    if parsed is None:
+        return None
     unit = parsed.unit
     if defn and defn.unit_kind == "percent":
         unit = "%"
+    if defn and defn.unit_kind == "quantity":
+        power = re.search(r"\d\s*(gw|mw)\b", c.source_span, re.I)
+        if power is None:
+            return None  # a capacity figure without its unit cannot be read
+        unit = power.group(1).upper()
     return MetricObservation(
         metric_id=metric_id, entity=c.entity.strip() or "unknown", value_text=parsed.text, value=parsed.value,
         unit=unit, period=c.period, label=c.label, definition=c.definition or (defn.definition if defn else None),

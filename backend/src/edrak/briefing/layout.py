@@ -36,6 +36,8 @@ def kpi_strip(cards: list[dict[str, Any]], template: UseCaseTemplate) -> list[di
             continue
         out.append({"card_key": card["card_key"], "metric_id": metric_id, "label": defn.name, "entity": card.get("entity") or "",
                     "value": value, "status": card["status"], "comparator": slots.get("comparator"),
+                    "period": slots.get("period") or ((slots.get("rows") or [{}])[0].get("period")),
+                    "reads_as": defn.reads_as or None, "definition": defn.definition,
                     "uid": (card["metric_uids"] or [None])[0], "facts": _facts_short(card)})
     return out
 

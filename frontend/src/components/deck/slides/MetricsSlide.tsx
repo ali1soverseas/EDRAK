@@ -62,24 +62,23 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                     <b className="kpi-value">{k.value}</b>
                     <span className="row g6 s12 t3 wrap">
                       {k.entity && <span className="ellip">{k.entity}</span>}
+                      {k.period && <span>· {k.period}</span>}
+                      {k.status === "thin" && <span className="chip c-ins" title={L("Only one independent source reports this figure.", "مصدر مستقل واحد فقط يذكر هذا الرقم.")}>{L("One source", "مصدر واحد")}</span>}
                       {k.comparator && <span className={`cmp ${k.comparator.direction > 0 ? "up" : "down"}`}>{k.comparator.direction > 0 ? "▲" : "▼"} {k.comparator.value} {k.comparator.label}</span>}
                     </span>
+                    {k.reads_as && <span className="s12 t2 lh14 kpi-reads" dir="auto">{k.reads_as}</span>}
                   </button>
                 ))}
               </div>
             )}
 
             {slide.comparison.length > 0 && (() => {
-              const MARKET_METRIC_IDS = new Set([
-                "market_size",
-                "market_cagr",
-                "market_concentration",
-                "adoption_rate",
-                "segment_growth",
-                "regulation_events",
-              ]);
-              const marketRows = slide.comparison.filter((r) => MARKET_METRIC_IDS.has(r.metric_id));
-              const competitiveRows = slide.comparison.filter((r) => !MARKET_METRIC_IDS.has(r.metric_id));
+              // Market figures (size, growth, investment, capacity) describe places, not rivals: they get their own table.
+              const MARKET_METRIC_IDS = new Set(["market_size", "market_cagr", "market_concentration", "adoption_rate", "segment_growth", "regulation_events"]);
+              const isMarket = (r: (typeof slide.comparison)[number]) => (r.lens ? r.lens === "market_intelligence" : MARKET_METRIC_IDS.has(r.metric_id));
+              const marketRows = slide.comparison.filter(isMarket);
+              const competitiveRows = slide.comparison.filter((r) => !isMarket(r));
+              const rivals = [...new Set(competitiveRows.flatMap((r) => r.theirs.map((c) => c.entity)).filter(Boolean))];
 
               return (
                 <div className="stack gap16">
@@ -108,7 +107,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                               onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
                               <span className="stack gap4">
                                 <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
-                                <span className="s11 t3">{L("Regional macro figure", "رقم إقليمي كلي")}</span>
+                                {r.reads_as && <span className="s12 t3 lh14" dir="auto">{r.reads_as}</span>}
                                 {r.note && <span className="s12 warn-text">{r.note}</span>}
                               </span>
                               <Cell cells={r.ours} empty="—" />
@@ -134,7 +133,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                         <div className="vs-row vs-head">
                           <span className="eyebrow">{L("Offering Feature / Pricing", "الميزة / التسعير")}</span>
                           <span className="eyebrow">{slide.company || L("Us", "نحن")}</span>
-                          <span className="eyebrow">{L("Competitors (AWS, Google, AMD, etc.)", "المنافسون (AWS، Google، AMD، إلخ)")}</span>
+                          <span className="eyebrow">{rivals.length ? `${L("Competitors", "المنافسون")} (${rivals.slice(0, 3).join(", ")}${rivals.length > 3 ? ", …" : ""})` : L("Competitors", "المنافسون")}</span>
                         </div>
                         {competitiveRows.map((r) => {
                           const key = cardFor(r.metric_id);
@@ -143,6 +142,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                               onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
                               <span className="stack gap4">
                                 <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
+                                {r.reads_as && <span className="s12 t3 lh14" dir="auto">{r.reads_as}</span>}
                                 {r.note && <span className="s12 warn-text">{r.note}</span>}
                               </span>
                               <Cell cells={r.ours} empty={L("Not found", "غير موجود")} />

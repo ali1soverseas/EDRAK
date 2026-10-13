@@ -28,4 +28,6 @@ class MetricsState(TypedDict, total=False):
     # Cells whose hunt read at least one of the entity's own pages (for "not publicly disclosed").
     read_official: list[str]
     conflicts: list[str]
+    # What the analysis is about ("sovereign AI infrastructure"): named in searches and required of market passages.
+    topic: str
     log: list[dict[str, Any]]

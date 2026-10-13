@@ -47,7 +47,12 @@ def _comparison(doc: dict[str, Any], template: Any, company: str) -> list[dict[s
     """Our figure next to each competitor's, per KPI metric. Only stored values; mismatched periods are flagged."""
     reg = get_registry()
     metrics = list((doc.get("metrics") or {}).values())
-    usable = [m for m in metrics if m.get("status") in ("verified", "thin", "conflict") and not m.get("derived") and m.get("metric_id")]
+    # Figures the brief already judged unreadable on their own (one search-index value, "shares" adding past 100%,
+    # too few items) are gaps, so they are not listed here as numbers either.
+    unreadable = {(g.get("metric_id"), (g.get("entity") or "").casefold()) for g in (doc.get("gaps_panel") or {}).get("gaps") or []
+                  if g.get("reason") in ("inconsistent", "below_min_sample")}
+    usable = [m for m in metrics if m.get("status") in ("verified", "thin", "conflict") and not m.get("derived") and m.get("metric_id")
+              and (m["metric_id"], m["entity"].casefold()) not in unreadable]
     rows = []
     for metric_id in template.kpi_strip:
         defn = reg.get(metric_id)
@@ -61,7 +66,8 @@ def _comparison(doc: dict[str, Any], template: Any, company: str) -> list[dict[s
         cell = lambda m: {"entity": m["entity"], "value": m["value_text"], "label": m.get("label"), "period": m.get("period"),
                           "uid": m["uid"], "ref": m.get("display_no"), "status": m["status"]}
         periods = {(m.get("period") or "").lower() for m in [*ours, *theirs]}
-        rows.append({"metric_id": metric_id, "name": defn.name, "ours": [cell(m) for m in ours], "theirs": [cell(m) for m in theirs],
+        rows.append({"metric_id": metric_id, "name": defn.name, "lens": defn.owner, "reads_as": defn.reads_as or None,
+                     "definition": defn.definition, "ours": [cell(m) for m in ours], "theirs": [cell(m) for m in theirs],
                      "comparable": len(periods) <= 1,
                      "note": None if len(periods) <= 1 else "Periods differ, so these are listed side by side, not compared."})
     return rows
@@ -115,7 +121,7 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
     """The five slides. A metrics slide with nothing to show collapses into the gaps slide."""
     reg = get_registry()
     tpl_info = doc.get("template") or {}
-    template = reg.template(tpl_info.get("use_case") or str(doc.get("use_case") or "competitive_intelligence"))
+    template = reg.template(tpl_info.get("key") or tpl_info.get("use_case") or str(doc.get("use_case") or "competitive_intelligence"))
     company = ((doc.get("request") or {}).get("company_profile") or {}).get("name") or ""
     cards = doc.get("cards") or {}
     signals = doc.get("signals_view") or []

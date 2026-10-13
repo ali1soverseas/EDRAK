@@ -13,6 +13,7 @@ from edrak.briefing.propose import apply_copy, overlap, propose_copy, unmet_dime
 from edrak.metrics.format import format_value
 from edrak.contracts import BusinessRequest, WorkerResult
 from edrak.db.repositories import metrics as metrics_repo
+from edrak.metrics.profile import business_model
 from edrak.metrics.registry import get_registry
 
 logger = logging.getLogger(__name__)
@@ -91,7 +92,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
     """Everything the dashboard shows that comes from typed metrics. Raises nothing the caller must handle."""
     reg = get_registry()
     rid = request.request_id
-    template = reg.template(request.business_context.use_case.value)
+    ctx = request.business_context
+    template = reg.template(ctx.use_case.value, business_model(request.company_profile, offering=ctx.offering, goal=request.goal))
     rows = await metrics_repo.list_metrics(db, rid, include_unverified=True)
     conflicts = await metrics_repo.list_conflicts(db, rid)
     outcomes = await metrics_repo.list_outcomes(db, rid)
@@ -145,7 +147,7 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
         "conflicts": conflicts,
         "signals_view": signals,
         "unmet_dimensions": unmet,
-        "template": {"use_case": template.use_case, "kpi_strip": template.kpi_strip, "required": template.required,
+        "template": {"use_case": template.use_case, "key": template.key, "kpi_strip": template.kpi_strip, "required": template.required,
                      "metrics_theme": template.metrics_theme, "signal_emphasis": template.signal_emphasis,
                      "decision_framing": template.decision_framing},
     }

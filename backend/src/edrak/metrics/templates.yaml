@@ -12,6 +12,12 @@ templates:
     metrics_theme: {title: "Us versus them", subtitle: "Our figures next to each competitor's: price, scale, revenue and what customers say."}
     signal_emphasis: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.6, market_intelligence: 0.5}
     decision_framing: "Frame each option as a competitive response: how the company positions against the named competitors (for example lead, match, differentiate, or hold and watch)."
+    variants:
+      hardware_infrastructure:
+        kpi_strip: [unit_price, own_price, market_concentration, release_cadence, supply_capacity, win_loss, certifications, funding_total]
+        required: [unit_price, own_price, supply_capacity]
+        optional: [market_concentration, release_cadence, certifications, win_loss, funding_total, revenue_arr]
+        metrics_theme: {title: "Us versus them", subtitle: "Our price and supply next to each competitor's: unit price, share and release pace."}
   market_entry_expansion:
     kpi_strip: [market_size, market_cagr, adoption_rate, market_concentration, segment_growth, regulation_events, search_interest, price_per_tier, share_of_voice, capacity]
     required: [market_size, market_cagr, adoption_rate, regulation_events, capacity]
@@ -23,6 +29,12 @@ templates:
     metrics_theme: {title: "The market", subtitle: "Size, growth, adoption and the rules that apply, with our capacity to deliver."}
     signal_emphasis: {market_intelligence: 1.0, internal_intelligence: 0.8, competitor_intelligence: 0.7, customer_trends: 0.6}
     decision_framing: "Frame each option as an entry path: when and how to enter (for example enter now, enter through a partner or a pilot, or wait for a condition)."
+    variants:
+      hardware_infrastructure:
+        kpi_strip: [market_size, market_cagr, infra_investment, deal_size, dc_capacity, adoption_rate, market_concentration, regulation_events, unit_price, supply_capacity]
+        required: [market_size, market_cagr, infra_investment, regulation_events, supply_capacity]
+        optional: [deal_size, dc_capacity, adoption_rate, market_concentration, unit_price, own_price]
+        metrics_theme: {title: "The market", subtitle: "Size, growth, committed spending and the rules that apply, with our capacity to supply."}
   product_launch:
     kpi_strip: [search_interest, top_pain_points, switching_intent, sentiment_split, price_per_tier, own_price, market_size, adoption_rate, capacity, roadmap_items]
     required: [search_interest, top_pain_points, price_per_tier, own_price, capacity]
@@ -34,3 +46,9 @@ templates:
     metrics_theme: {title: "Demand and price room", subtitle: "What customers search for and complain about, and where competitors price."}
     signal_emphasis: {customer_trends: 1.0, competitor_intelligence: 0.8, internal_intelligence: 0.7, market_intelligence: 0.6}
     decision_framing: "Frame each option as a launch choice: what to launch, for whom and at what price position (for example launch broadly, launch a narrow first version, or validate demand first)."
+    variants:
+      hardware_infrastructure:
+        kpi_strip: [unit_price, own_price, market_size, adoption_rate, deal_size, supply_capacity, roadmap_items, top_pain_points]
+        required: [unit_price, own_price, supply_capacity]
+        optional: [market_size, adoption_rate, deal_size, roadmap_items, top_pain_points, sentiment_split]
+        metrics_theme: {title: "Demand and price room", subtitle: "What buyers pay per unit, what they commit to, and what we can supply."}

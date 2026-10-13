@@ -134,7 +134,7 @@ def test_sentiment_is_counted_in_code_from_stance_labels():
     ms = fixed[0].metadata["metrics"]
     acme = {m["label"]: m for m in ms if m["metric_id"] == "sentiment_split" and m["entity"] == "Acme"}
     assert acme["positive"]["value"] == 50.0 and acme["positive"]["sample_size"] == 40
-    assert acme["positive"]["status"] == "verified" and acme["positive"]["derived"]
+    assert acme["positive"]["status"] == "verified" and acme["positive"]["formula"] and not acme["positive"]["derived"]
     globex = [m for m in ms if m["metric_id"] == "sentiment_split" and m["entity"] == "Globex"]
     assert all(m["status"] == "thin" for m in globex)  # 10 items is below the minimum sample
     sov = {m["entity"]: m["value"] for m in ms if m["metric_id"] == "share_of_voice"}

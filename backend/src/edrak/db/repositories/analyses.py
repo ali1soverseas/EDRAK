@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from edrak.metrics.profile import business_model
+
 from typing import Any, Iterable, Optional
 
 import aiosqlite
@@ -304,7 +306,7 @@ async def plan_contract(
                     request.company_profile.name,
                     competitors,
                     list(ctx.markets),
-                    ctx.offering or "",
+                    ctx.offering or "", business_model(request.company_profile, offering=ctx.offering, goal=request.goal),
                 ),
             )
             for t in tasks

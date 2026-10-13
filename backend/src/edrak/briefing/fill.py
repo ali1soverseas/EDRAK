@@ -48,6 +48,7 @@ def _card(defn: MetricDef, entity: str, component: str, rows: list[dict[str, Any
         "metric_id": defn.id, "entity": entity, "title": title or f"{defn.label()} · {entity}" if entity else defn.label(),
         "status": status or _worst(rows), "slots": slots, "caveat": caveat, "refs": _refs(rows), "metric_uids": _uids(rows),
         "derived": any(r.get("derived") for r in rows), "why_visual": None, "headline": None,
+        "reads_as": defn.reads_as or None, "definition": defn.definition,
     }
 
 
@@ -82,6 +83,20 @@ def _shown(r: dict[str, Any], defn: MetricDef) -> str:
     return format_value(r["value"], r["unit"])
 
 
+_YEAR = re.compile(r"\b(?:19|20)\d\d\b")
+
+
+def same_series(head: dict[str, Any], prev: dict[str, Any]) -> bool:
+    """Two figures can be compared as a change over time only when they are one series: both periods are dated,
+    the later one comes after the earlier, both are in the same unit, and the same source reports both. A 2031
+    forecast from one report against a 2026 figure from another, or "per pod" against "per node per month", is not
+    a change: it is two different numbers."""
+    hy, py = _YEAR.findall(head.get("period") or ""), _YEAR.findall(prev.get("period") or "")
+    if not hy or not py or max(hy) <= max(py) or head.get("unit") != prev.get("unit"):
+        return False
+    return bool(head.get("evidence_uid")) and head.get("evidence_uid") == prev.get("evidence_uid")
+
+
 def _comparators(rows: list[dict[str, Any]], derived: dict[tuple, dict[str, Any]], row: dict[str, Any], defn: MetricDef) -> Optional[dict[str, Any]]:
     d = derived.get((row["metric_id"], row["entity"].lower()))
     if d and defn.comparator == "company":
@@ -103,6 +118,7 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
     conflict_by = {(c["metric_id"], c["entity"].lower()): c for c in conflicts}
 
     cards: list[dict[str, Any]] = []
+    unusable: list[dict[str, Any]] = []  # figures found but not readable on their own: shown as gaps with the reason
     for metric_id, group in by_metric.items():
         defn = reg.get(metric_id)
         visual = defn.visual
@@ -118,7 +134,7 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
                                          "comparator": _comparators(rows, derived, head, defn)}
                 if len(ers) > len(same):  # an earlier period exists: show change against it, computed from stored values
                     prev = next(r for r in ers if (r["period"] or "") != (head["period"] or ""))
-                    if prev["value"]:
+                    if prev["value"] and same_series(head, prev):
                         slots["comparator"] = slots["comparator"] or {"kind": "prior", "label": f"vs {prev['period'] or 'prior'}",
                             "value": format_value(round((head["value"] - prev["value"]) / prev["value"] * 100, 1), "%"),
                             "direction": 1 if head["value"] > prev["value"] else -1, "uid": prev["uid"],
@@ -151,9 +167,13 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
             rows_out.sort(key=lambda r: r["raw"], reverse=True)
             cards.append(_card(defn, "", "ladder", group, {"rows": rows_out}, key=defn.id))
         elif visual == "segmented":
-            cards += _segmented(defn, group, conflicts)
+            got, dropped = _segmented(defn, group, conflicts)
+            cards += got
+            unusable += dropped
         elif visual == "line":
-            cards += _lines(defn, group)
+            got, dropped = _lines(defn, group)
+            cards += got
+            unusable += dropped
         elif visual == "timeline":
             ordered = sorted(group, key=lambda r: (r["period"] or "", r["entity"]))
             slots = {"events": [{"when": r["period"] or (r["value_text"] if defn.unit_kind == "date" else None),
@@ -166,17 +186,19 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
 
     cards += _series_cards(trend_series, reg.get("search_interest"))
     gaps = gap_cards(cards, usable, outcomes, template)
+    gaps = [g for g in gaps if (g["metric_id"], g["entity"].lower()) not in {(u["metric_id"], u["entity"].lower()) for u in unusable}] + unusable
     return cards + [g for g in gaps if g["blocking"]], gaps
 
 
-def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Parts of a whole. Checks: enough items behind it, comparable parts, parts that add up.
 
     A share whose found parts add up to less than 100 shows only the entities found plus
     "Others and unknown" for the rest, computed here and labelled incomplete. The remainder is never
     given to a missing name. A single found part is a KPI card, not a pie.
     """
-    out = []
+    out: list[dict[str, Any]] = []
+    dropped: list[dict[str, Any]] = []
     has_label = any(r["label"] for r in group)
     buckets: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in group:
@@ -188,7 +210,7 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
         small = need and any((r["sample_size"] or 0) < need for r in rs)
         mismatch = comparable(rs, defn)
         if small:
-            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} items behind it.", key=key))
+            dropped.append(_gap(defn, entity, "below_min_sample", False))
             continue
         if mismatch:
             out.append(_table(defn, entity, rs, mismatch, key=key))
@@ -207,7 +229,7 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
         caveat = None
         if defn.check.get("parts_sum_100") or defn.unit_kind == "percent":
             if total > 100 + PARTS_TOLERANCE:
-                out.append(_table(defn, entity, rs, "Not shown as a chart: the parts add up to more than 100%.", key=key))
+                dropped.append(_gap(defn, entity, "inconsistent", False))
                 continue
             if total < 100 - PARTS_TOLERANCE:
                 rest = round(100 - total, 1)
@@ -216,12 +238,15 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
                 slots["incomplete"] = True
                 caveat = "Incomplete: only the parts found are named. The rest is Others and unknown, computed as 100% minus what was found."
         out.append(_card(defn, entity, "segmented", rs, slots, key=key, caveat=caveat))
-    return out
+    return out, dropped
 
 
-def _lines(defn: MetricDef, group: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _lines(defn: MetricDef, group: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """A trend needs several points. An index such as search interest (0-100, relative to its own peak) means nothing
+    as one number, so too few points make it a gap; other figures fall back to a table."""
     need = defn.check.get("min_points", DEFAULT_MIN_POINTS)
-    out = []
+    out: list[dict[str, Any]] = []
+    dropped: list[dict[str, Any]] = []
     by_entity: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in group:
         if r["period"]:
@@ -229,11 +254,17 @@ def _lines(defn: MetricDef, group: list[dict[str, Any]]) -> list[dict[str, Any]]
     for entity, rs in by_entity.items():
         rs.sort(key=lambda r: r["period"])
         if len({r["period"] for r in rs}) < need:
-            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} data points."))
+            if defn.unit_kind == "index":
+                dropped.append(_gap(defn, entity, "below_min_sample", False))
+            else:
+                out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} data points."))
             continue
         pts = [{"x": r["period"], "y": r["value"], "display": format_value(r["value"], r["unit"]), "uid": r["uid"]} for r in rs]
         out.append(_card(defn, entity, "line", rs, {"points": pts, "unit": rs[0]["unit"]}))
-    return out
+    for entity in {r["entity"] for r in group if not r["period"]} - set(by_entity):
+        if defn.unit_kind == "index":  # one undated index value cannot be read at all
+            dropped.append(_gap(defn, entity, "below_min_sample", False))
+    return out, dropped
 
 
 def _series_cards(series: list[dict[str, Any]], defn: Optional[MetricDef]) -> list[dict[str, Any]]:
@@ -283,6 +314,7 @@ REASONS = {
     "below_min_sample": "Too little data behind it to show safely.",
     "conflict": "Sources disagree and none is authoritative.",
     "unverified": "Found, but the number could not be matched to its saved source.",
+    "inconsistent": "The figures found add up to more than 100%, so they are not shares of one market.",
 }
 
 

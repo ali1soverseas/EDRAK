@@ -8,6 +8,7 @@ metrics:
     name: {en: "Price per tier", ar: "السعر لكل باقة"}
     aliases: [pricing, plan price, price per seat, price per user]
     definition: "List price of each paid plan, per seat per month unless stated."
+    reads_as: "Where each competitor prices its plans. Only plans priced the same way are compared."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -20,6 +21,7 @@ metrics:
     name: {en: "Effective price under usage billing", ar: "السعر الفعلي عند الفوترة بالاستهلاك"}
     aliases: [usage price, overage price, cost per minute]
     definition: "Price per billed unit (e.g. CI minute, API call) beyond the included allowance."
+    reads_as: "What a customer pays per unit beyond the plan allowance."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -32,6 +34,7 @@ metrics:
     name: {en: "Paid subscribers", ar: "المشتركون المدفوعون"}
     aliases: [customers, paying customers, subscribers, active merchants]
     definition: "Number of paying customers or subscribers."
+    reads_as: "How many paying customers each company has: its scale."
     unit_kind: count
     period: latest_reported
     owner: competitor_intelligence
@@ -44,6 +47,7 @@ metrics:
     name: {en: "Revenue or ARR", ar: "الإيرادات"}
     aliases: [arr, annual revenue, revenue]
     definition: "Annual revenue or annual recurring revenue, if publicly reported."
+    reads_as: "Recurring revenue: how big each business is."
     unit_kind: currency
     period: fiscal_year
     owner: competitor_intelligence
@@ -56,6 +60,7 @@ metrics:
     name: {en: "Release cadence", ar: "وتيرة الإصدارات"}
     aliases: [release frequency, shipping cadence]
     definition: "Releases shipped per month or quarter."
+    reads_as: "How often each company ships. Faster cadence means faster response to the market."
     unit_kind: count
     period: trailing_12m
     owner: competitor_intelligence
@@ -68,6 +73,7 @@ metrics:
     name: {en: "Certifications", ar: "الشهادات"}
     aliases: [compliance, soc2, iso 27001, pci]
     definition: "Security and compliance certifications held."
+    reads_as: "Which compliance certificates each company holds. Missing ones can block deals."
     unit_kind: count
     period: point_in_time
     owner: competitor_intelligence
@@ -80,6 +86,7 @@ metrics:
     name: {en: "Funding raised", ar: "التمويل المجمّع"}
     aliases: [funding, total raised]
     definition: "Total external funding raised to date."
+    reads_as: "Money raised: how long each competitor can keep investing."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -93,6 +100,7 @@ metrics:
     name: {en: "Market size", ar: "حجم السوق"}
     aliases: [tam, market value]
     definition: "Total addressable market value for the offering in the target market."
+    reads_as: "How big the prize is in this market, for this offering."
     unit_kind: currency
     period: year
     owner: market_intelligence
@@ -105,6 +113,7 @@ metrics:
     name: {en: "Market growth (CAGR)", ar: "نمو السوق (CAGR)"}
     aliases: [cagr, growth rate]
     definition: "Compound annual growth rate of the market."
+    reads_as: "How fast the market grows each year, over the period stated."
     unit_kind: percent
     period: forecast_range
     owner: market_intelligence
@@ -117,6 +126,7 @@ metrics:
     name: {en: "Segment growth", ar: "نمو القطاع"}
     aliases: [segment cagr]
     definition: "Growth rate of the specific segment the offering targets."
+    reads_as: "How fast the specific segment grows compared with the wider market."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -129,6 +139,7 @@ metrics:
     name: {en: "Adoption rate", ar: "معدل التبني"}
     aliases: [penetration, adoption]
     definition: "Share of target customers already using the category."
+    reads_as: "Share of target customers already using the category. Low means early; high means a fight for share."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -141,6 +152,7 @@ metrics:
     name: {en: "Market concentration", ar: "تركّز السوق"}
     aliases: [market share, top players share]
     definition: "Share of the market held by the top players."
+    reads_as: "How much of the market the leaders hold. High concentration means entry needs a clear edge."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -153,6 +165,7 @@ metrics:
     name: {en: "Regulation events", ar: "الأحداث التنظيمية"}
     aliases: [regulation, licensing]
     definition: "Dated regulatory changes that affect the offering."
+    reads_as: "Rules that change who can sell, what and when."
     unit_kind: date
     period: upcoming_and_recent
     owner: market_intelligence
@@ -166,6 +179,7 @@ metrics:
     name: {en: "Share of voice", ar: "حصة الحديث"}
     aliases: [sov, mention share]
     definition: "Share of brand mentions among the company and its competitors."
+    reads_as: "Share of customer conversation about each company, counted from the posts we read."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -178,6 +192,7 @@ metrics:
     name: {en: "Sentiment split", ar: "توزيع المشاعر"}
     aliases: [sentiment]
     definition: "Positive, neutral and negative share of customer posts."
+    reads_as: "How customers feel about each company, counted from the posts we read."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -190,6 +205,7 @@ metrics:
     name: {en: "Rating", ar: "التقييم"}
     aliases: [stars, review score]
     definition: "Average review rating on a public review site."
+    reads_as: "Average public review score."
     unit_kind: index
     period: latest_reported
     owner: customer_trends
@@ -202,6 +218,7 @@ metrics:
     name: {en: "Top pain points", ar: "أبرز نقاط الألم"}
     aliases: [complaints, pain points]
     definition: "Most frequent complaint themes with their share of mentions."
+    reads_as: "What customers complain about most."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -214,6 +231,7 @@ metrics:
     name: {en: "Switching intent", ar: "نية التحويل"}
     aliases: [churn intent, considering switching]
     definition: "Share of posts expressing intent to switch away from or to a vendor."
+    reads_as: "Share of customers saying they want to switch."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -226,6 +244,7 @@ metrics:
     name: {en: "Search interest", ar: "الاهتمام البحثي"}
     aliases: [google trends, demand]
     definition: "Relative search interest over time (0-100)."
+    reads_as: "Search demand over time, 0 to 100, where 100 is the peak in the period shown. Read the trend, not one value."
     unit_kind: index
     period: time_window
     owner: customer_trends
@@ -239,6 +258,7 @@ metrics:
     name: {en: "Our price", ar: "سعرنا"}
     aliases: [our pricing, list price, internal price, target asp]
     definition: "The company's own price for the offering, from internal documents."
+    reads_as: "Our own price, from internal documents."
     unit_kind: currency
     period: point_in_time
     owner: internal_intelligence
@@ -251,6 +271,7 @@ metrics:
     name: {en: "Win/loss rate", ar: "معدل الفوز والخسارة"}
     aliases: [win rate, loss rate, win/loss, deal win rate]
     definition: "Share of competitive deals won."
+    reads_as: "Share of competitive deals we win."
     unit_kind: percent
     period: quarter
     owner: internal_intelligence
@@ -263,6 +284,7 @@ metrics:
     name: {en: "Delivery capacity", ar: "الطاقة التشغيلية"}
     aliases: [headcount, capacity, team capacity, delivery capacity, headcount capacity]
     definition: "Team or delivery capacity available for the initiative."
+    reads_as: "How much the team can take on for this initiative."
     unit_kind: count
     period: point_in_time
     owner: internal_intelligence
@@ -275,6 +297,7 @@ metrics:
     name: {en: "Roadmap commitments", ar: "التزامات خارطة الطريق"}
     aliases: [roadmap, milestone, release target]
     definition: "Dated roadmap commitments relevant to the decision."
+    reads_as: "Dated commitments on our roadmap."
     unit_kind: date
     period: upcoming
     owner: internal_intelligence
@@ -282,4 +305,70 @@ metrics:
     query_hints: ["roadmap"]
     check: {}
     visual: timeline
+    comparator: none
+  # ---- Infrastructure and hardware offerings (used when the company sells hardware or infrastructure) ----
+  - id: unit_price
+    name: {en: "Price per unit", ar: "السعر لكل وحدة"}
+    aliases: [price per gpu, price per accelerator, system price, price per hour, gpu hour price]
+    definition: "Reported price of one unit of the offering: per accelerator, per system, or per accelerator-hour in the cloud."
+    reads_as: "Where each supplier prices one unit. Only units of the same kind are compared."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} {offering} price per unit", "{entity} {offering} price per hour"]
+    check: {}
+    visual: ladder
+    comparator: company
+  - id: infra_investment
+    name: {en: "Committed investment", ar: "الاستثمار الملتزم به"}
+    aliases: [government investment, national programme funding, sovereign fund commitment, announced investment]
+    definition: "Public and private money committed to the offering in the target market: government programmes, sovereign funds and data-centre builds."
+    reads_as: "How much buyers in this market have committed to spend. Larger commitments mean a bigger near-term prize."
+    unit_kind: currency
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} {offering} investment billion", "{market} government {offering} programme funding"]
+    check: {}
+    visual: kpi
+    comparator: none
+  - id: dc_capacity
+    name: {en: "Data-centre capacity", ar: "سعة مراكز البيانات"}
+    aliases: [data center capacity, megawatts, it load, power capacity]
+    definition: "Data-centre power capacity installed or planned in the target market, in megawatts."
+    reads_as: "How much computing the market can host. It caps how many systems can be deployed there."
+    unit_kind: quantity
+    period: year
+    owner: market_intelligence
+    preferred_sources: [third_party, official]
+    query_hints: ["{market} data center capacity MW", "{market} data centre pipeline megawatts"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: deal_size
+    name: {en: "Comparable deal size", ar: "حجم الصفقات المماثلة"}
+    aliases: [contract value, deal value, signed contract, procurement]
+    definition: "Value of signed contracts for the offering in the target market, such as national or government compute deals."
+    reads_as: "What one customer in this market has actually paid. A guide to the size of a first contract."
+    unit_kind: currency
+    period: point_in_time
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} {offering} contract signed", "{market} {offering} deal value"]
+    check: {}
+    visual: kpi
+    comparator: none
+  - id: supply_capacity
+    name: {en: "Supply capacity", ar: "الطاقة الإنتاجية"}
+    aliases: [supply, allocation, units available, production capacity, shipments, cowos capacity]
+    definition: "Units the company can supply for the initiative in the period (systems, accelerators, wafers), from internal documents."
+    reads_as: "How much the company can deliver. Compare it with the demand the market figures imply."
+    unit_kind: count
+    period: point_in_time
+    owner: internal_intelligence
+    preferred_sources: [internal]
+    query_hints: ["supply plan", "allocation"]
+    check: {}
+    visual: kpi
     comparator: none

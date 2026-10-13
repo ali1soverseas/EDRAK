@@ -139,6 +139,55 @@ def use(find: Optional[Finder] = None, search: Optional[Searcher] = None, fetch:
     _seams["fetch"] = fetch or _default_fetch
 
 
+# ---------------------------------------------------------------- what a source is about
+
+# Stock quote, trading and investor-sentiment pages. Their numbers are prices and trader moods, never a market,
+# a customer or a product figure, so no metric reads them.
+_TICKER_HOSTS = ("stocktwits.com", "robinhood.com", "tradingview.com", "marketbeat.com", "altindex.com", "diplyzer.com",
+                 "etoro.com", "investing.com", "macrotrends.net", "stockanalysis.com", "zacks.com", "nasdaq.com",
+                 "marketwatch.com", "fool.com", "seekingalpha.com", "simplywall.st", "tikr.com", "perplexity.ai")
+_TICKER_PATHS = re.compile(r"/(?:quote|quotes|symbol|stocks?|equities|ticker|markets/stocks)/", re.I)
+# Pages that explain a metric rather than report one.
+_EXPLAINER = re.compile(r"^(?:what is|what's|how to|how do|need to know|guide to|definition)\b", re.I)
+_TOPIC_FILLER = {"market", "markets", "emerging", "global", "the", "and", "for", "of", "in", "new", "solutions", "services"}
+
+
+def is_noise(url: Optional[str], title: Optional[str] = None) -> bool:
+    host = _host(url)
+    if any(host == h or host.endswith("." + h) for h in _TICKER_HOSTS):
+        return True
+    if _TICKER_PATHS.search(urlparse(url or "").path or ""):
+        return True
+    return False
+
+
+_REPORTS = re.compile(r"\b(?:size|forecast|report|statistics|outlook|market)\b", re.I)
+
+
+def is_explainer(title: Optional[str]) -> bool:
+    """"What is share of voice?" explains a metric; "What is the sovereign AI market size in 2026?" reports one."""
+    t = (title or "").strip()
+    return bool(_EXPLAINER.match(t)) and not _REPORTS.search(t)
+
+
+def topic_words(topic: str) -> list[str]:
+    """The words that show a passage is about the topic: "Sovereign AI infrastructure" -> sovereign, infrastructure, ai."""
+    words = [w for w in re.findall(r"[a-z0-9]+", (topic or "").lower()) if w not in _TOPIC_FILLER]
+    return [w for w in words if len(w) >= 4 or w in {"ai", "ev", "iot", "gpu", "llm", "5g"}]
+
+
+def on_topic(text: str, words: list[str]) -> bool:
+    """True when no topic is known, or the text names at least one topic word (whole words only)."""
+    if not words:
+        return True
+    low = text.lower()
+    return any(re.search(rf"\b{re.escape(w)}\b", low) for w in words)
+
+
+# Metrics about a market: a passage must be about the topic, not just the place.
+_TOPIC_BOUND = {"market_intelligence"}
+
+
 # ---------------------------------------------------------------- windows and pointing
 
 
@@ -198,16 +247,20 @@ def _best_chunks(text: str, terms: list[str], unit_rx: Optional[re.Pattern], lim
     return [(score, chunk) for score, _, chunk in picked]
 
 
-def windows_for(defn: MetricDef, entities: list[str], evidence: list[Evidence]) -> list[tuple[Evidence, str]]:
+def windows_for(defn: MetricDef, entities: list[str], evidence: list[Evidence], topic: str = "") -> list[tuple[Evidence, str]]:
     """Passages that hold a digit, mention the metric and concern one of the entities.
 
     The entity's own pages come first, then passages that name the entity; within those, the passages that look most
-    like the figure being asked for.
+    like the figure being asked for. Stock quote pages and explainers are never read, and a market figure must come
+    from a passage (or a page title) about the topic, not only the place.
     """
     terms = _terms(defn)
     unit_rx = _UNIT_RX.get(defn.unit_kind)
+    words = topic_words(topic) if defn.owner in _TOPIC_BOUND else []
     scored: list[tuple[int, int, Evidence, str]] = []
     for ev in evidence:
+        if ev.metadata.get("computed_by") != "code" and (is_noise(ev.source_url, ev.source_title) or is_explainer(ev.source_title)):
+            continue
         text = _text(ev)
         about = " ".join([ev.source_title or "", ev.source_url or "", str(ev.metadata.get("competitor", ""))]).lower()
         own = any(is_own_site(ev.source_url, e) for e in entities)
@@ -215,19 +268,21 @@ def windows_for(defn: MetricDef, entities: list[str], evidence: list[Evidence]) 
             named = any(e.lower() in chunk.lower() or e.lower() in about for e in entities)
             if not named and not own:
                 continue
+            if not on_topic(f"{ev.source_title or ''} {chunk}", words):
+                continue
             scored.append((2 * own + named, quality, ev, chunk))
     scored.sort(key=lambda x: (-x[0], -x[1]))
     return [(ev, chunk) for _, _, ev, chunk in scored[:MAX_WINDOWS]]
 
 
-def point(defn: MetricDef, entities: list[str], windows: list[tuple[Evidence, str]]) -> list[MetricObservation]:
+def point(defn: MetricDef, entities: list[str], windows: list[tuple[Evidence, str]], topic: str = "") -> list[MetricObservation]:
     """One model call: which spans state this metric. Code checks each span and parses each value."""
     if not windows:
         return []
     passages = "\n\n".join(f"[{ev.evidence_id}] {ev.source_title or ''} ({ev.source_url or ev.publisher or ''})\n{sanitize(chunk)}"
                            for ev, chunk in windows)
     prompt = render(metric_id=defn.id, definition=defn.definition, aliases=", ".join(defn.aliases) or "none",
-                    entities=", ".join(entities), passages=passages)
+                    entities=", ".join(entities), passages=passages, topic=topic or "the company's offering")
     try:
         got = _seams["find"](prompt)
     except Exception as exc:  # noqa: BLE001 - a failed call is a gap, never a guess
@@ -288,7 +343,7 @@ def stance_metrics(result: WorkerResult, wanted: set[str]) -> tuple[list[Evidenc
                     metric_id="sentiment_split", entity=entity, value_text=_pct(n, total), value=round(100 * n / total, 1),
                     unit="%", label=s, evidence_id=ev.evidence_id, source_span=span, sample_size=total,
                     definition="Share of labelled customer items about this company with each stance.",
-                    derived=True, formula=f"items labelled {s} toward {entity} ÷ labelled items about {entity}",
+                    formula=f"items labelled {s} toward {entity} ÷ labelled items about {entity}",
                 ))
     if "share_of_voice" in wanted and len(counts) > 1:
         grand = sum(int(c["total"]) for c in counts.values())
@@ -304,7 +359,7 @@ def stance_metrics(result: WorkerResult, wanted: set[str]) -> tuple[list[Evidenc
                 metric_id="share_of_voice", entity=e, value_text=_pct(n, grand), value=round(100 * n / grand, 1), unit="%",
                 evidence_id=ev.evidence_id, source_span=f"{e} {n} ({_pct(n, grand)})", sample_size=grand,
                 definition="Share of labelled customer items that mention each tracked company.",
-                derived=True, formula=f"items about {e} ÷ items about any tracked company",
+                formula=f"items about {e} ÷ items about any tracked company",
             ))
     return evidence, obs
 
@@ -321,8 +376,19 @@ def build_grid(state: MetricsState) -> MetricsState:
             if k not in seen:
                 seen.add(k)
                 grid.append({"task_id": t.task_id, "requirement": r})
-    log_action(AGENT, f"grid: {len(grid)} figures for {len({c['requirement'].entity for c in grid})} entities")
-    return {"grid": grid, "observations": {}, "hunts": {}, "read_official": [], "log": []}
+    topic = topic_of(state)
+    log_action(AGENT, f"grid: {len(grid)} figures for {len({c['requirement'].entity for c in grid})} entities, about {topic or 'no named topic'}")
+    return {"grid": grid, "observations": {}, "hunts": {}, "read_official": [], "log": [], "topic": topic}
+
+
+def topic_of(state: MetricsState) -> str:
+    """What the analysis is about, for searches and relevance checks: the offering the planner settled on."""
+    for t in state.get("tasks") or []:
+        offering = (getattr(t.business_context, "offering", None) or "").strip()
+        if offering:
+            return offering
+    request = state.get("request")
+    return ((request.business_context.offering or "") if request else "").strip()
 
 
 def harvest(state: MetricsState) -> MetricsState:
@@ -348,10 +414,11 @@ def harvest(state: MetricsState) -> MetricsState:
                 found.setdefault(r.task_id, []).extend(obs)
 
     jobs = [(reg.get(m), ents) for m, ents in by_metric.items() if m not in counted and reg.get(m)]
+    topic = state.get("topic") or topic_of(state)
 
     def run(job: tuple[MetricDef, list[str]]) -> list[MetricObservation]:
         defn, ents = job
-        return point(defn, ents, windows_for(defn, ents, all_evidence))
+        return point(defn, ents, windows_for(defn, ents, all_evidence, topic), topic)
 
     with ThreadPoolExecutor(max_workers=PARALLEL) as pool:
         for obs_list in pool.map(run, jobs):
@@ -385,9 +452,24 @@ def _task_stub(cell: Cell, state: MetricsState):
     return task.model_copy(update={"requirements": [cell["requirement"]], "attempt": 1})
 
 
+def huntable(defn: Optional[MetricDef]) -> bool:
+    """False for figures that are never web-searched.
+
+    Figures computed from the customer worker's own data (stance counts, trend series) are never web-searched:
+    a search for "AMD sentiment" finds trader moods, and "NVIDIA search interest" finds stock-ticker trend pages."""
+    if defn is None or not defn.query_hints or defn.id in {"sentiment_split", "share_of_voice", "search_interest"}:
+        return False
+    # Our own figures live in our documents. A web search for "NVIDIA headcount" returns an employee-statistics blog,
+    # which is not the capacity this initiative has.
+    return defn.owner != "internal_intelligence"
+
+
 def missing_cells(state: MetricsState) -> list[tuple[Cell, RequirementOutcome]]:
     out = []
+    reg = get_registry()
     for c in state.get("grid") or []:
+        if not huntable(reg.get(c["requirement"].metric_id)):
+            continue
         o = _cell_outcome(c, state)
         if o.status is not OutcomeStatus.FOUND and o.reason in (GapReason.NOT_FOUND, GapReason.ONLY_THIRD_PARTY):
             out.append((c, o))
@@ -411,6 +493,13 @@ def _clean(q: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"\{[a-z_]+\}", "", q)).strip()
 
 
+def _with_topic(q: str, topic: str, defn: MetricDef) -> str:
+    """Market and competitor searches name the topic, so "Latin America market size" cannot return retail reports."""
+    if not topic or defn.owner == "internal_intelligence" or topic.casefold() in q.casefold():
+        return q
+    return f"{q} {topic}" if defn.owner != "market_intelligence" else f"{topic} {q}"
+
+
 def _queries(r: MetricRequirement, defn: MetricDef, offering: str, attempt: int, market: str = "") -> list[str]:
     name = defn.name.get("en", defn.id)
     registry_hints = list(getattr(defn, "query_hints", None) or [])
@@ -427,10 +516,11 @@ def _queries(r: MetricRequirement, defn: MetricDef, offering: str, attempt: int,
         out.append(_clean(filled))
     if not out:
         out = [_clean(f"{r.entity} {name}")]
-    if attempt == 2:  # the second hunt widens: the metric's other names
-        out = [_clean(f"{r.entity} {a}") for a in defn.aliases[:2]] or out
+    if attempt == 2:  # the second hunt widens: the metric's other names (never a short acronym such as "tam")
+        out = [_clean(f"{r.entity} {a}") for a in defn.aliases if len(a) >= 5][:2] or out
     elif attempt >= 3:  # the third asks for a recent report on the figure
-        out = [_clean(f"{r.entity} {name} {date.today().year}"), _clean(f"{market} {offering} {name} report")]
+        out = [_clean(f"{r.entity} {name} {date.today().year}"), _clean(f"{r.entity} {name} report")]
+    out = [_clean(_with_topic(q, offering, defn)) for q in out]
     return list(dict.fromkeys(q for q in out if q))[:2]
 
 
@@ -438,7 +528,7 @@ def hunt(state: MetricsState) -> MetricsState:
     """Targeted search for what the harvest missed. The entity's own pages are read first."""
     reg = get_registry()
     request = state.get("request")
-    offering = (request.business_context.offering or "") if request else ""
+    offering = state.get("topic") or topic_of(state)
     todo = [(c, o) for c, o in missing_cells(state) if (state.get("hunts") or {}).get(cell_key(c["requirement"].metric_id, c["requirement"].entity), 0) < MAX_HUNTS]
     todo.sort(key=lambda co: not co[0]["requirement"].required)
     todo = todo[:MAX_HUNT_CELLS]
@@ -468,6 +558,8 @@ def hunt(state: MetricsState) -> MetricsState:
             url = h.get("url", "")
             if not url or url in seen_urls or any(e.source_url == url for e in evs):
                 continue
+            if is_noise(url, h.get("title")) or is_explainer(h.get("title")):
+                continue
             text = _seams["fetch"](url)
             from_snippet = False
             if not text.strip():
@@ -489,7 +581,7 @@ def hunt(state: MetricsState) -> MetricsState:
                                           "snippet_only": from_snippet}))
             if len(evs) >= PAGES_PER_HUNT:
                 break
-        obs = point(defn, [r.entity], windows_for(defn, [r.entity], evs)) if evs else []
+        obs = point(defn, [r.entity], windows_for(defn, [r.entity], evs, offering), offering) if evs else []
         diag = {"queries": queries, "results": len(hits), "pages": pages, "snippets": snippets}
         return cell, evs, obs, own, diag
 

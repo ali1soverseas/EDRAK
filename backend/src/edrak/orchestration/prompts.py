@@ -22,10 +22,13 @@ Rules:
 6. Prefer the minimal set that covers the stated objective, competitors and markets.
 7. Write each goal as the question that worker answers, in plain language, naming the competitors, markets or offering it concerns.
 8. If the user rejected a previous plan, the feedback is given below: the new plan must address it.
+9. topic: the product or service category the objective is about, as a 2 to 5 word search phrase
+   (for example "sovereign AI infrastructure", "B2B payment gateway", "GPU cloud"). Never a place or a company name.
 
 Output format (exact JSON):
 {
   "rationale": "one sentence on why these workers and this split",
+  "topic": "2 to 5 word product or service category",
   "assignments": [
     {"worker": "competitor_intelligence", "goal": "...", "focus": "..."}
   ]

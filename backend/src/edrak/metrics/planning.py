@@ -8,7 +8,7 @@ from edrak.metrics.registry import MetricDef, get_registry
 MAX_ENTITIES_PER_METRIC = 5
 
 # Metrics that describe one company: asked once for our company, not per competitor.
-_OWN = {"own_price", "win_loss", "capacity", "roadmap_items"}
+_OWN = {"own_price", "win_loss", "capacity", "supply_capacity", "roadmap_items"}
 # Customer metrics worth asking for every named competitor too.
 _PER_COMPETITOR_CUSTOMER = {"share_of_voice", "sentiment_split", "rating", "top_pain_points", "switching_intent"}
 
@@ -29,10 +29,10 @@ def _entities(defn: MetricDef, company: str, competitors: list[str], markets: li
 
 
 def requirements_for(worker: str, use_case: str, company: str, competitors: list[str], markets: list[str],
-                     offering: str = "") -> list[MetricRequirement]:
-    """The checklist one worker owns for this use case. Required metrics come first."""
+                     offering: str = "", business_model: str | None = None) -> list[MetricRequirement]:
+    """The checklist one worker owns for this use case and kind of business. Required metrics come first."""
     reg = get_registry()
-    tpl = reg.template(use_case)
+    tpl = reg.template(use_case, business_model)
     required = set(tpl.required)
     out: list[MetricRequirement] = []
     for metric_id in [*tpl.required, *tpl.optional]:

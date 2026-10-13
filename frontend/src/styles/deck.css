@@ -98,6 +98,8 @@
 .icard-head { display: flex; align-items: flex-start; gap: 8px; }
 .icard-headline { font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--ink); }
 .icard-body { min-width: 0; }
+.icard-reads { margin: 0; font-size: 12px; line-height: 1.45; color: var(--ink2); }
+.kpi-reads { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
 .icard-caveat { display: flex; gap: 6px; margin: 0; font-size: 12px; line-height: 1.4; color: var(--ink2); }
 .icard-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--hair); }
 .icard-go { color: var(--ink3); transition: transform .18s var(--ease), color .18s; }
@@ -289,3 +291,7 @@
   .tmark.live .tmark-spin, .tmark.live .tn, .thinking-text, .dots i, .chat.docked, .chat.floating { animation: none; }
   .tap:hover, .kpi-tile:hover, .prompt-chip:hover { transform: none; }
 }
+
+/* Watchlist quick start */
+.drawer-body.quick .seg { align-self: flex-start; flex-wrap: wrap; }
+.quick-scope { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: var(--paper2); color: var(--ink2); }
