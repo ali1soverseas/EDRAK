@@ -12,7 +12,12 @@ import hmac
 import secrets
 
 from argon2 import PasswordHasher
-from argon2.exceptions import InvalidHashError, VerificationError, VerifyMismatchError
+from argon2.exceptions import VerificationError, VerifyMismatchError
+
+try:
+    from argon2.exceptions import InvalidHashError
+except ImportError:  # argon2-cffi < 23.1.0
+    from argon2.exceptions import InvalidHash as InvalidHashError
 
 _hasher = PasswordHasher()
 

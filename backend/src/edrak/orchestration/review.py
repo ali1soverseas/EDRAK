@@ -214,7 +214,7 @@ def human_review_node(state: OrchestrationState) -> OrchestrationState:
 
 
 def route_after_review(state: OrchestrationState) -> Any:
-    """continue -> synthesis (or finalize when nothing was verified); replan; stop -> finalize."""
+    """continue -> metrics, then synthesis; replan; stop -> finalize. Nothing verified -> finalize."""
     from .routing import route_from_plan
 
     choice = state.get("review_decision") or "continue"
@@ -231,4 +231,4 @@ def route_after_review(state: OrchestrationState) -> Any:
     )
     if decision is not None and decision.status is VerificationStatus.CANNOT_COMPLETE and not verified:
         return "finalize"
-    return "cross_signal"
+    return "metrics"

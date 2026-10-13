@@ -217,7 +217,8 @@ def _failed(task: ResearchTask, detail: str) -> WorkerResult:
 def metrics_node(state: OrchestrationState) -> OrchestrationState:
     """The metrics agent: every figure the planner asked for, found, hunted or marked a gap with a reason.
 
-    Runs after verification so checkpoint 2 can show conflicts.
+    Runs after the person continues, so the review pause is not waiting on these searches.
+    Conflicts are merged into the verification summary before cross-signal reads the results.
     """
     print("\n[metrics] NODE: metrics agent")
     from ..agents.metrics import run as run_metrics_agent

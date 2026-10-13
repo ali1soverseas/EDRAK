@@ -27,11 +27,12 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
     Workers are dispatched in parallel via ``Send``: ``route_from_plan`` emits
     one ``Send`` per task, LangGraph runs them concurrently in a thread pool,
     and ``verify`` runs once after the whole superstep completes.
-    A verified run then enters ``cross_signal`` before finalize.
+    A continued run then enters ``metrics``, then ``cross_signal``, before finalize.
 
     After verification the run always stops at ``human_review`` (checkpoint 2) until a person
-    decides: continue to synthesis, re-plan, or stop. Pausing needs a ``checkpointer``; the run
-    then resumes with ``Command(resume=...)`` on the same ``thread_id``.
+    decides: continue, re-plan, or stop. The number search waits until they continue, so the
+    pause is not held up by it. Pausing needs a ``checkpointer``; the run then resumes with
+    ``Command(resume=...)`` on the same ``thread_id``.
     """
     graph = StateGraph(OrchestrationState)
 
@@ -56,13 +57,13 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
 
     graph.add_edge("dispatch", "verify")
 
-    graph.add_edge("verify", "metrics")
-    graph.add_edge("metrics", "human_review")
+    graph.add_edge("verify", "human_review")
     graph.add_conditional_edges(
         "human_review",
         route_after_review,
-        ["dispatch", "cross_signal", "replan", "finalize"],
+        ["dispatch", "metrics", "replan", "finalize"],
     )
+    graph.add_edge("metrics", "cross_signal")
     graph.add_edge("cross_signal", "decision_analysis")
     graph.add_edge("decision_analysis", "finalize")
 

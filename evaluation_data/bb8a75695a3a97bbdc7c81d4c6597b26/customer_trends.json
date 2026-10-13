@@ -1,0 +1,1303 @@
+{
+  "task_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f1",
+      "statement": "A reported deal to allow the UAE to import 500,000 NVIDIA AI chips annually starting in 2025 shows a concrete procurement signal for the region.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "abb0eeebace17dd1",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Based on a single news post; no local source verification.",
+        "Evidence is in English and may not reflect broader regional intent.",
+        "single_source",
+        "gap: branch_demand"
+      ]
+    },
+    {
+      "finding_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f2",
+      "statement": "NVIDIA posts generate high engagement on X (average 1,241.93 interactions per item) and attract strong positive reactions to programs such as the Open Agent Safety Platform and the Inception program.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "ff70db09c9b2f961",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "2f34b2d0a89b39b4",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Engagement data is limited to the most‑engaged X posts; other platforms show lower or zero engagement.",
+        "Sample size is small relative to total evidence set."
+      ]
+    },
+    {
+      "finding_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f3",
+      "statement": "NVIDIA accounts for 64.5% of mentions in the collected set, while Intel accounts for 24.0%, indicating a visibility gap for Intel among regional AI computing discussions.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "ff70db09c9b2f961",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "361cccf5e896d791",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "0d51850cead9cd01",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Share of voice reflects the sample composition, not actual market share.",
+        "Evidence is dominated by English‑language content (87%)."
+      ]
+    },
+    {
+      "finding_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f4",
+      "statement": "Only 6% of the collected evidence is in Arabic, suggesting limited Arabic‑language coverage of AI computing topics.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "ff70db09c9b2f961",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Arabic content may exist outside the sampled sources.",
+        "Small absolute number of Arabic items (19) limits statistical confidence.",
+        "single_source",
+        "gap: branch_social"
+      ]
+    },
+    {
+      "finding_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f5",
+      "statement": "The downward trends for NVIDIA (-74.7%), Intel (-62.6%) and AMD (-55.3%) AI topics may represent a risk of waning market enthusiasm for AI computing solutions.",
+      "category": "risk",
+      "evidence_refs": [
+        {
+          "evidence_id": "53bb5b062d795a1d",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "3e60bd2ab1869a39",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "2021c6256498bdb0",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Trends are based on search interest, which can be influenced by news cycles.",
+        "Regional granularity is limited; global declines may not map directly to Saudi/UAE markets."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "abb0eeebace17dd1",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/ImMeme0/status/1923078768794484795",
+      "publisher": "x",
+      "extracted_fact": "🚨BREAKING: U.S. Reaches Preliminary Deal to Let UAE Import 500,000 Nvidia AI Chips Annually Starting in 2025 https://t.co/onnORKTG8K",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:29:31.691141Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2025-05-15T18:11:22+00:00",
+        "engagement": {
+          "likes": 13408,
+          "replies": 110,
+          "shares": 1965,
+          "views": 862077
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "ff70db09c9b2f961",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/JensenHuang/status/2104499465055023424",
+      "publisher": "x",
+      "extracted_fact": "Today, with over 100 industry partners, we introduced the NVIDIA Open Agent Safety Platform, bringing together OpenShell and Sentry.\n\nArtificial intelligence is extraordinary technology that will advance discovery, productivity, security, health, and prosperity for generations t…",
+      "excerpt": "Today, with over 100 industry partners, we introduced the NVIDIA Open Agent Safety Platform, bringing together OpenShell and Sentry.\n\nArtificial intelligence is extraordinary technology that will advance discovery, productivity, security, health, and prosperity for generations to come.\n\nBut its full promise can only be realized when people have confidence that AI is being built to be safe and deployed with wisdom and responsibility.\n\nThis is bigger than a single product. It's the beginning of a…",
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:29:05.264604Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-09-28T09:12:26+00:00",
+        "engagement": {
+          "likes": 28363,
+          "replies": 1766,
+          "shares": 4237,
+          "views": 10684684
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "2f34b2d0a89b39b4",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/kseniam0s/status/2099194454758523021",
+      "publisher": "x",
+      "extracted_fact": "OPPORTUNITY‼️: @nvidia will give your AI startup free training, cloud credits, and VC intros. No VC funding required, no equity, no deadline.\n\nThis is NVIDIA Inception program.\n\nWhat you get:\n- free technical courses and workshops\n- latest SDKs, model libraries, platforms\n- clou…",
+      "excerpt": "OPPORTUNITY‼️: @nvidia will give your AI startup free training, cloud credits, and VC intros. No VC funding required, no equity, no deadline.\n\nThis is NVIDIA Inception program.\n\nWhat you get:\n- free technical courses and workshops\n- latest SDKs, model libraries, platforms\n- cloud credits from NVIDIA & partners\n- preferred pricing on NVIDIA hardware\n- investor exposure on Capital Connect\n- GTM support and co-branded content\n\nWho qualifies: at least one developer, a working website, officially in…",
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:29:05.264604Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-09-13T17:52:13+00:00",
+        "engagement": {
+          "likes": 2527,
+          "replies": 120,
+          "shares": 280,
+          "views": 258234
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "361cccf5e896d791",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.facebook.com/Intel/videos/1485738182219960/",
+      "publisher": "facebook",
+      "extracted_fact": "Build more stories. With faster performance, the new #IntelCore 14th Gen Processors can handle your most demanding software. https://intel.ly/3LYLjuR",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:27:38.494507Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "facebook",
+        "language": "en",
+        "published_at": "2023-11-01T17:00:17+00:00",
+        "engagement": {
+          "likes": 1737,
+          "replies": 940,
+          "shares": 444,
+          "views": 39776
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "0d51850cead9cd01",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.instagram.com/p/DHJxpgMv-Pp/",
+      "publisher": "instagram",
+      "extracted_fact": "Introducing our new #Intel CEO, Lip-Bu Tan ✨, a technology leader with deep semiconductor experience. We are excited to welcome a true innovator who puts customers at the heart of everything he does. Link in bio for more.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:27:38.497161Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "instagram",
+        "language": "en",
+        "published_at": "2025-03-13T20:21:45+00:00",
+        "engagement": {
+          "likes": 4255,
+          "replies": 191,
+          "views": 29262
+        },
+        "provider": "apify"
+      }
+    },
+    {
+      "evidence_id": "53bb5b062d795a1d",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'NVIDIA AI' in SA over today 12-m is down: from 44 to 8 (relative scale), peak 100 on 2025-11-16.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:27:53.124877Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "3e60bd2ab1869a39",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'Intel AI' in SA over today 12-m is down: from 17 to 2 (relative scale), peak 32 on 2025-11-23.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:27:53.143064Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "2021c6256498bdb0",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": null,
+      "publisher": null,
+      "extracted_fact": "Search interest for 'AMD AI' in SA over today 12-m is down: from 15 to 4 (relative scale), peak 48 on 2025-11-23.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-12T21:27:53.149690Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "trend_point",
+        "language": "en",
+        "provider": "socialcrawl"
+      }
+    }
+  ],
+  "gaps": [
+    "the demand branch reported an error: the branch did not finish in 63.7 s",
+    "the social branch reported an error: the branch did not finish in 86.1 s"
+  ],
+  "conflicts": [],
+  "confidence": 0.6,
+  "started_at": "2026-10-12T21:27:24.149646Z",
+  "completed_at": "2026-10-12T21:31:18.369646Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "a5ecbee4-ab69-45d8-9dfa-b78198e06429.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "322 items (mostly English, 87%) from web, news and X show NVIDIA dominates conversation (64.5% share) while mentions of Intel and AMD fall, with weekly interest in NVIDIA AI dropping 75% and Intel AI 63%; however platform‑specific demand and social branches failed to run, leaving gaps.",
+      "overall_confidence": "medium",
+      "findings_count": 5,
+      "evidence_count": 322,
+      "coverage": {
+        "by_platform": {
+          "unknown": 176,
+          "x": 60,
+          "facebook": 40,
+          "instagram": 30,
+          "tiktok": 16
+        },
+        "by_source_type": {
+          "social_post": 92,
+          "web": 81,
+          "news": 78,
+          "social_comment": 54,
+          "review": 10,
+          "trend_point": 7
+        },
+        "by_language": {
+          "en": 281,
+          "unknown": 19,
+          "ar": 19,
+          "af": 1,
+          "es": 1,
+          "nl": 1
+        }
+      },
+      "gaps": [
+        "the demand branch reported an error: the branch did not finish in 63.7 s",
+        "the social branch reported an error: the branch did not finish in 86.1 s"
+      ],
+      "warnings": [
+        "theme analysis failed: analyze_text failed unexpectedly: ResponseError",
+        "finding f4 was dropped: numbers in the claim are not in metrics: 74.7, 63.3, 10.2; copy each into metrics as written (45% is 45), or cite a compute_metrics result as metric_id"
+      ],
+      "budget_used": {
+        "tool_calls": 38.0,
+        "cost_usd": 0.3626,
+        "seconds": 234.22
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\hanas\\EDRAK\\artifacts\\runs\\a5ecbee4-ab69-45d8-9dfa-b78198e06429.a1\\customer_trends\\result.json",
+      "evidence_store": "C:\\Users\\hanas\\EDRAK\\backend\\data\\evidence.db",
+      "evidence_count": 322,
+      "batch_ids": [
+        "b_9729ad29b0e5",
+        "b_c961f0b6b038",
+        "b_40137304d9bb",
+        "b_da7c9c27c499",
+        "b_c0b72a90044a",
+        "b_e96b24759bfc",
+        "b_cf6937a0cd6a",
+        "b_984f14713669",
+        "b_d94d0d729f08",
+        "b_8fb437d6fae5",
+        "b_40e63c795337",
+        "b_043ffa8bfb59",
+        "b_70fc691f58d3",
+        "b_b89aa74ccd1c",
+        "b_1e0572996290",
+        "b_d84852b23773",
+        "b_d42dbd87c174",
+        "b_c7df7ffa5e3d",
+        "b_37a8bbc4165e",
+        "b_d7fa730d6a0c",
+        "b_9deaecd136d2",
+        "b_b88bd144f5e7",
+        "b_c5188a23c067",
+        "b_b16afb233278",
+        "b_f2fcb7e3f4d1",
+        "b_eaed355b3058",
+        "b_de8984589f8a",
+        "b_62411babe5d1",
+        "b_772dc48b691e",
+        "b_b1c5eed3573a",
+        "b_adf513d3587e",
+        "b_8a9dcbf11b98",
+        "b_b2ad1da402b6",
+        "b_3cc84c12992b",
+        "b_3d84a7328dec",
+        "b_7a370fc84a37"
+      ]
+    },
+    "finding_metrics": {
+      "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f1": {
+        "chips": 500000
+      },
+      "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f2": {
+        "mean_engagement": 1241.93,
+        "metric_id": "m_a082a6486115"
+      },
+      "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f3": {
+        "NVIDIA_share_pct": 64.5,
+        "Intel_share_pct": 24.0,
+        "metric_id": "m_11199ff21939"
+      },
+      "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f4": {
+        "arabic_pct": 6,
+        "metric_id": "m_0a11ffb51b48"
+      },
+      "a5ecbee4-ab69-45d8-9dfa-b78198e06429:f5": {
+        "NVIDIA_AI_change_pct": -74.7,
+        "metric_id_NVIDIA_AI": "m_a6d5a7b40604",
+        "Intel_AI_change_pct": -62.6,
+        "metric_id_Intel_AI": "m_2d9264db8707",
+        "AMD_AI_change_pct": -55.3,
+        "metric_id_AMD_AI": "m_4cd4c97e917d"
+      }
+    },
+    "themes": [],
+    "trend_series": [
+      {
+        "keyword": "NVIDIA AI",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            44.0
+          ],
+          [
+            "2025-11-02",
+            84.0
+          ],
+          [
+            "2025-11-09",
+            72.0
+          ],
+          [
+            "2025-11-16",
+            100.0
+          ],
+          [
+            "2025-11-23",
+            69.0
+          ],
+          [
+            "2025-11-30",
+            82.0
+          ],
+          [
+            "2025-12-07",
+            83.0
+          ],
+          [
+            "2025-12-14",
+            50.0
+          ],
+          [
+            "2025-12-21",
+            44.0
+          ],
+          [
+            "2025-12-28",
+            45.0
+          ],
+          [
+            "2026-01-04",
+            42.0
+          ],
+          [
+            "2026-01-11",
+            31.0
+          ],
+          [
+            "2026-01-18",
+            30.0
+          ],
+          [
+            "2026-01-25",
+            26.0
+          ],
+          [
+            "2026-02-01",
+            22.0
+          ],
+          [
+            "2026-02-08",
+            19.0
+          ],
+          [
+            "2026-02-15",
+            16.0
+          ],
+          [
+            "2026-02-22",
+            35.0
+          ],
+          [
+            "2026-03-01",
+            37.0
+          ],
+          [
+            "2026-03-08",
+            51.0
+          ],
+          [
+            "2026-03-15",
+            51.0
+          ],
+          [
+            "2026-03-22",
+            38.0
+          ],
+          [
+            "2026-03-29",
+            37.0
+          ],
+          [
+            "2026-04-05",
+            31.0
+          ],
+          [
+            "2026-04-12",
+            35.0
+          ],
+          [
+            "2026-04-19",
+            41.0
+          ],
+          [
+            "2026-04-26",
+            31.0
+          ],
+          [
+            "2026-05-03",
+            34.0
+          ],
+          [
+            "2026-05-10",
+            44.0
+          ],
+          [
+            "2026-05-17",
+            58.0
+          ],
+          [
+            "2026-05-24",
+            61.0
+          ],
+          [
+            "2026-05-31",
+            64.0
+          ],
+          [
+            "2026-06-07",
+            36.0
+          ],
+          [
+            "2026-06-14",
+            21.0
+          ],
+          [
+            "2026-06-21",
+            21.0
+          ],
+          [
+            "2026-06-28",
+            38.0
+          ],
+          [
+            "2026-07-05",
+            27.0
+          ],
+          [
+            "2026-07-12",
+            28.0
+          ],
+          [
+            "2026-07-19",
+            22.0
+          ],
+          [
+            "2026-07-26",
+            21.0
+          ],
+          [
+            "2026-08-02",
+            17.0
+          ],
+          [
+            "2026-08-09",
+            20.0
+          ],
+          [
+            "2026-08-16",
+            12.0
+          ],
+          [
+            "2026-08-23",
+            14.0
+          ],
+          [
+            "2026-08-30",
+            19.0
+          ],
+          [
+            "2026-09-06",
+            14.0
+          ],
+          [
+            "2026-09-13",
+            26.0
+          ],
+          [
+            "2026-09-27",
+            8.0
+          ],
+          [
+            "2026-10-04",
+            8.0
+          ],
+          [
+            "2026-10-11",
+            8.0
+          ]
+        ]
+      },
+      {
+        "keyword": "NVIDIA GPU",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            13.0
+          ],
+          [
+            "2025-11-02",
+            27.0
+          ],
+          [
+            "2025-11-09",
+            21.0
+          ],
+          [
+            "2025-11-16",
+            28.0
+          ],
+          [
+            "2025-11-23",
+            42.0
+          ],
+          [
+            "2025-11-30",
+            52.0
+          ],
+          [
+            "2025-12-07",
+            44.0
+          ],
+          [
+            "2025-12-14",
+            36.0
+          ],
+          [
+            "2025-12-21",
+            20.0
+          ],
+          [
+            "2025-12-28",
+            31.0
+          ],
+          [
+            "2026-01-04",
+            27.0
+          ],
+          [
+            "2026-01-11",
+            13.0
+          ],
+          [
+            "2026-01-18",
+            26.0
+          ],
+          [
+            "2026-01-25",
+            28.0
+          ],
+          [
+            "2026-02-01",
+            12.0
+          ],
+          [
+            "2026-02-08",
+            24.0
+          ],
+          [
+            "2026-02-15",
+            14.0
+          ],
+          [
+            "2026-02-22",
+            24.0
+          ],
+          [
+            "2026-03-01",
+            23.0
+          ],
+          [
+            "2026-03-08",
+            31.0
+          ],
+          [
+            "2026-03-15",
+            21.0
+          ],
+          [
+            "2026-03-22",
+            31.0
+          ],
+          [
+            "2026-03-29",
+            28.0
+          ],
+          [
+            "2026-04-05",
+            24.0
+          ],
+          [
+            "2026-04-12",
+            24.0
+          ],
+          [
+            "2026-04-19",
+            25.0
+          ],
+          [
+            "2026-04-26",
+            25.0
+          ],
+          [
+            "2026-05-03",
+            18.0
+          ],
+          [
+            "2026-05-10",
+            19.0
+          ],
+          [
+            "2026-05-17",
+            28.0
+          ],
+          [
+            "2026-05-24",
+            27.0
+          ],
+          [
+            "2026-05-31",
+            23.0
+          ],
+          [
+            "2026-06-07",
+            11.0
+          ],
+          [
+            "2026-06-14",
+            12.0
+          ],
+          [
+            "2026-06-21",
+            16.0
+          ],
+          [
+            "2026-06-28",
+            24.0
+          ],
+          [
+            "2026-07-05",
+            25.0
+          ],
+          [
+            "2026-07-12",
+            12.0
+          ],
+          [
+            "2026-07-26",
+            14.0
+          ],
+          [
+            "2026-08-02",
+            12.0
+          ],
+          [
+            "2026-08-09",
+            11.0
+          ],
+          [
+            "2026-08-16",
+            11.0
+          ],
+          [
+            "2026-08-23",
+            10.0
+          ],
+          [
+            "2026-08-30",
+            12.0
+          ],
+          [
+            "2026-09-06",
+            8.0
+          ],
+          [
+            "2026-09-13",
+            18.0
+          ],
+          [
+            "2026-09-27",
+            7.0
+          ],
+          [
+            "2026-10-04",
+            8.0
+          ],
+          [
+            "2026-10-11",
+            7.0
+          ]
+        ]
+      },
+      {
+        "keyword": "AI computing Saudi Arabia",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2026-09-06",
+            8.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Intel AI",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            17.0
+          ],
+          [
+            "2025-11-02",
+            25.0
+          ],
+          [
+            "2025-11-09",
+            29.0
+          ],
+          [
+            "2025-11-16",
+            21.0
+          ],
+          [
+            "2025-11-23",
+            32.0
+          ],
+          [
+            "2025-11-30",
+            29.0
+          ],
+          [
+            "2025-12-07",
+            31.0
+          ],
+          [
+            "2025-12-14",
+            19.0
+          ],
+          [
+            "2025-12-21",
+            14.0
+          ],
+          [
+            "2025-12-28",
+            18.0
+          ],
+          [
+            "2026-01-04",
+            12.0
+          ],
+          [
+            "2026-01-11",
+            21.0
+          ],
+          [
+            "2026-01-18",
+            23.0
+          ],
+          [
+            "2026-01-25",
+            21.0
+          ],
+          [
+            "2026-02-01",
+            10.0
+          ],
+          [
+            "2026-02-08",
+            9.0
+          ],
+          [
+            "2026-02-15",
+            11.0
+          ],
+          [
+            "2026-02-22",
+            12.0
+          ],
+          [
+            "2026-03-01",
+            13.0
+          ],
+          [
+            "2026-03-08",
+            10.0
+          ],
+          [
+            "2026-03-15",
+            19.0
+          ],
+          [
+            "2026-03-22",
+            17.0
+          ],
+          [
+            "2026-03-29",
+            20.0
+          ],
+          [
+            "2026-04-05",
+            12.0
+          ],
+          [
+            "2026-04-12",
+            13.0
+          ],
+          [
+            "2026-04-19",
+            16.0
+          ],
+          [
+            "2026-04-26",
+            17.0
+          ],
+          [
+            "2026-05-03",
+            15.0
+          ],
+          [
+            "2026-05-10",
+            12.0
+          ],
+          [
+            "2026-05-17",
+            13.0
+          ],
+          [
+            "2026-05-24",
+            10.0
+          ],
+          [
+            "2026-05-31",
+            14.0
+          ],
+          [
+            "2026-06-07",
+            11.0
+          ],
+          [
+            "2026-06-14",
+            12.0
+          ],
+          [
+            "2026-07-19",
+            11.0
+          ],
+          [
+            "2026-08-02",
+            11.0
+          ],
+          [
+            "2026-09-13",
+            9.0
+          ],
+          [
+            "2026-09-27",
+            4.0
+          ],
+          [
+            "2026-10-04",
+            4.0
+          ],
+          [
+            "2026-10-11",
+            2.0
+          ]
+        ]
+      },
+      {
+        "keyword": "AMD AI",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            15.0
+          ],
+          [
+            "2025-11-02",
+            42.0
+          ],
+          [
+            "2025-11-09",
+            30.0
+          ],
+          [
+            "2025-11-16",
+            35.0
+          ],
+          [
+            "2025-11-23",
+            48.0
+          ],
+          [
+            "2025-11-30",
+            43.0
+          ],
+          [
+            "2025-12-07",
+            25.0
+          ],
+          [
+            "2025-12-14",
+            28.0
+          ],
+          [
+            "2025-12-21",
+            19.0
+          ],
+          [
+            "2025-12-28",
+            20.0
+          ],
+          [
+            "2026-01-04",
+            17.0
+          ],
+          [
+            "2026-01-11",
+            14.0
+          ],
+          [
+            "2026-01-18",
+            16.0
+          ],
+          [
+            "2026-01-25",
+            20.0
+          ],
+          [
+            "2026-02-01",
+            13.0
+          ],
+          [
+            "2026-02-08",
+            13.0
+          ],
+          [
+            "2026-02-15",
+            10.0
+          ],
+          [
+            "2026-02-22",
+            17.0
+          ],
+          [
+            "2026-03-01",
+            18.0
+          ],
+          [
+            "2026-03-08",
+            20.0
+          ],
+          [
+            "2026-03-15",
+            17.0
+          ],
+          [
+            "2026-03-22",
+            23.0
+          ],
+          [
+            "2026-03-29",
+            28.0
+          ],
+          [
+            "2026-04-05",
+            21.0
+          ],
+          [
+            "2026-04-12",
+            17.0
+          ],
+          [
+            "2026-04-19",
+            18.0
+          ],
+          [
+            "2026-04-26",
+            17.0
+          ],
+          [
+            "2026-05-03",
+            20.0
+          ],
+          [
+            "2026-05-10",
+            17.0
+          ],
+          [
+            "2026-05-17",
+            22.0
+          ],
+          [
+            "2026-05-24",
+            28.0
+          ],
+          [
+            "2026-05-31",
+            19.0
+          ],
+          [
+            "2026-06-07",
+            12.0
+          ],
+          [
+            "2026-06-14",
+            12.0
+          ],
+          [
+            "2026-06-21",
+            19.0
+          ],
+          [
+            "2026-06-28",
+            24.0
+          ],
+          [
+            "2026-07-05",
+            19.0
+          ],
+          [
+            "2026-07-19",
+            14.0
+          ],
+          [
+            "2026-07-26",
+            16.0
+          ],
+          [
+            "2026-08-02",
+            17.0
+          ],
+          [
+            "2026-08-09",
+            9.0
+          ],
+          [
+            "2026-08-16",
+            9.0
+          ],
+          [
+            "2026-09-27",
+            7.0
+          ],
+          [
+            "2026-10-04",
+            6.0
+          ],
+          [
+            "2026-10-11",
+            4.0
+          ]
+        ]
+      },
+      {
+        "keyword": "NVIDIA AI Saudi",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            32.0
+          ],
+          [
+            "2025-11-02",
+            45.0
+          ],
+          [
+            "2025-11-09",
+            60.0
+          ],
+          [
+            "2025-11-16",
+            68.0
+          ],
+          [
+            "2025-11-23",
+            41.0
+          ],
+          [
+            "2025-11-30",
+            100.0
+          ],
+          [
+            "2025-12-07",
+            45.0
+          ],
+          [
+            "2025-12-28",
+            47.0
+          ],
+          [
+            "2026-03-01",
+            54.0
+          ],
+          [
+            "2026-03-08",
+            39.0
+          ],
+          [
+            "2026-03-15",
+            38.0
+          ],
+          [
+            "2026-04-19",
+            41.0
+          ],
+          [
+            "2026-05-17",
+            33.0
+          ],
+          [
+            "2026-05-24",
+            49.0
+          ]
+        ]
+      },
+      {
+        "keyword": "NVIDIA GPU UAE",
+        "geo": "SA",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2026-09-20",
+            60.0
+          ]
+        ]
+      }
+    ],
+    "official_accounts": [
+      {
+        "owner": "Intel",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/Intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel",
+        "platform": "x",
+        "url": "https://x.com/intel",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {}
+  }
+}
