@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from edrak.metrics.profile import business_model
+from edrak.metrics.custom import metric_set
 
 from typing import Any, Iterable, Optional
 
@@ -306,7 +306,7 @@ async def plan_contract(
                     request.company_profile.name,
                     competitors,
                     list(ctx.markets),
-                    ctx.offering or "", business_model(request.company_profile, offering=ctx.offering, goal=request.goal),
+                    ctx.offering or "", *metric_set(request),
                 ),
             )
             for t in tasks

@@ -61,10 +61,11 @@ class Registry:
     def get(self, metric_id: Optional[str]) -> Optional[MetricDef]:
         return self.metrics.get(metric_id or "")
 
-    def template(self, use_case: str, business_model: Optional[str] = None) -> UseCaseTemplate:
+    def template(self, use_case: str, business_model: Optional[str] = None, custom: Optional[list[str]] = None) -> UseCaseTemplate:
         """The use case's template, with the metric set for the kind of business when one is defined.
 
-        `use_case` may also be a saved key such as "market_entry_expansion@hardware_infrastructure".
+        `use_case` may also be a saved key such as "market_entry_expansion@hardware_infrastructure". `custom` are the
+        ids of figures the planner proposed (metrics.custom): they lead the strip and the first two are required.
         """
         use_case, _, saved = (use_case or "").partition("@")
         base = self.templates.get(use_case) or self.templates["competitive_intelligence"]
@@ -72,7 +73,12 @@ class Registry:
         variant = base.variants.get(model or "")
         if not variant:
             return base.model_copy(update={"key": base.use_case})
-        return base.model_copy(update={**variant, "key": f"{base.use_case}@{model}"})
+        tpl = base.model_copy(update={**variant, "key": f"{base.use_case}@{model}"})
+        extra = [m for m in custom or [] if m in self.metrics and m not in tpl.kpi_strip]
+        if extra:
+            tpl = tpl.model_copy(update={"kpi_strip": [*extra, *tpl.kpi_strip], "required": [*tpl.required, *extra[:2]],
+                                         "optional": [*tpl.optional, *extra[2:]]})
+        return tpl
 
     def owned_by(self, worker: str) -> list[MetricDef]:
         return [m for m in self.metrics.values() if m.owner == worker]

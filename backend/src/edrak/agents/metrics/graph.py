@@ -26,6 +26,9 @@ def build_graph():
 
 def run(request: BusinessRequest, tasks: list[ResearchTask], results: list[WorkerResult]) -> tuple[list[WorkerResult], list[str]]:
     """The workers' results with typed metrics, checklist outcomes and any pages the hunt read; and the conflicts."""
+    from edrak.metrics.custom import register
+
+    register((getattr(request, "extras", None) or {}).get("custom_metrics") or [])  # figures the planner proposed for this field
     if not any(t.requirements for t in tasks):
         from edrak.briefing.reconcile import reconcile
 

@@ -16,6 +16,7 @@ from collections import Counter
 from typing import Any
 
 from edrak.briefing.layout import LENS_LABELS
+from edrak.metrics.custom import from_document
 from edrak.metrics.registry import get_registry
 
 DECK_VERSION = 1
@@ -121,7 +122,9 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
     """The five slides. A metrics slide with nothing to show collapses into the gaps slide."""
     reg = get_registry()
     tpl_info = doc.get("template") or {}
-    template = reg.template(tpl_info.get("key") or tpl_info.get("use_case") or str(doc.get("use_case") or "competitive_intelligence"))
+    custom = from_document(doc)
+    template = reg.template(tpl_info.get("key") or tpl_info.get("use_case") or str(doc.get("use_case") or "competitive_intelligence"),
+                            custom=custom)
     company = ((doc.get("request") or {}).get("company_profile") or {}).get("name") or ""
     cards = doc.get("cards") or {}
     signals = doc.get("signals_view") or []

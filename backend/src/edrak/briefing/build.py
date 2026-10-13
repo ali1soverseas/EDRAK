@@ -13,7 +13,7 @@ from edrak.briefing.propose import apply_copy, overlap, propose_copy, unmet_dime
 from edrak.metrics.format import format_value
 from edrak.contracts import BusinessRequest, WorkerResult
 from edrak.db.repositories import metrics as metrics_repo
-from edrak.metrics.profile import business_model
+from edrak.metrics.custom import metric_set
 from edrak.metrics.registry import get_registry
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
     reg = get_registry()
     rid = request.request_id
     ctx = request.business_context
-    template = reg.template(ctx.use_case.value, business_model(request.company_profile, offering=ctx.offering, goal=request.goal))
+    model, custom = metric_set(request)
+    template = reg.template(ctx.use_case.value, model, custom)
     rows = await metrics_repo.list_metrics(db, rid, include_unverified=True)
     conflicts = await metrics_repo.list_conflicts(db, rid)
     outcomes = await metrics_repo.list_outcomes(db, rid)
@@ -147,7 +148,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
         "conflicts": conflicts,
         "signals_view": signals,
         "unmet_dimensions": unmet,
-        "template": {"use_case": template.use_case, "key": template.key, "kpi_strip": template.kpi_strip, "required": template.required,
+        "template": {"use_case": template.use_case, "key": template.key, "custom": custom,
+                     "custom_metrics": [reg.get(m).model_dump(mode="json") for m in custom if reg.get(m)], "kpi_strip": template.kpi_strip, "required": template.required,
                      "metrics_theme": template.metrics_theme, "signal_emphasis": template.signal_emphasis,
                      "decision_framing": template.decision_framing},
     }

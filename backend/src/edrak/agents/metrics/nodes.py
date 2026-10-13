@@ -195,7 +195,8 @@ _TOPIC_BOUND = {"market_intelligence"}
 _UNIT_HINTS = {
     "currency": ["$", "€", "£", "usd", "egp", "sar", "aed", "price", "cost", "per month", "/mo"],
     "percent": ["%", "percent"],
-    "count": ["customers", "users", "subscribers", "merchants"],
+    "count": ["customers", "users", "subscribers", "merchants", "stores", "branches", "patients", "students", "learners", "shipments", "parcels"],
+    "quantity": ["mw", "megawatt", "gw", "gigawatt"],
     "index": ["index", "score", "rating"],
 }
 
@@ -211,7 +212,9 @@ def _terms(defn: MetricDef) -> list[str]:
 _UNIT_RX = {
     "currency": re.compile(r"[$€£]\s?\d|\d[\d,.]*\s?(?:usd|egp|sar|aed|eur|gbp|billion|million|bn|mn)\b|\b(?:usd|egp|sar|aed)\s?\d", re.I),
     "percent": re.compile(r"\d\s?%|\d\s?percent", re.I),
-    "count": re.compile(r"\d[\d,.]*\s?(?:k|m|million|thousand)?\+?\s*(?:customers|users|subscribers|merchants|employees|engineers|people)", re.I),
+    "count": re.compile(r"\d[\d,.]*\s?(?:k|m|million|thousand)?\+?\s*(?:customers|users|subscribers|merchants|employees|engineers|people|"
+                       r"stores|branches|outlets|clinics|patients|students|learners|shipments|parcels|deliveries|units|systems)", re.I),
+    "quantity": re.compile(r"\d[\d,.]*\s?(?:mw|gw|megawatts?|gigawatts?)\b", re.I),
     "index": re.compile(r"\d(?:\.\d)?\s?(?:/\s?\d+|out of \d+|stars?)", re.I),
     "date": re.compile(r"\b(?:19|20)\d\d\b|\bq[1-4]\b", re.I),
 }

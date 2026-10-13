@@ -280,6 +280,8 @@ def profile_contract_fields(company: dict[str, Any]) -> dict[str, Any]:
         "aliases": company.get("aliases") or [],
         "products": company.get("offerings") or [],
         "notes": company.get("description") or None,
+        "industries": list(company.get("industries") or []),
+        "industry_other": company.get("industry_other") or None,
         "website": company.get("website") or None,
         "social_accounts": socials,
     }

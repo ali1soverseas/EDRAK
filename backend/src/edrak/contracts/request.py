@@ -75,6 +75,14 @@ class CompanyProfile(ContractModel):
         description="Optional high-level company baseline notes.",
     )
 
+    industries: list[str] = Field(
+        default_factory=list,
+        description="Industry keys chosen at onboarding (fintech, saas, retail, technology, healthcare, manufacturing, "
+        "logistics, education, other). They choose which business metrics an analysis asks for.",
+    )
+
+    industry_other: str | None = Field(default=None, description="The company's own words for its industry when it chose Other.")
+
     website: str | None = Field(default=None, description="The company's official website.")
 
     social_accounts: list[SocialAccount] = Field(

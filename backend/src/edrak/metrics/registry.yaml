@@ -310,7 +310,7 @@ metrics:
   - id: unit_price
     name: {en: "Price per unit", ar: "السعر لكل وحدة"}
     aliases: [price per gpu, price per accelerator, system price, price per hour, gpu hour price]
-    definition: "Reported price of one unit of the offering: per accelerator, per system, or per accelerator-hour in the cloud."
+    definition: "Reported price of one unit of the offering: one product, one system, one course, one service, or one hour of use."
     reads_as: "Where each supplier prices one unit. Only units of the same kind are compared."
     unit_kind: currency
     period: point_in_time
@@ -372,3 +372,216 @@ metrics:
     check: {}
     visual: kpi
     comparator: none
+  # ---- Financial services (fintech) ----
+  - id: fee_rate
+    name: {en: "Fee per transaction", ar: "الرسوم لكل معاملة"}
+    aliases: [transaction fee, merchant discount rate, mdr, processing fee, take rate]
+    definition: "Fee charged per transaction, as a percentage of the amount or a flat amount."
+    reads_as: "What each provider charges per transaction. Merchants compare this first."
+    unit_kind: percent
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} transaction fees", "{entity} pricing merchant fee"]
+    check: {official_source_required: true}
+    visual: ladder
+    comparator: company
+  - id: transaction_volume
+    name: {en: "Transaction volume", ar: "حجم المعاملات"}
+    aliases: [total payment volume, tpv, gross transaction value, processed volume]
+    definition: "Total value of transactions processed in a period."
+    reads_as: "How much money flows through each provider: its real scale."
+    unit_kind: currency
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} total payment volume", "{entity} transaction volume processed"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: active_users
+    name: {en: "Active users", ar: "المستخدمون النشطون"}
+    aliases: [active customers, monthly active users, mau, active accounts, merchants]
+    definition: "Users, customers or merchants active in a period, as reported by the company."
+    reads_as: "How many people actually use each provider."
+    unit_kind: count
+    period: latest_reported
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} active users", "{entity} number of customers"]
+    check: {}
+    visual: kpi
+    comparator: company
+  # ---- Retail and consumer ----
+  - id: site_count
+    name: {en: "Locations", ar: "عدد المواقع"}
+    aliases: [stores, branches, outlets, clinics, hubs, locations]
+    definition: "Number of physical locations operated: stores, branches, clinics, warehouses or hubs."
+    reads_as: "How much physical reach each company has in the market."
+    unit_kind: count
+    period: latest_reported
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} number of stores", "{entity} locations branches"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: avg_order_value
+    name: {en: "Average order value", ar: "متوسط قيمة الطلب"}
+    aliases: [basket size, aov, average ticket, average spend]
+    definition: "Average amount a customer spends per order or visit."
+    reads_as: "How much a customer spends each time. Higher means fewer orders are needed to break even."
+    unit_kind: currency
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} average order value", "{entity} basket size"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: ecommerce_share
+    name: {en: "Online share of sales", ar: "حصة المبيعات عبر الإنترنت"}
+    aliases: [e-commerce penetration, online penetration, online sales share]
+    definition: "Share of the category's sales in the market made online."
+    reads_as: "How much of this market buys online. It decides how much a physical network matters."
+    unit_kind: percent
+    period: year
+    owner: market_intelligence
+    preferred_sources: [third_party, official]
+    query_hints: ["{market} {offering} online sales share", "{market} e-commerce penetration {offering}"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: category_spend
+    name: {en: "Consumer spending on the category", ar: "إنفاق المستهلكين على الفئة"}
+    aliases: [consumer spending, household spending, category spending, retail sales]
+    definition: "What households in the market spend on the category in a year."
+    reads_as: "The money customers already spend on this category: the pool a new entrant competes for."
+    unit_kind: currency
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} consumer spending {offering}", "{market} {offering} retail sales value"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  # ---- Logistics ----
+  - id: shipment_volume
+    name: {en: "Shipment volume", ar: "حجم الشحنات"}
+    aliases: [parcels, shipments, deliveries, parcel volume, orders delivered]
+    definition: "Parcels, shipments or deliveries handled in a period."
+    reads_as: "How much each company moves: its operating scale."
+    unit_kind: count
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} shipments per day", "{entity} parcels delivered"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: shipping_rate
+    name: {en: "Shipping rate", ar: "سعر الشحن"}
+    aliases: [delivery fee, shipping price, rate per kg, rate card]
+    definition: "Published price per shipment or per kilogram for a standard delivery."
+    reads_as: "What each carrier charges for a standard delivery."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} shipping rates", "{entity} delivery price per kg"]
+    check: {official_source_required: true}
+    visual: ladder
+    comparator: company
+  - id: lpi_score
+    name: {en: "Logistics Performance Index", ar: "مؤشر الأداء اللوجستي"}
+    aliases: [lpi, logistics performance index]
+    definition: "The World Bank Logistics Performance Index score for the market, from 1 to 5."
+    reads_as: "How well the market's roads, ports and customs work, from 1 (poor) to 5 (best)."
+    unit_kind: index
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} logistics performance index score"]
+    check: {}
+    visual: kpi
+    comparator: none
+  # ---- Healthcare ----
+  - id: patient_volume
+    name: {en: "Patients served", ar: "عدد المرضى"}
+    aliases: [patients, visits, consultations, admissions]
+    definition: "Patients served or visits in a period, as reported by the provider."
+    reads_as: "How many patients each provider serves: its scale."
+    unit_kind: count
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} patients served", "{entity} annual patient visits"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: health_spend
+    name: {en: "Health spending per person", ar: "الإنفاق الصحي للفرد"}
+    aliases: [health expenditure per capita, healthcare spending]
+    definition: "Total health spending per person in the market per year."
+    reads_as: "How much is spent on health per person: the ability to pay for the offering."
+    unit_kind: currency
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} health expenditure per capita"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: insurance_coverage
+    name: {en: "Health insurance coverage", ar: "نسبة التغطية التأمينية"}
+    aliases: [insured population, insurance penetration, coverage rate]
+    definition: "Share of the market's population with health insurance."
+    reads_as: "How many people have insurance that could pay for the offering."
+    unit_kind: percent
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} health insurance coverage percentage"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  # ---- Education ----
+  - id: enrollment
+    name: {en: "Learners enrolled", ar: "عدد المتعلمين"}
+    aliases: [students, learners, enrolled students, enrolments]
+    definition: "Students or learners enrolled with the provider, as reported."
+    reads_as: "How many learners each provider has: its scale."
+    unit_kind: count
+    period: latest_reported
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} number of students", "{entity} learners enrolled"]
+    check: {}
+    visual: kpi
+    comparator: company
+  - id: completion_rate
+    name: {en: "Completion rate", ar: "معدل الإتمام"}
+    aliases: [graduation rate, course completion]
+    definition: "Share of enrolled learners who complete the course or programme."
+    reads_as: "How many learners finish: a measure of outcome quality."
+    unit_kind: percent
+    period: year
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} completion rate"]
+    check: {}
+    visual: ladder
+    comparator: company
+  - id: learner_population
+    name: {en: "Learner population", ar: "عدد الطلاب في السوق"}
+    aliases: [student population, school enrolment, university enrolment]
+    definition: "Students enrolled in the relevant level of education in the market."
+    reads_as: "How many potential learners the market holds."
+    unit_kind: count
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} {offering} student enrolment total"]
+    check: {}
+    visual: kpi
+    comparator: prior

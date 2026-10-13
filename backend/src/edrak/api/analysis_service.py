@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from edrak.metrics.profile import business_model
+from edrak.metrics.custom import metric_set
 
 import logging
 import re
@@ -250,7 +250,7 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
             business_context=request.business_context,
             requirements=requirements_for(
                 w.value, ctx.use_case.value, request.company_profile.name,
-                competitors, list(ctx.markets), ctx.offering or "", business_model(request.company_profile, offering=ctx.offering, goal=request.goal),
+                competitors, list(ctx.markets), ctx.offering or "", *metric_set(request),
             ),
         )
         for w in allowed_workers

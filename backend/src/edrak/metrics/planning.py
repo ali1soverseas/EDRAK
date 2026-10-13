@@ -29,10 +29,11 @@ def _entities(defn: MetricDef, company: str, competitors: list[str], markets: li
 
 
 def requirements_for(worker: str, use_case: str, company: str, competitors: list[str], markets: list[str],
-                     offering: str = "", business_model: str | None = None) -> list[MetricRequirement]:
+                     offering: str = "", business_model: str | None = None,
+                     custom: list[str] | None = None) -> list[MetricRequirement]:
     """The checklist one worker owns for this use case and kind of business. Required metrics come first."""
     reg = get_registry()
-    tpl = reg.template(use_case, business_model)
+    tpl = reg.template(use_case, business_model, custom)
     required = set(tpl.required)
     out: list[MetricRequirement] = []
     for metric_id in [*tpl.required, *tpl.optional]:

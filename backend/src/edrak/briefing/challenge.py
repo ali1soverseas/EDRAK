@@ -105,7 +105,10 @@ async def challenge_card(db: aiosqlite.Connection, *, brief_id: str, request_id:
     rows = await metrics_repo.list_metrics(db, request_id)
     conflicts = await metrics_repo.list_conflicts(db, request_id)
     outcomes = await metrics_repo.list_outcomes(db, request_id)
-    template = get_registry().template((document.get("template") or {}).get("key") or document.get("use_case") or "competitive_intelligence")
+    from edrak.metrics.custom import from_document
+
+    template = get_registry().template((document.get("template") or {}).get("key") or document.get("use_case") or "competitive_intelligence",
+                                       custom=from_document(document))
     cards, _ = build_cards(rows, conflicts, outcomes, [], template, company)
     wanted = card_key if not card_key.startswith("gap:") else f"{metric_id}:{slug(entity)}"
     fresh = next((c for c in cards if c["card_key"] == wanted or (c["metric_id"] == metric_id and c["card_key"].startswith(f"{metric_id}") and slug(entity) in c["card_key"])), None)

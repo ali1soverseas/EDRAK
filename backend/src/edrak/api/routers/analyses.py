@@ -179,9 +179,10 @@ async def draft(
                                         request_id=request_id)
     plan = plan_for(request, workers_for(source_types))
     topic = next((t.business_context.offering for t in plan.tasks if t.business_context.offering), None)
-    if topic and not inputs["offering"]:
-        # The form named no offering; keep the one the planner settled on, so the run and the brief search for it.
-        await analyses_repo.update_request_contract(db, request, offering=topic)
+    if (topic and not inputs["offering"]) or request.extras.get("custom_metrics"):
+        # Keep what the planner settled on, so the run and the brief use it: the offering when the form named none,
+        # and the figures it proposed for a field the fixed metric sets do not cover (saved in extras).
+        await analyses_repo.update_request_contract(db, request, **({"offering": topic} if topic and not inputs["offering"] else {}))
     await analyses_repo.save_plan(db, plan, est_minutes=estimate_minutes(plan))
     await analyses_repo.set_request_status(db, request_id, "awaiting_approval")
     row = await analyses_repo.get_request(db, request_id)

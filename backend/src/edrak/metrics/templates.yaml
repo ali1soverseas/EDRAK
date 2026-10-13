@@ -18,6 +18,36 @@ templates:
         required: [unit_price, own_price, supply_capacity]
         optional: [market_concentration, release_cadence, certifications, win_loss, funding_total, revenue_arr]
         metrics_theme: {title: "Us versus them", subtitle: "Our price and supply next to each competitor's: unit price, share and release pace."}
+      financial_services:
+        kpi_strip: [fee_rate, own_price, transaction_volume, active_users, funding_total, sentiment_split, share_of_voice, rating, certifications]
+        required: [fee_rate, own_price, transaction_volume]
+        optional: [active_users, funding_total, sentiment_split, share_of_voice, rating, certifications, win_loss]
+        metrics_theme: {title: "Us versus them", subtitle: "Our fees and scale next to each competitor's: price per transaction, volume, users and what customers say."}
+      retail_consumer:
+        kpi_strip: [unit_price, own_price, site_count, avg_order_value, rating, sentiment_split, share_of_voice, funding_total]
+        required: [unit_price, own_price, sentiment_split]
+        optional: [site_count, avg_order_value, rating, share_of_voice, funding_total, top_pain_points]
+        metrics_theme: {title: "Us versus them", subtitle: "Our prices and reach next to each competitor's: product prices, stores, basket size and what shoppers say."}
+      logistics:
+        kpi_strip: [shipping_rate, own_price, shipment_volume, site_count, rating, sentiment_split, funding_total]
+        required: [shipping_rate, own_price, shipment_volume]
+        optional: [site_count, rating, sentiment_split, funding_total, top_pain_points, capacity]
+        metrics_theme: {title: "Us versus them", subtitle: "Our rates and scale next to each carrier's: price per delivery, volume, hubs and what customers say."}
+      healthcare:
+        kpi_strip: [unit_price, own_price, patient_volume, site_count, rating, certifications, funding_total]
+        required: [unit_price, own_price, patient_volume]
+        optional: [site_count, rating, certifications, funding_total, sentiment_split]
+        metrics_theme: {title: "Us versus them", subtitle: "Our prices and reach next to each provider's: price per service, patients, sites and accreditations."}
+      education:
+        kpi_strip: [unit_price, own_price, enrollment, completion_rate, rating, funding_total, sentiment_split]
+        required: [unit_price, own_price, enrollment]
+        optional: [completion_rate, rating, funding_total, sentiment_split, top_pain_points]
+        metrics_theme: {title: "Us versus them", subtitle: "Our fees and outcomes next to each provider's: tuition, learners, completion and what students say."}
+      dynamic:
+        kpi_strip: [own_price, unit_price, funding_total, sentiment_split, share_of_voice]
+        required: [own_price]
+        optional: [unit_price, funding_total, sentiment_split, share_of_voice, rating]
+        metrics_theme: {title: "Us versus them", subtitle: "Our figures next to each competitor's, on the measures that matter in this field."}
   market_entry_expansion:
     kpi_strip: [market_size, market_cagr, adoption_rate, market_concentration, segment_growth, regulation_events, search_interest, price_per_tier, share_of_voice, capacity]
     required: [market_size, market_cagr, adoption_rate, regulation_events, capacity]
@@ -35,6 +65,36 @@ templates:
         required: [market_size, market_cagr, infra_investment, regulation_events, supply_capacity]
         optional: [deal_size, dc_capacity, adoption_rate, market_concentration, unit_price, own_price]
         metrics_theme: {title: "The market", subtitle: "Size, growth, committed spending and the rules that apply, with our capacity to supply."}
+      financial_services:
+        kpi_strip: [market_size, market_cagr, adoption_rate, regulation_events, fee_rate, transaction_volume, market_concentration, capacity]
+        required: [market_size, adoption_rate, regulation_events, capacity]
+        optional: [market_cagr, fee_rate, transaction_volume, market_concentration, own_price]
+        metrics_theme: {title: "The market", subtitle: "Size, digital adoption, licensing rules and incumbents' fees, with our capacity to deliver."}
+      retail_consumer:
+        kpi_strip: [category_spend, market_cagr, ecommerce_share, market_concentration, regulation_events, unit_price, site_count, capacity]
+        required: [category_spend, market_cagr, ecommerce_share, capacity]
+        optional: [market_size, market_concentration, regulation_events, unit_price, site_count, own_price]
+        metrics_theme: {title: "The market", subtitle: "What shoppers spend, how fast it grows, how much is online, and who already sells there."}
+      logistics:
+        kpi_strip: [market_size, market_cagr, ecommerce_share, lpi_score, regulation_events, shipping_rate, market_concentration, capacity]
+        required: [market_size, market_cagr, lpi_score, capacity]
+        optional: [ecommerce_share, regulation_events, shipping_rate, market_concentration, own_price]
+        metrics_theme: {title: "The market", subtitle: "Size, growth, online demand and how well the market's infrastructure works, with our capacity."}
+      healthcare:
+        kpi_strip: [market_size, market_cagr, health_spend, insurance_coverage, regulation_events, unit_price, market_concentration, capacity]
+        required: [market_size, health_spend, regulation_events, capacity]
+        optional: [market_cagr, insurance_coverage, unit_price, market_concentration, own_price]
+        metrics_theme: {title: "The market", subtitle: "Size, spending per person, insurance coverage and the approvals needed, with our capacity."}
+      education:
+        kpi_strip: [market_size, market_cagr, learner_population, adoption_rate, regulation_events, unit_price, capacity]
+        required: [market_size, learner_population, regulation_events, capacity]
+        optional: [market_cagr, adoption_rate, unit_price, own_price, market_concentration]
+        metrics_theme: {title: "The market", subtitle: "Size, number of learners, adoption and accreditation rules, with our capacity to deliver."}
+      dynamic:
+        kpi_strip: [market_size, market_cagr, regulation_events, unit_price, capacity]
+        required: [market_size, market_cagr, regulation_events]
+        optional: [unit_price, capacity, adoption_rate, own_price]
+        metrics_theme: {title: "The market", subtitle: "Size, growth and the rules that apply, with the measures that matter in this field."}
   product_launch:
     kpi_strip: [search_interest, top_pain_points, switching_intent, sentiment_split, price_per_tier, own_price, market_size, adoption_rate, capacity, roadmap_items]
     required: [search_interest, top_pain_points, price_per_tier, own_price, capacity]
@@ -52,3 +112,33 @@ templates:
         required: [unit_price, own_price, supply_capacity]
         optional: [market_size, adoption_rate, deal_size, roadmap_items, top_pain_points, sentiment_split]
         metrics_theme: {title: "Demand and price room", subtitle: "What buyers pay per unit, what they commit to, and what we can supply."}
+      financial_services:
+        kpi_strip: [fee_rate, own_price, adoption_rate, active_users, top_pain_points, sentiment_split, capacity, roadmap_items]
+        required: [fee_rate, own_price, top_pain_points, capacity]
+        optional: [adoption_rate, active_users, sentiment_split, roadmap_items, switching_intent]
+        metrics_theme: {title: "Demand and price room", subtitle: "What customers pay and complain about, and where competitors set their fees."}
+      retail_consumer:
+        kpi_strip: [unit_price, own_price, avg_order_value, top_pain_points, sentiment_split, rating, capacity, roadmap_items]
+        required: [unit_price, own_price, top_pain_points, capacity]
+        optional: [avg_order_value, sentiment_split, rating, roadmap_items, search_interest, switching_intent]
+        metrics_theme: {title: "Demand and price room", subtitle: "Where competitors price, what shoppers spend and complain about, and what we can supply."}
+      logistics:
+        kpi_strip: [shipping_rate, own_price, shipment_volume, top_pain_points, sentiment_split, capacity, roadmap_items]
+        required: [shipping_rate, own_price, top_pain_points, capacity]
+        optional: [shipment_volume, sentiment_split, roadmap_items, switching_intent]
+        metrics_theme: {title: "Demand and price room", subtitle: "Where carriers price, what shippers complain about, and what we can handle."}
+      healthcare:
+        kpi_strip: [unit_price, own_price, patient_volume, insurance_coverage, top_pain_points, capacity, roadmap_items]
+        required: [unit_price, own_price, capacity]
+        optional: [patient_volume, insurance_coverage, top_pain_points, roadmap_items, sentiment_split]
+        metrics_theme: {title: "Demand and price room", subtitle: "Where providers price, who can pay, and what we can deliver."}
+      education:
+        kpi_strip: [unit_price, own_price, enrollment, completion_rate, top_pain_points, capacity, roadmap_items]
+        required: [unit_price, own_price, top_pain_points, capacity]
+        optional: [enrollment, completion_rate, roadmap_items, sentiment_split, search_interest]
+        metrics_theme: {title: "Demand and price room", subtitle: "Where providers set fees, how learners do, and what students complain about."}
+      dynamic:
+        kpi_strip: [unit_price, own_price, market_size, top_pain_points, capacity]
+        required: [unit_price, own_price]
+        optional: [market_size, top_pain_points, sentiment_split, capacity, roadmap_items]
+        metrics_theme: {title: "Demand and price room", subtitle: "Price room and demand, on the measures that matter in this field."}

@@ -75,3 +75,42 @@ def test_searches_name_the_topic_and_skip_short_acronyms():
     assert all("sovereign AI" in q for q in first)
     second = agent._queries(r, defn, "sovereign AI", 2)
     assert not any(" tam" in q.lower() for q in second)
+
+
+def test_each_onboarding_industry_gets_its_own_metric_set():
+    from edrak.metrics.profile import DYNAMIC, EDUCATION, FINANCE, HEALTH, LOGISTICS, RETAIL
+    assert business_model({"industries": ["fintech"]}) == FINANCE
+    assert business_model({"industries": ["retail"]}) == RETAIL
+    assert business_model({"industries": ["logistics"]}) == LOGISTICS
+    assert business_model({"industries": ["healthcare"]}) == HEALTH
+    assert business_model({"industries": ["education"]}) == EDUCATION
+    assert business_model({"industries": ["manufacturing"]}) == HARDWARE
+    assert business_model({"industries": ["saas"]}) is None
+    assert business_model({"industries": ["technology"], "notes": "We design GPUs and data center systems."}) == HARDWARE
+    assert business_model({"industries": ["other"], "industry_other": "Boutique hotels"}) == DYNAMIC
+    reg = get_registry()
+    fin = {r.metric_id for r in requirements_for("competitor_intelligence", "competitive_intelligence", "Acme", ["Fawry"], [], "", FINANCE)}
+    assert "fee_rate" in fin and "price_per_tier" not in fin
+    for uc in ("competitive_intelligence", "market_entry_expansion", "product_launch"):
+        for model in (FINANCE, RETAIL, LOGISTICS, HEALTH, EDUCATION, HARDWARE, DYNAMIC):
+            tpl = reg.template(uc, model)
+            assert tpl.key == f"{uc}@{model}" and tpl.required and all(reg.get(m) for m in tpl.kpi_strip)
+
+
+def test_planner_proposals_become_metrics_on_top_of_the_core():
+    from edrak.metrics.custom import register, to_defs
+    defs = to_defs([
+        {"name": "Hotel occupancy rate", "definition": "Share of rooms sold.", "unit_kind": "percent",
+         "owner": "market_intelligence", "search_phrase": "hotel occupancy rate", "reads_as": "How full hotels are."},
+        {"name": "Vibe score", "definition": "x", "unit_kind": "index", "owner": "market_intelligence", "search_phrase": "vibe"},
+        {"name": "Market size", "definition": "dup", "unit_kind": "currency", "owner": "market_intelligence", "search_phrase": "size"},
+        {"oops": True},
+    ])
+    assert [d.id for d in defs] == ["x_hotel_occupancy_rate"]  # no index, no duplicate of a known metric, no malformed item
+    ids = register(defs)
+    tpl = get_registry().template("market_entry_expansion", "dynamic", ids)
+    assert tpl.kpi_strip[0] == "x_hotel_occupancy_rate" and "x_hotel_occupancy_rate" in tpl.required
+    assert "market_size" in tpl.required
+    reqs = requirements_for("market_intelligence", "market_entry_expansion", "Acme", [], ["Egypt"], "boutique hotels", "dynamic", ids)
+    occ = next(r for r in reqs if r.metric_id == "x_hotel_occupancy_rate")
+    assert occ.query_hints == ["Egypt hotel occupancy rate"]

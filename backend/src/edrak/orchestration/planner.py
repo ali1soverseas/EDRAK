@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Any, Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ..contracts import (
     BusinessRequest,
@@ -14,10 +14,22 @@ from ..contracts import (
 from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
 from ..metrics.planning import requirements_for
-from ..metrics.profile import business_model
+from ..metrics.custom import register, to_defs
+from ..metrics.profile import DYNAMIC, business_model
 from .prompts import PLANNER_SYSTEM_PROMPT
 
 MAX_REPAIR_ATTEMPTS = 1
+
+PROPOSE_METRICS = """This company's field has no standard set of business figures. Also return "metrics": up to 5 figures
+that would most change the decision, each a number that is published somewhere (company pages, filings,
+statistics offices, industry reports). Never a score you would have to compute, never a vague index.
+Each item: {"name": "short name", "definition": "what exactly is counted, one sentence",
+"unit_kind": "currency" | "percent" | "count" | "quantity" | "date",
+"owner": "competitor_intelligence" (a figure per competitor) | "market_intelligence" (a figure per market) |
+"customer_trends" | "internal_intelligence" (our own figure, from our documents),
+"search_phrase": "2 to 6 words to search for it, without the company or place",
+"reads_as": "one sentence on what the figure tells the decision maker"}.
+Do not repeat market size, market growth, regulation, price or capacity: those are already asked for."""
 
 
 class PlanningError(RuntimeError):
@@ -59,6 +71,9 @@ class PlannerPlan(BaseModel):
     rationale: str | None = None
     # What is being assessed, as a short search phrase ("sovereign AI infrastructure"), when the form named no offering.
     topic: str | None = None
+    # Only for a field the fixed metric sets do not cover: the figures that would decide the question.
+    # Loosely typed on purpose: a malformed proposal is dropped by metrics.custom.to_defs, never fails the plan.
+    metrics: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class LlmPlanner:
@@ -117,6 +132,14 @@ class LlmPlanner:
             # "sovereign AI infrastructure Latin America market size".
             ctx = ctx.model_copy(update={"offering": topic})
         model = business_model(request.company_profile, offering=ctx.offering, goal=request.goal)
+        custom: list[str] = []
+        if model == DYNAMIC:
+            defs = to_defs(reply.metrics)
+            if defs:
+                # Saved on the request so the run, the brief and a restart all use the same figures. The caller
+                # persists `extras` with the request.
+                request.extras["custom_metrics"] = [d.model_dump(mode="json") for d in defs]
+            custom = register(request.extras.get("custom_metrics") or [])
         competitors = [c.name for c in ctx.competitors] or list(ctx.targets)
         tasks = [
             ResearchTask(
@@ -128,7 +151,7 @@ class LlmPlanner:
                 business_context=ctx,
                 requirements=requirements_for(
                     assignment.worker.value, ctx.use_case.value, request.company_profile.name,
-                    competitors, list(ctx.markets), ctx.offering or "", model,
+                    competitors, list(ctx.markets), ctx.offering or "", model, custom,
                 ),
             )
             for assignment in assignments
@@ -153,4 +176,7 @@ class LlmPlanner:
         feedback = request.extras.get("rejected_plan_feedback")
         if feedback:
             lines.append(f"The user rejected the previous plan with this feedback: {feedback}")
+        ctx = request.business_context
+        if business_model(request.company_profile, offering=ctx.offering, goal=request.goal) == DYNAMIC:
+            lines.append(PROPOSE_METRICS)
         return "\n".join(lines)

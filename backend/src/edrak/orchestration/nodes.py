@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..metrics.profile import business_model
+from ..metrics.custom import metric_set
 
 import contextlib
 import io
@@ -240,7 +240,7 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
                 req.company_profile.name,
                 comps,
                 list(ctx.markets),
-                ctx.offering or "", business_model(req.company_profile, offering=ctx.offering, goal=req.goal),
+                ctx.offering or "", *metric_set(req),
             )})
         tasks.append(t)
     try:
