@@ -117,10 +117,13 @@ class RunManager:
 
         logs: dict[str, list[dict[str, str]]] = {}
         verification_log: list[dict[str, str]] = []
+        metrics_log: list[dict[str, str]] = []
         supervisor: list[RunEvent] = []
         for e in events:
             if e["channel"] == "worker_feed" and e["task_id"]:
                 logs.setdefault(e["task_id"], []).append({"at": e["occurred_at"], "text": e["message"]})
+            elif e["channel"] == "verification_feed" and e["actor"] == "system":
+                metrics_log.append({"at": e["occurred_at"], "text": e["message"]})  # the metrics agent's lines
             elif e["channel"] == "verification_feed":
                 verification_log.append({"at": e["occurred_at"], "text": e["message"]})
             else:
@@ -164,6 +167,10 @@ class RunManager:
             verification_activity=run["verification_activity"] or "",
             verification_progress=run["verification_progress"],
             verification_log=verification_log[-self._MAX_LOG_LINES:],
+            metrics=("done" if metrics_log and run["current_stage"] in ("review", "synthesize", "brief", "done") else
+                     "running" if metrics_log else "waiting"),
+            metrics_activity=metrics_log[-1]["text"] if metrics_log else "",
+            metrics_log=metrics_log[-self._MAX_LOG_LINES:],
             brief_id=brief["id"] if brief else None,
             review={**pending["payload"], "review_id": pending["id"], "round": pending["round"]} if pending else None,
             notify_instead=bool(run.get("notify_instead")),
@@ -194,6 +201,18 @@ class RunManager:
                 view.verification_progress = max(view.verification_progress, int(100 * (int(done.group(1)) - 1) / int(done.group(2))))
             active.pending_lines.append(("verification_feed", None, "verification", text))
             active.verification_dirty = True
+            return
+        if agent == "metrics":
+            view = active.run_view
+            view.metrics = "running"
+            view.metrics_activity = text
+            view.metrics_log.append({"at": now_iso(), "text": text})
+            if len(view.metrics_log) > self._MAX_LOG_LINES:
+                del view.metrics_log[: len(view.metrics_log) - self._MAX_LOG_LINES]
+            # Stored with the verification feed under the "system" actor; view_from_db splits them out again.
+            active.pending_lines.append(("verification_feed", None, "system", text))
+            active.verification_dirty = True
+            active.stream.emit_nowait("verification", {"status": view.verification})  # the screen reloads on it
             return
         worker = self._AGENT_TO_WORKER.get(agent)
         if worker is None:
@@ -763,6 +782,8 @@ class RunManager:
         now = now_iso()
 
         if node_name == "metrics":
+            run_view.metrics = "done"
+            await stream.emit("run_update", {"metrics": "done"})
             await self._store_reconciled(analysis_id, node_output, request=state.get("request"))
             return
 

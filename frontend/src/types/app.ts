@@ -226,6 +226,9 @@ export interface RunView {
   verification_activity?: string;
   verification_progress?: number;
   verification_log?: Array<{ at: string; text: string }>;
+  metrics?: "waiting" | "running" | "done";
+  metrics_activity?: string;
+  metrics_log?: Array<{ at: string; text: string }>;
   brief_id: string | null;
   /** Checkpoint 2: what the person reviews while the run waits. */
   review?: RunReview | null;

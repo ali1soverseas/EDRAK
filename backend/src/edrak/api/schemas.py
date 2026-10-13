@@ -205,6 +205,10 @@ class RunViewOut(BaseModel):
     verification_activity: str = ""
     verification_progress: int = 0
     verification_log: list[dict[str, str]] = Field(default_factory=list)
+    # The metrics agent: grid, harvest, hunt and the figures it settled on.
+    metrics: str = "waiting"  # "waiting" | "running" | "done"
+    metrics_activity: str = ""
+    metrics_log: list[dict[str, str]] = Field(default_factory=list)
     brief_id: Optional[str] = None
     # Checkpoint 2: what the person reviews while the run waits (None when nothing is pending).
     review: Optional[dict[str, Any]] = None

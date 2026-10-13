@@ -66,16 +66,75 @@ def workers_for(source_types: list[str]) -> list[WorkerType]:
     return workers or list(WorkerType)
 
 
-def derive_title(form: AnalysisForm) -> str:
+TITLE_MAX = 90
+TITLE_FOCUS = {"pricing": "price", "features": "features", "positioning": "positioning", "sentiment": "customer sentiment",
+               "demand": "demand", "regulation": "regulation", "competition": "competition", "customers": "customers"}
+
+
+def _cut(text: str, limit: int = TITLE_MAX) -> str:
+    """Shorten at a word boundary, never mid-word."""
+    text = " ".join(text.split())
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0].rstrip(",;:-") + "…"
+
+
+def _and(items: list[str]) -> str:
+    items = [i for i in items if i]
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1] if items else ""
+
+
+def derive_title(form: AnalysisForm, company: str = "") -> str:
+    """A readable title without a model: who, against whom or where, and on what."""
+    us = company.strip() or "Us"
+    comps = [c.strip() for c in form.competitors if c.strip()]
+    rivals = _and(comps[:3]) + (" and others" if len(comps) > 3 else "")
+    markets, _ = split_markets(form.market)
+    where = _and(markets[:3]) + (" and more" if len(markets) > 3 else "")
+    focus = _and([TITLE_FOCUS.get(f, f) for f in form.focus[:2]])
     if form.use_case == UseCase.PRODUCT_LAUNCH and form.offering.strip():
-        return form.offering.strip()[:64]
-    if form.use_case == UseCase.MARKET_ENTRY_EXPANSION and form.market.strip():
-        return f"Expansion into {form.market.strip()[:48]}"
-    if form.competitors:
-        comps = [c for c in form.competitors if c.strip()][:2]
-        extra = len(form.competitors) - 2
-        return (f"Competitors: {', '.join(comps)}" + (f" +{extra}" if extra > 0 else ""))[:64]
-    return (form.goal.strip() or "Untitled analysis")[:64]
+        title = f"Launching {form.offering.strip()}" + (f" in {where}" if where else "")
+    elif form.use_case == UseCase.MARKET_ENTRY_EXPANSION and where:
+        title = f"{us} entering {where}" + (f" against {rivals}" if rivals else "")
+    elif rivals:
+        title = f"{us} against {rivals}" + (f" on {focus}" if focus else "")
+    else:
+        title = form.goal.strip() or "Untitled analysis"
+    return _cut(title)
+
+
+TITLE_PROMPT = """Write a title for this business analysis. 6 to 12 words. Name the company and its main rivals or
+the market. Say what is being compared or decided. Plain words, no digits, no quotation marks, no colon, no
+question mark. Reply with the title only.
+
+Company: {company}
+Use case: {use_case}
+Question: {goal}
+Competitors: {competitors}
+Markets: {markets}
+Offering: {offering}"""
+
+
+def write_title(form: AnalysisForm, company: str = "") -> str:
+    """A short descriptive title written by the model, checked, or the rule-based one when it fails the check."""
+    fallback = derive_title(form, company)
+    if not form.goal.strip():
+        return fallback
+    try:
+        from edrak.core.llm import get_chat_model
+
+        reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(TITLE_PROMPT.format(
+            company=company or "the company", use_case=form.use_case.value.replace("_", " "), goal=form.goal.strip()[:400],
+            competitors=", ".join(form.competitors[:5]) or "none named", markets=form.market or "none named",
+            offering=form.offering or "not named"))
+        text = " ".join(str(getattr(reply, "content", reply) or "").split()).strip(" .\"'“”")
+    except Exception as exc:  # noqa: BLE001 - a title is never worth failing a draft over
+        logger.info("Title model call failed: %s", exc)
+        return fallback
+    words = text.split()
+    if not 4 <= len(words) <= 14 or re.search(r"[0-9:?\"“”]", text) or len(text) > TITLE_MAX + 10:
+        return fallback
+    return _cut(text)
 
 
 _GROUP = re.compile(r"^(?P<head>[^()]*?)\s*\((?P<inner>[^()]+)\)\s*$")

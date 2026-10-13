@@ -15,6 +15,7 @@ from edrak.api.analysis_service import (
     allowed_source_types,
     build_request,
     derive_title,
+    write_title,
     draft_plan as plan_for,
     estimate_minutes,
     workers_for,
@@ -159,7 +160,7 @@ async def draft(
                 request_id=request_id, form=form, company=company, workspace_id=workspace_id,
                 rejection_feedback=existing.get("rejection_reason") if existing else None,
             )
-    title = derive_title(form)
+    title = await asyncio.to_thread(write_title, form, (company or {}).get("name") or "")
     app_fields = dict(
         title=title, form=form.model_dump(mode="json"), competitors=inputs["competitors"], markets=inputs["markets"],
         offering=inputs["offering"], target_customers=inputs["target_customers"],

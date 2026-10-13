@@ -58,11 +58,12 @@ from edrak.mcp.web_tools import (
 )
 
 def log_block(agent: str, title: str, body: str) -> None:
-    """Write a titled multi-line record using the shared one-line logger."""
+    """Write a titled multi-line record to the log file. Only the title reaches the run screen: a dumped
+    result is hundreds of lines (a goal, a context block, the final JSON) and buried the live steps."""
     text = body if isinstance(body, str) else str(body)
-    log_action(agent, title)
+    log_action(agent, title, live=False)
     for line in text.strip().splitlines() or [text]:
-        log_action(agent, line)
+        log_action(agent, line, live=False)
 
 
 def call_structured(schema, prompt: str, *, method: str = "function_calling", retries: int = 1):

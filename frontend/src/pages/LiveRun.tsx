@@ -144,6 +144,38 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
   );
 }
 
+/** The metrics agent: the figures the decision needs, read from the sources and searched for when missing. */
+function MetricsCard({ run }: { run: RunView }) {
+  const L = useL();
+  const log = run.metrics_log ?? [];
+  const [open, setOpen] = useState(false);
+  const logRef = useStickToBottom<HTMLDivElement>(log.length);
+  if ((run.metrics ?? "waiting") === "waiting" && log.length === 0) return null;
+  const done = run.metrics === "done";
+  return (
+    <article className="card" style={{ padding: "14px 18px" }}>
+      <div className="row g14 task-row">
+        <span className="wk lg" style={{ background: "var(--blue-bg, var(--paper2))", color: "var(--blue)" }}><Icon name="layers" size={19} /></span>
+        <div className="grow task-main" style={{ minWidth: 0 }}>
+          <div className="b6 s15">{L("Business figures", "الأرقام التجارية")}</div>
+          <div className="s13 t2 ellip" dir="auto">{run.metrics_activity || L("Reading the figures the decision needs", "قراءة الأرقام التي يحتاجها القرار")}</div>
+        </div>
+        {done ? <Chip tone="ok" icon="check">{L("Done", "تم")}</Chip> : <Chip tone="blue">{L("Working", "يعمل")}</Chip>}
+        {log.length > 1 && (
+          <button type="button" className="btn ghost sm" aria-expanded={open} onClick={() => setOpen(!open)}>
+            {open ? L("Hide steps", "إخفاء الخطوات") : L(`${log.length} steps`, `${log.length} خطوة`)}
+          </button>
+        )}
+      </div>
+      {open && (
+        <div ref={logRef} className="task-log mono s12 t2" style={{ maxHeight: 200, overflow: "auto", marginTop: 10 }}>
+          {log.map((line, i) => <div key={`${line.at}-${i}`} dir="auto">{line.text}</div>)}
+        </div>
+      )}
+    </article>
+  );
+}
+
 function VerificationCard({ run }: { run: RunView }) {
   const { t, formatTimeSeconds, formatNumber } = useI18n();
   const log = run.verification_log ?? [];
@@ -630,6 +662,7 @@ export function LiveRun() {
             />
           ))}
           <VerificationCard run={data} />
+          <MetricsCard run={data} />
         </div>
 
         <aside className="col g14 run-side">

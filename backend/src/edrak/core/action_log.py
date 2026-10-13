@@ -64,7 +64,8 @@ def _deliver(agent: str, message: str) -> None:
             pass
 
 
-def log_action(agent: str, message: str) -> None:
+def log_action(agent: str, message: str, *, live: bool = True) -> None:
+    """Append to the agent's log file and, unless `live` is False, show it on the run screen."""
     path = _ROOT / "artifacts" / "logs" / f"{agent}.log"
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -73,4 +74,5 @@ def log_action(agent: str, message: str) -> None:
             handle.write(f"{stamp}  {message}\n")
     except OSError:
         pass
-    _deliver(agent, message)
+    if live:
+        _deliver(agent, message)
