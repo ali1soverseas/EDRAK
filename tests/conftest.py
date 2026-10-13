@@ -9,7 +9,13 @@ for path in (SRC, ROOT):
     if path_str not in sys.path:
         sys.path.insert(0, path_str)
 
+import os
+import tempfile
+
 import pytest
+
+# Agent logs from tests go to a temporary folder, never into artifacts/logs with the real runs.
+os.environ.setdefault("EDRAK_LOG_DIR", tempfile.mkdtemp(prefix="edrak-test-logs-"))
 
 from edrak.contracts import (
     BusinessContext,

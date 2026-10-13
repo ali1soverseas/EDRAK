@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from edrak.metrics.contracts import MetricRequirement
 from edrak.metrics.registry import MetricDef, get_registry
 
@@ -11,6 +13,18 @@ MAX_ENTITIES_PER_METRIC = 5
 _OWN = {"own_price", "win_loss", "capacity", "supply_capacity", "roadmap_items"}
 # Customer metrics worth asking for every named competitor too.
 _PER_COMPETITOR_CUSTOMER = {"share_of_voice", "sentiment_split", "rating", "top_pain_points", "switching_intent"}
+
+
+def search_topic(offering: str) -> str:
+    """The category to search for, not our product list.
+
+    The offering often comes from the company profile, such as "Data center GPUs (H100, H200, Blackwell)". Added to a
+    search for AMD that becomes "AMD Data center GPUs (H100, H200, Blackwell) price", which asks about NVIDIA's
+    products. Brackets and what is in them are dropped, and so is anything after a colon or dash.
+    """
+    text = re.sub(r"[\(\[][^\)\]]*[\)\]]", " ", offering or "")
+    text = re.split(r"\s[:\u2013\u2014-]\s|:", text)[0]
+    return " ".join(text.split()[:6]).strip(" ,;")
 
 
 def _entities(defn: MetricDef, company: str, competitors: list[str], markets: list[str]) -> list[str]:
@@ -44,7 +58,7 @@ def requirements_for(worker: str, use_case: str, company: str, competitors: list
             out.append(MetricRequirement(
                 metric_id=defn.id, entity=entity, required=defn.id in required, definition=defn.definition,
                 preferred_source_types=list(defn.preferred_sources),
-                query_hints=[h.replace("{entity}", entity).replace("{market}", entity).replace("{offering}", offering or "")
+                query_hints=[h.replace("{entity}", entity).replace("{market}", entity).replace("{offering}", search_topic(offering))
                              .replace("  ", " ").strip() for h in defn.query_hints],
                 check_rule=", ".join(f"{k}={v}" for k, v in defn.check.items()) or None,
             ))

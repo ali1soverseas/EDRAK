@@ -30,6 +30,7 @@ from edrak.contracts.evidence import SourceType
 from edrak.core.action_log import log_action
 from edrak.guardrails.content import sanitize
 from edrak.metrics import requirements as req
+from edrak.metrics.planning import search_topic
 from edrak.metrics.contracts import (
     GapReason,
     MetricObservation,
@@ -385,13 +386,13 @@ def build_grid(state: MetricsState) -> MetricsState:
 
 
 def topic_of(state: MetricsState) -> str:
-    """What the analysis is about, for searches and relevance checks: the offering the planner settled on."""
+    """What the analysis is about, for searches and relevance checks: the offering's category."""
     for t in state.get("tasks") or []:
         offering = (getattr(t.business_context, "offering", None) or "").strip()
         if offering:
-            return offering
+            return search_topic(offering)
     request = state.get("request")
-    return ((request.business_context.offering or "") if request else "").strip()
+    return search_topic((request.business_context.offering or "") if request else "")
 
 
 def harvest(state: MetricsState) -> MetricsState:

@@ -8,6 +8,8 @@ is how the live run screen shows what each worker is doing as it happens.
 
 from __future__ import annotations
 
+import os
+
 import contextvars
 import threading
 from collections.abc import Callable
@@ -66,7 +68,8 @@ def _deliver(agent: str, message: str) -> None:
 
 def log_action(agent: str, message: str, *, live: bool = True) -> None:
     """Append to the agent's log file and, unless `live` is False, show it on the run screen."""
-    path = _ROOT / "artifacts" / "logs" / f"{agent}.log"
+    # EDRAK_LOG_DIR moves the logs (the tests point it at a temporary folder so they never mix with real runs).
+    path = Path(os.environ.get("EDRAK_LOG_DIR") or _ROOT / "artifacts" / "logs") / f"{agent}.log"
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

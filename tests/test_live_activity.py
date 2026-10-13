@@ -19,6 +19,7 @@ from edrak.core import action_log
 def _isolated_logs(tmp_path, monkeypatch):
     # log_action writes a file. Keep the test's lines out of the repository's artifacts/logs.
     monkeypatch.setattr(action_log, "_ROOT", tmp_path)
+    monkeypatch.delenv("EDRAK_LOG_DIR", raising=False)
     yield
     action_log._listeners.clear()
 
