@@ -1,6 +1,12 @@
 # API
 fastapi
 uvicorn[standard]
+aiosqlite
+python-multipart
+sse-starlette
+
+# Security
+argon2-cffi
 
 # Validation / configuration
 pydantic
@@ -9,11 +15,22 @@ python-dotenv
 
 # LangGraph / LLM integration
 langgraph
+langgraph-checkpoint-sqlite
+langchain
 langchain-core
-langchain-openai
+langchain-ollama
+ollama
+tavily-python
+requests
+
+# Structured logging
+structlog
+
+# Language detection (customer trends evidence language tagging)
+langdetect
 
 # MCP
-mcp
+mcp<2
 
 # HTTP
 httpx
@@ -24,8 +41,13 @@ chromadb
 # Document / web parsing
 pypdf
 python-docx
+openpyxl
+
+# Brief export (PDF)
+playwright
 beautifulsoup4
 lxml
+trafilatura
 
 # Data handling
 pandas

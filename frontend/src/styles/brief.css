@@ -1,0 +1,543 @@
+/*
+ * The brief. Layout values come from screens/brief.html. The scroll-driven blur and
+ * parallax are in edrak.css (.bscroll, .bcard, .bc-body, .bc-a/b/c) and are not
+ * repeated or overridden here, apart from mirroring for right-to-left.
+ */
+
+.brief-page {
+  height: 100%;
+  padding: 16px 40px 22px;
+  gap: 12px;
+}
+
+/* edrak.css pins the rail, its labels and the card padding to the right with physical
+   values. In Arabic the rail moves to the left edge, so the card gives it room there. */
+[dir="rtl"] .brail {
+  right: auto;
+  left: 14px;
+}
+[dir="rtl"] .btip {
+  right: auto;
+  left: 38px;
+  transform: translate(-10px, -50%);
+}
+[dir="rtl"] .bdot:hover .btip,
+[dir="rtl"] .bdot:focus-visible .btip {
+  transform: translate(0, -50%);
+}
+[dir="rtl"] .bcard {
+  padding: 38px 52px 62px 92px;
+}
+
+/* Inner lists scroll on their own when the window is shorter than the design. */
+.lens-findings,
+.sources-body,
+.options-col,
+.summary-left {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* The card roots fill their card. These values used to be inline, and the narrow layouts in
+   responsive.css need to change them. */
+.bc-fill {
+  height: 100%;
+}
+.bc-head {
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+/* ---- 01 Summary ---- */
+.summary-grid {
+  height: 100%;
+  gap: 52px;
+}
+.summary-left {
+  width: 430px;
+  flex: none;
+  height: 100%;
+  justify-content: space-between;
+  gap: 16px;
+}
+.summary-right {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin-top: 6px;
+  border-top: 1px solid var(--ink);
+}
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.summary-text {
+  font-size: 20px;
+  line-height: 1.5;
+}
+.worker-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.worker-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--hair);
+  background: var(--card);
+  min-width: 0;
+}
+.worker-pill.failed {
+  border-color: #e7b8b0;
+  background: var(--bad-bg);
+}
+.limits {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--hair2);
+  border-radius: 12px;
+}
+.limits.bad {
+  border: 1px solid #e7b8b0;
+  background: var(--bad-bg);
+  color: #5e1a0f;
+}
+
+/* ---- 02 Findings by lens ---- */
+/* ---- 02 Findings by lens ---- */
+.lens-row {
+  gap: 16px;
+  align-items: stretch;
+  flex: 1 1 0;
+  min-height: 200px;
+  overflow: hidden;
+}
+.lens {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 16px 6px;
+  gap: 8px;
+  overflow: hidden;
+}
+.lens.failed {
+  padding: 14px 16px 12px;
+  gap: 10px;
+  border-style: dashed;
+  border-color: #e7b8b0;
+}
+.lens-failed-body {
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--hair);
+}
+.lens-findings {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding-right: 4px;
+}
+.finding {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--hair);
+}
+.finding-text {
+  font-size: 15.5px;
+  line-height: 1.4;
+}
+.lens-foot {
+  padding: 8px 0 6px;
+  border-top: 1px solid var(--hair);
+}
+.synthesis-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 auto;
+  max-height: 185px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: linear-gradient(145deg, rgba(14, 16, 46, 0.98), rgba(24, 22, 60, 0.98));
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-top: 10px;
+  box-shadow: 0 8px 24px -6px rgba(11, 13, 56, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #F4F3EE;
+  position: relative;
+}
+
+.synthesis-card::-webkit-scrollbar,
+.lens-findings::-webkit-scrollbar {
+  width: 5px;
+}
+.synthesis-card::-webkit-scrollbar-track,
+.lens-findings::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+.synthesis-card::-webkit-scrollbar-thumb,
+.lens-findings::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.45);
+  border-radius: 4px;
+}
+
+.synthesis-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8B5CF6, #3B82F6, #10B981, #F59E0B);
+}
+
+.synthesis-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex: none;
+}
+
+.synthesis-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(139, 92, 246, 0.18);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #DDD6FE;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.synthesis-badge-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--mark);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.synthesis-meta-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.synthesis-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #C7D2FE;
+}
+
+.synthesis-statement-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.synthesis-main-text {
+  font-size: 14.5px;
+  line-height: 1.48;
+  color: #F8FAFC;
+  font-weight: 400;
+}
+
+.synth-mark {
+  background: linear-gradient(120deg, rgba(245, 158, 11, 0.32), rgba(251, 191, 36, 0.42));
+  border-bottom: 2px solid rgba(245, 158, 11, 0.8);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #FEF08A;
+  font-weight: 600;
+}
+
+.synthesis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.synthesis-item-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.synthesis-item-box:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.synthesis-subheading {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #A5B4FC;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.synthesis-patterns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.synthesis-pattern-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #E2E8F0;
+}
+
+.synthesis-pattern-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  margin-top: 6px;
+  flex: none;
+}
+
+.synthesis-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.synthesis-impact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  line-height: 1.3;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #A7F3D0;
+}
+
+.synthesis-item-box:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.synthesis-subheading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #A5B4FC;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.synthesis-patterns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.synthesis-pattern-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #E2E8F0;
+}
+
+.synthesis-pattern-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  margin-top: 7px;
+  flex: none;
+}
+
+.synthesis-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.synthesis-impact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #A7F3D0;
+}
+
+.synthesis {
+  padding: 18px 24px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+/* ---- 03 Evidence and sources ---- */
+.sources {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0 2px;
+  overflow: hidden;
+}
+.sources-body {
+  flex: 1;
+}
+.srow-head,
+.srow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 120px 80px 140px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 10px;
+}
+.srow-head {
+  border-bottom: 1px solid var(--hair);
+}
+.srow {
+  width: 100%;
+  text-align: start;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.srow:hover {
+  background: rgba(11, 13, 56, 0.03);
+}
+
+/* ---- 04 Options and next steps ---- */
+.option-row {
+  align-items: stretch;
+  gap: 16px;
+}
+.option {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px;
+  gap: 12px;
+}
+.option-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--ink);
+  color: #f4f3ee;
+  font-size: 15px;
+  font-weight: 700;
+  flex: none;
+}
+.options-bottom {
+  gap: 28px;
+  margin-top: 18px;
+  flex: 1;
+  min-height: 0;
+}
+.options-col {
+  gap: 8px;
+  min-width: 0;
+  max-height: 100%;
+}
+.gap-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--hair2);
+  border-radius: 12px;
+}
+.gap-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--warn-bg);
+  color: #7a4400;
+  flex: none;
+}
+
+/* ---- source drawer ---- */
+.drawer-body {
+  flex: 1;
+  gap: 16px;
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+/* In Arabic the bold lead-in gets its own line, so English data after it does not scramble it. */
+[dir="rtl"] .limits b {
+  display: block;
+  margin-bottom: 2px;
+}

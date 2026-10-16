@@ -1,0 +1,163 @@
+"""Ollama Cloud chat model factory and the structured-output and retry helpers."""
+
+import asyncio
+import json
+from collections.abc import Awaitable, Callable, Sequence
+from typing import Any, Literal, TypeVar
+
+import httpx
+import ollama
+from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.settings import Settings, get_settings
+from edrak.core.llm import schema_instruction
+from langchain_core.exceptions import OutputParserException
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain_ollama import ChatOllama
+from pydantic import BaseModel, ValidationError
+from tenacity import (
+    AsyncRetrying,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_random_exponential,
+)
+
+T = TypeVar("T")
+S = TypeVar("S", bound=BaseModel)
+
+Role = Literal["planner", "analyst", "writer", "branch"]
+
+_RETRY_ATTEMPTS = 3
+_TRANSIENT_STATUS = frozenset({429, 500, 502, 503, 504})
+
+log = get_logger(__name__)
+
+
+class LLMConfigError(RuntimeError):
+    """The model cannot be built because a setting is missing."""
+
+
+class StructuredOutputError(RuntimeError):
+    """The model did not produce output matching the requested schema."""
+
+
+def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
+    """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
+    from edrak.core.llm import provider_key
+
+    s = settings or get_settings()
+    # Resolved through the shared resolver so this worker gets its own quota,
+    # with the same own-key-then-backup-then-shared fallback as every other
+    # component.
+    key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
+    if not key:
+        raise LLMConfigError(
+            f"{variable} is not set: add it to .env at the repository root"
+        )
+    model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
+    return ChatOllama(
+        model=model or s.ollama_model,
+        base_url=s.ollama_base_url,
+        temperature=s.ollama_temperature,
+        client_kwargs={
+            "headers": {"Authorization": f"Bearer {key}"},
+            "timeout": s.ollama_timeout_s,
+        },
+    )
+
+
+def is_transient(exc: BaseException) -> bool:
+    """Timeouts, connection failures, 429 and 5xx are worth retrying; the rest are not."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code in _TRANSIENT_STATUS
+    if isinstance(exc, ollama.ResponseError):
+        return exc.status_code in _TRANSIENT_STATUS
+    return isinstance(exc, httpx.TransportError | ConnectionError | TimeoutError)
+
+
+async def _sleep(seconds: float) -> None:
+    await asyncio.sleep(seconds)
+
+
+async def invoke_with_retry(call: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
+    """Await `call` with up to three attempts on transient errors only."""
+    async for attempt in AsyncRetrying(
+        retry=retry_if_exception(is_transient),
+        stop=stop_after_attempt(_RETRY_ATTEMPTS),
+        wait=wait_random_exponential(multiplier=0.5, max=8),
+        sleep=_sleep,
+        reraise=True,
+    ):
+        with attempt:
+            return await call(*args, **kwargs)
+    raise AssertionError("unreachable: AsyncRetrying always yields an attempt")
+
+
+def _raw_text(raw: object) -> str:
+    content = getattr(raw, "content", raw)
+    return content if isinstance(content, str) else json.dumps(content, ensure_ascii=False)
+
+
+def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
+    """The shared helper from edrak.core.llm, as a message this worker can append."""
+    return HumanMessage(content=schema_instruction(schema)["content"])
+
+
+def _parse(schema: type[S], parsed: object) -> S:
+    if isinstance(parsed, schema):
+        return parsed
+    return schema.model_validate(parsed)
+
+
+async def structured_call(
+    llm: BaseChatModel,
+    schema: type[S],
+    messages: Sequence[BaseMessage],
+    *,
+    repair: bool = True,
+) -> S:
+    """Get a validated `schema` instance, with at most one repair attempt."""
+    # json_schema, not function_calling. Measured on the four schemas this
+    # worker sends, 10 first-attempt runs each with repair off, three times:
+    # 119/120 for this method against 11/120 for function_calling. The losing
+    # arm scored zero on every nested schema every run, and the only schema it
+    # ever returned was the only flat one. Do not switch this on intuition, and
+    # do not copy the market worker's json_mode choice: it disagrees here.
+    # Re-measure with llm/ab_structured_output.py after changing model,
+    # schemas, or langchain-ollama.
+    runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
+    base = [*messages, _schema_instruction(schema)]
+    conversation = list(base)
+    attempts = 2 if repair else 1
+    error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        out: Any = await invoke_with_retry(runnable.ainvoke, conversation)
+        raw, parsed, error = out["raw"], out["parsed"], out["parsing_error"]
+        try:
+            if error is not None or parsed is None:
+                raise error or OutputParserException("model returned no parsable output")
+            result = _parse(schema, parsed)
+        except (ValidationError, OutputParserException) as exc:
+            error = exc
+            log.warning(
+                "structured_call_invalid",
+                schema=schema.__name__,
+                attempt=attempt,
+                error_type=type(exc).__name__,
+            )
+            conversation = [
+                *base,
+                AIMessage(content=_raw_text(raw)),
+                HumanMessage(
+                    content=(
+                        f"Your previous output was invalid: {exc}\n"
+                        "Reply again with only the corrected output matching the schema."
+                    )
+                ),
+            ]
+            continue
+        log.info("structured_call_ok", schema=schema.__name__, attempt=attempt)
+        return result
+    raise StructuredOutputError(
+        f"{schema.__name__}: no valid output after {attempts} attempt(s): {error}"
+    ) from error

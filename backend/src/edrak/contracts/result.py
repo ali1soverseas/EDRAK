@@ -263,6 +263,14 @@ class OrchestrationResult(ContractModel):
     status: RunStatus = Field(description="Overall run outcome.")
     plan: ResearchPlan | None = Field(default=None, description="Plan that was executed.")
     results: list[WorkerResult] = Field(default_factory=list, description="Worker results collected.")
+    cross_signal: dict[str, Any] | None = Field(
+        default=None,
+        description="Validated CrossSignalOutput serialized as JSON, if verification succeeded.",
+    )
+    decision_analysis: dict[str, Any] | None = Field(
+        default=None,
+        description="DecisionAnalysisResult serialized as JSON, if that stage ran.",
+    )
     error: str | None = Field(default=None, description="Run-level failure detail.")
     completed_at: datetime = Field(
         default_factory=utcnow,

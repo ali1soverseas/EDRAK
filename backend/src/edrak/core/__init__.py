@@ -1,4 +1,5 @@
-from .config import settings
-from .llm import build_chat_model
+"""EDRAK core module."""
 
-__all__ = ["build_chat_model", "settings"]
+from edrak.core.config import settings
+
+__all__ = ["settings"]

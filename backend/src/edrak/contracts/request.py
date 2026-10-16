@@ -20,14 +20,41 @@ class TriggerType(str, Enum):
     SCHEDULED = "scheduled"
 
 
-class CompanyProfile(ContractModel):
-    """Minimal baseline describing the company under analysis.
+class SocialPlatform(str, Enum):
+    WEBSITE = "website"
+    X = "x"
+    FACEBOOK = "facebook"
+    INSTAGRAM = "instagram"
+    LINKEDIN = "linkedin"
+    YOUTUBE = "youtube"
+    TIKTOK = "tiktok"
 
-    Provisional. This field set is intentionally minimal and is expected to be
-    replaced once the internal-knowledge baseline is derived from
-    https://handbook.gitlab.com/handbook/ . Kept small on purpose so that
-    extraction can reshape it without breaking workers already built on it.
-    """
+
+class SocialAccount(ContractModel):
+    """One official account of a company, e.g. its X or Instagram profile."""
+
+    platform: SocialPlatform = Field(description="Where the account lives.")
+    url: NonBlankStr = Field(description="Full URL of the account or page.")
+
+
+class CompetitorRef(ContractModel):
+    """A company to compare against, with what is known about where it publishes."""
+
+    name: NonBlankStr = Field(description="The competitor's name.")
+    website: str | None = Field(default=None, description="Official website, when known.")
+    social_accounts: list[SocialAccount] = Field(
+        default_factory=list,
+        description="Official social accounts, read from the competitor's own website.",
+    )
+    entity_id: str | None = Field(default=None, description="Watchlist entity id in the app.")
+    discovered_by: str = Field(
+        default="user",
+        description="'user' when the person named it, 'agent' when Edrak found it.",
+    )
+
+
+class CompanyProfile(ContractModel):
+    """Baseline describing the company under analysis (the user's own company)."""
 
     name: NonBlankStr = Field(
         description="Canonical name of the company under analysis."
@@ -48,6 +75,19 @@ class CompanyProfile(ContractModel):
         description="Optional high-level company baseline notes.",
     )
 
+    website: str | None = Field(default=None, description="The company's official website.")
+
+    social_accounts: list[SocialAccount] = Field(
+        default_factory=list,
+        description="The company's own social accounts. The Customer worker reads what people say there.",
+    )
+
+    workspace_id: str | None = Field(
+        default=None,
+        description="Workspace whose uploaded documents the Internal worker may search. "
+        "When unset no internal documents are searched (a search never spans workspaces).",
+    )
+
 
 class BusinessContext(ContractModel):
     """Context that frames how the business goal should be analyzed."""
@@ -58,7 +98,28 @@ class BusinessContext(ContractModel):
 
     targets: list[NonBlankStr] = Field(
         default_factory=list,
-        description="Competitors, markets, products, or other analysis targets.",
+        description="Names of the competitors to compare against. Same names as `competitors`; "
+        "kept for workers that read a plain list.",
+    )
+
+    competitors: list[CompetitorRef] = Field(
+        default_factory=list,
+        description="Companies to compare against, the same idea in every use case.",
+    )
+
+    markets: list[NonBlankStr] = Field(
+        default_factory=list,
+        description="Places the analysis is about: countries, regions or cities.",
+    )
+
+    offering: str | None = Field(
+        default=None,
+        description="The product or service being assessed or launched.",
+    )
+
+    target_customers: str | None = Field(
+        default=None,
+        description="Who the offering is for.",
     )
 
     focus_areas: list[NonBlankStr] = Field(

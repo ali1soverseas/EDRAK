@@ -4,9 +4,12 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from .base import ContractModel, NonBlankStr, new_id, utcnow
+
+
+PAGE_TEXT_LIMIT = 20_000
 
 
 class SourceType(str, Enum):
@@ -49,6 +52,13 @@ class Evidence(ContractModel):
     publisher: str | None = Field(default=None, description="Who published the source.")
     extracted_fact: NonBlankStr = Field(description="The specific fact drawn from the source.")
     excerpt: str | None = Field(default=None, description="Supporting passage from the source.")
+    page_text: str | None = Field(
+        default=None,
+        description=(
+            "Full readable text of the page the fact came from, capped at PAGE_TEXT_LIMIT characters. "
+            "Kept so numbers further down a page can be found and checked. Never sent to a model whole."
+        ),
+    )
     retrieved_at: datetime = Field(
         default_factory=utcnow,
         description="When the source was retrieved (UTC).",
@@ -61,6 +71,12 @@ class Evidence(ContractModel):
         default_factory=dict,
         description="Source-specific extras such as pricing tier or publish date.",
     )
+
+    @field_validator("page_text")
+    @classmethod
+    def _cap_page_text(cls, v: str | None) -> str | None:
+        v = (v or "").strip()
+        return v[:PAGE_TEXT_LIMIT] or None
 
     @model_validator(mode="after")
     def _synthetic_sources_must_be_flagged(self) -> Evidence:

@@ -14,6 +14,7 @@ Full run (dispatch included; every task reports FAILED until real workers land):
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import sys
 from pathlib import Path
@@ -38,10 +39,10 @@ from edrak.contracts import (
     UseCase,
     WorkerRegistry,
 )
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 # The orchestration chain imports core.config, which constructs Settings at import
-# time and raises when LLM_API_KEY is missing. Those imports are deliberately
+# time and raises when OLLAMA_API_KEY is missing. Those imports are deliberately
 # deferred into the functions that need them so a missing key produces a readable
 # message instead of a traceback during module import.
 
@@ -113,7 +114,9 @@ def resolve_api_key() -> str | None:
     try:
         from edrak.core.config import settings
 
-        key = settings.llm_api_key.get_secret_value()
+        raw = settings.OLLAMA_API_KEY
+        # Settings may declare the key as SecretStr or as a plain str; accept both.
+        key = raw.get_secret_value() if hasattr(raw, "get_secret_value") else raw
     except Exception as exc:  # noqa: BLE001 - configuration errors vary by type
         print(f"could not load configuration: {exc}", file=sys.stderr)
         return None
@@ -121,30 +124,20 @@ def resolve_api_key() -> str | None:
 
 
 def parse_intent(query: str) -> ParsedIntent:
-    from edrak.core.llm import build_chat_model
+    from edrak.core.llm import get_chat_model
     from edrak.orchestration.planner import PlanningError
     from edrak.orchestration.prompts import REQUEST_BUILDER_SYSTEM_PROMPT
 
-    llm = build_chat_model()
-    response = llm.invoke(
-        [
-            {"role": "system", "content": REQUEST_BUILDER_SYSTEM_PROMPT},
-            {"role": "user", "content": query},
-        ]
-    )
-    content = getattr(response, "content", "") or ""
-    if isinstance(content, list):
-        content = "".join(
-            part.get("text", "") if isinstance(part, dict) else str(part)
-            for part in content
-        )
-    try:
-        return ParsedIntent.model_validate_json(str(content).strip())
-    except ValidationError as exc:
-        raise PlanningError(
-            f"request builder returned unusable output: {exc.error_count()} error(s)",
-            str(content),
-        ) from exc
+    # json_mode rather than function_calling, for the same reason as the planner:
+    # the request-builder prompt spells out the JSON shape and this model answers
+    # with prose instead of a tool call, so binding it to the schema yields nothing.
+    intent = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
+        ParsedIntent, method="json_mode"
+    ).invoke(REQUEST_BUILDER_SYSTEM_PROMPT + "\n\n" + query)
+
+    if not isinstance(intent, ParsedIntent):
+        raise PlanningError("request builder returned no usable intent", str(intent)[:200])
+    return intent
 
 
 def build_request(query: str, args: argparse.Namespace) -> BusinessRequest:
@@ -222,7 +215,7 @@ def write_artifact_plan(plan: ResearchPlan, request_id: str) -> Path | None:
 def render_request(request: BusinessRequest) -> None:
     print()
     print("=" * 70)
-    print("REQUEST")
+    print("[orchestrator] REQUEST")
     print("=" * 70)
     context = request.business_context
     print()
@@ -237,7 +230,7 @@ def render_request(request: BusinessRequest) -> None:
 
 def render_plan(plan: ResearchPlan) -> None:
     print()
-    print(f"  plan_id: {plan.plan_id}   tasks: {len(plan.tasks)}")
+    print(f"  [orchestrator] plan_id: {plan.plan_id}   tasks: {len(plan.tasks)}")
     for task in plan.tasks:
         print()
         print(f"  [{task.worker.value}]  attempt={task.attempt}")
@@ -248,6 +241,9 @@ def render_plan(plan: ResearchPlan) -> None:
 
 def render_result(result: OrchestrationResult) -> None:
     print()
+    print("=" * 70)
+    print("[orchestrator] RESULT")
+    print("=" * 70)
     print(f"  status : {result.status.value}")
     if result.error:
         print(f"  error  : {result.error}")
@@ -258,6 +254,52 @@ def render_result(result: OrchestrationResult) -> None:
     evidence = sum(len(item.evidence) for item in result.results)
     print()
     print(f"  findings: {findings}   evidence: {evidence}")
+    if result.cross_signal is not None:
+        signals = result.cross_signal.get("signals") or []
+        print(
+            "  [cross_signal] "
+            f"{result.cross_signal.get('status', 'unknown')} "
+            f"({len(signals)} signals)"
+        )
+        for index, signal in enumerate(signals, start=1):
+            kind = signal.get("signal_type") or ""
+            title = signal.get("title") or ""
+            claim = signal.get("signal") or ""
+            interpretation = signal.get("interpretation") or ""
+            heading = title or claim or f"signal {index}"
+            suffix = f" ({kind})" if kind else ""
+            print(f"  [cross_signal] {index}. {heading}{suffix}")
+            if claim:
+                print(f"      claim: {claim}")
+            if interpretation:
+                print(f"      interpretation: {interpretation}")
+
+    analysis = getattr(result, "decision_analysis", None)
+    if isinstance(analysis, dict) and analysis:
+        questions = (
+            analysis.get("question_recommendations")
+            or analysis.get("questions")
+            or []
+        )
+        status = analysis.get("status", "unknown")
+        print(f"  [decision_analysis] {status} ({len(questions)} recommendation(s))")
+        for index, item in enumerate(questions, start=1):
+            if isinstance(item, str):
+                question, recommendation = item, ""
+            else:
+                question = item.get("question") or item.get("decision_question") or ""
+                recommendation = item.get("recommendation") or ""
+                # recommendation is a nested object, not a string.
+                if isinstance(recommendation, dict):
+                    recommendation = (
+                        recommendation.get("summary")
+                        or recommendation.get("rationale")
+                        or recommendation.get("action")
+                        or ""
+                    )
+            print(f"  [decision_analysis] {index}. {question}".rstrip())
+            if recommendation:
+                print(f"      recommendation: {recommendation}")
 
 
 def write_artifact(result: OrchestrationResult, suffix: str = "") -> Path | None:
@@ -279,7 +321,7 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
     render_request(request)
     print()
     print("=" * 70)
-    print("PLAN")
+    print("[orchestrator] PLAN")
     print("=" * 70)
 
     plan = payload if isinstance(payload, ResearchPlan) else payload.plan
@@ -289,11 +331,70 @@ def _render_human(request: BusinessRequest, payload: ResearchPlan | Orchestratio
         render_plan(plan)
 
     if isinstance(payload, OrchestrationResult):
-        print()
-        print("=" * 70)
-        print("RESULT")
-        print("=" * 70)
         render_result(payload)
+
+
+def build_default_registry() -> WorkerRegistry:
+    """Register the workers that are wired for this integration slice.
+
+    All four contract workers are registered. Competitor, market and customer
+    trends already expose classes satisfying the ``Worker`` protocol
+    (``CompetitorAgent``, ``MarketIntelligence``, ``CustomerTrendsWorker``) and
+    register directly. Internal intelligence exposes a module-level function, so
+    a thin adapter carries it into the protocol.
+
+    Internal intelligence retrieves from a handbook vector store. Until
+    ``scripts/run_etl_pipeline.py`` has populated it, a dispatched internal task
+    finds no evidence rather than failing outright.
+
+    Every import is deferred. The customer trends package pulls in provider
+    SDKs, and a worker that cannot reach its model or its search provider must
+    not take down the rest of the run.
+    """
+    from edrak.contracts import WorkerType
+
+    registry = WorkerRegistry()
+
+    try:
+        from edrak.agents.competitor_intelligence import CompetitorAgent
+
+        registry.register(WorkerType.COMPETITOR_INTELLIGENCE, CompetitorAgent())
+    except Exception as exc:  # noqa: BLE001 - import-time config guards vary
+        print(
+            f"  competitor intelligence unavailable: {exc}",
+            file=sys.stderr,
+        )
+
+    try:
+        from edrak.agents.market_intelligence.graph import MarketIntelligence
+
+        registry.register(WorkerType.MARKET_INTELLIGENCE, MarketIntelligence())
+    except Exception as exc:  # noqa: BLE001 - keep one bad worker from killing all
+        print(f"  market intelligence unavailable: {exc}", file=sys.stderr)
+
+    try:
+        from edrak.agents.customer_trends.worker import CustomerTrendsWorker
+
+        registry.register(WorkerType.CUSTOMER_TRENDS, CustomerTrendsWorker())
+    except Exception as exc:  # noqa: BLE001 - provider SDK imports can fail
+        print(f"  customer trends unavailable: {exc}", file=sys.stderr)
+
+    try:
+        from edrak.agents.internal_intelligence.graph import run_internal_intelligence
+
+        class InternalWorker:
+            """Adapter for internal intelligence's module-level entry point."""
+
+            worker_type = WorkerType.INTERNAL_INTELLIGENCE
+
+            def run(self, task: Any) -> Any:
+                return run_internal_intelligence(task)
+
+        registry.register(WorkerType.INTERNAL_INTELLIGENCE, InternalWorker())
+    except Exception as exc:  # noqa: BLE001 - keep one bad worker from killing all
+        print(f"  internal intelligence unavailable: {exc}", file=sys.stderr)
+
+    return registry
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -302,7 +403,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not resolve_api_key():
         print(
-            "LLM_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
+            "OLLAMA_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
             "Create a key at https://ollama.com/settings/keys",
             file=sys.stderr,
         )
@@ -342,14 +443,16 @@ def main(argv: list[str] | None = None) -> int:
             _render_human(request, plan)
         if not args.no_out:
             out = write_artifact_plan(plan, request.request_id)
-            if out and not args.json:
+            if out:
                 print()
-                print(f"  wrote {out}")
+                print(f"  [orchestrator] run artifact saved: {out}")
         return EXIT_COMPLETED
 
     from edrak.orchestration.graph import build_graph
 
-    state = build_graph(WorkerRegistry()).invoke({"request": request})
+    state = asyncio.run(
+        build_graph(build_default_registry()).ainvoke({"request": request})
+    )
     result = state["orchestration_result"]
 
     if args.json:
@@ -368,9 +471,9 @@ def main(argv: list[str] | None = None) -> int:
             if args.plan_only
             else write_artifact(result)
         )
-        if out and not args.json:
+        if out:
             print()
-            print(f"  wrote {out}")
+            print(f"  [orchestrator] run artifact saved: {out}")
 
     if args.plan_only:
         return EXIT_COMPLETED

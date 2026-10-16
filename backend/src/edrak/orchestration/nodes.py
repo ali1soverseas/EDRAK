@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import contextlib
+import io
+import json
+import logging
 from collections.abc import Callable
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -13,13 +18,145 @@ from ..contracts import (
     WorkerResult,
     WorkerStatus,
 )
+from ..contracts.CrossSignal import CrossSignalOutput
+from ..contracts.DecisionAnalysis import (
+    DecisionAnalysisInput,
+)
 from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
+from ..core.action_log import log_action
+from ..DecisionAnalysis.service import run_decision_analysis
 from .planner import LlmPlanner, PlanningError
-from .state import OrchestrationState
+from .state import RESET, OrchestrationState
+
+logger = logging.getLogger(__name__)
+
+
+def _metric_context(state: OrchestrationState) -> dict[str, Any]:
+    """Which figures exist (by name and status, never their values) and which required ones are missing."""
+    seen: dict[tuple[str, str], str] = {}
+    gaps: list[str] = []
+    for wr in state.get("results") or []:
+        for m in wr.metadata.get("metrics") or []:
+            if m.get("metric_id") and m.get("status") in ("verified", "thin", "conflict"):
+                seen[(m["metric_id"], m.get("entity", ""))] = m["status"]
+        required = {(r.get("metric_id"), str(r.get("entity", "")).lower()): r.get("required", True) for r in wr.metadata.get("requirements") or []}
+        for o in wr.metadata.get("requirement_outcomes") or []:
+            if o.get("status") == "gap" and required.get((o.get("metric_id"), str(o.get("entity", "")).lower()), True):
+                gaps.append(f"{o.get('metric_id')} for {o.get('entity')}: {str(o.get('reason') or 'not_found').replace('_', ' ')}")
+    return {"metric_context": [{"metric_id": k[0], "entity": k[1], "status": v} for k, v in seen.items()], "blocking_gaps": gaps}
+
+
+def make_decision_analysis_node():
+    """
+    Create the orchestrator's Decision Analysis node.
+
+    Expected input:
+        state["request"]
+        state["cross_signal"]
+
+    Output:
+        state["decision_analysis"]
+    """
+    print("\n[orchestrator] NODE: decision_analysis")
+    async def decision_analysis_node(
+        state: OrchestrationState,
+    ) -> dict[str, Any]:
+        raw_cross_signal = state.get("cross_signal")
+        request = state.get("request")
+    
+        if not raw_cross_signal:
+            message = (
+                "Decision Analysis skipped: Cross-Signal output "
+                "is missing."
+            )
+
+            logger.warning(message)
+
+            return {
+                "decision_analysis": None,
+                "error": message,
+            }
+
+        if request is None:
+            message = (
+                "Decision Analysis skipped: business request "
+                "is missing."
+            )
+
+            logger.error(message)
+
+            return {
+                "decision_analysis": None,
+                "error": message,
+            }
+
+        try:
+            if isinstance(raw_cross_signal, CrossSignalOutput):
+                cross_signal = raw_cross_signal
+            else:
+                cross_signal = CrossSignalOutput.model_validate(
+                    raw_cross_signal
+                )
+
+            if cross_signal.status.lower() != "completed":
+                raise ValueError(
+                    "Cross-Signal did not complete successfully. "
+                    f"Received status: {cross_signal.status!r}"
+                )
+
+            decision_input = DecisionAnalysisInput(
+                research_run_id=cross_signal.research_run_id,
+                business_request=request,
+                cross_signal=cross_signal,
+                metadata={
+                    "source_stage": "cross_signal",
+                    "orchestrator_stage": "decision_analysis",
+                    **_metric_context(state),
+                },
+            )
+            print(
+                f"  [decision_analysis] running for run_id={decision_input.research_run_id}"
+            )
+            result = await run_decision_analysis(
+                decision_input=decision_input
+            )
+
+            dumped_result = result.model_dump(mode="json")
+
+            logger.info(
+                "Decision Analysis finished for run %s with status %s",
+                result.research_run_id,
+                result.status.value,
+            )
+
+            return {
+                "decision_analysis": dumped_result,
+            }
+
+        except Exception as exc:
+            logger.exception(
+                "Decision Analysis failed."
+            )
+
+            return {
+                "decision_analysis": None,
+                "error": (
+                    "Decision Analysis failed: "
+                    f"{type(exc).__name__}: {exc}"
+                ),
+            }
+
+    return decision_analysis_node
 
 
 def plan_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: plan")
+    # A plan that arrives with the request is the one a person reviewed and approved. Run that
+    # one. Planning again would run different workers than the ones approved, ignore the
+    # sources they allowed, and cost another model call.
+    if state.get("plan") is not None:
+        return state
     request: BusinessRequest = state["request"]
     plan = LlmPlanner().plan(request)
     return {**state, "plan": plan}
@@ -37,12 +174,15 @@ def run_task(task: ResearchTask, registry: WorkerRegistry) -> WorkerResult:
         return _failed(task, str(exc))
 
     try:
-        return WorkerResult.model_validate(worker.run(task))
+        result = WorkerResult.model_validate(worker.run(task))
     except ValidationError as exc:
         return _failed(task, f"worker returned an invalid WorkerResult: {exc}")
     # A worker is third-party code. Any failure is contained, not propagated.
     except Exception as exc:  # noqa: BLE001
         return _failed(task, f"worker raised {type(exc).__name__}: {exc}")
+    # Numbers are the metrics agent's job (metrics_node): it reads what every worker saved,
+    # hunts for what is missing and checks the checklist. A worker is never re-run for a figure.
+    return result
 
 
 def make_dispatch_worker(
@@ -56,7 +196,9 @@ def make_dispatch_worker(
     """
 
     def dispatch_worker(payload: dict) -> dict:
-        result = run_task(payload["task"], registry)
+        task = payload["task"]
+        print(f"\n[{task.worker.value}] NODE: dispatch")
+        result = run_task(task, registry)
         return {"results": [result], "outcomes": [result.to_outcome()]}
 
     return dispatch_worker
@@ -72,18 +214,138 @@ def _failed(task: ResearchTask, detail: str) -> WorkerResult:
     )
 
 
+def metrics_node(state: OrchestrationState) -> OrchestrationState:
+    """The metrics agent: every figure the planner asked for, found, hunted or marked a gap with a reason.
+
+    Runs after verification so checkpoint 2 can show conflicts.
+    """
+    print("\n[metrics] NODE: metrics agent")
+    from ..agents.metrics import run as run_metrics_agent
+    from ..metrics.planning import requirements_for
+
+    results = list(state.get("results") or [])
+    plan = state.get("plan")
+    raw_tasks = list(plan.tasks) if plan else []
+    req = state["request"]
+    ctx = req.business_context
+    comps = [c.name for c in ctx.competitors] or list(ctx.targets)
+    tasks = []
+    for t in raw_tasks:
+        if not t.requirements:
+            t = t.model_copy(update={"requirements": requirements_for(
+                t.worker.value if hasattr(t.worker, "value") else str(t.worker),
+                ctx.use_case.value if hasattr(ctx.use_case, "value") else str(ctx.use_case),
+                req.company_profile.name,
+                comps,
+                list(ctx.markets),
+                ctx.offering or "",
+            )})
+        tasks.append(t)
+    try:
+        fixed, conflicts = run_metrics_agent(req, tasks, results)
+    except Exception as exc:  # noqa: BLE001 - the brief still renders gap cards without figures
+        logger.warning("Metrics agent failed: %s", exc)
+        return state
+    update: dict[str, Any] = {"results": fixed}
+    vr = state.get("verification_result")
+    if vr is not None and conflicts:
+        cs = vr.control_summary
+        merged = list(dict.fromkeys([*cs.conflicts, *conflicts]))
+        update["verification_result"] = vr.model_copy(update={"control_summary": cs.model_copy(update={"conflicts": merged})})
+    return update
+
+
 def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[verification] NODE: verify")
+    from ..contracts.verification import VerificationInput
+    from ..verification.graph import run as run_verification
+
+    buffer = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buffer):
+            result = run_verification(
+                VerificationInput(
+                    request=state["request"],
+                    agent_outputs=state.get("results") or [],
+                )
+            )
+    except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+        # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
+        # here can. The person at the review checkpoint decides whether to re-plan.
+        return {
+            **state,
+            "verification": VerificationDecision(
+                status=VerificationStatus.CANNOT_COMPLETE,
+                summary=f"verification stage raised {type(exc).__name__}: {exc}",
+            ),
+        }
+    finally:
+        captured = buffer.getvalue()
+
+    if captured.strip():
+        log_action("verification", captured)
+
+    print(
+        f"  [verification] {result.decision.status.value} "
+        f"({len(result.findings)} findings assessed) "
+        f"-> artifacts/logs/verification.log"
+    )
+
     return {
         **state,
-        "verification": VerificationDecision(
-            status=VerificationStatus.VERIFIED,
-            summary="stub verification gate; always reports VERIFIED until the "
-            "verification stage is implemented",
-        ),
+        "verification": result.decision,
+        "verification_result": result,
     }
 
 
+async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[cross_signal] NODE: cross_signal")
+    from ..contracts.CrossSignal import build_cross_signal_input
+    from ..contracts.verification import FindingCheckStatus, VerificationResult
+    from ..CrossSignal.graph import run_cross_signal
+
+    raw = state.get("verification_result")
+    if raw is None:
+        print("  [cross_signal] skipped: no verification result")
+        return {**state, "cross_signal": None}
+
+    try:
+        payload = (
+            raw
+            if isinstance(raw, VerificationResult)
+            else VerificationResult.model_validate(raw)
+        )
+        # The contract builder rejects a payload that still contains
+        # insufficient findings. Keep the verified run, drop the rest.
+        verified_only = payload.model_copy(
+            update={
+                "findings": [
+                    item
+                    for item in payload.findings
+                    if item.verification_status is FindingCheckStatus.VERIFIED
+                ]
+            }
+        )
+        cs_input = build_cross_signal_input(verified_only, state["request"])
+        output = await run_cross_signal(cs_input)
+    except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+        print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
+        return {**state, "cross_signal": None}
+
+    dumped = output.model_dump(mode="json")
+    print("\n" + "=" * 72)
+    print("[cross_signal] OUTPUT")
+    print("=" * 72)
+    print(json.dumps(dumped, indent=2, default=str))
+    print(
+        f"  [cross_signal] {dumped.get('status', 'unknown')} "
+        f"({len(dumped.get('signals') or [])} signals)"
+    )
+    return {**state, "cross_signal": dumped}
+
+
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: exhausted")
     return {
         **state,
         "error": "orchestration retry/replan limits exhausted; "
@@ -92,43 +354,177 @@ def exhausted_node(state: OrchestrationState) -> OrchestrationState:
 
 
 def finalize_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: finalize")
     request: BusinessRequest = state["request"]
     plan = state.get("plan")
     results = state.get("results") or []
     error = state.get("error")
+    decision_analysis = state.get("decision_analysis")
 
-    any_failed = any(r.status is WorkerStatus.FAILED for r in results)
-    overall_status = RunStatus.PARTIAL if (any_failed or error) else RunStatus.COMPLETED
+    any_failed = any(
+        r.status is WorkerStatus.FAILED
+        for r in results
+    )
+
+    decision_analysis_failed = (
+        decision_analysis is None
+        and bool(state.get("cross_signal"))
+    )
+
+    overall_status = (
+        RunStatus.PARTIAL
+        if any_failed or error or decision_analysis_failed
+        else RunStatus.COMPLETED
+    )
 
     result = OrchestrationResult(
         request_id=request.request_id,
         status=overall_status,
         plan=plan,
         results=results,
-        error=error,
+        cross_signal=state.get("cross_signal"),
+        decision_analysis=decision_analysis,
+        error=(
+            error
+            or (
+                state.get("error")
+                if decision_analysis_failed
+                else None
+            )
+        ),
     )
+
     return {
         **state,
         "status": overall_status.value,
         "orchestration_result": result,
     }
 
+def _targeted_tasks(
+    state: OrchestrationState,
+) -> tuple[list[ResearchTask], dict[str, list[str]]] | None:
+    """Re-task only the workers whose findings verification found contradictory.
+
+    Returns the amended tasks and the reasons per worker, or None when no worker
+    can be identified, which sends the caller back to a full replan.
+
+    The task keeps its original ``task_id`` on purpose. ``merge_by_task_id``
+    replaces a result when the same task id comes back, so re-dispatching these
+    tasks overwrites exactly these workers' results and leaves every other
+    worker's findings in place.
+    """
+    raw = state.get("verification_result")
+    if raw is None:
+        return None
+
+    findings = getattr(raw, "findings", None)
+    if findings is None and isinstance(raw, dict):
+        findings = raw.get("findings")
+    if not findings:
+        return None
+
+    reasons: dict[str, list[str]] = {}
+    for verdict in findings:
+        contradictions = (
+            verdict.get("contradictions")
+            if isinstance(verdict, dict)
+            else getattr(verdict, "contradictions", None)
+        )
+        worker = (
+            verdict.get("worker")
+            if isinstance(verdict, dict)
+            else getattr(verdict, "worker", None)
+        )
+        if not contradictions or worker is None:
+            continue
+        key = getattr(worker, "value", worker)
+        bucket = reasons.setdefault(str(key), [])
+        for item in contradictions:
+            text = str(item).strip()
+            if text and text not in bucket:
+                bucket.append(text)
+
+    if not reasons:
+        return None
+
+    plan = state.get("plan")
+    if plan is None:
+        return None
+
+    amended: list[ResearchTask] = []
+    for task in plan.tasks:
+        worker_key = getattr(task.worker, "value", task.worker)
+        wanted = reasons.get(str(worker_key))
+        if not wanted:
+            continue
+        amended.append(
+            task.model_copy(
+                update={
+                    "goal": _amended_goal(task, wanted),
+                    "focus": _amended_focus(task, wanted),
+                    "attempt": task.attempt + 1,
+                }
+            )
+        )
+
+    return (amended, reasons) if amended else None
+
+
+def _amended_goal(task: ResearchTask, reasons: list[str]) -> str:
+    detail = "; ".join(reasons)
+    return (
+        f"{task.goal} Re-check the conflicting evidence for this assignment: {detail}."
+    )
+
+
+def _amended_focus(task: ResearchTask, reasons: list[str]) -> str:
+    detail = "; ".join(reasons)
+    return f"{task.focus} Resolve the contradiction first: {detail}."
+
 
 def replan_node(state: OrchestrationState) -> OrchestrationState:
+    print("\n[orchestrator] NODE: replan")
     request: BusinessRequest = state["request"]
     replan_count = (state.get("replan_count") or 0) + 1
+
+    targeted = _targeted_tasks(state)
+    if targeted is not None:
+        tasks, reasons = targeted
+        plan = state["plan"]
+        print(
+            f"  targeted replan {replan_count}: re-dispatching "
+            f"{len(tasks)} of {len(plan.tasks)} worker(s): "
+            + ", ".join(str(getattr(t.worker, "value", t.worker)) for t in tasks)
+        )
+        for worker, items in reasons.items():
+            print(f"    {worker}: {len(items)} contradiction(s) to resolve")
+        # The plan is left intact on purpose. Its tasks keep their original ids,
+        # so merge_by_task_id swaps in these results and the results of the
+        # workers that were not re-run stay valid against the plan.
+        return {
+            **state,
+            "replan_tasks": tasks,
+            "replan_count": replan_count,
+        }
+
+    # No worker could be identified, which happens when the verification stage
+    # itself raised and set REPLAN_REQUIRED without any findings. Re-plan from
+    # the request as before, otherwise there would be nothing to dispatch.
+    print("  no conflicting worker identified: replanning the whole request")
     plan = LlmPlanner().plan(request)
     return {
         **state,
         "plan": plan,
+        "replan_tasks": None,
         "replan_count": replan_count,
-        "results": [],
-        "outcomes": [],
+        "results": RESET,
+        "outcomes": RESET,
     }
 
 
 __all__ = [
     "PlanningError",
+    "cross_signal_node",
     "exhausted_node",
     "finalize_node",
     "make_dispatch_worker",

@@ -1,0 +1,419 @@
+/*
+ * Responsive layout. Loaded last.
+ *
+ * The handoff is drawn at 1440 px wide, and above 1180 px nothing here changes it. Below
+ * that the layout adapts in three steps, each only adjusting layout (never colours, type
+ * families or motion):
+ *
+ *   <= 1180 px  the side column of two-column screens drops below (see analysis, company, run css)
+ *   <=  960 px  the brief's cards stop being fixed-height frames and grow with their content;
+ *               the sources table loses a column
+ *   <=  900 px  the sidebar is the 72 px icon rail (markup switches in AppShell); sign in stacks
+ *   <=  760 px  the Analyses table becomes a list of cards
+ *   <=  640 px  the sidebar leaves the layout and slides in from the top bar's menu button
+ *
+ * Where a size is set inline in a component (a heading's font size, a card's fixed width) the
+ * override uses !important, and says so.
+ */
+
+.nav-toggle,
+.nav-scrim {
+  display: none;
+}
+:root {
+  --side-hide: -100%;
+}
+[dir="rtl"] {
+  --side-hide: 100%;
+}
+
+/* ====================================================================== <= 960 */
+@media (max-width: 960px) {
+  .brief-page {
+    padding: 12px 16px 16px;
+  }
+
+  /* Cards are no longer one fixed screen each. They are at least a screen tall and grow
+     with their content, and snapping only nudges instead of forcing. */
+  .bscroll {
+    scroll-snap-type: y proximity;
+  }
+  .bcard {
+    height: auto;
+    min-height: 100%;
+    padding: 28px 44px 64px 24px;
+    scroll-snap-stop: normal;
+  }
+  [dir="rtl"] .bcard {
+    padding: 28px 24px 64px 44px;
+  }
+  .bc-body {
+    height: auto;
+    min-height: 100%;
+  }
+  .bc-fill {
+    height: auto;
+  }
+  .bc-head {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .bc-head h2.disp {
+    font-size: 28px !important; /* inline 34px */
+  }
+  /* "Scroll or use the dots" floats over text once cards grow, and the cards scroll naturally. */
+  .bhint {
+    display: none;
+  }
+
+  /* 01 Summary */
+  .summary-grid {
+    flex-direction: column;
+    height: auto;
+    gap: 28px;
+  }
+  .summary-left {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .summary-right {
+    align-self: stretch;
+    margin-top: 0;
+  }
+  .summary-block {
+    flex: none;
+    padding: 20px 0;
+  }
+  .summary-text {
+    font-size: 18px;
+  }
+
+  /* 02 Findings */
+  .lens-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    flex: none;
+  }
+  .lens-findings {
+    overflow: visible;
+  }
+  .synthesis {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .synthesis > div {
+    width: auto !important; /* inline 200 and 240 px */
+  }
+
+  /* 03 Evidence: the Origin column goes, the square beside each source already shows the worker */
+  .sources-body {
+    overflow: visible;
+  }
+  .srow-head,
+  .srow {
+    grid-template-columns: 52px minmax(0, 1fr) 64px 124px;
+  }
+  .srow-head > :nth-child(3),
+  .srow > :nth-child(3) {
+    display: none;
+  }
+
+  /* 04 Options */
+  .option-row {
+    flex-direction: column;
+  }
+  .options-bottom {
+    flex-direction: column;
+    align-items: stretch; /* .row.as would shrink each column to its content */
+    gap: 22px;
+  }
+  .options-col {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* ====================================================================== <= 900 */
+@media (max-width: 900px) {
+  .top {
+    padding: 0 20px;
+  }
+  .page {
+    padding: 24px 24px;
+  }
+
+  /* Headings: inline sizes are for 1440 px. */
+  .page h1.disp {
+    font-size: clamp(26px, 5.2vw, 36px) !important; /* inline 32 to 44 px */
+  }
+
+  /* Sign in stacks: brand above, form below. The hub is decorative and is left out. */
+  .signin {
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+  }
+  .signin-brand {
+    gap: 28px;
+    padding: 32px 28px 36px;
+  }
+  .signin-brand h1.disp {
+    font-size: 44px !important; /* inline 64px */
+  }
+  .hub-box {
+    display: none;
+  }
+  .signin-panel {
+    padding: 28px 28px 36px;
+  }
+
+  .usecase-grid {
+    grid-template-columns: 1fr;
+  }
+  .page-head,
+  .list-head,
+  .plan-head {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .run-head {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .run-controls {
+    flex-wrap: wrap;
+  }
+  .company-foot {
+    flex-wrap: wrap;
+  }
+  .plan-title {
+    white-space: normal;
+  }
+}
+
+/* ====================================================================== <= 760 */
+@media (max-width: 760px) {
+  /* The Analyses table becomes cards: title and action on the first line, then status, when
+     and result. */
+  .tbl.roomy thead {
+    display: none;
+  }
+  .tbl.roomy,
+  .tbl.roomy tbody {
+    display: block;
+  }
+  .tbl.roomy tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 12px;
+    padding: 14px 6px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .tbl.roomy tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .tbl.roomy td {
+    display: block;
+    width: auto !important; /* inline 42% on the first cell */
+    padding: 0;
+    border: 0;
+  }
+  .tbl.roomy td:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .tbl.roomy td:nth-child(5) {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: end;
+  }
+  .tbl.roomy td:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .tbl.roomy td:nth-child(3) {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .tbl.roomy td:nth-child(4) {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+
+  .split {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .uc-switch {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* ====================================================================== <= 640 */
+@media (max-width: 640px) {
+  /* The sidebar becomes a menu: out of the grid, off screen, in on demand. */
+  .app,
+  .app.rail {
+    grid-template-columns: 1fr;
+  }
+  .side,
+  .app.rail .side {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 70;
+    width: 272px;
+    max-width: 86vw;
+    padding: 20px 14px 16px;
+    align-items: stretch;
+    transform: translateX(var(--side-hide));
+    /* Hidden from tab order and screen readers once it has slid out. */
+    transition: transform 0.3s var(--ease), visibility 0s linear 0.3s;
+    visibility: hidden;
+  }
+  .app.nav-open .side {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.3s var(--ease), visibility 0s;
+    box-shadow: 0 24px 60px -16px rgba(11, 13, 56, 0.4);
+  }
+  .nav-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    background: rgba(11, 13, 56, 0.34);
+  }
+  .nav-toggle {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .top {
+    gap: 10px;
+    padding: 0 12px;
+  }
+  /* Only the current page's name fits. */
+  .crumb {
+    min-width: 0;
+  }
+  .crumb .crumb-item {
+    min-width: 0;
+  }
+  .crumb .crumb-item:not(:last-child) {
+    display: none;
+  }
+  /* The separator belongs to the crumb before it, which is hidden. */
+  .crumb .crumb-item:last-child > .ic {
+    display: none;
+  }
+  .crumb b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .page {
+    padding: 20px 16px;
+  }
+  .brief-page {
+    padding: 8px 10px 10px;
+  }
+  .brief-bar {
+    height: auto !important; /* inline 36px */
+    flex-wrap: wrap;
+  }
+  .brief-requested {
+    display: none;
+  }
+  .bcard {
+    padding: 22px 38px 56px 16px;
+  }
+  [dir="rtl"] .bcard {
+    padding: 22px 16px 56px 38px;
+  }
+  .summary-left h1.disp {
+    font-size: 30px !important; /* inline 44px */
+  }
+  .lens-row {
+    grid-template-columns: 1fr;
+  }
+  .srow-head,
+  .srow {
+    grid-template-columns: 48px minmax(0, 1fr) 100px;
+  }
+  .srow-head > :nth-child(4),
+  .srow > :nth-child(4) {
+    display: none;
+  }
+
+  .signin-brand {
+    padding: 28px 20px 30px;
+  }
+  .signin-brand h1.disp {
+    font-size: 36px !important; /* inline 64px */
+  }
+  .signin-panel {
+    padding: 24px 20px 32px;
+  }
+
+  /* Live run: the stage tracker stands up, and each worker's progress drops under its name. */
+  .stage-tracker {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+  .step {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .step > div {
+    margin-top: 0 !important; /* inline -4px under the label */
+  }
+  .step-line {
+    display: none;
+  }
+  .task-row {
+    flex-wrap: wrap;
+  }
+  .task-main {
+    flex: 1 1 0;
+  }
+  .task-progress {
+    order: 3;
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .task-row > .btn {
+    order: 2;
+  }
+  .run-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .company-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .company-foot > .row {
+    width: 100%;
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .company-foot .btn {
+    width: 100%;
+  }
+  .analysis-grid .uc-option {
+    flex: none;
+  }
+  .menu {
+    min-width: 0;
+    width: 100%;
+  }
+}

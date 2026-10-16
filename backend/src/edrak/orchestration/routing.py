@@ -30,10 +30,18 @@ class ConcurrentWorkerDispatchError(RuntimeError):
 def route_from_plan(state: OrchestrationState) -> list[Send] | str:
     """Fan out one Send per task so workers run in parallel.
 
-    Also the single place the one-task-per-worker invariant is enforced.
+    Also the single place where the one-task-per-worker invariant is enforced.
+
+    A targeted replan narrows the dispatch to the workers verification found
+    contradictory by setting ``replan_tasks``. The plan itself keeps every task,
+    so results from the workers that were not re-run still belong to it.
     """
-    plan = state.get("plan")
-    tasks = plan.tasks if plan else []
+    pending = state.get("replan_tasks")
+    if pending:
+        tasks = pending
+    else:
+        plan = state.get("plan")
+        tasks = plan.tasks if plan else []
 
     if not tasks:
         return "finalize_failed"
@@ -54,17 +62,27 @@ def decide_after_verification(state: OrchestrationState) -> str:
 
     status = verification.status
 
-    if status in (VerificationStatus.VERIFIED, VerificationStatus.CANNOT_COMPLETE):
+    if status is VerificationStatus.VERIFIED:
+        return "cross_signal"
+    if status is VerificationStatus.CANNOT_COMPLETE:
         return "finalize"
 
     if status is VerificationStatus.RETRY_REQUIRED:
-        if state.get("attempts_exceeded") or settings.max_task_attempts < 1:
+        if state.get("attempts_exceeded") or settings.MAX_TASK_ATTEMPTS < 1:
             return "exhausted"
         return "dispatch"
 
     if status is VerificationStatus.REPLAN_REQUIRED:
-        if (state.get("replan_count") or 0) >= settings.max_replans:
-            return "exhausted"
+        if (state.get("replan_count") or 0) >= settings.MAX_REPLANS:
+            # Out of replans, but not out of signal. One contradictory finding
+            # used to send the whole run straight to finalize, which threw away
+            # cross_signal and decision_analysis even though the remaining
+            # findings were verified and usable. Both stages only ever receive
+            # VERIFIED findings, so they are safe to run on a partial set; the
+            # contract gate accepts REPLAN_REQUIRED when at least one finding
+            # passed. CANNOT_COMPLETE keeps going to finalize, because that
+            # status means nothing verified at all.
+            return "cross_signal"
         return "replan"
 
     return "finalize"

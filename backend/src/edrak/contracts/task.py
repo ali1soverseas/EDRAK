@@ -6,6 +6,7 @@ from enum import Enum
 from pydantic import Field, model_validator
 
 from .base import ContractModel, NonBlankStr, new_id, utcnow
+from .metrics import MetricRequirement
 from .request import BusinessContext, CompanyProfile
 
 
@@ -42,6 +43,10 @@ class ResearchTask(ContractModel):
         default=1,
         ge=1,
         description="Starts at 1 and increments on targeted retries.",
+    )
+    requirements: list[MetricRequirement] = Field(
+        default_factory=list,
+        description="Typed figures this worker must look for. Filled by code from the use-case template.",
     )
 
 

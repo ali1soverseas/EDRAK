@@ -1,0 +1,285 @@
+# Closed metric registry. Ids are what workers, the planner and the brief refer to.
+# unit_kind: currency | count | percent | index | date | text
+# visual: kpi | segmented | line | ladder | timeline | text
+# preferred_sources: official = the entity's own site/filings; third_party = press, analysts; internal = uploaded docs
+metrics:
+  # ---- Competitor agent ----
+  - id: price_per_tier
+    name: {en: "Price per tier", ar: "السعر لكل باقة"}
+    aliases: [pricing, plan price, price per seat, price per user]
+    definition: "List price of each paid plan, per seat per month unless stated."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} pricing", "{entity} plans price per user"]
+    check: {official_source_required: true}
+    visual: ladder
+    comparator: company
+  - id: effective_price_usage
+    name: {en: "Effective price under usage billing", ar: "السعر الفعلي عند الفوترة بالاستهلاك"}
+    aliases: [usage price, overage price, cost per minute]
+    definition: "Price per billed unit (e.g. CI minute, API call) beyond the included allowance."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} usage based pricing", "{entity} overage"]
+    check: {official_source_required: true}
+    visual: kpi
+    comparator: company
+  - id: paid_subscribers
+    name: {en: "Paid subscribers", ar: "المشتركون المدفوعون"}
+    aliases: [customers, paying customers, subscribers, active merchants]
+    definition: "Number of paying customers or subscribers."
+    unit_kind: count
+    period: latest_reported
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} number of customers", "{entity} paying customers"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: revenue_arr
+    name: {en: "Revenue or ARR", ar: "الإيرادات"}
+    aliases: [arr, annual revenue, revenue]
+    definition: "Annual revenue or annual recurring revenue, if publicly reported."
+    unit_kind: currency
+    period: fiscal_year
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} annual revenue", "{entity} ARR filing"]
+    check: {official_source_required: true}
+    visual: kpi
+    comparator: prior
+  - id: release_cadence
+    name: {en: "Release cadence", ar: "وتيرة الإصدارات"}
+    aliases: [release frequency, shipping cadence]
+    definition: "Releases shipped per month or quarter."
+    unit_kind: count
+    period: trailing_12m
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} release notes", "{entity} changelog"]
+    check: {min_points: 3}
+    visual: timeline
+    comparator: prior
+  - id: certifications
+    name: {en: "Certifications", ar: "الشهادات"}
+    aliases: [compliance, soc2, iso 27001, pci]
+    definition: "Security and compliance certifications held."
+    unit_kind: count
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official]
+    query_hints: ["{entity} security compliance certifications"]
+    check: {official_source_required: true}
+    visual: text
+    comparator: company
+  - id: funding_total
+    name: {en: "Funding raised", ar: "التمويل المجمّع"}
+    aliases: [funding, total raised]
+    definition: "Total external funding raised to date."
+    unit_kind: currency
+    period: point_in_time
+    owner: competitor_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{entity} funding round raised"]
+    check: {}
+    visual: kpi
+    comparator: none
+  # ---- Market agent ----
+  - id: market_size
+    name: {en: "Market size", ar: "حجم السوق"}
+    aliases: [tam, market value]
+    definition: "Total addressable market value for the offering in the target market."
+    unit_kind: currency
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} {offering} market size"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: market_cagr
+    name: {en: "Market growth (CAGR)", ar: "نمو السوق (CAGR)"}
+    aliases: [cagr, growth rate]
+    definition: "Compound annual growth rate of the market."
+    unit_kind: percent
+    period: forecast_range
+    owner: market_intelligence
+    preferred_sources: [third_party]
+    query_hints: ["{market} {offering} CAGR forecast"]
+    check: {}
+    visual: kpi
+    comparator: none
+  - id: segment_growth
+    name: {en: "Segment growth", ar: "نمو القطاع"}
+    aliases: [segment cagr]
+    definition: "Growth rate of the specific segment the offering targets."
+    unit_kind: percent
+    period: year
+    owner: market_intelligence
+    preferred_sources: [third_party]
+    query_hints: ["{market} {offering} segment growth"]
+    check: {min_points: 3}
+    visual: line
+    comparator: prior
+  - id: adoption_rate
+    name: {en: "Adoption rate", ar: "معدل التبني"}
+    aliases: [penetration, adoption]
+    definition: "Share of target customers already using the category."
+    unit_kind: percent
+    period: year
+    owner: market_intelligence
+    preferred_sources: [official, third_party]
+    query_hints: ["{market} {offering} adoption penetration"]
+    check: {}
+    visual: kpi
+    comparator: prior
+  - id: market_concentration
+    name: {en: "Market concentration", ar: "تركّز السوق"}
+    aliases: [market share, top players share]
+    definition: "Share of the market held by the top players."
+    unit_kind: percent
+    period: year
+    owner: market_intelligence
+    preferred_sources: [third_party]
+    query_hints: ["{market} {offering} market share leaders"]
+    check: {parts_sum_100: true}
+    visual: segmented
+    comparator: none
+  - id: regulation_events
+    name: {en: "Regulation events", ar: "الأحداث التنظيمية"}
+    aliases: [regulation, licensing]
+    definition: "Dated regulatory changes that affect the offering."
+    unit_kind: date
+    period: upcoming_and_recent
+    owner: market_intelligence
+    preferred_sources: [official]
+    query_hints: ["{market} {offering} regulation law", "{market} {offering} export control licensing"]
+    check: {official_source_required: true}
+    visual: timeline
+    comparator: none
+  # ---- Customer agent ----
+  - id: share_of_voice
+    name: {en: "Share of voice", ar: "حصة الحديث"}
+    aliases: [sov, mention share]
+    definition: "Share of brand mentions among the company and its competitors."
+    unit_kind: percent
+    period: time_window
+    owner: customer_trends
+    preferred_sources: [official]
+    query_hints: []
+    check: {parts_sum_100: true, min_sample: 30, min_platforms: 2}
+    visual: segmented
+    comparator: none
+  - id: sentiment_split
+    name: {en: "Sentiment split", ar: "توزيع المشاعر"}
+    aliases: [sentiment]
+    definition: "Positive, neutral and negative share of customer posts."
+    unit_kind: percent
+    period: time_window
+    owner: customer_trends
+    preferred_sources: [official]
+    query_hints: []
+    check: {parts_sum_100: true, min_sample: 30}
+    visual: segmented
+    comparator: none
+  - id: rating
+    name: {en: "Rating", ar: "التقييم"}
+    aliases: [stars, review score]
+    definition: "Average review rating on a public review site."
+    unit_kind: index
+    period: latest_reported
+    owner: customer_trends
+    preferred_sources: [third_party]
+    query_hints: ["{entity} reviews rating"]
+    check: {min_sample: 30}
+    visual: kpi
+    comparator: company
+  - id: top_pain_points
+    name: {en: "Top pain points", ar: "أبرز نقاط الألم"}
+    aliases: [complaints, pain points]
+    definition: "Most frequent complaint themes with their share of mentions."
+    unit_kind: percent
+    period: time_window
+    owner: customer_trends
+    preferred_sources: [official]
+    query_hints: []
+    check: {min_sample: 30}
+    visual: ladder
+    comparator: none
+  - id: switching_intent
+    name: {en: "Switching intent", ar: "نية التحويل"}
+    aliases: [churn intent, considering switching]
+    definition: "Share of posts expressing intent to switch away from or to a vendor."
+    unit_kind: percent
+    period: time_window
+    owner: customer_trends
+    preferred_sources: [official]
+    query_hints: []
+    check: {min_sample: 30}
+    visual: kpi
+    comparator: none
+  - id: search_interest
+    name: {en: "Search interest", ar: "الاهتمام البحثي"}
+    aliases: [google trends, demand]
+    definition: "Relative search interest over time (0-100)."
+    unit_kind: index
+    period: time_window
+    owner: customer_trends
+    preferred_sources: [third_party]
+    query_hints: []
+    check: {min_points: 3}
+    visual: line
+    comparator: prior
+  # ---- Internal agent ----
+  - id: own_price
+    name: {en: "Our price", ar: "سعرنا"}
+    aliases: [our pricing, list price, internal price, target asp]
+    definition: "The company's own price for the offering, from internal documents."
+    unit_kind: currency
+    period: point_in_time
+    owner: internal_intelligence
+    preferred_sources: [internal]
+    query_hints: ["pricing sheet", "price list"]
+    check: {}
+    visual: kpi
+    comparator: none
+  - id: win_loss
+    name: {en: "Win/loss rate", ar: "معدل الفوز والخسارة"}
+    aliases: [win rate, loss rate, win/loss, deal win rate]
+    definition: "Share of competitive deals won."
+    unit_kind: percent
+    period: quarter
+    owner: internal_intelligence
+    preferred_sources: [internal]
+    query_hints: ["win loss analysis"]
+    check: {min_sample: 10}
+    visual: segmented
+    comparator: prior
+  - id: capacity
+    name: {en: "Delivery capacity", ar: "الطاقة التشغيلية"}
+    aliases: [headcount, capacity, team capacity, delivery capacity, headcount capacity]
+    definition: "Team or delivery capacity available for the initiative."
+    unit_kind: count
+    period: point_in_time
+    owner: internal_intelligence
+    preferred_sources: [internal]
+    query_hints: ["capacity plan", "headcount"]
+    check: {}
+    visual: kpi
+    comparator: none
+  - id: roadmap_items
+    name: {en: "Roadmap commitments", ar: "التزامات خارطة الطريق"}
+    aliases: [roadmap, milestone, release target]
+    definition: "Dated roadmap commitments relevant to the decision."
+    unit_kind: date
+    period: upcoming
+    owner: internal_intelligence
+    preferred_sources: [internal]
+    query_hints: ["roadmap"]
+    check: {}
+    visual: timeline
+    comparator: none
