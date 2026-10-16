@@ -19,7 +19,14 @@ export type ApiErrorCode =
   | "email_taken"
   | "not_signed_in"
   | "not_found"
-  | "wrong_state";
+  | "wrong_state"
+  | "prompt_injection"
+  | "prompt_injection_semantic"
+  | "harmful_request"
+  | "harmful_request_semantic"
+  | "off_topic"
+  | "query_too_short"
+  | "query_too_long";
 
 export class ApiError extends Error {
   constructor(

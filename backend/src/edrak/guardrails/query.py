@@ -23,6 +23,8 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from edrak.core.config import settings
+from edrak.guardrails.jev import screen_query
 from edrak.guardrails.patterns import hidden_char_count, injection_hits, redact_pii
 
 logger = logging.getLogger(__name__)
@@ -101,7 +103,7 @@ def scope_of(text: str) -> Optional[tuple[str, str]]:
     return _scope_cached(hashlib.sha256(text.encode("utf-8")).hexdigest(), text)
 
 
-def check_query(text: str, *, use_model: bool = True, context: str = "") -> QueryVerdict:
+def check_query(text: str, *, use_model: bool = True, use_jev: bool | None = None, context: str = "") -> QueryVerdict:
     """Check a question (plus any context the form adds) before it is planned or answered."""
     raw = (text or "").strip()
     checks: list[Check] = []
@@ -128,6 +130,30 @@ def check_query(text: str, *, use_model: bool = True, context: str = "") -> Quer
     if harmful:
         checks.append(Check("harmful_intent", "high", "blocked", {"match": harmful.group(0)[:80]}))
         return QueryVerdict("blocked", raw, "Edrak cannot help with that request.", "harmful_request", checks)
+
+    # Hook A: JEV semantic second layer. Runs only after the deterministic
+    # blocks above pass, so a JEV "safe" result can never override them.
+    if use_jev or (use_jev is None and settings.JEV_GUARD_ENABLED):
+        probs = screen_query(combined)
+        if probs is None:
+            checks.append(Check("jev_semantic", "info", "allowed", {"status": "unavailable_or_capped"}))
+        else:
+            injection_p, harmful_p = probs
+            detail = {"injection": injection_p, "harmful": harmful_p}
+            if injection_p >= settings.JEV_HIGH or harmful_p >= settings.JEV_HIGH:
+                checks.append(Check("jev_semantic", "high", "blocked", detail))
+                if injection_p >= harmful_p:
+                    return QueryVerdict(
+                        "blocked", raw,
+                        "This question contains instructions aimed at the AI rather than a business question. Rephrase it as the decision you face.",
+                        "prompt_injection_semantic", checks,
+                    )
+                return QueryVerdict("blocked", raw, "Edrak cannot help with that request.",
+                                    "harmful_request_semantic", checks)
+            if injection_p >= settings.JEV_REVIEW or harmful_p >= settings.JEV_REVIEW:
+                checks.append(Check("jev_semantic", "medium", "flagged", detail))
+            else:
+                checks.append(Check("jev_semantic", "info", "allowed", detail))
 
     if use_model:
         scope = scope_of(raw)

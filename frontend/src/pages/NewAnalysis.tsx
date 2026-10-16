@@ -8,7 +8,7 @@ import { WorkerBadge } from "../components/ui/WorkerBadge";
 import { useI18n, type TKey } from "../i18n";
 import { USE_CASES, defaultForm, enabledSources, FOCUS_BY_USE_CASE } from "../lib/form";
 import { useAsync } from "../lib/hooks";
-import { api } from "../services/api";
+import { api, ApiError } from "../services/api";
 import { edrak, type Profile } from "../services/edrak";
 import type { AnalysisForm, SourceToggle } from "../types/app";
 import type { UseCase, WorkerType } from "../types/contracts";
@@ -59,7 +59,7 @@ export function NewAnalysis() {
   const [reason, setReason] = useState<string | null>(null);
   const [attempted, setAttempted] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<{ code: string; message: string } | null>(null);
   // The text the question was last filled in with by the app, so a switch can replace it.
   const suggested = useRef("");
 
@@ -138,17 +138,28 @@ export function NewAnalysis() {
 
   const submit = async () => {
     setAttempted(true);
-    setError(false);
+    setError(null);
     if (goalMissing || sourcesOn === 0) return;
     setBusy(true);
     try {
       const detail = await api.draftPlan(form, draftId ?? undefined);
       navigate(`/analyses/${detail.analysis_id}/plan`);
-    } catch {
-      setError(true);
+    } catch (err) {
+      setError(err instanceof ApiError ? { code: err.code, message: err.message } : { code: "wrong_state", message: "" });
       setBusy(false);
     }
   };
+
+  /** Guardrail block codes the backend can return on draft; shown verbatim. */
+  const GUARDRAIL_BLOCKS = new Set([
+    "prompt_injection",
+    "prompt_injection_semantic",
+    "harmful_request",
+    "harmful_request_semantic",
+    "off_topic",
+    "query_too_short",
+    "query_too_long",
+  ]);
 
   const steps: TKey[] = ["form.next.1", "form.next.2", "form.next.3"];
 
@@ -219,7 +230,10 @@ export function NewAnalysis() {
               {error && (
                 <div className="form-error" role="alert">
                   <Icon name="warning" size={16} />
-                  <span>{t("form.draftError")}</span>
+                  <span>{error.message || t("form.draftError")}</span>
+                  {GUARDRAIL_BLOCKS.has(error.code) && (
+                    <span className="mono" style={{ direction: "ltr", unicodeBidi: "embed" }}> {error.code}</span>
+                  )}
                 </div>
               )}
               <button type="button" className="btn pri lg" style={{ width: "100%" }} disabled={busy} aria-busy={busy} onClick={() => void submit()}>

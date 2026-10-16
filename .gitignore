@@ -35,6 +35,14 @@ artifacts/runs/*
 artifacts/reports/*
 artifacts/logs/
 artifacts/competitor_runs/*
+# Eval run products (reports_market_entry_Eval) and loose briefing dumps:
+# generated per run, never source. Untrack what is already committed with:
+#   git rm -r --cached artifacts/reports_market_entry_Eval
+artifacts/reports_market_entry_Eval/
+artifacts/*.briefing.txt
+artifacts/*.json
+artifacts/*.csv
+artifacts/*.md
 # LangGraph checkpoints and the customer trends evidence store
 backend/data/
 # Per-worker run products
@@ -50,6 +58,11 @@ backend/src/edrak/agents/*/outputs/
 
 # Local AI agent tooling
 .opencode/
+.agents/
+skills-lock.json
+
+# Graphify local scan config (local-only)
+.graphifyignore
 
 # OS
 .DS_Store
@@ -57,3 +70,6 @@ Thumbs.db
 
 # UI design handoff (reference only, not shipped)
 edrak-ui-handoff/
+
+# Generated HTML decks/exports (run products, large binaries)
+presentation/

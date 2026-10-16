@@ -71,6 +71,9 @@ PII_KINDS: tuple[PiiKind, ...] = (
     PiiKind("national_id", re.compile(r"\b[23]\d{13}\b"), "[national id]"),
     PiiKind("iban", re.compile(r"\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b"), "[iban]"),
     # Phone numbers: international or Egyptian/Gulf mobile formats.
+    # Note: bare 10-digit runs (including Gulf national IDs, which have no
+    # public checksum and are indistinguishable from 10-digit phones) are
+    # caught here, so they are redacted before any external call.
     PiiKind("phone", re.compile(r"(?<![\w])(?:\+\d{1,3}[\s-]?)?(?:\(?0?\d{2,3}\)?[\s-]?)?\d{3,4}[\s-]?\d{3,4}(?![\w])"), "[phone]"),
 )
 

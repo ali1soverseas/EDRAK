@@ -85,6 +85,14 @@ class Settings(BaseSettings):
     # Guardrails: the scope check asks a model whether a question is a business question.
     # Off in tests and when no model is configured; the pattern checks always run.
     GUARDRAIL_SCOPE_CHECK: bool = True
+    # Hook A: JEV semantic second layer in check_query (2 Nouls, ~1 credit per
+    # novel query). Off by default; the deterministic checks always run.
+    JEVSTATION_API_KEY: Optional[str] = None
+    JEV_GUARD_ENABLED: bool = False
+    JEV_HIGH: float = 0.85
+    JEV_REVIEW: float = 0.5
+    JEV_TIMEOUT_S: float = 8.0
+    JEV_MAX_CALLS_PER_DAY: int = 40
     # Evaluation after each run: a model judges a sample of findings (faithfulness, relevance).
     EVALUATION_JUDGE: bool = True
 

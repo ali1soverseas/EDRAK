@@ -1,7 +1,7 @@
 /**
  * Real HTTP client implementing EdrakApi for connecting to the FastAPI backend.
  */
-import { ApiError, type EdrakApi } from "./api";
+import { ApiError, type ApiErrorCode, type EdrakApi } from "./api";
 import type {
   AnalysisDetail,
   AnalysisForm,
@@ -34,13 +34,25 @@ async function request<T>(
   });
 
   if (!res.ok) {
-    let errorDetail = "";
+    // FastAPI guardrail blocks arrive as detail={code, message}; everything
+    // else arrives as a plain string detail. Normalize to (code, message).
+    let detailCode = "";
+    let detailMessage = "";
     try {
       const errorJson = await res.json();
-      errorDetail = errorJson.detail || "";
+      const detail: unknown = errorJson.detail ?? "";
+      if (detail && typeof detail === "object") {
+        const record = detail as Record<string, unknown>;
+        if (typeof record.code === "string") detailCode = record.code;
+        if (typeof record.message === "string") detailMessage = record.message;
+      } else if (typeof detail === "string") {
+        detailCode = detail;
+        detailMessage = detail;
+      }
     } catch {
-      errorDetail = res.statusText;
+      detailMessage = res.statusText;
     }
+    const errorDetail = detailMessage || detailCode;
 
     if (res.status === 401) {
       if (errorDetail === "invalid_credentials") {
@@ -53,6 +65,9 @@ async function request<T>(
     }
     if (res.status === 409) {
       throw new ApiError("email_taken", errorDetail || "Email taken");
+    }
+    if (res.status === 422 && detailCode) {
+      throw new ApiError(detailCode as ApiErrorCode, detailMessage || detailCode);
     }
     throw new ApiError("wrong_state", errorDetail || `Request failed with ${res.status}`);
   }
