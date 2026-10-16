@@ -29,11 +29,20 @@ from edrak.agents.competitor_intelligence.socials import USER_AGENT, find_offici
 from edrak.agents.competitor_intelligence.sources import compact, domain_of, host_of
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_structured, provider_key, schema_instruction
+from edrak.observability import traced_tool
 
 logger = logging.getLogger(__name__)
 
 MAX_QUERIES = 4
 RESULTS_PER_QUERY = 6
+
+
+class CompetitorDiscoveryConfigurationError(RuntimeError):
+    """Raised when web search or the competitor judge is not configured."""
+
+
+class CompetitorDiscoveryServiceError(RuntimeError):
+    """Raised when a configured search or model service fails."""
 
 
 class Candidate(BaseModel):
@@ -66,9 +75,11 @@ def _queries(company: str, offerings: list[str], industry: Optional[str], market
     return seen[:MAX_QUERIES]
 
 
+@traced_tool("competitor_web_search")
 def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[str, str]]:
     """Tavily first, Serper as a fallback. Returns [{title, url, content}]."""
-    key, _ = provider_key("TAVILY_API_KEY", "competitor")
+    key, tavily_variable = provider_key("TAVILY_API_KEY", "competitor")
+    tavily_error: Exception | None = None
     if key:
         try:
             from tavily import TavilyClient
@@ -79,24 +90,40 @@ def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[st
                 for r in response.get("results", [])
             ]
         except Exception as exc:  # noqa: BLE001 - fall through to Serper
+            tavily_error = exc
             logger.info("Tavily search failed for %r: %s", query, exc)
-    key, _ = provider_key("SERPER_API_KEY", "competitor")
-    if key:
-        try:
-            resp = httpx.post(
-                "https://google.serper.dev/search",
-                headers={"X-API-KEY": key, "Content-Type": "application/json"},
-                json={"q": query, "num": max_results},
-                timeout=15,
+    key, serper_variable = provider_key("SERPER_API_KEY", "competitor")
+    if not key:
+        if tavily_error is not None:
+            raise CompetitorDiscoveryServiceError(
+                "Tavily competitor search failed and Serper is not configured."
+            ) from tavily_error
+        raise CompetitorDiscoveryConfigurationError(
+            "Competitor search needs TAVILY_API_KEY or SERPER_API_KEY in the project .env."
+        )
+
+    try:
+        resp = httpx.post(
+            "https://google.serper.dev/search",
+            headers={"X-API-KEY": key, "Content-Type": "application/json"},
+            json={"q": query, "num": max_results},
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            raise CompetitorDiscoveryServiceError(
+                f"Serper competitor search returned HTTP {resp.status_code}."
             )
-            if resp.status_code == 200:
-                return [
-                    {"title": r.get("title", ""), "url": r.get("link", ""), "content": r.get("snippet", "")}
-                    for r in resp.json().get("organic", [])
-                ]
-        except httpx.HTTPError as exc:
-            logger.info("Serper search failed for %r: %s", query, exc)
-    return []
+        return [
+            {"title": r.get("title", ""), "url": r.get("link", ""), "content": r.get("snippet", "")}
+            for r in resp.json().get("organic", [])
+        ]
+    except httpx.HTTPError as exc:
+        logger.info("Serper search failed for %r using %s: %s", query, serper_variable, exc)
+        if tavily_error is not None:
+            raise CompetitorDiscoveryServiceError(
+                "Tavily and Serper competitor search requests failed."
+            ) from exc
+        raise CompetitorDiscoveryServiceError("Serper competitor search request failed.") from exc
 
 
 def _prompt(company: str, profile_lines: str, results: list[dict[str, str]], exclude: list[str], limit: int) -> str:
@@ -199,6 +226,18 @@ def discover_competitors(
 ) -> list[dict[str, Any]]:
     """Competitors found on the web, each {name, website, reason, confidence, links, evidence_urls}."""
     offerings, markets = list(offerings), list(markets)
+    tavily_key, _ = provider_key("TAVILY_API_KEY", "competitor")
+    serper_key, _ = provider_key("SERPER_API_KEY", "competitor")
+    if not tavily_key and not serper_key:
+        raise CompetitorDiscoveryConfigurationError(
+            "Competitor search needs TAVILY_API_KEY or SERPER_API_KEY in the project .env."
+        )
+    model_key, _ = provider_key("OLLAMA_API_KEY", "competitor")
+    if not model_key:
+        raise CompetitorDiscoveryConfigurationError(
+            "Competitor discovery needs OLLAMA_API_KEY (or OLLAMA_API_KEY_COMPETITOR) "
+            "to evaluate web results."
+        )
     exclude_list = [company, *[e for e in exclude if e]]
     log_action("competitor_intelligence", f"looking for competitors of {company}")
     results: list[dict[str, str]] = []
@@ -226,9 +265,11 @@ def discover_competitors(
         reply = get_structured(Candidates, agent="competitor", temperature=0).invoke(
             [_prompt(company, profile_lines, results, exclude_list, limit), schema_instruction(Candidates)]
         )
-    except Exception as exc:  # noqa: BLE001 - discovery is optional; the caller shows "none found"
+    except Exception as exc:  # noqa: BLE001 - convert model failures to a user-visible discovery error
         logger.warning("Competitor discovery failed: %s", exc)
-        return []
+        raise CompetitorDiscoveryServiceError(
+            "Could not evaluate competitor search results. Check the configured competitor model."
+        ) from exc
     if reply is None:
         return []
 

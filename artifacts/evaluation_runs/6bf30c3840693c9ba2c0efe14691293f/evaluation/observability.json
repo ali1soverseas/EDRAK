@@ -1,0 +1,1558 @@
+{
+  "generated_at_utc": "2026-10-16T17:43:20.898164+00:00",
+  "judge": {
+    "calls": 0,
+    "cache_hits": 0,
+    "errors": 315,
+    "total_latency_seconds": 1747.1211,
+    "calls_by_metric": {},
+    "failures_by_metric": {
+      "faithfulness": 92,
+      "relevancy": 95,
+      "specificity": 37,
+      "insight": 43,
+      "actionability": 43,
+      "context_relevancy": 4,
+      "tool_selection": 1
+    }
+  },
+  "agent_files": {
+    "competitor_intelligence": [
+      {
+        "file": "worker_competitor_intelligence_attempt_1_011e2c88-57a.json",
+        "metrics": {
+          "attempt": 1,
+          "status": "partial",
+          "error": null,
+          "findings": 14,
+          "evidence_in_file": 10,
+          "evidence_collected": 38,
+          "evidence_sample_pct": 26.32,
+          "evidence_cited": 10,
+          "evidence_utilization_pct": 100.0,
+          "synthetic_evidence_pct": 0.0,
+          "findings_synthetic_only_pct": 0.0,
+          "distinct_source_domains_cited": 5,
+          "top_domain_share_pct": 30.0,
+          "third_party_evidence_pct": 20.0,
+          "avg_retrieval_score": 0.4397,
+          "requirements_total": 10,
+          "requirement_coverage_pct": 60.0,
+          "profiles": 2,
+          "matrix_cells": 12,
+          "matrix_cells_with_evidence_pct": 41.67,
+          "matrix_cells_not_established_pct": 66.67,
+          "gaps": 4,
+          "conflicts": 0,
+          "queries_executed": 24,
+          "agent_confidence": 0.82,
+          "avg_finding_confidence": 0.82,
+          "findings_with_numbers_not_in_evidence": 0,
+          "units_with_absence_claims": 2,
+          "units": 38,
+          "units_flagged": 9,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "specificity_tested": 0,
+          "specificity_avg": null,
+          "specificity_pass_pct": null,
+          "insight_tested": 0,
+          "insight_avg": null,
+          "insight_pass_pct": null,
+          "actionability_tested": 0,
+          "actionability_avg": null,
+          "actionability_pass_pct": null,
+          "judge_errors": 83,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "every fulfilled requirement maps to at least one finding",
+            "passed": false,
+            "detail": "3 unlinked",
+            "severity": "error"
+          },
+          {
+            "check": "fulfilled requirements: every claimed 'N grounded findings' is backed",
+            "passed": false,
+            "detail": "4 mismatches",
+            "severity": "warn"
+          },
+          {
+            "check": "no requirement is 'missing' while a grounded finding exists",
+            "passed": false,
+            "detail": "",
+            "severity": "warn"
+          },
+          {
+            "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+            "passed": false,
+            "detail": "2 units",
+            "severity": "warn"
+          },
+          {
+            "check": "run completed (not partial/failed)",
+            "passed": false,
+            "detail": "partial",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "internal_intelligence": [
+      {
+        "file": "worker_internal_intelligence_attempt_1_0c587331-2e7.json",
+        "metrics": {
+          "attempt": 1,
+          "status": "completed",
+          "error": null,
+          "findings": 6,
+          "evidence_in_file": 7,
+          "evidence_collected": 7,
+          "evidence_sample_pct": 100.0,
+          "evidence_cited": 5,
+          "evidence_utilization_pct": 71.43,
+          "synthetic_evidence_pct": 0.0,
+          "findings_synthetic_only_pct": 0.0,
+          "distinct_source_domains_cited": 3,
+          "top_domain_share_pct": 60.0,
+          "third_party_evidence_pct": 0.0,
+          "avg_retrieval_score": 0.564,
+          "requirements_total": 0,
+          "requirement_coverage_pct": null,
+          "profiles": 0,
+          "matrix_cells": 0,
+          "matrix_cells_with_evidence_pct": null,
+          "matrix_cells_not_established_pct": null,
+          "gaps": 3,
+          "conflicts": 0,
+          "queries_executed": 6,
+          "agent_confidence": 0.75,
+          "avg_finding_confidence": 0.75,
+          "findings_with_numbers_not_in_evidence": 0,
+          "units_with_absence_claims": 0,
+          "units": 6,
+          "units_flagged": 0,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "specificity_tested": 0,
+          "specificity_avg": null,
+          "specificity_pass_pct": null,
+          "insight_tested": 0,
+          "insight_avg": null,
+          "insight_pass_pct": null,
+          "actionability_tested": 0,
+          "actionability_avg": null,
+          "actionability_pass_pct": null,
+          "judge_errors": 30,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "market_intelligence": [
+      {
+        "file": "worker_market_intelligence_attempt_1_87029b67-a73.json",
+        "metrics": {
+          "attempt": 1,
+          "status": "completed",
+          "error": "none",
+          "findings": 12,
+          "evidence_in_file": 12,
+          "evidence_collected": null,
+          "evidence_sample_pct": null,
+          "evidence_cited": 12,
+          "evidence_utilization_pct": 100.0,
+          "synthetic_evidence_pct": 0.0,
+          "findings_synthetic_only_pct": 0.0,
+          "distinct_source_domains_cited": 4,
+          "top_domain_share_pct": 50.0,
+          "third_party_evidence_pct": 0.0,
+          "avg_retrieval_score": null,
+          "requirements_total": 0,
+          "requirement_coverage_pct": null,
+          "profiles": 0,
+          "matrix_cells": 0,
+          "matrix_cells_with_evidence_pct": null,
+          "matrix_cells_not_established_pct": null,
+          "gaps": 0,
+          "conflicts": 0,
+          "queries_executed": null,
+          "agent_confidence": 0.79,
+          "avg_finding_confidence": 0.7875,
+          "findings_with_numbers_not_in_evidence": 0,
+          "units_with_absence_claims": 0,
+          "units": 12,
+          "units_flagged": 0,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "specificity_tested": 0,
+          "specificity_avg": null,
+          "specificity_pass_pct": null,
+          "insight_tested": 0,
+          "insight_avg": null,
+          "insight_pass_pct": null,
+          "actionability_tested": 0,
+          "actionability_avg": null,
+          "actionability_pass_pct": null,
+          "judge_errors": 60,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "run reported no error",
+            "passed": false,
+            "detail": "none",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "customer_trends": [
+      {
+        "file": "worker_customer_trends_attempt_1_2efa19bd-4df.json",
+        "metrics": {
+          "attempt": 1,
+          "status": "partial",
+          "error": null,
+          "findings": 5,
+          "evidence_in_file": 13,
+          "evidence_collected": 85,
+          "evidence_sample_pct": 15.29,
+          "evidence_cited": 13,
+          "evidence_utilization_pct": 100.0,
+          "synthetic_evidence_pct": 0.0,
+          "findings_synthetic_only_pct": 0.0,
+          "distinct_source_domains_cited": 10,
+          "top_domain_share_pct": 23.08,
+          "third_party_evidence_pct": 0.0,
+          "avg_retrieval_score": null,
+          "requirements_total": 0,
+          "requirement_coverage_pct": null,
+          "profiles": 0,
+          "matrix_cells": 0,
+          "matrix_cells_with_evidence_pct": null,
+          "matrix_cells_not_established_pct": null,
+          "gaps": 4,
+          "conflicts": 0,
+          "queries_executed": null,
+          "agent_confidence": 0.6,
+          "avg_finding_confidence": 0.48,
+          "findings_with_numbers_not_in_evidence": 0,
+          "units_with_absence_claims": 0,
+          "units": 5,
+          "units_flagged": 1,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "specificity_tested": 0,
+          "specificity_avg": null,
+          "specificity_pass_pct": null,
+          "insight_tested": 0,
+          "insight_avg": null,
+          "insight_pass_pct": null,
+          "actionability_tested": 0,
+          "actionability_avg": null,
+          "actionability_pass_pct": null,
+          "judge_errors": 25,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "run completed (not partial/failed)",
+            "passed": false,
+            "detail": "partial",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "metrics": [
+      {
+        "file": "metrics_007.json",
+        "metrics": {
+          "worker_results": 4,
+          "metric_observations": 57,
+          "verified_observations": 2,
+          "thin_observations": 50,
+          "conflicting_observations": 5,
+          "unverified_observations": 0,
+          "requirements": 17,
+          "required_requirements": 5,
+          "found_outcomes": 7,
+          "gap_outcomes": 10,
+          "required_outcome_coverage_pct": 100.0,
+          "unresolved_evidence_refs": 0,
+          "invalid_grounded_claims": 23,
+          "missing_gap_reasons": 0,
+          "found_without_observations": 0,
+          "duplicate_outcomes": 0,
+          "nonterminal_outcomes": 0,
+          "orphan_outcomes": 0
+        },
+        "execution_quality": null,
+        "failed_checks": [
+          {
+            "check": "verified metric observations are grounded in cited sources",
+            "passed": false,
+            "detail": "23 unsupported or malformed verified/thin/conflicting observation(s)",
+            "severity": "error"
+          }
+        ]
+      }
+    ],
+    "verification": [
+      {
+        "file": "verification_pass_001.json",
+        "metrics": {
+          "decision_status": "verified",
+          "targeted_actions": 0,
+          "findings": 37,
+          "verified": 36,
+          "not_verified": 1,
+          "verified_pct": 97.3,
+          "false_verification_pct": null,
+          "verified_but_unfaithful": 0,
+          "missed_valid_pct": null,
+          "rejected_but_faithful": 0,
+          "confidence_distinct_values": 4,
+          "confidence_stdev": 0.1095,
+          "avg_confidence": 0.8343,
+          "avg_confidence_verified": 0.8472,
+          "avg_confidence_not_verified": 0.37,
+          "avg_confidence_high_quality": 0.94,
+          "avg_confidence_medium_quality": 0.7605,
+          "avg_confidence_low_quality": 0.8,
+          "verified_on_synthetic_only": 0,
+          "near_duplicate_findings": 0,
+          "rewritten_vs_worker": 0,
+          "findings_with_contradictions": 0,
+          "control_gaps": 13,
+          "control_conflicts": 0,
+          "control_failures": 0,
+          "units": 37,
+          "units_flagged": 1,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "judge_errors": 74,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "no finding is verified on low-quality evidence",
+            "passed": false,
+            "detail": "",
+            "severity": "warn"
+          },
+          {
+            "check": "confidence follows evidence quality (high >= medium >= low)",
+            "passed": false,
+            "detail": "{'high': 0.94, 'medium': 0.7605, 'low': 0.8}",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "cross_signal": [
+      {
+        "file": "cross_signal.json",
+        "metrics": {
+          "status": "completed",
+          "signals": 6,
+          "avg_supporting_findings": 4.3333,
+          "support_resolution_pct": 100.0,
+          "verified_findings_used": 18,
+          "verified_findings_available": 36,
+          "finding_usage_pct": 50.0,
+          "signals_single_worker_support": 0,
+          "signals_on_unverified_findings": 0,
+          "signals_entity_not_in_support": 0,
+          "signals_confidence_exceeds_support": 0,
+          "signals_with_evidence_gaps": 6,
+          "avg_signal_confidence": 0.8383,
+          "signal_types": "convergence=1, dependency=1, gap=1, momentum=2, timing=1",
+          "discarded_missing_support": 1,
+          "discarded_insufficient_support": 0,
+          "units": 6,
+          "units_flagged": 0,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "insight_tested": 0,
+          "insight_avg": null,
+          "insight_pass_pct": null,
+          "judge_errors": 18,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "pipeline reported no unresolved support references",
+            "passed": false,
+            "detail": "1",
+            "severity": "error"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "decision": [
+      {
+        "file": "decision_analysis.json",
+        "metrics": {
+          "status": "completed",
+          "recommendations": 6,
+          "opportunities": 12,
+          "risks": 12,
+          "recommended_actions": 30,
+          "priorities": 54,
+          "options": 3,
+          "options_without_content_pct": 0.0,
+          "undetermined_priority_pct": 0.0,
+          "human_approval_pct": 100.0,
+          "priority_mix": "high=47, medium=7",
+          "actions_with_success_indicators_pct": 100.0,
+          "actions_with_prerequisites_pct": 100.0,
+          "near_duplicate_actions": 0,
+          "avg_signals_per_recommendation": 1.0,
+          "signal_coverage_pct": 100.0,
+          "avg_recommendation_confidence": 0.6833,
+          "recommendations_with_new_numbers": 4,
+          "recommendations_with_past_timeline": 0,
+          "additional_information_needed": 0,
+          "limitations_listed": 9,
+          "warnings": 0,
+          "units": 7,
+          "units_flagged": 4,
+          "faithfulness_tested": 0,
+          "faithfulness_avg": null,
+          "faithfulness_pass_pct": null,
+          "relevancy_tested": 0,
+          "relevancy_avg": null,
+          "relevancy_pass_pct": null,
+          "actionability_tested": 0,
+          "actionability_avg": null,
+          "actionability_pass_pct": null,
+          "judge_errors": 20,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "no recommendation has numbers absent from its signals",
+            "passed": false,
+            "detail": "4 recommendations",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "orchestration": [
+      {
+        "file": "orchestration_result.json",
+        "metrics": {
+          "planned_tasks": 4,
+          "result_tasks": 4,
+          "task_completion_pct": 100.0,
+          "missing_tasks": 0,
+          "unexpected_results": 0,
+          "missing_dependencies": 0,
+          "failed_tasks": 1,
+          "tool_calls_observed": 0,
+          "retry_events": 0,
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "orchestration reports no failed tasks",
+            "passed": false,
+            "detail": "1 failed",
+            "severity": "warn"
+          },
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "rag": [
+      {
+        "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_001.json",
+        "metrics": {
+          "queries": 1,
+          "retrieved_chunks": 4,
+          "nonempty_chunks_pct": 100.0,
+          "mean_retrieval_score": 0.5777,
+          "chunks_with_score_pct": 100.0,
+          "invalid_retrieval_scores": 0,
+          "unique_source_domains": 2,
+          "duplicate_chunk_pairs": 0,
+          "empty_chunks": 0,
+          "context_relevancy_score": null,
+          "context_relevancy_reason": "",
+          "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f3468f99d0 state=finished raised RateLimitError>]",
+          "answer_relevancy_score": null,
+          "answer_relevancy_reason": "",
+          "answer_relevancy_error": "not requested",
+          "faithfulness_score": null,
+          "faithfulness_reason": "",
+          "faithfulness_error": "not requested",
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_002.json",
+        "metrics": {
+          "queries": 1,
+          "retrieved_chunks": 1,
+          "nonempty_chunks_pct": 100.0,
+          "mean_retrieval_score": 0.577,
+          "chunks_with_score_pct": 100.0,
+          "invalid_retrieval_scores": 0,
+          "unique_source_domains": 1,
+          "duplicate_chunk_pairs": 0,
+          "empty_chunks": 0,
+          "context_relevancy_score": null,
+          "context_relevancy_reason": "",
+          "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f3468feb50 state=finished raised RateLimitError>]",
+          "answer_relevancy_score": null,
+          "answer_relevancy_reason": "",
+          "answer_relevancy_error": "not requested",
+          "faithfulness_score": null,
+          "faithfulness_reason": "",
+          "faithfulness_error": "not requested",
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_003.json",
+        "metrics": {
+          "queries": 1,
+          "retrieved_chunks": 1,
+          "nonempty_chunks_pct": 100.0,
+          "mean_retrieval_score": 0.553,
+          "chunks_with_score_pct": 100.0,
+          "invalid_retrieval_scores": 0,
+          "unique_source_domains": 1,
+          "duplicate_chunk_pairs": 0,
+          "empty_chunks": 0,
+          "context_relevancy_score": null,
+          "context_relevancy_reason": "",
+          "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f34691e1d0 state=finished raised RateLimitError>]",
+          "answer_relevancy_score": null,
+          "answer_relevancy_reason": "",
+          "answer_relevancy_error": "not requested",
+          "faithfulness_score": null,
+          "faithfulness_reason": "",
+          "faithfulness_error": "not requested",
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_004.json",
+        "metrics": {
+          "queries": 1,
+          "retrieved_chunks": 1,
+          "nonempty_chunks_pct": 100.0,
+          "mean_retrieval_score": 0.507,
+          "chunks_with_score_pct": 100.0,
+          "invalid_retrieval_scores": 0,
+          "unique_source_domains": 1,
+          "duplicate_chunk_pairs": 0,
+          "empty_chunks": 0,
+          "context_relevancy_score": null,
+          "context_relevancy_reason": "",
+          "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f34690ccd0 state=finished raised RateLimitError>]",
+          "answer_relevancy_score": null,
+          "answer_relevancy_reason": "",
+          "answer_relevancy_error": "not requested",
+          "faithfulness_score": null,
+          "faithfulness_reason": "",
+          "faithfulness_error": "not requested",
+          "execution_quality_status": "not_assessable"
+        },
+        "execution_quality": {
+          "status": "not_assessable",
+          "metrics": {
+            "calls": 0,
+            "tools": [],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 0,
+            "schema_errors": [],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "not_assessable",
+            "dimensions_assessable": 0
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_arguments": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            },
+            "efficiency": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No structured tool-call trace was supplied."
+            }
+          },
+          "checks": [
+            {
+              "check": "execution quality has structured trace evidence",
+              "passed": false,
+              "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      }
+    ],
+    "telemetry": [
+      {
+        "file": "telemetry.json",
+        "metrics": {
+          "spans": 54,
+          "tool_calls": 44,
+          "observed_errors": 0,
+          "worker_spans": 4,
+          "worker_task_identity_pct": 100.0,
+          "worker_process_recorded_pct": 100.0,
+          "worker_types": [
+            "competitor_intelligence",
+            "customer_trends",
+            "internal_intelligence",
+            "market_intelligence"
+          ],
+          "error_rate_pct": 0.0,
+          "duration_samples": 54,
+          "mean_duration_ms": 31274.4311,
+          "p95_duration_ms": 246555.56,
+          "max_duration_ms": 475569.71,
+          "unique_tools": 3,
+          "tool_names": [
+            "competitor_web_search",
+            "internal_rag.retrieve",
+            "market_search"
+          ],
+          "units": 54,
+          "units_flagged": 0,
+          "execution_quality_status": "partial"
+        },
+        "execution_quality": {
+          "status": "partial",
+          "metrics": {
+            "calls": 44,
+            "tools": [
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "internal_rag.retrieve",
+              "market_search",
+              "competitor_web_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "market_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "market_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search",
+              "competitor_web_search"
+            ],
+            "allowed_tools": null,
+            "available_tools": null,
+            "expected_sequence": null,
+            "sequence_missing": [],
+            "schema_checks": 44,
+            "schema_errors": [
+              "call 1: invalid type for origin",
+              "call 3: invalid type for origin",
+              "call 5: invalid type for origin",
+              "call 7: invalid type for origin",
+              "call 9: invalid type for origin",
+              "call 11: invalid type for origin"
+            ],
+            "errors": 0,
+            "repeated_calls": 0,
+            "trace_complete": false,
+            "status": "partial",
+            "dimensions_assessable": 1
+          },
+          "dimensions": {
+            "tool_selection": {
+              "status": "pending_judge",
+              "score": null,
+              "reason": "RetryError: RetryError[<Future at 0x1f3466fab50 state=finished raised RateLimitError>]"
+            },
+            "tool_arguments": {
+              "status": "assessable",
+              "score": null,
+              "reason": "6 schema violation(s)."
+            },
+            "tool_result_use": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+            },
+            "workflow_sequence": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "No expected workflow sequence was supplied."
+            },
+            "error_handling": {
+              "status": "not_assessable",
+              "score": null,
+              "reason": "Trace has no failures."
+            },
+            "efficiency": {
+              "status": "partial",
+              "score": null,
+              "reason": "Call arguments/fingerprints are incomplete; exact duplicate calls cannot be established."
+            }
+          },
+          "checks": [
+            {
+              "check": "tool calls stay within declared/available tools",
+              "passed": true,
+              "detail": "",
+              "severity": "error"
+            },
+            {
+              "check": "tool arguments satisfy supplied schemas",
+              "passed": false,
+              "detail": "call 1: invalid type for origin; call 3: invalid type for origin; call 5: invalid type for origin; call 7: invalid type for origin; call 9: invalid type for origin; call 11: invalid type for origin",
+              "severity": "error"
+            },
+            {
+              "check": "workflow sequence is assessable",
+              "passed": false,
+              "detail": "no expected_sequence/workflow_sequence supplied",
+              "severity": "warn"
+            },
+            {
+              "check": "trace records tool failure handling",
+              "passed": false,
+              "detail": "no errors observed, but trace completeness is not declared",
+              "severity": "warn"
+            },
+            {
+              "check": "trace avoids duplicate tool work",
+              "passed": true,
+              "detail": "0 repeated call(s)",
+              "severity": "warn"
+            }
+          ]
+        },
+        "failed_checks": [
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": false,
+            "detail": "call 1: invalid type for origin; call 3: invalid type for origin; call 5: invalid type for origin; call 7: invalid type for origin; call 9: invalid type for origin; call 11: invalid type for origin",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

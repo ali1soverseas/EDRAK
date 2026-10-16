@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_chat_model, schema_instruction
+from edrak.observability import traced_tool
 from dotenv import load_dotenv
 from tavily import TavilyClient
 
@@ -1449,6 +1450,7 @@ def after_queries_router(
 # NODE 3: TAVILY SEARCH
 # ============================================================
 
+@traced_tool("competitor_web_search")
 def run_tavily(
     query: str,
     stage: int,

@@ -1,0 +1,539 @@
+{
+  "agent": "rag",
+  "generated_at_utc": "2026-10-16T17:43:20.893097+00:00",
+  "model": "gpt-5",
+  "dry_run": false,
+  "thresholds": {
+    "context_relevancy": 0.5
+  },
+  "files": [
+    {
+      "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_001.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 4,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.5777,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 2,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_relevancy_score": null,
+        "context_relevancy_reason": "",
+        "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f3468f99d0 state=finished raised RateLimitError>]",
+        "answer_relevancy_score": null,
+        "answer_relevancy_reason": "",
+        "answer_relevancy_error": "not requested",
+        "faithfulness_score": null,
+        "faithfulness_reason": "",
+        "faithfulness_error": "not requested",
+        "execution_quality_status": "not_assessable"
+      },
+      "execution_quality": {
+        "status": "not_assessable",
+        "metrics": {
+          "calls": 0,
+          "tools": [],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "not_assessable",
+          "dimensions_assessable": 0
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_arguments": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "efficiency": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          }
+        },
+        "checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "4/4 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "execution quality has structured trace evidence",
+          "passed": false,
+          "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_002.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 1,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.577,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_relevancy_score": null,
+        "context_relevancy_reason": "",
+        "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f3468feb50 state=finished raised RateLimitError>]",
+        "answer_relevancy_score": null,
+        "answer_relevancy_reason": "",
+        "answer_relevancy_error": "not requested",
+        "faithfulness_score": null,
+        "faithfulness_reason": "",
+        "faithfulness_error": "not requested",
+        "execution_quality_status": "not_assessable"
+      },
+      "execution_quality": {
+        "status": "not_assessable",
+        "metrics": {
+          "calls": 0,
+          "tools": [],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "not_assessable",
+          "dimensions_assessable": 0
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_arguments": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "efficiency": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          }
+        },
+        "checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "execution quality has structured trace evidence",
+          "passed": false,
+          "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_003.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 1,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.553,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_relevancy_score": null,
+        "context_relevancy_reason": "",
+        "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f34691e1d0 state=finished raised RateLimitError>]",
+        "answer_relevancy_score": null,
+        "answer_relevancy_reason": "",
+        "answer_relevancy_error": "not requested",
+        "faithfulness_score": null,
+        "faithfulness_reason": "",
+        "faithfulness_error": "not requested",
+        "execution_quality_status": "not_assessable"
+      },
+      "execution_quality": {
+        "status": "not_assessable",
+        "metrics": {
+          "calls": 0,
+          "tools": [],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "not_assessable",
+          "dimensions_assessable": 0
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_arguments": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "efficiency": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          }
+        },
+        "checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "execution quality has structured trace evidence",
+          "passed": false,
+          "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_0c587331-2e7_004.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 1,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.507,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_relevancy_score": null,
+        "context_relevancy_reason": "",
+        "context_relevancy_error": "RetryError: RetryError[<Future at 0x1f34690ccd0 state=finished raised RateLimitError>]",
+        "answer_relevancy_score": null,
+        "answer_relevancy_reason": "",
+        "answer_relevancy_error": "not requested",
+        "faithfulness_score": null,
+        "faithfulness_reason": "",
+        "faithfulness_error": "not requested",
+        "execution_quality_status": "not_assessable"
+      },
+      "execution_quality": {
+        "status": "not_assessable",
+        "metrics": {
+          "calls": 0,
+          "tools": [],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "not_assessable",
+          "dimensions_assessable": 0
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_arguments": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "efficiency": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          }
+        },
+        "checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "execution quality has structured trace evidence",
+          "passed": false,
+          "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

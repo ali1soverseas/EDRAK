@@ -21,6 +21,7 @@ from chromadb.config import Settings as ChromaSettings
 
 from edrak.contracts.evidence import Evidence, SourceType
 from edrak.core.config import settings
+from edrak.observability import traced_tool
 from edrak.rag.embeddings import get_embedding_function
 from edrak.rag.text_utils import as_bool, best_fact
 
@@ -114,6 +115,7 @@ class InternalRetriever:
         )
 
     # ------------------------------------------------------------------ public API
+    @traced_tool("internal_rag.retrieve")
     def retrieve(
         self,
         query: str,

@@ -124,9 +124,28 @@ npm run dev
 5. **Review the Brief**:
    - Once completed, the final Brief is loaded with evidence chips (E-numbers), worker lenses, cross-signal hypotheses, and strategic options (A, B, C).
 
+## 4. Evaluation Artifacts and Tracing
+
+Each backend run writes evaluator inputs and stage history under
+`artifacts/evaluation_runs/<analysis_id>/`. Internal retrievals are recorded as RAG inputs;
+worker, verification, metrics, synthesis, and decision outputs are retained as their stages
+complete. The run-bundle evaluator includes metrics-stage artifacts as well as the inputs
+directory. Worker and tool spans are exported to the run bundle's `inputs/telemetry.json`.
+
+Evaluate a completed or paused run locally without calling a model:
+
+```powershell
+.venv\Scripts\python.exe evaluationEnhanced\evaluation_Agent\edrak_eval_agent_enhanced.py `
+  --run-bundle artifacts\evaluation_runs\<analysis_id> --dry-run
+```
+
+For model-judged quality scores, configure `OPENAI_API_KEY` and install `deepeval`, then omit
+`--dry-run`. Telemetry can also be sent to an OTLP collector by setting
+`OTEL_EXPORTER_OTLP_ENDPOINT`; `EDRAK_TELEMETRY_EXPORT_PATH` selects the local span export file.
+
 ---
 
-## 4. How to Run Automated Tests
+## 5. How to Run Automated Tests
 
 ### Backend Tests (Pytest)
 ```powershell

@@ -1,0 +1,235 @@
+{
+  "agent": "verification",
+  "generated_at_utc": "2026-10-16T17:43:20.885988+00:00",
+  "model": "gpt-5",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5
+  },
+  "files": [
+    {
+      "file": "verification_pass_001.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "decision_status": "verified",
+        "targeted_actions": 0,
+        "findings": 37,
+        "verified": 36,
+        "not_verified": 1,
+        "verified_pct": 97.3,
+        "false_verification_pct": null,
+        "verified_but_unfaithful": 0,
+        "missed_valid_pct": null,
+        "rejected_but_faithful": 0,
+        "confidence_distinct_values": 4,
+        "confidence_stdev": 0.1095,
+        "avg_confidence": 0.8343,
+        "avg_confidence_verified": 0.8472,
+        "avg_confidence_not_verified": 0.37,
+        "avg_confidence_high_quality": 0.94,
+        "avg_confidence_medium_quality": 0.7605,
+        "avg_confidence_low_quality": 0.8,
+        "verified_on_synthetic_only": 0,
+        "near_duplicate_findings": 0,
+        "rewritten_vs_worker": 0,
+        "findings_with_contradictions": 0,
+        "control_gaps": 13,
+        "control_conflicts": 0,
+        "control_failures": 0,
+        "units": 37,
+        "units_flagged": 1,
+        "faithfulness_tested": 0,
+        "faithfulness_avg": null,
+        "faithfulness_pass_pct": null,
+        "relevancy_tested": 0,
+        "relevancy_avg": null,
+        "relevancy_pass_pct": null,
+        "judge_errors": 74,
+        "execution_quality_status": "not_assessable"
+      },
+      "execution_quality": {
+        "status": "not_assessable",
+        "metrics": {
+          "calls": 0,
+          "tools": [],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "not_assessable",
+          "dimensions_assessable": 0
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_arguments": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          },
+          "efficiency": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No structured tool-call trace was supplied."
+          }
+        },
+        "checks": [
+          {
+            "check": "execution quality has structured trace evidence",
+            "passed": false,
+            "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=37 actual=37",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.verified_count matches verified findings",
+          "passed": true,
+          "detail": "metadata=36 actual=36",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.insufficient_count matches insufficient findings",
+          "passed": true,
+          "detail": "metadata=1 actual=1",
+          "severity": "error"
+        },
+        {
+          "check": "replan_required comes with targeted actions; verified comes without",
+          "passed": true,
+          "detail": "status=verified targeted_actions=0",
+          "severity": "error"
+        },
+        {
+          "check": "decision.summary numbers match the findings",
+          "passed": true,
+          "detail": "summary='36 of 37 findings are evidence-backed; 1 were insufficient and recorde' findings=37 verified=36 with_contradictions=0",
+          "severity": "error"
+        },
+        {
+          "check": "every worker finding was verified",
+          "passed": true,
+          "detail": "0 missing",
+          "severity": "error"
+        },
+        {
+          "check": "no unknown finding ids",
+          "passed": true,
+          "detail": "0 ids not in worker output",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "verified findings have no open contradictions/gaps",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no finding is verified on low-quality evidence",
+          "passed": false,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence discriminates between findings (>=3 distinct values)",
+          "passed": true,
+          "detail": "4 distinct, stdev=0.1095",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence is calibrated to the label (verified > not verified)",
+          "passed": true,
+          "detail": "verified=0.8472 not_verified=0.37",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence follows evidence quality (high >= medium >= low)",
+          "passed": false,
+          "detail": "{'high': 0.94, 'medium': 0.7605, 'low': 0.8}",
+          "severity": "warn"
+        },
+        {
+          "check": "no finding's confidence contradicts its label",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "control conflicts match findings with contradictions",
+          "passed": true,
+          "detail": "control=0 findings=0",
+          "severity": "warn"
+        },
+        {
+          "check": "control gaps are not just a copy of next_research_targets",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no near-duplicate findings",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        },
+        {
+          "check": "execution quality has structured trace evidence",
+          "passed": false,
+          "detail": "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "2efa19bd-4dfa-4607-baec-f1b3e9e22d34:f5",
+          "statement": "UAE AI leader G42 has secured NVIDIA’s most advanced AI chips, indicating strong demand for NVIDIA hardware among leading AI developers in the region.",
+          "flags": [
+            "verified_on_low_quality_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

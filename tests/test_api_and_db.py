@@ -576,6 +576,20 @@ def test_discover_suggests_competitors_without_saving_them(client, monkeypatch):
     assert links == {"website": "https://kanzpay.example", "x": "https://x.com/kanzpay"}
 
 
+def test_discover_reports_missing_search_configuration(client, monkeypatch):
+    from edrak.agents.competitor_intelligence import discovery
+
+    monkeypatch.setattr(discovery, "provider_key", lambda *args, **kwargs: ("", ""))
+    _account(client)
+    _complete_profile(client)
+
+    response = client.post("/api/entities/discover", json={"limit": 3})
+
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "competitor_discovery_not_configured"
+    assert "TAVILY_API_KEY or SERPER_API_KEY" in response.json()["detail"]["message"]
+
+
 def test_a_plan_uses_tracked_competitors_and_discovers_only_when_there_are_none(client, monkeypatch):
     from edrak.api import analysis_service
     from edrak.api.routers import analyses as analyses_router

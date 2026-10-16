@@ -40,6 +40,7 @@ from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
 from edrak.core.config import settings
+from edrak.evaluation_artifacts import EvaluationArtifactBundle
 from edrak.orchestration.graph import build_graph
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
@@ -67,6 +68,7 @@ class ActiveRun:
         self.requested_by_id: Optional[str] = None
         self.workspace_id: Optional[str] = None
         self.pause_requested = False
+        self.evaluation_bundle: Optional[EvaluationArtifactBundle] = None
 
 
 class RunManager:
@@ -518,8 +520,35 @@ class RunManager:
         sub_token = None
         flusher = asyncio.create_task(self._flusher(active))
         resuming = resume is not None or from_checkpoint
+        run_span_scope = None
+        run_span = None
+        bundle = active.evaluation_bundle
 
         try:
+            if bundle is None:
+                try:
+                    bundle = await asyncio.to_thread(EvaluationArtifactBundle, analysis_id, request, plan)
+                    active.evaluation_bundle = bundle
+                except Exception:
+                    logger.exception("Could not create evaluation artifact bundle for %s", analysis_id)
+
+            try:
+                from opentelemetry import trace
+
+                from edrak.observability import configure_telemetry
+
+                configure_telemetry()
+                run_span_scope = trace.get_tracer("edrak.orchestration").start_as_current_span(
+                    "edrak.orchestration.graph"
+                )
+                run_span = run_span_scope.__enter__()
+                run_span.set_attribute("edrak.run.id", analysis_id)
+                run_span.set_attribute("edrak.run.resuming", resuming)
+            except Exception:
+                logger.exception("Could not initialize telemetry for %s", analysis_id)
+                run_span_scope = None
+                run_span = None
+
             if not resuming:
                 run_view.stage = "dispatch"
                 await stream.emit("stage_change", {"stage": "dispatch"})
@@ -570,6 +599,17 @@ class RunManager:
                                 state[k] = merge_by_task_id(state.get(k) or [], v)
                             else:
                                 state[k] = v
+                        if bundle is not None:
+                            try:
+                                await asyncio.to_thread(
+                                    bundle.record_node, node_name, node_output, state
+                                )
+                            except Exception:
+                                logger.exception(
+                                    "Could not record evaluation artifact for %s node %s",
+                                    analysis_id,
+                                    node_name,
+                                )
                         await self._on_node(active, node_name, node_output, state, plan, analysis_id)
                     if active.pause_requested:
                         await self._mark_paused(active)
@@ -585,12 +625,27 @@ class RunManager:
 
         except asyncio.CancelledError:
             logger.info("Analysis %s run cancelled", analysis_id)
+            if bundle is not None:
+                try:
+                    await asyncio.to_thread(bundle.finish, "cancelled")
+                except Exception:
+                    logger.exception("Could not mark evaluation bundle cancelled for %s", analysis_id)
             run_view.state = "cancelled"
             run_view.finished_at = now_iso()
             await stream.emit("complete", {"state": "cancelled", "brief_id": None})
             stream.close()
 
         except Exception as exc:  # noqa: BLE001
+            if run_span is not None and run_span.is_recording():
+                from opentelemetry.trace import Status, StatusCode
+
+                run_span.record_exception(exc)
+                run_span.set_status(Status(StatusCode.ERROR))
+            if bundle is not None:
+                try:
+                    await asyncio.to_thread(bundle.finish, "failed")
+                except Exception:
+                    logger.exception("Could not mark evaluation bundle failed for %s", analysis_id)
             logger.exception("Analysis %s run failed with error: %s", analysis_id, exc)
             now = now_iso()
             run_view.state = "failed"
@@ -608,6 +663,24 @@ class RunManager:
             flusher.cancel()
             await self._flush(active)
             action_log.unsubscribe(analysis_id, sub_token)
+            trace_id = None
+            if run_span is not None:
+                span_context = run_span.get_span_context()
+                if span_context.is_valid:
+                    trace_id = f"{span_context.trace_id:032x}"
+            if run_span_scope is not None:
+                try:
+                    run_span_scope.__exit__(None, None, None)
+                except Exception:
+                    logger.exception("Could not close telemetry span for %s", analysis_id)
+            if bundle is not None and trace_id is not None:
+                try:
+                    from edrak.observability import spans_for_run
+
+                    spans = await asyncio.to_thread(spans_for_run, analysis_id, trace_id)
+                    await asyncio.to_thread(bundle.save_telemetry, spans)
+                except Exception:
+                    logger.exception("Could not save telemetry for evaluation bundle %s", analysis_id)
 
     # ------------------------------------------------------------------ checkpoint 2 and pausing
 
@@ -918,6 +991,14 @@ class RunManager:
         is_partial = orchestration_result.status == RunStatus.PARTIAL or state.get("review_decision") == "stop"
         final_state = "partial" if is_partial else "completed"
         now = now_iso()
+        if active.evaluation_bundle is not None:
+            try:
+                await asyncio.to_thread(
+                    active.evaluation_bundle.save_orchestration_result, orchestration_result
+                )
+                await asyncio.to_thread(active.evaluation_bundle.finish, final_state)
+            except Exception:
+                logger.exception("Could not finalize evaluation artifacts for %s", analysis_id)
 
         async with get_db() as db:
             requested_by = None

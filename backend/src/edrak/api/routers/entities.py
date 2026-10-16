@@ -121,23 +121,38 @@ async def discover(
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> list[Candidate]:
     """Find competitors from the company profile. Nothing is saved: the person picks which to keep."""
-    from edrak.agents.competitor_intelligence.discovery import discover_competitors
+    from edrak.agents.competitor_intelligence.discovery import (
+        CompetitorDiscoveryConfigurationError,
+        CompetitorDiscoveryServiceError,
+        discover_competitors,
+    )
 
     company = await company_repo.get_company(db, session.workspace.workspace_id)
     if not company["name"].strip():
         raise HTTPException(status_code=422, detail={"code": "profile_incomplete", "missing": ["name"]})
     tracked = {c["name"].lower() for c in company["competitors"]}
-    found = await asyncio.to_thread(
-        discover_competitors,
-        company=company["name"],
-        description=company["description"] or None,
-        offerings=company["offerings"],
-        industry=company_repo.industry_text(company) or None,
-        markets=body.markets or [m["name"] for m in company["markets"]],
-        target_customers=company["target_customers"] or None,
-        exclude=company["aliases"],
-        limit=max(1, min(body.limit, 8)),
-    )
+    try:
+        found = await asyncio.to_thread(
+            discover_competitors,
+            company=company["name"],
+            description=company["description"] or None,
+            offerings=company["offerings"],
+            industry=company_repo.industry_text(company) or None,
+            markets=body.markets or [m["name"] for m in company["markets"]],
+            target_customers=company["target_customers"] or None,
+            exclude=company["aliases"],
+            limit=max(1, min(body.limit, 8)),
+        )
+    except CompetitorDiscoveryConfigurationError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={"code": "competitor_discovery_not_configured", "message": str(exc)},
+        ) from exc
+    except CompetitorDiscoveryServiceError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail={"code": "competitor_discovery_failed", "message": str(exc)},
+        ) from exc
     await audit_repo.record(
         db, workspace_id=session.workspace.workspace_id, action="competitors.discovered", target_type="workspace",
         target_id=session.workspace.workspace_id, actor_id=session.user.user_id,

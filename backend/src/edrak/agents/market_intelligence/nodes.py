@@ -50,6 +50,7 @@ from edrak.agents.market_intelligence.state import (
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_chat_model
+from edrak.observability import traced_tool
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
     TOOL_MAP,
@@ -507,8 +508,13 @@ def _query_strings(queries) -> list[str]:
 def invoke_search_tool(tool_obj, tool_args: dict) -> str:
     """MCP search tools take List[str]. Flatten planner query objects to keywords."""
     strings = _query_strings(tool_args.get("queries"))
-    result = tool_obj.invoke({"queries": strings})
+    result = _invoke_market_search(tool_obj, strings)
     return result if isinstance(result, str) else json.dumps(result, ensure_ascii=False)
+
+
+@traced_tool("market_search")
+def _invoke_market_search(tool_obj, queries: list[str]) -> object:
+    return tool_obj.invoke({"queries": queries})
 
 
 def task_planner(state: MarketAgentState) -> dict:

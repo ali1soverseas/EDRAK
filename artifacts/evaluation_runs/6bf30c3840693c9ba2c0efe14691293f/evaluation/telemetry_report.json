@@ -1,0 +1,235 @@
+{
+  "agent": "telemetry",
+  "generated_at_utc": "2026-10-16T17:43:20.895409+00:00",
+  "model": "gpt-5",
+  "dry_run": false,
+  "thresholds": {},
+  "files": [
+    {
+      "file": "telemetry.json",
+      "metrics_used": [
+        "observability",
+        "execution_quality"
+      ],
+      "metrics": {
+        "spans": 54,
+        "tool_calls": 44,
+        "observed_errors": 0,
+        "worker_spans": 4,
+        "worker_task_identity_pct": 100.0,
+        "worker_process_recorded_pct": 100.0,
+        "worker_types": [
+          "competitor_intelligence",
+          "customer_trends",
+          "internal_intelligence",
+          "market_intelligence"
+        ],
+        "error_rate_pct": 0.0,
+        "duration_samples": 54,
+        "mean_duration_ms": 31274.4311,
+        "p95_duration_ms": 246555.56,
+        "max_duration_ms": 475569.71,
+        "unique_tools": 3,
+        "tool_names": [
+          "competitor_web_search",
+          "internal_rag.retrieve",
+          "market_search"
+        ],
+        "units": 54,
+        "units_flagged": 0,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 44,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "internal_rag.retrieve",
+            "market_search",
+            "competitor_web_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "market_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "market_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 44,
+          "schema_errors": [
+            "call 1: invalid type for origin",
+            "call 3: invalid type for origin",
+            "call 5: invalid type for origin",
+            "call 7: invalid type for origin",
+            "call 9: invalid type for origin",
+            "call 11: invalid type for origin"
+          ],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "status": "partial",
+          "dimensions_assessable": 1
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "pending_judge",
+            "score": null,
+            "reason": "RetryError: RetryError[<Future at 0x1f3466fab50 state=finished raised RateLimitError>]"
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "6 schema violation(s)."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "partial",
+            "score": null,
+            "reason": "Call arguments/fingerprints are incomplete; exact duplicate calls cannot be established."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": false,
+            "detail": "call 1: invalid type for origin; call 3: invalid type for origin; call 5: invalid type for origin; call 7: invalid type for origin; call 9: invalid type for origin; call 11: invalid type for origin",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "telemetry includes events or spans",
+          "passed": true,
+          "detail": "no recognizable spans/tool calls",
+          "severity": "warn"
+        },
+        {
+          "check": "observed tool and span errors are recorded",
+          "passed": true,
+          "detail": "0 error events",
+          "severity": "warn"
+        },
+        {
+          "check": "worker spans carry agent and task identity",
+          "passed": true,
+          "detail": "0/4 worker span(s) missing agent or task id",
+          "severity": "warn"
+        },
+        {
+          "check": "worker spans record process status and duration",
+          "passed": true,
+          "detail": "0/4 worker span(s) missing success status or valid duration",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": false,
+          "detail": "call 1: invalid type for origin; call 3: invalid type for origin; call 5: invalid type for origin; call 7: invalid type for origin; call 9: invalid type for origin; call 11: invalid type for origin",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

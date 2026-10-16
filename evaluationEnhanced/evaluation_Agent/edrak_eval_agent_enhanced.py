@@ -1,46 +1,18 @@
-#!/usr/bin/env python3
-"""EDRAK evaluation: judge every agent of a multi-agent pipeline from its output JSON files.
-
-HOW IT WORKS
-  1. LOAD     read every JSON and detect which agent produced it (worker / verification / cross_signal / decision).
-  2. PHASES   files may come from several phases of ONE run (a worker re-run, a second verification pass ...).
-              Every file is evaluated "as of" its own timestamp: it only sees the worker version, verification and
-              signals that existed when it was produced. Re-runs reuse finding ids, so this matters.
-  3. CONTEXT  one shared picture per file: goal, evidence, findings, signals. Missing parts are simply skipped.
-  4. JUDGE    each agent's evaluator turns its output into "units" (findings, signals, recommendations ...) and scores
-              them with DeepEval (LLM-as-a-judge). Metrics differ per agent:
-                 worker         faithfulness, relevancy, specificity, insight, actionability
-                                (+ context_relevancy with a flag). insight/actionability use WORKER-SPECIFIC criteria
-                                (a research finding about a competitor, not a signal or a recommendation).
-                 verification   faithfulness, relevancy   (an independent second opinion on the verifier's labels)
-                 cross_signal   faithfulness, relevancy, insight                (does the signal add something?)
-                 decision       faithfulness, relevancy, actionability
-  5. CHECK    deterministic Python checks: counts match metadata, ids resolve, numbers appear in the evidence,
-              no duplicates, confidence is calibrated, deadlines are not in the past, absence claims
-              ("not mentioned") are not stated as facts ... Checks that need data a use case does not have are
-              skipped. Severity is "error" (integrity) or "warn" (quality / run state).
-  6. TRACE    pipeline-level: decision -> signal -> finding -> evidence, plus a phase-1 vs phase-2 re-run comparison.
-  7. REPORT   CSV per agent, JSON per agent, overview.csv, pipeline_report.json, summary.md.
-
-RULE OF THE HOUSE
-  The LLM only produces judgements (scores + reasons, cached on disk). Every count, percentage, pass/fail and
-  flag is computed in plain Python.
-
-USAGE (give every use case its own --out; put ALL phases of that use case in one run)
-    pip install deepeval python-dotenv
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --out reports/usecase1
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --dry-run            # no LLM, deterministic checks only
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --context-relevancy  # also judge the retrieved evidence
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --deep               # also judge actions + matrix cells
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --no-extra-metrics   # only faithfulness + relevancy
-    python edrak_eval_agent.py --inputs "usecase1/*.json" --agents verification decision
-
-An initial-input JSON (research goal, company, competitors) is optional. Without it the goal is taken from the
-decision / cross-signal `business_goal`, or from --task.
-"""
 from __future__ import annotations
 
-import argparse, copy, csv, difflib, glob, hashlib, json, os, re, statistics, sys, time
+import argparse
+import copy
+import csv
+import difflib
+import glob
+import hashlib
+import json
+import math
+import os
+import re
+import statistics
+import sys
+import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -86,20 +58,140 @@ GEVAL = {
                       "Score low if it is vague, unmeasurable, contradicts the signals or ignores stated gaps.",
                       True),
 }
-# Per-agent overrides: a raw research finding is not a signal or a recommendation, so it gets its own criteria.
+# Worker findings need domain-specific criteria; they are not signals or recommendations.
 GEVAL_BY_AGENT = {
     "worker": {
-        "insight": ("The output is a research finding about a competitor and the context is its source evidence. "
-                    "Score high only if it goes beyond restating a source sentence: it explains what the fact "
-                    "means for the competitor's position relative to the target company (a difference, advantage, "
-                    "gap or implication) AND that interpretation follows from the evidence. Score low if it only "
-                    "repeats marketing text or a generic fact, or draws conclusions the evidence does not support.",
+        "insight": ("The output is a research finding and the context is its source evidence. Score high only if it "
+                    "goes beyond restating a source sentence and explains a relevant implication for the stated "
+                    "business goal, with reasoning supported by the evidence. Score low if it only repeats a source "
+                    "or draws conclusions the evidence does not support.",
                     True),
         "actionability": ("The output is a research finding and the context is its source evidence. Score high if "
-                          "a product, pricing or strategy owner could act on it: it names the competitor and "
-                          "market, gives the concrete mechanism (fee, threshold, program, delivery promise, "
-                          "condition) and something to compare against. Score low if it is too vague or too "
-                          "generic to inform any decision.", True),
+                          "it gives a concrete, decision-useful fact, constraint, trend, customer need, or mechanism "
+                          "that a business owner can investigate or compare. Do not require a competitor name unless "
+                          "the research question is specifically about competitors. Score low if it is too vague or "
+                          "generic to inform a decision.", True),
+    },
+    "competitor_intelligence": {
+        "insight": ("The output is a competitor research finding and the context is its source evidence. Score high "
+                    "only if it explains a supported difference, advantage, gap, or implication for the target "
+                    "company's position. Score low if it only repeats marketing text or draws unsupported conclusions.",
+                    True),
+        "actionability": ("The output is a competitor research finding and the context is its source evidence. Score "
+                          "high if it gives a product, pricing, or strategy owner a concrete competitor mechanism "
+                          "(such as a fee, threshold, program, delivery promise, or condition) and a useful basis for "
+                          "comparison. Score low if it is too vague or generic to inform a decision.", True),
+    },
+    "internal_intelligence": {
+        "insight": ("The output is an internal research finding and the context is its source evidence. Score high "
+                    "only if it explains a supported implication for the company's capabilities, constraints, prior "
+                    "decisions, or strategic priorities. Do not require an external competitor comparison. Score low "
+                    "if it merely restates a document or makes unsupported inferences.", True),
+        "actionability": ("The output is an internal research finding and the context is its source evidence. Score "
+                          "high if it identifies a concrete internal capability, constraint, decision, or priority "
+                          "that an owner can use to inform the business goal. Score low if it is vague, generic, or "
+                          "not supported by the supplied internal evidence.", True),
+    },
+    "market_intelligence": {
+        "insight": ("The output is a market research finding and the context is its source evidence. Score high only "
+                    "if it explains a supported implication of a market, economic, regulatory, or industry "
+                    "development for the stated business goal. Do not require a competitor comparison. Score low if "
+                    "it only restates a headline or makes unsupported forecasts.", True),
+        "actionability": ("The output is a market research finding and the context is its source evidence. Score high "
+                          "if it identifies a concrete market condition, trend, threshold, or timing implication "
+                          "that can inform a business choice. Score low if it is generic or not grounded in the "
+                          "supplied market evidence.", True),
+    },
+    "customer_trends": {
+        "insight": ("The output is a customer and trends research finding and the context is its source evidence. "
+                    "Score high only if it explains a supported customer need, sentiment pattern, behavior, or "
+                    "demand implication relevant to the stated business goal. Account for sample and source limits; "
+                    "do not require a competitor comparison. Score low if it overgeneralizes or merely repeats a post.",
+                    True),
+        "actionability": ("The output is a customer and trends research finding and the context is its source "
+                          "evidence. Score high if it identifies a concrete customer need, friction, sentiment, or "
+                          "behavior that can inform a product or business response, while respecting evidence "
+                          "coverage and sample limits. Score low if it is vague or overgeneralized.", True),
+    },
+}
+EXECUTION_GEVAL = {
+    "tool_selection": (
+        "Given the business task and the tools available in the trace, judge whether the agent "
+        "selected appropriate tools and used them in a sensible order. Do not assume tools or "
+        "requirements that are not present in the supplied trace.",
+        False,
+    ),
+    "tool_arguments": (
+        "Given the task, tool names, schemas, and arguments, judge whether each tool call supplied "
+        "appropriate and valid arguments. Do not infer argument values that are not shown.",
+        False,
+    ),
+    "tool_result_use": (
+        "Judge whether the final agent output uses the supplied tool results correctly, avoids "
+        "unsupported claims, and acknowledges missing or failed results.",
+        True,
+    ),
+    "workflow_sequence": (
+        "Compare the observed ordered execution trace with the expected workflow supplied in the "
+        "context. Judge whether required steps and dependencies were followed.",
+        True,
+    ),
+    "error_handling": (
+        "Judge whether tool failures, empty results, retries, and fallbacks were handled "
+        "appropriately according to the task and the recorded execution trace.",
+        False,
+    ),
+    "efficiency": (
+        "Judge whether the execution trace avoids unnecessary repeated tool calls and work while "
+        "still gathering enough information for the task.",
+        False,
+    ),
+}
+WORKER_ALLOWED_TOOLS = {
+    "internal_intelligence": ("internal_rag.retrieve",),
+    "competitor_intelligence": ("competitor_web_search",),
+    "market_intelligence": ("market_search",),
+    "customer_trends": (
+        "account_posts",
+        "analyze_text",
+        "compute_metrics",
+        "evidence_query",
+        "fetch_page",
+        "news_coverage",
+        "reviews_fetch",
+        "search_interest",
+        "social_comments",
+        "social_search",
+        "submit_findings",
+        "web_search",
+    ),
+}
+TOOL_ARGUMENT_SCHEMAS = {
+    "internal_rag.retrieve": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+            "query": {"type": "string"},
+            "top_k": {"type": "integer"},
+            "min_score": {"type": "number"},
+            "where_filter": {"type": "object"},
+            "workspace_id": {"type": "string"},
+            "allow_all_workspaces": {"type": "boolean"},
+            "origin": {"type": "string"},
+        },
+    },
+    "competitor_web_search": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+            "query": {"type": "string"},
+            "max_results": {"type": "integer"},
+        },
+    },
+    "market_search": {
+        "type": "object",
+        "required": ["queries"],
+        "properties": {"queries": {"type": "array"}},
     },
 }
 CUSTOM = tuple(GEVAL)
@@ -121,9 +213,14 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def detect(d: dict[str, Any]) -> str:
-    """Which pipeline component produced this file? Workers are detected generically (any 'worker' name)."""
+    """Detect pipeline outputs, orchestration plans, RAG traces, and generic observability payloads."""
+    if d.get("metrics_stage") is True:
+        return "metrics"
     if "company_profile" in d and "research_goal" in d:
         return "input"
+    if any(k in d for k in ("retrieval_results", "retrieved_documents", "retrieved_chunks")) and any(
+            k in d for k in ("query", "user_query", "retrieval_query")):
+        return "rag"
     if "question_recommendations" in d:
         return "decision"
     if "signals" in d and "decision_ready_context" in d:
@@ -135,6 +232,20 @@ def detect(d: dict[str, Any]) -> str:
             return "verification"
         if d.get("worker"):
             return "worker"
+    if any(
+        key in d
+        for key in (
+            "spans",
+            "trace_events",
+            "observability_events",
+            "tool_traces",
+            "events",
+            "tool_calls",
+            "tools_used",
+            "tool_events",
+        )
+    ):
+        return "telemetry"
     return "unknown"
 
 
@@ -208,12 +319,34 @@ def retrieval_score(rec: dict[str, Any]) -> float | None:
     return None
 
 
+def rag_document_score(rec: dict[str, Any]) -> Any:
+    """Support both retrieval DTO scores and Evidence.metadata relevance scores."""
+    for key in ("score", "relevance_score"):
+        if key in rec:
+            return rec[key]
+    metadata = rec.get("metadata")
+    if isinstance(metadata, dict):
+        for key in ("score", "relevance_score", "confidence_score"):
+            if key in metadata:
+                return metadata[key]
+    return None
+
+
 def domain(url: Any) -> str:
     return urlparse(str(url or "")).netloc.lower().removeprefix("www.")
 
 
 def is_num(v: Any) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def is_finite_num(v: Any) -> bool:
+    if not is_num(v):
+        return False
+    try:
+        return math.isfinite(float(v))
+    except OverflowError:
+        return False
 
 
 def conf_num(v: Any) -> float | None:
@@ -443,19 +576,24 @@ class Cfg:
 
     def __init__(self, args: argparse.Namespace) -> None:
         self.deep, self.ctx_rel, self.extra = args.deep, args.context_relevancy, not args.no_extra_metrics
+        self.include_tool_payloads = getattr(args, "include_tool_payloads", False)
         self.thr = {"faithfulness": args.faithfulness_threshold, "relevancy": args.relevancy_threshold,
                     "context_relevancy": args.context_relevancy_threshold, "specificity": args.specificity_threshold,
                     "insight": args.insight_threshold, "actionability": args.actionability_threshold}
         self.metrics: list[str] = []
         self.geval: dict[str, tuple] = dict(GEVAL)
 
-    def for_agent(self, kind: str) -> "Cfg":
+    def for_agent(self, kind: str, worker_type: str | None = None) -> "Cfg":
         c = copy.copy(self)
         ms = [m for m in AGENT_METRICS[kind] if self.extra or m not in CUSTOM]
         if kind == "worker" and self.ctx_rel:
             ms.append("context_relevancy")
         c.metrics = ms
-        c.geval = {**GEVAL, **GEVAL_BY_AGENT.get(kind, {})}
+        c.geval = {
+            **GEVAL,
+            **GEVAL_BY_AGENT.get(kind, {}),
+            **GEVAL_BY_AGENT.get(worker_type or "", {}),
+        }
         return c
 
 
@@ -466,6 +604,9 @@ class Judge:
         self.model, self.cache_path, self.enabled, self.retries = model, cache_path, enabled, retries
         self.cache: dict[str, Any] = json.loads(cache_path.read_text(encoding="utf-8")) if cache_path.exists() else {}
         self.calls = self.hits = self.errors = 0
+        self.total_latency_seconds = 0.0
+        self.metric_calls: Counter[str] = Counter()
+        self.metric_failures: Counter[str] = Counter()
 
     def run(self, metric: str, question: str, output: str, ctx: list[str], threshold: float,
             spec: tuple | None = None) -> dict[str, Any]:
@@ -485,9 +626,12 @@ class Judge:
             return self.cache[key]
         last = ""
         for attempt in range(self.retries):
+            started = time.perf_counter()
             try:
                 res = self._measure(metric, question, output, ctx, threshold, spec)
                 self.calls += 1
+                self.metric_calls[metric] += 1
+                self.total_latency_seconds += time.perf_counter() - started
                 self.cache[key] = res
                 self.cache_path.write_text(json.dumps(self.cache, ensure_ascii=False, indent=1), encoding="utf-8")
                 return res
@@ -495,19 +639,21 @@ class Judge:
                 last = f"{type(exc).__name__}: {exc}"
                 time.sleep(1 + attempt)
         self.errors += 1
+        self.metric_failures[metric] += 1
+        self.total_latency_seconds += time.perf_counter() - started
         return {"score": None, "reason": "", "error": last}
 
     def _measure(self, metric: str, question: str, output: str, ctx: list[str], threshold: float,
                  spec: tuple | None = None) -> dict[str, Any]:
         import deepeval.metrics as dm
-        from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+        from deepeval.test_case import LLMTestCase, SingleTurnParams
         case = LLMTestCase(input=question or "Evaluate this output.", actual_output=output,
                            retrieval_context=ctx or None)
         if spec:
             criteria, uses_ctx = spec
-            params = [LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT]
+            params = [SingleTurnParams.INPUT, SingleTurnParams.ACTUAL_OUTPUT]
             if uses_ctx:
-                params.append(LLMTestCaseParams.RETRIEVAL_CONTEXT)
+                params.append(SingleTurnParams.RETRIEVAL_CONTEXT)
             m = dm.GEval(name=metric, criteria=criteria, evaluation_params=params, model=self.model,
                          threshold=threshold, async_mode=False)
         else:
@@ -586,8 +732,8 @@ def _result(rows, metrics, checks, cfg):
 # ------------------------------------------------------------------ any worker (internal, competitor, market, customer, ...)
 @evaluator("worker")
 def eval_worker(path, d, ctx, judge, cfg):
-    cfg = cfg.for_agent("worker")
     worker = d["worker"]
+    cfg = cfg.for_agent("worker", worker_type=worker)
     meta = d.get("metadata") or {}
     control = meta.get("control_summary") or {}
     goal = ctx.task_goals.get(worker) or meta.get("research_goal") or ctx.goal
@@ -596,7 +742,7 @@ def eval_worker(path, d, ctx, judge, cfg):
     competitors = [c for c in map(comp_name, meta.get("competitors") or ctx.competitors) if c]
     profiles = meta.get("competitor_profiles") or {}
     matrix = meta.get("comparison_matrix") or {}
-    competitor_style = bool(profiles or meta.get("competitors"))      # competitor-type worker
+    competitor_style = "competitor" in worker.lower()
     internal = "internal" in worker.lower()                            # internal workers may use synthetic evidence
     attempt = int(d.get("attempt") or 1)
     rows, cited_all, by_stmt, bad_relations = [], set(), {}, 0
@@ -639,8 +785,15 @@ def eval_worker(path, d, ctx, judge, cfg):
         comp = next((ev_meta(r).get("competitor") for r in recs if ev_meta(r).get("competitor")), "")
         if not comp:
             comp = next((c for c in competitors if c.lower() in statement.lower()), "")
-        f_question = (f"{f.get('category') or 'Overview'} of {comp or 'the competitors'}. "
-                      f"Overall research goal: {goal}")
+        worker_topic = {
+            "internal_intelligence": "internal capabilities, constraints, and decisions",
+            "market_intelligence": "market, economic, industry, or regulatory conditions",
+            "customer_trends": "customer needs, sentiment, and behavior",
+        }.get(worker, f"competitor {comp or 'positioning'}" if competitor_style else "research findings")
+        f_question = (
+            f"{f.get('category') or 'Overview'} concerning {worker_topic}. "
+            f"Overall research goal: {goal}"
+        )
         row.update(judge_unit(judge, cfg, f_question, statement, judge_ctx, ctx_rel=True))
         flags = base_flags(row, len(judge_ctx), cfg)
         if row["refs_resolved"] and row["synthetic_refs"] == row["refs_resolved"]:
@@ -823,6 +976,229 @@ def eval_worker(path, d, ctx, judge, cfg):
         check("run reported no error", not d.get("error"), str(d.get("error")), "warn"),
     ]
     return _result(rows, metrics, checks, cfg)
+
+
+@evaluator("metrics")
+def eval_metrics(path, d, ctx, judge, cfg):
+    """Check metric observations and required-metric outcomes against their saved evidence."""
+    results = dict_items(d.get("results"))
+    rows = []
+    observation_count = verified_count = thin_count = conflict_count = unverified_count = 0
+    requirement_count = required_count = found_count = gap_count = 0
+    missing_outcomes = duplicate_outcomes = unresolved_evidence = 0
+    nonterminal_outcomes = orphan_outcomes = required_terminal_outcomes = 0
+    invalid_claims = missing_gap_reasons = found_without_observations = 0
+    captured_metric_data = False
+
+    for result in results:
+        worker = str(result.get("worker") or "")
+        metadata = result.get("metadata") or {}
+        evidence = evidence_map(result.get("evidence"))
+        observations = dict_items(metadata.get("metrics"))
+        requirements = dict_items(metadata.get("requirements"))
+        outcomes = dict_items(metadata.get("requirement_outcomes"))
+        captured_metric_data |= any(
+            key in metadata for key in ("metrics", "requirements", "requirement_outcomes")
+        )
+        outcome_by_key: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+        observations_by_key: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+
+        for outcome in outcomes:
+            key = (str(outcome.get("metric_id") or ""), str(outcome.get("entity") or "").casefold())
+            outcome_by_key[key].append(outcome)
+
+        for observation in observations:
+            observation_count += 1
+            metric_id = str(observation.get("metric_id") or "")
+            entity = str(observation.get("entity") or "")
+            key = (metric_id, entity.casefold())
+            observations_by_key[key].append(observation)
+            status = str(observation.get("status") or "").lower()
+            value_text = str(observation.get("value_text") or "")
+            source_id = str(observation.get("evidence_id") or "")
+            source = evidence.get(source_id)
+            source_text = "\n".join(
+                str(source.get(field) or "")
+                for field in ("extracted_fact", "excerpt", "page_text", "text")
+            ) if source else ""
+            source_span = str(observation.get("source_span") or "")
+            normalized_source = re.sub(r"\s+", " ", source_text).strip().casefold()
+            normalized_span = re.sub(r"\s+", " ", source_span).strip().casefold()
+            span_resolves = bool(normalized_span and normalized_span in normalized_source)
+            number_grounded = bool(NUM_RE.findall(value_text)) and not ungrounded_numbers(value_text, [source_text])
+            flags = []
+            if not metric_id:
+                flags.append("missing_metric_id")
+            if not entity.strip():
+                flags.append("missing_metric_entity")
+            if not source:
+                flags.append("unresolved_metric_evidence")
+                unresolved_evidence += 1
+            if not span_resolves:
+                flags.append("source_span_not_in_evidence")
+            if status != "unverified" and not number_grounded:
+                flags.append("metric_value_not_in_evidence")
+            if status not in {"verified", "thin", "conflict", "unverified"}:
+                flags.append("invalid_metric_status")
+            if status != "unverified" and not is_finite_num(observation.get("value")):
+                flags.append("invalid_numeric_value")
+            if flags and status != "unverified":
+                invalid_claims += 1
+            if status == "verified":
+                verified_count += 1
+            elif status == "thin":
+                thin_count += 1
+            elif status == "conflict":
+                conflict_count += 1
+            elif status == "unverified":
+                unverified_count += 1
+            rows.append({
+                "unit_type": "metric_observation",
+                "unit_index": observation_count,
+                "unit_id": f"{worker}:{metric_id}:{entity}:{observation.get('evidence_id') or ''}",
+                "worker": worker,
+                "metric_id": metric_id,
+                "entity": entity,
+                "value_text": value_text,
+                "value": observation.get("value"),
+                "status": status,
+                "evidence_id": source_id,
+                "flags": flags,
+            })
+
+        seen_required: set[tuple[str, str]] = set()
+        for requirement in requirements:
+            requirement_count += 1
+            metric_id = str(requirement.get("metric_id") or "")
+            entity = str(requirement.get("entity") or "")
+            key = (metric_id, entity.casefold())
+            if requirement.get("required", True):
+                required_count += 1
+                seen_required.add(key)
+            matches = outcome_by_key.get(key, [])
+            flags = []
+            if requirement.get("required", True) and not matches:
+                flags.append("required_outcome_missing")
+                missing_outcomes += 1
+            if len(matches) > 1:
+                flags.append("duplicate_requirement_outcomes")
+                duplicate_outcomes += len(matches) - 1
+            outcome = matches[0] if matches else {}
+            outcome_status = str(outcome.get("status") or "").lower()
+            if outcome_status == "found":
+                found_count += 1
+                if requirement.get("required", True):
+                    required_terminal_outcomes += 1
+                supported = any(
+                    str(item.get("status") or "").lower() in {"verified", "thin"}
+                    for item in observations_by_key.get(key, [])
+                )
+                if not supported:
+                    flags.append("found_without_metric_observation")
+                    found_without_observations += 1
+            elif outcome_status == "gap":
+                gap_count += 1
+                if requirement.get("required", True):
+                    required_terminal_outcomes += 1
+                if not outcome.get("reason"):
+                    flags.append("gap_without_reason")
+                    missing_gap_reasons += 1
+            elif outcome_status:
+                flags.append("nonterminal_requirement_outcome")
+                nonterminal_outcomes += 1
+            elif matches:
+                flags.append("invalid_requirement_outcome")
+                nonterminal_outcomes += 1
+            rows.append({
+                "unit_type": "metric_requirement",
+                "unit_index": requirement_count,
+                "unit_id": f"{worker}:{metric_id}:{entity}",
+                "worker": worker,
+                "metric_id": metric_id,
+                "entity": entity,
+                "required": requirement.get("required", True),
+                "outcome": outcome_status or None,
+                "gap_reason": outcome.get("reason"),
+                "flags": flags,
+            })
+
+        for key, matches in outcome_by_key.items():
+            if key not in seen_required and not any(
+                (str(req.get("metric_id") or ""), str(req.get("entity") or "").casefold()) == key
+                for req in requirements
+            ):
+                orphan_outcomes += len(matches)
+                rows.append({
+                    "unit_type": "metric_requirement_outcome",
+                    "unit_index": len(rows) + 1,
+                    "unit_id": f"{worker}:{key[0]}:{key[1]}",
+                    "worker": worker,
+                    "metric_id": key[0],
+                    "entity": matches[0].get("entity"),
+                    "outcome": matches[0].get("status"),
+                    "flags": ["outcome_without_requirement"],
+                })
+
+    metrics = {
+        "worker_results": len(results),
+        "metric_observations": observation_count,
+        "verified_observations": verified_count,
+        "thin_observations": thin_count,
+        "conflicting_observations": conflict_count,
+        "unverified_observations": unverified_count,
+        "requirements": requirement_count,
+        "required_requirements": required_count,
+        "found_outcomes": found_count,
+        "gap_outcomes": gap_count,
+        "required_outcome_coverage_pct": pct(required_terminal_outcomes, required_count),
+        "unresolved_evidence_refs": unresolved_evidence,
+        "invalid_grounded_claims": invalid_claims,
+        "missing_gap_reasons": missing_gap_reasons,
+        "found_without_observations": found_without_observations,
+        "duplicate_outcomes": duplicate_outcomes,
+        "nonterminal_outcomes": nonterminal_outcomes,
+        "orphan_outcomes": orphan_outcomes,
+    }
+    checks = [
+        check(
+            "verified metric observations are grounded in cited sources",
+            invalid_claims == 0,
+            f"{invalid_claims} unsupported or malformed verified/thin/conflicting observation(s)",
+        ),
+        check(
+            "every required metric has a terminal outcome",
+            missing_outcomes == 0 and duplicate_outcomes == 0 and nonterminal_outcomes == 0,
+            f"{missing_outcomes} missing, {duplicate_outcomes} duplicate, "
+            f"and {nonterminal_outcomes} nonterminal outcome(s)",
+        ),
+        check(
+            "metric outcomes map to declared requirements",
+            orphan_outcomes == 0,
+            f"{orphan_outcomes} outcome(s) without a matching requirement",
+        ),
+        check(
+            "every metric gap states a reason",
+            missing_gap_reasons == 0,
+            f"{missing_gap_reasons} gap(s) without a reason",
+        ),
+        check(
+            "found outcomes have supporting metric observations",
+            found_without_observations == 0,
+            f"{found_without_observations} unsupported found outcome(s)",
+        ),
+        check(
+            "metrics-stage data was captured",
+            captured_metric_data,
+            "no worker result contains metric, requirement, or outcome metadata",
+            "warn",
+        ),
+    ]
+    return {
+        "rows": rows,
+        "metrics": metrics,
+        "checks": checks,
+        "metrics_used": ["metric_evidence_integrity", "metric_requirement_coverage"],
+    }
 
 
 # ------------------------------------------------------------------ verification agent
@@ -1224,6 +1600,788 @@ def eval_decision(path, d, ctx, judge, cfg):
     return _result(rows, metrics, checks, cfg)
 
 
+
+# ------------------------------------------------------------------ orchestration / RAG / telemetry evaluators
+def _walk_records(value: Any, keys: tuple[str, ...]) -> list[dict]:
+    """Find nested record lists without assuming one exact producer schema."""
+    found: list[dict] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in keys and isinstance(child, list):
+                found.extend(x for x in child if isinstance(x, dict))
+            else:
+                found.extend(_walk_records(child, keys))
+    elif isinstance(value, list):
+        for child in value:
+            found.extend(_walk_records(child, keys))
+    return found
+
+
+def _execution_calls(payload: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Read one ordered execution trace from worker provenance or evaluator telemetry."""
+    trace = payload.get("execution_trace")
+    if not isinstance(trace, dict):
+        metadata = payload.get("metadata") or {}
+        trace = metadata.get("execution_trace")
+    if not isinstance(trace, dict):
+        trace = (metadata.get("provenance") if isinstance(metadata, dict) else None) or payload.get("provenance")
+    trace = trace if isinstance(trace, dict) else payload
+
+    for key in ("calls", "tool_calls", "tool_events", "tools_used"):
+        calls = trace.get(key)
+        if isinstance(calls, list):
+            return [x for x in calls if isinstance(x, dict)], trace
+
+    records = _walk_records(payload, ("calls", "tool_calls", "tool_events", "tools_used"))
+    if records:
+        return records, trace
+
+    spans = _walk_records(payload, ("spans", "trace_events", "observability_events", "events"))
+    spans_by_id = {str(span["span_id"]): span for span in spans if span.get("span_id")}
+
+    def worker_context(span: dict[str, Any]) -> tuple[str, str]:
+        current = span
+        visited: set[str] = set()
+        while current:
+            attrs = current.get("attributes") or {}
+            worker = attrs.get("edrak.agent.type")
+            if worker:
+                return str(worker), str(attrs.get("edrak.task.id") or "")
+            parent_id = str(current.get("parent_span_id") or "")
+            if not parent_id or parent_id in visited:
+                break
+            visited.add(parent_id)
+            current = spans_by_id.get(parent_id, {})
+        return "", ""
+
+    calls = []
+    for span in spans:
+        attrs = span.get("attributes") or {}
+        tool = attrs.get("edrak.tool.name") or span.get("tool") or span.get("tool_name")
+        if tool:
+            argument_types = attrs.get("edrak.tool.argument.types", {})
+            if isinstance(argument_types, str):
+                try:
+                    argument_types = json.loads(argument_types)
+                except json.JSONDecodeError:
+                    argument_types = {}
+            worker, task_id = worker_context(span)
+            calls.append({
+                "tool": tool,
+                "worker": worker,
+                "task_id": task_id,
+                "status": attrs.get("edrak.tool.status") or span.get("status"),
+                "error_code": attrs.get("edrak.tool.error_code"),
+                "fallback_used": attrs.get("edrak.tool.fallback"),
+                "argument_names": attrs.get("edrak.tool.argument.names"),
+                "argument_types": argument_types if isinstance(argument_types, dict) else {},
+                "count": attrs.get("edrak.tool.result.count"),
+                "latency_ms": span.get("duration_ms"),
+                "branch": attrs.get("edrak.tool.branch"),
+                "span_id": span.get("span_id"),
+            })
+    return calls, trace
+
+
+def _secret_redacted(value: Any) -> Any:
+    """Remove credential-like values before optional tool payloads reach the model judge."""
+    secret_key = re.compile(r"(?:token|secret|password|api[_-]?key|authorization|cookie|credential)", re.I)
+    if isinstance(value, dict):
+        return {
+            str(key): "[REDACTED]" if secret_key.search(str(key)) else _secret_redacted(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_secret_redacted(item) for item in value[:MAX_CTX_ITEMS]]
+    if isinstance(value, str):
+        return value[:MAX_CTX_CHARS]
+    return value
+
+
+def _execution_summary(call: dict[str, Any], include_payloads: bool) -> dict[str, Any]:
+    attrs = call.get("attributes") or {}
+    args = call.get("args", call.get("arguments"))
+    argument_types = call.get("argument_types") or attrs.get("edrak.tool.argument.types") or {}
+    if isinstance(argument_types, str):
+        try:
+            argument_types = json.loads(argument_types)
+        except json.JSONDecodeError:
+            argument_types = {}
+    recorded_argument_names = call.get("argument_names") or attrs.get("edrak.tool.argument.names")
+    if isinstance(recorded_argument_names, str):
+        recorded_argument_names = [name for name in recorded_argument_names.split(",") if name]
+    result = call.get("result_summary", call.get("tool_result_summary"))
+    summary = {
+        "tool": call.get("tool") or call.get("tool_name") or attrs.get("edrak.tool.name") or call.get("name"),
+        "status": call.get("status") or attrs.get("edrak.tool.status"),
+        "branch": call.get("branch") or attrs.get("edrak.tool.branch"),
+        "argument_names": (
+            sorted(map(str, args.keys())) if isinstance(args, dict)
+            else sorted(map(str, recorded_argument_names or []))
+        ),
+        "argument_types": (
+            {str(k): type(v).__name__ for k, v in args.items()}
+            if isinstance(args, dict)
+            else {str(k): str(v) for k, v in argument_types.items()}
+            if isinstance(argument_types, dict)
+            else {}
+        ),
+        "result_count": call.get("count", call.get("result_count", attrs.get("edrak.tool.result.count"))),
+        "latency_ms": call.get("latency_ms", call.get("duration_ms")),
+        "fallback_used": call.get("fallback_used", attrs.get("edrak.tool.fallback")),
+        "error_code": call.get("error_code") or attrs.get("edrak.tool.error_code"),
+    }
+    if include_payloads:
+        if isinstance(args, dict):
+            summary["arguments"] = _secret_redacted(args)
+        if result is None:
+            result = call.get("result")
+        if result is not None:
+            summary["result_summary"] = _secret_redacted(result)
+    return summary
+
+
+def _schema_argument_errors(call: dict[str, Any], schema: dict[str, Any] | None = None) -> list[str] | None:
+    """Check argument shape from either a call schema or a known tool schema."""
+    args = call.get("args", call.get("arguments"))
+    schema = schema or call.get("argument_schema") or call.get("input_schema")
+    if not isinstance(schema, dict):
+        return None
+    argument_types = call.get("argument_types") or (call.get("attributes") or {}).get(
+        "edrak.tool.argument.types"
+    ) or {}
+    if isinstance(argument_types, str):
+        try:
+            argument_types = json.loads(argument_types)
+        except json.JSONDecodeError:
+            argument_types = {}
+    if not isinstance(argument_types, dict):
+        argument_types = {}
+    argument_names = call.get("argument_names") or (call.get("attributes") or {}).get(
+        "edrak.tool.argument.names"
+    )
+    if isinstance(argument_names, str):
+        argument_names = [name.strip() for name in argument_names.split(",") if name.strip()]
+    if not isinstance(args, dict) and not argument_names and not argument_types:
+        return None
+    observed_names = set(map(str, args.keys())) if isinstance(args, dict) else set(map(str, argument_names or []))
+    observed_names.update(map(str, argument_types))
+    errors = []
+    for key in schema.get("required", []):
+        if key not in observed_names:
+            errors.append(f"missing {key}")
+    expected_types = {
+        "string": str, "integer": int, "number": (int, float), "boolean": bool, "object": dict, "array": list,
+    }
+    observed_type_names = {
+        "string": {"str", "string"},
+        "integer": {"int", "integer"},
+        "number": {"int", "integer", "float", "number"},
+        "boolean": {"bool", "boolean"},
+        "object": {"dict", "object"},
+        "array": {"list", "tuple", "array"},
+    }
+    for key, definition in (schema.get("properties") or {}).items():
+        if key not in observed_names or not isinstance(definition, dict):
+            continue
+        expected = definition.get("type")
+        choices = expected if isinstance(expected, list) else [expected]
+        types = tuple(expected_types[x] for x in choices if x in expected_types)
+        if isinstance(args, dict) and key in args:
+            value = args[key]
+            if types and (
+                isinstance(value, bool) and (int in types or float in types)
+                or not isinstance(value, types)
+            ):
+                errors.append(f"invalid type for {key}")
+        elif key in argument_types and not any(
+            str(argument_types[key]).lower() in observed_type_names.get(choice, {choice})
+            for choice in choices if choice in observed_type_names
+        ):
+            errors.append(f"invalid type for {key}")
+    return errors
+
+
+def eval_execution_trace(payload: dict[str, Any], goal: str, output: str, judge: Any,
+                         include_payloads: bool = False) -> dict[str, Any]:
+    """Assess execution only against explicit plans and recorded tool-call evidence."""
+    calls, trace = _execution_calls(payload)
+    summaries = [_execution_summary(call, include_payloads) for call in calls]
+    tool_names = [str(x.get("tool") or "") for x in summaries]
+    tool_names = [x for x in tool_names if x]
+    declared_tools = trace.get("allowed_tools") or trace.get("expected_tools")
+    available_tools = trace.get("available_tools")
+    allowed = declared_tools or available_tools
+    worker = str(payload.get("worker") or "")
+    worker_policy = WORKER_ALLOWED_TOOLS.get(worker)
+    if not allowed and worker_policy:
+        allowed = list(worker_policy)
+    allowed_by_branch = trace.get("allowed_tools_by_branch") or {}
+    allowed_by_stage = trace.get("allowed_tools_by_stage") or {}
+    if not isinstance(allowed_by_branch, dict):
+        allowed_by_branch = {}
+    if not isinstance(allowed_by_stage, dict):
+        allowed_by_stage = {}
+    expected_sequence = trace.get("expected_sequence") or trace.get("workflow_sequence")
+    if isinstance(declared_tools, str):
+        declared_tools = [declared_tools]
+    if isinstance(available_tools, str):
+        available_tools = [available_tools]
+    if isinstance(allowed, str):
+        allowed = [allowed]
+    if isinstance(expected_sequence, str):
+        expected_sequence = [expected_sequence]
+
+    selection_errors = []
+    selection_checkable = bool(allowed or allowed_by_branch or allowed_by_stage)
+    task_policy_complete = bool(calls)
+    selection_unassessed = 0
+    for call, summary in zip(calls, summaries):
+        branch, stage = call.get("branch"), call.get("stage")
+        call_worker = str(call.get("worker") or worker)
+        call_policy = WORKER_ALLOWED_TOOLS.get(call_worker)
+        options = allowed_by_branch.get(branch) if branch else None
+        task_specific_options = bool(options)
+        if not options and stage:
+            options = allowed_by_stage.get(stage)
+            task_specific_options = bool(options)
+        options = options or allowed or call_policy
+        if options:
+            selection_checkable = True
+        tool = summary.get("tool")
+        if not tool:
+            selection_errors.append("call without tool name")
+        elif options and str(tool) not in set(map(str, options)):
+            selection_errors.append(str(tool))
+        elif not options:
+            selection_checkable = False
+            selection_unassessed += 1
+        if not task_specific_options and not call_policy:
+            task_policy_complete = False
+    selection_errors = sorted(set(selection_errors))
+    schema_results = [
+        _schema_argument_errors(
+            call,
+            TOOL_ARGUMENT_SCHEMAS.get(str(call.get("tool") or call.get("tool_name") or "")),
+        )
+        for call in calls
+    ]
+    schema_checked = [result for result in schema_results if result is not None]
+    schema_errors = [f"call {index + 1}: {error}" for index, errors in enumerate(schema_results)
+                     if errors for error in errors]
+
+    sequence_missing: list[str] = []
+    if expected_sequence:
+        actual_iter = iter(tool_names)
+        actual = list(actual_iter)
+        cursor = 0
+        for expected in expected_sequence:
+            try:
+                cursor = actual.index(str(expected), cursor) + 1
+            except ValueError:
+                sequence_missing.append(str(expected))
+
+    errors = [
+        (index, call) for index, call in enumerate(calls)
+        if str(call.get("status") or (call.get("attributes") or {}).get("edrak.tool.status", "")).lower()
+        in {"error", "failed", "failure", "timeout"}
+        or call.get("error") or call.get("error_code")
+    ]
+    def recovered_by_retry(index: int, failed_call: dict[str, Any]) -> bool:
+        call_id = failed_call.get("call_id") or failed_call.get("id") or failed_call.get("span_id")
+        if not call_id:
+            return False
+        return any(
+            later.get("retry_of") == call_id
+            and str(later.get("status", "")).lower() in {"ok", "success", "completed"}
+            for later in calls[index + 1:]
+        )
+
+    handling_recorded = [
+        call.get("error_handled") is True
+        or call.get("fallback_used") is True
+        or recovered_by_retry(index, call)
+        for index, call in errors
+    ]
+    signatures = []
+    for call, summary in zip(calls, summaries):
+        args = call.get("args", call.get("arguments"))
+        if isinstance(args, dict):
+            signatures.append(json.dumps([summary.get("tool"), args], sort_keys=True, ensure_ascii=False))
+        elif call.get("argument_fingerprint"):
+            signatures.append(json.dumps([summary.get("tool"), call["argument_fingerprint"]]))
+        else:
+            signatures.append(None)
+    duplicate_counts = Counter(signature for signature in signatures if signature is not None)
+    repeated_calls = sum(count - 1 for count in duplicate_counts.values() if count > 1)
+    complete_argument_trace = bool(calls) and all(signature is not None for signature in signatures)
+    has_result_summaries = any(
+        call.get("result_summary") is not None or call.get("tool_result_summary") is not None
+        or call.get("result") is not None
+        for call in calls
+    )
+    complete = trace.get("complete") is True or trace.get("trace_complete") is True
+    outcome_summary = {
+        "calls": len(calls),
+        "tools": tool_names,
+        "allowed_tools": declared_tools,
+        "available_tools": available_tools,
+        "expected_sequence": expected_sequence,
+        "sequence_missing": sequence_missing,
+        "schema_checks": len(schema_checked),
+        "schema_errors": schema_errors,
+        "errors": len(errors),
+        "repeated_calls": repeated_calls,
+        "trace_complete": complete,
+    }
+
+    dimensions: dict[str, dict[str, Any]] = {
+        name: {"status": "not_assessable", "score": None, "reason": ""}
+        for name in EXECUTION_GEVAL
+    }
+    checks = []
+    if not calls:
+        for dimension in dimensions.values():
+            dimension["reason"] = "No structured tool-call trace was supplied."
+        checks.append(check(
+            "execution quality has structured trace evidence", False,
+            "tool selection, arguments, result use, sequence, error handling, and efficiency are not assessable",
+            "warn",
+        ))
+    else:
+        dimensions["tool_selection"]["status"] = (
+            "assessable" if selection_checkable and (declared_tools or task_policy_complete) else "partial"
+        )
+        dimensions["tool_selection"]["reason"] = (
+            "Only registered tool availability is known; task-specific expected tools are absent."
+            if not task_policy_complete and not declared_tools and (available_tools or allowed_by_branch or allowed_by_stage) else
+            "No allowed/expected tool set; use judgment only."
+            if not selection_checkable else
+            f"{len(selection_errors)} call(s) used tools outside the declared set." if selection_errors else ""
+        )
+        dimensions["tool_arguments"]["status"] = (
+            "assessable" if schema_checked else
+            "partial" if any(summary["argument_names"] for summary in summaries) else
+            "not_assessable"
+        )
+        dimensions["tool_arguments"]["reason"] = (
+            f"{len(schema_errors)} schema violation(s)." if schema_errors else
+            "No per-call input schema; value suitability requires opt-in payload judging."
+            if not include_payloads else ""
+        )
+        dimensions["tool_result_use"]["status"] = (
+            "assessable" if include_payloads and has_result_summaries and output.strip() else "not_assessable"
+        )
+        dimensions["tool_result_use"]["reason"] = (
+            "Requires tool result summaries, final output, and --include-tool-payloads."
+            if dimensions["tool_result_use"]["status"] == "not_assessable" else ""
+        )
+        dimensions["workflow_sequence"]["status"] = "assessable" if expected_sequence else "not_assessable"
+        dimensions["workflow_sequence"]["reason"] = (
+            f"Missing expected ordered steps: {sequence_missing}." if sequence_missing else
+            "No expected workflow sequence was supplied." if not expected_sequence else ""
+        )
+        dimensions["error_handling"]["status"] = (
+            "assessable" if errors and all(handling_recorded)
+            else "partial" if errors else "not_assessable"
+        )
+        dimensions["error_handling"]["reason"] = (
+            "Trace has no failures." if not errors else
+            "Failure recovery/outcome fields are incomplete." if dimensions["error_handling"]["status"] == "partial" else ""
+        )
+        dimensions["efficiency"]["status"] = "assessable" if complete_argument_trace else "partial"
+        dimensions["efficiency"]["reason"] = f"{repeated_calls} exact repeated call(s) with the same tool and arguments." if repeated_calls else ""
+        if not complete_argument_trace and not repeated_calls:
+            dimensions["efficiency"]["reason"] = "Call arguments/fingerprints are incomplete; exact duplicate calls cannot be established."
+
+        if selection_checkable:
+            selection_detail = []
+            if selection_errors:
+                selection_detail.append(", ".join(selection_errors))
+            if selection_unassessed:
+                selection_detail.append(f"{selection_unassessed} call(s) have no applicable tool policy")
+            checks.append(check("tool calls stay within declared/available tools",
+                                not selection_errors and not selection_unassessed,
+                                "; ".join(selection_detail),
+                                "error" if declared_tools or task_policy_complete else "warn"))
+        else:
+            checks.append(check("tool choice is constrained by a declared allowed tool set", False,
+                                "no allowed_tools/expected_tools supplied", "warn"))
+        if schema_checked:
+            checks.append(check("tool arguments satisfy supplied schemas", not schema_errors,
+                                "; ".join(schema_errors)))
+        else:
+            checks.append(check("tool arguments can be validated against schemas", False,
+                                "no per-call argument schema supplied", "warn"))
+        if expected_sequence:
+            checks.append(check("observed tools follow the expected sequence", not sequence_missing,
+                                ", ".join(sequence_missing)))
+        else:
+            checks.append(check("workflow sequence is assessable", False,
+                                "no expected_sequence/workflow_sequence supplied", "warn"))
+        if errors:
+            unhandled = [
+                str(call.get("tool") or call.get("tool_name") or "unknown")
+                for index, call in errors
+                if call.get("error_handled") is not True
+                and call.get("fallback_used") is not True
+                and not recovered_by_retry(index, call)
+            ]
+            unhandled_by_tool = Counter(unhandled)
+            detail = f"{len(unhandled)} unhandled failure(s)"
+            if unhandled_by_tool:
+                detail += " across " + ", ".join(
+                    f"{tool}={count}" for tool, count in sorted(unhandled_by_tool.items())
+                )
+            checks.append(check("tool failures are handled or explicitly surfaced", not unhandled,
+                                detail if unhandled else "", "warn"))
+        else:
+            checks.append(check("trace records tool failure handling", complete,
+                                "no errors observed, but trace completeness is not declared", "warn"))
+        checks.append(check("trace avoids duplicate tool work", repeated_calls == 0,
+                            f"{repeated_calls} repeated call(s)", "warn"))
+
+        if judge and getattr(judge, "enabled", False) and goal:
+            public_context = [
+                json.dumps({
+                    "available_tools": available_tools or allowed,
+                    "allowed_tools_by_branch": allowed_by_branch,
+                    "allowed_tools_by_stage": allowed_by_stage,
+                    "expected_sequence": expected_sequence,
+                    "argument_schemas": [call.get("argument_schema") or call.get("input_schema")
+                                         for call in calls if call.get("argument_schema") or call.get("input_schema")],
+                }, ensure_ascii=False, default=str)[:MAX_CTX_CHARS]
+            ]
+            trace_text = json.dumps(summaries, ensure_ascii=False, default=str)[:MAX_CTX_CHARS]
+            judge_metrics = ("tool_selection",)
+            if include_payloads and any("arguments" in item for item in summaries):
+                judge_metrics += ("tool_arguments",)
+            if include_payloads and complete_argument_trace:
+                judge_metrics += ("efficiency",)
+            if include_payloads and has_result_summaries and output.strip():
+                judge_metrics += ("tool_result_use",)
+            if expected_sequence:
+                judge_metrics += ("workflow_sequence",)
+            if errors:
+                judge_metrics += ("error_handling",)
+            for metric in judge_metrics:
+                context = public_context
+                actual = trace_text
+                if metric == "tool_result_use":
+                    context = [
+                        json.dumps([{"tool": item.get("tool"), "result_summary": item.get("result_summary")}
+                                    for item in summaries], ensure_ascii=False, default=str)[:MAX_CTX_CHARS]
+                    ]
+                    actual = output[:MAX_CTX_CHARS]
+                elif metric == "workflow_sequence":
+                    context = [json.dumps({"expected": expected_sequence, "observed": tool_names})]
+                result = judge.run(
+                    metric, goal, actual, context, 0.7, spec=EXECUTION_GEVAL[metric]
+                )
+                dimensions[metric].update({
+                    "status": "assessable" if result.get("score") is not None else "pending_judge",
+                    "score": result.get("score"),
+                    "reason": result.get("reason") or result.get("error") or dimensions[metric]["reason"],
+                })
+
+    assessable = sum(value["status"] == "assessable" for value in dimensions.values())
+    status = "not_assessable" if not calls else "assessable" if assessable == len(dimensions) else "partial"
+    outcome_summary.update({"status": status, "dimensions_assessable": assessable})
+    return {"status": status, "metrics": outcome_summary, "dimensions": dimensions, "checks": checks}
+
+
+@evaluator("orchestration")
+def eval_orchestration(path, d, ctx, judge, cfg):
+    plan = d.get("plan") or {}
+    tasks = dict_items(plan.get("tasks"))
+    results = dict_items(d.get("results"))
+    task_names = [str(t.get("worker") or t.get("name") or t.get("task_id") or "") for t in tasks]
+    result_names = [str(r.get("worker") or r.get("name") or r.get("task_id") or "") for r in results]
+    planned = {x for x in task_names if x}
+    completed = {x for x in result_names if x}
+    missing = sorted(planned - completed)
+    unexpected = sorted(completed - planned) if planned else []
+    deps_missing = []
+    for task in tasks:
+        name = str(task.get("worker") or task.get("name") or task.get("task_id") or "")
+        deps = task.get("depends_on") or task.get("dependencies") or []
+        if isinstance(deps, str): deps = [deps]
+        for dep in deps:
+            dep_name = str(dep.get("worker") or dep.get("task_id") or dep) if isinstance(dep, dict) else str(dep)
+            if dep_name not in planned:
+                deps_missing.append(f"{name}->{dep_name}")
+    failed = [r for r in results if str(r.get("status", "")).lower() in {"failed", "error", "timeout"} or r.get("error")]
+    rows = []
+    for i, task in enumerate(tasks, 1):
+        name = str(task.get("worker") or task.get("name") or task.get("task_id") or f"task-{i}")
+        result = next((r for r in results if name in {
+            str(r.get("worker") or ""), str(r.get("name") or ""), str(r.get("task_id") or "")}), {})
+        status = str(result.get("status") or ("completed" if result else "missing")).lower()
+        rows.append({"unit_type":"orchestration_task","unit_index":i,"unit_id":name,
+                     "statement":str(task.get("goal") or task.get("description") or ""),
+                     "status":status,"dependencies":task.get("depends_on") or task.get("dependencies") or [],
+                     "result_present":bool(result),"flags":(["task_result_missing"] if not result else []) +
+                     (["task_failed"] if result in failed else [])})
+    tool_records = _walk_records(d, ("tool_calls", "tools_used", "tool_events"))
+    retries = sum(1 for x in _walk_records(d, ("events", "trace_events", "spans"))
+                  if "retry" in str(x.get("event") or x.get("name") or x.get("type") or "").lower())
+    metrics = {"planned_tasks":len(tasks),"result_tasks":len(results),
+               "task_completion_pct":pct(len(planned & completed),len(planned)),
+               "missing_tasks":len(missing),"unexpected_results":len(unexpected),
+               "missing_dependencies":len(deps_missing),"failed_tasks":len(failed),
+               "tool_calls_observed":len(tool_records),"retry_events":retries}
+    checks = [
+        check("planned tasks have results", not missing, ", ".join(missing)),
+        check("results correspond to planned tasks", not unexpected, ", ".join(unexpected), "warn") if planned else None,
+        check("all declared dependencies reference planned tasks", not deps_missing, ", ".join(deps_missing)),
+        check("orchestration reports no failed tasks", not failed, f"{len(failed)} failed", "warn"),
+        check("pipeline status is successful", str(d.get("status","completed")).lower() not in {"failed","error","partial"},
+              str(d.get("status","unknown")), "warn")
+    ]
+    return {"rows":rows,"metrics":metrics,"checks":[x for x in checks if x],
+            "metrics_used":["orchestration_quality"],"orchestration_quality":metrics}
+
+
+@evaluator("rag")
+def eval_rag(path, d, ctx, judge, cfg):
+    docs = d.get("retrieval_results") or d.get("retrieved_documents") or d.get("retrieved_chunks") or []
+    docs = dict_items(docs)
+    query = str(d.get("query") or d.get("user_query") or d.get("retrieval_query") or "")
+    ids = [str(x.get("document_id") or x.get("chunk_id") or x.get("id") or "") for x in docs]
+    raw_scores = [rag_document_score(x) for x in docs]
+    valid_scores = [
+        float(score) for score in raw_scores
+        if is_finite_num(score) and 0 <= float(score) <= 1
+    ]
+    invalid_scores = [
+        score for score in raw_scores
+        if score is not None and (
+            not is_finite_num(score) or not 0 <= float(score) <= 1
+        )
+    ]
+    scores = [float(score) for score in raw_scores if is_finite_num(score)]
+    texts = [
+        str(x.get("text") or x.get("content") or x.get("page_content")
+            or x.get("excerpt") or x.get("extracted_fact") or "")
+        for x in docs
+    ]
+    nonempty = sum(bool(x.strip()) for x in texts)
+    normalized = [norm(x) for x in texts if x.strip()]
+    duplicate_pairs = sum(1 for i in range(len(normalized)) for j in range(i+1,len(normalized))
+                          if near_dup(normalized[i],normalized[j]))
+    source_names = [domain(x.get("source_url") or x.get("url") or x.get("source")) for x in docs]
+    unique_sources = len({x for x in source_names if x})
+    rows = []
+    for i, doc in enumerate(docs,1):
+        text = str(doc.get("text") or doc.get("content") or doc.get("page_content")
+                   or doc.get("excerpt") or doc.get("extracted_fact") or "")
+        score = rag_document_score(doc)
+        rows.append({"unit_type":"retrieved_chunk","unit_index":i,
+                     "unit_id":str(doc.get("chunk_id") or doc.get("document_id") or doc.get("id") or i),
+                     "query":query,"statement":text[:500],"retrieval_score":score,
+                     "source":doc.get("source_url") or doc.get("url") or doc.get("source"),
+                     "flags":(["empty_retrieved_chunk"] if not text.strip() else []) +
+                     (["low_retrieval_score"] if is_num(score) and score < 0.3 else []) +
+                     (["invalid_retrieval_score"] if score is not None and
+                      (not is_finite_num(score) or not 0 <= float(score) <= 1) else [])})
+    answer = next(
+        (
+            str(d[key]).strip()
+            for key in ("answer", "response", "actual_output", "output")
+            if d.get(key) and str(d[key]).strip()
+        ),
+        "",
+    )
+    rag_judges = {
+        metric: {"score": None, "reason": "", "error": "not requested"}
+        for metric in ("context_relevancy", "relevancy", "faithfulness")
+    }
+    judge_rag_metrics = bool(query and docs and getattr(judge, "enabled", False))
+    if judge_rag_metrics:
+        context = texts[:MAX_CTX_ITEMS]
+        rag_judges["context_relevancy"] = judge.run(
+            "context_relevancy",
+            query,
+            answer or query,
+            context,
+            getattr(cfg, "thr", {}).get("context_relevancy", 0.5),
+        )
+        if answer:
+            for metric in ("relevancy", "faithfulness"):
+                rag_judges[metric] = judge.run(
+                    metric,
+                    query,
+                    answer,
+                    context,
+                    getattr(cfg, "thr", {}).get(metric, 0.5),
+                )
+    metrics = {"queries":1 if query else 0,"retrieved_chunks":len(docs),
+               "nonempty_chunks_pct":pct(nonempty,len(docs)),"mean_retrieval_score":mean(valid_scores),
+               "chunks_with_score_pct":pct(sum(score is not None for score in raw_scores),len(docs)),
+               "invalid_retrieval_scores":len(invalid_scores),"unique_source_domains":unique_sources,
+               "duplicate_chunk_pairs":duplicate_pairs,"empty_chunks":len(docs)-nonempty,
+               "context_relevancy_score":rag_judges["context_relevancy"].get("score"),
+               "context_relevancy_reason":rag_judges["context_relevancy"].get("reason"),
+               "context_relevancy_error":rag_judges["context_relevancy"].get("error"),
+               "answer_relevancy_score":rag_judges["relevancy"].get("score"),
+               "answer_relevancy_reason":rag_judges["relevancy"].get("reason"),
+               "answer_relevancy_error":rag_judges["relevancy"].get("error"),
+               "faithfulness_score":rag_judges["faithfulness"].get("score"),
+               "faithfulness_reason":rag_judges["faithfulness"].get("reason"),
+               "faithfulness_error":rag_judges["faithfulness"].get("error")}
+    if answer:
+        rag_row = {
+            "unit_type": "rag_answer",
+            "unit_index": 1,
+            "unit_id": str(d.get("answer_id") or "answer"),
+            "query": query,
+            "statement": answer[:500],
+            "flags": [],
+        }
+        for metric, result in rag_judges.items():
+            score = result.get("score")
+            threshold = getattr(cfg, "thr", {}).get(metric, 0.5)
+            rag_row[f"{metric}_score"] = score
+            rag_row[f"{metric}_pass"] = None if score is None else score >= threshold
+            rag_row[f"{metric}_reason"] = result.get("reason", "")
+            rag_row[f"{metric}_note"] = result.get("error", "")
+            if rag_row[f"{metric}_pass"] is False:
+                rag_row["flags"].append(METRICS[metric][2])
+        rows.append(rag_row)
+    checks = [
+        check("retrieval query is present",bool(query),"query missing"),
+        check("retrieval returned at least one chunk",bool(docs),"no retrieved documents","warn"),
+        check("retrieved chunks contain text",nonempty==len(docs),f"{len(docs)-nonempty} empty","warn") if docs else None,
+        check("retrieval scores are available for observability",len(scores)==len(docs),
+              f"{len(scores)}/{len(docs)} have scores","warn") if docs else None,
+        check("retrieval scores are within [0, 1]",not invalid_scores,
+              f"{len(invalid_scores)} invalid score(s): {invalid_scores}","warn") if docs else None,
+        check("retrieved chunks are not near-duplicates",duplicate_pairs==0,f"{duplicate_pairs} duplicate pairs","warn")
+    ]
+    context_score = rag_judges["context_relevancy"].get("score")
+    if context_score is not None:
+        checks.append(
+            check(
+                "retrieved context is relevant to the query",
+                context_score >= getattr(cfg, "thr", {}).get("context_relevancy", 0.5),
+                str(rag_judges["context_relevancy"].get("reason") or context_score),
+                "warn",
+            )
+        )
+    rag_metrics_used = ["rag_retrieval_quality"]
+    if judge_rag_metrics:
+        rag_metrics_used.extend(["context_relevancy"])
+        if answer:
+            rag_metrics_used.extend(["relevancy", "faithfulness"])
+    return {"rows":rows,"metrics":metrics,"checks":[x for x in checks if x],
+            "metrics_used":rag_metrics_used,"rag_quality":metrics}
+
+
+@evaluator("telemetry")
+def eval_telemetry(path, d, ctx, judge, cfg):
+    spans = _walk_records(d, ("spans","trace_events","observability_events","tool_traces","events"))
+    explicit_tool_calls = _walk_records(d, ("tool_calls","tools_used","tool_events"))
+    tool_calls, _ = _execution_calls(d)
+    worker_spans = [
+        span for span in spans
+        if (span.get("attributes") or {}).get("edrak.agent.type") or span.get("name") == "edrak.worker.run"
+    ]
+    worker_identity_missing = [
+        span for span in worker_spans
+        if not (span.get("attributes") or {}).get("edrak.agent.type")
+        or not (span.get("attributes") or {}).get("edrak.task.id")
+    ]
+    worker_process_missing = [
+        span for span in worker_spans
+        if str(span.get("status") or "").lower() not in {"ok", "success", "completed"}
+        or not is_num(span.get("duration_ms"))
+        or not is_finite_num(span.get("duration_ms"))
+        or float(span.get("duration_ms", 0)) < 0
+    ]
+    tool_context_by_span = {
+        str(call.get("span_id")): call for call in tool_calls if call.get("span_id")
+    }
+    error_records = spans + explicit_tool_calls
+    errors = [x for x in error_records if x.get("error") or str(x.get("status","")).lower() in {"error","failed"}]
+    durations = []
+    for x in spans + explicit_tool_calls:
+        value = x.get("duration_ms", x.get("latency_ms"))
+        if is_num(value): durations.append(float(value))
+        elif is_num(x.get("duration")): durations.append(float(x["duration"])*1000)
+    ordered_durations = sorted(durations)
+    p95_duration = round(ordered_durations[math.ceil(0.95 * len(ordered_durations)) - 1], 2) if ordered_durations else None
+    names = [
+        str(x.get("tool") or x.get("tool_name") or (x.get("attributes") or {}).get("edrak.tool.name") or x.get("name") or "")
+        for x in tool_calls
+    ]
+    metrics = {"spans":len(spans),"tool_calls":len(tool_calls),"observed_errors":len(errors),
+               "worker_spans":len(worker_spans),
+               "worker_task_identity_pct":pct(len(worker_spans)-len(worker_identity_missing),len(worker_spans)),
+               "worker_process_recorded_pct":pct(len(worker_spans)-len(worker_process_missing),len(worker_spans)),
+               "worker_types":sorted({
+                   str((span.get("attributes") or {}).get("edrak.agent.type"))
+                   for span in worker_spans
+                   if (span.get("attributes") or {}).get("edrak.agent.type")
+               }),
+               "error_rate_pct":pct(len(errors),len(error_records)),
+               "duration_samples":len(durations),
+               "mean_duration_ms":mean(durations),"p95_duration_ms":p95_duration,
+               "max_duration_ms":round(max(durations), 2) if durations else None,
+               "unique_tools":len({n for n in names if n}),"tool_names":sorted({n for n in names if n})}
+    rows = []
+    for i, x in enumerate(spans + explicit_tool_calls, 1):
+        attrs = x.get("attributes") or {}
+        tool_context = tool_context_by_span.get(str(x.get("span_id") or ""), {})
+        is_worker_span = x in worker_spans
+        flags = (["execution_error"] if x.get("error") or str(x.get("status", "")).lower() in {"error", "failed"} else [])
+        if is_worker_span:
+            if not attrs.get("edrak.agent.type") or not attrs.get("edrak.task.id"):
+                flags.append("missing_worker_task_identity")
+            if x in worker_process_missing:
+                flags.append("incomplete_worker_process_trace")
+        rows.append({
+            "unit_type": "worker_trace" if is_worker_span else "trace_event",
+            "unit_index": i,
+            "unit_id": str(x.get("span_id") or x.get("id") or i),
+            "worker": attrs.get("edrak.agent.type") or tool_context.get("worker"),
+            "task_id": attrs.get("edrak.task.id") or tool_context.get("task_id"),
+            "task_attempt": attrs.get("edrak.task.attempt"),
+            "statement": str(attrs.get("edrak.tool.name") or x.get("name") or x.get("tool") or x.get("event") or x.get("type") or ""),
+            "status": x.get("status"),
+            "duration_ms": x.get("duration_ms", x.get("latency_ms")),
+            "error": x.get("error"),
+            "flags": flags,
+        })
+    metrics["units"] = len(rows)
+    metrics["units_flagged"] = sum(bool(row["flags"]) for row in rows)
+    checks = [check("telemetry includes events or spans",bool(spans or explicit_tool_calls),"no recognizable spans/tool calls","warn"),
+              check("observed tool and span errors are recorded",not errors,f"{len(errors)} error events","warn")]
+    checks.append(
+        check(
+            "worker spans carry agent and task identity",
+            bool(worker_spans) and not worker_identity_missing,
+            f"{len(worker_identity_missing)}/{len(worker_spans)} worker span(s) missing agent or task id"
+            if worker_spans else "no worker.run spans available",
+            "warn",
+        )
+    )
+    checks.append(
+        check(
+            "worker spans record process status and duration",
+            bool(worker_spans) and not worker_process_missing,
+            f"{len(worker_process_missing)}/{len(worker_spans)} worker span(s) missing success status or valid duration"
+            if worker_spans else "no worker.run spans available",
+            "warn",
+        )
+    )
+    execution = eval_execution_trace(
+        d, getattr(ctx, "goal", ""), "", judge, getattr(cfg, "include_tool_payloads", False)
+    )
+    metrics["execution_quality_status"] = execution["status"]
+    return {"rows":rows,"metrics":metrics,"checks":[*checks, *execution["checks"]],
+            "metrics_used":["observability", "execution_quality"],"execution_quality":execution}
+
+
 # =============================================================================== 5. pipeline-level checks
 def pipeline_checks(ctx: Ctx, per_agent: dict[str, list[dict]], decision_files: list[dict],
                     loaded: list[tuple[Path, str, dict]]) -> dict[str, Any]:
@@ -1409,6 +2567,8 @@ class EvalAgent:
     def not_evaluated(self) -> list[str]:
         """Downstream agents with no evaluated file. Without them insight (cross_signal) and the recommendation-level
         actionability (decision) are not scored, and the end-to-end trace is incomplete."""
+        if self.loaded and all(kind == "telemetry" for _, kind, _ in self.loaded):
+            return []
         wanted = {"verification", "cross_signal", "decision"}
         if self.a.agents:
             wanted &= set(self.a.agents)
@@ -1416,13 +2576,17 @@ class EvalAgent:
 
     def run(self) -> int:
         final = build_ctx(self.loaded, self.a.task)
-        if not final.goal:
+        has_output_evaluation = any(
+            kind in {"worker", "verification", "cross_signal", "decision"}
+            for _, kind, _ in self.loaded
+        )
+        if has_output_evaluation and not final.goal:
             print("WARNING: no research goal found (include the initial-input file or pass --task); "
                   "relevancy scores will be weak.", file=sys.stderr)
         # evaluate in pipeline order, so the console reads like the run
-        order = {"worker": 0, "verification": 1, "cross_signal": 2, "decision": 3}
+        order = {"worker": 0, "metrics": 1, "verification": 2, "cross_signal": 3, "decision": 4}
         for p, kind, d in sorted(self.loaded, key=lambda x: (order.get(x[1], 9), file_time(x[1], x[2]) or EPOCH)):
-            if kind in ("input", "orchestration"):
+            if kind == "input":
                 continue
             if kind not in EVALUATORS:
                 print(f"Skipped {p.name}: unrecognised schema")
@@ -1437,16 +2601,48 @@ class EvalAgent:
                 self.errors.append({"file": p.name, "error": f"evaluator crashed: {type(exc).__name__}: {exc}"})
                 print(f"  ERROR evaluating {p.name}: {exc}", file=sys.stderr)
                 continue
+            if kind not in {"telemetry", "metrics"}:
+                metadata = d.get("metadata") or {}
+                goal = (ctx.task_goals.get(str(d.get("worker") or ""))
+                        or metadata.get("research_goal") or ctx.goal or "")
+                output_parts = [
+                    str(item.get(key) or "")
+                    for key in ("findings", "signals", "question_recommendations")
+                    for item in dict_items(d.get(key))
+                ]
+                output_parts.extend(
+                    str(d.get(key) or "")
+                    for key in ("answer", "response", "output", "final_output", "summary")
+                    if isinstance(d.get(key), str)
+                )
+                execution = eval_execution_trace(
+                    d, goal, "\n".join(part for part in output_parts if part),
+                    self.judge, self.cfg.include_tool_payloads,
+                )
+                res["execution_quality"] = execution
+                res["metrics"]["execution_quality_status"] = execution["status"]
+                res["checks"].extend(execution["checks"])
+                res["metrics_used"] = list(dict.fromkeys([*res.get("metrics_used", []), "execution_quality"]))
             res["rows"] = [{"file": p.name, "agent": label, **r} for r in res["rows"]]
             res["file"] = p.name
             self.per_agent.setdefault(label, []).append(res)
-            if kind != "worker":
+            if kind not in {"worker", "telemetry"}:
                 self.chain.append({"file": p.name, "agent": kind, "worker_attempts_seen": ctx.worker_attempt,
                                    "verification_seen": ctx.verification_file, "cross_signal_seen": ctx.cross_signal_file})
             err = sum(c["passed"] for c in res["checks"] if c["severity"] == "error")
             n_err = sum(c["severity"] == "error" for c in res["checks"])
             warn = sum(not c["passed"] for c in res["checks"] if c["severity"] == "warn")
-            print(f"[{label}] {p.name}: {len(res['rows'])} units, {err}/{n_err} integrity checks passed, {warn} warnings")
+            if kind == "telemetry":
+                metrics = res["metrics"]
+                print(
+                    f"[{label}] {p.name}: {metrics['spans']} spans, {metrics['tool_calls']} tool calls, "
+                    f"{metrics['observed_errors']} observed errors, execution quality "
+                    f"{metrics['execution_quality_status']}, {warn} warnings "
+                    "(integrity checks: n/a)"
+                )
+            else:
+                integrity = f"{err}/{n_err} integrity checks passed" if n_err else "integrity checks: n/a (none defined)"
+                print(f"[{label}] {p.name}: {len(res['rows'])} units, {integrity}, {warn} warnings")
         if not self.per_agent:
             print("ERROR: nothing to evaluate.", file=sys.stderr)
             return 2
@@ -1463,7 +2659,23 @@ class EvalAgent:
             except Exception as exc:
                 print(f"narrative failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         self.write_all()
-        return 1 if self.errors else 0
+        integrity_failures = [
+            check_result
+            for results in self.per_agent.values()
+            for result in results
+            for check_result in result["checks"]
+            if check_result["severity"] == "error" and not check_result["passed"]
+        ]
+        integrity_failures.extend(
+            item for item in self.pipeline.get("checks", [])
+            if item["severity"] == "error" and not item["passed"]
+        )
+        if integrity_failures:
+            print(
+                f"ERROR: {len(integrity_failures)} deterministic integrity check(s) failed.",
+                file=sys.stderr,
+            )
+        return 1 if self.errors or integrity_failures else 0
 
     # -- reports
     def metrics_in_use(self) -> list[str]:
@@ -1482,6 +2694,7 @@ class EvalAgent:
                 "model": None if self.a.dry_run else self.a.model, "dry_run": self.a.dry_run,
                 "thresholds": {m: t for m, t in self.cfg.thr.items() if m in used},
                 "files": [{"file": res["file"], "metrics_used": res.get("metrics_used"), "metrics": res["metrics"],
+                           "execution_quality": res.get("execution_quality"),
                            "checks": res["checks"],
                            "flagged_units": [{k: r.get(k) for k in ("unit_type", "unit_id", "statement", "flags")}
                                              for r in res["rows"] if r.get("flags")]} for res in results]}
@@ -1499,6 +2712,17 @@ class EvalAgent:
         write_csv(out / "overview.csv", overview)
         (out / "pipeline_report.json").write_text(json.dumps(self.pipeline, ensure_ascii=False, indent=2, default=str),
                                                   encoding="utf-8")
+        obs = {"generated_at_utc": datetime.now(timezone.utc).isoformat(),
+               "judge": {"calls": self.judge.calls, "cache_hits": self.judge.hits,
+                         "errors": self.judge.errors, "total_latency_seconds": round(self.judge.total_latency_seconds, 4),
+                         "calls_by_metric": dict(self.judge.metric_calls),
+                         "failures_by_metric": dict(self.judge.metric_failures)},
+               "agent_files": {a: [{"file": r["file"], "metrics": r["metrics"],
+                                    "execution_quality": r.get("execution_quality"),
+                                    "failed_checks": [c for c in r["checks"] if not c["passed"]]}
+                                   for r in rs] for a, rs in self.per_agent.items()},
+               "errors": self.errors}
+        (out / "observability.json").write_text(json.dumps(obs, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         (out / "summary.md").write_text(self.markdown(), encoding="utf-8")
         print(f"\nDone. LLM calls: {self.judge.calls}, cache hits: {self.judge.hits}, judge failures: {self.judge.errors}."
               f" Reports in {out}/ (start with summary.md)")
@@ -1515,16 +2739,28 @@ class EvalAgent:
         if self.narrative:
             L += ["## Diagnosis (LLM-written from the computed results)", "", self.narrative, ""]
         L += ["## Scores per file", "",
-              "| Agent | File | Integrity checks | Warnings | Units | Flagged | " + " | ".join(f"{m} avg" for m in m_cols) + " |",
-              "|---|---|---|---|---|---|" + "---|" * len(m_cols)]
+              "| Agent | File | Execution quality | Integrity checks | Warnings | Units | Flagged | " + " | ".join(f"{m} avg" for m in m_cols) + " |",
+              "|---|---|---|---|---|---|---|" + "---|" * len(m_cols)]
         for agent, results in self.per_agent.items():
             for r in results:
                 m = r["metrics"]
                 errs = [c for c in r["checks"] if c["severity"] == "error"]
                 warn = sum(not c["passed"] for c in r["checks"] if c["severity"] == "warn")
                 cell = lambda x: "-" if m.get(f"{x}_avg") is None else str(m[f"{x}_avg"])
-                L.append(f"| {agent} | {r['file']} | {sum(c['passed'] for c in errs)}/{len(errs)} | {warn} | {m.get('units')} | "
+                execution_status = (r.get("execution_quality") or {}).get("status", "not_assessable")
+                integrity = f"{sum(c['passed'] for c in errs)}/{len(errs)}" if errs else "n/a"
+                L.append(f"| {agent} | {r['file']} | {execution_status} | {integrity} | {warn} | {m.get('units')} | "
                          f"{m.get('units_flagged')} | " + " | ".join(cell(x) if x in r.get("metrics_used", []) else "n/a" for x in m_cols) + " |")
+        L += ["", "## RAG / orchestration / observability", "",
+              "- RAG inputs are checked for retrieval score coverage and range, empty/duplicate chunks; source-domain coverage is recorded. DeepEval scores contextual relevance and, when an answer is supplied, answer relevancy and faithfulness unless `--dry-run` is selected.",
+              "- Orchestration inputs are evaluated for planned-task completion, dependency integrity, failed tasks, retries, and observed tool calls.",
+              "- Worker and downstream-agent quality metrics use DeepEval unless `--dry-run` is selected; `--deep` also judges every recommendation and comparison-matrix cell.",
+              "- Telemetry checks worker-run spans for agent/task identity and successful status/duration, and correlates tool spans with their worker when trace parentage is present.",
+              "- Execution quality is reported separately for tool selection, argument validity/suitability, result use, workflow sequence, failure/retry handling, and efficiency. Checks are marked not assessable when the trace lacks required evidence.",
+              "- Tool argument values and result summaries are excluded from DeepEval by default. Use `--include-tool-payloads` to send redacted payloads for argument and result-use judgments.",
+              "- `observability.json` records judge calls, cache hits, judge failures, metric-level failures, evaluation latency, and per-file metrics.",
+              "- The backend exports OpenTelemetry spans as evaluator-readable `spans` JSON. Set `EDRAK_TELEMETRY_EXPORT_PATH` to choose the file; set `OTEL_EXPORTER_OTLP_ENDPOINT` to additionally export to an OTLP collector.",
+              "- Request, orchestration, RAG retrieval, document indexing, and customer-trends tool spans export timing/status metadata, plus safe tool names and argument names/types; argument values, query text, document text, and credentials are not exported.", ""]
         L += ["", "## Failed integrity checks (errors)", ""]
         fails = [f"- **{a}** / {r['file']}: {c['check']}" + (f" ({c['detail']})" if c["detail"] else "")
                  for a, rs in self.per_agent.items() for r in rs for c in r["checks"]
@@ -1575,11 +2811,13 @@ class EvalAgent:
 # =============================================================================== 7. CLI
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--inputs", nargs="+", required=True, help="JSON files or globs of ONE use case (all phases together)")
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument("--inputs", nargs="+", help="JSON files or globs of ONE use case (all phases together)")
+    source.add_argument("--run-bundle", help="Evaluate one backend run bundle created under artifacts/evaluation_runs")
     ap.add_argument("--out", default="reports")
     ap.add_argument("--agents", nargs="+", help="Only evaluate these (kind or worker name, e.g. verification decision)")
     ap.add_argument("--task", default="", help="Override the research goal text")
-    ap.add_argument("--model", default=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), help="DeepEval judge model")
+    ap.add_argument("--model", default=os.getenv("OPENAI_MODEL", "gpt-5"), help="DeepEval judge model")
     ap.add_argument("--faithfulness-threshold", type=float, default=0.7)
     ap.add_argument("--relevancy-threshold", type=float, default=0.5)
     ap.add_argument("--context-relevancy-threshold", type=float, default=0.5)
@@ -1592,7 +2830,26 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true", help="No LLM calls; deterministic checks only")
     ap.add_argument("--deep", action="store_true", help="Also judge each recommended action and each matrix cell")
     ap.add_argument("--narrative", action="store_true", help="Add an LLM-written diagnosis to summary.md")
+    ap.add_argument(
+        "--include-tool-payloads",
+        action="store_true",
+        help="Send redacted tool arguments/results to DeepEval for argument and result-use judgments",
+    )
     a = ap.parse_args()
+
+    if a.run_bundle:
+        bundle = Path(a.run_bundle)
+        manifest_path = bundle / "manifest.json"
+        inputs_path = bundle / "inputs"
+        if not manifest_path.is_file() or not inputs_path.is_dir():
+            print(f"ERROR: {bundle} is not an EDRAK evaluation run bundle.", file=sys.stderr)
+            return 2
+        a.inputs = [
+            str(inputs_path / "*.json"),
+            str(bundle / "outputs" / "metrics_*.json"),
+        ]
+        if a.out == "reports":
+            a.out = str(bundle / "evaluation")
 
     if not a.dry_run:
         try:
