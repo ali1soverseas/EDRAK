@@ -1,0 +1,48 @@
+{
+  "task_id": "52c1d566-59da-4bac-a06f-83bcf9895383",
+  "worker": "customer_trends",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "plnew-customer-nvidia-stance-snapshot",
+      "statement": "In the ProductLaunchNew sample, 42 items about NVIDIA were labelled by stance: 20 positive, 20 neutral, 1 negative, and 1 mixed; this is a sample snapshot, not representative customer sentiment.",
+      "category": "customer_sentiment",
+      "importance": "should"
+    },
+    {
+      "finding_id": "plnew-customer-broadcom-stance-snapshot",
+      "statement": "In the ProductLaunchNew sample, 10 items about Broadcom were labelled by stance: 4 positive, 2 neutral, 2 negative, and 2 mixed; this is a sample snapshot, not representative customer sentiment.",
+      "category": "customer_sentiment",
+      "importance": "should"
+    },
+    {
+      "finding_id": "plnew-customer-intel-stance-snapshot",
+      "statement": "In the ProductLaunchNew sample, one item about Intel was labelled neutral; the sample is too small to characterize customer sentiment toward Intel.",
+      "category": "customer_sentiment",
+      "importance": "should"
+    },
+    {
+      "finding_id": "plnew-customer-evidence-coverage",
+      "statement": "The ProductLaunchNew customer-trends run collected 204 evidence items: 112 web, 40 social comments, 32 social posts, and 20 news items; platform attribution was unknown for 132 items and YouTube for 72.",
+      "category": "coverage",
+      "importance": "should"
+    },
+    {
+      "finding_id": "plnew-customer-dgx-station-theme",
+      "statement": "The ProductLaunchNew sample included a DGX Station overview theme with three items, two labelled neutral and one positive; this small theme count does not establish broader buyer preference.",
+      "category": "customer_sentiment",
+      "importance": "nice"
+    },
+    {
+      "finding_id": "plnew-customer-demand-data-gap",
+      "statement": "The ProductLaunchNew run collected no search-interest series, so it did not establish demand trends over time.",
+      "category": "evidence_gap",
+      "importance": "should"
+    }
+  ],
+  "metadata": {
+    "curation_status": "run_aligned_provisional",
+    "seeded_from": "artifacts/evaluation_runs/ProductLaunchNew/inputs/orchestration_result.json",
+    "source_note": "These expectations intentionally mirror computed counts and coverage in one Edrak run so the comparator can measure output similarity. They are not independent customer ground truth; do not use the resulting similarity score as evidence that the customer claims are correct."
+  }
+}

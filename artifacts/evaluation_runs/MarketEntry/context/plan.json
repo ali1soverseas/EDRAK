@@ -1,0 +1,531 @@
+{
+  "plan_id": "78cb5044-4ac0-45c2-a349-64e687bc80a3",
+  "request_id": "b7df208b10bdb96d1a6b54fad306ff57",
+  "tasks": [
+    {
+      "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+      "parent_request_id": "b7df208b10bdb96d1a6b54fad306ff57",
+      "worker": "internal_intelligence",
+      "goal": "Which geographic markets and industry verticals does NVIDIA currently serve with its AI computing and data center platforms, and where are there internal capability gaps or constraints for expansion?",
+      "focus": "Current market coverage, product readiness, regulatory or supply constraints",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "capacity",
+          "entity": "NVIDIA Corporation",
+          "required": true,
+          "definition": "Team or delivery capacity available for the initiative.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "capacity plan",
+            "headcount"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "own_price",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "The company's own price for the offering, from internal documents.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "pricing sheet",
+            "price list"
+          ],
+          "check_rule": null
+        }
+      ]
+    },
+    {
+      "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+      "parent_request_id": "b7df208b10bdb96d1a6b54fad306ff57",
+      "worker": "competitor_intelligence",
+      "goal": "What geographic markets and industry verticals are Intel Corp and Broadcom actively targeting or have established offerings in for AI computing, and how do their products, pricing, and positioning compare to NVIDIA’s?",
+      "focus": "Intel and Broadcom presence, product features, pricing, go‑to‑market strategies",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom pricing",
+            "Broadcom plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corp pricing",
+            "Intel Corp plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        }
+      ]
+    },
+    {
+      "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+      "parent_request_id": "b7df208b10bdb96d1a6b54fad306ff57",
+      "worker": "market_intelligence",
+      "goal": "What are the growth rates, demand drivers, regulatory environment, and competitive intensity for AI computing in potential new markets beyond Europe and the United States, such as Asia‑Pacific, Latin America, and key industry sectors?",
+      "focus": "Market size, trends, regulation, economic signals for each candidate market",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "market_size",
+          "entity": "Europe",
+          "required": true,
+          "definition": "Total addressable market value for the offering in the target market.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Europe AI computing market size"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "market_size",
+          "entity": "United States",
+          "required": true,
+          "definition": "Total addressable market value for the offering in the target market.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "United States AI computing market size"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "market_cagr",
+          "entity": "Europe",
+          "required": true,
+          "definition": "Compound annual growth rate of the market.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Europe AI computing CAGR forecast"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "market_cagr",
+          "entity": "United States",
+          "required": true,
+          "definition": "Compound annual growth rate of the market.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "United States AI computing CAGR forecast"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "adoption_rate",
+          "entity": "Europe",
+          "required": true,
+          "definition": "Share of target customers already using the category.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Europe AI computing adoption penetration"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "adoption_rate",
+          "entity": "United States",
+          "required": true,
+          "definition": "Share of target customers already using the category.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "United States AI computing adoption penetration"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "regulation_events",
+          "entity": "Europe",
+          "required": true,
+          "definition": "Dated regulatory changes that affect the offering.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Europe AI computing regulation law",
+            "Europe AI computing export control licensing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "regulation_events",
+          "entity": "United States",
+          "required": true,
+          "definition": "Dated regulatory changes that affect the offering.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "United States AI computing regulation law",
+            "United States AI computing export control licensing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "segment_growth",
+          "entity": "Europe",
+          "required": false,
+          "definition": "Growth rate of the specific segment the offering targets.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Europe AI computing segment growth"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "segment_growth",
+          "entity": "United States",
+          "required": false,
+          "definition": "Growth rate of the specific segment the offering targets.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "United States AI computing segment growth"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "market_concentration",
+          "entity": "Europe",
+          "required": false,
+          "definition": "Share of the market held by the top players.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Europe AI computing market share leaders"
+          ],
+          "check_rule": "parts_sum_100=True"
+        },
+        {
+          "metric_id": "market_concentration",
+          "entity": "United States",
+          "required": false,
+          "definition": "Share of the market held by the top players.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "United States AI computing market share leaders"
+          ],
+          "check_rule": "parts_sum_100=True"
+        }
+      ]
+    },
+    {
+      "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+      "parent_request_id": "b7df208b10bdb96d1a6b54fad306ff57",
+      "worker": "customer_trends",
+      "goal": "What are the current needs, adoption barriers, and sentiment of cloud service providers and AI developers in those prospective markets regarding AI computing platforms?",
+      "focus": "Customer demand, pain points, purchasing criteria in target markets",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "search_interest",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Relative search interest over time (0-100).",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-10-22T20:15:51.186000Z",
+  "rationale": "Combining internal capability data, competitor positioning, market attractiveness, and target‑customer demand is needed to pinpoint new geographic or vertical markets for NVIDIA’s AI computing business."
+}

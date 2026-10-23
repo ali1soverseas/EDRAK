@@ -19,10 +19,88 @@ from edrak.contracts.vocabulary import competitor_names, describe_context
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_json_object
+from edrak.rag.reconcile import restore_missing_workspace_chunks
 from edrak.rag.retriever import InternalRetriever
 from edrak.rag.text_utils import clean_markdown
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_conflicts(
+    raw_conflicts: Any,
+    findings: List[Finding],
+    known_evidence_ids: Set[str],
+) -> tuple[List[Conflict], List[str]]:
+    """Link each model-reported conflict to the finding it actually challenges."""
+    conflicts: List[Conflict] = []
+    unlinked: List[str] = []
+    findings_by_statement: Dict[str, List[Finding]] = {}
+    for finding in findings:
+        key = re.sub(r"\s+", " ", finding.statement).strip().casefold()
+        findings_by_statement.setdefault(key, []).append(finding)
+
+    for raw in raw_conflicts if isinstance(raw_conflicts, list) else []:
+        if isinstance(raw, dict):
+            description = raw.get("description")
+            description = description.strip() if isinstance(description, str) else ""
+            raw_ids = raw.get("contradicting_evidence_ids")
+            if not isinstance(raw_ids, list):
+                raw_ids = raw.get("evidence_ids")
+            contradicting_ids = list(dict.fromkeys(
+                str(evidence_id) for evidence_id in raw_ids
+                if isinstance(evidence_id, str) and evidence_id in known_evidence_ids
+            )) if isinstance(raw_ids, list) else []
+            target_statement = raw.get("finding_statement")
+            if not isinstance(target_statement, str):
+                target_statement = ""
+        elif isinstance(raw, str):
+            description = raw.strip()
+            contradicting_ids = []
+            target_statement = ""
+        else:
+            continue
+
+        if not description:
+            continue
+
+        matching_findings = findings_by_statement.get(
+            re.sub(r"\s+", " ", target_statement).strip().casefold(), []
+        ) if target_statement else []
+        target = matching_findings[0] if len(matching_findings) == 1 else None
+        if target is None and not target_statement:
+            candidates = [
+                finding for finding in findings
+                if ({ref.evidence_id for ref in finding.evidence_refs
+                     if ref.relation is EvidenceRelation.SUPPORTS} & set(contradicting_ids))
+                and (set(contradicting_ids) - {
+                    ref.evidence_id for ref in finding.evidence_refs
+                    if ref.relation is EvidenceRelation.SUPPORTS
+                })
+            ]
+            if len(candidates) == 1:
+                target = candidates[0]
+
+        if target is None:
+            unlinked.append(description)
+            continue
+
+        supported_ids = {
+            ref.evidence_id for ref in target.evidence_refs
+            if ref.relation is EvidenceRelation.SUPPORTS
+        }
+        contradicting_ids = [evidence_id for evidence_id in contradicting_ids
+                             if evidence_id not in supported_ids]
+        if not contradicting_ids:
+            unlinked.append(description)
+            continue
+
+        conflicts.append(Conflict(
+            finding_id=target.finding_id,
+            contradicting_evidence_ids=contradicting_ids,
+            description=description,
+        ))
+
+    return conflicts, unlinked
 
 
 def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
@@ -103,6 +181,8 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
         # Never search the shared store without a workspace: that would read other companies' documents.
         logger.warning("Internal retrieval skipped: the task carries no workspace_id.")
         queries = []
+    else:
+        restore_missing_workspace_chunks(workspace_id, retriever.collection)
 
     for q in queries:
         try:
@@ -311,28 +391,12 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
         discarded_evidence = list(res_data.get("discarded_evidence", []))
 
         # Parse conflicts
-        raw_conflicts = res_data.get("conflicts", [])
-        if isinstance(raw_conflicts, list) and findings:
-            for rc in raw_conflicts:
-                if isinstance(rc, dict):
-                    desc = rc.get("description", "").strip()
-                    c_eids = [eid for eid in rc.get("evidence_ids", []) if eid in evidence_by_id]
-                    if desc:
-                        conflicts.append(
-                            Conflict(
-                                finding_id=findings[0].finding_id,
-                                contradicting_evidence_ids=c_eids,
-                                description=desc,
-                            )
-                        )
-                elif isinstance(rc, str) and rc.strip():
-                    conflicts.append(
-                        Conflict(
-                            finding_id=findings[0].finding_id,
-                            contradicting_evidence_ids=[],
-                            description=rc.strip(),
-                        )
-                    )
+        conflicts, unlinked_conflicts = _parse_conflicts(
+            res_data.get("conflicts"), findings, set(evidence_by_id)
+        )
+        for description in unlinked_conflicts:
+            logger.warning("Ignoring internal conflict that could not be linked to a finding: %s", description)
+            gaps.append(f"Unlinked conflict requires review: {description}")
 
         llm_succeeded = True
         logger.info("LLM synthesis produced %d verified findings", len(findings))
@@ -411,7 +475,13 @@ def format_worker_result_node(state: InternalAgentState) -> Dict[str, Any]:
     # Status determination
     if not evidence:
         status = WorkerStatus.NO_EVIDENCE
-    elif any("no internal evidence" in g.lower() or "uncovered" in g.lower() or "absent" in g.lower() for g in gaps):
+    elif any(
+        "no internal evidence" in g.lower()
+        or "uncovered" in g.lower()
+        or "absent" in g.lower()
+        or "unlinked conflict" in g.lower()
+        for g in gaps
+    ):
         status = WorkerStatus.PARTIAL
     else:
         status = WorkerStatus.COMPLETED

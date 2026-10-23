@@ -248,7 +248,10 @@ Read the numbers for what they measure:
   posts that were read, not the company's whole audience.
 - When most evidence comes from one platform or one language, say that in the caveats.
 
-Write 3 to 8 findings that answer the business question from the evidence, covering the focus.
+Write 3 to 8 findings only when the evidence directly answers the business question and focus.
+Drop broad product descriptions, search-result snippets, and generic market facts that do not
+show a customer need, pain point, purchasing preference, or relevant demand signal. Explain the
+decision relevance without turning an unsupported inference into a fact.
 """
     + _FINDING_RULES
     + """

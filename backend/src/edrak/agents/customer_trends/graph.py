@@ -23,7 +23,7 @@ from edrak.agents.customer_trends.state import WorkerState, gaps_of
 
 CHECKPOINTS_FILE = "checkpoints.db"
 MAX_REPLANS = 1
-MIN_REPLAN_S = 30  # a second collection shorter than this is not worth its planning call
+MIN_REPLAN_S = 60  # a second collection shorter than this is not worth its planning call
 
 WorkerGraph = CompiledStateGraph[WorkerState, None, WorkerState, WorkerState]
 NODES: dict[str, nodes.NodeFn] = {

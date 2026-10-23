@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from types import SimpleNamespace
+
 import pytest
 
 from edrak.agents.competitor_intelligence import nodes, sources
@@ -99,6 +102,53 @@ def test_grounding_refuses_invented_numbers_and_unsupported_claims():
     assert nodes.grounding_problem("Kanz Pay offers payroll for enterprises in Saudi Arabia.", PRICING_TEXT)
 
 
+def test_structured_output_recovers_from_none_with_valid_json(monkeypatch):
+    class Model:
+        def with_structured_output(self, _schema, method):
+            assert method == "json_schema"
+            return SimpleNamespace(invoke=lambda _messages: None)
+
+        def invoke(self, _messages):
+            return SimpleNamespace(content=json.dumps({
+                "requirements": [{
+                    "competitor": "Intel",
+                    "requirement": "Current AI accelerator products and release status.",
+                }]
+            }))
+
+    monkeypatch.setattr(nodes, "llm", lambda: Model())
+
+    result = nodes.call_structured("requirements prompt", ResearchRequirements, retries=0)
+
+    assert result == ResearchRequirements(requirements=[
+        ResearchRequirement(
+            competitor="Intel",
+            requirement="Current AI accelerator products and release status.",
+        )
+    ])
+
+
+def test_structured_output_reports_provider_error_when_failure_is_fatal(monkeypatch):
+    class Structured:
+        def invoke(self, _messages):
+            raise ConnectionError("provider unavailable")
+
+    class Model:
+        def with_structured_output(self, _schema, method):
+            assert method == "json_schema"
+            return Structured()
+
+    monkeypatch.setattr(nodes, "llm", lambda: Model())
+
+    with pytest.raises(RuntimeError, match="ConnectionError: provider unavailable"):
+        nodes.call_structured(
+            "requirements prompt",
+            ResearchRequirements,
+            retries=0,
+            raise_on_failure=True,
+        )
+
+
 def test_the_router_stops_on_stages_budget_and_lack_of_progress():
     open_req = [{"requirement_id": "R1", "competitor": "A", "requirement": "x"}]
     assert nodes.research_router({"missing_information": []}) == "finish"
@@ -126,7 +176,7 @@ class FakeTavily:
         }
 
 
-def fake_structured(prompt, model_class, strong=False, retries=1):
+def fake_structured(prompt, model_class, strong=False, retries=1, **kwargs):
     if model_class is ResearchRequirements:
         return ResearchRequirements(requirements=[
             ResearchRequirement(competitor="Kanz Pay", requirement=f"Pricing plan detail {i}") for i in range(9)

@@ -35,6 +35,8 @@ _SECRET_KEY = re.compile(
 )
 _MAX_TOOL_RESULT_ITEMS = 8
 _MAX_TOOL_RESULT_CHARS = 3500
+_MAX_TOOL_ARGUMENT_CHARS = 2000
+_MAX_TOOL_ARGUMENT_VALUE_CHARS = 300
 _SAFE_SPAN_ATTRIBUTES = {
     "edrak.agent.type",
     "edrak.error.type",
@@ -49,9 +51,11 @@ _SAFE_SPAN_ATTRIBUTES = {
     "edrak.tool.status",
     "edrak.tool.error_code",
     "edrak.tool.fallback",
+    "edrak.tool.provider",
     "edrak.tool.result.count",
     "edrak.tool.argument.names",
     "edrak.tool.argument.types",
+    "edrak.tool.argument.values",
     "edrak.tool.result.summary",
     "edrak.tool.result.payload",
     "http.request.method",
@@ -219,13 +223,6 @@ def configure_telemetry() -> TracerProvider:
         exporter_path = Path(os.environ.get("EDRAK_TELEMETRY_EXPORT_PATH", _default_export_path()))
         provider.add_span_processor(BatchSpanProcessor(JsonFileSpanExporter(exporter_path)))
 
-        if os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"):
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-                OTLPSpanExporter,
-            )
-
-            provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-
         _provider = provider
         logger.info("OpenTelemetry configured; evaluation spans will be written to %s", exporter_path)
         return provider
@@ -352,6 +349,28 @@ def traced_tool(name: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
     return decorate
 
 
+def _redact_argument_value(value: Any, depth: int = 0) -> Any:
+    if depth >= 4:
+        return "[TRUNCATED]"
+    if isinstance(value, str):
+        return value[:_MAX_TOOL_ARGUMENT_VALUE_CHARS]
+    if isinstance(value, dict):
+        return {
+            str(key): "[REDACTED]" if _SECRET_KEY.search(str(key)) else _redact_argument_value(item, depth + 1)
+            for key, item in list(value.items())[:20]
+        }
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [_redact_argument_value(item, depth + 1) for item in list(value)[:_MAX_TOOL_RESULT_ITEMS]]
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    return f"<{type(value).__name__}>"
+
+
+def redact_tool_argument_values(value: Any) -> Any:
+    """Return bounded, credential-redacted tool arguments for trusted local displays."""
+    return _redact_argument_value(value)
+
+
 def _set_tool_attributes(
     span: Any, name: str, function: Callable[..., Any], args: tuple[Any, ...], kwargs: dict[str, Any]
 ) -> None:
@@ -360,25 +379,66 @@ def _set_tool_attributes(
     bound = inspect.signature(function).bind_partial(*args, **kwargs)
     argument_names: set[str] = set()
     argument_types: dict[str, str] = {}
+    argument_values: dict[str, Any] = {}
     for key, value in bound.arguments.items():
         if key in {"self", "cls", "ctx", "tool_obj"}:
             continue
         if isinstance(value, dict):
             argument_names.update(map(str, value))
             argument_types.update({str(name): type(item).__name__ for name, item in value.items()})
+            argument_values.update({str(name): item for name, item in value.items()})
         elif hasattr(value, "model_fields") and callable(getattr(value, "model_dump", None)):
             fields = value.model_dump(exclude={"run_id", "task_id"})
             argument_names.update(map(str, fields))
             argument_types.update({str(name): type(item).__name__ for name, item in fields.items()})
+            argument_values.update({str(name): item for name, item in fields.items()})
         else:
             argument_names.add(key)
             argument_types[key] = type(value).__name__
+            argument_values[key] = value
+    if argument_values and os.environ.get(
+        "EDRAK_TELEMETRY_ARGUMENT_VALUES", "1"
+    ).strip().lower() not in {"0", "false", "no", "off"}:
+        values = json.dumps(
+            {
+                key: "[REDACTED]" if _SECRET_KEY.search(key) else _redact_argument_value(item)
+                for key, item in argument_values.items()
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            default=str,
+        )
+        if len(values) > _MAX_TOOL_ARGUMENT_CHARS:
+            values = json.dumps({"truncated": True, "serialized_length": len(values)}, separators=(",", ":"))
+        span.set_attribute("edrak.tool.argument.values", values)
     if argument_names:
         span.set_attribute("edrak.tool.argument.names", ",".join(sorted(argument_names)))
         span.set_attribute(
             "edrak.tool.argument.types",
             json.dumps(argument_types, sort_keys=True, separators=(",", ":")),
         )
+
+
+def set_tool_provider(provider: str, *, fallback: bool = False) -> None:
+    """Record which concrete backend (e.g. tavily, serper) served the current tool call."""
+    span = trace.get_current_span()
+    if span.is_recording():
+        span.set_attribute("edrak.tool.provider", provider)
+        if fallback:
+            span.set_attribute("edrak.tool.fallback", True)
+
+
+def set_tool_outcome(status: str, *, error_code: str | None = None) -> None:
+    """Record a tool's returned status when failures are represented as response objects."""
+    span = trace.get_current_span()
+    if not span.is_recording():
+        return
+    span.set_attribute("edrak.tool.status", status)
+    if error_code:
+        span.set_attribute("edrak.tool.error_code", error_code)
+    if status.lower() in {"error", "failed", "failure", "timeout"}:
+        span.set_status(Status(StatusCode.ERROR))
 
 
 def _set_tool_error(span: Any, error: Exception) -> None:
@@ -421,10 +481,16 @@ def _tool_result_shape(result: Any) -> dict[str, Any]:
         }
     if isinstance(value, dict):
         safe_keys = [str(key) for key in value if not _SECRET_KEY.search(str(key))]
+        collection_counts = {
+            str(key): len(item)
+            for key, item in value.items()
+            if str(key) in safe_keys and isinstance(item, (list, tuple))
+        }
         return {
             "type": "object",
             "keys": sorted(safe_keys)[:20],
             "field_count": len(value),
+            "collection_counts": collection_counts,
             "decoded_json": decoded_json,
         }
     if isinstance(value, str):
@@ -456,14 +522,12 @@ def _redact_tool_result(value: Any, depth: int = 0) -> Any:
 
 
 def _set_tool_result(span: Any, result: Any) -> None:
-    value = _tool_result_value(result)
-    if isinstance(result, (list, tuple)):
-        span.set_attribute("edrak.tool.result.count", len(result))
-    elif isinstance(value, (list, tuple)):
-        span.set_attribute("edrak.tool.result.count", len(value))
+    result_shape = _tool_result_shape(result)
+    if result_shape.get("type") == "array" and isinstance(result_shape.get("count"), int):
+        span.set_attribute("edrak.tool.result.count", result_shape["count"])
     span.set_attribute(
         "edrak.tool.result.summary",
-        json.dumps(_tool_result_shape(result), sort_keys=True, separators=(",", ":")),
+        json.dumps(result_shape, sort_keys=True, separators=(",", ":")),
     )
     if os.environ.get("EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS", "").strip().lower() in {
         "1", "true", "yes", "on",

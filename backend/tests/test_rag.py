@@ -1,8 +1,8 @@
 """Tests for RAG indexer and retriever."""
 
-import pytest
 import tempfile
 from pathlib import Path
+
 from edrak.rag.indexer import InternalIndexer
 from edrak.rag.retriever import InternalRetriever
 
@@ -26,11 +26,16 @@ def test_internal_indexer_and_retriever():
             source_uri="internal://test/pricing.md",
             title="GitLab Duo Pricing Guide",
             doc_type="internal_doc",
+            workspace_id="test-workspace",
         )
         assert chunks_indexed > 0
 
         retriever = InternalRetriever(persist_dir=tmp_path, collection_name=collection_name)
-        results = retriever.retrieve(query="How much does GitLab Duo Pro cost?", top_k=2, allow_all_workspaces=True)
+        results = retriever.retrieve(
+            query="How much does GitLab Duo Pro cost?",
+            top_k=2,
+            workspace_id="test-workspace",
+        )
 
         assert len(results) > 0
         assert "19" in (results[0].excerpt or results[0].extracted_fact)

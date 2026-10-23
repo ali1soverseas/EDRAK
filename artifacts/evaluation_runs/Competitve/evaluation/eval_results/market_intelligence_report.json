@@ -1,0 +1,774 @@
+{
+  "agent": "market_intelligence",
+  "generated_at_utc": "2026-10-22T18:18:08.522143+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_market_intelligence_attempt_1_3e974135-99c.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "partial",
+        "error": "Some research tasks were skipped.",
+        "findings": 13,
+        "evidence_in_file": 13,
+        "evidence_collected": null,
+        "evidence_sample_pct": null,
+        "evidence_cited": 13,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 3,
+        "top_domain_share_pct": 46.15,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": null,
+        "requirements_total": 0,
+        "requirement_coverage_pct": null,
+        "profiles": 0,
+        "matrix_cells": 0,
+        "matrix_cells_with_evidence_pct": null,
+        "matrix_cells_not_established_pct": null,
+        "gaps": 2,
+        "conflicts": 0,
+        "queries_executed": null,
+        "agent_confidence": 0.82,
+        "avg_finding_confidence": 0.8154,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 0,
+        "units": 13,
+        "units_flagged": 13,
+        "faithfulness_tested": 13,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 13,
+        "relevancy_avg": 0.6923,
+        "relevancy_pass_pct": 69.23,
+        "specificity_tested": 13,
+        "specificity_avg": 0.3572,
+        "specificity_pass_pct": 15.38,
+        "insight_tested": 13,
+        "insight_avg": 0.3299,
+        "insight_pass_pct": 7.69,
+        "context_relevancy_tested": 13,
+        "context_relevancy_avg": 0.7273,
+        "context_relevancy_pass_pct": 76.92,
+        "judge_errors": 0,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 10,
+          "tools": [
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 10,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 2,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 4073.5556,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing market size United States",
+                  "AI data center platform market size Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 16,
+              "latency_ms": 2634.1356,
+              "result_summary": {
+                "count": 16,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "EU AI data center regulations",
+                  "US AI export control regulations"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 3675.0548,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU supply shortage United States",
+                  "AI hardware supply chain Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5826.1058,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA A100 price United States",
+                  "NVIDIA H100 price Europe",
+                  "cloud AI instance pricing United States Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 5136.8247,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA data center deal United States",
+                  "AI computing adoption Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 4602.8024,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing market demand forecast",
+                  "data center platforms growth outlook",
+                  "AI infrastructure market size 2024"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 5968.6256,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing regulatory framework data residency",
+                  "data center AI licensing export control rules",
+                  "artificial intelligence export controls chips"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 4517.1559,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU supply shortage United States",
+                  "AI hardware supply chain Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 4192.8524,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA A100 price United States",
+                  "NVIDIA H100 price Europe",
+                  "cloud AI instance pricing United States Europe"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "3e974135-99cc-4a13-8d5f-bd7abd8cb125",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 7484.7059,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing platform deal",
+                  "data center AI deployment",
+                  "AI accelerator partnership announcement"
+                ]
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.8953,
+            "reason": "The output includes multiple distinct tool calls that cover market demand, regulatory environment, supply constraints, and pricing trends across the US and Europe, aligning well with the input requirements. There is no evident repetition of identical queries or redundant calls, and the use of different providers and query focuses ensures thorough data collection. The execution trace balances thoroughness and efficiency without unnecessary repetition, though the last tool call appears truncated, which slightly impacts completeness."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": false,
+            "detail": "2 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.005",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": false,
+          "detail": "Some research tasks were skipped.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": false,
+          "detail": "2 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "8f393d2b-cf76-42b4-a777-a16a03f9340b",
+          "statement": "Mistral plans to use 13,800 Nvidia GPUs for a data center near Paris.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "89752a29-d4d3-4657-aecb-98ef8eda2eee",
+          "statement": "Deutsche Telekom’s Munich Industrial AI Cloud will be built with nearly 10,000 Nvidia Blackwell GPUs.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "7574601c-d2cc-4375-8c52-8c7fd33ddeeb",
+          "statement": "Nscale’s deployment will start with more than 12,600 Nvidia Blackwell Ultra GPUs and expand to over 66,000 GPUs by 2027.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "dbdc45bf-c602-4086-b98b-e0dd8294dea2",
+          "statement": "The NVIDIA A100 Tensor Core GPU provides up to 20X higher performance over the prior generation.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "27829d10-5ab4-473b-a713-0207b0cfefdf",
+          "statement": "The A100 80GB GPU offers memory bandwidth of over 2 terabytes per second (TB/s).",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "b9998b14-b90a-4602-aa7d-f96e857f15eb",
+          "statement": "Mistral has lined up 13,800 Nvidia GPUs for a data center near Paris.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "91d24125-d68c-4741-9d9d-e5dcd38362db",
+          "statement": "Deutsche Telekom’s Munich Industrial AI Cloud is being built with nearly 10,000 Nvidia Blackwell GPUs.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "fab9006e-06d8-4e05-9fcb-72cf591dc801",
+          "statement": "Nscale’s deployment will start with more than 12,600 Nvidia Blackwell Ultra GPUs before expanding to more than 66,000 in 2027.",
+          "flags": [
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "94ae0015-1f34-4b3a-aebb-423797bea17d",
+          "statement": "The NVIDIA A100 GPU provides up to 20× higher performance over the prior generation.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "d835851f-ef51-4d3e-9790-451f95d0c361",
+          "statement": "The A100 80GB GPU offers memory bandwidth exceeding 2 terabytes per second.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "9fdaedb3-fecd-48be-aafe-1c2230d5c3ee",
+          "statement": "Infleqtion delivered a 100-physical-qubit system to the U.K. National Quantum Computing Centre.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "79d73fd1-450f-4456-b3a1-cd205f05f10c",
+          "statement": "Infleqtion announced a fault-tolerant system for Illinois.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "3cdb91b9-f49e-4dd3-8f25-5f5c6274cfe9",
+          "statement": "Infleqtion opened a Chicago Quantum Innovation Center.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

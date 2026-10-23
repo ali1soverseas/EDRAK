@@ -1,0 +1,210 @@
+{
+  "agent": "verification",
+  "generated_at_utc": "2026-10-22T19:57:29.029584+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5
+  },
+  "files": [
+    {
+      "file": "verification_pass_001.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy"
+      ],
+      "metrics": {
+        "decision_status": "verified",
+        "targeted_actions": 0,
+        "findings": 33,
+        "verified": 32,
+        "not_verified": 1,
+        "verified_pct": 96.97,
+        "false_verification_pct": 3.12,
+        "verified_but_unfaithful": 1,
+        "missed_valid_pct": 100.0,
+        "rejected_but_faithful": 1,
+        "confidence_distinct_values": 3,
+        "confidence_stdev": 0.1093,
+        "avg_confidence": 0.8209,
+        "avg_confidence_verified": 0.835,
+        "avg_confidence_not_verified": 0.37,
+        "avg_confidence_high_quality": 0.8925,
+        "avg_confidence_medium_quality": 0.78,
+        "avg_confidence_low_quality": null,
+        "verified_on_synthetic_only": 0,
+        "near_duplicate_findings": 0,
+        "rewritten_vs_worker": 0,
+        "findings_with_contradictions": 0,
+        "control_gaps": 16,
+        "control_conflicts": 0,
+        "control_failures": 1,
+        "units": 33,
+        "units_flagged": 6,
+        "faithfulness_tested": 33,
+        "faithfulness_avg": 0.9687,
+        "faithfulness_pass_pct": 96.97,
+        "relevancy_tested": 33,
+        "relevancy_avg": 0.8616,
+        "relevancy_pass_pct": 87.88,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=33 actual=33",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.verified_count matches verified findings",
+          "passed": true,
+          "detail": "metadata=32 actual=32",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.insufficient_count matches insufficient findings",
+          "passed": true,
+          "detail": "metadata=1 actual=1",
+          "severity": "error"
+        },
+        {
+          "check": "replan_required comes with targeted actions; verified comes without",
+          "passed": true,
+          "detail": "status=verified targeted_actions=0",
+          "severity": "error"
+        },
+        {
+          "check": "decision.summary numbers match the findings",
+          "passed": true,
+          "detail": "summary='32 of 33 findings are evidence-backed; 1 were insufficient and recorde' findings=33 verified=32 with_contradictions=0",
+          "severity": "error"
+        },
+        {
+          "check": "every worker finding was verified",
+          "passed": true,
+          "detail": "0 missing",
+          "severity": "error"
+        },
+        {
+          "check": "no unknown finding ids",
+          "passed": true,
+          "detail": "0 ids not in worker output",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "verified findings have no open contradictions/gaps",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no finding is verified on low-quality evidence",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence discriminates between findings (>=3 distinct values)",
+          "passed": true,
+          "detail": "3 distinct, stdev=0.1093",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence is calibrated to the label (verified > not verified)",
+          "passed": true,
+          "detail": "verified=0.835 not_verified=0.37",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence follows evidence quality (high >= medium >= low)",
+          "passed": true,
+          "detail": "{'high': 0.8925, 'medium': 0.78, 'low': None}",
+          "severity": "warn"
+        },
+        {
+          "check": "no finding's confidence contradicts its label",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "control conflicts match findings with contradictions",
+          "passed": true,
+          "detail": "control=0 findings=0",
+          "severity": "warn"
+        },
+        {
+          "check": "control gaps are not just a copy of next_research_targets",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no near-duplicate findings",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "f87c978a-4703-4002-ba2e-80a05625f177",
+          "statement": "Intel Corp: Intel-based Google Cloud C4 virtual machines are priced per month as of 10/02/2025: c4-standard-8-lssd $349.40, c4-standard-16-lssd $698.00, c3-standard-8-lssd $355.15, and c3-standard-22-lssd $930.26.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "45714cf7-f4a5-4635-91dd-70ce7f2d5235",
+          "statement": "Intel Corp: At Computex 2026 Intel unveiled a rackscale AI infrastructure that pairs Intel Xeon processors with SambaNova SN‑50 Reconfigurable Dataflow Units (RDUs); Foxconn will integrate the system and also offer a CPU‑dense variant for workloads that do not require additional acceleration.",
+          "flags": [
+            "rejected_but_faithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "00b94b31-331d-46be-ba74-0a04d3dc567f",
+          "statement": "Recent changes: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom announced that its rack‑scale AI hardware, built on Tomahawk 6 switches and custom XPUs, will ship in H2 2026.",
+          "flags": [
+            "unfaithful",
+            "verified_but_unfaithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "6b63ec66-926a-44cb-b309-c7e1e8a00a85",
+          "statement": "If AI data centers agreed to curtail just 1% of their load, grid operators could add 126 GW in new load with minimal capacity expansion.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "0273ba18-a16d-43a1-8a55-333d6ab14248",
+          "statement": "Intel's Xeon 6+ processors are based on the 18A process node.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "c4ad3e91-82a7-47bb-9d7f-5ccd114a1c36",
+          "statement": "Cloudian offers the HyperScale AI Data Platform.",
+          "flags": [
+            "low_relevancy"
+          ]
+        }
+      ]
+    }
+  ]
+}

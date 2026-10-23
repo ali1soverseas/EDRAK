@@ -1,0 +1,186 @@
+{
+  "agent": "decision",
+  "generated_at_utc": "2026-10-22T21:52:31.216050+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "decision_analysis.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "actionability"
+      ],
+      "metrics": {
+        "status": "completed",
+        "recommendations": 6,
+        "opportunities": 12,
+        "risks": 12,
+        "recommended_actions": 20,
+        "priorities": 44,
+        "options": 3,
+        "options_without_content_pct": 0.0,
+        "undetermined_priority_pct": 0.0,
+        "human_approval_pct": 100.0,
+        "priority_mix": "high=18, medium=26",
+        "actions_with_success_indicators_pct": 100.0,
+        "actions_with_prerequisites_pct": 100.0,
+        "near_duplicate_actions": 0,
+        "avg_signals_per_recommendation": 1.0,
+        "signal_coverage_pct": 100.0,
+        "avg_recommendation_confidence": 0.8083,
+        "recommendations_with_new_numbers": 0,
+        "recommendations_with_past_timeline": 0,
+        "additional_information_needed": 0,
+        "limitations_listed": 6,
+        "warnings": 6,
+        "units": 7,
+        "units_flagged": 0,
+        "faithfulness_tested": 7,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 7,
+        "relevancy_avg": 0.9524,
+        "relevancy_pass_pct": 100.0,
+        "actionability_tested": 6,
+        "actionability_avg": 0.8914,
+        "actionability_pass_pct": 100.0,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "all supporting_signal_ids are valid",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.recommendation_count matches recommendations",
+          "passed": true,
+          "detail": "metadata=6 actual=6",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.opportunity_count matches opportunities",
+          "passed": true,
+          "detail": "metadata=12 actual=12",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.risk_count matches risks",
+          "passed": true,
+          "detail": "metadata=12 actual=12",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.priority_count matches priorities",
+          "passed": true,
+          "detail": "metadata=44 actual=44",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.recommended_action_count matches recommended actions",
+          "passed": true,
+          "detail": "metadata=20 actual=20",
+          "severity": "error"
+        },
+        {
+          "check": "every opportunity/risk/action has a priority entry (matching type and id)",
+          "passed": true,
+          "detail": "0 without priority",
+          "severity": "error"
+        },
+        {
+          "check": "no priority points to an unknown item",
+          "passed": true,
+          "detail": "0 unknown",
+          "severity": "error"
+        },
+        {
+          "check": "action links to opportunities/risks resolve",
+          "passed": true,
+          "detail": "0 dangling",
+          "severity": "error"
+        },
+        {
+          "check": "valid_cross_signal_ids equals the cross-signal agent's signals",
+          "passed": true,
+          "detail": "decision=6 cross_signal=6",
+          "severity": "error"
+        },
+        {
+          "check": "every decision question from the cross-signal agent is answered",
+          "passed": true,
+          "detail": "0 unanswered",
+          "severity": "error"
+        },
+        {
+          "check": "priorities are determined (<=25% 'undetermined')",
+          "passed": true,
+          "detail": "0.0% undetermined",
+          "severity": "warn"
+        },
+        {
+          "check": "no unsupported questions",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every action has success indicators",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every cross-signal is used by at least one recommendation",
+          "passed": true,
+          "detail": "0 unused",
+          "severity": "warn"
+        },
+        {
+          "check": "no near-duplicate actions",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        },
+        {
+          "check": "options carry content (what we would do / trade-offs)",
+          "passed": true,
+          "detail": "0/3 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "no recommendation has numbers absent from its signals",
+          "passed": true,
+          "detail": "0 recommendations",
+          "severity": "warn"
+        },
+        {
+          "check": "no recommendation schedules work in a year that is already over",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every action requires human approval",
+          "passed": true,
+          "detail": "20/20",
+          "severity": "error"
+        },
+        {
+          "check": "decision agent reported no warnings",
+          "passed": false,
+          "detail": "Removed numeric claims not present in cited signals for 'What timing adjustments should NVIDIA consider in its product roadmap to maintain competitiveness against Intel's newly launched AI hardware?'.",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

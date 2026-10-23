@@ -59,6 +59,8 @@ flowchart TD
     Verification --> Synthesis[Synthesis Stage]
 ```
 
+Before internal retrieval, EDRAK compares the active workspace's clean indexed chunks in SQLite with its Chroma entries and restores missing vectors without changing other workspaces. An embedding-function mismatch now fails explicitly instead of deleting and recreating the shared collection.
+
 ---
 
 ## 3. Shared Contracts Compliance (`backend/src/edrak/contracts/`)

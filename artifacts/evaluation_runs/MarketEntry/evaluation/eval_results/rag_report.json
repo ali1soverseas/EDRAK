@@ -1,0 +1,1741 @@
+{
+  "agent": "rag",
+  "generated_at_utc": "2026-10-22T21:52:31.225146+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "context_relevancy": 0.5,
+    "context_precision": 0.5,
+    "context_recall": 0.5
+  },
+  "files": [
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_001.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 2,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.7345,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 0.5,
+        "context_precision_reason": "The score is 0.50 because the first node in the retrieval contexts, ranked first, is irrelevant as it only provides a general company profile and market context without addressing specific internal capability gaps or supply chain constraints. However, the second node, ranked second, is relevant as it discusses infrastructure and energy readiness directly related to constraints on NVIDIA's expansion. The presence of an irrelevant node ranked higher than a relevant one lowers the score, but the inclusion of a relevant node still maintains it at 0.50.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.3333,
+        "context_recall_reason": "The score is 0.33 because only the first and fourth sentences in the expected output are supported by nodes in the retrieval context—specifically, node 1 confirms NVIDIA's AI computing and data-center platforms, and node 2 addresses infrastructure readiness like data-center power and cooling. However, the other sentences regarding delivery capacity, pricing, local partnerships, and product gaps have no support in the provided nodes, limiting the overall contextual recall.",
+        "context_recall_error": "",
+        "context_relevancy_score": 0.6,
+        "context_relevancy_reason": "The score is 0.60 because while the retrieval context includes relevant statements such as 'Data-center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served' and 'NVIDIA-specific feasibility: exact product eligibility, supply, qualified system, cloud region, and support,' much of the context is procedural or unrelated, like 'Separate public facts from EDRAK's planning assumptions' and 'The statement about regulatory readiness does not relate to internal capability gaps or supply chain constraints,' which lowers overall relevancy.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 55.9163,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 59.4343,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 52.3983,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7622,
+            "reason": "The output includes two distinct tool calls targeting different data origins (internal intelligence and public handbook), which avoids redundant queries and covers necessary information about internal capability gaps and constraints. However, the second call returns no results, indicating a potentially unnecessary query that does not contribute new information, slightly reducing efficiency. Overall, the sequence logically progresses toward task completion with minimal repetition and includes relevant details from the input."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "2/2 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 0.60 because while the retrieval context includes relevant statements such as 'Data-center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served' and 'NVIDIA-specific feasibility: exact product eligibility, supply, qualified system, cloud region, and support,' much of the context is procedural or unrelated, like 'Separate public facts from EDRAK's planning assumptions' and 'The statement about regulatory readiness does not relate to internal capability gaps or supply chain constraints,' which lowers overall relevancy.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 0.50 because the first node in the retrieval contexts, ranked first, is irrelevant as it only provides a general company profile and market context without addressing specific internal capability gaps or supply chain constraints. However, the second node, ranked second, is relevant as it discusses infrastructure and energy readiness directly related to constraints on NVIDIA's expansion. The presence of an irrelevant node ranked higher than a relevant one lowers the score, but the inclusion of a relevant node still maintains it at 0.50.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.33 because only the first and fourth sentences in the expected output are supported by nodes in the retrieval context—specifically, node 1 confirms NVIDIA's AI computing and data-center platforms, and node 2 addresses infrastructure readiness like data-center power and cooling. However, the other sentences regarding delivery capacity, pricing, local partnerships, and product gaps have no support in the provided nodes, limiting the overall contextual recall.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_002.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 3,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.6513,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 2,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 1.0,
+        "context_precision_reason": "The score is 1.00 because all nodes in the retrieval contexts that are relevant are ranked higher than any irrelevant nodes, with the first three nodes each providing detailed and directly related information about NVIDIA's deployment requirements, AI computing portfolio, and customer evaluation criteria. There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.3333,
+        "context_recall_reason": "The score is 0.33 because only the first and fourth sentences in the expected output are supported by node 1 in the retrieval context, which mentions NVIDIA's AI computing portfolio and deployment requirements. However, the other sentences about delivery capacity, pricing, local partners, and product gaps lack support from any retrieval nodes, limiting the overall recall.",
+        "context_recall_error": "",
+        "context_relevancy_score": 0.9524,
+        "context_relevancy_reason": "The score is 0.95 because the retrieval context includes detailed evaluations of NVIDIA products, cloud providers, AI workloads, deployment requirements, and customer demand, which align well with the input's focus on performance, integration, and support challenges for NVIDIA AI platforms. However, the incomplete statement 'Their evaluation commonly includes:' slightly reduces relevance, preventing a perfect score.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 54.1647,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.1409,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.1885,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7044,
+            "reason": "The output includes two distinct tool calls with different parameters targeting relevant information about NVIDIA's AI computing platforms, addressing geographic and vertical challenges. However, the second call uses the same query as the first with only the origin filter changed, which may be somewhat redundant given the zero results returned. Overall, the calls gather necessary information without excessive repetition but could be more optimized by refining queries to avoid overlap."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "3/3 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 0.95 because the retrieval context includes detailed evaluations of NVIDIA products, cloud providers, AI workloads, deployment requirements, and customer demand, which align well with the input's focus on performance, integration, and support challenges for NVIDIA AI platforms. However, the incomplete statement 'Their evaluation commonly includes:' slightly reduces relevance, preventing a perfect score.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because all nodes in the retrieval contexts that are relevant are ranked higher than any irrelevant nodes, with the first three nodes each providing detailed and directly related information about NVIDIA's deployment requirements, AI computing portfolio, and customer evaluation criteria. There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.33 because only the first and fourth sentences in the expected output are supported by node 1 in the retrieval context, which mentions NVIDIA's AI computing portfolio and deployment requirements. However, the other sentences about delivery capacity, pricing, local partners, and product gaps lack support from any retrieval nodes, limiting the overall recall.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_003.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 3,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.624,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 2,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 1.0,
+        "context_precision_reason": "The score is 1.00 because all nodes in the retrieval contexts that discuss deployment readiness, market entry conditions, and compliance in Europe and the US are ranked at the top positions (nodes 1 to 3). There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.5,
+        "context_recall_reason": "The score is 0.50 because while the retrieval context (node 1) supports sentences 4, 5, and 6 by detailing deployment readiness, local partner strength, and compliance constraints, it lacks any information on NVIDIA's AI computing portfolio, delivery capacity, or pricing strategies mentioned in sentences 1, 2, and 3, limiting the overall contextual recall.",
+        "context_recall_error": "",
+        "context_relevancy_score": 0.4545,
+        "context_relevancy_reason": "The score is 0.45 because while most retrieval context statements focus on compliance and regulatory aspects unrelated to geographic deployment, some relevant statements like 'Europe is not one legal, electricity, procurement, or cloud-availability jurisdiction.' and 'Identify the exact country and customer/use context for the United States or each European market.' do address geographic considerations, justifying a moderate relevancy score.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 268.5534,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 495.4892,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 41.6177,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.67,
+            "reason": "The output includes two distinct tool calls targeting different data origins (internal intelligence and public handbook), which helps gather relevant information about NVIDIA's geographic markets. However, the second call returns no results and uses a query nearly identical to the first, indicating some redundancy and inefficiency. While the sequence logically attempts to cover multiple sources, it could better avoid repeated queries and improve efficiency by refining or consolidating calls to reduce unnecessary work."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "3/3 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": false,
+          "detail": "The score is 0.45 because while most retrieval context statements focus on compliance and regulatory aspects unrelated to geographic deployment, some relevant statements like 'Europe is not one legal, electricity, procurement, or cloud-availability jurisdiction.' and 'Identify the exact country and customer/use context for the United States or each European market.' do address geographic considerations, justifying a moderate relevancy score.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because all nodes in the retrieval contexts that discuss deployment readiness, market entry conditions, and compliance in Europe and the US are ranked at the top positions (nodes 1 to 3). There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": true,
+          "detail": "The score is 0.50 because while the retrieval context (node 1) supports sentences 4, 5, and 6 by detailing deployment readiness, local partner strength, and compliance constraints, it lacks any information on NVIDIA's AI computing portfolio, delivery capacity, or pricing strategies mentioned in sentences 1, 2, and 3, limiting the overall contextual recall.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_004.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 2,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.6575,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 2,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 0.0,
+        "context_precision_reason": "The score is 0.00 because the first node in retrieval contexts, ranked highest, is irrelevant as it broadly describes NVIDIA's AI computing and data-center platforms without mentioning specific industry verticals or revenue contributions, which is the focus of the input. The second node, ranked second, is also irrelevant since it discusses product portfolio and market entry planning but lacks information on current industry vertical usage or revenue by vertical. Therefore, all relevant information is absent or ranked lower, resulting in a zero contextual precision score.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.1667,
+        "context_recall_reason": "The score is 0.17 because only the first sentence of the expected output is supported by node 1 in the retrieval context, which mentions NVIDIA's AI computing portfolio including compute platforms, systems, networking, and software. However, the remaining sentences lack support as the retrieval context does not provide information on NVIDIA's delivery capacity, pricing, deployment readiness, local partnerships, or product and platform gaps, leading to a low overall recall.",
+        "context_recall_error": "",
+        "context_relevancy_score": 0.625,
+        "context_relevancy_reason": "The score is 0.62 because while the retrieval context provides relevant information about NVIDIA's AI computing and data-center platforms, target customers, and markets, it lacks specific details on industry verticals and revenue contributions. Additionally, several statements about competitors, developer ecosystems, and partner offerings are irrelevant to the input focused on industry verticals and revenue.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 47.6199,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 40.1989,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.0409,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7154,
+            "reason": "The output includes two distinct tool calls targeting different data origins (non-public and public handbook) for industry verticals relevant to NVIDIA's AI platforms, which aligns with gathering necessary information. However, both calls focus solely on industry verticals and do not address geographic markets or internal capability gaps, leaving part of the input unaddressed. There is no evident redundant repetition, but the scope is incomplete, reducing thoroughness and task completion."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "2/2 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 0.62 because while the retrieval context provides relevant information about NVIDIA's AI computing and data-center platforms, target customers, and markets, it lacks specific details on industry verticals and revenue contributions. Additionally, several statements about competitors, developer ecosystems, and partner offerings are irrelevant to the input focused on industry verticals and revenue.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because the first node in retrieval contexts, ranked highest, is irrelevant as it broadly describes NVIDIA's AI computing and data-center platforms without mentioning specific industry verticals or revenue contributions, which is the focus of the input. The second node, ranked second, is also irrelevant since it discusses product portfolio and market entry planning but lacks information on current industry vertical usage or revenue by vertical. Therefore, all relevant information is absent or ranked lower, resulting in a zero contextual precision score.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.17 because only the first sentence of the expected output is supported by node 1 in the retrieval context, which mentions NVIDIA's AI computing portfolio including compute platforms, systems, networking, and software. However, the remaining sentences lack support as the retrieval context does not provide information on NVIDIA's delivery capacity, pricing, deployment readiness, local partnerships, or product and platform gaps, leading to a low overall recall.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_005.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 1,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.653,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 1.0,
+        "context_precision_reason": "The score is 1.00 because the first node in retrieval contexts is relevant and directly addresses regulatory and compliance constraints such as export-control and data-protection rules affecting deployment of NVIDIA AI platforms. There are no irrelevant nodes ranked higher, ensuring perfect contextual precision.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.0,
+        "context_recall_reason": "The score is 0.00 because none of the expected output sentences are supported by the information in node 1 of the retrieval context; there is no mention of NVIDIA's AI computing portfolio, delivery capacity, pricing, deployment readiness, local partnerships, or product gaps in the provided context.",
+        "context_recall_error": "",
+        "context_relevancy_score": 1.0,
+        "context_relevancy_reason": "The score is 1.00 because the relevant statements directly address regulatory and compliance constraints such as export-control and data-protection rules, which align perfectly with the input about EU export controls and data residency requirements affecting NVIDIA AI deployments.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 65.779,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 60.2214,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 71.3367,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.327,
+            "reason": "The output includes two retrieval tool calls with identical queries but different parameters, resulting in redundant calls that do not contribute new information. While the first call returns results, the second returns none, indicating inefficiency. Additionally, the output does not synthesize or present the requested information about NVIDIA's geographic markets, industry verticals, or internal capability gaps, thus lacking completeness and effectiveness in addressing the input query."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 1.00 because the relevant statements directly address regulatory and compliance constraints such as export-control and data-protection rules, which align perfectly with the input about EU export controls and data residency requirements affecting NVIDIA AI deployments.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because the first node in retrieval contexts is relevant and directly addresses regulatory and compliance constraints such as export-control and data-protection rules affecting deployment of NVIDIA AI platforms. There are no irrelevant nodes ranked higher, ensuring perfect contextual precision.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because none of the expected output sentences are supported by the information in node 1 of the retrieval context; there is no mention of NVIDIA's AI computing portfolio, delivery capacity, pricing, deployment readiness, local partnerships, or product gaps in the provided context.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_006.json",
+      "metrics_used": [
+        "rag_retrieval_quality",
+        "context_relevancy",
+        "context_precision",
+        "context_recall",
+        "retrieval_latency",
+        "execution_quality"
+      ],
+      "metrics": {
+        "queries": 1,
+        "retrieved_chunks": 1,
+        "nonempty_chunks_pct": 100.0,
+        "mean_retrieval_score": 0.617,
+        "chunks_with_score_pct": 100.0,
+        "invalid_retrieval_scores": 0,
+        "unique_source_domains": 1,
+        "duplicate_chunk_pairs": 0,
+        "empty_chunks": 0,
+        "context_precision_score": 1.0,
+        "context_precision_reason": "The score is 1.00 because the first node in retrieval contexts, ranked highest, is relevant and directly addresses specific validation criteria related to AI computing opportunities in the U.S., matching the input's focus on NVIDIA's AI computing business metrics. There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+        "context_precision_error": "",
+        "expected_output_source": "golden/ground_truth/nvidia_new_markets_inputs/inputs/worker_internal_intelligence.json",
+        "context_recall_score": 0.1667,
+        "context_recall_reason": "The score is 0.17 because only the first sentence about deployment readiness is supported by node 1 in the retrieval context, while the other sentences regarding NVIDIA's AI computing portfolio, delivery capacity, pricing, local partners, and product gaps are not mentioned at all.",
+        "context_recall_error": "",
+        "context_relevancy_score": 1.0,
+        "context_relevancy_reason": "The score is 1.00 because the retrieval context provides detailed criteria for validating AI-compute opportunities, such as 'named customer and use case' and 'confirmed region/zone,' which directly relate to assessing NVIDIA's AI computing business metrics by market and vertical.",
+        "context_relevancy_error": "",
+        "answer_source": null,
+        "retrieval_latency_ms": 50.7509,
+        "retrieval_latency_calls": 2,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "tools": [
+            "internal_rag.retrieve",
+            "internal_rag.retrieve"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.0282,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 48.4736,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6864,
+            "reason": "The output includes two distinct tool calls with different parameters and origins, avoiding redundant queries with identical parameters. However, the second call returns no results, indicating a possible inefficiency or lack of useful information gained. The output provides some relevant data but does not fully address internal capability gaps or constraints for expansion, limiting completeness."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 1.00 because the retrieval context provides detailed criteria for validating AI-compute opportunities, such as 'named customer and use case' and 'confirmed region/zone,' which directly relate to assessing NVIDIA's AI computing business metrics by market and vertical.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because the first node in retrieval contexts, ranked highest, is relevant and directly addresses specific validation criteria related to AI computing opportunities in the U.S., matching the input's focus on NVIDIA's AI computing business metrics. There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.17 because only the first sentence about deployment readiness is supported by node 1 in the retrieval context, while the other sentences regarding NVIDIA's AI computing portfolio, delivery capacity, pricing, local partners, and product gaps are not mentioned at all.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

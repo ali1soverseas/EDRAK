@@ -1,0 +1,143 @@
+{
+  "spans": [
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7cb1402e372a8ba12a640ab66592872d",
+      "span_id": "38885d90726a618e",
+      "start_time": "2026-10-22T18:07:06.438762+00:00",
+      "end_time": "2026-10-22T18:07:19.143748+00:00",
+      "duration_ms": 12704.9856,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.agent.type": "internal_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "0ab2e865-2462-4880-8115-657caa939f6d"
+      },
+      "parent_span_id": "c5d2f39f9c0ddad4"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7cb1402e372a8ba12a640ab66592872d",
+      "span_id": "b9b953a766af5714",
+      "start_time": "2026-10-22T18:07:06.441406+00:00",
+      "end_time": "2026-10-22T18:08:48.937498+00:00",
+      "duration_ms": 102496.0916,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.agent.type": "market_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "9c07ef93-09fb-4563-b66e-46768b0f64d4"
+      },
+      "parent_span_id": "c5d2f39f9c0ddad4"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7cb1402e372a8ba12a640ab66592872d",
+      "span_id": "6ddac0ada04c278c",
+      "start_time": "2026-10-22T18:07:06.442747+00:00",
+      "end_time": "2026-10-22T18:09:56.173578+00:00",
+      "duration_ms": 169730.8299,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.agent.type": "competitor_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "d525a577-b73d-4df3-b548-1d224a19f00b"
+      },
+      "parent_span_id": "c5d2f39f9c0ddad4"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7cb1402e372a8ba12a640ab66592872d",
+      "span_id": "4e5d0e2621e41994",
+      "start_time": "2026-10-22T18:07:06.442573+00:00",
+      "end_time": "2026-10-22T18:12:06.819836+00:00",
+      "duration_ms": 300377.2633,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.agent.type": "customer_trends",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "52c1d566-59da-4bac-a06f-83bcf9895383"
+      },
+      "parent_span_id": "c5d2f39f9c0ddad4"
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "7cb1402e372a8ba12a640ab66592872d",
+      "span_id": "c5d2f39f9c0ddad4",
+      "start_time": "2026-10-22T18:07:06.381472+00:00",
+      "end_time": "2026-10-22T18:15:30.436168+00:00",
+      "duration_ms": 504054.6962,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.run.resuming": false
+      },
+      "parent_span_id": "86e81fc64acad0dc"
+    },
+    {
+      "name": "fastapi.dependencies",
+      "trace_id": "67ddf3cc9d289ce64c476cfb008ca19f",
+      "span_id": "0541dd99fea9d8c3",
+      "start_time": "2026-10-22T19:23:45.766142+00:00",
+      "end_time": "2026-10-22T19:23:45.781497+00:00",
+      "duration_ms": 15.3553,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "76a9cfbfd067e868"
+    },
+    {
+      "name": "fastapi.endpoint",
+      "trace_id": "67ddf3cc9d289ce64c476cfb008ca19f",
+      "span_id": "cfaf5e3bd764e286",
+      "start_time": "2026-10-22T19:23:45.782512+00:00",
+      "end_time": "2026-10-22T19:23:45.950820+00:00",
+      "duration_ms": 168.308,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "76a9cfbfd067e868"
+    },
+    {
+      "name": "fastapi.serialization",
+      "trace_id": "67ddf3cc9d289ce64c476cfb008ca19f",
+      "span_id": "13a45b4166ff1768",
+      "start_time": "2026-10-22T19:23:45.951012+00:00",
+      "end_time": "2026-10-22T19:23:45.951079+00:00",
+      "duration_ms": 0.0669,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "76a9cfbfd067e868"
+    },
+    {
+      "name": "POST /api/analyses/{analysis_id}/review",
+      "trace_id": "67ddf3cc9d289ce64c476cfb008ca19f",
+      "span_id": "76a9cfbfd067e868",
+      "start_time": "2026-10-22T19:23:45.752861+00:00",
+      "end_time": "2026-10-22T19:23:45.953288+00:00",
+      "duration_ms": 200.4269,
+      "status": "ok",
+      "attributes": {
+        "http.request.method": "POST",
+        "http.route": "/api/analyses/{analysis_id}/review",
+        "http.response.status_code": 200
+      }
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "67ddf3cc9d289ce64c476cfb008ca19f",
+      "span_id": "2856ee7545fc39c9",
+      "start_time": "2026-10-22T19:23:45.945812+00:00",
+      "end_time": "2026-10-22T19:25:18.653484+00:00",
+      "duration_ms": 92707.6722,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "ef407c8d12ca90031b248a2fd674123f",
+        "edrak.run.resuming": true
+      },
+      "parent_span_id": "cfaf5e3bd764e286"
+    }
+  ]
+}

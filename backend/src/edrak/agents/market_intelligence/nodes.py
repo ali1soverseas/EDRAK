@@ -50,7 +50,7 @@ from edrak.agents.market_intelligence.state import (
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_chat_model
-from edrak.observability import traced_tool
+from edrak.observability import set_tool_provider, traced_tool
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
     TOOL_MAP,
@@ -514,6 +514,7 @@ def invoke_search_tool(tool_obj, tool_args: dict) -> str:
 
 @traced_tool("market_search")
 def _invoke_market_search(tool_obj, queries: list[str]) -> object:
+    set_tool_provider(str(getattr(tool_obj, "name", "") or "unknown"))
     return tool_obj.invoke({"queries": queries})
 
 

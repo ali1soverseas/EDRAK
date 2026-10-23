@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 from edrak.contracts.task import WorkerType
 
-from evaluationEnhanced.evaluation_Agent import edrak_eval_agent_enhanced as eval_agent
+from Evaluation.evaluation_Agent import edrak_eval_agent_enhanced as eval_agent
 
 
 def _cfg():
@@ -84,9 +84,17 @@ def test_worker_uses_domain_specific_judge_criteria(worker, criteria_phrase):
     )
 
     assert result["metrics"]["findings"] == 1
-    assert criteria_phrase in judge.specs["insight"][0]
-    assert criteria_phrase in judge.specs["actionability"][0]
-    assert "competitor name" not in judge.specs["actionability"][0]
+    used = {
+        "competitor_intelligence": {"actionability"},
+        "internal_intelligence": {"actionability"},
+        "market_intelligence": {"insight"},
+        "customer_trends": {"insight"},
+    }[worker]
+    assert set(judge.specs) & {"insight", "actionability"} == used
+    for metric in used:
+        assert criteria_phrase in judge.specs[metric][0]
+    if "actionability" in used:
+        assert "competitor name" not in judge.specs["actionability"][0]
     expected_topic = {
         "competitor_intelligence": "competitor",
         "internal_intelligence": "internal capabilities",
@@ -361,6 +369,53 @@ def test_cli_evaluates_a_run_bundle_without_manual_input_glob(tmp_path, monkeypa
     assert eval_agent.main() == 0
     assert (bundle / "evaluation" / "telemetry_report.json").is_file()
     assert (bundle / "evaluation" / "metrics_report.json").is_file()
+
+
+def test_cli_runs_comparison_after_run_bundle_evaluation(tmp_path, monkeypatch):
+    bundle = tmp_path / "analysis-compare"
+    inputs = bundle / "inputs"
+    inputs.mkdir(parents=True)
+    outputs = bundle / "outputs"
+    outputs.mkdir()
+    (bundle / "manifest.json").write_text('{"analysis_id": "analysis-compare"}', encoding="utf-8")
+    (inputs / "telemetry.json").write_text(
+        '{"spans": [{"name": "edrak.orchestration.graph", "trace_id": "trace-1", "span_id": "span-1", '
+        '"status": "ok", "duration_ms": 10, "attributes": {}}]}',
+        encoding="utf-8",
+    )
+    (outputs / "metrics_001.json").write_text('{"metrics_stage": true, "results": []}', encoding="utf-8")
+    comparison_calls = []
+
+    def run_comparison(command, check):
+        assert (bundle / "evaluation" / "telemetry_report.json").is_file()
+        comparison_calls.append((command, check))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "edrak_eval_agent_enhanced.py",
+            "--run-bundle",
+            str(bundle),
+            "--dry-run",
+            "--compare-to",
+            "nvidia_product_launch_inputs",
+        ],
+    )
+    monkeypatch.setattr(eval_agent.subprocess, "run", run_comparison)
+
+    assert eval_agent.main() == 0
+    command, check = comparison_calls[0]
+    assert command[1].endswith("compare.py")
+    assert command[2:4] == ["nvidia_product_launch_inputs", str(bundle)]
+    assert "--no-llm" in command
+    assert Path(command[command.index("--out") + 1]) == (
+        Path(eval_agent.__file__).resolve().parents[2]
+        / "reports"
+        / "compare"
+        / "analysis-compare_nvidia_product_launch_inputs.json"
+    )
+    assert check is False
 
 
 def test_cli_returns_failure_when_deterministic_integrity_check_fails(tmp_path, monkeypatch):

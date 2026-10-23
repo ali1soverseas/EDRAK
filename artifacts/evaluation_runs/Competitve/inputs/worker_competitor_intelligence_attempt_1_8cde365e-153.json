@@ -1,0 +1,725 @@
+{
+  "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+  "worker": "competitor_intelligence",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "f86e1e6a-6ecb-47be-8abe-38a2bb33e266",
+      "statement": "The fee for a Broadcom AIops collector is listed at $30 (presumably per month) and the cost for each cloud‑based device is $0.20 per month.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "28a72695-f627-40b4-b702-f5135564b088",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.85,
+      "limitations": []
+    },
+    {
+      "finding_id": "9b0b4431-5800-481f-abd9-a8d638a30ef5",
+      "statement": "Broadcom reported full‑year revenue of approximately $63.8 billion to $63.9 billion for the fiscal year ending October 31 2025.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "ee95a159-a7f7-4334-8b46-6c8f66169eeb",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.72,
+      "limitations": []
+    },
+    {
+      "finding_id": "623ab480-68bf-4ff4-8498-e501de96413f",
+      "statement": "Broadcom announced a series of AI‑related hardware and software releases in Q3 FY2026, including the VMware Private AI Cloud (31 Aug 2026), VMware AI Factory (31 Aug 2026), a 102.4 Tbps switch (12 Mar 2026), a 400G/lane Optical DSP (11 Mar 2026), and a 3.5D Face‑to‑Face Compute SoC (26 Feb 2026). This demonstrates that Broadcom shipped at least five distinct AI‑focused products within a single quarter, indicating a release cadence of roughly one major AI or data‑center product per month.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "52a46097-1060-4aa1-9214-1b037dbba419",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "e8f81e80-52d6-4000-80f1-aa6fbf833a6d",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.94,
+      "limitations": []
+    },
+    {
+      "finding_id": "fcbaa2f7-684d-4737-8a1c-9e45d0f5cea9",
+      "statement": "Intel Corp: Intel's Data Center and AI segment generated $16.92 billion in revenue for the fiscal year 2025, representing a 9.01% increase over the prior year.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "0001f47d-86c4-4639-873e-42be83d8db1b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": []
+    },
+    {
+      "finding_id": "ab18fb4d-9f61-4c8a-b2c8-f732cbdc7554",
+      "statement": "Intel Corp: Intel states that its software AI accelerators deliver performance gains of 10x–100x at no additional cost, requiring no extra hardware, developer time, or licensing fees.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "0a1288b9-2a46-4472-b391-5e2ddd840491",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.67,
+      "limitations": []
+    },
+    {
+      "finding_id": "a92080e1-6631-4b99-bf57-ed6197bd5100",
+      "statement": "Core capabilities relevant to the goal: compared with NVIDIA Corporation, Intel Corp is different approach. Intel states its software AI accelerators can give 10×–100× performance improvements on Xeon CPUs without extra hardware, though independent benchmarks are not provided.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "0a1288b9-2a46-4472-b391-5e2ddd840491",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Compares documented facts only; absence of evidence is not absence of a capability."
+      ]
+    },
+    {
+      "finding_id": "807a56c1-ef07-4916-8e6d-8c94c8f1d3f4",
+      "statement": "Pricing and packaging: compared with NVIDIA Corporation, Intel Corp is different approach. Intel claims its software AI accelerators incur no additional licensing fees, implying a zero‑cost model beyond the underlying hardware.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "0a1288b9-2a46-4472-b391-5e2ddd840491",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Compares documented facts only; absence of evidence is not absence of a capability."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "28a72695-f627-40b4-b702-f5135564b088",
+      "source_type": "official_documentation",
+      "source_title": "The Total Economic Impact Of AIOps from Broadcom",
+      "source_url": "https://docs.broadcom.com/docs/the-total-economic-impact-of-aiops-from-broadcom",
+      "publisher": "docs.broadcom.com",
+      "extracted_fact": "One thousand cloud-based devices. The fee per collector is $30 and the cost for cloud-based devices is $0.20 per month.",
+      "excerpt": "One thousand cloud-based devices. •. The fee per collector is $30 and the cost for cloud-based devices is $0.20 per month.",
+      "page_text": "One thousand cloud-based devices. •. The fee per collector is $30 and the cost for cloud-based devices is $0.20 per month.",
+      "retrieved_at": "2026-10-22T17:18:58.558167Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": true,
+        "competitor": "Broadcom",
+        "requirement_id": "R1",
+        "query": "Broadcom AI computing platform subscription pricing per seat per month site:broadcom.com",
+        "stage": 1,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.63777614
+      }
+    },
+    {
+      "evidence_id": "ee95a159-a7f7-4334-8b46-6c8f66169eeb",
+      "source_type": "web_page",
+      "source_title": "Broadcom’s AI Backlog Starts to Matter More Than Short-Term Margin Optics | Investing.com",
+      "source_url": "https://www.investing.com/analysis/broadcoms-ai-backlog-starts-to-matter-more-than-shortterm-margin-optics-200673252",
+      "publisher": "www.investing.com",
+      "extracted_fact": "Quarterly revenue in Q4 reached roughly $18.0 billion, up around 28% year over year, while full-year revenue landed near $63.8–63.9 billion, an increase of about 24% versus the prior year. Infrastructure software moved from around $5.82 billion to approximately $6.94 billion, about 19% year-over-year growth, taking total quarterly revenue from roughly $14.05 billion to about $18.02 billion.",
+      "excerpt": "basis if the run-rate holds. The demand side is anchored in custom XPUs and accelerators designed for very specific hyperscaler workloads rather than generic mass-market GPUs. Broadcom now counts at least five major custom silicon clients, including hyperscalers such as Alphabet, Meta, Amazon, Microsoft and frontier-model customers like Anthropic and OpenAI. These customers are pushing AI workloads that require power, bandwidth and latency characteristics not easily met by off-the-shelf GPUs, which is why Broadcom’s XPU model has traction. The key is that this AI revenue is not speculative. It is tied to committed, contracted orders sitting in a visible backlog that stretches into 2026. That is what differentiates NASDAQ:AVGO from many “AI narrative” names that still depend on future [...] together, so Broadcom is embedded in the structural fabric of AI data centers rather than at the edge. Client concentration exists, but it is trending lower as the number of large custom silicon customers increases from three to five and potentially beyond. Orders include a $10 billion XPU deal with Anthropic in Q3 FY25, an additional $11 billion follow-on in Q4, and another initial $1 billion order from a new XPU customer for late 2026 delivery. Management’s guidance for about 100% year-over-year growth in AI revenue into FY26 is therefore backed by concrete delivery schedules, not aspirational pipeline estimates. That level of revenue visibility through at least six quarters is rare in se",
+      "page_text": "basis if the run-rate holds. The demand side is anchored in custom XPUs and accelerators designed for very specific hyperscaler workloads rather than generic mass-market GPUs. Broadcom now counts at least five major custom silicon clients, including hyperscalers such as Alphabet, Meta, Amazon, Microsoft and frontier-model customers like Anthropic and OpenAI. These customers are pushing AI workloads that require power, bandwidth and latency characteristics not easily met by off-the-shelf GPUs, which is why Broadcom’s XPU model has traction. The key is that this AI revenue is not speculative. It is tied to committed, contracted orders sitting in a visible backlog that stretches into 2026. That is what differentiates NASDAQ:AVGO from many “AI narrative” names that still depend on future [...] together, so Broadcom is embedded in the structural fabric of AI data centers rather than at the edge. Client concentration exists, but it is trending lower as the number of large custom silicon customers increases from three to five and potentially beyond. Orders include a $10 billion XPU deal with Anthropic in Q3 FY25, an additional $11 billion follow-on in Q4, and another initial $1 billion order from a new XPU customer for late 2026 delivery. Management’s guidance for about 100% year-over-year growth in AI revenue into FY26 is therefore backed by concrete delivery schedules, not aspirational pipeline estimates. That level of revenue visibility through at least six quarters is rare in semiconductors and supports the thesis that Broadcom’s AI growth is execution risk, not demand risk.\n#### Popular Searches\n\n##### Please try another search\n\nBuy these 2 stocks amid AI financing concerns: Analyst\n\nWhich company has the world’s highest earnings? The answer may surprise you\n\nMemory stocks: Is the wall of worry justified?\n\nCiti says interest rates may matter more for economy than stock valuations\n\n# Broadcom’s AI Backlog Starts to Matter More Than Short-Term Margin Optics\n\n![Itai Smidt](https://content-media.investing.com/www/company_logo/f9e5fac4423f063173bc06ebb8e693fa.jpg)\n\n[Broadcom](/equities/avago-technologies?cid=13969) closed fiscal 2025 with scale and profitability that look more like a software franchise than a traditional chipmaker. Quarterly revenue in Q4 reached roughly $18.0 billion, up around 28% year over year, while full-year revenue landed near $63.8–63.9 billion, an increase of about 24% versus the prior year. The mix remains anchored in two pillars. Semiconductor solutions revenue climbed from about $8.23 billion to roughly $11.07 billion in Q4, a 35% jump, driven largely by AI and custom silicon demand. Infrastructure software moved from around $5.82 billion to approximately $6.94 billion, about 19% year-over-year growth, taking total quarterly revenue from roughly $14.05 billion to about $18.02 billion. Profitability scaled even faster than revenue. Q4 gross profit was about $13.8 billion, with GAAP gross margin in the 76–77% zone. On a full-year basis, Broadcom generated roughly $49.4 billion of gross profit and expanded gross margin to around 77.3%, roughly two percentage points higher than the previous year, which signals genuine pricing power rather than pure volume. Operating leverage is extreme. Quarterly operating income reached about $7.7 billion, up more than 50% year over year, and Q4 net income nearly doubled to around $8.5 billion. Full-year net income jumped to roughly $23.1 billion, close to a three-fold increase, showing how quickly incremental revenue is dropping through to the bottom line. Management guided Q1 FY26 revenue to roughly $19.1 billion with an adjusted EBITDA margin around 67%, a combination that still supports high-teens to 20% plus earnings growth despite the recent pullback in the share price of NASDAQ:AVGO.\n\nThe core growth driver for Broadcom is now AI semiconductors, not legacy networking or storage. In the most recent quarter, AI semiconductor revenue rose around 74% versus the prior year, a rate that materially outpaces the rest of the portfolio. For Q1 FY26, management expects about $8.2 billion in AI semiconductor revenue alone. At the gross margin profile Broadcom reported in Q4, close to 78% on the AI side, that $8.2 billion translates into roughly $6.4 billion in gross profit from AI in a single quarter. After factoring in R&D and operating costs that typically run near 50% of revenue, that AI segment can realistically generate around $4.0 billion or more in operating income per quarter, above $16 billion on an annualized basis if the run-rate holds. The demand side is anchored in custom XPUs and accelerators designed for very specific hyperscaler workloads rather than generic mass-market GPUs. Broadcom now counts at least five major custom silicon clients, including hyperscalers such as Alphabet, Meta, Amazon, Microsoft and frontier-model customers like Anthropic and OpenAI. These customers are pushing AI workloads that require power, bandwidth and latency characteristics not easily met by off-the-shelf GPUs, which is why Broadcom’s XPU model has traction. The key is that this AI revenue is not speculative. It is tied to committed, contracted orders sitting in a visible backlog that stretches into 2026. That is what differentiates NASDAQ:AVGO from many “AI narrative” names that still depend on future demand assumptions.\n\nAlongside AI hardware, Broadcom’s infrastructure software arm, built around VMware, operates as a stabilizing cash machine. In fiscal 2025, software revenue climbed about 26% to roughly $27 billion, with gross margins sitting near 93% and operating margins reaching around 78%. Those are best-in-class numbers even within the pure software universe and create an earnings floor when semiconductor cycles inevitably soften. The strategic move was the rapid shift of VMware’s largest ten thousand customers from one-time perpetual licenses to subscription contracts. More than 90% of those accounts have already migrated to subscriptio",
+      "retrieved_at": "2026-10-22T17:18:58.558639Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": false,
+        "competitor": "Broadcom",
+        "requirement_id": "R3",
+        "query": "Broadcom AI services paying customers count",
+        "stage": 1,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.767638
+      }
+    },
+    {
+      "evidence_id": "52a46097-1060-4aa1-9214-1b037dbba419",
+      "source_type": "release_notes",
+      "source_title": "Financial News | Broadcom Inc.",
+      "source_url": "https://investors.broadcom.com/financial-information/financial-news-releases",
+      "publisher": "investors.broadcom.com",
+      "extracted_fact": "| 08/31/26 | Broadcom Unveils AI-Ready Data Foundations in VMware Tanzu Platform to Power Secure Enterprise AI Cloud | [...] | 03/12/26 | Broadcom Now Shipping World’s First 102.4 Tbps Switch in Production Volume | | 08/31/26 | [Broadcom Introduces VMware Private AI Cloud, Enabling Enterprises to Scale AI Cost-Effectively, Operate More Securely, and Innovate Rapidly](/news-releases/news-release-details/broadcom-introduces-vmware-private-ai-cloud-enabling-enterprises) |",
+      "excerpt": "|  |  |\n --- |\n| 09/02/26 | Broadcom Inc. Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend |\n| 08/31/26 | Broadcom Introduces VMware Private AI Cloud, Enabling Enterprises to Scale AI Cost-Effectively, Operate More Securely, and Innovate Rapidly |\n| 08/31/26 | Broadcom Announces VMware AI Factory, Enabling Faster Time to Production AI and Greater Control Over AI Tokenomics |\n| 08/31/26 | VMware Cloud Foundation Brings Leading AI Models to the Private AI Cloud |\n| 08/31/26 | Broadcom Strengthens Spring Security and Adds Coverage of Java, Python, and Node.js Ecosystems with TrueSource |\n| 08/31/26 | Broadcom Unveils AI-Ready Data Foundations in VMware Tanzu Platform to Power Secure Enterprise AI Cloud | [...] | 03/12/26 | Broadcom Now Shipping World’s First 102.4 Tbps Switch in Production Volume |\n| 03/11/26 | Broadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks |\n| 03/04/26 | Broadcom Inc. Announces First Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend |\n| 03/02/26 | Broadcom Announces VMware Telco Cloud Platform 9 to Drive Greater Hardware Efficiency for Sovereign-Ready Telco Infrastructure |\n| 02/26/26 | Broadcom Ships 3.5D Face-to-Face Compute SoC Powering AI Revolution |\n| 02/19/26 | Broadcom Introduces Industry’s First 6G Digital Front-End SoC for Massive MIMO |\n| 02/03/26 | Broadcom Announces Industry’s First Enterprise Wi-Fi 8 Access Point and Switch Solution for the AI Era | [...] | ",
+      "page_text": "|  |  |\n --- |\n| 09/02/26 | Broadcom Inc. Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend |\n| 08/31/26 | Broadcom Introduces VMware Private AI Cloud, Enabling Enterprises to Scale AI Cost-Effectively, Operate More Securely, and Innovate Rapidly |\n| 08/31/26 | Broadcom Announces VMware AI Factory, Enabling Faster Time to Production AI and Greater Control Over AI Tokenomics |\n| 08/31/26 | VMware Cloud Foundation Brings Leading AI Models to the Private AI Cloud |\n| 08/31/26 | Broadcom Strengthens Spring Security and Adds Coverage of Java, Python, and Node.js Ecosystems with TrueSource |\n| 08/31/26 | Broadcom Unveils AI-Ready Data Foundations in VMware Tanzu Platform to Power Secure Enterprise AI Cloud | [...] | 03/12/26 | Broadcom Now Shipping World’s First 102.4 Tbps Switch in Production Volume |\n| 03/11/26 | Broadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks |\n| 03/04/26 | Broadcom Inc. Announces First Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend |\n| 03/02/26 | Broadcom Announces VMware Telco Cloud Platform 9 to Drive Greater Hardware Efficiency for Sovereign-Ready Telco Infrastructure |\n| 02/26/26 | Broadcom Ships 3.5D Face-to-Face Compute SoC Powering AI Revolution |\n| 02/19/26 | Broadcom Introduces Industry’s First 6G Digital Front-End SoC for Massive MIMO |\n| 02/03/26 | Broadcom Announces Industry’s First Enterprise Wi-Fi 8 Access Point and Switch Solution for the AI Era | [...] | 06/08/26 | Broadcom Expands Its Investment in Spring and Java Ecosystem Security to Prepare Customers for AI-Enabled Threats |\n| 06/03/26 | Broadcom Inc. Announces Second Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend |\n| 06/01/26 | Broadcom Connects the AI Edge with Comprehensive Multi-Gig Broadband and Wi-Fi 8 Innovations |\n| 05/27/26 | Broadcom Unveils World’s First Integrated 5G and Wi-Fi 8 FWA Platform in Collaboration with Samsung Electronics |\n| 05/27/26 | Broadcom Delivers Industry’s First Integrated Wi-Fi 8 SoCs to Power Next-Gen Mesh and Multi-Gigabit Routers |\n| 05/26/26 | Broadcom Accelerates the AI Era with the Industry’s First End-to-End 50G PON Edge AI Portfolio |\n![Broadcom corporate site](/sites/g/files/knoqqb13036/themes/site/nir_pid1211/client/images/broadcom-logo.png)\n![Broadcom](/sites/g/files/knoqqb13036/themes/site/nir_pid1211/client/images3/broadcom-logo.png)\n\n## Breadcrumb\n\n# Financial News\n\n## Investor Center\n\n## Shareholder Tools\n\n# Financial News\n\n|  |  |\n| --- | --- |\n| 09/02/26 | [Broadcom Inc. Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend](/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial) |\n| 08/31/26 | [Broadcom Introduces VMware Private AI Cloud, Enabling Enterprises to Scale AI Cost-Effectively, Operate More Securely, and Innovate Rapidly](/news-releases/news-release-details/broadcom-introduces-vmware-private-ai-cloud-enabling-enterprises) |\n| 08/31/26 | [Broadcom Announces VMware AI Factory, Enabling Faster Time to Production AI and Greater Control Over AI Tokenomics](/news-releases/news-release-details/broadcom-announces-vmware-ai-factory-enabling-faster-time) |\n| 08/31/26 | [VMware Cloud Foundation Brings Leading AI Models to the Private AI Cloud](/news-releases/news-release-details/vmware-cloud-foundation-brings-leading-ai-models-private-ai) |\n| 08/31/26 | [Broadcom Strengthens Spring Security and Adds Coverage of Java, Python, and Node.js Ecosystems with TrueSource](/news-releases/news-release-details/broadcom-strengthens-spring-security-and-adds-coverage-java) |\n| 08/31/26 | [Broadcom Unveils AI-Ready Data Foundations in VMware Tanzu Platform to Power Secure Enterprise AI Cloud](/news-releases/news-release-details/broadcom-unveils-ai-ready-data-foundations-vmware-tanzu-platform) |\n| 08/31/26 | [Broadcom Delivers End-to-End Security, Identity, and Observability for Agentic AI](/news-releases/news-release-details/broadcom-delivers-end-end-security-identity-and-observability) |\n| 08/31/26 | [Broadcom Unveils AgentMinder, An Enterprise Solution for AI Agent Governance and Runtime Control](/news-releases/news-release-details/broadcom-unveils-agentminder-enterprise-solution-ai-agent) |\n| 08/17/26 | [VMware Explore 2026 Brings Technical Sessions, Labs and Certs to IT Practitioners, Arming them for the Private AI Cloud Era](/news-releases/news-release-details/vmware-explore-2026-brings-technical-sessions-labs-and-certs-it) |\n| 08/06/26 | [Broadcom Enables Enterprises to Strengthen Multi-Layer Cyber Defense and Operational Efficiency with New vDefend and Avi Load Balancer Capabilities](/news-releases/news-release-details/broadcom-enables-enterprises-strengthen-multi-layer-cyber) |\n| 08/03/26 | [Broadcom Inc. to Announce Third Quarter Fiscal Year 2026 Financial Results on Wednesday, September 2, 2026](/news-releases/news-release-details/broadcom-inc-announce-third-quarter-fiscal-year-2026-financial) |\n| 07/16/26 | [Standard Chartered Selects Broadcom to Deliver Secure, Always-On Banking Services at Global Scale](/news-releases/news-release-details/standard-chartered-selects-broadcom-deliver-secure-always) |\n| 06/24/26 | [OpenAI and Broadcom Unveil LLM-Optimized Intelligence Processor](/news-releases/news-release-details/openai-and-broadcom-unveil-llm-optimized-intelligence-processor) |\n| 06/17/26 | [Broadcom Inc. Announces Results and Upsize of Offers to Purchase for Cash Certain of its Outstanding Debt Securities](/news-releases/news-release-details/broadcom-inc-announces-results-and-upsize-offers-purchase-cash) |\n| 06/17/26 | [Broadcom Inc. Announces Pricing Terms of Offers to Purchase for Cash Certain of its Outstanding Debt Securities](/news-releases/news-release-details/broadcom-inc-announces-pricing-terms-offers-purchase-cash) |\n| 06/11/26 | [Broadcom Inc. Commences Offers to Purchase for Cash Certain of its Outstanding Debt Securities](/news-releases/news-release-details/broad",
+      "retrieved_at": "2026-10-22T17:18:58.559138Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": true,
+        "competitor": "Broadcom",
+        "requirement_id": "R9",
+        "query": "Broadcom AI platform release cadence quarterly",
+        "stage": 1,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.6496014
+      }
+    },
+    {
+      "evidence_id": "e8f81e80-52d6-4000-80f1-aa6fbf833a6d",
+      "source_type": "release_notes",
+      "source_title": "Product News Releases",
+      "source_url": "https://broadcom.com/company/news/product-releases",
+      "publisher": "broadcom.com",
+      "extracted_fact": "Broadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks. Broadcom Delivers Industry’s Broadest Portfolio of Fiber Optics, PHY and Switch Solutions for 100/200/400/800G Data Center Connectivity. Broadcom Delivers Industry’s First Dual 400G MACSec PHY for Hyper-scale Data Center and Cloud Infrastructure. Broadcom Delivers Industry’s First Complete 7nm PAM-4 Optical Platform for Hyper-Scale Data Center and Cloud Infrastructure.",
+      "excerpt": "Broadcom Announces VMware Cloud Foundation 9.1, Enabling Secure and Cost-Effective Infrastructure for Production AI. Broadcom Showcases Industry-Leading Solutions for Scaling AI Infrastructure at OFC 2026. Broadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks. Broadcom Announces Industry’s First Enterprise Wi-Fi 8 Access Point and Switch Solution for the AI Era. Broadcom Launches Unified Wi-Fi 8 Platform for Seamless AI Experiences in Homes. Broadcom Introduces Industry’s First 800G AI Ethernet NIC. Broadcom Introduces Industry’s First Wi-Fi 8 Silicon Ecosystem Powering the AI Era. OpenAI and Broadcom announce strategic collaboration to deploy 10 gigawatts of OpenAI-designed AI accelerators. Broadcom Advances Optical Connectivity for AI Infrastructure with Industry-Leading Solutions at OFC 2025. Broadcom Delivers Industry’s First 3.5D F2F Technology for AI XPUs. VMware Cloud Foundation Delivers a Private Cloud Platform to Accelerate Customers’ AI, Sovereignty and Security Outcomes. Broadcom Unveils VeloRAIN, an Industry-First for Robust AI Networking Beyond the Data Center. Broadcom Delivers On AI Infrastructure Vision with Industry-Leading Solutions at 2024 OCP Global Summit. Broadcom Announces Industry’s First Merchant Silicon 50G PON Solution with AI/ML Capabilities. Broadcom Delivers Industry Leading 200G/lane DSP for Gen AI Infrastructure. Broadcom Delivers Industry’s First 51.2-Tbps Co-Packaged Optics Ethernet Switch Platform for Scala",
+      "page_text": "Broadcom Announces VMware Cloud Foundation 9.1, Enabling Secure and Cost-Effective Infrastructure for Production AI. Broadcom Showcases Industry-Leading Solutions for Scaling AI Infrastructure at OFC 2026. Broadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks. Broadcom Announces Industry’s First Enterprise Wi-Fi 8 Access Point and Switch Solution for the AI Era. Broadcom Launches Unified Wi-Fi 8 Platform for Seamless AI Experiences in Homes. Broadcom Introduces Industry’s First 800G AI Ethernet NIC. Broadcom Introduces Industry’s First Wi-Fi 8 Silicon Ecosystem Powering the AI Era. OpenAI and Broadcom announce strategic collaboration to deploy 10 gigawatts of OpenAI-designed AI accelerators. Broadcom Advances Optical Connectivity for AI Infrastructure with Industry-Leading Solutions at OFC 2025. Broadcom Delivers Industry’s First 3.5D F2F Technology for AI XPUs. VMware Cloud Foundation Delivers a Private Cloud Platform to Accelerate Customers’ AI, Sovereignty and Security Outcomes. Broadcom Unveils VeloRAIN, an Industry-First for Robust AI Networking Beyond the Data Center. Broadcom Delivers On AI Infrastructure Vision with Industry-Leading Solutions at 2024 OCP Global Summit. Broadcom Announces Industry’s First Merchant Silicon 50G PON Solution with AI/ML Capabilities. Broadcom Delivers Industry Leading 200G/lane DSP for Gen AI Infrastructure. Broadcom Delivers Industry’s First 51.2-Tbps Co-Packaged Optics Ethernet Switch Platform for Scalable AI Systems. Broadcom Introduces Industry’s First Switch With On-Chip Neural Network. Broadcom Delivers Industry-Leading Cloud Technology To Enterprise Data Centers. Broadcom Unveils Industry’s Highest Performance Fabric for AI Networks. Broadcom Ships Tomahawk 5, Industry’s Highest Bandwidth Switch Chip to Accelerate AI/ML Workloads. Broadcom’s Industry-Leading AI, Security and Hybrid Cloud Solutions Accelerate Client Value on New z16 Mainframe. Broadcom Delivers Industry’s Broadest Portfolio of Fiber Optics, PHY and Switch Solutions for 100/200/400/800G Data Center Connectivity. Broadcom Delivers Innovative Software to Silicon Integration with Industry’s First AI-Driven Network Monitoring Solution. Broadcom Delivers Industry’s First Dual 400G MACSec PHY for Hyper-scale Data Center and Cloud Infrastructure. Broadcom Announces Industry’s First Complete Portfolio of OCP NIC 3.0 Adapters for Data Center and Cloud Infrastructure. Broadcom Delivers Industry’s First Complete 7nm PAM-4 Optical Platform for Hyper-Scale Data Center and Cloud Infrastructure. Broadcom Introduces the Industry’s First 5G Radio Switch. Broadcom Ships World’s Fastest NVMe/SAS/SATA RAID Solutions to Server and External Storage OEMs. Broadcom Unveils Industry’s Most Comprehensive Dual 100G MACsec PHY with 256-bit AES for Secure Network Infrastructure.",
+      "retrieved_at": "2026-10-22T17:18:58.559396Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": true,
+        "competitor": "Broadcom",
+        "requirement_id": "R9",
+        "query": "Broadcom product roadmap \"AI\" \"release\" \"2024\"",
+        "stage": 1,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.8399576
+      }
+    },
+    {
+      "evidence_id": "0001f47d-86c4-4639-873e-42be83d8db1b",
+      "source_type": "web_page",
+      "source_title": "Intel Corp (INTC) - Data Center and AI Revenue (DISCONTINUED) (Yearly, I:ICINTCNY) - United States - Historical Data & Trends",
+      "source_url": "https://ycharts.com/indicators/intel_corp_intc_data_center_and_ai_revenue",
+      "publisher": "ycharts.com",
+      "extracted_fact": "Intel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago. Intel Corp Data Center and AI Revenue refers to the financial performance of a specific business segment within Intel that focuses on providing products and solutions tailored for data centers and AI applications. Intel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago.",
+      "excerpt": "16.92B USD for 2025 \n\nWatchlist\n\nLoading...\n\n   Overview\n   Interactive Chart\n\nMore\n\n### Level Chart\n\nImage 10: Level Chart\n\n### Basic Info\n\nIntel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago. This is a change of 9.01% from one year ago.\nIntel Corp Data Center and AI Revenue refers to the financial performance of a specific business segment within Intel that focuses on providing products and solutions tailored for data centers and AI applications.\n\nReportFiscal.ai\nCategorySegments & KPIs\n\nRegionUnited States\nSourceFiscal.ai\n\nData provided via Fiscal.ai\n\n### Stats\n\nLast Value 16.92B\nLatest Period 2025\nLast Updated Jan 31 2026, 08:31 EST\nAverage Growth Rate-3.92% [...] 09/23 16:37\n\nAIAI Holdings' Constellation Network Launches Dôr Patient Journey with Proactive MD(R), Expanding Transformational AI In Healthcare\n\n09/17 09:25\n\nSalesforce Launches Agentforce Job-Ready AI Agents Across Business Functions\n\n09/11 10:14\n\n### Basic Info\n\nIntel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago. This is a change of 9.01% from one year ago.\nIntel Corp Data Center and AI Revenue refers to the financial performance of a specific business segment within Intel that focuses on providing products and solutions tailored for data centers and AI applications.\n\nReportFiscal.ai\nCategorySegments & KPIs\n\nRegionUnited States\nSourceFiscal.ai\n\nData provided via Fiscal.ai\n\n### Stats [...] Data prov",
+      "page_text": "16.92B USD for 2025 \n\nWatchlist\n\nLoading...\n\n   Overview\n   Interactive Chart\n\nMore\n\n### Level Chart\n\nImage 10: Level Chart\n\n### Basic Info\n\nIntel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago. This is a change of 9.01% from one year ago.\nIntel Corp Data Center and AI Revenue refers to the financial performance of a specific business segment within Intel that focuses on providing products and solutions tailored for data centers and AI applications.\n\nReportFiscal.ai\nCategorySegments & KPIs\n\nRegionUnited States\nSourceFiscal.ai\n\nData provided via Fiscal.ai\n\n### Stats\n\nLast Value 16.92B\nLatest Period 2025\nLast Updated Jan 31 2026, 08:31 EST\nAverage Growth Rate-3.92% [...] 09/23 16:37\n\nAIAI Holdings' Constellation Network Launches Dôr Patient Journey with Proactive MD(R), Expanding Transformational AI In Healthcare\n\n09/17 09:25\n\nSalesforce Launches Agentforce Job-Ready AI Agents Across Business Functions\n\n09/11 10:14\n\n### Basic Info\n\nIntel Corp (INTC) - Data Center and AI Revenue is at a current level of 16.92B, up from 15.52B one year ago. This is a change of 9.01% from one year ago.\nIntel Corp Data Center and AI Revenue refers to the financial performance of a specific business segment within Intel that focuses on providing products and solutions tailored for data centers and AI applications.\n\nReportFiscal.ai\nCategorySegments & KPIs\n\nRegionUnited States\nSourceFiscal.ai\n\nData provided via Fiscal.ai\n\n### Stats [...] Data provided via Fiscal.ai\n\n### Stats\n\nLast Value 16.92B\nLatest Period 2025\nLast Updated Jan 31 2026, 08:31 EST\nAverage Growth Rate-3.92%\n\nValue from 1 Year Ago 15.52B\nChange from 1 Year Ago 9.01%\nFrequency Yearly\nUnit USD\nAdjustment N/A\nDownload Source File\n\n### Related Securities\n\n| Symbol | Name | Change % |\n --- \n| INTC | Intel Corp. | -2.22% |\n\n   Terms of Use\n   Disclosure\n   Privacy Policy\n   Security\n[![Image 1: YCharts logo](blob:http://localhost/f1ae442739c8f73892d2ab1803f444c3)![Image 2: YCharts logo](blob:http://localhost/ea565528d512cde5937e00747b10d767)](https://ycharts.com/)\n\n[Data](javascript:void(0))\n\n[![Image 3: YCharts logo](blob:http://localhost/f1ae442739c8f73892d2ab1803f444c3)](https://ycharts.com/)\n\nMarkets\n\n[Stocks](https://ycharts.com/stocks)[Indices](https://ycharts.com/indices)[Events Calendar](https://ycharts.com/events/calendar/)[News](https://ycharts.com/news/)[Sectors](https://ycharts.com/classifications/sectors)\n\nEconomy\n\n[Economic Indicators](https://ycharts.com/indicators)[Economic Calendar](https://ycharts.com/indicators/economic_calendar)[Yield Curve](https://ycharts.com/yield_curve)\n\nFunds\n\n[Mutual Funds](https://ycharts.com/mutual_funds)[ETFs](https://ycharts.com/etfs)[CEFs](https://ycharts.com/cefs)[Alternatives](https://ycharts.com/alternatives/list/)\n\nFeatured Content\n\n[![Image 4: Monthly Market Wrap](https://ycharts-media.s3.amazonaws.com/support/MMW_Image.png?AWSAccessKeyId=ASIA3WEVRVL24INUPWRP&Signature=2Hf9lwRXVTS0ZSRhnTxx1B%2FHQ78%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEKX%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQChQ4bGm%2FrI0YJXpS%2BoH8o2qFwuAtPW5ulZ6AfRN9KJ3QIhAP%2FKyyhW%2Fn5eyrKSBnkmtGPXLK7Mox2TiYM8bE4gyAe6KuUDCG4QABoMODAzNDcyNTE3ODc3IgzwtBxjD4n1gw0G1yYqwgPEDL8Q1g2z1kwrc9epn%2FGbAcGvPoe3F7pveTIsM3vAAd0DEa3vsvt0rUZsR2oCzBqnrCl5K9Nb%2Bhw5iW%2FfRrBruCDXNgpkQ0FsgTJ3Uqb5htxnZ9G%2FpLdOV4lg9Di%2BRN2HfUnbd%2Bickh65GHIiqOT58caUWi4ayBrMMAWg7Jc8umUaZML1vPPG%2B65ZOCjcvIxPqaFdFCE96BhiIiq5WA9iNWfTwrr%2Fj2Ml3u11eXXOQQRCgr5aPz9J42swAZY50fYs79OvR%2F7PzQA7k1H%2F7XkivJfmSGX56CJsiwRkG2fpTTRzZI0UHB04NiniMeFUi9mpaTdRXRjSZVTcT3kyXor7dOrpBqGPdfzurV4ukaKC50HfVSGADqDtg68zNEKzHwFqQeRBQ%2F6%2BPocfLCFS4t6vG3AOmjX9%2B1zwlpe5YAvtO5XW4CzV6vkFbhWC1hH6Z16dH8BXLrKJ1OKmaI9olQETevliLK6y03E3cnyCg4XN9tl4c0W%2B37h6ncuH9tQwzA70Sf3MnmoW3YDWfmqk8rwqDcKYJmT%2F2Y7oyOt9RzdmJMmnJKv80PhqxJ15nrnlSqBJ6Q1y9%2FJPZMK34eM5E1bOLagwhYyu1gY6pAFrs038TLQfLR4ZhMZKMFARB06UYlS2zT17DRHSBB6f7oxfoOp7e9AOSAhRVq6UlaM1lBwqHILFSQiRpdqer5ilpGIfFeS%2FA6sMI8SJIDDtmX0aII15SpTlA8yVX07G2RhTgAodmRZAvx7hfeEeMtvlWmEiOHwfUKQznxdeKBBOXdWWnRnPaSW%2Fh12iwQvD9XvQqRUPfahk%2FzLO4KSqyEhLfagG5g%3D%3D&Expires=1791727981) Monthly Market Wrap](https://go.ycharts.com/monthly-market-wrap)[Top 10 Visuals Deck](https://go.ycharts.com/the-top-10-visuals-for-clients-and-prospects)[Fed Rate Cut Deck](https://go.ycharts.com/ycharts-research-fed-rate-cut-deck)\n\nUnlock Additional Benefits When You Refer Colleagues\n\nShare model strategies, proposals and more\n\nCreate consistent branding across teams\n\nSave time on administrative tasks\n\nEnter an email address to invite people to YCharts.\n\n Cancel \n\n[Invite](javascript:void(0))\n\n[Tools](javascript:void(0))\n\n[![Image 5: YCharts logo](blob:http://localhost/f1ae442739c8f73892d2ab1803f444c3)](https://ycharts.com/)\n\nMonitor\n\n[Dashboard](https://ycharts.com/dashboard/)[Watchlists](https://ycharts.com/watchlists/list/)[Alerts](https://ycharts.com/alerts/list/)\n\nVisualize\n\n[Fundamental Chart](https://ycharts.com/charts/fundamental_chart/)[Scatter Plot](https://ycharts.com/charts/scatter_plot/)[Technical Chart](https://ycharts.com/charts/technical_chart/)[Interactive Analysis](https://ycharts.com/analysis_plan/)[Portfolio Optimizer](https://ycharts.com/portfolio_optimizer/)[Scenarios](https://ycharts.com/scenarios/)\n\nReport\n\n[Report Builder](https://ycharts.com/custom_pdf_reports/list/)[Talking Points](https://ycharts.com/talking_points/list/)[Email Reports](https://ycharts.com/email_reports/list/)\n\nClients\n\n[Clients](https://ycharts.com/client_management/list/)[Questionnaires](https://ycharts.com/risk_tolerance_questionnaire/assessments/)[Risk Profiles](https://ycharts.com/risk_profiles/list/)[Questionnaire Builder](https://ycharts.com/risk_tolerance_questionnaire/questionnaires/)\n\nResearch\n\n[Stock Screener](https://ycharts.com/screener/stock/)[Fund Screener](https://ycharts.com/screener/mutual_fund_and_etf/)[Comp Tables](https://ycharts.com/tables/comparison/)[Timeseries Analysis](https://ycharts.com/tables/timeseries/)[Ex",
+      "retrieved_at": "2026-10-22T17:18:58.559735Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": false,
+        "competitor": "Intel Corp",
+        "requirement_id": "R8",
+        "query": "Intel data center AI segment annual revenue",
+        "stage": 1,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.9407083
+      }
+    },
+    {
+      "evidence_id": "0a1288b9-2a46-4472-b391-5e2ddd840491",
+      "source_type": "news_article",
+      "source_title": "Realize Up to 100x Performance Gains with Software AI Accelerators",
+      "source_url": "https://www.intel.com/content/www/us/en/developer/articles/technical/software-ai-accelerators-ai-performance-boost-for-free.html",
+      "publisher": "www.intel.com",
+      "extracted_fact": "What’s more is that this AI performance boost driven by software optimizations is free, requiring almost no code changes or developer time and no additional hardware costs.",
+      "excerpt": "cloud service providers, even a 10x gain in performance through software AI accelerators can lead to approximate cost savings of millions of dollars a month.† [...] 1. Build upon the broad AI software ecosystem:It is critical for us to embrace the current AI software ecosystem. We want everyone to use the software that they are familiar with in deep learning, machine learning, and data analytics, for example, from TensorFlow\\ and PyTorch\\, scikit-learn\\ and XGBoost, to Ray framework and Apache Spark\\. We have heavily optimized these frameworks and libraries to help increase their performance by orders of magnitude on Intel platforms designed to deliver drop-in 10x–100x software AI acceleration. [...] 2. Implement an end-to-end data science and AI workflow: We want to innovate and deliver a rich suite of optimized tools for all your AI needs, including data preparation, training, inference, deployment, and scaling. Examples include AI Tools to accelerate end-to-end data science and machine learning pipelines, Intel® Distribution of OpenVINO™ toolkit to deploy high-performance inference applications from device to cloud, and BigDL to seamlessly scale your AI models to big data clusters with thousands of nodes for distributed training or inference.\n[Skip To Main Content](#primary-content)\n\nThe browser version you are using is not recommended for this site.  \nPlease consider upgrading to the latest version of your browser by clicking one of the following links.\n\n* [Safari](https:",
+      "page_text": "cloud service providers, even a 10x gain in performance through software AI accelerators can lead to approximate cost savings of millions of dollars a month.† [...] 1. Build upon the broad AI software ecosystem:It is critical for us to embrace the current AI software ecosystem. We want everyone to use the software that they are familiar with in deep learning, machine learning, and data analytics, for example, from TensorFlow\\ and PyTorch\\, scikit-learn\\ and XGBoost, to Ray framework and Apache Spark\\. We have heavily optimized these frameworks and libraries to help increase their performance by orders of magnitude on Intel platforms designed to deliver drop-in 10x–100x software AI acceleration. [...] 2. Implement an end-to-end data science and AI workflow: We want to innovate and deliver a rich suite of optimized tools for all your AI needs, including data preparation, training, inference, deployment, and scaling. Examples include AI Tools to accelerate end-to-end data science and machine learning pipelines, Intel® Distribution of OpenVINO™ toolkit to deploy high-performance inference applications from device to cloud, and BigDL to seamlessly scale your AI models to big data clusters with thousands of nodes for distributed training or inference.\n[Skip To Main Content](#primary-content)\n\nThe browser version you are using is not recommended for this site.  \nPlease consider upgrading to the latest version of your browser by clicking one of the following links.\n\n* [Safari](https://support.apple.com/downloads/safari)\n* [Chrome](https://support.google.com/chrome/answer/95346?hl=en)\n* [Edge](https://www.microsoft.com/en-us/edge)\n* [Firefox](https://www.mozilla.org/en-US/firefox/new/)\n\n# Software AI Accelerators: AI Performance Boost for Free\n\n## Get the Latest on All Things CODE\n\n[Sign Up](https://software.seek.intel.com/developer-products-sign-up)\n\n![author-image]()\n\nBy\n\n**Wei Li**, vice president and chief architect, Machine Learning Software & Performance\n\n**Chandan Damannagari**, director, Product, AI Software\n\nIntel Corporation\n\nThe exponential growth of data has fed AI's voracious appetite and led to its transformation from niche to omnipresent. An equally important aspect of this AI growth equation is the ever-expanding demands it places on computer system requirements to deliver higher AI performance. This has not only led to AI acceleration being incorporated into common chip architectures such as CPUs, GPUs, and FPGAs but it has also mushroomed a class of dedicated hardware AI accelerators specifically designed to accelerate artificial neural networks and machine learning applications. While these hardware accelerators can deliver impressive AI performance improvements, software AI accelerators are required to deliver even [higher orders of magnitude AI performance](https://venturebeat.com/2021/07/19/scaling-ai-and-data-science-10-smart-ways-to-move-from-pilot-to-production/) gains across deep learning, classical machine learning, and graph analytics for the same hardware setup. What’s more is that this AI performance boost driven by software optimizations is free, requiring almost no code changes or developer time and no additional hardware costs.\n\nLet us try to visualize the scope of the cost savings that can be realized through the 10x–100x performance gains that can be realized through software AI acceleration. For example, many of the leading streaming media services have tens of thousands of hours of available content. They might want to use image classification and object detection algorithms for content moderation, text identification, and celebrity recognition. The classification criteria might also be different by country based on local customs and government regulations, and the process might need to be repeated for approximately 10% of the content every month based on new programs and rule changes. Using the list prices of running these AI algorithms on the leading cloud service providers, even a 10x gain in performance through software AI accelerators can lead to approximate cost savings of millions of dollars a month.†\n\nSimilar cost savings can also be realized for other AI services, such as automatic caption generation and recommendation engines, and of course the savings are even higher for the use cases with 100x performance improvements. While your particular AI workload might be markedly smaller, your savings could still be rather significant.\n\nSoftware determines the ultimate performance of computing platforms and software acceleration is therefore key to enabling AI Everywhere with applications across entertainment, telecommunication, automotive, healthcare, and more.\n\n## What Is a Software AI Accelerator and How Does It Compare to a Hardware AI Accelerator?\n\nA software AI accelerator is a term used to refer to the AI performance improvements that can be achieved through software optimizations for the same hardware configuration. A software AI accelerator can make platforms over 10x–100x faster across a variety of applications, models, and use-cases.\n\nThe increasing diversity of AI workloads has necessitated a business demand for a variety of [AI-optimized hardware](/content/www/us/en/learn/ai-hardware.html) architectures. These can be classified into three main categories: AI-accelerated CPU, AI-accelerated GPU, and dedicated hardware AI accelerators. We see multiple examples of all three of these hardware categories in the market, for example, Intel® Xeon® CPUs with Intel® Deep Learning Boost, Apple\\* CPUs with a neural engine, NVIDIA\\* GPUs with tensor cores, Google Tensor Processing Unit\\* integrated circuit, AWS Inferentia\\*, Intel® Gaudi® AI accelerators, and many others that are under development by a combination of traditional hardware companies, cloud service providers, and AI startups.\n\nWhile AI hardware has continued to take tremendous strides, the growth rate of AI model complexity far outstrips hardware advancements. About three years ago, a natural l",
+      "retrieved_at": "2026-10-22T17:18:58.560089Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": false,
+        "competitor": "Intel Corp",
+        "requirement_id": "R2",
+        "query": "Intel AI accelerator subscription pricing per seat per month site:intel.com",
+        "stage": 2,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.20154628
+      }
+    }
+  ],
+  "gaps": [
+    "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+    "[Broadcom] Number of paying customers or subscribers. (paid_subscribers)",
+    "[Intel Corp] Number of paying customers or subscribers. (paid_subscribers)",
+    "[Broadcom] Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+    "[Intel Corp] Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+    "[Broadcom] Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+    "[Intel Corp] Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+    "[Intel Corp] Releases shipped per month or quarter. (release_cadence)"
+  ],
+  "conflicts": [],
+  "confidence": 0.75,
+  "started_at": null,
+  "completed_at": null,
+  "error": null,
+  "metadata": {
+    "company": "NVIDIA Corporation",
+    "competitors": [
+      {
+        "name": "Broadcom",
+        "website": null,
+        "official_domains": [],
+        "social_accounts": [],
+        "discovered_by": "user",
+        "discovery_reason": null,
+        "discovery_confidence": null
+      },
+      {
+        "name": "Intel Corp",
+        "website": null,
+        "official_domains": [],
+        "social_accounts": [],
+        "discovered_by": "user",
+        "discovery_reason": null,
+        "discovery_confidence": null
+      }
+    ],
+    "research_stages_completed": 2,
+    "queries_executed": 24,
+    "sources_read": 37,
+    "sources_set_aside": 31,
+    "requirement_checks": [
+      {
+        "requirement_id": "R1",
+        "competitor": "Broadcom",
+        "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+        "status": "fulfilled",
+        "evidence_found": "1 grounded finding(s)",
+        "missing_reason": "",
+        "confidence": 0.85,
+        "evidence_quality": "first_party"
+      },
+      {
+        "requirement_id": "R2",
+        "competitor": "Intel Corp",
+        "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R3",
+        "competitor": "Broadcom",
+        "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R4",
+        "competitor": "Intel Corp",
+        "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R5",
+        "competitor": "Broadcom",
+        "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R6",
+        "competitor": "Intel Corp",
+        "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R7",
+        "competitor": "Broadcom",
+        "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R8",
+        "competitor": "Intel Corp",
+        "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R9",
+        "competitor": "Broadcom",
+        "requirement": "Releases shipped per month or quarter. (release_cadence)",
+        "status": "fulfilled",
+        "evidence_found": "1 grounded finding(s)",
+        "missing_reason": "",
+        "confidence": 0.94,
+        "evidence_quality": "first_party"
+      },
+      {
+        "requirement_id": "R10",
+        "competitor": "Intel Corp",
+        "requirement": "Releases shipped per month or quarter. (release_cadence)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      }
+    ],
+    "comparison_matrix": {
+      "company": "NVIDIA Corporation",
+      "executive_summary": "NVIDIA’s baseline describes a globally available AI GPU platform with a mature software ecosystem, but it does not provide concrete pricing or recent performance metrics. Broadcom offers AI‑accelerated hardware and an AIops service with explicit monthly fees, yet its performance and global GA status are not quantified. Intel promotes software accelerators that claim large performance gains at no extra cost, but lacks disclosed pricing and clear availability details. Both competitors target the same cloud and AI developer markets as NVIDIA, but the evidence does not allow a direct capability‑for‑capability comparison.",
+      "dimensions": [
+        {
+          "dimension": "Core capabilities relevant to the goal",
+          "target_position": "NVIDIA provides industry-leading GPU hardware and a software stack (CUDA, cuDNN, TensorRT) that deliver high-throughput AI compute for data-center and cloud workloads.",
+          "takeaway": "Both competitors provide AI compute options, but evidence does not enable a direct performance comparison with NVIDIA.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "Broadcom offers AI-accelerated system-on-chips, optical DSPs and networking switches for data-center and cloud use, but no disclosed performance metrics relative to NVIDIA GPUs.",
+              "confidence": 0.4,
+              "evidence_ids": []
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "different_approach",
+              "summary": "Intel states its software AI accelerators can give 10×–100× performance improvements on Xeon CPUs without extra hardware, though independent benchmarks are not provided.",
+              "confidence": 0.65,
+              "evidence_ids": [
+                "0a1288b9-2a46-4472-b391-5e2ddd840491"
+              ]
+            }
+          ]
+        },
+        {
+          "dimension": "Pricing and packaging",
+          "target_position": "NVIDIA’s pricing is typically based on per-GPU instance usage or licensing of software tools, but specific tiered pricing is not detailed in the baseline.",
+          "takeaway": "Broadcom provides explicit monthly fees, while Intel advertises a cost‑free accelerator model; NVIDIA’s pricing structure is not quantified for comparison.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "Broadcom charges $30 per month for its AIops collector and $0.20 per month per cloud‑based device.",
+              "confidence": 0.85,
+              "evidence_ids": [
+                "28a72695-f627-40b4-b702-f5135564b088"
+              ]
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "different_approach",
+              "summary": "Intel claims its software AI accelerators incur no additional licensing fees, implying a zero‑cost model beyond the underlying hardware.",
+              "confidence": 0.65,
+              "evidence_ids": [
+                "0a1288b9-2a46-4472-b391-5e2ddd840491"
+              ]
+            }
+          ]
+        },
+        {
+          "dimension": "Target customers and positioning",
+          "target_position": "NVIDIA targets cloud service providers and AI developers in the United States and Europe.",
+          "takeaway": "Both Broadcom and Intel position their AI offerings toward the same cloud and developer audiences as NVIDIA.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "Broadcom’s AI‑focused hardware and software are marketed to data-center and cloud environments, aligning with the same customer set.",
+              "confidence": 0.4,
+              "evidence_ids": []
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "not_established",
+              "summary": "Intel’s AI computing and data‑center platforms are explicitly aimed at cloud providers and AI developers operating in the US and EU.",
+              "confidence": 0.4,
+              "evidence_ids": []
+            }
+          ]
+        },
+        {
+          "dimension": "Availability (plans, regions, generally available vs preview vs announced)",
+          "target_position": "NVIDIA’s AI GPUs and software are generally available worldwide, including the United States and Europe.",
+          "takeaway": "Availability details for Broadcom and Intel are less concrete than NVIDIA’s established global GA presence.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "Broadcom shipped at least five AI‑related products in Q3 FY2026, indicating a roughly monthly release cadence, but the release status (GA vs preview) is not explicitly confirmed.",
+              "confidence": 0.65,
+              "evidence_ids": [
+                "52a46097-1060-4aa1-9214-1b037dbba419",
+                "e8f81e80-52d6-4000-80f1-aa6fbf833a6d"
+              ]
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "not_established",
+              "summary": "Intel’s AI offerings are described as being for US and EU markets, yet no specific availability dates or GA status are provided.",
+              "confidence": 0.4,
+              "evidence_ids": []
+            }
+          ]
+        },
+        {
+          "dimension": "Integrations and ecosystem",
+          "target_position": "NVIDIA’s ecosystem includes CUDA, cuDNN, TensorRT, and broad third‑party framework support, enabling seamless integration for AI developers.",
+          "takeaway": "NVIDIA’s documented ecosystem is more explicit than the limited integration information for Broadcom and Intel.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "The available evidence mentions AIops services and hardware but does not detail integration with major AI frameworks or a developer ecosystem.",
+              "confidence": 0.4,
+              "evidence_ids": []
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "not_established",
+              "summary": "Intel promotes software accelerators that run on existing Xeon CPUs without extra licensing, but specific framework integrations are not documented.",
+              "confidence": 0.65,
+              "evidence_ids": [
+                "0a1288b9-2a46-4472-b391-5e2ddd840491"
+              ]
+            }
+          ]
+        },
+        {
+          "dimension": "Recent changes",
+          "target_position": "The baseline does not specify recent product launches or revenue shifts for NVIDIA.",
+          "takeaway": "Recent activity is documented for Broadcom and Intel, while comparable recent NVIDIA updates are absent from the provided baseline.",
+          "cells": [
+            {
+              "competitor": "Broadcom",
+              "relative_to_target": "not_established",
+              "summary": "Broadcom reported a release cadence of roughly one major AI or data‑center product per month in Q3 FY2026.",
+              "confidence": 0.85,
+              "evidence_ids": [
+                "52a46097-1060-4aa1-9214-1b037dbba419",
+                "e8f81e80-52d6-4000-80f1-aa6fbf833a6d"
+              ]
+            },
+            {
+              "competitor": "Intel Corp",
+              "relative_to_target": "not_established",
+              "summary": "Intel’s Data Center and AI segment generated $16.92 billion in FY2025, a 9.01% YoY increase, and it claims large performance gains from its software accelerators.",
+              "confidence": 0.65,
+              "evidence_ids": [
+                "0001f47d-86c4-4639-873e-42be83d8db1b",
+                "0a1288b9-2a46-4472-b391-5e2ddd840491"
+              ]
+            }
+          ]
+        }
+      ],
+      "areas_where_target_appears_ahead": [
+        "Integrations and ecosystem – NVIDIA’s documented CUDA‑based ecosystem is more fully described than competitors’ integration details.",
+        "Availability – NVIDIA’s products are confirmed as generally available worldwide, whereas competitor availability is not explicitly established."
+      ],
+      "areas_where_competitors_appear_ahead": [
+        "Pricing – Broadcom provides explicit monthly pricing for its AIops service.",
+        "Performance claim – Intel advertises 10×–100× performance gains from its software accelerators."
+      ],
+      "limitations": [
+        "NVIDIA baseline does not include concrete pricing, performance benchmarks, or recent product release information.",
+        "Broadcom performance metrics and GA status are not disclosed; assessments rely on product shipment statements.",
+        "Intel performance claims are self‑reported and lack independent verification; pricing details are absent.",
+        "Integration and ecosystem details for both competitors are missing, limiting direct comparison.",
+        "All revenue figures are from third‑party sources and not directly comparable to NVIDIA’s undisclosed financial data.",
+        "3 competitor requirement(s) were supported by third-party sources. These sources were accepted because the evidence was verified as relevant to the research requirement.",
+        "8 requirement(s) remained unresolved after research."
+      ]
+    },
+    "competitor_profiles": {
+      "Broadcom": {
+        "overview": "Broadcom offers AI‑focused hardware and software solutions for data‑center and cloud environments, including AI‑accelerated system‑on‑chips, high‑speed optical DSPs, and networking switches. The company reported total revenue of approximately $63.8‑$63.9 billion for the fiscal year ending October 31 2025. Its AIops service is priced at $30 per collector per month and $0.20 per cloud‑based device per month. In Q3 FY2026 Broadcom shipped at least five distinct AI‑related products, indicating a release cadence of roughly one major AI or data‑center product per month.",
+        "requirements": [
+          {
+            "requirement_id": "R1",
+            "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+            "status": "fulfilled",
+            "missing_reason": "",
+            "release_status": "not_stated",
+            "confidence": 0.85,
+            "evidence_quality": "first_party",
+            "summary": "The Broadcom AIops collector is priced at $30 per month, and each cloud‑based device is charged at $0.20 per month.",
+            "sources": [
+              {
+                "url": "https://docs.broadcom.com/docs/the-total-economic-impact-of-aiops-from-broadcom",
+                "title": "The Total Economic Impact Of AIOps from Broadcom",
+                "first_party": true
+              }
+            ]
+          },
+          {
+            "requirement_id": "R3",
+            "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The number of paying customers or subscribers was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R5",
+            "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Price per billed unit beyond the included allowance was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R7",
+            "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+            "status": "missing",
+            "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+            "release_status": "not_stated",
+            "confidence": 0.72,
+            "evidence_quality": "third_party_only",
+            "summary": "Broadcom reported full‑year revenue of approximately $63.8 billion to $63.9 billion for the fiscal year ending October 31 2025.",
+            "sources": [
+              {
+                "url": "https://www.investing.com/analysis/broadcoms-ai-backlog-starts-to-matter-more-than-shortterm-margin-optics-200673252",
+                "title": "Broadcom’s AI Backlog Starts to Matter More Than Short-Term Margin Optics | Investing.com",
+                "first_party": false
+              }
+            ]
+          },
+          {
+            "requirement_id": "R9",
+            "requirement": "Releases shipped per month or quarter. (release_cadence)",
+            "status": "fulfilled",
+            "missing_reason": "",
+            "release_status": "generally_available",
+            "confidence": 0.94,
+            "evidence_quality": "first_party",
+            "summary": "Broadcom announced and shipped at least five AI‑focused hardware and software products in Q3 FY2026, indicating a release cadence of roughly one major AI or data‑center product per month.",
+            "sources": [
+              {
+                "url": "https://investors.broadcom.com/financial-information/financial-news-releases",
+                "title": "Financial News | Broadcom Inc.",
+                "first_party": true
+              },
+              {
+                "url": "https://broadcom.com/company/news/product-releases",
+                "title": "Product News Releases",
+                "first_party": true
+              }
+            ]
+          }
+        ],
+        "caveats": [
+          "Pricing information only covers the AIops collector and cloud device, not broader AI compute or data‑center offerings.",
+          "Revenue figure is derived from a third‑party source rather than a direct Broadcom statement.",
+          "Release status for AI products is inferred from \"shipped\" language; explicit GA confirmation is not provided.",
+          "R7: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
+        ],
+        "verified_findings_count": 3
+      },
+      "Intel Corp": {
+        "overview": "Intel provides AI computing and data‑center platforms that combine its Xeon processors with software AI accelerators. The company states that its software accelerators can deliver 10×–100× performance gains without requiring additional hardware, developer effort, or licensing fees. Intel's Data Center and AI segment generated $16.92 billion in revenue for fiscal year 2025, a 9.01% year‑over‑year increase. These offerings are aimed at cloud service providers and AI developers operating in the United States and Europe.",
+        "requirements": [
+          {
+            "requirement_id": "R2",
+            "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R4",
+            "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R6",
+            "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+            "status": "missing",
+            "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+            "release_status": "not_stated",
+            "confidence": 0.67,
+            "evidence_quality": "third_party_only",
+            "summary": "Intel claims its software AI accelerators provide 10×–100× performance improvements at no additional cost, meaning there is no per‑unit charge beyond any included allowance.",
+            "sources": [
+              {
+                "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/software-ai-accelerators-ai-performance-boost-for-free.html",
+                "title": "Realize Up to 100x Performance Gains with Software AI Accelerators",
+                "first_party": false
+              }
+            ]
+          },
+          {
+            "requirement_id": "R8",
+            "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+            "status": "missing",
+            "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+            "release_status": "not_stated",
+            "confidence": 0.77,
+            "evidence_quality": "third_party_only",
+            "summary": "Intel's Data Center and AI segment generated $16.92 billion in revenue for fiscal year 2025, representing a 9.01% increase over the prior year.",
+            "sources": [
+              {
+                "url": "https://ycharts.com/indicators/intel_corp_intc_data_center_and_ai_revenue",
+                "title": "Intel Corp (INTC) - Data Center and AI Revenue (DISCONTINUED) (Yearly, I:ICINTCNY) - United States - Historical Data & Trends",
+                "first_party": false
+              }
+            ]
+          },
+          {
+            "requirement_id": "R10",
+            "requirement": "Releases shipped per month or quarter. (release_cadence)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          }
+        ],
+        "caveats": [
+          "Revenue figure comes from a third‑party data source (S1) rather than Intel's own reporting.",
+          "Performance and cost‑free claim is based on an Intel developer article (S2) that may be promotional and lacks independent verification.",
+          "No verified data were found for pricing tiers (R2), subscriber counts (R4), or release cadence (R10).",
+          "R6: supported only by third-party sources. These sources were accepted because they directly supported the research requirement.",
+          "R8: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
+        ],
+        "verified_findings_count": 2
+      }
+    },
+    "research_goal": "How do Broadcom's and Intel's AI computing and data‑center platform performance, software compatibility, product availability, and pricing compare to NVIDIA's for cloud providers and AI developers in the United States and Europe?",
+    "research_focus": "performance, software stack support, availability, pricing for Broadcom and Intel in US and EU"
+  }
+}

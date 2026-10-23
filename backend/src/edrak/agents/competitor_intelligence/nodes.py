@@ -2,6 +2,7 @@
 
 import difflib
 import json
+import logging
 import os
 import pprint
 import re
@@ -12,7 +13,7 @@ from urllib.parse import urlparse
 
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_chat_model, schema_instruction
-from edrak.observability import traced_tool
+from edrak.observability import set_tool_provider, traced_tool
 from dotenv import load_dotenv
 from tavily import TavilyClient
 
@@ -72,6 +73,8 @@ from .state import (
     SearchQueryList,
     comparison_dimensions,
 )
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================
@@ -221,6 +224,7 @@ def call_structured(
     model_class,
     strong: bool = False,
     retries: int = 1,
+    raise_on_failure: bool = False,
 ):
     """
     Structured output via json_schema with the schema restated in the prompt.
@@ -237,6 +241,8 @@ def call_structured(
 
     structured = model.with_structured_output(model_class, method="json_schema")
     messages = [prompt, schema_instruction(model_class)]
+    last_error = None
+    received_none = False
 
     for attempt in range(retries + 1):
         try:
@@ -245,16 +251,53 @@ def call_structured(
             if result is not None:
                 return result
 
+            received_none = True
             print(
                 f"WARNING: structured call returned None "
                 f"(attempt {attempt + 1})"
             )
 
-        except Exception as e:
+        except Exception as exc:
+            last_error = exc
             print(
                 f"WARNING: structured call failed "
-                f"(attempt {attempt + 1}): {e}"
+                f"(attempt {attempt + 1}): {type(exc).__name__}: {exc}"
             )
+
+    if received_none:
+        try:
+            response = model.invoke(messages)
+            content = response.content if hasattr(response, "content") else response
+            if isinstance(content, list):
+                content = "".join(
+                    part.get("text", "") if isinstance(part, dict) else str(part)
+                    for part in content
+                )
+            text = str(content).strip()
+            start = text.find("{")
+            if start >= 0:
+                payload, _ = json.JSONDecoder().raw_decode(text[start:])
+                return model_class.model_validate(payload)
+            last_error = ValueError("model reply contained no JSON object")
+        except Exception as exc:
+            last_error = exc
+            logger.warning(
+                "Plain-JSON recovery for %s failed: %s: %s",
+                model_class.__name__,
+                type(exc).__name__,
+                exc,
+            )
+
+    if raise_on_failure:
+        detail = (
+            f"{type(last_error).__name__}: {last_error}"
+            if last_error is not None
+            else "model returned no structured result or JSON response"
+        )
+        raise RuntimeError(
+            f"Structured output for {model_class.__name__} failed after "
+            f"{retries + 1} attempts: {detail}"
+        ) from last_error
 
     return None
 
@@ -1098,6 +1141,7 @@ def identify_research_requirements_node(
     result = call_structured(
         prompt,
         ResearchRequirements,
+        raise_on_failure=True,
     )
 
     if result is None:
@@ -1467,6 +1511,7 @@ def run_tavily(
     if domains:
         # The official-sources stage reads the competitor's own site first.
         params["include_domains"] = domains
+    set_tool_provider("tavily")
     return tavily().search(**params)
 
 

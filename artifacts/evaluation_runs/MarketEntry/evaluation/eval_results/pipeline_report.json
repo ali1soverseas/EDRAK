@@ -1,0 +1,192 @@
+{
+  "checks": [
+    {
+      "check": "every finding traces to evidence",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "every signal traces to a finding",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "signals only rest on verified findings",
+      "passed": true,
+      "detail": "0 signals",
+      "severity": "warn"
+    },
+    {
+      "check": "every recommendation traces to signal -> finding",
+      "passed": true,
+      "detail": "6/6",
+      "severity": "error"
+    },
+    {
+      "check": "verifier covers all worker findings",
+      "passed": true,
+      "detail": "0 missing",
+      "severity": "error"
+    },
+    {
+      "check": "verification, cross-signal and decision share one research_run_id",
+      "passed": true,
+      "detail": "b7df208b10bdb96d1a6b54fad306ff57",
+      "severity": "error"
+    }
+  ],
+  "detail": {
+    "findings_without_resolvable_evidence": [],
+    "signals_without_findings": [],
+    "signals_resting_on_unverified_findings": [],
+    "recommendations_fully_traceable_pct": 100.0,
+    "synthetic_evidence_pct_overall": 0.0,
+    "agents_evaluated": [
+      "competitor_intelligence",
+      "cross_signal",
+      "customer_trends",
+      "decision",
+      "internal_intelligence",
+      "market_intelligence",
+      "orchestration",
+      "rag",
+      "telemetry",
+      "verification"
+    ],
+    "worker_attempts_used_by_final_state": {
+      "competitor_intelligence": 1,
+      "customer_trends": 1,
+      "internal_intelligence": 1,
+      "market_intelligence": 1
+    },
+    "stage_inputs": [
+      {
+        "file": "verification_pass_001.json",
+        "agent": "verification",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": ""
+      },
+      {
+        "file": "cross_signal.json",
+        "agent": "cross_signal",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "decision_analysis.json",
+        "agent": "decision",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "orchestration_result.json",
+        "agent": "orchestration",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_001.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_002.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_003.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_004.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_005.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_006.json",
+        "agent": "rag",
+        "worker_attempts_seen": {
+          "competitor_intelligence": 1,
+          "customer_trends": 1,
+          "internal_intelligence": 1,
+          "market_intelligence": 1
+        },
+        "verification_seen": "verification_pass_001.json",
+        "cross_signal_seen": "cross_signal.json"
+      }
+    ],
+    "not_evaluated": []
+  },
+  "reruns": {
+    "workers": [],
+    "verification": []
+  }
+}

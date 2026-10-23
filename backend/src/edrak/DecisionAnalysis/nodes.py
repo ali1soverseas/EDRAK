@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import Any
 
 from dotenv import load_dotenv
@@ -29,6 +30,9 @@ from .state import DecisionAnalysisState
 
 load_dotenv()
 logger = logging.getLogger(__name__)
+_NUMBER_TOKEN = re.compile(
+    r"(?<![A-Za-z0-9])(?:[A-Za-z]{1,2}\d+|\d+(?:[.,]\d+)?%?)(?![A-Za-z0-9])"
+)
 
 
 # ============================================================================
@@ -90,6 +94,10 @@ RULES
 
 6. Never invent statistics, financial projections, market shares,
    customer commitments, product capabilities, or evidence IDs.
+   Do not introduce dates, quantities, performance thresholds, or product
+   specifications unless the exact value appears in a supporting signal.
+   When a measurable threshold is not supplied, recommend defining one from
+   validated customer requirements rather than inventing a target.
 
 7. When evidence is insufficient, recommend a conditional next step.
    Explain what is unknown, how to validate it, and what must be
@@ -347,6 +355,96 @@ def _validated_signal_ids(
         for identifier in identifiers
         if str(identifier) in valid_signal_ids
     )
+
+
+def _number_tokens(text: str) -> set[str]:
+    return {match.casefold() for match in _NUMBER_TOKEN.findall(text)}
+
+
+def _remove_unsupported_numeric_sentences(
+    text: str,
+    supported_numbers: set[str],
+) -> tuple[str, bool]:
+    """Drop sentences containing numeric values absent from the cited signals."""
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    kept: list[str] = []
+    changed = False
+    for sentence in sentences:
+        if _number_tokens(sentence) - supported_numbers:
+            changed = True
+            continue
+        if sentence:
+            kept.append(sentence)
+    return " ".join(kept), changed
+
+
+def _ground_recommendation_numbers(
+    details: RecommendationDetails,
+    signals: list[dict[str, Any]],
+) -> tuple[RecommendationDetails, bool]:
+    """Keep numeric claims only when they occur in the recommendation's cited
+    signals."""
+    signal_ids = set(details.supporting_signal_ids)
+    supported_numbers = {
+        token
+        for signal in signals
+        if _signal_id(signal) in signal_ids
+        for key in ("title", "signal", "interpretation")
+        for token in _number_tokens(str(signal.get(key) or ""))
+    }
+    changed = False
+    updates: dict[str, Any] = {}
+
+    for field_name in ("decision", "rationale"):
+        value, field_changed = _remove_unsupported_numeric_sentences(
+            getattr(details, field_name),
+            supported_numbers,
+        )
+        changed |= field_changed
+        if value:
+            updates[field_name] = value
+
+    for field_name in (
+        "actions",
+        "opportunities",
+        "risks",
+        "success_criteria",
+        "limitations",
+    ):
+        values: list[str] = []
+        for item in getattr(details, field_name):
+            value, field_changed = _remove_unsupported_numeric_sentences(
+                item,
+                supported_numbers,
+            )
+            changed |= field_changed
+            if value:
+                values.append(value)
+        updates[field_name] = values
+
+    if changed:
+        updates.setdefault(
+            "decision",
+            "Condition an irreversible launch decision on validating readiness "
+            "and customer demand.",
+        )
+        updates.setdefault(
+            "rationale",
+            "The supporting signals identify competitive pressure but do not establish "
+            "unsupported numeric thresholds or product specifications.",
+        )
+        if not updates.get("actions"):
+            updates["actions"] = [
+                "Validate launch readiness and customer requirements against "
+                "the supporting signals."
+            ]
+        if not updates.get("success_criteria"):
+            updates["success_criteria"] = [
+                "Set measurable acceptance criteria from validated customer "
+                "requirements before approval."
+            ]
+
+    return details.model_copy(update=updates), changed
 
 
 # ============================================================================
@@ -631,11 +729,27 @@ def make_validate_and_assemble_node():
                     "confidence was set to low."
                 )
 
+            grounded_details, removed_unsupported_numbers = (
+                _ground_recommendation_numbers(
+                    details.model_copy(
+                        update={"supporting_signal_ids": accepted_ids}
+                    ),
+                    context.get("signals", []),
+                )
+            )
+            if removed_unsupported_numbers:
+                warnings.append(
+                    "Removed numeric claims not present in cited signals for "
+                    f"'{item.question}'."
+                )
+
             validated_details = details.model_copy(
                 update={
-                    "supporting_signal_ids": accepted_ids,
+                    **grounded_details.model_dump(),
                     "confidence": confidence,
-                    "rationale": rationale,
+                    "rationale": grounded_details.rationale
+                    if removed_unsupported_numbers
+                    else rationale,
                 }
             )
 

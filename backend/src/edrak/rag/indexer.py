@@ -86,23 +86,11 @@ class InternalIndexer:
                 embedding_function=self.embedding_fn,
                 metadata=COLLECTION_METADATA,
             )
-        except ValueError:
-            logger.warning(
-                "Embedding function mismatch on '%s'. Resetting collection...",
-                self.collection_name,
-            )
-            self._drop_and_create()
-
-    def _drop_and_create(self) -> None:
-        try:
-            self._client.delete_collection(self.collection_name)
-        except Exception:
-            pass
-        self.collection = self._client.create_collection(
-            name=self.collection_name,
-            embedding_function=self.embedding_fn,
-            metadata=COLLECTION_METADATA,
-        )
+        except ValueError as e:
+            raise RuntimeError(
+                f"Embedding function mismatch for collection '{self.collection_name}'. "
+                "Resolve the mismatch explicitly before reindexing; existing vectors were not modified."
+            ) from e
 
     # ------------------------------------------------------------------ chunking
     @staticmethod

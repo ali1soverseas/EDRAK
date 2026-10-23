@@ -1,0 +1,1423 @@
+{
+  "agent": "competitor_intelligence",
+  "generated_at_utc": "2026-10-22T18:18:08.511630+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_competitor_intelligence_attempt_1_8cde365e-153.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "actionability",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "partial",
+        "error": null,
+        "findings": 7,
+        "evidence_in_file": 6,
+        "evidence_collected": 37,
+        "evidence_sample_pct": 16.22,
+        "evidence_cited": 6,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 6,
+        "top_domain_share_pct": 16.67,
+        "third_party_evidence_pct": 50.0,
+        "avg_retrieval_score": 0.6729,
+        "requirements_total": 10,
+        "requirement_coverage_pct": 20.0,
+        "profiles": 2,
+        "matrix_cells": 12,
+        "matrix_cells_with_evidence_pct": 58.33,
+        "matrix_cells_not_established_pct": 83.33,
+        "gaps": 8,
+        "conflicts": 0,
+        "queries_executed": 24,
+        "agent_confidence": 0.75,
+        "avg_finding_confidence": 0.75,
+        "findings_with_numbers_not_in_evidence": 2,
+        "units_with_absence_claims": 4,
+        "units": 31,
+        "units_flagged": 12,
+        "faithfulness_tested": 11,
+        "faithfulness_avg": 0.9545,
+        "faithfulness_pass_pct": 90.91,
+        "relevancy_tested": 11,
+        "relevancy_avg": 0.8485,
+        "relevancy_pass_pct": 90.91,
+        "specificity_tested": 7,
+        "specificity_avg": 0.5126,
+        "specificity_pass_pct": 42.86,
+        "actionability_tested": 7,
+        "actionability_avg": 0.5417,
+        "actionability_pass_pct": 71.43,
+        "context_relevancy_tested": 7,
+        "context_relevancy_avg": 0.7635,
+        "context_relevancy_pass_pct": 100.0,
+        "judge_errors": 0,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 24,
+          "tools": [
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search",
+            "competitor_web_search"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 24,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 5181.9468,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI computing platform subscription pricing per seat per month site:broadcom.com",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3604.98,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom cloud AI service pricing tiers \"per user\" \"per month\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2432.038,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI accelerator subscription price per seat per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3866.7846,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel data center AI platform pricing \"per user\" \"per month\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2477.8621,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI services paying customers count",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2883.3478,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI platform customers \"subscription\" \"2024\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2420.6586,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI cloud customers number",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3643.7028,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI platform subscription users \"2023\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3613.8525,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI compute overage pricing per hour",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3580.1717,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI platform usage fees \"beyond\" \"included\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3322.8034,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI service extra usage price per compute hour",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3839.6033,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI platform overage rates \"per request\" \"beyond\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2207.1847,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI computing annual revenue 2025",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3085.0434,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom data center AI segment revenue \"annual\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2568.5929,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI accelerator revenue 2025",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4229.974,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel data center AI segment annual revenue",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2492.3063,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI platform release cadence quarterly",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 5659.0745,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom product roadmap \"AI\" \"release\" \"2024\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3595.4984,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI accelerator release schedule per quarter",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2734.9015,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI platform product updates \"2023\" \"quarter\"",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4451.742,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel AI accelerator subscription pricing per seat per month site:intel.com",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2828.1496,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel Data Center AI platform pricing tiers per user per month site:intel.com",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4772.8164,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI platform paying customers site:broadcom.com",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "8cde365e-1535-4cf9-a981-5c7b2b3ba570",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 5067.8377,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AIops collector subscription customers count site:broadcom.com",
+                "stage": 2
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7124,
+            "reason": "The output includes multiple distinct tool calls targeting specific pricing queries for Broadcom and Intel, which aligns with the input's focus on pricing comparison. However, the calls appear narrowly focused on pricing and do not explicitly address other requested aspects such as AI computing and data-center platform performance, software compatibility, product availability, or regional differences for the US and Europe. There is no evident repetition of identical queries, indicating avoidance of redundant work, but the coverage is incomplete relative to the input's full scope."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every fulfilled requirement maps to at least one finding",
+          "passed": true,
+          "detail": "0 unlinked",
+          "severity": "error"
+        },
+        {
+          "check": "fulfilled requirements: every claimed 'N grounded findings' is backed",
+          "passed": true,
+          "detail": "0 mismatches",
+          "severity": "warn"
+        },
+        {
+          "check": "every missing requirement states a reason",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no requirement is 'missing' while a grounded finding exists",
+          "passed": false,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every named competitor has a profile",
+          "passed": true,
+          "detail": "Broadcom, Intel Corp",
+          "severity": "error"
+        },
+        {
+          "check": "matrix claims rest on evidence",
+          "passed": true,
+          "detail": "0 cells",
+          "severity": "warn"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.0",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": false,
+          "detail": "2 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": false,
+          "detail": "4 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "f86e1e6a-6ecb-47be-8abe-38a2bb33e266",
+          "statement": "The fee for a Broadcom AIops collector is listed at $30 (presumably per month) and the cost for each cloud‑based device is $0.20 per month.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "9b0b4431-5800-481f-abd9-a8d638a30ef5",
+          "statement": "Broadcom reported full‑year revenue of approximately $63.8 billion to $63.9 billion for the fiscal year ending October 31 2025.",
+          "flags": [
+            "ungrounded_numbers",
+            "low_relevancy",
+            "generic_statement",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "623ab480-68bf-4ff4-8498-e501de96413f",
+          "statement": "Broadcom announced a series of AI‑related hardware and software releases in Q3 FY2026, including the VMware Private AI Cloud (31 Aug 2026), VMware AI Factory (31 Aug 2026), a 102.4 Tbps switch (12 Mar 2026), a 400G/lane Optical DSP (11 Mar 2026), and a 3.5D Face‑to‑Face Compute SoC (26 Feb 2026). This demonstrates that Broadcom shipped at least five distinct AI‑focused products within a single quarter, indicating a release cadence of roughly one major AI or data‑center product per month.",
+          "flags": [
+            "unfaithful"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "fcbaa2f7-684d-4737-8a1c-9e45d0f5cea9",
+          "statement": "Intel Corp: Intel's Data Center and AI segment generated $16.92 billion in revenue for the fiscal year 2025, representing a 9.01% increase over the prior year.",
+          "flags": [
+            "ungrounded_numbers",
+            "not_actionable"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "a92080e1-6631-4b99-bf57-ed6197bd5100",
+          "statement": "Core capabilities relevant to the goal: compared with NVIDIA Corporation, Intel Corp is different approach. Intel states its software AI accelerators can give 10×–100× performance improvements on Xeon CPUs without extra hardware, though independent benchmarks are not provided.",
+          "flags": [
+            "generic_statement",
+            "absence_claim"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "807a56c1-ef07-4916-8e6d-8c94c8f1d3f4",
+          "statement": "Pricing and packaging: compared with NVIDIA Corporation, Intel Corp is different approach. Intel claims its software AI accelerators incur no additional licensing fees, implying a zero‑cost model beyond the underlying hardware.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "requirement",
+          "unit_id": "R2",
+          "statement": "The information was not established by the verified evidence.",
+          "flags": [
+            "missing_despite_grounded_finding"
+          ]
+        },
+        {
+          "unit_type": "requirement",
+          "unit_id": "R3",
+          "statement": "The number of paying customers or subscribers was not established by the verified evidence.",
+          "flags": [
+            "missing_despite_grounded_finding"
+          ]
+        },
+        {
+          "unit_type": "requirement",
+          "unit_id": "R8",
+          "statement": "Intel's Data Center and AI segment generated $16.92 billion in revenue for fiscal year 2025, representing a 9.01% increase over the prior year.",
+          "flags": [
+            "missing_despite_grounded_finding"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Core capabilities relevant to the goal | Broadcom",
+          "statement": "Broadcom offers AI-accelerated system-on-chips, optical DSPs and networking switches for data-center and cloud use, but no disclosed performance metrics relative to NVIDIA GPUs.",
+          "flags": [
+            "absence_claim"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Core capabilities relevant to the goal | Intel Corp",
+          "statement": "Intel states its software AI accelerators can give 10×–100× performance improvements on Xeon CPUs without extra hardware, though independent benchmarks are not provided.",
+          "flags": [
+            "absence_claim"
+          ]
+        },
+        {
+          "unit_type": "matrix_cell",
+          "unit_id": "Availability (plans, regions, generally available vs preview vs announced) | Intel Corp",
+          "statement": "Intel’s AI offerings are described as being for US and EU markets, yet no specific availability dates or GA status are provided.",
+          "flags": [
+            "absence_claim"
+          ]
+        }
+      ]
+    }
+  ]
+}

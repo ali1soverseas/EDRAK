@@ -1,0 +1,1645 @@
+{
+  "spans": [
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "069c8bb7c9bdff01",
+      "start_time": "2026-10-22T20:16:04.692597+00:00",
+      "end_time": "2026-10-22T20:16:05.188087+00:00",
+      "duration_ms": 495.4892,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "5e6f3b4477428267",
+      "start_time": "2026-10-22T20:16:05.188179+00:00",
+      "end_time": "2026-10-22T20:16:05.229796+00:00",
+      "duration_ms": 41.6177,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "4aa81bfb75d4c1ad",
+      "start_time": "2026-10-22T20:16:05.229925+00:00",
+      "end_time": "2026-10-22T20:16:05.270124+00:00",
+      "duration_ms": 40.1989,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "00097cd383a514ad",
+      "start_time": "2026-10-22T20:16:05.270271+00:00",
+      "end_time": "2026-10-22T20:16:05.325311+00:00",
+      "duration_ms": 55.0409,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "cd7af28e8bb6ac06",
+      "start_time": "2026-10-22T20:16:05.325436+00:00",
+      "end_time": "2026-10-22T20:16:05.384870+00:00",
+      "duration_ms": 59.4343,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "f5f2b19f1ae1820a",
+      "start_time": "2026-10-22T20:16:05.384985+00:00",
+      "end_time": "2026-10-22T20:16:05.437383+00:00",
+      "duration_ms": 52.3983,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "228a065fb316c948",
+      "start_time": "2026-10-22T20:16:05.437512+00:00",
+      "end_time": "2026-10-22T20:16:05.497733+00:00",
+      "duration_ms": 60.2214,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "2b06c98c61029859",
+      "start_time": "2026-10-22T20:16:05.497829+00:00",
+      "end_time": "2026-10-22T20:16:05.569166+00:00",
+      "duration_ms": 71.3367,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "43d9cadfd239439b",
+      "start_time": "2026-10-22T20:16:05.569289+00:00",
+      "end_time": "2026-10-22T20:16:05.622318+00:00",
+      "duration_ms": 53.0282,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "16a511dc1be4e089",
+      "start_time": "2026-10-22T20:16:05.622436+00:00",
+      "end_time": "2026-10-22T20:16:05.670909+00:00",
+      "duration_ms": 48.4736,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "66eef54e6cf139ed",
+      "start_time": "2026-10-22T20:16:05.671062+00:00",
+      "end_time": "2026-10-22T20:16:05.724203+00:00",
+      "duration_ms": 53.1409,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "aaaee8b955886e35",
+      "start_time": "2026-10-22T20:16:05.724304+00:00",
+      "end_time": "2026-10-22T20:16:05.779492+00:00",
+      "duration_ms": 55.1885,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}"
+      },
+      "parent_span_id": "9653a7c7a1d91bc7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "5171cc87dde3cb5b",
+      "start_time": "2026-10-22T20:16:07.063135+00:00",
+      "end_time": "2026-10-22T20:16:10.932385+00:00",
+      "duration_ms": 3869.2506,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AI computing market size Asia Pacific\",\"AI accelerator market size Latin America\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "306166d94f7fd257",
+      "start_time": "2026-10-22T20:16:11.984360+00:00",
+      "end_time": "2026-10-22T20:16:12.036402+00:00",
+      "duration_ms": 52.0422,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "reviews_fetch",
+        "edrak.tool.argument.values": "{\"country\":\"US\",\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\",\"ar\"],\"max_results\":50,\"since\":\"\",\"store\":\"google_play\",\"target_id_or_url\":\"com.nvidia.geforcenow\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "country,depth,entity,geo,languages,max_results,since,store,target_id_or_url,until",
+        "edrak.tool.argument.types": "{\"country\":\"str\",\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"since\":\"str\",\"store\":\"str\",\"target_id_or_url\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "apify",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "1d93e6d673eb98e6",
+      "start_time": "2026-10-22T20:16:10.731014+00:00",
+      "end_time": "2026-10-22T20:16:12.327525+00:00",
+      "duration_ms": 1596.511,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "search_interest",
+        "edrak.tool.argument.values": "{\"geo\":\"US\",\"keywords\":[\"NVIDIA AI\",\"AI computing\",\"Intel AI\",\"Broadcom AI\",\"AI cloud adoption\"],\"timeframe\":\"today 12-m\"}",
+        "edrak.tool.argument.names": "geo,keywords,timeframe",
+        "edrak.tool.argument.types": "{\"geo\":\"str\",\"keywords\":\"list\",\"timeframe\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "83cd3bae3e757c4a",
+      "start_time": "2026-10-22T20:16:10.882428+00:00",
+      "end_time": "2026-10-22T20:16:15.611033+00:00",
+      "duration_ms": 4728.6052,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI accelerator subscription pricing per seat per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "c819c021fda7ecc5",
+      "start_time": "2026-10-22T20:16:15.667273+00:00",
+      "end_time": "2026-10-22T20:16:16.287802+00:00",
+      "duration_ms": 620.5298,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "reviews_fetch",
+        "edrak.tool.argument.values": "{\"country\":\"US\",\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"ar\"],\"max_results\":30,\"since\":\"\",\"store\":\"google_play\",\"target_id_or_url\":\"com.nvidia.geforcenow\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "country,depth,entity,geo,languages,max_results,since,store,target_id_or_url,until",
+        "edrak.tool.argument.types": "{\"country\":\"str\",\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"since\":\"str\",\"store\":\"str\",\"target_id_or_url\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "5486f89cb00f653a",
+      "start_time": "2026-10-22T20:16:16.809713+00:00",
+      "end_time": "2026-10-22T20:16:16.814602+00:00",
+      "duration_ms": 4.889,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "search_interest",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"granularity\":\"monthly\",\"include_related\":true,\"keywords\":[\"NVIDIA AI\",\"AI computing\",\"Intel AI\",\"Broadcom AI\",\"AI cloud adoption\"],\"languages\":[\"en\",\"ar\"],\"max_results\":5,\"since\":\"\",\"timeframe\":\"today 12-m\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,granularity,include_related,keywords,languages,max_results,since,timeframe,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"granularity\":\"str\",\"include_related\":\"bool\",\"keywords\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"since\":\"str\",\"timeframe\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "invalid_input",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "9653a7c7a1d91bc7",
+      "start_time": "2026-10-22T20:15:59.648016+00:00",
+      "end_time": "2026-10-22T20:16:17.507413+00:00",
+      "duration_ms": 17859.3969,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.agent.type": "internal_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea"
+      },
+      "parent_span_id": "eeff902048ad1fe7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "31e2d4fd943acecf",
+      "start_time": "2026-10-22T20:16:15.629163+00:00",
+      "end_time": "2026-10-22T20:16:18.703906+00:00",
+      "duration_ms": 3074.7436,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI software licensing tiers price list\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ce3641ca3b2bf40b",
+      "start_time": "2026-10-22T20:16:19.962069+00:00",
+      "end_time": "2026-10-22T20:16:20.390280+00:00",
+      "duration_ms": 428.2107,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "search_interest",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"granularity\":\"month\",\"include_related\":true,\"keywords\":[\"NVIDIA AI\",\"AI computing\",\"Intel AI\",\"Broadcom AI\",\"AI cloud adoption\"],\"languages\":[\"en\",\"ar\"],\"max_results\":5,\"timeframe\":\"today 12-m\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,granularity,include_related,keywords,languages,max_results,timeframe",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"granularity\":\"str\",\"include_related\":\"bool\",\"keywords\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"timeframe\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "552a3c73a73c84bd",
+      "start_time": "2026-10-22T20:16:18.920359+00:00",
+      "end_time": "2026-10-22T20:16:20.968678+00:00",
+      "duration_ms": 2048.3192,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":20,\"num\":10,\"query\":\"NVIDIA AI computing platform cloud providers adoption barriers\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "b6a8c6e92646631f",
+      "start_time": "2026-10-22T20:16:18.710795+00:00",
+      "end_time": "2026-10-22T20:16:21.551011+00:00",
+      "duration_ms": 2840.216,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI software subscription cost per user per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "7b52f3120cd068b8",
+      "start_time": "2026-10-22T20:16:20.724303+00:00",
+      "end_time": "2026-10-22T20:16:23.793625+00:00",
+      "duration_ms": 3069.3223,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"cloud AI workload growth Asia Pacific 2024\",\"AI developer adoption Latin America 2024\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "74391ca6d1b94595",
+      "start_time": "2026-10-22T20:16:24.129475+00:00",
+      "end_time": "2026-10-22T20:16:25.278660+00:00",
+      "duration_ms": 1149.1844,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"ar\"],\"max_results\":20,\"num\":10,\"query\":\"منصات حوسبة الذكاء الاصطناعي NVIDIA سحابة\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "8ca65b4c6e1342c3",
+      "start_time": "2026-10-22T20:16:21.561425+00:00",
+      "end_time": "2026-10-22T20:16:25.865816+00:00",
+      "duration_ms": 4304.391,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel oneAPI pricing model per seat per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "47e3340ecaf56f15",
+      "start_time": "2026-10-22T20:16:26.605742+00:00",
+      "end_time": "2026-10-22T20:16:27.852494+00:00",
+      "duration_ms": 1246.7519,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":10,\"num\":10,\"query\":\"NVIDIA DGX Cloud Amazon product\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "97df0d7a3dbd9c68",
+      "start_time": "2026-10-22T20:16:25.878517+00:00",
+      "end_time": "2026-10-22T20:16:28.991693+00:00",
+      "duration_ms": 3113.1754,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI hardware and software market presence United States Europe APAC\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "99eb9f823dd92289",
+      "start_time": "2026-10-22T20:16:29.598618+00:00",
+      "end_time": "2026-10-22T20:16:30.309175+00:00",
+      "duration_ms": 710.5567,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "fetch_page",
+        "edrak.tool.argument.values": "{\"max_chars\":20000,\"url\":\"https://blogs.nvidia.com/blog/ai-cloud-ecosystem/\"}",
+        "edrak.tool.argument.names": "max_chars,url",
+        "edrak.tool.argument.types": "{\"max_chars\":\"int\",\"url\":\"str\"}",
+        "edrak.tool.provider": "direct_http",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"preview\":1,\"warnings\":1},\"decoded_json\":true,\"field_count\":7,\"keys\":[\"batch_id\",\"count\",\"coverage\",\"preview\",\"provider_used\",\"status\",\"warnings\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ea435024a344988c",
+      "start_time": "2026-10-22T20:16:29.004061+00:00",
+      "end_time": "2026-10-22T20:16:32.387099+00:00",
+      "duration_ms": 3383.0383,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI product availability by region press release 2025 2026\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "b9c95b9e25e47114",
+      "start_time": "2026-10-22T20:16:32.024581+00:00",
+      "end_time": "2026-10-22T20:16:34.134606+00:00",
+      "duration_ms": 2110.025,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"Intel\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":20,\"num\":10,\"query\":\"Intel AI accelerator Amazon review\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "b66ffe4fa714ad0f",
+      "start_time": "2026-10-22T20:16:13.715089+00:00",
+      "end_time": "2026-10-22T20:16:34.758039+00:00",
+      "duration_ms": 21042.9498,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"hashtags\":[\"#NVIDIAAI\",\"#AICloud\",\"#GPU\"],\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"x\",\"query\":\"NVIDIA AI platform\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,hashtags,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"hashtags\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "e56438c5ff86cdc3",
+      "start_time": "2026-10-22T20:16:32.409054+00:00",
+      "end_time": "2026-10-22T20:16:35.865235+00:00",
+      "duration_ms": 3456.1804,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI solutions target industry verticals cloud service providers automotive healthcare finance\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "f5e26d3de1b9b276",
+      "start_time": "2026-10-22T20:16:38.456836+00:00",
+      "end_time": "2026-10-22T20:16:38.809098+00:00",
+      "duration_ms": 352.2611,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"hashtags\":[],\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"reddit\",\"query\":\"NVIDIA AI platform\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,hashtags,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"hashtags\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "29d052f5ae171c76",
+      "start_time": "2026-10-22T20:16:37.520575+00:00",
+      "end_time": "2026-10-22T20:16:38.939240+00:00",
+      "duration_ms": 1418.6655,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"Broadcom\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":20,\"num\":10,\"query\":\"Broadcom AI accelerator cloud providers review\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "033212b2af2dc782",
+      "start_time": "2026-10-22T20:16:35.877074+00:00",
+      "end_time": "2026-10-22T20:16:39.122851+00:00",
+      "duration_ms": 3245.7769,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI portfolio industry focus whitepaper 2024\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "d425037e2634cdf9",
+      "start_time": "2026-10-22T20:16:39.878386+00:00",
+      "end_time": "2026-10-22T20:16:40.706271+00:00",
+      "duration_ms": 827.8847,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"hashtags\":[],\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"youtube\",\"query\":\"NVIDIA AI webinar\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,hashtags,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"hashtags\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "youtube_api",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"preview\":5},\"decoded_json\":true,\"field_count\":7,\"keys\":[\"batch_id\",\"count\",\"coverage\",\"next_cursor\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "38d57539f20bf231",
+      "start_time": "2026-10-22T20:16:39.139261+00:00",
+      "end_time": "2026-10-22T20:16:41.242614+00:00",
+      "duration_ms": 2103.3531,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI accelerator product lineup competing with NVIDIA GPUs\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "1947321b97493925",
+      "start_time": "2026-10-22T20:16:42.117586+00:00",
+      "end_time": "2026-10-22T20:16:43.614140+00:00",
+      "duration_ms": 1496.5537,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":30,\"num\":10,\"query\":\"NVIDIA AI cloud platform review\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":4},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "9ad09df17b87fa2d",
+      "start_time": "2026-10-22T20:16:41.255124+00:00",
+      "end_time": "2026-10-22T20:16:43.881506+00:00",
+      "duration_ms": 2626.382,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel Xeon Scalable AI extensions product name and capabilities\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "eaede9890732440e",
+      "start_time": "2026-10-22T20:16:43.900566+00:00",
+      "end_time": "2026-10-22T20:16:47.243370+00:00",
+      "duration_ms": 3342.804,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI accelerator pricing per unit and software licensing fees\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "e99f6fd6b96d8c78",
+      "start_time": "2026-10-22T20:16:45.390968+00:00",
+      "end_time": "2026-10-22T20:16:48.438623+00:00",
+      "duration_ms": 3047.6548,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "web_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"Intel\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":30,\"num\":10,\"query\":\"Intel AI cloud platform review\",\"search_type\":\"web\",\"since\":\"\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,num,query,search_type,since,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"num\":\"int\",\"query\":\"str\",\"search_type\":\"str\",\"since\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "878ef405bc22497e",
+      "start_time": "2026-10-22T20:16:47.254153+00:00",
+      "end_time": "2026-10-22T20:16:49.629319+00:00",
+      "duration_ms": 2375.1658,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI software subscription tiers pricing table\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "08f58ff938604bf7",
+      "start_time": "2026-10-22T20:16:50.356580+00:00",
+      "end_time": "2026-10-22T20:16:51.097777+00:00",
+      "duration_ms": 741.1977,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "social_comments",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"youtube\",\"post_url\":\"https://www.youtube.com/watch?v=jIviHI7fqyc\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,platform,post_url,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"post_url\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "youtube_api",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"preview\":5},\"decoded_json\":true,\"field_count\":7,\"keys\":[\"batch_id\",\"count\",\"coverage\",\"next_cursor\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "d208c7303bec7b8c",
+      "start_time": "2026-10-22T20:16:52.846681+00:00",
+      "end_time": "2026-10-22T20:16:53.036329+00:00",
+      "duration_ms": 189.6482,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"hashtags\":[],\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"tiktok\",\"query\":\"NVIDIA AI demo\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,hashtags,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"hashtags\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "d6c02687a2f8238a",
+      "start_time": "2026-10-22T20:16:49.638338+00:00",
+      "end_time": "2026-10-22T20:16:54.342861+00:00",
+      "duration_ms": 4704.5233,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI‑accelerated networking product market regions United States Europe APAC\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "2f0350846aa2eb45",
+      "start_time": "2026-10-22T20:16:54.429348+00:00",
+      "end_time": "2026-10-22T20:16:54.616543+00:00",
+      "duration_ms": 187.1947,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"hashtags\":[],\"languages\":[\"en\"],\"max_results\":30,\"platform\":\"facebook\",\"query\":\"NVIDIA AI services\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,hashtags,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"hashtags\":\"list\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "53e79693421a29e9",
+      "start_time": "2026-10-22T20:16:54.367316+00:00",
+      "end_time": "2026-10-22T20:16:58.791776+00:00",
+      "duration_ms": 4424.4607,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI solutions regional availability press release 2025\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "53079a4d887c2a24",
+      "start_time": "2026-10-22T20:16:22.648761+00:00",
+      "end_time": "2026-10-22T20:17:01.881464+00:00",
+      "duration_ms": 39232.7035,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "news_coverage",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":10,\"query\":\"NVIDIA AI platform adoption US\",\"since\":\"\",\"source\":\"gdelt\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,query,since,source,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"query\":\"str\",\"since\":\"str\",\"source\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "c77947a9ba5aaa65",
+      "start_time": "2026-10-22T20:16:58.796593+00:00",
+      "end_time": "2026-10-22T20:17:02.105732+00:00",
+      "duration_ms": 3309.1395,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI ASIC target verticals data center telecommunications enterprise edge AI\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "19413ffab6da1f07",
+      "start_time": "2026-10-22T20:17:02.937010+00:00",
+      "end_time": "2026-10-22T20:17:02.939738+00:00",
+      "duration_ms": 2.7275,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "search_interest",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"granularity\":\"month\",\"include_related\":true,\"keywords\":[\"NVIDIA AI\",\"AI computing\",\"Intel AI\",\"Broadcom AI\",\"AI cloud adoption\"],\"max_results\":5,\"timeframe\":\"today 12-m\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,granularity,include_related,keywords,max_results,timeframe",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"granularity\":\"str\",\"include_related\":\"bool\",\"keywords\":\"list\",\"max_results\":\"int\",\"timeframe\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "4ac0530815b57c59",
+      "start_time": "2026-10-22T20:16:56.790670+00:00",
+      "end_time": "2026-10-22T20:17:03.746031+00:00",
+      "duration_ms": 6955.3612,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AI hardware import tariffs China\",\"data residency regulations AI cloud Brazil\",\"AI export control policy India\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 24,
+        "edrak.tool.result.summary": "{\"count\":24,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "be04c49451d17ee6",
+      "start_time": "2026-10-22T20:17:02.111879+00:00",
+      "end_time": "2026-10-22T20:17:04.771808+00:00",
+      "duration_ms": 2659.9295,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI product portfolio industry focus whitepaper\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ebee49a9d4a7e6e5",
+      "start_time": "2026-10-22T20:17:04.777540+00:00",
+      "end_time": "2026-10-22T20:17:07.199979+00:00",
+      "duration_ms": 2422.4391,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI accelerator product names inference ASICs comparable to NVIDIA GPUs\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "cbe93acce698f0cd",
+      "start_time": "2026-10-22T20:17:04.119398+00:00",
+      "end_time": "2026-10-22T20:17:08.076370+00:00",
+      "duration_ms": 3956.9714,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "news_coverage",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":10,\"query\":\"NVIDIA AI platform adoption US\",\"since\":\"\",\"source\":\"google_news\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,query,since,source,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"query\":\"str\",\"since\":\"str\",\"source\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "c4a25294816c98d0",
+      "start_time": "2026-10-22T20:17:07.230089+00:00",
+      "end_time": "2026-10-22T20:17:11.026099+00:00",
+      "duration_ms": 3796.0108,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI‑optimized networking chips product lineup\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "b1c49ac4da6183f8",
+      "start_time": "2026-10-22T20:17:09.657592+00:00",
+      "end_time": "2026-10-22T20:17:12.614953+00:00",
+      "duration_ms": 2957.3607,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "news_coverage",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":10,\"query\":\"AI cloud market Europe NVIDIA\",\"since\":\"\",\"source\":\"google_news\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,query,since,source,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"query\":\"str\",\"since\":\"str\",\"source\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "65dfe5433a863a60",
+      "start_time": "2026-10-22T20:17:11.033967+00:00",
+      "end_time": "2026-10-22T20:17:13.928059+00:00",
+      "duration_ms": 2894.0923,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI accelerator pricing model list price\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ada456c7b759994d",
+      "start_time": "2026-10-22T20:17:14.246464+00:00",
+      "end_time": "2026-10-22T20:17:16.170362+00:00",
+      "duration_ms": 1923.8972,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "news_coverage",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"Intel AI competition\",\"geo\":\"US\",\"languages\":[\"en\"],\"max_results\":10,\"query\":\"Intel AI competition news\",\"since\":\"\",\"source\":\"google_news\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,query,since,source,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"query\":\"str\",\"since\":\"str\",\"source\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":5},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "66a06f31247269c2",
+      "start_time": "2026-10-22T20:17:13.945347+00:00",
+      "end_time": "2026-10-22T20:17:16.976293+00:00",
+      "duration_ms": 3030.946,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI software licensing fees per seat\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "befb1e7afb38ecd6",
+      "start_time": "2026-10-22T20:17:13.000608+00:00",
+      "end_time": "2026-10-22T20:17:18.953319+00:00",
+      "duration_ms": 5952.7109,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Broadcom AI accelerator market share Asia Pacific\",\"Intel AI GPU market Latin America\",\"local AI chip startups market Asia Pacific\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ecdff1fe084cd677",
+      "start_time": "2026-10-22T20:17:17.943819+00:00",
+      "end_time": "2026-10-22T20:17:23.082978+00:00",
+      "duration_ms": 5139.1595,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "news_coverage",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA AI computing\",\"geo\":\"US\",\"languages\":[\"ar\"],\"max_results\":10,\"query\":\"NVIDIA AI منصة السحابة adoption US\",\"since\":\"\",\"source\":\"google_news\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,query,since,source,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"query\":\"str\",\"since\":\"str\",\"source\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.provider": "serper",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1,\"preview\":1},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"batch_id\",\"cost_estimate\",\"count\",\"coverage\",\"gaps\",\"preview\",\"provider_used\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "c2f4b9ce1f898fa2",
+      "start_time": "2026-10-22T20:17:24.877212+00:00",
+      "end_time": "2026-10-22T20:17:31.214859+00:00",
+      "duration_ms": 6337.6471,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Alibaba Cloud AI GPU pricing\",\"AWS AI instance pricing Brazil\",\"Google Cloud AI accelerator pricing Japan\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 24,
+        "edrak.tool.result.summary": "{\"count\":24,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "197bf748b64e9f10",
+      "start_time": "2026-10-22T20:17:39.025598+00:00",
+      "end_time": "2026-10-22T20:17:41.579046+00:00",
+      "duration_ms": 2553.448,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI software per‑seat pricing site:broadcom.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "1598c3a4d3caac70",
+      "start_time": "2026-10-22T20:17:41.599628+00:00",
+      "end_time": "2026-10-22T20:17:44.934197+00:00",
+      "duration_ms": 3334.5692,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI licensing plans pricing per user per month official pricing guide\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "ae47a4dc4285c191",
+      "start_time": "2026-10-22T20:17:40.009555+00:00",
+      "end_time": "2026-10-22T20:17:45.336558+00:00",
+      "duration_ms": 5327.0025,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Japan national AI strategy funding 2024\",\"Brazil AI accelerator subsidies 2024\",\"India AI data center incentives 2024\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "1902f5e0e7664b65",
+      "start_time": "2026-10-22T20:17:44.950131+00:00",
+      "end_time": "2026-10-22T20:17:49.115852+00:00",
+      "duration_ms": 4165.7207,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel oneAPI AI Toolkit pricing per user per month site:intel.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "fce93d3ac114f819",
+      "start_time": "2026-10-22T20:17:49.123146+00:00",
+      "end_time": "2026-10-22T20:17:51.654358+00:00",
+      "duration_ms": 2531.2115,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI software subscription pricing site:intel.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "a0db5ab202c4c096"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "bb08fe0f8f0825fa",
+      "start_time": "2026-10-22T20:17:58.838665+00:00",
+      "end_time": "2026-10-22T20:18:07.280479+00:00",
+      "duration_ms": 8441.8139,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Broadcom AI accelerator market share\",\"Intel AI accelerator product portfolio\",\"AMD AI accelerator go-to-market strategy\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}"
+      },
+      "parent_span_id": "375922a277870a0a"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "375922a277870a0a",
+      "start_time": "2026-10-22T20:15:59.653044+00:00",
+      "end_time": "2026-10-22T20:18:17.202239+00:00",
+      "duration_ms": 137549.1952,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.agent.type": "market_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a"
+      },
+      "parent_span_id": "eeff902048ad1fe7"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "a0db5ab202c4c096",
+      "start_time": "2026-10-22T20:15:59.650257+00:00",
+      "end_time": "2026-10-22T20:18:22.709396+00:00",
+      "duration_ms": 143059.1394,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.agent.type": "competitor_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "c6a09889-7791-4578-986c-4d6a5040cd3a"
+      },
+      "parent_span_id": "eeff902048ad1fe7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "aa52d797164e77c6",
+      "start_time": "2026-10-22T20:17:23.113382+00:00",
+      "end_time": "2026-10-22T20:18:38.657442+00:00",
+      "duration_ms": 75544.0593,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "analyze_text",
+        "edrak.tool.argument.values": "{\"batch_ids\":[\"b_9c2a539eb4f9\",\"b_f24fe965032f\",\"b_6a47ddfc7d35\",\"b_e76148329a17\",\"b_fc73d8dee02f\",\"b_368bf6e98ab5\",\"b_22ebe479b957\",\"b_6ea52aed783b\"],\"max_items\":200}",
+        "edrak.tool.argument.names": "batch_ids,max_items",
+        "edrak.tool.argument.types": "{\"batch_ids\":\"list\",\"max_items\":\"int\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"themes\":15},\"decoded_json\":true,\"field_count\":8,\"keys\":[\"analyzed\",\"count\",\"languages\",\"sentiment\",\"status\",\"themes\",\"themes_total\",\"total_items\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "0a2bfbebed79ee3e",
+      "start_time": "2026-10-22T20:18:38.659837+00:00",
+      "end_time": "2026-10-22T20:18:38.676660+00:00",
+      "duration_ms": 16.8225,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"volume_over_time\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"batch_ids\":15},\"decoded_json\":true,\"field_count\":7,\"keys\":[\"batch_ids\",\"count\",\"metric\",\"metric_id\",\"params\",\"status\",\"values\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "95914f265d16cfe0",
+      "start_time": "2026-10-22T20:18:38.677820+00:00",
+      "end_time": "2026-10-22T20:18:38.695299+00:00",
+      "duration_ms": 17.4782,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"platform_mix\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"batch_ids\":15},\"decoded_json\":true,\"field_count\":6,\"keys\":[\"batch_ids\",\"count\",\"metric\",\"metric_id\",\"status\",\"values\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "296d5b2ab7929067",
+      "start_time": "2026-10-22T20:18:38.696567+00:00",
+      "end_time": "2026-10-22T20:18:38.716055+00:00",
+      "duration_ms": 19.4879,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"language_mix\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"batch_ids\":15},\"decoded_json\":true,\"field_count\":6,\"keys\":[\"batch_ids\",\"count\",\"metric\",\"metric_id\",\"status\",\"values\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "f3d866c538ba0b23",
+      "start_time": "2026-10-22T20:18:38.717192+00:00",
+      "end_time": "2026-10-22T20:18:38.734372+00:00",
+      "duration_ms": 17.18,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"engagement_stats\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"batch_ids\":15},\"decoded_json\":true,\"field_count\":6,\"keys\":[\"batch_ids\",\"count\",\"metric\",\"metric_id\",\"status\",\"values\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "3f2613434b4c35e4",
+      "start_time": "2026-10-22T20:18:38.735657+00:00",
+      "end_time": "2026-10-22T20:18:38.787895+00:00",
+      "duration_ms": 52.2388,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"share_of_voice\",\"params\":{\"competitors\":[\"Broadcom\",\"Intel Corp\"],\"entity\":\"NVIDIA Corporation\"}}",
+        "edrak.tool.argument.names": "metric,params",
+        "edrak.tool.argument.types": "{\"metric\":\"str\",\"params\":\"dict\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"batch_ids\":15},\"decoded_json\":true,\"field_count\":7,\"keys\":[\"batch_ids\",\"count\",\"metric\",\"metric_id\",\"params\",\"status\",\"values\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "dff473a7c84d7b9a",
+      "start_time": "2026-10-22T20:18:38.839656+00:00",
+      "end_time": "2026-10-22T20:18:38.844142+00:00",
+      "duration_ms": 4.4863,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{},\"limit\":8,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":8,\"warnings\":1},\"decoded_json\":true,\"field_count\":5,\"keys\":[\"count\",\"items\",\"status\",\"total\",\"warnings\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "55f6312e14aabc7f",
+      "start_time": "2026-10-22T20:18:38.856696+00:00",
+      "end_time": "2026-10-22T20:18:38.864323+00:00",
+      "duration_ms": 7.6272,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"NVIDIA DGX Cloud\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":3,\"warnings\":1},\"decoded_json\":true,\"field_count\":5,\"keys\":[\"count\",\"items\",\"status\",\"total\",\"warnings\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "2dddf9cba83dda77",
+      "start_time": "2026-10-22T20:18:38.866217+00:00",
+      "end_time": "2026-10-22T20:18:38.873735+00:00",
+      "duration_ms": 7.5185,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"AI certification courses\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":3,\"warnings\":1},\"decoded_json\":true,\"field_count\":5,\"keys\":[\"count\",\"items\",\"status\",\"total\",\"warnings\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "a4fb7bd505ed86fc",
+      "start_time": "2026-10-22T20:18:38.876451+00:00",
+      "end_time": "2026-10-22T20:18:38.883154+00:00",
+      "duration_ms": 6.7032,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"GPU cloud providers\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":3},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"items\",\"status\",\"total\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "6f34fb0d1a060146",
+      "start_time": "2026-10-22T20:18:38.884948+00:00",
+      "end_time": "2026-10-22T20:18:38.892478+00:00",
+      "duration_ms": 7.5306,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"AI education\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":2},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"items\",\"status\",\"total\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "c827e27efd8cc55a",
+      "start_time": "2026-10-22T20:18:38.893923+00:00",
+      "end_time": "2026-10-22T20:18:38.901211+00:00",
+      "duration_ms": 7.288,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"AI infrastructure\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":2},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"items\",\"status\",\"total\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "0c7c4a1c9e49514c",
+      "start_time": "2026-10-22T20:18:38.902930+00:00",
+      "end_time": "2026-10-22T20:18:38.909289+00:00",
+      "duration_ms": 6.3593,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{\"theme\":\"Intel AI performance\"},\"limit\":3,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"items\":2},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"items\",\"status\",\"total\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "54158306bbbc8af9",
+      "start_time": "2026-10-22T20:18:51.896341+00:00",
+      "end_time": "2026-10-22T20:18:51.912250+00:00",
+      "duration_ms": 15.9091,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "submit_findings",
+        "edrak.tool.argument.values": "{\"truncated\":true,\"serialized_length\":2562}",
+        "edrak.tool.argument.names": "findings",
+        "edrak.tool.argument.types": "{\"findings\":\"list\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"accepted\":5},\"decoded_json\":true,\"field_count\":3,\"keys\":[\"accepted\",\"count\",\"status\"],\"type\":\"object\"}"
+      },
+      "parent_span_id": "0532d23d40b5fc15"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "0532d23d40b5fc15",
+      "start_time": "2026-10-22T20:15:59.691701+00:00",
+      "end_time": "2026-10-22T20:18:55.532021+00:00",
+      "duration_ms": 175840.3193,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.agent.type": "customer_trends",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "029ef749-18d0-44f3-bc64-5651a5a759b7"
+      },
+      "parent_span_id": "eeff902048ad1fe7"
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "7506858fb2b59ce33f36fa14173ef0a9",
+      "span_id": "eeff902048ad1fe7",
+      "start_time": "2026-10-22T20:15:54.653190+00:00",
+      "end_time": "2026-10-22T20:22:10.695248+00:00",
+      "duration_ms": 376042.058,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.run.resuming": false
+      }
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "5b54018a8d59c25d640b90e1f4e08cf4",
+      "span_id": "948813615758123d",
+      "start_time": "2026-10-22T21:15:01.649196+00:00",
+      "end_time": "2026-10-22T21:16:47.434530+00:00",
+      "duration_ms": 105785.3337,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "b7df208b10bdb96d1a6b54fad306ff57",
+        "edrak.run.resuming": true
+      }
+    }
+  ]
+}

@@ -4,7 +4,7 @@ from typing import Annotated, Any, Dict, List, Optional
 from typing_extensions import TypedDict
 
 from edrak.contracts.evidence import Evidence
-from edrak.contracts.result import Finding, WorkerResult
+from edrak.contracts.result import Conflict, Finding, WorkerResult
 from edrak.contracts.task import ResearchTask
 
 
@@ -21,7 +21,7 @@ class InternalAgentState(TypedDict, total=False):
     retrieved_evidence: List[Evidence]
     findings: List[Finding]
     limitations_and_gaps: List[str]
-    conflicts: List[str]
+    conflicts: List[Conflict]
     dropped_findings: List[Dict[str, Any]]
     summary: str
     llm_used: bool

@@ -21,6 +21,7 @@ from edrak.agents.customer_trends.tools import (
     web_search,
 )
 from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, invoke_tool
+from edrak.observability import set_tool_outcome, set_tool_provider, traced_tool
 
 COLLECTION_SPECS: tuple[ToolSpec, ...] = (
     web_search.SPEC,
@@ -111,8 +112,15 @@ def compact_json(response: ToolResponse | ProcessingResponse) -> str:
 
 
 def _structured_tool(ctx: ToolContext, spec: ToolSpec) -> StructuredTool:
+    @traced_tool(spec.name)
     async def run(**arguments: Any) -> str:
-        return compact_json(await invoke_tool(ctx, spec, arguments))
+        response = await invoke_tool(ctx, spec, arguments)
+        provider = getattr(response, "provider_used", None)
+        if provider:
+            set_tool_provider(provider, fallback=bool(getattr(response, "fallback_used", False)))
+        status = getattr(response.status, "value", response.status)
+        set_tool_outcome(str(status), error_code=getattr(response, "error_code", None))
+        return compact_json(response)
 
     return StructuredTool(
         name=spec.name,

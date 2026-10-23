@@ -1,0 +1,1145 @@
+{
+  "ground_truth": "nvidia_competitive_intelligence_inputs",
+  "run_bundle": "Competitive",
+  "method": "llm judge (gpt-5.1)",
+  "query": {
+    "goal_word_overlap": 1.0,
+    "same_company": true,
+    "same_targets": true,
+    "same_markets": true,
+    "ground_truth": {
+      "goal": "How does NVIDIA's data-center AI accelerator and inference-platform offering compare with Intel Gaudi and Broadcom's AI accelerator and networking portfolio in the United States and Europe, based on public evidence from 2025–2026?",
+      "company": "NVIDIA Corporation",
+      "company_aliases": [
+        "NVIDIA"
+      ],
+      "targets": [
+        "Broadcom",
+        "Intel Corp"
+      ],
+      "markets": [
+        "Europe",
+        "United States"
+      ]
+    },
+    "edrak": {
+      "goal": "How does NVIDIA's data-center AI accelerator and inference-platform offering compare with Intel Gaudi and Broadcom's AI accelerator and networking portfolio in the United States and Europe, based on public evidence from 2025–2026?",
+      "company": "NVIDIA Corporation",
+      "company_aliases": [
+        "Nvidia"
+      ],
+      "targets": [
+        "Broadcom",
+        "Intel Corp"
+      ],
+      "markets": [
+        "Europe",
+        "United States"
+      ]
+    }
+  },
+  "orchestrator": {
+    "workers_expected": [
+      "competitor_intelligence",
+      "market_intelligence"
+    ],
+    "workers_missing_in_edrak": [],
+    "workers_extra_in_edrak": [
+      "internal_intelligence"
+    ],
+    "worker_recall": 1.0,
+    "worker_jaccard": 0.667,
+    "task_count": [
+      2,
+      3
+    ],
+    "task_goal_word_overlap": {
+      "competitor_intelligence": 0.5,
+      "market_intelligence": 0.176
+    },
+    "truth_items": 2,
+    "edrak_items": 3,
+    "matched": 2,
+    "full_matches": 2,
+    "partial_matches": 0,
+    "contradictions": 0,
+    "recall": 1.0,
+    "full_recall": 1.0,
+    "graded_recall": 1.0,
+    "weighted_recall": 1.0,
+    "must_recall": null,
+    "one_to_one_recall": 1.0,
+    "contradiction_rate": 0.0,
+    "coverage_concentration": 1,
+    "alignment": 0.667,
+    "precision_adjusted": 0.667,
+    "valid_novel": 0,
+    "noise": 1,
+    "noise_rate": 0.333,
+    "duplicate_rate": 0.0,
+    "f1": 0.8,
+    "f1_adjusted": 0.8,
+    "volume_ratio": 1.5,
+    "judge_agreement": null
+  },
+  "workers": {
+    "competitor_intelligence": {
+      "truth_items": 5,
+      "edrak_items": 1,
+      "matched": 1,
+      "full_matches": 1,
+      "partial_matches": 0,
+      "contradictions": 0,
+      "recall": 0.2,
+      "full_recall": 0.2,
+      "graded_recall": 0.2,
+      "weighted_recall": 0.182,
+      "must_recall": 0.0,
+      "one_to_one_recall": 0.2,
+      "recall_ci95": [
+        0.0,
+        0.6
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 1,
+      "alignment": 1.0,
+      "precision_adjusted": 1.0,
+      "valid_novel": 0,
+      "noise": 0,
+      "noise_rate": 0.0,
+      "duplicate_rate": 0.0,
+      "f1": 0.333,
+      "f1_adjusted": 0.333,
+      "volume_ratio": 0.2,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "System says nothing about NVIDIA DGX B200 page or comparison scope",
+          "edrak": []
+        },
+        {
+          "truth": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No mention of Gaudi docs, versions, or inference workflows",
+          "edrak": []
+        },
+        {
+          "truth": "IBM announced Intel Gaudi 3 availability on IBM Cloud in Frankfurt and Washington, D.C., with Dallas availability planned for Q2 2025; this is a partner-cloud deployment announcement, not proof of general availability in every region.",
+          "importance": "should",
+          "verdict": "full",
+          "reason": "Matches regions, Dallas timeline, and partner-cloud rollout framing",
+          "edrak": [
+            "Intel Corp: Intel Gaudi 3 AI accelerators were launched on IBM Cloud in the Frankfurt (eu-de) and Washington, D.C. (us-east) regions, with a planned expansion to the Dallas (us-south) region in Q2 2025, indicating a regional rollout cadence by quarter."
+          ]
+        },
+        {
+          "truth": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s StrataXGS Ethernet switch; this is networking evidence and does not by itself establish a complete inference system.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No reference to Broadcom, Tomahawk 5, or networking gear",
+          "edrak": []
+        },
+        {
+          "truth": "The reviewed official pages do not establish comparable United States or Europe transaction prices for complete NVIDIA, Intel, and Broadcom inference systems; a defensible comparison needs dated quotes with equivalent scope.",
+          "importance": "must",
+          "verdict": "none",
+          "reason": "Does not discuss pricing comparability or need for dated quotes",
+          "edrak": []
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+          "reason": "System says nothing about NVIDIA DGX B200 page or comparison scope",
+          "verdict": "none"
+        },
+        {
+          "item": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+          "reason": "No mention of Gaudi docs, versions, or inference workflows",
+          "verdict": "none"
+        },
+        {
+          "item": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s StrataXGS Ethernet switch; this is networking evidence and does not by itself establish a complete inference system.",
+          "reason": "No reference to Broadcom, Tomahawk 5, or networking gear",
+          "verdict": "none"
+        },
+        {
+          "item": "The reviewed official pages do not establish comparable United States or Europe transaction prices for complete NVIDIA, Intel, and Broadcom inference systems; a defensible comparison needs dated quotes with equivalent scope.",
+          "reason": "Does not discuss pricing comparability or need for dated quotes",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [],
+      "category_agreement": 0.0,
+      "recall_by_category": {
+        "availability": 1.0,
+        "pricing": 0.0,
+        "product": 0.0
+      },
+      "in_edrak": true
+    },
+    "internal_intelligence": {
+      "truth_items": 4,
+      "edrak_items": 5,
+      "matched": 4,
+      "full_matches": 3,
+      "partial_matches": 1,
+      "contradictions": 0,
+      "recall": 1.0,
+      "full_recall": 0.75,
+      "graded_recall": 0.875,
+      "weighted_recall": 0.85,
+      "must_recall": 0.75,
+      "one_to_one_recall": 1.0,
+      "recall_ci95": [
+        0.625,
+        1.0
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 1,
+      "alignment": 0.8,
+      "precision_adjusted": 0.8,
+      "valid_novel": 0,
+      "noise": 1,
+      "noise_rate": 0.2,
+      "duplicate_rate": 0.0,
+      "f1": 0.889,
+      "f1_adjusted": 0.889,
+      "volume_ratio": 1.25,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "The company-setup documents are synthetic planning references, not confidential or verified NVIDIA operating data, and should guide research without serving as proof of product claims.",
+          "importance": "must",
+          "verdict": "partial",
+          "reason": "Covers non-approval of plans, not synthetic/non-confidential nature",
+          "edrak": [
+            "The planning framework states it does not assert that NVIDIA has approved any particular product, feature, launch, or schedule."
+          ]
+        },
+        {
+          "truth": "The United States and Europe are initial analysis scopes, not confirmed NVIDIA investment or launch plans.",
+          "importance": "should",
+          "verdict": "full",
+          "reason": "Same claim about US/EU as analysis scope, not plans",
+          "edrak": [
+            "The United States and Europe are identified as the initial analysis scopes, not as statements of future investment or launch plans."
+          ]
+        },
+        {
+          "truth": "Compare performance only when the workload, configuration, test conditions, and source are disclosed and sufficiently comparable; the planning reference supplies no benchmark results.",
+          "importance": "must",
+          "verdict": "full",
+          "reason": "Both require comparable, sourced benchmarks and note no numbers provided",
+          "edrak": [
+            "The competitive‑intelligence planning document requires performance and efficiency benchmarks to be comparable and sourced, but it does not provide any specific benchmark numbers."
+          ]
+        },
+        {
+          "truth": "Use approved, current pricing and packaging when available; the planning references provide no actual NVIDIA prices or comparable transaction quotes.",
+          "importance": "should",
+          "verdict": "full",
+          "reason": "States need for approved pricing; references give none themselves",
+          "edrak": [
+            "The commercial model requires using approved, current pricing and packaging when published."
+          ]
+        }
+      ],
+      "not_covered": [],
+      "extra_edrak_items": [
+        {
+          "item": "When published, the commercial model includes public list pricing, purchase/lease options, cloud pricing, and support terms.",
+          "label": "noise",
+          "reason": "Pricing mechanics generic; not NVIDIA–Intel–Broadcom specific"
+        }
+      ],
+      "category_agreement": 0.0,
+      "recall_by_category": {
+        "methodology": 1.0,
+        "pricing": 1.0,
+        "scope": 1.0
+      },
+      "in_edrak": true
+    }
+  },
+  "verification": {
+    "truth_items": 5,
+    "edrak_items": 17,
+    "matched": 1,
+    "full_matches": 0,
+    "partial_matches": 1,
+    "contradictions": 0,
+    "recall": 0.2,
+    "full_recall": 0.0,
+    "graded_recall": 0.1,
+    "weighted_recall": 0.1,
+    "must_recall": null,
+    "one_to_one_recall": 0.2,
+    "recall_ci95": [
+      0.0,
+      0.3
+    ],
+    "contradiction_rate": 0.0,
+    "coverage_concentration": 1,
+    "alignment": 0.176,
+    "precision_adjusted": 0.353,
+    "valid_novel": 3,
+    "noise": 11,
+    "noise_rate": 0.647,
+    "duplicate_rate": 0.0,
+    "f1": 0.188,
+    "f1_adjusted": 0.255,
+    "volume_ratio": 3.4,
+    "judge_agreement": null,
+    "matches": [
+      {
+        "truth": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+        "importance": "should",
+        "verdict": "none",
+        "reason": "No mention of NVIDIA DGX B200 or system-level comparison",
+        "edrak": []
+      },
+      {
+        "truth": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+        "importance": "should",
+        "verdict": "none",
+        "reason": "System list has nothing on Intel Gaudi docs or workflows",
+        "edrak": []
+      },
+      {
+        "truth": "IBM announced Intel Gaudi 3 availability on IBM Cloud in Frankfurt and Washington, D.C., with Dallas availability planned for Q2 2025; this is a partner-cloud deployment announcement, not proof of general availability in every region.",
+        "importance": "should",
+        "verdict": "none",
+        "reason": "No IBM Cloud or Gaudi 3 regional availability discussed",
+        "edrak": []
+      },
+      {
+        "truth": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s StrataXGS Ethernet switch; this is networking evidence and does not by itself establish a complete inference system.",
+        "importance": "should",
+        "verdict": "none",
+        "reason": "No Broadcom Tomahawk 5 or Ethernet switch evidence mentioned",
+        "edrak": []
+      },
+      {
+        "truth": "The reviewed official pages do not establish comparable United States or Europe transaction prices for complete NVIDIA, Intel, and Broadcom inference systems; a defensible comparison needs dated quotes with equivalent scope.",
+        "importance": "should",
+        "verdict": "partial",
+        "reason": "Items note pricing and benchmark requirements but not missing comparable prices",
+        "edrak": [
+          "The commercial model requires using approved, current pricing and packaging when published.",
+          "When published, the commercial model includes public list pricing, purchase/lease options, cloud pricing, and support terms.",
+          "The competitive‑intelligence planning document requires performance and efficiency benchmarks to be comparable and sourced, but it does not provide any specific benchmark numbers."
+        ]
+      }
+    ],
+    "not_covered": [
+      {
+        "item": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+        "reason": "No mention of NVIDIA DGX B200 or system-level comparison",
+        "verdict": "none"
+      },
+      {
+        "item": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+        "reason": "System list has nothing on Intel Gaudi docs or workflows",
+        "verdict": "none"
+      },
+      {
+        "item": "IBM announced Intel Gaudi 3 availability on IBM Cloud in Frankfurt and Washington, D.C., with Dallas availability planned for Q2 2025; this is a partner-cloud deployment announcement, not proof of general availability in every region.",
+        "reason": "No IBM Cloud or Gaudi 3 regional availability discussed",
+        "verdict": "none"
+      },
+      {
+        "item": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s StrataXGS Ethernet switch; this is networking evidence and does not by itself establish a complete inference system.",
+        "reason": "No Broadcom Tomahawk 5 or Ethernet switch evidence mentioned",
+        "verdict": "none"
+      }
+    ],
+    "extra_edrak_items": [
+      {
+        "item": "The United States and Europe are identified as the initial analysis scopes, not as statements of future investment or launch plans.",
+        "label": "noise",
+        "reason": "About scope of research, not market comparison"
+      },
+      {
+        "item": "The planning framework states it does not assert that NVIDIA has approved any particular product, feature, launch, or schedule.",
+        "label": "noise",
+        "reason": "Methodological disclaimer, not competitive evidence"
+      },
+      {
+        "item": "Broadcom reported securing a fifth XPU customer with a $1.0 billion order in FY2025, after previously adding a fourth XPU customer earlier in the year. This indicates at least five distinct paying customers for its custom AI accelerator (XPU) business.",
+        "label": "valid_novel",
+        "reason": "Concrete data on Broadcom AI accelerator customers"
+      },
+      {
+        "item": "Broadcom posted FY2025 total revenue of $64 billion, with AI‑related revenue reaching $20 billion and AI semiconductor revenue of $6.5 billion. Q4 FY2025 revenue was $18 billion, and full‑year revenue was reported between $63.8 billion and $63.9 billion.",
+        "label": "valid_novel",
+        "reason": "Quantifies Broadcom AI revenue relevant to portfolio strength"
+      },
+      {
+        "item": "Broadcom’s VMware View desktop virtualization solution is priced at roughly $50 per desktop seat; the amount covers the license and includes advanced features such as vCenter, ESX, and DRS/HA. The quoted figure is a per‑seat cost rather than a recurring monthly fee.",
+        "label": "noise",
+        "reason": "Desktop virtualization pricing, unrelated to AI accelerators"
+      },
+      {
+        "item": "The EU aims to raise Europe’s share of the global chip market to 20% by 2030.",
+        "label": "noise",
+        "reason": "High-level EU policy, not vendor‑specific comparison"
+      },
+      {
+        "item": "GPUs held the largest chip‑type market share at approximately 35% in 2025.",
+        "label": "noise",
+        "reason": "Generic chip-type share, not vendor‑specific"
+      },
+      {
+        "item": "Windsurf achieved 50% cost savings using Crusoe Cloud for their GPU infrastructure.",
+        "label": "noise",
+        "reason": "Customer cloud cost case, not NVIDIA/Intel/Broadcom"
+      },
+      {
+        "item": "GMI Cloud provides a full‑stack, U.S.-based GPU infrastructure and enterprise‑grade inference services.",
+        "label": "noise",
+        "reason": "Cloud provider description, not about three target vendors"
+      },
+      {
+        "item": "Lambda is an AI developer cloud for machine learning/AI teams to train, fine‑tune, and infer AI models.",
+        "label": "noise",
+        "reason": "Generic AI cloud info, not competitive comparison"
+      },
+      {
+        "item": "Pre-trained, open language models range from 7 billion to 70 billion parameters.",
+        "label": "noise",
+        "reason": "Generic model size info, not tied to vendors"
+      },
+      {
+        "item": "Foundry is used by developers at more than 80,000 enterprises and digital natives, including 80% of Fortune 500 companies.",
+        "label": "noise",
+        "reason": "Unclear product; not about accelerators/networking"
+      },
+      {
+        "item": "GPUs held 59.20% revenue share of the AI accelerators market in 2025.",
+        "label": "noise",
+        "reason": "Market share by device type, not vendor"
+      },
+      {
+        "item": "Broadcom anticipates a USD 60-90 billion ASIC opportunity by 2027.",
+        "label": "valid_novel",
+        "reason": "Broadcom ASIC TAM expectation informs competitive positioning"
+      }
+    ],
+    "worker_agreement": 0.0,
+    "recall_by_worker": {
+      "competitor_intelligence": 0.2
+    }
+  },
+  "cross_signal": {
+    "truth_items": 3,
+    "edrak_items": 6,
+    "matched": 2,
+    "full_matches": 0,
+    "partial_matches": 2,
+    "contradictions": 0,
+    "recall": 0.667,
+    "full_recall": 0.0,
+    "graded_recall": 0.333,
+    "weighted_recall": 0.333,
+    "must_recall": null,
+    "one_to_one_recall": 0.667,
+    "recall_ci95": [
+      0.0,
+      0.5
+    ],
+    "contradiction_rate": 0.0,
+    "coverage_concentration": 2,
+    "alignment": 0.333,
+    "precision_adjusted": 1.0,
+    "valid_novel": 4,
+    "noise": 0,
+    "noise_rate": 0.0,
+    "duplicate_rate": 0.0,
+    "f1": 0.444,
+    "f1_adjusted": 0.8,
+    "volume_ratio": 2.0,
+    "judge_agreement": null,
+    "matches": [
+      {
+        "truth": "The comparison spans different product layers NVIDIA DGX B200 is documented as a system, Intel Gaudi documentation covers accelerators and inference software, and Broadcom's cited Tomahawk 5 page covers an Ethernet switch; these sources alone do not establish like-for-like substitutes. Normalize the comparison around a specified inference workload and total system scope before making relative capability claims.",
+        "importance": "should",
+        "verdict": "partial",
+        "reason": "System notes lack of like-for-like NVIDIA data, not full normalization",
+        "edrak": [
+          "Standardized Benchmarking and Pricing Framework Shapes Competitive Comparison The planning framework mandates comparable performance and efficiency benchmarks and requires the use of approved public pricing and packaging, leading to a convergence on standardized evaluation criteria across AI accelerator vendors. Consistent benchmarking and pricing requirements will drive all competitors, including NVIDIA, Intel, and Broadcom, to present their offerings on a common metric set, affecting how their relative strengths are assessed.",
+          "Insufficient public NVIDIA product and benchmark data The analysis scope (F1) and planning disclaimer (F2) indicate no publicly disclosed NVIDIA data‑center AI accelerator specifications or launch commitments, and the competitive‑intelligence framework (F5) lacks benchmark numbers, creating a gap that prevents direct performance and pricing comparison with Broadcom and Intel offerings. Without concrete NVIDIA product details or benchmark data, any comparative assessment of capability, efficiency, or cost against Broadcom's XPU and Intel Gaudi will be based on inference rather than evidence."
+        ]
+      },
+      {
+        "truth": "Comparable transaction pricing is not established The reviewed product and documentation pages do not give comparable regional transaction prices for complete inference systems. Collect dated vendor or partner quotes with comparable hardware, software, networking, support, and service scope before claiming a price advantage.",
+        "importance": "should",
+        "verdict": "partial",
+        "reason": "Mentions standardized pricing framework, not actual comparable transaction quotes",
+        "edrak": [
+          "Standardized Benchmarking and Pricing Framework Shapes Competitive Comparison The planning framework mandates comparable performance and efficiency benchmarks and requires the use of approved public pricing and packaging, leading to a convergence on standardized evaluation criteria across AI accelerator vendors. Consistent benchmarking and pricing requirements will drive all competitors, including NVIDIA, Intel, and Broadcom, to present their offerings on a common metric set, affecting how their relative strengths are assessed.",
+          "Insufficient public NVIDIA product and benchmark data The analysis scope (F1) and planning disclaimer (F2) indicate no publicly disclosed NVIDIA data‑center AI accelerator specifications or launch commitments, and the competitive‑intelligence framework (F5) lacks benchmark numbers, creating a gap that prevents direct performance and pricing comparison with Broadcom and Intel offerings. Without concrete NVIDIA product details or benchmark data, any comparative assessment of capability, efficiency, or cost against Broadcom's XPU and Intel Gaudi will be based on inference rather than evidence."
+        ]
+      },
+      {
+        "truth": "Cloud availability must be checked by provider and region The cited IBM announcement places Intel Gaudi 3 in named IBM Cloud regions and describes a planned additional region; that does not establish equivalent NVIDIA or Broadcom availability. Compare deployment options by provider, region, and announcement-versus-current status before drawing conclusions about US and European coverage.",
+        "importance": "should",
+        "verdict": "none",
+        "reason": "No item compares cloud availability by provider, region, or status",
+        "edrak": []
+      }
+    ],
+    "not_covered": [
+      {
+        "item": "Cloud availability must be checked by provider and region The cited IBM announcement places Intel Gaudi 3 in named IBM Cloud regions and describes a planned additional region; that does not establish equivalent NVIDIA or Broadcom availability. Compare deployment options by provider, region, and announcement-versus-current status before drawing conclusions about US and European coverage.",
+        "reason": "No item compares cloud availability by provider, region, or status",
+        "verdict": "none"
+      }
+    ],
+    "extra_edrak_items": [
+      {
+        "item": "Broadcom's ASIC opportunity hinges on macro market trends and EU policy The projected $60‑90 billion ASIC opportunity (F17) is dependent on broader market dynamics, including the EU’s goal to raise its chip‑market share to 20% by 2030 (F9) and the current dominance of GPUs in chip‑type (35%) and AI accelerator revenue (59.2%) markets (F10, F16). Broadcom’s future growth in ASICs will be facilitated if EU policy stimulates local chip demand and if the overall market does not remain overwhelmingly GPU‑centric, which could limit ASIC adoption.",
+        "label": "valid_novel",
+        "reason": "EU policy and GPU dominance shape Broadcom positioning"
+      },
+      {
+        "item": "Broadcom AI Accelerator Momentum Challenges GPU Dominance Broadcom's acquisition of a fifth XPU customer and $6.5 B AI semiconductor revenue in FY2025 demonstrate accelerating momentum in the AI accelerator market, which is significant given GPUs currently command 59.2% of AI accelerator revenue. The rapid growth of Broadcom's AI accelerator business indicates increasing competitive pressure on NVIDIA's GPU‑centric data‑center AI offerings in the United States and Europe.",
+        "label": "valid_novel",
+        "reason": "Directly compares Broadcom accelerator momentum versus GPU dominance"
+      },
+      {
+        "item": "EU Chip Share Target vs GPU‑Centric Market Landscape The EU's goal to raise Europe’s share of the global chip market to 20% by 2030 contrasts with the current dominance of GPUs, which hold 35% of chip‑type market share and 59.2% of AI accelerator revenue, revealing a strategic gap for alternative architectures. Policy ambitions create a gap that could be exploited by non‑GPU AI accelerator providers such as Intel Gaudi or Broadcom ASICs to gain European market share.",
+        "label": "valid_novel",
+        "reason": "EU ambition vs GPU landscape relevant to regional competition"
+      },
+      {
+        "item": "Broadcom AI accelerator business shows accelerating momentum Broadcom secured a fifth XPU customer with a $1 billion order in FY2025 (F6), reported AI semiconductor revenue of $6.5 billion (F7), and projects a $60‑90 billion ASIC opportunity by 2027 (F17), indicating rapid growth and expanding market presence. The combination of high‑value customer wins, sizable current revenue, and a large forward‑looking opportunity suggests Broadcom is gaining significant traction in the AI accelerator space, which could shift competitive dynamics for NVIDIA and Intel.",
+        "label": "valid_novel",
+        "reason": "Broadcom AI accelerator revenue and customers show competitiveness"
+      }
+    ],
+    "signal_type_agreement": 0.0,
+    "urgency_agreement": 0.0,
+    "recall_by_signal_type": {
+      "availability": 0.0,
+      "gap": 1.0,
+      "pricing": 1.0
+    }
+  },
+  "decision": {
+    "executive_summary": {
+      "truth_items": 3,
+      "edrak_items": 1,
+      "matched": 0,
+      "full_matches": 0,
+      "partial_matches": 0,
+      "contradictions": 0,
+      "recall": 0.0,
+      "full_recall": 0.0,
+      "graded_recall": 0.0,
+      "weighted_recall": 0.0,
+      "must_recall": null,
+      "one_to_one_recall": 0.0,
+      "recall_ci95": [
+        0.0,
+        0.0
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 0,
+      "alignment": 0.0,
+      "precision_adjusted": 0.0,
+      "valid_novel": 0,
+      "noise": 1,
+      "noise_rate": 1.0,
+      "duplicate_rate": 0.0,
+      "f1": 0.0,
+      "f1_adjusted": 0.0,
+      "volume_ratio": 0.33,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "A tiered pricing and service bundle is a hypothesis to test in the United States and Europe, not a demonstrated price advantage: the reviewed sources do not provide comparable quotes.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "System says nothing about tiered pricing or quote comparability",
+          "edrak": []
+        },
+        {
+          "truth": "Track competitor AI product announcements and named-region cloud availability, but do not infer an appropriate NVIDIA release cadence from isolated announcements.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No mention of AI product tracking or NVIDIA release cadence",
+          "edrak": []
+        },
+        {
+          "truth": "Compare equivalent inference workloads and full-system scope before making performance or vendor-ranking claims.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No statement on comparing inference workloads or full-system scope",
+          "edrak": []
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "A tiered pricing and service bundle is a hypothesis to test in the United States and Europe, not a demonstrated price advantage: the reviewed sources do not provide comparable quotes.",
+          "reason": "System says nothing about tiered pricing or quote comparability",
+          "verdict": "none"
+        },
+        {
+          "item": "Track competitor AI product announcements and named-region cloud availability, but do not infer an appropriate NVIDIA release cadence from isolated announcements.",
+          "reason": "No mention of AI product tracking or NVIDIA release cadence",
+          "verdict": "none"
+        },
+        {
+          "item": "Compare equivalent inference workloads and full-system scope before making performance or vendor-ranking claims.",
+          "reason": "No statement on comparing inference workloads or full-system scope",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [
+        {
+          "item": "NVIDIA and Intel should prioritize European market initiatives that align with the EU’s 20% chip‑share target, while treating Broadcom’s ASIC opportunity as a medium‑term prospect that depends on policy‑driven diversification away from GPUs; NVIDIA should proactively defend its market share in the US and Europe by accelerating performance improvements, offering targeted pricing incentives, and deepening relationships with key cloud providers.",
+          "label": "noise",
+          "reason": "Prescriptive strategy, not evidence-based comparison of offerings"
+        }
+      ]
+    },
+    "opportunities": {
+      "truth_items": 3,
+      "edrak_items": 13,
+      "matched": 2,
+      "full_matches": 0,
+      "partial_matches": 2,
+      "contradictions": 0,
+      "recall": 0.667,
+      "full_recall": 0.0,
+      "graded_recall": 0.333,
+      "weighted_recall": 0.333,
+      "must_recall": null,
+      "one_to_one_recall": 0.667,
+      "recall_ci95": [
+        0.0,
+        0.5
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 2,
+      "alignment": 0.231,
+      "precision_adjusted": 0.692,
+      "valid_novel": 6,
+      "noise": 4,
+      "noise_rate": 0.308,
+      "duplicate_rate": 0.0,
+      "f1": 0.343,
+      "f1_adjusted": 0.679,
+      "volume_ratio": 4.33,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "Test pricing tiers and bundled services with comparable scope Evaluate possible hardware, software, and support tiers using dated United States and Europe quotes; the reviewed pages do not establish a price advantage.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Side‑by‑side and price–performance comparison, but no tiers or quotes",
+          "edrak": [
+            "Achieve objective, side‑by‑side comparison to inform product and partnership decisions.",
+            "Identify performance‑price sweet spots across the vendor landscape."
+          ]
+        },
+        {
+          "truth": "Monitor competitor product launches and regional rollout Track dated announcements and distinguish current partner-cloud availability from planned launches and unverified roadmap claims.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No items address launches, regions, or roadmap timing details",
+          "edrak": []
+        },
+        {
+          "truth": "Validate service bundles with cloud partners Investigate whether partner-delivered deployment and support options address buyer needs, then validate them with customer evidence before prioritizing.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Mentions product and partnership decisions, not validating bundles with evidence",
+          "edrak": [
+            "Achieve objective, side‑by‑side comparison to inform product and partnership decisions.",
+            "Retain and potentially grow market share among cloud providers."
+          ]
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "Monitor competitor product launches and regional rollout Track dated announcements and distinguish current partner-cloud availability from planned launches and unverified roadmap claims.",
+          "reason": "No items address launches, regions, or roadmap timing details",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [
+        {
+          "item": "Capture EU incentives for diversified chip technologies.",
+          "label": "valid_novel",
+          "reason": "EU policy affects US/EU competitive positioning"
+        },
+        {
+          "item": "Position GPU offerings as interim solutions while ASIC ecosystems mature.",
+          "label": "noise",
+          "reason": "Strategy suggestion, not comparative evidence"
+        },
+        {
+          "item": "Strengthen NVIDIA’s value proposition with enhanced performance‑per‑dollar metrics.",
+          "label": "noise",
+          "reason": "Prescriptive, not describing current offerings comparison"
+        },
+        {
+          "item": "Leverage existing CUDA ecosystem to lock‑in developer loyalty.",
+          "label": "valid_novel",
+          "reason": "CUDA ecosystem central to NVIDIA vs Gaudi/Broadcom"
+        },
+        {
+          "item": "Gain early‑mover advantage in a policy‑favored segment.",
+          "label": "valid_novel",
+          "reason": "Policy‑favored segment impacts regional competition"
+        },
+        {
+          "item": "Potentially secure public‑sector contracts tied to EU chip‑share goals.",
+          "label": "valid_novel",
+          "reason": "Public‑sector contracts shape EU market share"
+        },
+        {
+          "item": "Improved accuracy of market‑share and technology‑gap assessments.",
+          "label": "noise",
+          "reason": "Meta‑benefit of research, not market comparison"
+        },
+        {
+          "item": "Reduced risk of mis‑aligned product strategy.",
+          "label": "noise",
+          "reason": "Generic strategy risk, not specific to offerings"
+        },
+        {
+          "item": "Leverage ecosystem lock‑in to offset ASIC competition.",
+          "label": "valid_novel",
+          "reason": "Ecosystem lock‑in is key differentiator vs rivals"
+        },
+        {
+          "item": "Capture early‑stage customers seeking high‑performance alternatives to ASICs.",
+          "label": "valid_novel",
+          "reason": "Customer segment dynamics inform comparative positioning"
+        }
+      ],
+      "urgency_agreement": 0.0,
+      "strategic_fit_agreement": 0.0,
+      "recall_by_urgency": {
+        "high": 0.5,
+        "medium": 1.0
+      }
+    },
+    "risks": {
+      "truth_items": 4,
+      "edrak_items": 12,
+      "matched": 2,
+      "full_matches": 0,
+      "partial_matches": 2,
+      "contradictions": 0,
+      "recall": 0.5,
+      "full_recall": 0.0,
+      "graded_recall": 0.25,
+      "weighted_recall": 0.25,
+      "must_recall": null,
+      "one_to_one_recall": 0.5,
+      "recall_ci95": [
+        0.0,
+        0.5
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 1,
+      "alignment": 0.333,
+      "precision_adjusted": 0.583,
+      "valid_novel": 3,
+      "noise": 5,
+      "noise_rate": 0.417,
+      "duplicate_rate": 0.0,
+      "f1": 0.4,
+      "f1_adjusted": 0.538,
+      "volume_ratio": 3.0,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "Unmatched product scope can distort competitive rankings A system, an accelerator/software stack, and a networking switch are not equivalent units for performance, price, or feature comparisons.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Mentions bias from incomplete data, not product-scope mismatch specifics",
+          "edrak": [
+            "Incomplete data may bias the evaluation toward vendors with more disclosed information."
+          ]
+        },
+        {
+          "truth": "Unverified competitor growth or pricing claims can distort strategy Company-wide revenue or third-party estimates do not alone establish AI-product momentum, regional market share, or comparable prices.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Touches on missing data and estimate-based, public-only pricing, not growth claims",
+          "edrak": [
+            "Current lack of market penetration data could lead to over‑investment.",
+            "Reliance on public pricing may not reflect enterprise discount structures.",
+            "Potential reliance on estimates if primary data remains unavailable."
+          ]
+        },
+        {
+          "truth": "An accelerated release cadence may create execution risk Do not set NVIDIA launch intervals from isolated competitor announcements without confirming source dates, internal capacity, and product readiness.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No item mentions launch cadence, execution capacity, or readiness risk",
+          "edrak": []
+        },
+        {
+          "truth": "Partner-cloud availability may be mistaken for broad regional availability A provider announcement for named regions does not establish current availability from the vendor directly or across all regions.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No item addresses cloud-region availability versus direct or broad availability",
+          "edrak": []
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "An accelerated release cadence may create execution risk Do not set NVIDIA launch intervals from isolated competitor announcements without confirming source dates, internal capacity, and product readiness.",
+          "reason": "No item mentions launch cadence, execution capacity, or readiness risk",
+          "verdict": "none"
+        },
+        {
+          "item": "Partner-cloud availability may be mistaken for broad regional availability A provider announcement for named regions does not establish current availability from the vendor directly or across all regions.",
+          "reason": "No item addresses cloud-region availability versus direct or broad availability",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [
+        {
+          "item": "If GPU dominance persists, ASIC market growth may be slower than projected.",
+          "label": "valid_novel",
+          "reason": "Directly about GPU vs ASIC trajectory, competitive"
+        },
+        {
+          "item": "Uncertainty around specific EU funding mechanisms could limit investment returns.",
+          "label": "noise",
+          "reason": "Financing detail, not specific to AI accelerators"
+        },
+        {
+          "item": "Potential erosion of market share if Broadcom’s ASICs achieve cost or performance advantages.",
+          "label": "valid_novel",
+          "reason": "Directly addresses NVIDIA vs Broadcom cost-performance risk"
+        },
+        {
+          "item": "Price discounting could compress margins.",
+          "label": "noise",
+          "reason": "Generic pricing risk, not specific to compared offerings"
+        },
+        {
+          "item": "EU policy implementation timelines may shift, affecting rollout schedules.",
+          "label": "noise",
+          "reason": "Generic EU policy timing, weak link to product comparison"
+        },
+        {
+          "item": "Delay in obtaining NVIDIA data could postpone strategic initiatives.",
+          "label": "noise",
+          "reason": "Internal data-access issue, not market comparison"
+        },
+        {
+          "item": "If Broadcom’s ASIC market matures faster than anticipated, investments may yield diminishing returns.",
+          "label": "valid_novel",
+          "reason": "Addresses timing of Broadcom ASIC maturity vs returns"
+        },
+        {
+          "item": "Price competition could pressure margins.",
+          "label": "noise",
+          "reason": "Redundant generic margin pressure, not product-specific"
+        }
+      ],
+      "likelihood_agreement": 0.0,
+      "impact_agreement": 0.0,
+      "recall_by_likelihood": {
+        "high": 0.667,
+        "medium": 0.0
+      }
+    },
+    "recommended_actions": {
+      "truth_items": 4,
+      "edrak_items": 25,
+      "matched": 3,
+      "full_matches": 0,
+      "partial_matches": 3,
+      "contradictions": 0,
+      "recall": 0.75,
+      "full_recall": 0.0,
+      "graded_recall": 0.375,
+      "weighted_recall": 0.375,
+      "must_recall": null,
+      "one_to_one_recall": 0.75,
+      "recall_ci95": [
+        0.125,
+        0.5
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 1,
+      "alignment": 0.24,
+      "precision_adjusted": 0.8,
+      "valid_novel": 14,
+      "noise": 5,
+      "noise_rate": 0.2,
+      "duplicate_rate": 0.0,
+      "f1": 0.364,
+      "f1_adjusted": 0.774,
+      "volume_ratio": 6.25,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "Verify competitor launch and financial claims against dated sources Use primary or clearly attributed sources; distinguish product launch dates, planned production, partner availability, and company-wide revenue from AI-specific facts.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No item about validating competitor launch or financial claims",
+          "edrak": []
+        },
+        {
+          "truth": "Model pricing tiers only after establishing comparable scope Define the hardware, software, networking, support, and service bundle, then collect dated regional quotes before proposing discounts or price positioning.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Pricing actions and terms, but no prior scope comparability work",
+          "edrak": [
+            "Launch a limited‑time pricing/lease program for high‑volume cloud customers in the US and EU.",
+            "Document approved list pricing, lease options, and support terms for each offering."
+          ]
+        },
+        {
+          "truth": "Monitor product announcements and availability by region Maintain a dated view of competitor AI product launches and partner-cloud rollouts, labeling current, planned, and unverified status separately.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Tracks adoption and market share, not dated regional availability states",
+          "edrak": [
+            "Implement quarterly market‑share tracking for AI accelerators in both regions.",
+            "Establish a quarterly market‑watch task force to track Broadcom ASIC adoption and adjust tactics accordingly."
+          ]
+        },
+        {
+          "truth": "Validate service bundles with cloud partners and customers Test proposed support and cloud-service packages with target buyers rather than assuming demand or preference.",
+          "importance": "should",
+          "verdict": "partial",
+          "reason": "Pilots and alliances touch bundles but not explicit demand validation",
+          "edrak": [
+            "Pilot the solutions with at least two European cloud service providers within 9 months.",
+            "Form strategic alliances with major US and EU cloud service providers for joint solution bundles."
+          ]
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "Verify competitor launch and financial claims against dated sources Use primary or clearly attributed sources; distinguish product launch dates, planned production, partner availability, and company-wide revenue from AI-specific facts.",
+          "reason": "No item about validating competitor launch or financial claims",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [
+        {
+          "item": "Map EU funding programs and incentives related to non‑GPU chip development.",
+          "label": "valid_novel",
+          "reason": "EU non‑GPU incentives shape Intel/Broadcom competitiveness"
+        },
+        {
+          "item": "Accelerate EU‑focused GPU product releases and performance upgrades.",
+          "label": "noise",
+          "reason": "Internal NVIDIA action, not comparative evidence gathering"
+        },
+        {
+          "item": "Develop a joint EU‑region technology roadmap that includes optional ASIC integration pathways.",
+          "label": "valid_novel",
+          "reason": "Roadmap with ASIC options informs future comparative positioning"
+        },
+        {
+          "item": "Establish quarterly metrics to track EU policy developments and ASIC adoption signals.",
+          "label": "valid_novel",
+          "reason": "Tracks EU policy context affecting accelerators’ competitiveness"
+        },
+        {
+          "item": "Compile a competitive performance matrix comparing Broadcom XPU specs (as available) to NVIDIA GPUs.",
+          "label": "valid_novel",
+          "reason": "Directly supports NVIDIA vs Broadcom spec comparison"
+        },
+        {
+          "item": "Fast‑track development of the next‑generation GPU architecture with measurable performance gains.",
+          "label": "noise",
+          "reason": "Strategic action, not evidence about current offerings"
+        },
+        {
+          "item": "Identify and apply for EU research and innovation grants supporting non‑GPU AI accelerators.",
+          "label": "valid_novel",
+          "reason": "EU grants influence non‑GPU ecosystem strength vs NVIDIA"
+        },
+        {
+          "item": "Adapt Gaudi and Broadcom ASIC roadmaps to meet EU regulatory and performance standards.",
+          "label": "valid_novel",
+          "reason": "Relates Gaudi/Broadcom fit to EU standards vs NVIDIA"
+        },
+        {
+          "item": "Create joint marketing collateral highlighting EU policy alignment.",
+          "label": "noise",
+          "reason": "Marketing tactic, not analytical input for comparison"
+        },
+        {
+          "item": "Gather all publicly available benchmark results for Intel Gaudi and Broadcom XPU.",
+          "label": "valid_novel",
+          "reason": "Benchmark collection is core to technical comparison"
+        },
+        {
+          "item": "Record missing NVIDIA specifications and benchmark data as ‘data unavailable’ entries.",
+          "label": "valid_novel",
+          "reason": "Ensures transparent gaps in NVIDIA comparison matrix"
+        },
+        {
+          "item": "Use the completed matrix for internal comparative analysis and investment prioritization.",
+          "label": "valid_novel",
+          "reason": "Uses comparative matrix to understand relative strengths"
+        },
+        {
+          "item": "Request detailed product specifications and benchmark results from NVIDIA through analyst briefings or public disclosure Request detailed product specifications and benchmark results from NVIDIA through analyst briefings or public disclosures.",
+          "label": "valid_novel",
+          "reason": "Improves NVIDIA data quality for head‑to‑head analysis"
+        },
+        {
+          "item": "Commission an independent third‑party benchmarking study covering NVIDIA, Intel Gaudi, and Broadcom XPU.",
+          "label": "valid_novel",
+          "reason": "Generates public comparative benchmarks across vendors"
+        },
+        {
+          "item": "Update competitive positioning models once the missing data is obtained.",
+          "label": "valid_novel",
+          "reason": "Refines comparative models once data gaps close"
+        },
+        {
+          "item": "Re‑evaluate strategic recommendations after data incorporation.",
+          "label": "valid_novel",
+          "reason": "Updates conclusions about relative positioning with new data"
+        },
+        {
+          "item": "Launch region‑specific marketing programs highlighting GPU and Gaudi performance advantages for AI workloads.",
+          "label": "noise",
+          "reason": "Regional marketing, not evidence for technical comparison"
+        },
+        {
+          "item": "Strengthen software ecosystems (CUDA, oneAPI) with new developer tools and certification programs.",
+          "label": "valid_novel",
+          "reason": "Ecosystem strength key differentiator vs Gaudi/Broadcom"
+        },
+        {
+          "item": "Allocate additional R&D budget (5‑7% of annual spend) to next‑gen GPU and Gaudi performance and efficiency improvements.",
+          "label": "noise",
+          "reason": "Budget decision, not directly useful comparative evidence"
+        }
+      ],
+      "priority_agreement": 0.0,
+      "time_horizon_agreement": 0.0,
+      "recall_by_priority": {
+        "high": 0.75
+      }
+    },
+    "options": {
+      "truth_items": 2,
+      "edrak_items": 3,
+      "matched": 0,
+      "full_matches": 0,
+      "partial_matches": 0,
+      "contradictions": 0,
+      "recall": 0.0,
+      "full_recall": 0.0,
+      "graded_recall": 0.0,
+      "weighted_recall": 0.0,
+      "must_recall": null,
+      "one_to_one_recall": 0.0,
+      "recall_ci95": [
+        0.0,
+        0.0
+      ],
+      "contradiction_rate": 0.0,
+      "coverage_concentration": 0,
+      "alignment": 0.0,
+      "precision_adjusted": 1.0,
+      "valid_novel": 3,
+      "noise": 0,
+      "noise_rate": 0.0,
+      "duplicate_rate": 0.0,
+      "f1": 0.0,
+      "f1_adjusted": 0.0,
+      "volume_ratio": 1.5,
+      "judge_agreement": null,
+      "matches": [
+        {
+          "truth": "Evidence-led tiered offer Test value-based hardware and service tiers, but base positioning on comparable quotes and workload evidence rather than unverified market-share or price claims.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No mention of evidence-led tiers or comparable quote basing",
+          "edrak": []
+        },
+        {
+          "truth": "Roadmap monitoring before cadence changes Track dated competitor launches and regional availability, and change NVIDIA's launch cadence only after confirming internal readiness and comparable evidence.",
+          "importance": "should",
+          "verdict": "none",
+          "reason": "No content on roadmap monitoring, launch dates, or cadence changes",
+          "edrak": []
+        }
+      ],
+      "not_covered": [
+        {
+          "item": "Evidence-led tiered offer Test value-based hardware and service tiers, but base positioning on comparable quotes and workload evidence rather than unverified market-share or price claims.",
+          "reason": "No mention of evidence-led tiers or comparable quote basing",
+          "verdict": "none"
+        },
+        {
+          "item": "Roadmap monitoring before cadence changes Track dated competitor launches and regional availability, and change NVIDIA's launch cadence only after confirming internal readiness and comparable evidence.",
+          "reason": "No content on roadmap monitoring, launch dates, or cadence changes",
+          "verdict": "none"
+        }
+      ],
+      "extra_edrak_items": [
+        {
+          "item": "Lead with GPU Performance NVIDIA defends its leadership by accelerating performance improvements and offering targeted pricing incentives to cloud providers in the United States and Europe.",
+          "label": "valid_novel",
+          "reason": "Addresses NVIDIA DC AI positioning vs rivals in US/EU"
+        },
+        {
+          "item": "Match EU Policy with Hybrid Offering NVIDIA aligns its roadmap with EU diversification goals by supporting ASIC‑compatible interfaces and collaborating on hybrid GPU‑ASIC solutions.",
+          "label": "valid_novel",
+          "reason": "Relates to EU policy, architectural competition vs Gaudi/Broadcom"
+        },
+        {
+          "item": "Differentiate via Platform Services NVIDIA shifts focus to an end‑to‑end AI inference platform, leveraging software ecosystem and premium services to create value beyond raw GPU performance.",
+          "label": "valid_novel",
+          "reason": "Platform/inference differentiation central to comparing accelerator offerings"
+        }
+      ]
+    }
+  },
+  "overview": {
+    "mean_recall": 0.498,
+    "mean_alignment": 0.378,
+    "mean_f1": 0.376,
+    "pooled_recall": 0.486,
+    "mean_graded_recall": 0.347,
+    "pooled_graded_recall": 0.329,
+    "mean_weighted_recall": 0.342,
+    "pooled_weighted_recall": 0.323,
+    "mean_full_recall": 0.195,
+    "mean_one_to_one_recall": 0.498,
+    "must_recall": 0.375,
+    "mean_precision_adjusted": 0.69,
+    "mean_f1_adjusted": 0.507,
+    "contradiction_rate": 0.0,
+    "noise_rate": 0.326,
+    "valid_novel_total": 33,
+    "duplicate_rate": 0.0,
+    "judge_agreement": null,
+    "stages_with_zero_recall": [
+      "decision/executive_summary",
+      "decision/options"
+    ],
+    "stages_with_contradictions": [],
+    "weakest_stages": [
+      "decision/executive_summary",
+      "decision/options",
+      "verification"
+    ]
+  }
+}

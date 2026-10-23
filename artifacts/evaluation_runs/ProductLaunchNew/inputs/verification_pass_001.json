@@ -1,0 +1,518 @@
+{
+  "research_run_id": "ef407c8d12ca90031b248a2fd674123f",
+  "decision": {
+    "status": "verified",
+    "targeted_actions": [],
+    "summary": "32 of 33 findings are evidence-backed; 1 were insufficient and recorded for follow-up."
+  },
+  "findings": [
+    {
+      "finding_id": "86beb852-54bc-43ec-92fd-25ae60514ea4",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA describes system‑level offerings under the DGX platform.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "2ce04e0f-c2de-4f75-82f8-5f914be9a9b9"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "c0724475-09cc-4cb9-b83c-9c7ad6a562f2",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA’s rack‑scale platform concept treats compute, networking, storage, software, power/cooling, deployment, and operations as an end‑to‑end system.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "cf4ab94c-c62a-4937-baf3-23416a6ef42d"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ca8952bc-d0c4-4800-bbbd-08e9cc1c8464",
+      "worker": "internal_intelligence",
+      "statement": "Public NVIDIA materials describe a broad data‑center portfolio spanning compute, systems, networking, and software.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "705e0e7d-8d39-490a-99ed-e3ce3a2711a0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b161e390-b630-4a97-b84b-26eae21d85a6",
+      "worker": "internal_intelligence",
+      "statement": "Supply lead times and eligibility must be validated for the exact NVIDIA product configuration and destination.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "93f114e2-4e64-4291-b452-cccb891f9969"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "35a0e7cb-fbdc-403f-8033-15021caccfa1",
+      "worker": "internal_intelligence",
+      "statement": "Launch assessments must identify the exact NVIDIA offer unit and verify its release status and availability at the time of analysis.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "705e0e7d-8d39-490a-99ed-e3ce3a2711a0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "db444a17-acc9-41d5-804a-94d2fde8a97f",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom does not provide a fully pre‑integrated rack‑scale AI inference platform that combines its networking ASICs, custom AI accelerators (XPUs) and inference software for on‑premises deployment. The company offers custom AI accelerators and networking chips as reference rack components that customers must assemble themselves.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "7403a390-88cd-4575-b0fe-60c9ee5a4982",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom’s disclosed rack‑scale AI hardware includes custom AI accelerators (XPUs), high‑bandwidth Ethernet switching (Tomahawk Ultra/6) and PCI‑Express switches for inter‑rack and host connectivity. Shipments are slated for the second half of 2026, but public materials do not specify compute capacity per rack, exact networking bandwidth, or form‑factor dimensions.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "2b99ee6b-8f16-46af-95bf-8a53816410aa",
+        "32148c1f-62b3-4d82-bb4e-87235d9f9cd3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b550309c-e7c0-4062-a88d-f3c9fd24fd60",
+      "worker": "competitor_intelligence",
+      "statement": "Public sources describe Broadcom’s networking ASICs (e.g., Tomahawk 6) and collaborations on custom AI accelerators, but they do not mention a pre‑integrated rack‑scale AI inference system that bundles Broadcom networking, accelerators, and inference software for on‑premises deployment.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c0ed640b-9663-4dba-aac7-cd14e253d37a",
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86",
+        "185bb6f3-b81a-4328-97f4-32e1bcad10b4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "8ce8362f-f36f-44b6-aff6-920e505f069d",
+      "worker": "competitor_intelligence",
+      "statement": "The only hardware details disclosed by Broadcom relate to its Tomahawk 6 (BCM78910/BCM78914) Ethernet switch chip, which offers up to 102.4 Tb/s aggregate bandwidth, 128 × 106.25 G PAM4 or 64 × 212.5 G PAM4 SerDes cores, and is built on a 3 nm process. No public specification provides the accelerator type, compute capacity per rack, or form factor of a complete rack‑scale AI inference offering.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86",
+        "185bb6f3-b81a-4328-97f4-32e1bcad10b4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "8f3f0ed0-3e28-4944-bfa5-51be49f9f6a0",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom’s publicly available licensing documentation (e.g., the LICENSEWARE Wiki) describes per‑core subscriptions for VMware and capacity‑based licensing for its CA and Symantec software families, but it does not contain any terms for inference software, frameworks, or management tools that would be part of a rack‑scale AI inference solution.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "4a49672f-5bb2-467f-a2f8-36964fb5c374"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "f87c978a-4703-4002-ba2e-80a05625f177",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel-based Google Cloud C4 virtual machines are priced per month as of 10/02/2025: c4-standard-8-lssd $349.40, c4-standard-16-lssd $698.00, c3-standard-8-lssd $355.15, and c3-standard-22-lssd $930.26.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "c23883ce-4ea8-46e5-9e5c-40bf4125e4bd"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "51d78926-6e8b-4465-872b-0d08a58933bd",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers rack‑scale AI inference system reference designs built around Gaudi 3 accelerators, integrating Intel Xeon CPUs, networking, and inference software for on‑premises deployment.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "f7795deb-1e19-4734-a651-218299c447e3",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Gaudi 3 rack‑scale reference design supports up to 64 Gaudi 3 PCIe accelerators per rack and provides 8.2 TB of high‑bandwidth memory with liquid cooling. Intel’s GPU D‑series (Crescent Island) delivers up to 480 GB LPDDR5X memory, 1.5 TB/s memory bandwidth, and 1.3 PFLOPS FP8 compute within a 350 W envelope. Xeon 6+ configurations can exceed 46,000 cores per rack at a total rack power of 133.45 kW.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4",
+        "915cb1a9-7785-4ab3-bf11-bbab320ef840"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "8624af9f-8fde-4d4f-a117-86e04025e857",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom’s Edge AI web page describes solutions that deliver distributed, virtualized inference across network infrastructure, and its Form 10‑Q filing notes that the company offers AI racks built around custom XPU accelerators and networking solutions that can be leased. Neither source mentions a fully pre‑integrated rack‑scale AI inference platform that bundles networking ASICs, accelerators, and inference software for on‑premises deployment.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "73c098bc-c341-47a8-8cce-8fce8fafee65",
+        "ad1939da-f4f2-4990-bece-d540e1a1fee8"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "a79e0298-5a52-4cfb-b691-8ec6b92df18a",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel announced a multi‑year collaboration with SambaNova to deliver rack‑level AI inference solutions built around Intel® Xeon® processors combined with SambaNova’s AI platform, targeting on‑premises deployments for AI‑native companies and enterprises.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "76cb3b5d-291b-4ca4-89dc-e956709ef81c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "45714cf7-f4a5-4635-91dd-70ce7f2d5235",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: At Computex 2026 Intel unveiled a rackscale AI infrastructure that pairs Intel Xeon processors with SambaNova SN‑50 Reconfigurable Dataflow Units (RDUs); Foxconn will integrate the system and also offer a CPU‑dense variant for workloads that do not require additional acceleration.",
+      "verification_status": "insufficient",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "ac3ff90b-3e55-45cc-bdeb-012123ad75f2"
+      ],
+      "contradictions": [],
+      "missing_information": [
+        "Claim quantity 2026 is not in the saved source.",
+        "Claim includes details that are not in the saved source: 2026"
+      ],
+      "confidence": 0.37
+    },
+    {
+      "finding_id": "bb43eeb5-0c7a-4f27-81c1-e083e465a488",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel’s AI software stack includes AI accelerators that provide drop‑in performance optimizations for leading AI frameworks, delivered as part of Intel‑optimized distributions; the software is supplied under Intel’s standard software licensing terms (specific licensing details not disclosed).",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "79ace2ff-ee52-460f-97e3-4e9045e2a15b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "fd419bdd-f579-4038-b30c-5b4a4b4ef015",
+      "worker": "competitor_intelligence",
+      "statement": "How each competitor addresses the problem the offering solves: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom offers networking ASICs and custom XPU accelerators as separate reference components, without a bundled, pre‑integrated rack‑scale inference system.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "c0ed640b-9663-4dba-aac7-cd14e253d37a",
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "5aca1818-4a42-4930-a63f-1e98a3041d65",
+      "worker": "competitor_intelligence",
+      "statement": "How each competitor addresses the problem the offering solves: compared with NVIDIA Corporation, Intel Corp is comparable. Intel delivers rack‑scale AI inference reference designs that combine Xeon CPUs, Habana Gaudi 3 accelerators, networking, and an AI software stack, matching NVIDIA's integrated approach.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4",
+        "76cb3b5d-291b-4ca4-89dc-e956709ef81c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "e2ca1829-9ccc-4ea0-9848-a8555518a0a9",
+      "worker": "competitor_intelligence",
+      "statement": "Target customers and positioning: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom positions its high‑bandwidth networking ASICs and XPU accelerators for AI infrastructure used by cloud providers and AI developers, aligning with NVIDIA's target market.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "c0ed640b-9663-4dba-aac7-cd14e253d37a",
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d6ffb660-4e74-4d33-91e5-9ba0d55318a1",
+      "worker": "competitor_intelligence",
+      "statement": "Target customers and positioning: compared with NVIDIA Corporation, Intel Corp is comparable. Intel's rack‑scale AI inference solutions are marketed to the same cloud service providers and AI developers in the United States and Europe.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4",
+        "76cb3b5d-291b-4ca4-89dc-e956709ef81c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "58785396-8d71-4e1f-b680-e7b151b49fb7",
+      "worker": "competitor_intelligence",
+      "statement": "Gaps and limitations people point out: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom lacks a pre‑integrated rack‑scale solution, provides incomplete hardware specs, and its licensing documentation does not cover AI inference software.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "c0ed640b-9663-4dba-aac7-cd14e253d37a",
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "28919660-debf-4012-81db-04bc816e4b71",
+      "worker": "competitor_intelligence",
+      "statement": "Gaps and limitations people point out: compared with NVIDIA Corporation, Intel Corp is comparable. Intel's disclosures omit per‑seat pricing, release cadence, and detailed licensing terms for its AI software stack.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "c23883ce-4ea8-46e5-9e5c-40bf4125e4bd",
+        "79ace2ff-ee52-460f-97e3-4e9045e2a15b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "778597bf-4fa4-4687-8adf-2c5109f7f57d",
+      "worker": "competitor_intelligence",
+      "statement": "Availability (generally available vs preview vs announced): compared with NVIDIA Corporation, Broadcom is comparable. Broadcom has announced rack‑scale AI hardware slated for shipment in the second half of 2026, but no pre‑integrated product is yet available.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "c0ed640b-9663-4dba-aac7-cd14e253d37a",
+        "90a3ad8c-0023-4fac-bb21-8752a7b46b86"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "092ba88b-fb0e-429c-ba31-8ef8c9b938bc",
+      "worker": "competitor_intelligence",
+      "statement": "Availability (generally available vs preview vs announced): compared with NVIDIA Corporation, Intel Corp is broader. Intel offers announced reference designs, some of which are generally available, and a forthcoming SambaNova‑integrated rack system.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4",
+        "76cb3b5d-291b-4ca4-89dc-e956709ef81c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "00b94b31-331d-46be-ba74-0a04d3dc567f",
+      "worker": "competitor_intelligence",
+      "statement": "Recent changes: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom announced that its rack‑scale AI hardware, built on Tomahawk 6 switches and custom XPUs, will ship in H2 2026.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "774a5d01-5a5c-44c8-be74-5f71e78403da",
+        "2b99ee6b-8f16-46af-95bf-8a53816410aa",
+        "32148c1f-62b3-4d82-bb4e-87235d9f9cd3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "c21fe9b8-69bf-4498-85e4-06ac241752be",
+      "worker": "competitor_intelligence",
+      "statement": "Recent changes: compared with NVIDIA Corporation, Intel Corp is broader. Intel announced a multi‑year partnership with SambaNova and new rack‑scale reference designs featuring Gaudi 3 accelerators.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "c3f81690-3dff-4fbd-af82-8f575ac7bbe4",
+        "76cb3b5d-291b-4ca4-89dc-e956709ef81c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "6b63ec66-926a-44cb-b309-c7e1e8a00a85",
+      "worker": "market_intelligence",
+      "statement": "If AI data centers agreed to curtail just 1% of their load, grid operators could add 126 GW in new load with minimal capacity expansion.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "de09d98b-a00f-4a77-a758-16f4265ac85f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "1e9a300e-0f77-4718-9e51-6f8c4ebaf7b3",
+      "worker": "market_intelligence",
+      "statement": "68% of industry executives believe data center demand flexibility will become an acceptable tradeoff to secure speed to market.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "ec4314de-7e2d-4a04-b8d3-194279c31b11"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "b7485458-c730-401a-a52d-305a4749c3c0",
+      "worker": "market_intelligence",
+      "statement": "The United States is conducting an investigation under Section 232 of the Trade Expansion Act into the impact of semiconductor imports on national security.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "36f76c22-3dc3-42f5-bd02-e7b11e9a8b18"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "0273ba18-a16d-43a1-8a55-333d6ab14248",
+      "worker": "market_intelligence",
+      "statement": "Intel's Xeon 6+ processors are based on the 18A process node.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "924ccedb-3183-4b85-9281-c2c69bcad3a2"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "c4ad3e91-82a7-47bb-9d7f-5ccd114a1c36",
+      "worker": "market_intelligence",
+      "statement": "Cloudian offers the HyperScale AI Data Platform.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "0018ab9d-7036-4bf5-b519-cee4abdb4da9"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "358863e8-78f7-44b6-b37f-cb4c90a8ae6e",
+      "worker": "market_intelligence",
+      "statement": "Real-time applications require response times under 100 milliseconds.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "4cace30a-0668-42cf-a11f-b53e1a06711b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    }
+  ],
+  "control_summary": {
+    "missing_information": [
+      "Claim quantity 2026 is not in the saved source.",
+      "Claim includes details that are not in the saved source: 2026",
+      "Specific GPU model names, performance specs, and inference software version numbers are not provided.",
+      "Quantitative supply‑chain metrics such as lead‑time durations, production capacity, or historical launch timelines are missing.",
+      "Details on networking bandwidth, topology, or latency characteristics for NVIDIA’s interconnect solutions are absent.",
+      "Evidence of past platform launch outcomes or post‑launch performance data is not present.",
+      "[Broadcom] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Broadcom] Releases shipped per month or quarter. (release_cadence)",
+      "[Intel Corp] Releases shipped per month or quarter. (release_cadence)",
+      "No page stated a relevant fact for: Quantify the total addressable market and growth rate for on‑premises AI inference racks in the United States and Europe",
+      "No page stated a relevant fact for: Map data‑sovereignty, export‑control, and other regulatory requirements that affect deployment of AI inference hardware on‑premises in the United States and Europe",
+      "the demand branch reported an error: the branch did not finish in 57.2 s",
+      "1 platform(s) have at least 20 items; at least 2 are needed",
+      "no search interest series was collected, so demand over time is unknown",
+      "the run stopped at its time limit of 300 s"
+    ],
+    "conflicts": [],
+    "failures": [
+      "market_intelligence: Some research tasks were skipped."
+    ],
+    "next_research_targets": [
+      "Intel Corp: At Computex 2026 Intel unveiled a rackscale AI infrastructure that pairs Intel Xeon processors with SambaNova SN‑50 Reconfigurable Dataflow Units (RDUs); Foxconn will integrate the system and also offer a CPU‑dense variant for workloads that do not require additional acceleration. — Claim quantity 2026 is not in the saved source.",
+      "Specific GPU model names, performance specs, and inference software version numbers are not provided.",
+      "Quantitative supply‑chain metrics such as lead‑time durations, production capacity, or historical launch timelines are missing.",
+      "Details on networking bandwidth, topology, or latency characteristics for NVIDIA’s interconnect solutions are absent.",
+      "Evidence of past platform launch outcomes or post‑launch performance data is not present.",
+      "[Broadcom] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Broadcom] Releases shipped per month or quarter. (release_cadence)",
+      "[Intel Corp] Releases shipped per month or quarter. (release_cadence)",
+      "No page stated a relevant fact for: Quantify the total addressable market and growth rate for on‑premises AI inference racks in the United States and Europe",
+      "No page stated a relevant fact for: Map data‑sovereignty, export‑control, and other regulatory requirements that affect deployment of AI inference hardware on‑premises in the United States and Europe",
+      "the demand branch reported an error: the branch did not finish in 57.2 s",
+      "1 platform(s) have at least 20 items; at least 2 are needed",
+      "no search interest series was collected, so demand over time is unknown",
+      "the run stopped at its time limit of 300 s"
+    ]
+  },
+  "metadata": {
+    "workers": [
+      "internal_intelligence",
+      "competitor_intelligence",
+      "market_intelligence",
+      "customer_trends"
+    ],
+    "finding_count": 33,
+    "verified_count": 32,
+    "insufficient_count": 1,
+    "completed_at": "2026-10-22T18:12:11.649753+00:00"
+  },
+  "completed_at": "2026-10-22T18:12:11.649764Z"
+}

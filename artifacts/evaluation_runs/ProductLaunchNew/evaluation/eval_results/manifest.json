@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "analysis_id": "ef407c8d12ca90031b248a2fd674123f",
+  "status": "completed",
+  "started_at_utc": "2026-10-22T18:07:06.361652+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-10-22T18:07:06.432036+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-22T18:07:19.144135+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_0ab2e865-246.json",
+        "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_004.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-22T18:08:48.938919+00:00",
+      "artifacts": [
+        "inputs\\worker_market_intelligence_attempt_1_9c07ef93-09f.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-22T18:09:56.174537+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_d525a577-b73.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-22T18:12:06.820536+00:00",
+      "artifacts": [
+        "inputs\\worker_customer_trends_attempt_1_52c1d566-59d.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-10-22T18:12:11.669484+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "metrics",
+      "completed_at_utc": "2026-10-22T18:15:30.061200+00:00",
+      "artifacts": [
+        "outputs\\metrics_007.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-10-22T19:23:46.510671+00:00",
+      "artifacts": [
+        "outputs\\human_review_008.json"
+      ]
+    },
+    {
+      "node": "cross_signal",
+      "completed_at_utc": "2026-10-22T19:24:37.806340+00:00",
+      "artifacts": [
+        "inputs\\cross_signal.json"
+      ]
+    },
+    {
+      "node": "decision_analysis",
+      "completed_at_utc": "2026-10-22T19:24:58.573337+00:00",
+      "artifacts": [
+        "inputs\\decision_analysis.json"
+      ]
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-10-22T19:24:58.692392+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:0ab2e865-2462-4880-8115-657caa939f6d:1": "inputs\\worker_internal_intelligence_attempt_1_0ab2e865-246.json",
+    "rag:0ab2e865-2462-4880-8115-657caa939f6d:1:1": "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_001.json",
+    "rag:0ab2e865-2462-4880-8115-657caa939f6d:1:2": "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_002.json",
+    "rag:0ab2e865-2462-4880-8115-657caa939f6d:1:3": "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_003.json",
+    "rag:0ab2e865-2462-4880-8115-657caa939f6d:1:4": "inputs\\rag_internal_intelligence_attempt_1_0ab2e865-246_004.json",
+    "worker:9c07ef93-09fb-4563-b66e-46768b0f64d4:1": "inputs\\worker_market_intelligence_attempt_1_9c07ef93-09f.json",
+    "worker:d525a577-b73d-4df3-b548-1d224a19f00b:1": "inputs\\worker_competitor_intelligence_attempt_1_d525a577-b73.json",
+    "worker:52c1d566-59da-4bac-a06f-83bcf9895383:1": "inputs\\worker_customer_trends_attempt_1_52c1d566-59d.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "metrics:7": "outputs\\metrics_007.json",
+    "telemetry": "inputs\\telemetry.json",
+    "cross_signal": "inputs\\cross_signal.json",
+    "decision_analysis": "inputs\\decision_analysis.json",
+    "orchestration_result": "inputs\\orchestration_result.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-10-22T19:25:19.133028+00:00",
+  "telemetry_spans": 10,
+  "telemetry_trace_ids": [
+    "67ddf3cc9d289ce64c476cfb008ca19f",
+    "7cb1402e372a8ba12a640ab66592872d"
+  ],
+  "completed_at_utc": "2026-10-22T19:24:58.819992+00:00"
+}

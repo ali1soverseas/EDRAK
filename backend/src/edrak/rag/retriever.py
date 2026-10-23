@@ -61,10 +61,9 @@ class InternalRetriever:
                 metadata=COLLECTION_METADATA,
             )
         except ValueError as e:
-            # Do NOT delete the persisted index from a read path.
             raise RuntimeError(
                 f"Embedding function mismatch for collection '{self.collection_name}'. "
-                "Re-run the seeding script to rebuild the index with the current embedding settings."
+                "Resolve the mismatch explicitly before reindexing; existing vectors were not modified."
             ) from e
 
     # ------------------------------------------------------------------ helpers

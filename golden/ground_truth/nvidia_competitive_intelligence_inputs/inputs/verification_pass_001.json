@@ -1,0 +1,38 @@
+{
+  "research_run_id": "nvidia-ci-ai-computing-us-eu",
+  "decision": {
+    "summary": "Five source-bounded competitor findings are suitable as reference expectations; broader customer and regional market claims remain uncurated."
+  },
+  "findings": [
+    {
+      "finding_id": "ci-competitor-nvidia-dgx",
+      "worker": "competitor_intelligence",
+      "statement": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+      "verification_status": "verified"
+    },
+    {
+      "finding_id": "ci-competitor-intel-gaudi",
+      "worker": "competitor_intelligence",
+      "statement": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+      "verification_status": "verified"
+    },
+    {
+      "finding_id": "ci-competitor-intel-regional-cloud-availability",
+      "worker": "competitor_intelligence",
+      "statement": "IBM announced Intel Gaudi 3 availability on IBM Cloud in Frankfurt and Washington, D.C., with Dallas availability planned for Q2 2025; this is a partner-cloud deployment announcement, not proof of general availability in every region.",
+      "verification_status": "verified"
+    },
+    {
+      "finding_id": "ci-competitor-broadcom-networking",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s StrataXGS Ethernet switch; this is networking evidence and does not by itself establish a complete inference system.",
+      "verification_status": "verified"
+    },
+    {
+      "finding_id": "ci-competitor-price-gap",
+      "worker": "competitor_intelligence",
+      "statement": "The reviewed official pages do not establish comparable United States or Europe transaction prices for complete NVIDIA, Intel, and Broadcom inference systems; a defensible comparison needs dated quotes with equivalent scope.",
+      "verification_status": "verified"
+    }
+  ]
+}

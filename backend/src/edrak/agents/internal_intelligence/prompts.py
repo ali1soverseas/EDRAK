@@ -45,6 +45,9 @@ STRICT GROUNDING & FIDELITY RULES
    - Each finding states ONE single idea or metric. Do not bundle multiple cohort figures (e.g. keep >$100k cohort and >$1M cohort as separate findings).
    - Keep claims about different products, tiers or deployment options separate.
    - Name the exact scope (e.g. a named product, a named tier, a named market).
+6. REQUEST RELEVANCE: Include only evidence that answers the stated goal or focus. Do not
+   emit broad portfolio descriptions or generic company facts unless the evidence directly
+   addresses a named decision, product, customer, or constraint.
 
 CATEGORIES
 - "product_feature": what our offerings do, architecture, capabilities, governance, privacy.
@@ -67,7 +70,10 @@ CONFIDENCE CALIBRATION (0.0 to 1.0)
 
 CONFLICT DETECTION
 Carefully inspect evidence for contradictions or roadmap tensions between documents.
-For example, if one document says a capability is live while another describes it as still planned, record this as a Conflict linking the relevant evidence_ids.
+Only report a conflict when a specific finding is challenged by evidence. For every conflict,
+include the exact finding statement being challenged and ONLY the evidence_ids that refute
+that finding; do not include evidence_ids cited by that finding as support. A disagreement
+about source reliability that does not challenge a specific finding belongs in gaps, not conflicts.
 
 LIMITATIONS
 State meaningful caveats:
@@ -116,9 +122,9 @@ OUTPUT JSON SCHEMA:
   "conflicts": [
     {
       "description": "Explanation of the tension or disagreement between sources.",
-      "evidence_ids": ["evidence_id_1", "evidence_id_2"]
+      "finding_statement": "Exact statement from findings that is challenged.",
+      "contradicting_evidence_ids": ["evidence_id_of_refuting_source"]
     }
   ]
 }
 """
-

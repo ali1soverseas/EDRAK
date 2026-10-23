@@ -1,0 +1,219 @@
+{
+  "agent": "decision",
+  "generated_at_utc": "2026-10-22T19:57:29.040198+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "actionability": 0.5
+  },
+  "files": [
+    {
+      "file": "decision_analysis.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "actionability"
+      ],
+      "metrics": {
+        "status": "completed",
+        "recommendations": 6,
+        "opportunities": 12,
+        "risks": 12,
+        "recommended_actions": 28,
+        "priorities": 52,
+        "options": 3,
+        "options_without_content_pct": 0.0,
+        "undetermined_priority_pct": 0.0,
+        "human_approval_pct": 100.0,
+        "priority_mix": "high=44, medium=8",
+        "actions_with_success_indicators_pct": 100.0,
+        "actions_with_prerequisites_pct": 100.0,
+        "near_duplicate_actions": 1,
+        "avg_signals_per_recommendation": 1.0,
+        "signal_coverage_pct": 100.0,
+        "avg_recommendation_confidence": 0.6833,
+        "recommendations_with_new_numbers": 4,
+        "recommendations_with_past_timeline": 0,
+        "additional_information_needed": 0,
+        "limitations_listed": 6,
+        "warnings": 0,
+        "units": 7,
+        "units_flagged": 4,
+        "faithfulness_tested": 7,
+        "faithfulness_avg": 0.9444,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 7,
+        "relevancy_avg": 1.0,
+        "relevancy_pass_pct": 100.0,
+        "actionability_tested": 6,
+        "actionability_avg": 0.9,
+        "actionability_pass_pct": 100.0,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "all supporting_signal_ids are valid",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.recommendation_count matches recommendations",
+          "passed": true,
+          "detail": "metadata=6 actual=6",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.opportunity_count matches opportunities",
+          "passed": true,
+          "detail": "metadata=12 actual=12",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.risk_count matches risks",
+          "passed": true,
+          "detail": "metadata=12 actual=12",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.priority_count matches priorities",
+          "passed": true,
+          "detail": "metadata=52 actual=52",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.recommended_action_count matches recommended actions",
+          "passed": true,
+          "detail": "metadata=28 actual=28",
+          "severity": "error"
+        },
+        {
+          "check": "every opportunity/risk/action has a priority entry (matching type and id)",
+          "passed": true,
+          "detail": "0 without priority",
+          "severity": "error"
+        },
+        {
+          "check": "no priority points to an unknown item",
+          "passed": true,
+          "detail": "0 unknown",
+          "severity": "error"
+        },
+        {
+          "check": "action links to opportunities/risks resolve",
+          "passed": true,
+          "detail": "0 dangling",
+          "severity": "error"
+        },
+        {
+          "check": "valid_cross_signal_ids equals the cross-signal agent's signals",
+          "passed": true,
+          "detail": "decision=6 cross_signal=6",
+          "severity": "error"
+        },
+        {
+          "check": "every decision question from the cross-signal agent is answered",
+          "passed": true,
+          "detail": "0 unanswered",
+          "severity": "error"
+        },
+        {
+          "check": "priorities are determined (<=25% 'undetermined')",
+          "passed": true,
+          "detail": "0.0% undetermined",
+          "severity": "warn"
+        },
+        {
+          "check": "no unsupported questions",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every action has success indicators",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every cross-signal is used by at least one recommendation",
+          "passed": true,
+          "detail": "0 unused",
+          "severity": "warn"
+        },
+        {
+          "check": "no near-duplicate actions",
+          "passed": false,
+          "detail": "1 duplicates",
+          "severity": "warn"
+        },
+        {
+          "check": "options carry content (what we would do / trade-offs)",
+          "passed": true,
+          "detail": "0/3 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "no recommendation has numbers absent from its signals",
+          "passed": false,
+          "detail": "4 recommendations",
+          "severity": "warn"
+        },
+        {
+          "check": "no recommendation schedules work in a year that is already over",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "every action requires human approval",
+          "passed": true,
+          "detail": "28/28",
+          "severity": "error"
+        },
+        {
+          "check": "decision agent reported no warnings",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "recommendation",
+          "unit_id": "q1",
+          "statement": "Differentiate the platform by emphasizing NVIDIA's superior AI software stack, performance leadership with the latest GPUs, flexible subscription‑plus‑hardware pricing, and a comprehensive services ecosystem that Intel's offering does not provide. Intel's GA designs and SambaNova partnership create strong momentum (signal c7386d90). To compete, NVIDIA must offer unique value beyond hardware, leveraging its DGX expertise, TensorRT, AI Enterprise, and developer tools, which are not part of Intel's current stack.",
+          "flags": [
+            "new_numbers_not_in_signals"
+          ]
+        },
+        {
+          "unit_type": "recommendation",
+          "unit_id": "q2",
+          "statement": "Launch the integrated rack‑scale platform no later than Q3 2026 in the US, with a feature set that includes the latest GPU generation, advanced Mellanox networking, and the full NVIDIA AI software suite, ensuring the offering precedes Broadcom's H2 2026 shipment and matches or exceeds Intel's GA capabilities. Intel's accelerating roadmap (signal 5605c533) pressures NVIDIA to either launch earlier or provide a clearly superior feature set. Aligning launch before Broadcom's entry and delivering next‑gen hardware/software will preserve market leadership.",
+          "flags": [
+            "new_numbers_not_in_signals"
+          ]
+        },
+        {
+          "unit_type": "recommendation",
+          "unit_id": "q3",
+          "statement": "Position the platform as a turnkey, end‑to‑end AI inference solution that delivers immediate operational readiness, backed by NVIDIA's proven DGX reliability and a full software stack, targeting customers who would otherwise consider Broadcom's component‑only approach. Broadcom lacks a pre‑integrated rack‑scale AI inference system (signal 830967ad). Highlighting NVIDIA's complete solution fills this market gap and differentiates from Broadcom's fragmented offerings.",
+          "flags": [
+            "new_numbers_not_in_signals"
+          ]
+        },
+        {
+          "unit_type": "recommendation",
+          "unit_id": "q6",
+          "statement": "Position the platform as the performance‑first, software‑rich, and service‑enabled solution that delivers higher inference throughput, lower total cost of ownership, and flexible consumption models than Intel's reference designs. Both NVIDIA and Intel converge on integrated rack‑scale offerings (signal de3b0730). Differentiation must therefore focus on NVIDIA's strengths—GPU performance, AI software ecosystem, and subscription services—to avoid commoditization.",
+          "flags": [
+            "new_numbers_not_in_signals"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -13,16 +13,21 @@ from ..contracts import (
 from ..contracts.verification import VerificationDecision, VerificationResult
 
 
-class _Reset:
-    """Sentinel telling a reducer channel to discard its current value."""
+RESET = "__edrak_reset__"
+"""Sentinel telling a reducer channel to discard its current value.
 
-
-RESET = _Reset()
+It is a plain string, not a custom object, because LangGraph's checkpointer
+serializes pending channel writes with msgpack and rejects unknown types.
+"""
 
 T = TypeVar("T")
 
 
-def merge_by_task_id(left: list[T], right: list[T] | _Reset) -> list[T]:
+def _is_reset(value: object) -> bool:
+    return isinstance(value, str) and value == RESET
+
+
+def merge_by_task_id(left: list[T], right: list[T] | str) -> list[T]:
     """Reducer for parallel dispatch.
 
     LangGraph merges the simultaneous writes from every dispatched worker
@@ -36,7 +41,7 @@ def merge_by_task_id(left: list[T], right: list[T] | _Reset) -> list[T]:
     previous value intact. A node that genuinely needs to clear the channel (a
     replan, whose new plan carries new task ids) must write :data:`RESET`.
     """
-    if isinstance(right, _Reset):
+    if _is_reset(right):
         return []
     merged = {item.task_id: item for item in left}
     merged.update({item.task_id: item for item in right})

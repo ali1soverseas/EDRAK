@@ -1,0 +1,74 @@
+{
+  "task_id": "golden-ci-competitor",
+  "worker": "competitor_intelligence",
+  "attempt": 1,
+  "expected_output": "Compare source-supported product and software facts for NVIDIA, Intel, and Broadcom across the stated buyer and geography scope. Keep performance conditional on comparable tests, distinguish networking components from accelerators and systems, qualify partner-cloud availability by named region and announcement status, and state when comparable transaction pricing is not established.",
+  "findings": [
+    {
+      "finding_id": "ci-competitor-nvidia-dgx-system",
+      "statement": "NVIDIA's DGX B200 product page describes an eight-GPU data-center AI system; this establishes a system-level NVIDIA offer, not an apples-to-apples performance comparison with an accelerator product page.",
+      "category": "product_feature",
+      "importance": "should",
+      "alternatives": [
+        "NVIDIA describes DGX B200 as an eight-GPU AI system; this system-level page does not establish comparable performance against a standalone accelerator."
+      ],
+      "source_ids": [
+        "nvidia_dgx_b200"
+      ]
+    },
+    {
+      "finding_id": "ci-competitor-intel-gaudi-software",
+      "statement": "Intel's current Gaudi documentation covers Gaudi 2 and Gaudi 3 and includes inference workflows for PyTorch, vLLM, and SGLang.",
+      "category": "product_feature",
+      "importance": "should",
+      "alternatives": [
+        "Intel Gaudi 2 and Gaudi 3 documentation includes inference guidance for PyTorch, vLLM, and SGLang."
+      ],
+      "source_ids": [
+        "intel_gaudi_docs"
+      ]
+    },
+    {
+      "finding_id": "ci-competitor-intel-regional-cloud-availability",
+      "statement": "IBM announced Intel Gaudi 3 availability on IBM Cloud in Frankfurt and Washington, D.C., and said Dallas availability was planned for Q2 2025; this partner announcement does not establish general availability across all US or European regions.",
+      "category": "availability",
+      "importance": "should",
+      "alternatives": [
+        "IBM named Frankfurt and Washington, D.C. for Gaudi 3 cloud availability and Dallas as planned; this is not evidence of availability throughout the US or Europe."
+      ],
+      "source_ids": [
+        "ibm_intel_gaudi3_cloud_2025"
+      ]
+    },
+    {
+      "finding_id": "ci-competitor-broadcom-networking-scope",
+      "statement": "Broadcom identifies BCM78900 Tomahawk 5 as a 51.2 Tb/s Ethernet switch; this is networking evidence and does not by itself establish a complete Broadcom AI accelerator or inference system.",
+      "category": "product_feature",
+      "importance": "should",
+      "alternatives": [
+        "Broadcom's Tomahawk 5 is a 51.2 Tb/s Ethernet switch, not evidence by itself of a complete AI accelerator system."
+      ],
+      "source_ids": [
+        "broadcom_tomahawk5"
+      ]
+    },
+    {
+      "finding_id": "ci-competitor-comparable-price-gap",
+      "statement": "The reviewed official pages do not establish comparable US or Europe transaction prices for complete NVIDIA, Intel, and Broadcom inference systems; a defensible price comparison needs dated quotes with equivalent scope.",
+      "category": "pricing",
+      "importance": "should",
+      "alternatives": [
+        "The sources contain no comparable regional transaction prices for equivalent complete systems; use dated quotes with the same hardware, software, networking, and service scope."
+      ],
+      "source_ids": [
+        "nvidia_dgx_b200",
+        "intel_gaudi_docs",
+        "broadcom_tomahawk5"
+      ]
+    }
+  ],
+  "metadata": {
+    "curation_status": "partially_curated_source_bounded",
+    "source_note": "Expected competitor findings are derived from the reviewed source register, not from the evaluated run's worker output. Maintained product pages have no verified publication dates; report their review date and do not claim the requested source recency from them. No comparable performance benchmark or transaction price is established. Adjacent corporate financials or VMware infrastructure-software facts may be useful context when sourced, but do not substitute for AI product, system, software, availability, or comparable-cost evidence."
+  }
+}

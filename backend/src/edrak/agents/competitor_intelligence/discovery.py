@@ -29,7 +29,7 @@ from edrak.agents.competitor_intelligence.socials import USER_AGENT, find_offici
 from edrak.agents.competitor_intelligence.sources import compact, domain_of, host_of
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_structured, provider_key, schema_instruction
-from edrak.observability import traced_tool
+from edrak.observability import set_tool_provider, traced_tool
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +84,7 @@ def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[st
         try:
             from tavily import TavilyClient
 
+            set_tool_provider("tavily")
             response = TavilyClient(api_key=key).search(query=query, search_depth="basic", max_results=max_results)
             return [
                 {"title": r.get("title", ""), "url": r.get("url", ""), "content": r.get("content", "")}
@@ -102,6 +103,7 @@ def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[st
             "Competitor search needs TAVILY_API_KEY or SERPER_API_KEY in the project .env."
         )
 
+    set_tool_provider("serper", fallback=tavily_error is not None)
     try:
         resp = httpx.post(
             "https://google.serper.dev/search",

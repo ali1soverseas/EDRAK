@@ -11,24 +11,21 @@ from langchain_core.messages import (
     SystemMessage,
 )
 
+from ..contracts.base import new_id
 from ..contracts.CrossSignal import (
     CrossSignal,
     CrossSignalInput,
     CrossSignalOutput,
     CrossSignalSummary,
     DecisionReadyContext,
+    SignalType,
 )
-
-from ..contracts.base import new_id
-
 from ..core.llm import schema_instruction
-
 from .state import (
     CrossSignalSettings,
     CrossSignalState,
     SignalDetectionResult,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -259,6 +256,35 @@ def _finding_confidence(
             return 0.0
 
     return 0.0
+
+
+def _request_entities(cross_input: CrossSignalInput) -> list[str]:
+    """Return the company and named competitors whose mentions need support."""
+    request = cross_input.business_request
+    profile = request.company_profile
+    context = request.business_context
+    entities = [profile.name, *profile.aliases, *context.targets]
+    entities.extend(competitor.name for competitor in context.competitors)
+    entities.extend(
+        re.sub(
+            r"\s+(?:corporation|incorporated|inc\.?|corp\.?|limited|ltd\.?|llc)\.?$",
+            "",
+            entity,
+            flags=re.IGNORECASE,
+        )
+        for entity in list(entities)
+    )
+    return _unique_nonempty(entities)
+
+
+def _mentions_entity(text: str, entity: str) -> bool:
+    return bool(
+        re.search(
+            rf"(?<!\w){re.escape(entity)}(?!\w)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
 
 
 # ============================================================================
@@ -1400,6 +1426,14 @@ SEMANTIC RULES
 
 6. Never invent facts.
 
+6a. Every named company, product, market, or technology in a signal must appear
+in at least one of that signal's supporting finding statements. Do not add a
+competitor merely to create a comparison.
+
+6b. Do not add dates, quantities, percentages, or other numbers unless they
+appear in the supporting finding statements. F-number aliases are references,
+not evidence for a numeric claim.
+
 7. Never introduce unsupported competitors, products, markets,
    technologies, risks, opportunities, or business areas.
 
@@ -1746,6 +1780,7 @@ class CrossSignalNodes:
         state: CrossSignalState,
     ) -> dict[str, Any]:
 
+        request_entities = _request_entities(state["input"])
         candidates = list(
             state.get(
                 "candidate_signals",
@@ -1901,6 +1936,27 @@ class CrossSignalNodes:
 
                 continue
 
+            support_text = " ".join(
+                _finding_statement(finding) for finding in actual_findings
+            ).casefold()
+            unsupported_entities = [
+                entity
+                for entity in request_entities
+                if _mentions_entity(signal.signal, entity)
+                and not _mentions_entity(support_text, entity)
+            ]
+            if unsupported_entities:
+                discarded_insufficient_support += 1
+                logger.warning(
+                    (
+                        "Discarding candidate=%d: named entities lack supporting "
+                        "findings: %s"
+                    ),
+                    signal_index,
+                    ", ".join(unsupported_entities),
+                )
+                continue
+
             # ----------------------------------------------------------------
             # Derive domains from actual findings.
             # ----------------------------------------------------------------
@@ -1938,6 +1994,25 @@ class CrossSignalNodes:
                     finding_aliases,
                 )
             )
+
+            if (
+                signal.signal_type == SignalType.CONVERGENCE
+                and len(
+                    {
+                        _enum_value(domain)
+                        for domain in signal.domains_involved
+                    }
+                ) < 2
+            ):
+                discarded_insufficient_support += 1
+                logger.warning(
+                    (
+                        "Discarding candidate=%d: convergence requires findings "
+                        "from multiple workers."
+                    ),
+                    signal_index,
+                )
+                continue
 
             signal.signal_id = new_id()
 
@@ -2031,10 +2106,19 @@ class CrossSignalNodes:
                 resolved_reference_count
             ),
 
-            "support_references_unresolved": (
-                len(
-                    unresolved_references
-                )
+            "support_references_unresolved": sum(
+                1
+                for signal in final_signals
+                for support in signal.supporting_findings
+                if _resolve_finding_id(
+                    _support_finding_id(support),
+                    findings_by_id,
+                    finding_aliases,
+                ) is None
+            ),
+
+            "candidate_support_references_unresolved": len(
+                unresolved_references
             ),
 
             "discarded_missing_support": (
@@ -2045,7 +2129,7 @@ class CrossSignalNodes:
                 discarded_insufficient_support
             ),
 
-            "unresolved_support_references": (
+            "unresolved_candidate_support_references": (
                 _unique_nonempty(
                     unresolved_references,
                     limit=(
@@ -2060,7 +2144,7 @@ class CrossSignalNodes:
             (
                 "Collection completed: "
                 "candidates=%d normalized=%d final=%d "
-                "seen_refs=%d resolved_refs=%d unresolved_refs=%d"
+                "seen_refs=%d resolved_refs=%d unresolved_candidate_refs=%d"
             ),
             len(candidates),
             len(normalized),

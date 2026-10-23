@@ -1,0 +1,572 @@
+{
+  "agent": "market_intelligence",
+  "generated_at_utc": "2026-10-22T21:52:31.190570+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_market_intelligence_attempt_1_5599e9b6-db4.json",
+      "metrics_used": [
+        "faithfulness",
+        "relevancy",
+        "specificity",
+        "insight",
+        "context_relevancy",
+        "execution_quality"
+      ],
+      "metrics": {
+        "attempt": 1,
+        "status": "completed",
+        "error": "none",
+        "findings": 9,
+        "evidence_in_file": 9,
+        "evidence_collected": null,
+        "evidence_sample_pct": null,
+        "evidence_cited": 9,
+        "evidence_utilization_pct": 100.0,
+        "synthetic_evidence_pct": 0.0,
+        "findings_synthetic_only_pct": 0.0,
+        "distinct_source_domains_cited": 6,
+        "top_domain_share_pct": 33.33,
+        "third_party_evidence_pct": 0.0,
+        "avg_retrieval_score": null,
+        "requirements_total": 0,
+        "requirement_coverage_pct": null,
+        "profiles": 0,
+        "matrix_cells": 0,
+        "matrix_cells_with_evidence_pct": null,
+        "matrix_cells_not_established_pct": null,
+        "gaps": 0,
+        "conflicts": 0,
+        "queries_executed": null,
+        "agent_confidence": 0.72,
+        "avg_finding_confidence": 0.7167,
+        "findings_with_numbers_not_in_evidence": 0,
+        "units_with_absence_claims": 0,
+        "units": 9,
+        "units_flagged": 4,
+        "faithfulness_tested": 9,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 9,
+        "relevancy_avg": 1.0,
+        "relevancy_pass_pct": 100.0,
+        "specificity_tested": 9,
+        "specificity_avg": 0.571,
+        "specificity_pass_pct": 66.67,
+        "insight_tested": 9,
+        "insight_avg": 0.6654,
+        "insight_pass_pct": 66.67,
+        "context_relevancy_tested": 9,
+        "context_relevancy_avg": 0.7238,
+        "context_relevancy_pass_pct": 77.78,
+        "judge_errors": 0,
+        "execution_quality_status": "partial"
+      },
+      "execution_quality": {
+        "status": "partial",
+        "metrics": {
+          "calls": 7,
+          "tools": [
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search",
+            "market_search"
+          ],
+          "allowed_tools": null,
+          "available_tools": null,
+          "expected_sequence": null,
+          "sequence_missing": [],
+          "schema_checks": 7,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 3869.2506,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing market size Asia Pacific",
+                  "AI accelerator market size Latin America"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 3069.3223,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "cloud AI workload growth Asia Pacific 2024",
+                  "AI developer adoption Latin America 2024"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6955.3612,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI hardware import tariffs China",
+                  "data residency regulations AI cloud Brazil",
+                  "AI export control policy India"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5952.7109,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Broadcom AI accelerator market share Asia Pacific",
+                  "Intel AI GPU market Latin America",
+                  "local AI chip startups market Asia Pacific"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6337.6471,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Alibaba Cloud AI GPU pricing",
+                  "AWS AI instance pricing Brazil",
+                  "Google Cloud AI accelerator pricing Japan"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5327.0025,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Japan national AI strategy funding 2024",
+                  "Brazil AI accelerator subsidies 2024",
+                  "India AI data center incentives 2024"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 8441.8139,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Broadcom AI accelerator market share",
+                  "Intel AI accelerator product portfolio",
+                  "AMD AI accelerator go-to-market strategy"
+                ]
+              }
+            }
+          ],
+          "status": "partial",
+          "dimensions_assessable": 3
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7321,
+            "reason": "The output covers multiple relevant queries addressing growth rates, demand drivers, regulatory environment, and competitive intensity across Asia-Pacific and Latin America, fulfilling the task comprehensively. However, there is some repetition in tool calls using similar providers and overlapping query themes, which reduces efficiency. The sequence is thorough but could be optimized by consolidating queries to avoid redundant searches."
+          }
+        },
+        "checks": [
+          {
+            "check": "tool calls stay within declared/available tools",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "tool arguments satisfy supplied schemas",
+            "passed": true,
+            "detail": "",
+            "severity": "error"
+          },
+          {
+            "check": "workflow sequence is assessable",
+            "passed": false,
+            "detail": "no expected_sequence/workflow_sequence supplied",
+            "severity": "warn"
+          },
+          {
+            "check": "trace records tool failure handling",
+            "passed": false,
+            "detail": "no errors observed, but trace completeness is not declared",
+            "severity": "warn"
+          },
+          {
+            "check": "trace avoids duplicate tool work",
+            "passed": true,
+            "detail": "0 repeated call(s)",
+            "severity": "warn"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.003",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": true,
+          "detail": "completed",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": false,
+          "detail": "none",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "0f21a9c4-ed41-4a9e-af67-2459d3cc9a06",
+          "statement": "Competitive intensity is high, with a leading vendor holding a dominant market position in the AI accelerator market, capturing a majority share.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "eded65b2-deff-493a-af70-73f1e2119602",
+          "statement": "If BIS cannot verify a foreign party’s reliability through an EUC, the party may face heightened regulatory scrutiny or be placed on the Unverified List or Entity List, creating barriers for AI hardware exporters.",
+          "flags": [
+            "generic_statement",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "8923c9b3-2975-483a-959d-cd02a516d34d",
+          "statement": "Amazon Bedrock includes foundation models from multiple leading AI providers (Anthropic, Meta, Mistral AI, and Amazon), reflecting a multi‑vendor licensing model that enhances competitive options for customers.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "63afac75-e84e-4131-9f09-d7050d10920d",
+          "statement": "Broadcom's AI semiconductor revenues surged 143% year‑over‑year to $10.8 billion in Q2 FY2026, highlighting its rapidly expanding market presence in AI accelerators and networking.",
+          "flags": [
+            "no_added_insight"
+          ]
+        }
+      ]
+    }
+  ]
+}

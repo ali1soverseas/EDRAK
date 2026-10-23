@@ -344,10 +344,13 @@ pre-existing routing, not merge damage.
    Causes: the `demand` branch hit a provider-side `500` from Ollama, the
    `social` branch times out at ~83s, and `news:gdelt` is rate-limited or
    unavailable upstream.
-2. **customer-trends collection is time-starved.** Branches get
-   `min(branch_timeout_s=100, time_left)` inside a 210s collection window
-   (300 × (1 − 0.3) reserve). They receive ~70–85s. Raising the brief's
-   `max_seconds` to 600 roughly doubles CT wall time; undecided.
+2. **customer-trends collection is time-starved.** The worker now reserves half
+   of its run budget for analysis and finding generation, and only starts a
+   second collection pass when at least 60s remain in the collection window.
+   With the default 300s budget, collection is capped at 150s instead of 210s.
+   This protects synthesis from the zero-finding timeout observed above, but
+   may reduce evidence volume; the live run still needs to be repeated to
+   measure the tradeoff.
 3. **A lost CT branch is absorbed silently.** A branch failure becomes a gap,
    which verification records and never retries. `_worker_error` reads only
    `result.error`, so it never registers as a failure.

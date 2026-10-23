@@ -129,18 +129,46 @@ npm run dev
 Each backend run writes evaluator inputs and stage history under
 `artifacts/evaluation_runs/<analysis_id>/`. Internal retrievals are recorded as RAG inputs;
 worker, verification, metrics, synthesis, and decision outputs are retained as their stages
-complete. The run-bundle evaluator includes metrics-stage artifacts as well as the inputs
-directory. Worker and tool spans are exported to the run bundle's `inputs/telemetry.json`.
+complete. The run-bundle evaluator reads metrics-stage artifacts as pipeline context, but does
+not emit a separate evaluation report for the metrics stage. Worker and tool spans are exported
+to the run bundle's `inputs/telemetry.json`.
 
 Evaluate a completed or paused run locally without calling a model:
 
 ```powershell
-.venv\Scripts\python.exe evaluationEnhanced\evaluation_Agent\edrak_eval_agent_enhanced.py `
+.venv\Scripts\python.exe Evaluation\evaluation_Agent\edrak_eval_agent_enhanced.py `
   --run-bundle artifacts\evaluation_runs\<analysis_id> --dry-run
 ```
 
 For model-judged quality scores, configure `OPENAI_API_KEY` and install `deepeval`, then omit
-`--dry-run`. Telemetry can also be sent to an OTLP collector by setting
+`--dry-run`. The default judge set is faithfulness and relevancy; use `--extra-metrics` to also
+run the slower specificity, insight, and actionability judges. Deterministic evidence metrics
+and integrity checks still run in either mode. The judge model defaults to `gpt-4.1-mini`
+(`--model` or `OPENAI_MODEL` to change it). Judge requests run sequentially by default
+(`--workers 1`) to avoid rate-limit bursts; `--retries 2` bounds retries for a metric.
+After repeated rate-limit responses, the evaluator opens a run-scoped circuit breaker and
+skips further judge requests instead of spending the remaining run retrying. Successful
+judge results are cached in `--cache`.
+
+To compare the run against a golden dataset immediately after evaluation, add
+`--compare-to <name>` using the folder name under `golden\ground_truth`. The comparison report
+is written under `reports\compare` for the evaluation API and dashboard. `--dry-run` also makes
+the comparison use word overlap without a model; use `--compare-no-llm` to force this fallback
+during a model-judged evaluation. Keep the Evaluation frontend open at
+`http://localhost:5500/?api=http://localhost:8000` (and signed in to the backend); it checks for
+new comparison results every three seconds and opens the newest result automatically.
+Execution-quality reports correlate telemetry spans to matching task IDs and attempts for
+worker and retrieval artifacts. The API exposes the six execution dimensions per evaluated
+agent; dimensions without their required trace evidence remain not assessable. Tool argument
+values are fingerprinted locally for duplicate-call checks and are not sent to DeepEval unless
+`--include-tool-payloads` is explicitly enabled.
+
+**Evaluation dashboard.** The backend serves read-only results at `/api/evaluation/runs`,
+`/api/evaluation/runs/{run_id}`, `/api/evaluation/comparisons` and `/api/evaluation/comparisons/{id}`
+(sign-in required; reports are read from `reports/`, override with `EDRAK_EVAL_REPORTS_DIR`).
+To view them, start the backend, sign in, then serve the dashboard:
+`cd "Evaluation frontend"; python -m http.server 5500` and open `http://localhost:5500/?api=http://localhost:8000`.
+Telemetry can also be sent to an OTLP collector by setting
 `OTEL_EXPORTER_OTLP_ENDPOINT`; `EDRAK_TELEMETRY_EXPORT_PATH` selects the local span export file.
 
 ---

@@ -24,7 +24,7 @@ from edrak.contracts.verification import (
 from edrak.evaluation_artifacts import EvaluationArtifactBundle
 from edrak.observability import spans_for_run
 
-from evaluationEnhanced.evaluation_Agent import edrak_eval_agent_enhanced as evaluator
+from Evaluation.evaluation_Agent import edrak_eval_agent_enhanced as evaluator
 
 
 def _request() -> BusinessRequest:

@@ -1,0 +1,4754 @@
+{
+  "generated_at_utc": "2026-10-22T21:52:31.245136+00:00",
+  "judge": {
+    "calls": 369,
+    "successful_calls": 369,
+    "cache_hits": 0,
+    "errors": 0,
+    "skipped": 0,
+    "rate_limit_circuit_open": false,
+    "total_latency_seconds": 2017.9337,
+    "calls_by_metric": {
+      "faithfulness": 104,
+      "relevancy": 106,
+      "specificity": 32,
+      "actionability": 34,
+      "context_relevancy": 48,
+      "efficiency": 11,
+      "insight": 20,
+      "error_handling": 2,
+      "context_precision": 6,
+      "context_recall": 6
+    },
+    "failures_by_metric": {},
+    "skipped_by_metric": {}
+  },
+  "agent_files": {
+    "competitor_intelligence": [
+      {
+        "file": "worker_competitor_intelligence_attempt_1_c6a09889-779.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 24,
+          "sequence_missing": [],
+          "schema_checks": 24,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4728.6052,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI accelerator subscription pricing per seat per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3074.7436,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI software licensing tiers price list",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2840.216,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI software subscription cost per user per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4304.391,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel oneAPI pricing model per seat per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3113.1754,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI hardware and software market presence United States Europe APAC",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3383.0383,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI product availability by region press release 2025 2026",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3456.1804,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI solutions target industry verticals cloud service providers automotive healthcare finance",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3245.7769,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI portfolio industry focus whitepaper 2024",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2103.3531,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI accelerator product lineup competing with NVIDIA GPUs",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2626.382,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel Xeon Scalable AI extensions product name and capabilities",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3342.804,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI accelerator pricing per unit and software licensing fees",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2375.1658,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI software subscription tiers pricing table",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4704.5233,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI‑accelerated networking product market regions United States Europe APAC",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4424.4607,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI solutions regional availability press release 2025",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3309.1395,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI ASIC target verticals data center telecommunications enterprise edge AI",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2659.9295,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI product portfolio industry focus whitepaper",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2422.4391,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI accelerator product names inference ASICs comparable to NVIDIA GPUs",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3796.0108,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI‑optimized networking chips product lineup",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2894.0923,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI accelerator pricing model list price",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3030.946,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI software licensing fees per seat",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2553.448,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI software per‑seat pricing site:broadcom.com",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3334.5692,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Broadcom AI licensing plans pricing per user per month official pricing guide",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4165.7207,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel oneAPI AI Toolkit pricing per user per month site:intel.com",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "c6a09889-7791-4578-986c-4d6a5040cd3a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2531.2115,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "query": "Intel AI software subscription pricing site:intel.com",
+                "stage": 2
+              }
+            }
+          ],
+          "tool_counts": {
+            "competitor_web_search": 24
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6846,
+            "reason": "The output includes multiple distinct competitor_web_search calls targeting specific pricing queries for Broadcom and Intel, which aligns with gathering relevant information on products and pricing. However, the searches focus narrowly on pricing tiers and subscription costs without explicitly addressing geographic markets, industry verticals, or direct comparison to NVIDIA’s positioning, indicating incomplete coverage. There is no evident repetition of identical tool calls, so redundancy is avoided, but the output lacks a balanced thoroughness by omitting broader market and positioning data requested in the input."
+          }
+        }
+      }
+    ],
+    "internal_intelligence": [
+      {
+        "file": "worker_internal_intelligence_attempt_1_c9d27bf7-569.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 12,
+          "sequence_missing": [],
+          "schema_checks": 12,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 495.4892,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 41.6177,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 40.1989,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.0409,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 59.4343,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 52.3983,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 60.2214,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 71.3367,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.0282,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 48.4736,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.1409,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.1885,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 12
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.632,
+            "reason": "The output includes multiple tool calls that are similar but target different data origins, which shows an attempt to gather comprehensive information on geographic markets and industry verticals. However, there is some redundancy in repeated queries with only the 'origin' parameter changing, and some calls return zero results, indicating inefficiency. The output covers the necessary areas from the input but could be more efficient by consolidating queries or avoiding calls that yield no data."
+          }
+        }
+      }
+    ],
+    "market_intelligence": [
+      {
+        "file": "worker_market_intelligence_attempt_1_5599e9b6-db4.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 7,
+          "sequence_missing": [],
+          "schema_checks": 7,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 3869.2506,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing market size Asia Pacific",
+                  "AI accelerator market size Latin America"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 3069.3223,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "cloud AI workload growth Asia Pacific 2024",
+                  "AI developer adoption Latin America 2024"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6955.3612,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI hardware import tariffs China",
+                  "data residency regulations AI cloud Brazil",
+                  "AI export control policy India"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5952.7109,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Broadcom AI accelerator market share Asia Pacific",
+                  "Intel AI GPU market Latin America",
+                  "local AI chip startups market Asia Pacific"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6337.6471,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Alibaba Cloud AI GPU pricing",
+                  "AWS AI instance pricing Brazil",
+                  "Google Cloud AI accelerator pricing Japan"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5327.0025,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Japan national AI strategy funding 2024",
+                  "Brazil AI accelerator subsidies 2024",
+                  "India AI data center incentives 2024"
+                ]
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "5599e9b6-db4b-4b14-be3e-0c41375b3d4a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 8441.8139,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Broadcom AI accelerator market share",
+                  "Intel AI accelerator product portfolio",
+                  "AMD AI accelerator go-to-market strategy"
+                ]
+              }
+            }
+          ],
+          "tool_counts": {
+            "market_search": 7
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7321,
+            "reason": "The output covers multiple relevant queries addressing growth rates, demand drivers, regulatory environment, and competitive intensity across Asia-Pacific and Latin America, fulfilling the task comprehensively. However, there is some repetition in tool calls using similar providers and overlapping query themes, which reduces efficiency. The sequence is thorough but could be optimized by consolidating queries to avoid redundant searches."
+          }
+        }
+      }
+    ],
+    "customer_trends": [
+      {
+        "file": "worker_customer_trends_attempt_1_029ef749-18d.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 39,
+          "sequence_missing": [],
+          "schema_checks": 0,
+          "schema_errors": [],
+          "errors": 10,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "since",
+                "store",
+                "target_id_or_url",
+                "until"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "since": "str",
+                "store": "str",
+                "target_id_or_url": "str",
+                "until": "str"
+              },
+              "latency_ms": 52.0422,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "since": "",
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforcenow",
+                "until": ""
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "geo",
+                "keywords",
+                "timeframe"
+              ],
+              "argument_types": {
+                "geo": "str",
+                "keywords": "list",
+                "timeframe": "str"
+              },
+              "latency_ms": 1596.511,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "geo": "US",
+                "keywords": [
+                  "NVIDIA AI",
+                  "AI computing",
+                  "Intel AI",
+                  "Broadcom AI",
+                  "AI cloud adoption"
+                ],
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "country",
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "since",
+                "store",
+                "target_id_or_url",
+                "until"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "since": "str",
+                "store": "str",
+                "target_id_or_url": "str",
+                "until": "str"
+              },
+              "latency_ms": 620.5298,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 30,
+                "since": "",
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforcenow",
+                "until": ""
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "granularity",
+                "include_related",
+                "keywords",
+                "languages",
+                "max_results",
+                "since",
+                "timeframe",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "granularity": "str",
+                "include_related": "bool",
+                "keywords": "list",
+                "languages": "list",
+                "max_results": "int",
+                "since": "str",
+                "timeframe": "str",
+                "until": "str"
+              },
+              "latency_ms": 4.889,
+              "error_code": "invalid_input",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "granularity": "monthly",
+                "include_related": true,
+                "keywords": [
+                  "NVIDIA AI",
+                  "AI computing",
+                  "Intel AI",
+                  "Broadcom AI",
+                  "AI cloud adoption"
+                ],
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 5,
+                "since": "",
+                "timeframe": "today 12-m",
+                "until": ""
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "granularity",
+                "include_related",
+                "keywords",
+                "languages",
+                "max_results",
+                "timeframe"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "granularity": "str",
+                "include_related": "bool",
+                "keywords": "list",
+                "languages": "list",
+                "max_results": "int",
+                "timeframe": "str"
+              },
+              "latency_ms": 428.2107,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "granularity": "month",
+                "include_related": true,
+                "keywords": [
+                  "NVIDIA AI",
+                  "AI computing",
+                  "Intel AI",
+                  "Broadcom AI",
+                  "AI cloud adoption"
+                ],
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 5,
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 2048.3192,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 20,
+                "num": 10,
+                "query": "NVIDIA AI computing platform cloud providers adoption barriers",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 1149.1844,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 20,
+                "num": 10,
+                "query": "منصات حوسبة الذكاء الاصطناعي NVIDIA سحابة",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 1246.7519,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "num": 10,
+                "query": "NVIDIA DGX Cloud Amazon product",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "fetch_page",
+              "provider": "direct_http",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "max_chars",
+                "url"
+              ],
+              "argument_types": {
+                "max_chars": "int",
+                "url": "str"
+              },
+              "latency_ms": 710.5567,
+              "result_summary": {
+                "collection_counts": {
+                  "preview": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "preview",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "max_chars": 20000,
+                "url": "https://blogs.nvidia.com/blog/ai-cloud-ecosystem/"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 2110.025,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 20,
+                "num": 10,
+                "query": "Intel AI accelerator Amazon review",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 21042.9498,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "hashtags": [
+                  "#NVIDIAAI",
+                  "#AICloud",
+                  "#GPU"
+                ],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "x",
+                "query": "NVIDIA AI platform",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 352.2611,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "reddit",
+                "query": "NVIDIA AI platform",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 1418.6655,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Broadcom",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 20,
+                "num": 10,
+                "query": "Broadcom AI accelerator cloud providers review",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "youtube_api",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 827.8847,
+              "result_summary": {
+                "collection_counts": {
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "next_cursor",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "youtube",
+                "query": "NVIDIA AI webinar",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 1496.5537,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "num": 10,
+                "query": "NVIDIA AI cloud platform review",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 3047.6548,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "num": 10,
+                "query": "Intel AI cloud platform review",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_comments",
+              "provider": "youtube_api",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "post_url",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "post_url": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 741.1977,
+              "result_summary": {
+                "collection_counts": {
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "next_cursor",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "youtube",
+                "post_url": "https://www.youtube.com/watch?v=jIviHI7fqyc",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 189.6482,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "tiktok",
+                "query": "NVIDIA AI demo",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 187.1947,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "facebook",
+                "query": "NVIDIA AI services",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 39232.7035,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA AI platform adoption US",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "granularity",
+                "include_related",
+                "keywords",
+                "max_results",
+                "timeframe"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "granularity": "str",
+                "include_related": "bool",
+                "keywords": "list",
+                "max_results": "int",
+                "timeframe": "str"
+              },
+              "latency_ms": 2.7275,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "granularity": "month",
+                "include_related": true,
+                "keywords": [
+                  "NVIDIA AI",
+                  "AI computing",
+                  "Intel AI",
+                  "Broadcom AI",
+                  "AI cloud adoption"
+                ],
+                "max_results": 5,
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 3956.9714,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA AI platform adoption US",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 2957.3607,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "AI cloud market Europe NVIDIA",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 1923.8972,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel AI competition",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "Intel AI competition news",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 5139.1595,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 1
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI computing",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA AI منصة السحابة adoption US",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "analyze_text",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "batch_ids",
+                "max_items"
+              ],
+              "argument_types": {
+                "batch_ids": "list",
+                "max_items": "int"
+              },
+              "latency_ms": 75544.0593,
+              "result_summary": {
+                "collection_counts": {
+                  "themes": 15
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "analyzed",
+                  "count",
+                  "languages",
+                  "sentiment",
+                  "status",
+                  "themes",
+                  "themes_total",
+                  "total_items"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "batch_ids": [
+                  "b_9c2a539eb4f9",
+                  "b_f24fe965032f",
+                  "b_6a47ddfc7d35",
+                  "b_e76148329a17",
+                  "b_fc73d8dee02f",
+                  "b_368bf6e98ab5",
+                  "b_22ebe479b957",
+                  "b_6ea52aed783b"
+                ],
+                "max_items": 200
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 16.8225,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 15
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "volume_over_time"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 17.4782,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 15
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "platform_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 19.4879,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 15
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "language_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 17.18,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 15
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "engagement_stats"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric",
+                "params"
+              ],
+              "argument_types": {
+                "metric": "str",
+                "params": "dict"
+              },
+              "latency_ms": 52.2388,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 15
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "share_of_voice",
+                "params": {
+                  "competitors": [
+                    "Broadcom",
+                    "Intel Corp"
+                  ],
+                  "entity": "NVIDIA Corporation"
+                }
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 4.4863,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 8,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {},
+                "limit": 8,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 7.6272,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "NVIDIA DGX Cloud"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 7.5185,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "AI certification courses"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.7032,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "GPU cloud providers"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 7.5306,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "AI education"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 7.288,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "AI infrastructure"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.3593,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "Intel AI performance"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "submit_findings",
+              "worker": "customer_trends",
+              "task_id": "029ef749-18d0-44f3-bc64-5651a5a759b7",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "findings"
+              ],
+              "argument_types": {
+                "findings": "list"
+              },
+              "latency_ms": 15.9091,
+              "result_summary": {
+                "collection_counts": {
+                  "accepted": 5
+                },
+                "decoded_json": true,
+                "field_count": 3,
+                "keys": [
+                  "accepted",
+                  "count",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "truncated": true,
+                "serialized_length": 2562
+              }
+            }
+          ],
+          "tool_counts": {
+            "reviews_fetch": 2,
+            "search_interest": 4,
+            "web_search": 7,
+            "fetch_page": 1,
+            "social_search": 5,
+            "social_comments": 1,
+            "news_coverage": 5,
+            "analyze_text": 1,
+            "compute_metrics": 5,
+            "evidence_query": 7,
+            "submit_findings": 1
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "partial",
+            "reason": ""
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.4848,
+            "reason": "The output shows mixed results with some tool failures (search_interest and reviews_fetch returning errors) and one successful reviews_fetch call. However, there is no evidence of retries or fallbacks being triggered after failures, which is a shortcoming given the task requirements. The execution trace indicates no attempts to recover from provider_exhausted or invalid_input errors, reflecting incomplete handling of failures and fallbacks."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.3269,
+            "reason": "The output includes multiple tool calls, but several return errors or incomplete data, indicating inefficiency and redundancy. There are repeated attempts with similar parameters that do not contribute new information, violating the step to avoid redundant work. Additionally, the output lacks a clear synthesis or summary of the needs, barriers, and sentiment, thus missing completeness and effective task fulfillment."
+          }
+        }
+      }
+    ],
+    "verification": [
+      {
+        "file": "verification_pass_001.json",
+        "status": "not_assessable"
+      }
+    ],
+    "cross_signal": [
+      {
+        "file": "cross_signal.json",
+        "status": "not_assessable"
+      }
+    ],
+    "decision": [
+      {
+        "file": "decision_analysis.json",
+        "status": "not_assessable"
+      }
+    ],
+    "orchestration": [
+      {
+        "file": "orchestration_result.json",
+        "status": "not_assessable"
+      }
+    ],
+    "rag": [
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_001.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 59.4343,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 52.3983,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Internal capability gaps or supply chain constraints that limit NVIDIA's ability to expand AI computing offerings into additional European markets or new industry verticals",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7622,
+            "reason": "The output includes two distinct tool calls targeting different data origins (internal intelligence and public handbook), which avoids redundant queries and covers necessary information about internal capability gaps and constraints. However, the second call returns no results, indicating a potentially unnecessary query that does not contribute new information, slightly reducing efficiency. Overall, the sequence logically progresses toward task completion with minimal repetition and includes relevant details from the input."
+          }
+        }
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_002.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.1409,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.1885,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Customer support tickets, survey feedback, and sales notes that highlight performance, integration, or support challenges for NVIDIA AI computing platforms in specific verticals or regions",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7044,
+            "reason": "The output includes two distinct tool calls with different parameters targeting relevant information about NVIDIA's AI computing platforms, addressing geographic and vertical challenges. However, the second call uses the same query as the first with only the origin filter changed, which may be somewhat redundant given the zero results returned. Overall, the calls gather necessary information without excessive repetition but could be more optimized by refining queries to avoid overlap."
+          }
+        }
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_003.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 495.4892,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 41.6177,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Geographic regions in Europe and the United States where NVIDIA's AI computing and data center platforms are currently deployed for cloud service providers and AI developers",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.67,
+            "reason": "The output includes two distinct tool calls targeting different data origins (internal intelligence and public handbook), which helps gather relevant information about NVIDIA's geographic markets. However, the second call returns no results and uses a query nearly identical to the first, indicating some redundancy and inefficiency. While the sequence logically attempts to cover multiple sources, it could better avoid repeated queries and improve efficiency by refining or consolidating calls to reduce unnecessary work."
+          }
+        }
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_004.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 40.1989,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 55.0409,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Industry verticals (e.g., automotive, healthcare, finance, media) that are currently using NVIDIA's AI computing and data center platforms, including revenue contribution by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7154,
+            "reason": "The output includes two distinct tool calls targeting different data origins (non-public and public handbook) for industry verticals relevant to NVIDIA's AI platforms, which aligns with gathering necessary information. However, both calls focus solely on industry verticals and do not address geographic markets or internal capability gaps, leaving part of the input unaddressed. There is no evident redundant repetition, but the scope is incomplete, reducing thoroughness and task completion."
+          }
+        }
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_005.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 60.2214,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 71.3367,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Regulatory and compliance constraints (e.g., EU export controls, data residency requirements) affecting deployment of NVIDIA AI computing and data center platforms in Europe and the United States",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.327,
+            "reason": "The output includes two retrieval tool calls with identical queries but different parameters, resulting in redundant calls that do not contribute new information. While the first call returns results, the second returns none, indicating inefficiency. Additionally, the output does not synthesize or present the requested information about NVIDIA's geographic markets, industry verticals, or internal capability gaps, thus lacking completeness and effectiveness in addressing the input query."
+          }
+        }
+      },
+      {
+        "file": "rag_internal_intelligence_attempt_1_c9d27bf7-569_006.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 2,
+          "sequence_missing": [],
+          "schema_checks": 2,
+          "schema_errors": [],
+          "errors": 0,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 53.0282,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "c9d27bf7-569c-4eb2-9ef8-71c3a3af47ea",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 48.4736,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Current internal OKRs, adoption metrics, and revenue targets for NVIDIA's AI computing business in the European and U.S. markets, broken down by vertical",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            }
+          ],
+          "tool_counts": {
+            "internal_rag.retrieve": 2
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6864,
+            "reason": "The output includes two distinct tool calls with different parameters and origins, avoiding redundant queries with identical parameters. However, the second call returns no results, indicating a possible inefficiency or lack of useful information gained. The output provides some relevant data but does not fully address internal capability gaps or constraints for expansion, limiting completeness."
+          }
+        }
+      }
+    ],
+    "telemetry": [
+      {
+        "file": "telemetry.json",
+        "status": "partial",
+        "metrics": {
+          "calls": 82,
+          "sequence_missing": [],
+          "schema_checks": 43,
+          "schema_errors": [],
+          "errors": 10,
+          "repeated_calls": 0,
+          "trace_complete": false,
+          "tool_counts": {
+            "internal_rag.retrieve": 12,
+            "market_search": 7,
+            "reviews_fetch": 2,
+            "search_interest": 4,
+            "competitor_web_search": 24,
+            "web_search": 7,
+            "fetch_page": 1,
+            "social_search": 5,
+            "social_comments": 1,
+            "news_coverage": 5,
+            "analyze_text": 1,
+            "compute_metrics": 5,
+            "evidence_query": 7,
+            "submit_findings": 1
+          }
+        },
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "reason": ""
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.5588,
+            "reason": "The output shows multiple retrieval attempts with some returning results and others empty, but no retries or fallbacks were triggered despite empty results from 'public_handbook' origin queries. This indicates partial handling of failures (empty results) but lacks retry or fallback mechanisms as required by the evaluation steps."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6589,
+            "reason": "The output includes multiple distinct retrieval calls targeting different queries relevant to NVIDIA's AI business growth, which ensures completeness of information. However, there is some repetition in the retrieval structure and parameters (e.g., repeated attempts with similar queries differing only by origin filters), which could indicate redundant processing. The output balances thoroughness with some inefficiency but avoids excessive repetition."
+          }
+        }
+      }
+    ]
+  },
+  "errors": []
+}
