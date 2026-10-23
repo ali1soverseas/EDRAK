@@ -11,6 +11,11 @@ def _client(tmp_path, monkeypatch) -> TestClient:
     reports = tmp_path / "reports"
     agent = reports / "run1" / "decision"
     agent.mkdir(parents=True)
+    (reports / "run1" / "pipeline_report.json").write_text(
+        '{"total":2,"passed":1,"failed":1,"warnings":0,'
+        '"checks":[{"check":"recommendation trace","passed":false,"detail":"signal missing","severity":"error"}]}',
+        encoding="utf-8",
+    )
     (agent / "decision_report.json").write_text(
         '{"agent":"decision","model":"m","thresholds":{"faithfulness":0.7},"files":[{"file":"f",'
         '"metrics":{"units":4,"units_flagged":1,"faithfulness_avg":0.8},'
@@ -43,10 +48,14 @@ def test_lists_and_summarises_runs(tmp_path, monkeypatch) -> None:
     run = client.get("/api/evaluation/runs/run1").json()
     assert run["goal"] == "Assess the market"
     assert run["use_case"] == "market_entry"
+    assert run["pipeline_report"]["checks"][0]["check"] == "recommendation trace"
+    assert run["pipeline_report"]["failed"] == 1
     agent = run["agents"][0]
     assert (agent["checks"], agent["checks_passed"], agent["units_flagged"]) == (2, 1, 1)
-    assert agent["judged_avg"] == {"faithfulness": 0.8}
-    assert agent["passed_checks"][0]["check"] == "a"
+    assert "judged_avg" not in agent
+    assert "passed_checks" not in agent
+    assert "domain_metrics" not in agent
+    assert "metrics_used" not in agent
     assert agent["failed_checks"][0]["check"] == "b"
     assert agent["failed_checks"][0]["passed"] is False
     assert agent["file_details"][0]["file"] == "f"
@@ -54,7 +63,7 @@ def test_lists_and_summarises_runs(tmp_path, monkeypatch) -> None:
     assert client.get("/api/evaluation/runs/run1/agents/metrics").status_code == 404
 
 
-def test_summarises_rag_and_orchestration_metrics() -> None:
+def test_agent_summary_omits_unrendered_domain_metrics() -> None:
     rag = evaluation._agent_summary({
         "agent": "rag",
         "files": [
@@ -73,23 +82,9 @@ def test_summarises_rag_and_orchestration_metrics() -> None:
                          "retrieval_latency_ms": 80, "retrieval_latency_calls": 1}},
         ],
     })
-    assert rag["judged_avg"]["context_relevancy"] == 0.6
-    assert rag["domain_metrics"] == {
-        "mean_retrieval_score": 0.533,
-        "context_precision": {"score": None, "reason": "reference missing"},
-        "context_recall": {"score": None, "reason": "reference missing"},
-        "context_relevancy": {"score": 0.6, "reason": None},
-        "answer_source": "matched_worker_findings",
-        "queries": 2,
-        "retrieved_chunks": 3,
-        "empty_chunks": 1,
-        "duplicate_chunk_pairs": 1,
-        "retrieval_latency_ms": 106.667,
-    }
-    assert "faithfulness" not in rag["domain_metrics"]
-    assert "answer_relevancy" not in rag["domain_metrics"]
-    assert "faithfulness" not in rag["judged_avg"]
-    assert "relevancy" not in rag["judged_avg"]
+    assert "judged_avg" not in rag
+    assert "domain_metrics" not in rag
+    assert "metrics_used" not in rag
 
     orchestration = evaluation._agent_summary({
         "agent": "orchestration",
@@ -101,21 +96,7 @@ def test_summarises_rag_and_orchestration_metrics() -> None:
                                "missing_tasks": 0, "missing_dependencies": 0,
                                "execution_quality_status": "not_assessable"}}],
     })
-    assert orchestration["domain_metrics"] == {
-        "task_completion_pct": 75.0,
-        "workflow_success_pct": 0.0,
-        "dependency_integrity_pct": 50.0,
-        "failure_rate_pct": 25.0,
-        "retry_rate_pct": 20.0,
-        "execution_duration_seconds": 42.5,
-        "planned_tasks": 4,
-        "failed_tasks": 1,
-        "dependency_edges": 2,
-        "dependency_violations": 1,
-        "missing_tasks": 0,
-        "missing_dependencies": 0,
-        "execution_quality_status": "not_assessable",
-    }
+    assert "domain_metrics" not in orchestration
 
 
 def test_summarises_execution_quality_dimensions() -> None:
@@ -141,8 +122,8 @@ def test_summarises_execution_quality_dimensions() -> None:
                         },
                         "result_count": 2,
                         "result_summary": {"type": "array", "count": 2},
+                        "result": [{"excerpt": "retrieved result", "api_token": "must be redacted"}],
                         "latency_ms": 25.0,
-                        "result": [{"excerpt": "must not be exposed"}],
                     }],
                 },
                 "dimensions": {
@@ -162,11 +143,8 @@ def test_summarises_execution_quality_dimensions() -> None:
     })
 
     quality = summary["execution_quality"]
-    assert quality["status"] == "partial"
-    assert quality["files_with_trace"] == 1
-    assert quality["calls"] == 3
-    assert quality["errors"] == 1
-    assert quality["repeated_calls"] == 2
+    assert set(quality) == {"dimensions"}
+    assert "dimensions" not in summary["file_details"][0]["execution_quality"]
     assert summary["file_details"][0]["execution_quality"]["errors"] == 1
     assert quality["dimensions"]["tool_selection"] == {
         "assessable_files": 1, "partial_files": 0, "pending_judge_files": 0,
@@ -174,7 +152,7 @@ def test_summarises_execution_quality_dimensions() -> None:
     }
     assert quality["dimensions"]["tool_arguments"]["partial_files"] == 1
     assert quality["dimensions"]["tool_result_use"]["reasons"] == ["payload disabled"]
-    assert quality["call_details"] == [{
+    assert summary["file_details"][0]["execution_quality"]["call_details"] == [{
         "file": "worker_trace.json",
         "tool": "internal_rag.retrieve",
         "provider": "chroma",
@@ -188,10 +166,12 @@ def test_summarises_execution_quality_dimensions() -> None:
         },
         "result_count": 2,
         "result_summary": {"type": "array", "count": 2},
+        "result": [{"excerpt": "retrieved result", "api_token": "[REDACTED]"}],
         "latency_ms": 25.0,
     }]
-    assert summary["file_details"][0]["execution_quality"]["call_details"] == quality["call_details"]
-    assert "result" not in summary["file_details"][0]["execution_quality"]["call_details"][0]
+    assert summary["file_details"][0]["execution_quality"]["call_details"][0]["result"] == [
+        {"excerpt": "retrieved result", "api_token": "[REDACTED]"}
+    ]
 
 
 def test_serves_comparisons_and_rejects_bad_ids(tmp_path, monkeypatch) -> None:

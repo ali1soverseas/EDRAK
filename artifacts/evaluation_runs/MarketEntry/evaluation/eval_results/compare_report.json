@@ -2,605 +2,103 @@
   "ground_truth": "nvidia_new_markets_inputs",
   "run_bundle": "MarketEntry",
   "method": "llm judge (gpt-5.1)",
-  "query": {
-    "goal_word_overlap": 0.909,
-    "same_company": false,
-    "same_targets": true,
-    "same_markets": false,
-    "ground_truth": {
-      "goal": "What new markets should NVIDIA target to grow its AI business against Intel and Broadcom?",
-      "company": "NIVIDIA Corporation",
-      "company_aliases": [
-        "Nividia"
-      ],
-      "targets": [
-        "Broadcom",
-        "Intel Corp"
-      ],
-      "markets": []
-    },
-    "edrak": {
-      "goal": "What new markets should NVIDIA target to grow its AI business against Intel Corp and Broadcom?",
-      "company": "NVIDIA Corporation",
-      "company_aliases": [
-        "Nvidia"
-      ],
-      "targets": [
-        "Broadcom",
-        "Intel Corp"
-      ],
-      "markets": [
-        "Europe",
-        "United States"
-      ]
-    }
-  },
-  "orchestrator": {
-    "workers_expected": [
-      "competitor_intelligence",
-      "customer_trends",
-      "internal_intelligence",
-      "market_intelligence"
-    ],
-    "workers_missing_in_edrak": [],
-    "workers_extra_in_edrak": [],
-    "worker_recall": 1.0,
-    "worker_jaccard": 1.0,
-    "task_count": [
-      4,
-      4
-    ],
-    "task_goal_word_overlap": {
-      "internal_intelligence": 0.167,
-      "competitor_intelligence": 0.296,
-      "market_intelligence": 0.171,
-      "customer_trends": 0.571
-    },
-    "truth_items": 4,
-    "edrak_items": 4,
-    "matched": 4,
-    "full_matches": 4,
-    "partial_matches": 0,
-    "contradictions": 0,
-    "recall": 1.0,
-    "full_recall": 1.0,
-    "graded_recall": 1.0,
-    "weighted_recall": 1.0,
-    "must_recall": null,
-    "one_to_one_recall": 1.0,
-    "contradiction_rate": 0.0,
-    "coverage_concentration": 1,
-    "alignment": 1.0,
-    "precision_adjusted": 1.0,
-    "valid_novel": 0,
-    "noise": 0,
-    "noise_rate": 0.0,
-    "duplicate_rate": 0.0,
-    "f1": 1.0,
-    "f1_adjusted": 1.0,
-    "volume_ratio": 1.0,
-    "judge_agreement": null
-  },
   "workers": {
     "competitor_intelligence": {
       "truth_items": 9,
-      "edrak_items": 23,
-      "matched": 8,
-      "full_matches": 2,
-      "partial_matches": 6,
-      "contradictions": 0,
-      "recall": 0.889,
-      "full_recall": 0.222,
-      "graded_recall": 0.556,
-      "weighted_recall": 0.556,
-      "must_recall": null,
-      "one_to_one_recall": 0.889,
-      "recall_ci95": [
-        0.389,
-        0.722
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 4,
-      "alignment": 0.783,
-      "precision_adjusted": 0.826,
-      "valid_novel": 1,
-      "noise": 4,
-      "noise_rate": 0.174,
-      "duplicate_rate": 0.0,
-      "f1": 0.832,
-      "f1_adjusted": 0.856,
+      "matched": 7,
+      "recall": 0.778,
+      "alignment": 0.826,
+      "f1": 0.801,
       "volume_ratio": 2.56,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Intel publishes list pricing for its AI computing products and plans, so its price points can be benchmarked against NVIDIA.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "System gives Intel products, nothing about list pricing disclosure",
-          "edrak": []
-        },
-        {
-          "truth": "Broadcom publishes pricing for its AI computing and networking offerings, so its price points can be benchmarked against NVIDIA.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "rescued: Gives concrete Broadcom prices but also says no public API list",
-          "edrak": [
-            "Broadcom’s AI‑accelerated networking products are sold worldwide, with engineering, sales and support operations in North America, Europe (EMEA) and Asia‑Pacific.",
-            "Broadcom targets multiple verticals with its AI computing and ASIC offerings, including data‑center/cloud providers, telecommunications operators, enterprise networking, edge AI (home and enterprise premises), broadband, wireless, storage and industrial markets.",
-            "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3).",
-            "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-            "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs."
-          ]
-        },
-        {
-          "truth": "Intel positions its AI accelerators as a lower-cost, open-software alternative to NVIDIA.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "rescued: Shows Intel competing with NVIDIA but not explicitly lower-cost positioning",
-          "edrak": [
-            "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3).",
-            "Intel Corp: Intel is actively marketing AI computing hardware and software in the United States (e.g., CES 2026, OCP 2026 events) and in Taiwan (Computex 2026), and is referenced as a key AI hardware player across North America, Europe, and APAC in a market analysis report.",
-            "Intel Corp: Intel’s AI computing product portfolio that competes with NVIDIA includes Intel Xeon Scalable processors (4th/5th Gen) with Advanced Matrix Extensions (AMX) for AI inference, Intel Xeon CPU Max Series, Intel Core Ultra Series 3 processors for AI PCs, Intel Arc Pro B70 GPU, and the Intel OpenVINO software toolkit that leverages AMX for accelerated deep‑learning workloads.",
-            "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is broader. Intel actively markets AI processors and software in the United States, Europe and APAC, giving it presence in all NVIDIA target markets plus APAC.",
-            "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA."
-          ]
-        },
-        {
-          "truth": "Broadcom positions itself in AI computing mainly through custom accelerators and AI networking silicon for large cloud customers.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Covers custom accelerators and AI networking but not mainly positioning nuance",
-          "edrak": [
-            "Broadcom’s AI‑related hardware that overlaps with NVIDIA’s portfolio includes: the Jalapeño inference ASIC co‑developed with OpenAI; custom AI accelerator chips branded as XPU; high‑bandwidth Ethernet switching ASICs such as Tomahawk 6, Tomahawk Ultra and Jericho 4; AI‑optimized Ethernet NICs like Thor 800G and Thor 2 400G; and third‑generation TH6‑Davisson co‑packaged optics for AI clusters.",
-            "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-            "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
-            "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s portfolio for those markets consists of AI‑accelerated networking ASICs (Jalapeño, XPU), high‑bandwidth Ethernet switches (Tomahawk 6/Ultra, Jericho 4) and AI‑optimized NICs, which are marketed as complementary infrastructure rather than direct GPU compute."
-          ]
-        },
-        {
-          "truth": "Intel's AI computing offering spans accelerators, CPUs and a software toolchain.",
-          "importance": "should",
-          "verdict": "full",
-          "reason": "Mentions accelerators, CPUs and OpenVINO software toolchain together",
-          "edrak": [
-            "Intel Corp: Intel’s AI computing product portfolio that competes with NVIDIA includes Intel Xeon Scalable processors (4th/5th Gen) with Advanced Matrix Extensions (AMX) for AI inference, Intel Xeon CPU Max Series, Intel Core Ultra Series 3 processors for AI PCs, Intel Arc Pro B70 GPU, and the Intel OpenVINO software toolkit that leverages AMX for accelerated deep‑learning workloads.",
-            "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA."
-          ]
-        },
-        {
-          "truth": "Broadcom's AI computing offering spans custom accelerators and high-speed networking and switching.",
-          "importance": "should",
-          "verdict": "full",
-          "reason": "Describes custom accelerators plus high‑speed networking and switching",
-          "edrak": [
-            "Broadcom’s AI‑related hardware that overlaps with NVIDIA’s portfolio includes: the Jalapeño inference ASIC co‑developed with OpenAI; custom AI accelerator chips branded as XPU; high‑bandwidth Ethernet switching ASICs such as Tomahawk 6, Tomahawk Ultra and Jericho 4; AI‑optimized Ethernet NICs like Thor 800G and Thor 2 400G; and third‑generation TH6‑Davisson co‑packaged optics for AI clusters.",
-            "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-            "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
-            "Broadcom provides AI‑accelerated networking and AI compute solutions globally, with dedicated sales, engineering and support teams in the Americas, Europe‑Middle East‑Africa (EMEA) and Asia‑Pacific (APJ) regions.",
-            "Broadcom targets multiple industry verticals with its AI‑enabled silicon, including hyperscale data‑center and cloud service providers, enterprise networking, broadband and industrial networking, server and storage platforms, wireless communications, cybersecurity, enterprise software, private‑cloud infrastructure, and broader semiconductor‑solution markets.",
-            "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s portfolio for those markets consists of AI‑accelerated networking ASICs (Jalapeño, XPU), high‑bandwidth Ethernet switches (Tomahawk 6/Ultra, Jericho 4) and AI‑optimized NICs, which are marketed as complementary infrastructure rather than direct GPU compute."
-          ]
-        },
-        {
-          "truth": "Intel sells through OEMs, system integrators, cloud providers and regional partners.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Mentions broad customers and partners, not specific channels like OEMs",
-          "edrak": [
-            "Intel Corp: Intel targets multiple industry verticals with its AI solutions, including data‑center and cloud service providers (rackscale AI infrastructure), industrial manufacturing and automation (partners Foxconn, Siemens, Hitachi), healthcare and biotech (partners Echo Neurotechnologies, Greenstone Biosciences), and edge robotics/AI PCs (Core Ultra Series 3 for robotics).",
-            "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is broader. Intel actively markets AI processors and software in the United States, Europe and APAC, giving it presence in all NVIDIA target markets plus APAC.",
-            "Partnerships and distribution: compared with NVIDIA Corporation, Intel Corp is comparable. Intel collaborates with hardware partners such as Foxconn, Siemens and Hitachi and uses its worldwide sales organization to reach customers."
-          ]
-        },
-        {
-          "truth": "Broadcom sells largely through direct, design-win relationships with hyperscale cloud providers.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Shows focus on hyperscale and design wins but omits sales‑model detail",
-          "edrak": [
-            "Broadcom targets multiple verticals with its AI computing and ASIC offerings, including data‑center/cloud providers, telecommunications operators, enterprise networking, edge AI (home and enterprise premises), broadband, wireless, storage and industrial markets.",
-            "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-            "Broadcom provides AI‑accelerated networking and AI compute solutions globally, with dedicated sales, engineering and support teams in the Americas, Europe‑Middle East‑Africa (EMEA) and Asia‑Pacific (APJ) regions.",
-            "Broadcom targets multiple industry verticals with its AI‑enabled silicon, including hyperscale data‑center and cloud service providers, enterprise networking, broadband and industrial networking, server and storage platforms, wireless communications, cybersecurity, enterprise software, private‑cloud infrastructure, and broader semiconductor‑solution markets.",
-            "Target customers and positioning: compared with NVIDIA Corporation, Broadcom is broader. Broadcom targets data‑center operators, cloud providers, telecom carriers, enterprise networking, edge AI and related verticals, a broader set than NVIDIA’s stated focus.",
-            "Partnerships and distribution: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom operates global sales, engineering and support teams across NA, EMEA and APJ and partners with OpenAI on the Jalapeño ASIC, providing a broad distribution network."
-          ]
-        },
-        {
-          "truth": "Intel and Broadcom are expanding into emerging markets through regional partnerships and announcements.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Shows global presence and partnerships, not explicit emerging‑market expansion",
-          "edrak": [
-            "Broadcom’s AI‑accelerated networking products are sold worldwide, with engineering, sales and support operations in North America, Europe (EMEA) and Asia‑Pacific.",
-            "Intel Corp: Intel is actively marketing AI computing hardware and software in the United States (e.g., CES 2026, OCP 2026 events) and in Taiwan (Computex 2026), and is referenced as a key AI hardware player across North America, Europe, and APAC in a market analysis report.",
-            "Broadcom provides AI‑accelerated networking and AI compute solutions globally, with dedicated sales, engineering and support teams in the Americas, Europe‑Middle East‑Africa (EMEA) and Asia‑Pacific (APJ) regions.",
-            "Presence in the target markets: compared with NVIDIA Corporation, Broadcom is broader. Broadcom sells AI‑accelerated networking and ASICs worldwide, with dedicated sales, engineering and support teams in North America, EMEA and APJ, thus covering Europe, the United States and additional APJ markets.",
-            "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is broader. Intel actively markets AI processors and software in the United States, Europe and APAC, giving it presence in all NVIDIA target markets plus APAC.",
-            "Partnerships and distribution: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom operates global sales, engineering and support teams across NA, EMEA and APJ and partners with OpenAI on the Jalapeño ASIC, providing a broad distribution network.",
-            "Partnerships and distribution: compared with NVIDIA Corporation, Intel Corp is comparable. Intel collaborates with hardware partners such as Foxconn, Siemens and Hitachi and uses its worldwide sales organization to reach customers."
-          ]
-        }
-      ],
       "not_covered": [
         {
           "item": "Intel publishes list pricing for its AI computing products and plans, so its price points can be benchmarked against NVIDIA.",
-          "reason": "System gives Intel products, nothing about list pricing disclosure",
+          "reason": "No mention of Intel list pricing or benchmarkable prices",
+          "verdict": "none"
+        },
+        {
+          "item": "Intel sells through OEMs, system integrators, cloud providers and regional partners.",
+          "reason": "Intel channels via OEMs, SIs, cloud, regional partners not discussed",
           "verdict": "none"
         }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "Broadcom offers a per‑seat AI licence priced at $30 per user per month or $60 per user per month, scaling with headcount regardless of usage.",
-          "label": "noise",
-          "reason": "pricing detail, not about new market segments"
-        },
-        {
-          "item": "Broadcom’s AI offerings are sold under a subscription‑based licensing model; the VMware AI Factory provides a software‑defined AI infrastructure with predictable subscription fees and explicitly states that there is no per‑token pricing.",
-          "label": "noise",
-          "reason": "licensing model info, not market identification"
-        },
-        {
-          "item": "Target customers and positioning: compared with NVIDIA Corporation, Intel Corp is broader. Intel’s AI portfolio is positioned for data‑centers, cloud services, industrial manufacturing, healthcare, biotech and edge robotics, also broader than NVIDIA’s stated customer base.",
-          "label": "valid_novel",
-          "reason": "lists verticals Intel targets; indicates expansion markets"
-        },
-        {
-          "item": "Recent changes: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom recently introduced the Jalapeño inference ASIC co‑developed with OpenAI, launched Tomahawk Ultra and the Thor 2 400G NIC, indicating active product refreshes.",
-          "label": "noise",
-          "reason": "product refresh info, not market opportunities"
-        },
-        {
-          "item": "Recent changes: compared with NVIDIA Corporation, Intel Corp is comparable. Intel has launched Xeon processors with AMX, the Arc Pro B70 GPU and the Core Ultra 3 series, reflecting recent expansion of its AI hardware lineup.",
-          "label": "noise",
-          "reason": "hardware launches, not about customer or sector focus"
-        }
-      ],
-      "category_agreement": 0.125,
-      "recall_by_category": {
-        "go_to_market": 1.0,
-        "market": 1.0,
-        "positioning": 1.0,
-        "pricing": 0.5,
-        "product": 1.0
-      },
-      "in_edrak": true
+      ]
     },
     "customer_trends": {
       "truth_items": 6,
-      "edrak_items": 5,
-      "matched": 3,
-      "full_matches": 0,
-      "partial_matches": 3,
-      "contradictions": 0,
-      "recall": 0.5,
-      "full_recall": 0.0,
-      "graded_recall": 0.25,
-      "weighted_recall": 0.25,
-      "must_recall": null,
-      "one_to_one_recall": 0.5,
-      "recall_ci95": [
-        0.083,
-        0.417
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 1,
-      "alignment": 1.0,
-      "precision_adjusted": 1.0,
-      "valid_novel": 0,
-      "noise": 0,
-      "noise_rate": 0.0,
-      "duplicate_rate": 0.0,
-      "f1": 0.667,
-      "f1_adjusted": 0.667,
+      "matched": 1,
+      "recall": 0.167,
+      "alignment": 0.4,
+      "f1": 0.235,
       "volume_ratio": 0.83,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Cloud service providers and AI developers show strong and rising search interest in AI computing platforms.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Developer interest in NVIDIA AI training, not broad AI platforms generally",
-          "edrak": [
-            "NVIDIA AI certification courses generate strong engagement on YouTube, indicating developer interest in formal AI computing credentials."
-          ]
-        },
-        {
-          "truth": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of local or sovereign AI compute demand",
-          "edrak": []
-        },
-        {
-          "truth": "Buyers compare accelerators on price, workload performance, software compatibility and supply availability.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No discussion of accelerator evaluation criteria like price or performance",
-          "edrak": []
-        },
-        {
-          "truth": "Customer sentiment toward NVIDIA is largely positive, with recurring complaints about price and availability.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Shows positive NVIDIA sentiment but not complaints on price or availability",
-          "edrak": [
-            "Positive sentiment accounts for 0.8333 of the references to NVIDIA DGX Cloud."
-          ]
-        },
-        {
-          "truth": "NVIDIA has a larger share of voice in customer discussion of AI computing than Intel or Broadcom.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No share-of-voice comparison versus Intel or Broadcom",
-          "edrak": []
-        },
-        {
-          "truth": "Some customers prefer owned infrastructure, others hosted capacity or managed cloud services, which affects go-to-market choices.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "rescued: Implies infra ownership tradeoffs but not explicit customer preference split",
-          "edrak": [
-            "Cloud providers cite massive upfront capital outlays to purchase and install GPUs as a barrier to scaling AI infrastructure.",
-            "Intel’s public messaging emphasizes AI performance on edge NPUs rather than fully managed GPU cloud platforms.",
-            "Mentions of GPU cloud providers are presented without positive or negative language, resulting in a neutral sentiment across the three references."
-          ]
-        }
-      ],
       "not_covered": [
         {
+          "item": "Cloud service providers and AI developers show strong and rising search interest in AI computing platforms.",
+          "reason": "no item on rising search interest in AI platforms",
+          "verdict": "none"
+        },
+        {
           "item": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
-          "reason": "No mention of local or sovereign AI compute demand",
+          "reason": "no mention of local or sovereign AI compute demand",
           "verdict": "none"
         },
         {
           "item": "Buyers compare accelerators on price, workload performance, software compatibility and supply availability.",
-          "reason": "No discussion of accelerator evaluation criteria like price or performance",
+          "reason": "no discussion of accelerator comparison criteria like price or performance",
           "verdict": "none"
         },
         {
           "item": "NVIDIA has a larger share of voice in customer discussion of AI computing than Intel or Broadcom.",
-          "reason": "No share-of-voice comparison versus Intel or Broadcom",
+          "reason": "no comparison of share of voice vs Intel or Broadcom",
+          "verdict": "none"
+        },
+        {
+          "item": "Some customers prefer owned infrastructure, others hosted capacity or managed cloud services, which affects go-to-market choices.",
+          "reason": "no content on preferences for owned vs hosted infrastructure",
           "verdict": "none"
         }
-      ],
-      "extra_edrak_items": [],
-      "category_agreement": 0.333,
-      "recall_by_category": {
-        "market": 0.5
-      },
-      "in_edrak": true
+      ]
     },
     "internal_intelligence": {
       "truth_items": 6,
-      "edrak_items": 5,
       "matched": 2,
-      "full_matches": 0,
-      "partial_matches": 2,
-      "contradictions": 0,
       "recall": 0.333,
-      "full_recall": 0.0,
-      "graded_recall": 0.167,
-      "weighted_recall": 0.167,
-      "must_recall": null,
-      "one_to_one_recall": 0.333,
-      "recall_ci95": [
-        0.0,
-        0.333
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 1,
       "alignment": 0.6,
-      "precision_adjusted": 0.6,
-      "valid_novel": 0,
-      "noise": 2,
-      "noise_rate": 0.4,
-      "duplicate_rate": 0.0,
       "f1": 0.429,
-      "f1_adjusted": 0.429,
       "volume_ratio": 0.83,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "NVIDIA's current AI computing portfolio covers accelerators, data-center platforms, networking and software, which is the base it brings to any new market.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "System list lacks portfolio breadth across accelerators, networking, software",
-          "edrak": []
-        },
-        {
-          "truth": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of headcount, teams, or capacity limiting market entry",
-          "edrak": []
-        },
-        {
-          "truth": "NVIDIA's own price list for its AI computing offerings sets the baseline against which entry pricing in new markets must be judged.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "Nothing about NVIDIA’s own price list as entry pricing baseline",
-          "edrak": []
-        },
-        {
-          "truth": "Entering a new geographic market requires deployment readiness, including data-center power, cooling and supply availability.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Covers power and cooling constraints but not explicit market entry",
-          "edrak": [
-            "Data‑center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served."
-          ]
-        },
-        {
-          "truth": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No reference to local cloud or systems‑integration partners strength",
-          "edrak": []
-        },
-        {
-          "truth": "Product and platform gaps, such as missing local hosting, compliance or packaging options, constrain entry into some markets.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Touches config and regulatory readiness; not explicit product-platform gaps",
-          "edrak": [
-            "Supply lead times and eligibility for the exact product configuration and destination must be validated for each opportunity.",
-            "Regulatory readiness requires confirming applicable data‑protection, cybersecurity, AI‑system, procurement, export‑control, and sanctions rules for each country and sector."
-          ]
-        }
-      ],
       "not_covered": [
         {
           "item": "NVIDIA's current AI computing portfolio covers accelerators, data-center platforms, networking and software, which is the base it brings to any new market.",
-          "reason": "System list lacks portfolio breadth across accelerators, networking, software",
+          "reason": "System never lists portfolio breadth across accelerators, networking, software",
           "verdict": "none"
         },
         {
           "item": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
-          "reason": "No mention of headcount, teams, or capacity limiting market entry",
+          "reason": "No mention of headcount, team capacity, or number of markets",
           "verdict": "none"
         },
         {
           "item": "NVIDIA's own price list for its AI computing offerings sets the baseline against which entry pricing in new markets must be judged.",
-          "reason": "Nothing about NVIDIA’s own price list as entry pricing baseline",
+          "reason": "System does not mention NVIDIA price lists or baseline pricing",
           "verdict": "none"
         },
         {
           "item": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
-          "reason": "No reference to local cloud or systems‑integration partners strength",
+          "reason": "No reference to local cloud or systems‑integration partner strength",
           "verdict": "none"
         }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "NVIDIA currently sells its AI computing and data‑center platforms in the United States and Europe.",
-          "label": "noise",
-          "reason": "Existing geography; no new market insight"
-        },
-        {
-          "item": "The profile names cloud service providers and AI developers as target customers for NVIDIA’s AI computing and data‑center platforms.",
-          "label": "noise",
-          "reason": "Existing segments; doesn’t identify new target markets"
-        }
-      ],
-      "category_agreement": 0.5,
-      "recall_by_category": {
-        "other": 0.5,
-        "positioning": 0.0,
-        "pricing": 0.0
-      },
-      "in_edrak": true
+      ]
     },
     "market_intelligence": {
       "truth_items": 8,
-      "edrak_items": 9,
-      "matched": 5,
-      "full_matches": 0,
-      "partial_matches": 5,
-      "contradictions": 0,
-      "recall": 0.625,
-      "full_recall": 0.0,
-      "graded_recall": 0.312,
-      "weighted_recall": 0.312,
-      "must_recall": null,
-      "one_to_one_recall": 0.625,
-      "recall_ci95": [
-        0.125,
-        0.438
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
+      "matched": 6,
+      "recall": 0.75,
       "alignment": 0.889,
-      "precision_adjusted": 0.889,
-      "valid_novel": 0,
-      "noise": 1,
-      "noise_rate": 0.111,
-      "duplicate_rate": 0.0,
-      "f1": 0.734,
-      "f1_adjusted": 0.734,
+      "f1": 0.814,
       "volume_ratio": 1.12,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "The AI computing market is large and growing quickly at global level, with the largest demand coming from cloud service providers.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Shows rapid growth and cloud demand but only for APAC",
-          "edrak": [
-            "Accelerating digital transformation initiatives across mature and emerging economies in APAC are driving rapid scaling of AI computing investments, including cloud infrastructure and AI workloads.",
-            "Cloud‑based AI accelerators dominate the APAC AI accelerator segment because they deliver high compute power without requiring on‑premise hardware, making them especially attractive to SMEs lacking capital for expensive GPUs or accelerators.",
-            "Major hyperscalers and regional players are committing over $160 billion (AWS, Google, Microsoft, Oracle) plus additional multi‑billion‑dollar investments from Alibaba ($52 billion) and ByteDance ($30 billion in 2026) to AI infrastructure in APAC, reflecting intense competitive investment activity."
-          ]
-        },
-        {
-          "truth": "Forecast compound annual growth rates for AI computing are high, with third-party analysts expecting double-digit annual growth.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No CAGR or double‑digit growth forecasts mentioned",
-          "edrak": []
-        },
-        {
-          "truth": "Adoption of AI computing differs widely by region, and many emerging markets still have low penetration.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Mentions APAC and Brazil but not global penetration gaps",
-          "edrak": [
-            "Accelerating digital transformation initiatives across mature and emerging economies in APAC are driving rapid scaling of AI computing investments, including cloud infrastructure and AI workloads.",
-            "Brazil's \"AI for the Good of All\" initiative allocates approximately US$4 billion to develop business innovation projects and invest in AI infrastructure, representing a direct government subsidy that can drive demand for NVIDIA's AI computing platforms in Brazil."
-          ]
-        },
-        {
-          "truth": "Export-control and licensing rules for advanced AI chips affect which markets NVIDIA can serve and on what terms.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Describes export‑control barriers but not NVIDIA‑specific effects",
-          "edrak": [
-            "If BIS cannot verify a foreign party’s reliability through an EUC, the party may face heightened regulatory scrutiny or be placed on the Unverified List or Entity List, creating barriers for AI hardware exporters."
-          ]
-        },
-        {
-          "truth": "Data-protection and data-residency rules shape how AI computing can be deployed in regulated sectors such as finance and health.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Mentions AI regulatory framework but not data‑residency specifics",
-          "edrak": [
-            "Brazil's Senate approved Bill no. 2338/2023, which establishes a framework for the development, promotion, ethical, and responsible use of AI, shaping the regulatory environment for AI computing deployments in the country."
-          ]
-        },
-        {
-          "truth": "Growth in inference and enterprise AI is faster than in other segments of AI computing.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No comparison of inference or enterprise AI segment growth",
-          "edrak": []
-        },
-        {
-          "truth": "The AI computing market is concentrated, with NVIDIA holding the largest share and a few competitors holding most of the rest.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Indicates dominance and rivals but not NVIDIA’s leading share",
-          "edrak": [
-            "Competitive intensity is high, with a leading vendor holding a dominant market position in the AI accelerator market, capturing a majority share.",
-            "Broadcom's AI semiconductor revenues surged 143% year‑over‑year to $10.8 billion in Q2 FY2026, highlighting its rapidly expanding market presence in AI accelerators and networking."
-          ]
-        },
-        {
-          "truth": "Power availability and data-center build-out are limiting factors for AI computing growth in many markets.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of power or data‑center capacity constraints",
-          "edrak": []
-        }
-      ],
       "not_covered": [
         {
-          "item": "Forecast compound annual growth rates for AI computing are high, with third-party analysts expecting double-digit annual growth.",
-          "reason": "No CAGR or double‑digit growth forecasts mentioned",
-          "verdict": "none"
-        },
-        {
           "item": "Growth in inference and enterprise AI is faster than in other segments of AI computing.",
-          "reason": "No comparison of inference or enterprise AI segment growth",
+          "reason": "No discussion of inference or enterprise AI segment growth",
           "verdict": "none"
         },
         {
@@ -608,1068 +106,153 @@
           "reason": "No mention of power or data‑center capacity constraints",
           "verdict": "none"
         }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "Amazon Bedrock includes foundation models from multiple leading AI providers (Anthropic, Meta, Mistral AI, and Amazon), reflecting a multi‑vendor licensing model that enhances competitive options for customers.",
-          "label": "noise",
-          "reason": "About Amazon’s model marketplace, not NVIDIA’s target markets"
-        }
-      ],
-      "category_agreement": 0.6,
-      "recall_by_category": {
-        "market": 0.5,
-        "regulatory": 1.0
-      },
-      "in_edrak": true
+      ]
     }
   },
   "verification": {
     "truth_items": 29,
-    "edrak_items": 39,
     "matched": 18,
-    "full_matches": 2,
-    "partial_matches": 16,
-    "contradictions": 0,
     "recall": 0.621,
-    "full_recall": 0.069,
-    "graded_recall": 0.345,
-    "weighted_recall": 0.345,
-    "must_recall": null,
-    "one_to_one_recall": 0.586,
-    "recall_ci95": [
-      0.241,
-      0.448
-    ],
-    "contradiction_rate": 0.0,
-    "coverage_concentration": 3,
     "alignment": 0.795,
-    "precision_adjusted": 0.846,
-    "valid_novel": 2,
-    "noise": 6,
-    "noise_rate": 0.154,
-    "duplicate_rate": 0.0,
     "f1": 0.697,
-    "f1_adjusted": 0.716,
     "volume_ratio": 1.34,
-    "judge_agreement": null,
-    "matches": [
-      {
-        "truth": "NVIDIA's current AI computing portfolio covers accelerators, data-center platforms, networking and software, which is the base it brings to any new market.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "System never summarizes NVIDIA portfolio breadth across stack",
-        "edrak": []
-      },
-      {
-        "truth": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No mention of NVIDIA headcount or delivery capacity limits",
-        "edrak": []
-      },
-      {
-        "truth": "NVIDIA's own price list for its AI computing offerings sets the baseline against which entry pricing in new markets must be judged.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "NVIDIA pricing baseline is not discussed anywhere",
-        "edrak": []
-      },
-      {
-        "truth": "Entering a new geographic market requires deployment readiness, including data-center power, cooling and supply availability.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Power and cooling limits cited, not full deployment readiness detail",
-        "edrak": [
-          "Data‑center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served."
-        ]
-      },
-      {
-        "truth": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No coverage of strength of NVIDIA local partners",
-        "edrak": []
-      },
-      {
-        "truth": "Product and platform gaps, such as missing local hosting, compliance or packaging options, constrain entry into some markets.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "rescued: Supply/configuration constraints noted, but not local hosting/compliance gaps",
-        "edrak": [
-          "Data‑center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served.",
-          "Supply lead times and eligibility for the exact product configuration and destination must be validated for each opportunity.",
-          "Broadcom targets multiple verticals with its AI computing and ASIC offerings, including data‑center/cloud providers, telecommunications operators, enterprise networking, edge AI (home and enterprise premises), broadband, wireless, storage and industrial markets.",
-          "Broadcom’s AI‑related hardware that overlaps with NVIDIA’s portfolio includes: the Jalapeño inference ASIC co‑developed with OpenAI; custom AI accelerator chips branded as XPU; high‑bandwidth Ethernet switching ASICs such as Tomahawk 6, Tomahawk Ultra and Jericho 4; AI‑optimized Ethernet NICs like Thor 800G and Thor 2 400G; and third‑generation TH6‑Davisson co‑packaged optics for AI clusters.",
-          "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3)."
-        ]
-      },
-      {
-        "truth": "Intel publishes list pricing for its AI computing products and plans, so its price points can be benchmarked against NVIDIA.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "Intel list pricing comparability to NVIDIA is not mentioned",
-        "edrak": []
-      },
-      {
-        "truth": "Broadcom publishes pricing for its AI computing and networking offerings, so its price points can be benchmarked against NVIDIA.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Broadcom pricing models noted but not benchmark role vs NVIDIA",
-        "edrak": [
-          "Broadcom offers a per‑seat AI licence priced at $30 per user per month or $60 per user per month, scaling with headcount regardless of usage.",
-          "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3)."
-        ]
-      },
-      {
-        "truth": "Intel positions its AI accelerators as a lower-cost, open-software alternative to NVIDIA.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Mentions Intel emphasis on edge NPUs, not explicit low-cost positioning",
-        "edrak": [
-          "Intel’s public messaging emphasizes AI performance on edge NPUs rather than fully managed GPU cloud platforms."
-        ]
-      },
-      {
-        "truth": "Broadcom positions itself in AI computing mainly through custom accelerators and AI networking silicon for large cloud customers.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Covers custom accelerators, networking for large cloud customers, broadly aligned",
-        "edrak": [
-          "Broadcom targets multiple verticals with its AI computing and ASIC offerings, including data‑center/cloud providers, telecommunications operators, enterprise networking, edge AI (home and enterprise premises), broadband, wireless, storage and industrial markets.",
-          "Broadcom’s AI‑related hardware that overlaps with NVIDIA’s portfolio includes: the Jalapeño inference ASIC co‑developed with OpenAI; custom AI accelerator chips branded as XPU; high‑bandwidth Ethernet switching ASICs such as Tomahawk 6, Tomahawk Ultra and Jericho 4; AI‑optimized Ethernet NICs like Thor 800G and Thor 2 400G; and third‑generation TH6‑Davisson co‑packaged optics for AI clusters.",
-          "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-          "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
-          "Broadcom targets multiple industry verticals with its AI‑enabled silicon, including hyperscale data‑center and cloud service providers, enterprise networking, broadband and industrial networking, server and storage platforms, wireless communications, cybersecurity, enterprise software, private‑cloud infrastructure, and broader semiconductor‑solution markets.",
-          "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s portfolio for those markets consists of AI‑accelerated networking ASICs (Jalapeño, XPU), high‑bandwidth Ethernet switches (Tomahawk 6/Ultra, Jericho 4) and AI‑optimized NICs, which are marketed as complementary infrastructure rather than direct GPU compute."
-        ]
-      },
-      {
-        "truth": "Intel's AI computing offering spans accelerators, CPUs and a software toolchain.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Intel CPUs, GPU, software listed; accelerators category implicit not explicit",
-        "edrak": [
-          "Intel Corp: Intel’s AI computing product portfolio that competes with NVIDIA includes Intel Xeon Scalable processors (4th/5th Gen) with Advanced Matrix Extensions (AMX) for AI inference, Intel Xeon CPU Max Series, Intel Core Ultra Series 3 processors for AI PCs, Intel Arc Pro B70 GPU, and the Intel OpenVINO software toolkit that leverages AMX for accelerated deep‑learning workloads.",
-          "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA."
-        ]
-      },
-      {
-        "truth": "Broadcom's AI computing offering spans custom accelerators and high-speed networking and switching.",
-        "importance": "should",
-        "verdict": "full",
-        "reason": "Explicitly lists custom accelerators and high-speed AI networking",
-        "edrak": [
-          "Broadcom’s AI‑related hardware that overlaps with NVIDIA’s portfolio includes: the Jalapeño inference ASIC co‑developed with OpenAI; custom AI accelerator chips branded as XPU; high‑bandwidth Ethernet switching ASICs such as Tomahawk 6, Tomahawk Ultra and Jericho 4; AI‑optimized Ethernet NICs like Thor 800G and Thor 2 400G; and third‑generation TH6‑Davisson co‑packaged optics for AI clusters.",
-          "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-          "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
-          "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s portfolio for those markets consists of AI‑accelerated networking ASICs (Jalapeño, XPU), high‑bandwidth Ethernet switches (Tomahawk 6/Ultra, Jericho 4) and AI‑optimized NICs, which are marketed as complementary infrastructure rather than direct GPU compute."
-        ]
-      },
-      {
-        "truth": "Intel sells through OEMs, system integrators, cloud providers and regional partners.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Mentions Intel hardware partners and sales org, not full channel list",
-        "edrak": [
-          "Partnerships and distribution: compared with NVIDIA Corporation, Intel Corp is comparable. Intel collaborates with hardware partners such as Foxconn, Siemens and Hitachi and uses its worldwide sales organization to reach customers."
-        ]
-      },
-      {
-        "truth": "Broadcom sells largely through direct, design-win relationships with hyperscale cloud providers.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Describes Broadcom hyperscale, direct design-win style, but not explicitly only",
-        "edrak": [
-          "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
-          "Broadcom provides AI‑accelerated networking and AI compute solutions globally, with dedicated sales, engineering and support teams in the Americas, Europe‑Middle East‑Africa (EMEA) and Asia‑Pacific (APJ) regions.",
-          "Presence in the target markets: compared with NVIDIA Corporation, Broadcom is broader. Broadcom sells AI‑accelerated networking and ASICs worldwide, with dedicated sales, engineering and support teams in North America, EMEA and APJ, thus covering Europe, the United States and additional APJ markets.",
-          "Target customers and positioning: compared with NVIDIA Corporation, Broadcom is broader. Broadcom targets data‑center operators, cloud providers, telecom carriers, enterprise networking, edge AI and related verticals, a broader set than NVIDIA’s stated focus.",
-          "Partnerships and distribution: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom operates global sales, engineering and support teams across NA, EMEA and APJ and partners with OpenAI on the Jalapeño ASIC, providing a broad distribution network."
-        ]
-      },
-      {
-        "truth": "Intel and Broadcom are expanding into emerging markets through regional partnerships and announcements.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Shows Intel and Broadcom global presence and some regional moves, not emerging focus",
-        "edrak": [
-          "Intel Corp: Intel is actively marketing AI computing hardware and software in the United States (e.g., CES 2026, OCP 2026 events) and in Taiwan (Computex 2026), and is referenced as a key AI hardware player across North America, Europe, and APAC in a market analysis report.",
-          "Broadcom provides AI‑accelerated networking and AI compute solutions globally, with dedicated sales, engineering and support teams in the Americas, Europe‑Middle East‑Africa (EMEA) and Asia‑Pacific (APJ) regions.",
-          "Presence in the target markets: compared with NVIDIA Corporation, Broadcom is broader. Broadcom sells AI‑accelerated networking and ASICs worldwide, with dedicated sales, engineering and support teams in North America, EMEA and APJ, thus covering Europe, the United States and additional APJ markets.",
-          "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is broader. Intel actively markets AI processors and software in the United States, Europe and APAC, giving it presence in all NVIDIA target markets plus APAC.",
-          "Partnerships and distribution: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom operates global sales, engineering and support teams across NA, EMEA and APJ and partners with OpenAI on the Jalapeño ASIC, providing a broad distribution network.",
-          "Partnerships and distribution: compared with NVIDIA Corporation, Intel Corp is comparable. Intel collaborates with hardware partners such as Foxconn, Siemens and Hitachi and uses its worldwide sales organization to reach customers.",
-          "Accelerating digital transformation initiatives across mature and emerging economies in APAC are driving rapid scaling of AI computing investments, including cloud infrastructure and AI workloads."
-        ]
-      },
-      {
-        "truth": "The AI computing market is large and growing quickly at global level, with the largest demand coming from cloud service providers.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Shows rapid growth, large investments, but not explicit global framing",
-        "edrak": [
-          "Accelerating digital transformation initiatives across mature and emerging economies in APAC are driving rapid scaling of AI computing investments, including cloud infrastructure and AI workloads.",
-          "Major hyperscalers and regional players are committing over $160 billion (AWS, Google, Microsoft, Oracle) plus additional multi‑billion‑dollar investments from Alibaba ($52 billion) and ByteDance ($30 billion in 2026) to AI infrastructure in APAC, reflecting intense competitive investment activity.",
-          "Broadcom's AI semiconductor revenues surged 143% year‑over‑year to $10.8 billion in Q2 FY2026, highlighting its rapidly expanding market presence in AI accelerators and networking."
-        ]
-      },
-      {
-        "truth": "Forecast compound annual growth rates for AI computing are high, with third-party analysts expecting double-digit annual growth.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No quantitative CAGR or double-digit analyst forecasts provided",
-        "edrak": []
-      },
-      {
-        "truth": "Adoption of AI computing differs widely by region, and many emerging markets still have low penetration.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Mentions APAC scaling, not explicit cross-region adoption differences",
-        "edrak": [
-          "Accelerating digital transformation initiatives across mature and emerging economies in APAC are driving rapid scaling of AI computing investments, including cloud infrastructure and AI workloads.",
-          "Cloud‑based AI accelerators dominate the APAC AI accelerator segment because they deliver high compute power without requiring on‑premise hardware, making them especially attractive to SMEs lacking capital for expensive GPUs or accelerators."
-        ]
-      },
-      {
-        "truth": "Export-control and licensing rules for advanced AI chips affect which markets NVIDIA can serve and on what terms.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Export-control and scrutiny noted, but not NVIDIA-specific impact detailed",
-        "edrak": [
-          "Regulatory readiness requires confirming applicable data‑protection, cybersecurity, AI‑system, procurement, export‑control, and sanctions rules for each country and sector.",
-          "If BIS cannot verify a foreign party’s reliability through an EUC, the party may face heightened regulatory scrutiny or be placed on the Unverified List or Entity List, creating barriers for AI hardware exporters."
-        ]
-      },
-      {
-        "truth": "Data-protection and data-residency rules shape how AI computing can be deployed in regulated sectors such as finance and health.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Data-protection and AI rules mentioned, not tied to sectors like finance",
-        "edrak": [
-          "Regulatory readiness requires confirming applicable data‑protection, cybersecurity, AI‑system, procurement, export‑control, and sanctions rules for each country and sector.",
-          "Brazil's Senate approved Bill no. 2338/2023, which establishes a framework for the development, promotion, ethical, and responsible use of AI, shaping the regulatory environment for AI computing deployments in the country."
-        ]
-      },
-      {
-        "truth": "Growth in inference and enterprise AI is faster than in other segments of AI computing.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No segment comparison between inference, enterprise AI and others",
-        "edrak": []
-      },
-      {
-        "truth": "The AI computing market is concentrated, with NVIDIA holding the largest share and a few competitors holding most of the rest.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "Market concentration and NVIDIA share dominance not discussed",
-        "edrak": []
-      },
-      {
-        "truth": "Power availability and data-center build-out are limiting factors for AI computing growth in many markets.",
-        "importance": "should",
-        "verdict": "full",
-        "reason": "Explicitly states power and DC build constraints for serving demand",
-        "edrak": [
-          "Data‑center power, grid access, cooling, networking, construction, capacity, and operational capability can constrain when or whether demand can be served."
-        ]
-      },
-      {
-        "truth": "Cloud service providers and AI developers show strong and rising search interest in AI computing platforms.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "rescued: Developer interest shown, but not rising search by CSPs and developers",
-        "edrak": [
-          "The profile names cloud service providers and AI developers as target customers for NVIDIA’s AI computing and data‑center platforms.",
-          "Broadcom targets multiple verticals with its AI computing and ASIC offerings, including data‑center/cloud providers, telecommunications operators, enterprise networking, edge AI (home and enterprise premises), broadband, wireless, storage and industrial markets.",
-          "Intel Corp: Intel targets multiple industry verticals with its AI solutions, including data‑center and cloud service providers (rackscale AI infrastructure), industrial manufacturing and automation (partners Foxconn, Siemens, Hitachi), healthcare and biotech (partners Echo Neurotechnologies, Greenstone Biosciences), and edge robotics/AI PCs (Core Ultra Series 3 for robotics).",
-          "Broadcom targets multiple industry verticals with its AI‑enabled silicon, including hyperscale data‑center and cloud service providers, enterprise networking, broadband and industrial networking, server and storage platforms, wireless communications, cybersecurity, enterprise software, private‑cloud infrastructure, and broader semiconductor‑solution markets.",
-          "NVIDIA AI certification courses generate strong engagement on YouTube, indicating developer interest in formal AI computing credentials."
-        ]
-      },
-      {
-        "truth": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No reference to demand for sovereign or locally hosted AI compute",
-        "edrak": []
-      },
-      {
-        "truth": "Buyers compare accelerators on price, workload performance, software compatibility and supply availability.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "rescued: Supply and pricing noted; performance and software comparison not explicit",
-        "edrak": [
-          "Supply lead times and eligibility for the exact product configuration and destination must be validated for each opportunity.",
-          "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3).",
-          "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
-          "Intel Corp: Intel is actively marketing AI computing hardware and software in the United States (e.g., CES 2026, OCP 2026 events) and in Taiwan (Computex 2026), and is referenced as a key AI hardware player across North America, Europe, and APAC in a market analysis report.",
-          "Intel Corp: Intel’s AI computing product portfolio that competes with NVIDIA includes Intel Xeon Scalable processors (4th/5th Gen) with Advanced Matrix Extensions (AMX) for AI inference, Intel Xeon CPU Max Series, Intel Core Ultra Series 3 processors for AI PCs, Intel Arc Pro B70 GPU, and the Intel OpenVINO software toolkit that leverages AMX for accelerated deep‑learning workloads."
-        ]
-      },
-      {
-        "truth": "Customer sentiment toward NVIDIA is largely positive, with recurring complaints about price and availability.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "Customer sentiment toward NVIDIA, price and availability not covered",
-        "edrak": []
-      },
-      {
-        "truth": "NVIDIA has a larger share of voice in customer discussion of AI computing than Intel or Broadcom.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No discussion of share of voice in customer AI discussions",
-        "edrak": []
-      },
-      {
-        "truth": "Some customers prefer owned infrastructure, others hosted capacity or managed cloud services, which affects go-to-market choices.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Cloud versus on-prem cost dynamics implied; preferences not explicitly segmented",
-        "edrak": [
-          "Cloud‑based AI accelerators dominate the APAC AI accelerator segment because they deliver high compute power without requiring on‑premise hardware, making them especially attractive to SMEs lacking capital for expensive GPUs or accelerators.",
-          "Cloud providers cite massive upfront capital outlays to purchase and install GPUs as a barrier to scaling AI infrastructure."
-        ]
-      }
-    ],
     "not_covered": [
       {
         "item": "NVIDIA's current AI computing portfolio covers accelerators, data-center platforms, networking and software, which is the base it brings to any new market.",
-        "reason": "System never summarizes NVIDIA portfolio breadth across stack",
+        "reason": "No item summarizes NVIDIA portfolio breadth across stack",
         "verdict": "none"
       },
       {
         "item": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
-        "reason": "No mention of NVIDIA headcount or delivery capacity limits",
+        "reason": "No discussion of NVIDIA headcount or capacity constraints",
         "verdict": "none"
       },
       {
         "item": "NVIDIA's own price list for its AI computing offerings sets the baseline against which entry pricing in new markets must be judged.",
-        "reason": "NVIDIA pricing baseline is not discussed anywhere",
+        "reason": "No NVIDIA AI price list or baseline pricing mentioned",
         "verdict": "none"
       },
       {
         "item": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
-        "reason": "No coverage of strength of NVIDIA local partners",
+        "reason": "No mention of strength of local partners as entry precondition",
         "verdict": "none"
       },
       {
         "item": "Intel publishes list pricing for its AI computing products and plans, so its price points can be benchmarked against NVIDIA.",
-        "reason": "Intel list pricing comparability to NVIDIA is not mentioned",
+        "reason": "Intel pricing publication or benchmarking not discussed",
+        "verdict": "none"
+      },
+      {
+        "item": "Intel positions its AI accelerators as a lower-cost, open-software alternative to NVIDIA.",
+        "reason": "No Intel lower‑cost, open‑software positioning vs NVIDIA",
         "verdict": "none"
       },
       {
         "item": "Forecast compound annual growth rates for AI computing are high, with third-party analysts expecting double-digit annual growth.",
-        "reason": "No quantitative CAGR or double-digit analyst forecasts provided",
+        "reason": "No CAGR numbers or double‑digit analyst forecasts mentioned",
         "verdict": "none"
       },
       {
         "item": "Growth in inference and enterprise AI is faster than in other segments of AI computing.",
-        "reason": "No segment comparison between inference, enterprise AI and others",
+        "reason": "No segment‑level comparison for inference and enterprise AI growth",
         "verdict": "none"
       },
       {
         "item": "The AI computing market is concentrated, with NVIDIA holding the largest share and a few competitors holding most of the rest.",
-        "reason": "Market concentration and NVIDIA share dominance not discussed",
-        "verdict": "none"
-      },
-      {
-        "item": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
-        "reason": "No reference to demand for sovereign or locally hosted AI compute",
+        "reason": "No statement on market concentration or NVIDIA’s largest share",
         "verdict": "none"
       },
       {
         "item": "Customer sentiment toward NVIDIA is largely positive, with recurring complaints about price and availability.",
-        "reason": "Customer sentiment toward NVIDIA, price and availability not covered",
+        "reason": "Customer sentiment toward NVIDIA not covered",
         "verdict": "none"
       },
       {
         "item": "NVIDIA has a larger share of voice in customer discussion of AI computing than Intel or Broadcom.",
-        "reason": "No discussion of share of voice in customer AI discussions",
+        "reason": "Share of voice or discussion volume not mentioned",
         "verdict": "none"
       }
-    ],
-    "extra_edrak_items": [
-      {
-        "item": "NVIDIA currently sells its AI computing and data‑center platforms in the United States and Europe.",
-        "label": "noise",
-        "reason": "Too generic; no new market insight"
-      },
-      {
-        "item": "Broadcom’s AI‑accelerated networking products are sold worldwide, with engineering, sales and support operations in North America, Europe (EMEA) and Asia‑Pacific.",
-        "label": "noise",
-        "reason": "Describes Broadcom footprint, not NVIDIA opportunities"
-      },
-      {
-        "item": "Broadcom’s AI offerings are sold under a subscription‑based licensing model; the VMware AI Factory provides a software‑defined AI infrastructure with predictable subscription fees and explicitly states that there is no per‑token pricing.",
-        "label": "noise",
-        "reason": "Pricing model detail, not about target markets"
-      },
-      {
-        "item": "Target customers and positioning: compared with NVIDIA Corporation, Intel Corp is broader. Intel’s AI portfolio is positioned for data‑centers, cloud services, industrial manufacturing, healthcare, biotech and edge robotics, also broader than NVIDIA’s stated customer base.",
-        "label": "valid_novel",
-        "reason": "Highlights verticals where NVIDIA could expand AI"
-      },
-      {
-        "item": "Recent changes: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom recently introduced the Jalapeño inference ASIC co‑developed with OpenAI, launched Tomahawk Ultra and the Thor 2 400G NIC, indicating active product refreshes.",
-        "label": "noise",
-        "reason": "Product refresh info, not market expansion guidance"
-      },
-      {
-        "item": "Recent changes: compared with NVIDIA Corporation, Intel Corp is comparable. Intel has launched Xeon processors with AMX, the Arc Pro B70 GPU and the Core Ultra 3 series, reflecting recent expansion of its AI hardware lineup.",
-        "label": "noise",
-        "reason": "Intel product launches, not market identification"
-      },
-      {
-        "item": "Amazon Bedrock includes foundation models from multiple leading AI providers (Anthropic, Meta, Mistral AI, and Amazon), reflecting a multi‑vendor licensing model that enhances competitive options for customers.",
-        "label": "noise",
-        "reason": "Describes Amazon’s model strategy, not NVIDIA markets"
-      },
-      {
-        "item": "Brazil's \"AI for the Good of All\" initiative allocates approximately US$4 billion to develop business innovation projects and invest in AI infrastructure, representing a direct government subsidy that can drive demand for NVIDIA's AI computing platforms in Brazil.",
-        "label": "valid_novel",
-        "reason": "Identifies Brazil as funded AI growth market"
-      }
-    ],
-    "worker_agreement": 0.611,
-    "recall_by_worker": {
-      "competitor_intelligence": 0.889,
-      "customer_trends": 0.5,
-      "internal_intelligence": 0.333,
-      "market_intelligence": 0.625
-    }
+    ]
   },
   "cross_signal": {
     "truth_items": 5,
-    "edrak_items": 6,
     "matched": 4,
-    "full_matches": 1,
-    "partial_matches": 3,
-    "contradictions": 0,
     "recall": 0.8,
-    "full_recall": 0.2,
-    "graded_recall": 0.5,
-    "weighted_recall": 0.5,
-    "must_recall": null,
-    "one_to_one_recall": 0.4,
-    "recall_ci95": [
-      0.2,
-      0.8
-    ],
-    "contradiction_rate": 0.0,
-    "coverage_concentration": 3,
     "alignment": 0.667,
-    "precision_adjusted": 0.833,
-    "valid_novel": 1,
-    "noise": 1,
-    "noise_rate": 0.167,
-    "duplicate_rate": 0.0,
     "f1": 0.727,
-    "f1_adjusted": 0.816,
     "volume_ratio": 1.2,
-    "judge_agreement": null,
-    "matches": [
-      {
-        "truth": "Competitor activity in emerging markets creates a timing risk Intel and Broadcom are already expanding into emerging markets, so a late NVIDIA entry could lose early adopters.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Competitors active in APAC; NVIDIA absent, but no explicit timing-risk framing",
-        "edrak": [
-          "Geographic coverage gap relative to Broadcom and Intel NVIDIA currently sells AI computing platforms only in the United States and Europe, while Broadcom and Intel have established presence across North America, EMEA, and APAC, indicating a coverage gap for NVIDIA. Findings F1, F19, and F20 together reveal that NVIDIA lacks market presence in APAC where competitors are active.",
-          "Accelerating competitor momentum in AI hardware and regional investment Broadcom’s AI semiconductor revenues grew 143% YoY (F36) and Intel launched new AI processors and GPUs (F28), while APAC AI infrastructure investments exceed $160 billion from hyperscalers plus additional regional spend (F31). This combined momentum raises the competitive bar for NVIDIA. Rapid growth and product launches by competitors, coupled with massive regional investment, increase market pressure on NVIDIA to accelerate its own offerings.",
-          "Rapid APAC AI infrastructure investment creates momentum beyond NVIDIA's current markets Major hyperscalers and regional players are committing over $160 billion to AI infrastructure in APAC, and cloud‑based AI accelerators dominate the APAC segment, while NVIDIA currently sells AI computing platforms only in the United States and Europe. There is strong and accelerating demand for AI compute in APAC that NVIDIA is not yet serving, indicating a market momentum gap."
-        ]
-      },
-      {
-        "truth": "Deployment readiness limits where NVIDIA can enter Power, cooling, supply and local-partner strength are preconditions, and internal capacity limits how many markets can be pursued.",
-        "importance": "should",
-        "verdict": "full",
-        "reason": "States power, cooling and regulatory constraints as prerequisites for opportunities",
-        "edrak": [
-          "Infrastructure and regulatory dependencies constrain NVIDIA’s ability to serve cloud providers NVIDIA targets cloud service providers and AI developers (F2), but data‑center power, cooling, networking and construction constraints (F3) and regulatory readiness requirements (F5) must be satisfied for each opportunity, making these factors dependencies for market success. Operational and compliance factors are critical enablers; any shortfall can impede sales."
-        ]
-      },
-      {
-        "truth": "Sovereign and locally hosted AI compute demand favours markets with local partners Customers in regulated sectors want locally hosted AI compute, which favours NVIDIA bundles built with local cloud and integration partners.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Mentions serving cloud providers but not sovereign, local-hosting preference",
-        "edrak": [
-          "Infrastructure and regulatory dependencies constrain NVIDIA’s ability to serve cloud providers NVIDIA targets cloud service providers and AI developers (F2), but data‑center power, cooling, networking and construction constraints (F3) and regulatory readiness requirements (F5) must be satisfied for each opportunity, making these factors dependencies for market success. Operational and compliance factors are critical enablers; any shortfall can impede sales."
-        ]
-      },
-      {
-        "truth": "Export-control and data-residency rules change which markets are open Export controls and data-residency rules decide market access and the deployment model NVIDIA can offer.",
-        "importance": "should",
-        "verdict": "partial",
-        "reason": "Notes regulatory readiness constraints but not export-control or data-residency specifics",
-        "edrak": [
-          "Infrastructure and regulatory dependencies constrain NVIDIA’s ability to serve cloud providers NVIDIA targets cloud service providers and AI developers (F2), but data‑center power, cooling, networking and construction constraints (F3) and regulatory readiness requirements (F5) must be satisfied for each opportunity, making these factors dependencies for market success. Operational and compliance factors are critical enablers; any shortfall can impede sales."
-        ]
-      },
-      {
-        "truth": "Price and supply availability drive buyer choice against Intel and Broadcom Customers weigh price, performance, software compatibility and supply, so competitor price points affect NVIDIA's entry pricing.",
-        "importance": "should",
-        "verdict": "none",
-        "reason": "No discussion of price, supply availability or buyer tradeoffs",
-        "edrak": []
-      }
-    ],
     "not_covered": [
       {
         "item": "Price and supply availability drive buyer choice against Intel and Broadcom Customers weigh price, performance, software compatibility and supply, so competitor price points affect NVIDIA's entry pricing.",
-        "reason": "No discussion of price, supply availability or buyer tradeoffs",
+        "reason": "No items discuss price, supply availability, or buyer trade‑offs",
         "verdict": "none"
       }
-    ],
-    "extra_edrak_items": [
-      {
-        "item": "Intel's recent AI hardware rollout intensifies competition timing Intel's launch of Xeon processors with AMX, Arc Pro B70 GPU, and Core Ultra 3 series coincides with active marketing at CES 2026, OCP 2026, and Computex 2026, indicating a coordinated timing of product and market push against NVIDIA. Intel is synchronizing new AI hardware releases with high‑visibility marketing events, accelerating its entry into the AI compute market and challenging NVIDIA's leadership.",
-        "label": "noise",
-        "reason": "launch timing detail, not new market insight"
-      },
-      {
-        "item": "Convergent target verticals – NVIDIA, Broadcom and Intel all focus on data‑center and cloud service providers NVIDIA’s stated target customers are cloud service providers and AI developers (F2), while Broadcom targets data‑center/cloud providers among other verticals (F8) and Intel targets data‑center and cloud service providers (F14). This convergence indicates overlapping competitive focus. NVIDIA faces direct competition in its core market segments, intensifying the need for differentiation.",
-        "label": "valid_novel",
-        "reason": "highlights saturated segments, informs adjacent-market targeting"
-      }
-    ],
-    "signal_type_agreement": 0.0,
-    "urgency_agreement": 0.0,
-    "recall_by_signal_type": {
-      "demand": 1.0,
-      "gap": 1.0,
-      "pricing": 0.0,
-      "regulatory": 1.0,
-      "timing": 1.0
-    }
+    ]
   },
   "decision": {
     "executive_summary": {
       "truth_items": 3,
-      "edrak_items": 1,
       "matched": 2,
-      "full_matches": 0,
-      "partial_matches": 2,
-      "contradictions": 0,
       "recall": 0.667,
-      "full_recall": 0.0,
-      "graded_recall": 0.333,
-      "weighted_recall": 0.333,
-      "must_recall": null,
-      "one_to_one_recall": 0.333,
-      "recall_ci95": [
-        0.0,
-        0.5
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
       "alignment": 1.0,
-      "precision_adjusted": 1.0,
-      "valid_novel": 0,
-      "noise": 0,
-      "noise_rate": 0.0,
-      "duplicate_rate": 0.0,
       "f1": 0.8,
-      "f1_adjusted": 0.8,
       "volume_ratio": 0.33,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "NVIDIA should enter new markets in a partner-led, sequenced way, starting with the high-growth markets where cloud-provider demand is strongest.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Mentions APAC entry and partnership-first, but not sequenced by demand",
-          "edrak": [
-            "Accelerate NVIDIA's AI hardware roadmap to introduce a next‑generation GPU/accelerator before or concurrently with Intel's Xeon/Arc releases at major 2026 events; Prioritize APAC entry and evaluate a partnership‑first model with leading regional cloud providers and system integrators, while establishing a lean direct‑sales team for strategic accounts."
-          ]
-        },
-        {
-          "truth": "Market access depends on export-control status, data-residency rules and deployment readiness.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of export controls, data residency, or deployment readiness",
-          "edrak": []
-        },
-        {
-          "truth": "Speed matters because Intel and Broadcom are already expanding into emerging markets.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Refers to beating Intel’s timeline, not broader emerging markets expansion",
-          "edrak": [
-            "Accelerate NVIDIA's AI hardware roadmap to introduce a next‑generation GPU/accelerator before or concurrently with Intel's Xeon/Arc releases at major 2026 events; Prioritize APAC entry and evaluate a partnership‑first model with leading regional cloud providers and system integrators, while establishing a lean direct‑sales team for strategic accounts."
-          ]
-        }
-      ],
       "not_covered": [
         {
           "item": "Market access depends on export-control status, data-residency rules and deployment readiness.",
           "reason": "No mention of export controls, data residency, or deployment readiness",
           "verdict": "none"
         }
-      ],
-      "extra_edrak_items": []
+      ]
     },
     "opportunities": {
       "truth_items": 4,
-      "edrak_items": 12,
-      "matched": 3,
-      "full_matches": 0,
-      "partial_matches": 3,
-      "contradictions": 0,
-      "recall": 0.75,
-      "full_recall": 0.0,
-      "graded_recall": 0.375,
-      "weighted_recall": 0.375,
-      "must_recall": null,
-      "one_to_one_recall": 0.75,
-      "recall_ci95": [
-        0.125,
-        0.5
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
-      "alignment": 0.417,
-      "precision_adjusted": 0.667,
-      "valid_novel": 3,
-      "noise": 4,
-      "noise_rate": 0.333,
-      "duplicate_rate": 0.0,
-      "f1": 0.536,
-      "f1_adjusted": 0.706,
+      "matched": 4,
+      "recall": 1.0,
+      "alignment": 0.5,
+      "f1": 0.667,
       "volume_ratio": 3.0,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Prioritise high-growth markets with strong cloud-provider demand Enter the markets where forecast growth and cloud-provider demand are highest.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "APAC focus and high regional AI spend, not cloud‑demand targeting",
-          "edrak": [
-            "Close the geographic gap and reduce competitor advantage in APAC.",
-            "Maintain market leadership and capture a larger share of APAC AI spend.",
-            "Leverage high regional AI spend to boost overall revenue growth."
-          ]
-        },
-        {
-          "truth": "Bundle hardware and software with local cloud and integration partners Offer integrated, locally hosted AI platforms built with regional partners to meet sovereign-compute demand.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of bundling with local cloud or sovereign‑compute focus",
-          "edrak": []
-        },
-        {
-          "truth": "Serve regulated sectors with private AI inference Target finance and other regulated sectors that need private, data-resident inference.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Mentions reliability and compliance, not private or data‑resident inference",
-          "edrak": [
-            "Enhanced reputation for reliability and compliance."
-          ]
-        },
-        {
-          "truth": "Use supply and software leadership against Intel and Broadcom Compete on supply assurance and software ecosystem where rivals have gaps.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "rescued: Mentions ecosystem/software strength but not explicit Intel/Broadcom comparison",
-          "edrak": [
-            "Reinforce NVIDIA's ecosystem with timely software updates and value‑added services.",
-            "Maintain market leadership and capture a larger share of APAC AI spend."
-          ]
-        }
-      ],
-      "not_covered": [
-        {
-          "item": "Bundle hardware and software with local cloud and integration partners Offer integrated, locally hosted AI platforms built with regional partners to meet sovereign-compute demand.",
-          "reason": "No mention of bundling with local cloud or sovereign‑compute focus",
-          "verdict": "none"
-        }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "Preserve market share among cloud providers and AI developers.",
-          "label": "noise",
-          "reason": "Preserving share isn’t entering new markets"
-        },
-        {
-          "item": "Capture new revenue streams from hyperscaler and enterprise AI deployments.",
-          "label": "valid_novel",
-          "reason": "New revenue streams from deployments implies new segments/markets"
-        },
-        {
-          "item": "Command premium pricing for value‑added services.",
-          "label": "noise",
-          "reason": "Pricing strategy, not a new market target"
-        },
-        {
-          "item": "Strengthen lock‑in with cloud providers through integrated software.",
-          "label": "valid_novel",
-          "reason": "Cloud‑provider lock‑in suggests deepening a specific target segment"
-        },
-        {
-          "item": "Enable faster response to emerging customer requirements.",
-          "label": "noise",
-          "reason": "Capability/benefit, not a distinct market"
-        },
-        {
-          "item": "Reduced sales cycle time with cloud providers.",
-          "label": "noise",
-          "reason": "Process efficiency, not identification of new markets"
-        },
-        {
-          "item": "Capture early‑mover advantage and lock in contracts with hyperscalers.",
-          "label": "valid_novel",
-          "reason": "Early contracts with hyperscalers defines a key target market"
-        }
-      ],
-      "urgency_agreement": 0.0,
-      "strategic_fit_agreement": 0.333,
-      "recall_by_urgency": {
-        "high": 0.5,
-        "medium": 1.0
-      }
+      "not_covered": []
     },
     "risks": {
       "truth_items": 4,
-      "edrak_items": 12,
-      "matched": 3,
-      "full_matches": 1,
-      "partial_matches": 2,
-      "contradictions": 0,
-      "recall": 0.75,
-      "full_recall": 0.25,
-      "graded_recall": 0.5,
-      "weighted_recall": 0.5,
-      "must_recall": null,
-      "one_to_one_recall": 0.75,
-      "recall_ci95": [
-        0.125,
-        0.875
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
-      "alignment": 0.75,
-      "precision_adjusted": 0.75,
-      "valid_novel": 0,
-      "noise": 3,
-      "noise_rate": 0.25,
-      "duplicate_rate": 0.0,
-      "f1": 0.75,
-      "f1_adjusted": 0.75,
+      "matched": 4,
+      "recall": 1.0,
+      "alignment": 0.583,
+      "f1": 0.737,
       "volume_ratio": 3.0,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Late entry loses early adopters to Intel and Broadcom Rival announcements and partnerships may lock in early customers.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Covers risk of missing early demand, not rival lock‑in specifics",
-          "edrak": [
-            "Supply‑chain constraints may limit ability to meet early demand.",
-            "Competitors may close the software gap quickly.",
-            "Regulatory approval delays could push launch beyond the optimal window.",
-            "Supply‑chain bottlenecks may limit ability to meet early demand."
-          ]
-        },
-        {
-          "truth": "Export-control and licensing restrictions block or delay a market Regulation may limit which products can be sold in a target market.",
-          "importance": "should",
-          "verdict": "full",
-          "reason": "Export controls and regulatory approvals delaying or limiting market entry",
-          "edrak": [
-            "Regulatory and export‑control hurdles could delay market entry.",
-            "Delays in certification could postpone deployments.",
-            "Regulatory changes could introduce new compliance costs.",
-            "Regulatory approval delays could push launch beyond the optimal window."
-          ]
-        },
-        {
-          "truth": "Power and cooling readiness delay deployments Local data-center infrastructure may not support high-density AI hardware on time.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No mention of power, cooling, or data‑center infrastructure readiness",
-          "edrak": []
-        },
-        {
-          "truth": "Price competition erodes margins Lower-priced rival offerings may force price concessions.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Margins impacted by costs, not explicitly by price competition",
-          "edrak": [
-            "Higher R&D and marketing spend may affect short‑term profitability.",
-            "Additional development costs could affect margins."
-          ]
-        }
-      ],
-      "not_covered": [
-        {
-          "item": "Power and cooling readiness delay deployments Local data-center infrastructure may not support high-density AI hardware on time.",
-          "reason": "No mention of power, cooling, or data‑center infrastructure readiness",
-          "verdict": "none"
-        }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "Rushed development could impact product quality or yield.",
-          "label": "noise",
-          "reason": "generic execution risk, not about new markets"
-        },
-        {
-          "item": "Over‑investment could strain cash flow if market growth slows.",
-          "label": "noise",
-          "reason": "financial risk, not identifying or evaluating markets"
-        },
-        {
-          "item": "Accelerated timelines may increase engineering risk and product defects.",
-          "label": "noise",
-          "reason": "engineering risk, unrelated to market selection focus"
-        }
-      ],
-      "likelihood_agreement": 0.0,
-      "impact_agreement": 0.667,
-      "recall_by_likelihood": {
-        "medium": 0.75
-      }
+      "not_covered": []
     },
     "recommended_actions": {
       "truth_items": 7,
-      "edrak_items": 20,
       "matched": 7,
-      "full_matches": 2,
-      "partial_matches": 5,
-      "contradictions": 0,
       "recall": 1.0,
-      "full_recall": 0.286,
-      "graded_recall": 0.643,
-      "weighted_recall": 0.643,
-      "must_recall": null,
-      "one_to_one_recall": 1.0,
-      "recall_ci95": [
-        0.5,
-        0.786
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
       "alignment": 0.8,
-      "precision_adjusted": 0.85,
-      "valid_novel": 1,
-      "noise": 3,
-      "noise_rate": 0.15,
-      "duplicate_rate": 0.0,
       "f1": 0.889,
-      "f1_adjusted": 0.919,
       "volume_ratio": 2.86,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Shortlist target markets using market size, growth, adoption and regulation Rank candidate markets on size, growth, adoption and regulatory openness.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Market demand study helps shortlist but lacks ranking criteria detail",
-          "edrak": [
-            "Commission a market demand study for AI compute in key APAC economies (China, Japan, South Korea, India, Southeast Asia) Commission a market demand study for AI compute in key APAC economies (China, Japan, South Korea, India, Southeast Asia)."
-          ]
-        },
-        {
-          "truth": "Confirm export-control and licensing status per shortlisted market Check official rules for each shortlisted market before committing.",
-          "importance": "should",
-          "verdict": "full",
-          "reason": "All map and checklist export‑control and local licensing per market",
-          "edrak": [
-            "Map export‑control and local regulatory requirements for AI hardware in each target country.",
-            "Develop a regulatory‑clearance checklist per country, incorporating export‑control classifications and local AI‑hardware Develop a regulatory‑clearance checklist per country, incorporating export‑control classifications and local AI‑hardware rules.",
-            "Implement a monitoring dashboard to track certification status and regulatory approvals."
-          ]
-        },
-        {
-          "truth": "Audit deployment readiness in shortlisted markets Assess power, cooling and supply readiness with local operators.",
-          "importance": "should",
-          "verdict": "full",
-          "reason": "They assess and secure power, cooling, networking and DC capacity",
-          "edrak": [
-            "Create a cross‑functional task force (Compliance, Operations, Engineering) to map power, cooling, and networking specifi Create a cross‑functional task force (Compliance, Operations, Engineering) to map power, cooling, and networking specifications required for NVIDIA hardware in target regions.",
-            "Partner with major data‑center operators to reserve capacity for NVIDIA deployments."
-          ]
-        },
-        {
-          "truth": "Identify and sign local cloud and integration partners Select partners that can host and support NVIDIA platforms locally.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Cloud and GTM partners engaged, not specifically local hosting/integration",
-          "edrak": [
-            "Engage top APAC cloud providers (e.g., Alibaba Cloud, Tencent Cloud, AWS APAC) to explore joint‑go‑to‑market partnership Engage top APAC cloud providers (e.g., Alibaba Cloud, Tencent Cloud, AWS APAC) to explore joint‑go‑to‑market partnerships.",
-            "Launch joint reference architectures with key cloud partners showcasing performance and cost benefits.",
-            "Identify and engage potential technology partners (e.g., fab partners, software firms) to shorten development cycles.",
-            "Partner with major data‑center operators to reserve capacity for NVIDIA deployments.",
-            "Establish local sales and support teams in at least two priority APAC regions."
-          ]
-        },
-        {
-          "truth": "Benchmark Intel and Broadcom pricing against NVIDIA's price list Compare official competitor price points with NVIDIA's own pricing.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Competitive analysis and benchmarks, but no explicit price list comparison",
-          "edrak": [
-            "Conduct a competitive gap analysis of NVIDIA's software and services versus Broadcom ASICs and Intel CPUs/GPU offerings.",
-            "Publish benchmark results demonstrating clear performance advantage on mixed AI workloads."
-          ]
-        },
-        {
-          "truth": "Design a private or sovereign hosted offering for regulated sectors Package compliant, locally hosted inference for regulated customers.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Service and regulatory work, but not explicit sovereign/hosted design",
-          "edrak": [
-            "Create a tiered GPU‑as‑a‑Service offering with guaranteed latency and throughput metrics for cloud providers.",
-            "Launch joint reference architectures with key cloud partners showcasing performance and cost benefits.",
-            "Develop a regulatory‑clearance checklist per country, incorporating export‑control classifications and local AI‑hardware Develop a regulatory‑clearance checklist per country, incorporating export‑control classifications and local AI‑hardware rules."
-          ]
-        },
-        {
-          "truth": "Confirm delivery capacity for the entry programme Check headcount and team capacity before committing to several markets.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "Actions affect capacity but no explicit capacity confirmation step",
-          "edrak": [
-            "Allocate additional engineering resources to meet the accelerated timeline.",
-            "Set up a small direct‑sales office in APAC to manage strategic enterprise accounts.",
-            "Implement a rolling portfolio review to re‑allocate resources toward high‑impact projects.",
-            "Establish local sales and support teams in at least two priority APAC regions."
-          ]
-        }
-      ],
-      "not_covered": [],
-      "extra_edrak_items": [
-        {
-          "item": "Coordinate a joint product‑launch and marketing campaign at CES 2026 or Computex 2026.",
-          "label": "noise",
-          "reason": "Timing/venue choice, not about new markets"
-        },
-        {
-          "item": "Monitor competitor announcements and adjust the timeline if Intel adds later releases.",
-          "label": "noise",
-          "reason": "Competitive timing, no new segment or use case"
-        },
-        {
-          "item": "Accelerate development of unified AI software stack that simplifies deployment across heterogeneous hardware.",
-          "label": "valid_novel",
-          "reason": "Enables entry into broader heterogeneous-enterprise and edge markets"
-        },
-        {
-          "item": "Track competitor launch timelines and adjust internal milestones accordingly.",
-          "label": "noise",
-          "reason": "Internal scheduling, not identifying growth markets"
-        }
-      ],
-      "priority_agreement": 0.286,
-      "time_horizon_agreement": 0.143,
-      "recall_by_priority": {
-        "high": 1.0,
-        "medium": 1.0
-      }
+      "not_covered": []
     },
     "options": {
       "truth_items": 3,
-      "edrak_items": 3,
       "matched": 2,
-      "full_matches": 0,
-      "partial_matches": 2,
-      "contradictions": 0,
       "recall": 0.667,
-      "full_recall": 0.0,
-      "graded_recall": 0.333,
-      "weighted_recall": 0.333,
-      "must_recall": null,
-      "one_to_one_recall": 0.333,
-      "recall_ci95": [
-        0.0,
-        0.5
-      ],
-      "contradiction_rate": 0.0,
-      "coverage_concentration": 2,
       "alignment": 0.333,
-      "precision_adjusted": 0.333,
-      "valid_novel": 0,
-      "noise": 2,
-      "noise_rate": 0.667,
-      "duplicate_rate": 0.0,
       "f1": 0.444,
-      "f1_adjusted": 0.444,
       "volume_ratio": 1.0,
-      "judge_agreement": null,
-      "matches": [
-        {
-          "truth": "Focus on one lead market first Enter one high-growth market with a partner-led launch, then expand.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "rescued: APAC launch via partners aligns; single lead and sequencing implicit",
-          "edrak": [
-            "Accelerated APAC partnership launch NVIDIA teams with leading APAC cloud providers and system integrators to deliver AI accelerators, capturing the rapid regional infrastructure investment while closing the geographic coverage gap."
-          ]
-        },
-        {
-          "truth": "Enter several markets in parallel Enter several markets at once to pre-empt competitors, accepting higher capacity and readiness risk.",
-          "importance": "should",
-          "verdict": "none",
-          "reason": "No recommendation to enter several markets in parallel",
-          "edrak": []
-        },
-        {
-          "truth": "Partner-led managed or hosted entry Serve new markets through local cloud and managed-service partners instead of direct hardware sales.",
-          "importance": "should",
-          "verdict": "partial",
-          "reason": "APAC cloud partnerships align, but not clearly replacing direct hardware sales",
-          "edrak": [
-            "Accelerated APAC partnership launch NVIDIA teams with leading APAC cloud providers and system integrators to deliver AI accelerators, capturing the rapid regional infrastructure investment while closing the geographic coverage gap."
-          ]
-        }
-      ],
       "not_covered": [
         {
           "item": "Enter several markets in parallel Enter several markets at once to pre-empt competitors, accepting higher capacity and readiness risk.",
-          "reason": "No recommendation to enter several markets in parallel",
+          "reason": "No recommendation to enter multiple markets in parallel",
           "verdict": "none"
-        }
-      ],
-      "extra_edrak_items": [
-        {
-          "item": "Product roadmap acceleration in core markets NVIDIA compresses its GPU generation cycle to launch a next‑generation accelerator concurrent with Intel’s new AI hardware, defending its lead among cloud service providers and data‑center customers.",
-          "label": "noise",
-          "reason": "Roadmap speed, not entry into new markets"
-        },
-        {
-          "item": "Compliance‑first infrastructure program NVIDIA establishes a dedicated compliance and data‑center certification framework to remove infrastructure and regulatory barriers for cloud providers, enabling sales across regions while deferring new market entry.",
-          "label": "noise",
-          "reason": "Regulatory enablement, not a distinct new market"
         }
       ]
     }
   },
   "overview": {
-    "mean_recall": 0.717,
-    "mean_alignment": 0.753,
-    "mean_f1": 0.709,
+    "mean_recall": 0.732,
+    "mean_alignment": 0.699,
+    "mean_f1": 0.687,
     "pooled_recall": 0.693,
-    "mean_graded_recall": 0.443,
-    "pooled_graded_recall": 0.415,
-    "mean_weighted_recall": 0.443,
-    "pooled_weighted_recall": 0.415,
-    "mean_full_recall": 0.169,
-    "mean_one_to_one_recall": 0.625,
-    "must_recall": null,
-    "mean_precision_adjusted": 0.799,
-    "mean_f1_adjusted": 0.736,
-    "contradiction_rate": 0.0,
-    "noise_rate": 0.187,
-    "valid_novel_total": 8,
-    "duplicate_rate": 0.0,
-    "judge_agreement": null,
-    "stages_with_zero_recall": [],
-    "stages_with_contradictions": [],
-    "weakest_stages": [
-      "workers/internal_intelligence",
-      "workers/customer_trends",
-      "workers/market_intelligence"
-    ]
+    "stages_with_zero_recall": []
   }
 }

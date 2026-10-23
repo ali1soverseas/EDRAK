@@ -20,7 +20,7 @@ Keep final worker attempts (default for run bundles)
         +--> Execution-quality checks from recorded tool traces
         |
         v
-Per-agent reports + pipeline checks + observability
+Per-agent reports + pipeline checks
         |
         +--> Optional golden ground-truth comparison
         |
@@ -57,7 +57,7 @@ Backend execution
             ├─ deterministic integrity checks
             ├─ execution traces and tool-use checks
             ├─ DeepEval quality metrics (Faithfulness, Relevancy, etc.)
-            └─ report JSON / summary.md dashboard output
+            └─ report JSON dashboard output
 ```
 
 This flow means the evaluator can reconstruct what happened in a run from the recorded trace and the persisted artifacts, even without rerunning the pipeline. The exporter is intentionally lightweight: it keeps only a safe subset of attributes, avoids raw argument values, and optionally mirrors to OTLP when `OTEL_EXPORTER_OTLP_ENDPOINT` is set.
@@ -103,7 +103,6 @@ RAG metrics are evaluated when their inputs are available:
 - **Context relevancy** judges retrieved context against the query.
 - **Context precision** and **Context recall** need an expected/reference answer. Without one, they are explicitly not assessable.
 - **Faithfulness** and **Answer relevancy** need an answer as well as retrieved context.
-- **Retrieval latency** is calculated from matching telemetry spans, not an LLM judgment.
 
 Scores and thresholds are reported independently by metric. An unavailable score is not treated as zero.
 
@@ -113,25 +112,18 @@ Each agent type has its own evaluator. The evaluator uses the artifact's structu
 
 ### Workers
 
-Worker evaluation is unit-based: it checks individual findings and, where present, requirement answers, competitor profiles, and comparison-matrix cells. A finding is judged against the evidence references attached to that finding, rather than against every document in the run. The evaluator also checks whether evidence IDs resolve and whether a finding's statements, numbers, source mix, confidence, limitations, and status are internally consistent.
+Worker evaluation is unit-based: it checks individual findings and, where present, requirement answers and competitor profiles. A finding is judged against the evidence references attached to that finding, rather than against every document in the run. The evaluator also checks whether evidence IDs resolve and whether a finding's statements, numbers, source mix, confidence, limitations, and status are internally consistent.
 
 | Worker type | Additional emphasis |
 |---|---|
 | Internal intelligence | Internal evidence and synthetic/adapted evidence are allowed, but synthetic-only findings need an explicit limitation. |
-| Competitor intelligence | Competitor coverage, profiles, requirement-to-finding links, and evidence behind comparison-matrix cells. |
+| Competitor intelligence | Competitor coverage, profiles, and requirement-to-finding links. |
 | Market intelligence | Grounding, sources, claims and caveats for market, industry, economic, regulatory, or geographic findings. |
 | Customer & trends intelligence | Grounding and source diversity for customer needs, sentiment, trends, and behavior claims. |
 
-All worker types use Faithfulness and Relevancy by default. `--extra-metrics` enables the additional configured metrics by worker type (for example, specificity, insight, or actionability). `--context-relevancy` adds a separate judgment about whether a finding's evidence context is relevant to the research goal. Competitor profile overviews are checked against that competitor's findings; matrix-cell judgments require `--deep`.
+All worker types use Faithfulness and Relevancy by default. `--extra-metrics` enables the additional configured metrics by worker type (for example, specificity, insight, or actionability). `--context-relevancy` adds a separate judgment about whether a finding's evidence context is relevant to the research goal. Competitor profile overviews are checked against that competitor's findings.
 
-Common worker measurements include:
-
-- **Evidence utilization:** how much collected evidence is cited.
-- **Evidence resolution/grounding:** whether cited IDs exist and each finding has support.
-- **Source coverage:** distinct cited domains, top-domain share, first-/third-party evidence, and retrieval scores where present.
-- **Requirement coverage:** whether fulfilled requirements have a grounded answer/finding, missing requirements explain why, and claimed grounded-finding counts match.
-- **Claim quality warnings:** unsupported numbers, absence claims stated as facts, competitor names not reflected in the finding, non-supporting evidence relations, or synthetic evidence without a limitation.
-- **Competitor-specific structure:** whether competitor profiles exist and matrix claims have evidence.
+Worker integrity checks cover evidence resolution and grounding, requirement links, claim quality, and competitor-specific structure. The report exports dashboard-rendered judge summaries and unit counts; other diagnostic aggregates are not calculated or exported.
 
 Some measures are only meaningful when the input provides the corresponding field. Missing metadata is not automatically evidence of poor research; inspect each check's status and detail.
 
@@ -139,16 +131,14 @@ Some measures are only meaningful when the input provides the corresponding fiel
 
 RAG evaluation operates on each recorded retrieval: a query plus the chunks returned for that query. It has two layers:
 
-1. **Retrieval integrity and diagnostics (deterministic):** checks query presence, whether any chunks were returned, empty chunk text, score coverage and score range `[0, 1]`, duplicate/near-duplicate chunks, and source-domain coverage. It records chunk count, mean available retrieval score, and the number of unique source domains.
+1. **Retrieval integrity (deterministic):** checks query presence, whether any chunks were returned, empty chunk text, score coverage and score range `[0, 1]`, and duplicate/near-duplicate chunks.
 2. **Retrieved-context quality (LLM, when inputs allow):** Context Relevancy assesses the retrieved text in relation to the query. Context Precision and Context Recall require a reference/expected answer. RAG retrieval records do not score Answer Relevancy or Faithfulness because they represent retrievals, not generated answers; those metrics remain available for worker and downstream outputs that include an answer. If required inputs for a metric are absent, it is not run.
-
-Retrieval latency is drawn from matching `internal_rag.retrieve` telemetry spans and reported separately from relevance scores. Matching uses task ID and attempt when present. If telemetry does not contain a matching span or duration, latency is unavailable. RAG evaluation audits the recorded retrieval; it does not make another retrieval call.
 
 For example, high retrieval scores do not prove that the chunks answer the query. Conversely, a low Context Relevancy score says the retrieved text did not relate well to the query, even if retrieval returned non-empty chunks and valid numeric scores. Read the deterministic retrieval checks and the LLM score together.
 
 ### Verification
 
-Verification evaluation checks the verifier's labels and the provenance behind them. It compares verifier findings with worker findings by ID, resolves their cited evidence, and examines evidence quality, confidence, contradictions, missing information, rewrites, and near-duplicates.
+Verification evaluation checks the verifier's labels and the provenance behind them. It compares verifier findings with worker findings by ID, resolves their cited evidence, and examines evidence quality, confidence, contradictions, missing information, rewrites, and near-duplicates. The report exports dashboard-rendered judge summaries and unit counts; diagnostic confidence and verification aggregates are not exported.
 
 When Faithfulness judgments are available, the evaluator compares them with the verifier's `verified`/not-verified labels:
 
@@ -159,7 +149,7 @@ These are diagnostic comparisons, not a replacement for human review. The evalua
 
 ### Cross-signal synthesis
 
-Cross-signal evaluation checks whether each signal's supporting finding IDs resolve and whether the support is appropriately diverse and verified. It records the number of supporting findings/workers, support resolution, signal confidence relative to supporting confidence, evidence gaps, domains, and how many verified findings are used.
+Cross-signal evaluation checks whether each signal's supporting finding IDs resolve and whether the support is appropriately diverse and verified. Diagnostic support counts and confidence aggregates are not exported.
 
 Checks flag signals with unresolved support, convergence claims based on one worker, unverified support, entities/domains not present in the cited support, confidence above the support, and mismatches between the signal list and decision-ready context. Faithfulness and Relevancy are the default quality judgments; Insight is available with `--extra-metrics`.
 
@@ -167,28 +157,24 @@ Checks flag signals with unresolved support, convergence claims based on one wor
 
 Decision evaluation follows recommendations back to their supporting signal IDs, then through those signals to findings and evidence. It checks recommendation coverage, opportunities, risks, priorities, options, action prerequisites, success criteria, human-approval markers, duplicate actions, and dangling cross-references.
 
-Faithfulness and Relevancy are the default judgments. Actionability is available with `--extra-metrics` and evaluates the full recommendation, including actions, success criteria, and limitations. `--deep` additionally judges each recommended action and expands judgment to comparison-matrix cells upstream. Deterministic checks also flag new unsupported numbers, past timelines, missing limitations/success criteria, and references to invalid signals.
+Faithfulness and Relevancy are the default judgments. Actionability is available with `--extra-metrics` and evaluates the full recommendation, including actions, success criteria, and limitations. `--deep` additionally judges each recommended action. Deterministic checks also flag new unsupported numbers, past timelines, missing limitations/success criteria, and references to invalid signals.
 
 Recommendations support human decision-making; the evaluator does not approve or execute them.
 
 ### Orchestration
 
-Orchestration evaluation uses the plan, task results, run manifest, and any recorded retry events:
+Orchestration evaluation uses the plan and task results:
 
 - **Task completion rate:** planned tasks with a successful result divided by planned tasks.
-- **Workflow success rate:** whether the manifest/run status is explicitly successful and there are no failed result tasks. Missing planned results are separately flagged by the integrity check and reduce task completion; they are not included in the failed-result count.
-- **Dependency integrity:** whether declared dependency edges refer to planned tasks and the prerequisite completed before its dependent began. If no edges or required timestamps exist, it is not assessable.
-- **Failure rate:** recorded failed result tasks divided by planned tasks. Missing results are reported separately and reduce task completion, but are not included in this numerator.
-- **Retry rate:** observed retries divided by planned tasks plus retries.
-- **Execution duration:** end-to-end manifest start-to-completion duration, falling back to task timestamps when available.
+- **Workflow success rate:** task completion for successful workflow statuses, zero for failed/partial/cancelled statuses, and otherwise not assessable.
 
-Partial, failed, errored, or missing results do not count as successful task completion. Because the workflow-success metric uses the manifest status and failed result tasks, a missing result is surfaced by the separate planned-task integrity check rather than automatically counted as a failed result. A run can have a high task completion rate and still have a failed workflow status; these metrics answer different questions.
+Partial results with generated worker output count as completed executions. Missing results reduce task completion and are separately flagged by the planned-task integrity check. Unrendered retry, dependency, failure-rate, and duration aggregates are not calculated or exported.
 
 ### Telemetry and pipeline-wide checks
 
-Telemetry evaluation checks the run's recorded spans/events: whether they are recognizable, whether observed errors are recorded, whether worker spans include agent/task identity and valid status/duration, and what tool names, error rates, and latency distributions appear. It is the run-level trace record, not a worker output-quality score.
+Telemetry evaluation checks the run's recorded spans/events: whether they are recognizable, whether observed errors are recorded, and whether worker spans include agent/task identity and valid status/duration. The dashboard receives tool and worker names, unit counts, and execution-quality details—not unrendered error-rate or latency aggregates.
 
-The pipeline report performs cross-stage checks such as decision → signal → finding → evidence traceability, verifier coverage, research-run ID consistency, and stability of finding IDs/statements across reruns. Checks only run when the relevant stages and evidence are present.
+The pipeline report performs cross-stage checks such as decision → signal → finding → evidence traceability, verifier coverage, research-run ID consistency, and stability of finding IDs/statements across reruns. It records both summary counts and the individual check results. Checks only run when the relevant stages and evidence are present.
 
 The metrics stage itself is intentionally excluded as a separate evaluation row. Its input may still be used as pipeline context.
 
@@ -209,7 +195,7 @@ Dimensions with missing evidence are marked **not assessable** rather than infer
 
 ## 5. Runtime and rate-limit safeguards
 
-The judge cache reuses successful results for the same metric/model/input combination. Its location is controlled by `--cache` (default: `edrak_judge_cache.json`).
+Each evaluation run sends eligible metrics to the judge; successful results are not persisted or reused between runs.
 
 Current defaults are intentionally conservative:
 
@@ -217,7 +203,7 @@ Current defaults are intentionally conservative:
 - At most two attempts per metric (`--retries 2`).
 - After repeated rate-limit responses for a metric, a run-scoped circuit breaker skips subsequent judge requests instead of spending the remainder of the run retrying.
 
-Observability distinguishes judge attempts, successful scores, cache hits, failed metrics, and skipped requests. The circuit breaker limits wasted time during rate limiting; it cannot guarantee faster evaluation when the judge service is responding normally.
+Observability distinguishes judge attempts, successful scores, failed metrics, and skipped requests. The circuit breaker limits wasted time during rate limiting; it cannot guarantee faster evaluation when the judge service is responding normally.
 
 ## 6. Reports and dashboard
 
@@ -225,31 +211,24 @@ The evaluator writes reports to `evaluation/` for a run bundle, or to the path s
 A comparison requested with `--compare-to` is saved by default as
 `reports/compare/<run-id>_<ground-truth-name>.json`. Typical evaluation outputs include:
 
-- `<agent>_report.json` — per-file metrics, checks, flagged units, and execution-quality details.
-- `<agent>_units.csv` — unit-level rows and scores.
-- `overview.csv` — compact per-agent/file summary.
-- `pipeline_report.json` — cross-stage checks and provenance/traceability information.
-- `observability.json` — judge counts, failures, latency, and per-file tool traces.
-- `summary.md` — human-readable report.
+- `<agent>_report.json` — dashboard-rendered per-file metrics, checks, flagged units, and execution-quality details.
+- `pipeline_report.json` — summary counts and individual cross-stage check results used for run-level traceability.
 
-Orchestration execution metrics count a planned task as completed when its final result is
-completed/successful, or when it contains generated worker output (findings, evidence, signals, gaps,
-conflicts, or a summary), even if the result also records an error for skipped work. A failed/error
-result with no generated output is a task failure; a planned task with no result is missing. `partial_tasks`
-separately records partial worker outputs; these count as completed executions, not complete research coverage.
-For a successful terminal workflow, workflow success percentage follows task execution completion;
-failed, cancelled, and partial terminal workflows score 0%. Successful retry rate is successfully
-executed tasks that were re-dispatched by a recorded replan (matched by worker when replanning creates
-new task IDs), divided by planned tasks. `retry_events` separately counts observed retry/replan events.
+Orchestration task completion counts a task as successful when its final result is successful or contains
+generated worker output, even if it also records an error for skipped work. A failed/error result with no
+generated output is a task failure; a planned task with no result is missing. The dashboard receives
+planned/result/successful task counts, task completion, and workflow success; retry, dependency, failure-rate,
+partial-task, and duration aggregates are not computed or exported.
 For RAG context precision and recall, the evaluator uses an explicit reference answer on the RAG record
 when present; otherwise, it matches the run's `business_context.use_case` to
-`golden/ground_truth/*/inputs/initial_input.json` and uses the corresponding golden worker file's
-`expected_output` (falling back to its curated findings) as the reference answer. These scores remain
-not assessable if that use case has no matching golden worker file.
+`golden/ground_truth/*/inputs/initial_input.json` and looks for an exact normalized query in
+`inputs/rag_internal_intelligence.json`. If no query-specific answer matches, the evaluator may use its
+legacy embedding-based fallback over the golden worker file's expected output/findings. Precision and
+recall remain not assessable when neither source provides a reference answer.
 The Competitive Intelligence golden record includes an explicit scope-constraint reference for internal
 RAG queries: no confidential NVIDIA data was supplied, so use only public, source-supported evidence.
 
-The dashboard Overview shows run-level health and metadata from the selected reports. Include `initial_input.json`, `manifest.json`, and `observability.json` with the agent reports when available to populate the goal, run ID, and judge totals. Include `pipeline_report.json` to show cross-stage traceability checks. Use Pipeline for per-agent judge scores, domain metrics (including RAG/orchestration/telemetry), integrity checks, and flagged units. The comparison view is a separate ground-truth comparison and should not be confused with integrity checks or LLM-judged averages.
+The dashboard Overview shows run-level health and metadata from the selected reports. Include `initial_input.json` and `manifest.json` with the agent reports when available to populate the goal and run ID. Include `pipeline_report.json` to show cross-stage traceability checks. The Pipeline page displays these checks in a separate **Pipeline-wide checks** panel above the per-agent reports. Use the per-agent cards for stage metrics, integrity checks, execution quality, and flagged units. Tool execution displays available result summaries or recorded result details for each agent; raw payloads appear only when present in the report, and evaluator payload capture is opt-in with `--include-tool-payloads`. Competitor tool-call arguments named `domain` or `domains` are omitted from this panel. Unflagged unit-level rows and metrics not rendered by the dashboard are not exported in agent reports. The comparison view is a separate ground-truth comparison and should not be confused with integrity checks or LLM-judged averages.
 Execution-quality/tool-trace checks are included for tool-using workers and RAG stages. Verification,
 cross-signal, decision, and orchestration are not treated as tool-execution stages and do not receive
 the "no structured trace evidence" check.
@@ -257,16 +236,11 @@ When opened with `?api=http://localhost:8000`, the dashboard polls the backend f
 reports and opens a new result automatically after the evaluator command completes.
 For local reports, use **Upload run reports** to select one run's agent `*_report.json` files from
 its `eval_results` folder. Include that run's `inputs/initial_input.json` to display its goal, and
-optionally include `manifest.json`, `observability.json`, `pipeline_report.json`, and
+optionally include `manifest.json`, `pipeline_report.json`, and
 `compare_report.json` in the same selection. Each upload creates a saved run
 page in the sidebar; the currently open page is marked **Opened**. Uploaded reports are stored in
 the browser's IndexedDB and restored after refresh. They stay in that browser profile and are not
 sent to the backend. Clearing site data removes saved pages.
-
-The **Overall performance** page displays the aggregate report at
-`Evaluation/Evaluation frontend/data/overall_performance_report.json` when served through a local
-web server. If the dashboard is opened directly as a `file://` URL, use **Load aggregate report
-JSON** to select that report manually.
 
 ## 7. Running an evaluation
 
@@ -294,17 +268,15 @@ Configure `OPENAI_API_KEY`, then omit `--dry-run`:
 To run the golden comparison immediately after evaluation completes, pass the folder name under
 `golden/ground_truth`. The comparison report is written under `reports/compare/` so the evaluation
 API and dashboard can list it.
-With `--dry-run`, the comparison automatically uses word overlap and makes no judge-model calls:
-
 ```powershell
 .\.venv\Scripts\python.exe Evaluation\evaluation_Agent\edrak_eval_agent_enhanced.py `
   --run-bundle artifacts\evaluation_runs\<run-id> `
-  --dry-run `
   --compare-to nvidia_product_launch_inputs
 ```
 
-Use `--compare-no-llm` to force word-overlap comparison during a normal judged evaluation, or
-`--compare-out PATH` to choose the comparison report path. `--compare-to` requires `--run-bundle`.
+Ground-truth comparisons always use the configured LLM judge, so `--compare-to` cannot be combined
+with `--dry-run`. Use `--compare-out PATH` to choose the comparison report path. `--compare-to`
+requires `--run-bundle`.
 
 Ground-truth folders may include `ground_truth.json` curation status and `sources.json` provenance.
 Only treat a comparison as a benchmark score when its dataset is marked curated. The
@@ -321,7 +293,6 @@ Useful options:
 | `--context-relevancy` | Add context relevancy checks for workers. RAG inputs are separately judged for context relevancy when eligible. |
 | `--workers N` | Set judge concurrency; default is `1`. |
 | `--retries N` | Set attempts per metric; default is `2`. |
-| `--cache PATH` | Choose the judge cache file. |
 | `--include-tool-payloads` | Permit redacted tool arguments/results to be sent for argument and result-use judgments. |
 | `--all-attempts` | Evaluate earlier attempts instead of final-only run-bundle behavior. |
 | `--out PATH` | Write reports somewhere other than the run's `evaluation/` directory. |

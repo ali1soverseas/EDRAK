@@ -1,6 +1,6 @@
 {
   "agent": "competitor_intelligence",
-  "generated_at_utc": "2026-10-22T21:52:31.176788+00:00",
+  "generated_at_utc": "2026-10-23T14:15:04.068218+00:00",
   "model": "gpt-4.1-mini",
   "dry_run": false,
   "thresholds": {
@@ -13,102 +13,64 @@
   "files": [
     {
       "file": "worker_competitor_intelligence_attempt_1_c6a09889-779.json",
-      "metrics_used": [
-        "faithfulness",
-        "relevancy",
-        "specificity",
-        "actionability",
-        "context_relevancy",
-        "execution_quality"
-      ],
       "metrics": {
-        "attempt": 1,
         "status": "partial",
-        "error": null,
-        "findings": 23,
-        "evidence_in_file": 17,
-        "evidence_collected": 29,
-        "evidence_sample_pct": 58.62,
-        "evidence_cited": 17,
-        "evidence_utilization_pct": 100.0,
-        "synthetic_evidence_pct": 0.0,
-        "findings_synthetic_only_pct": 0.0,
-        "distinct_source_domains_cited": 14,
-        "top_domain_share_pct": 17.65,
-        "third_party_evidence_pct": 76.47,
-        "avg_retrieval_score": 0.6299,
-        "requirements_total": 10,
-        "requirement_coverage_pct": 70.0,
-        "profiles": 2,
-        "matrix_cells": 12,
-        "matrix_cells_with_evidence_pct": 91.67,
-        "matrix_cells_not_established_pct": 16.67,
-        "gaps": 3,
-        "conflicts": 0,
-        "queries_executed": 24,
-        "agent_confidence": 0.785,
-        "avg_finding_confidence": 0.7848,
-        "findings_with_numbers_not_in_evidence": 0,
-        "units_with_absence_claims": 0,
-        "units": 47,
+        "units": 35,
         "units_flagged": 21,
         "faithfulness_tested": 30,
-        "faithfulness_avg": 0.9383,
-        "faithfulness_pass_pct": 86.67,
+        "faithfulness_avg": 0.9494,
+        "faithfulness_pass_pct": 90.0,
         "relevancy_tested": 32,
-        "relevancy_avg": 0.9726,
-        "relevancy_pass_pct": 100.0,
+        "relevancy_avg": 0.9197,
+        "relevancy_pass_pct": 93.75,
         "specificity_tested": 23,
-        "specificity_avg": 0.5211,
+        "specificity_avg": 0.5234,
         "specificity_pass_pct": 52.17,
         "actionability_tested": 23,
-        "actionability_avg": 0.6177,
-        "actionability_pass_pct": 78.26,
+        "actionability_avg": 0.6327,
+        "actionability_pass_pct": 82.61,
         "context_relevancy_tested": 23,
-        "context_relevancy_avg": 0.6477,
-        "context_relevancy_pass_pct": 82.61,
-        "judge_errors": 0,
-        "execution_quality_status": "partial"
+        "context_relevancy_avg": 0.6432,
+        "context_relevancy_pass_pct": 78.26,
+        "judge_errors": 0
       },
       "execution_quality": {
-        "status": "partial",
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.706,
+            "reason": "The output includes multiple distinct web search calls targeting specific pricing and subscription details for Broadcom and Intel, which aligns with gathering comprehensive data on products and pricing. However, the searches focus heavily on pricing queries without explicitly addressing geographic markets, industry verticals, or direct comparison to NVIDIA’s positioning, indicating incomplete coverage of the input requirements. There is no evident repetition of identical tool calls, showing efficient use of tools, but the sequence could be improved by integrating broader queries earlier to cover all aspects before drilling down into pricing specifics."
+          }
+        },
         "metrics": {
           "calls": 24,
-          "tools": [
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search",
-            "competitor_web_search"
-          ],
-          "allowed_tools": null,
-          "available_tools": null,
-          "expected_sequence": null,
-          "sequence_missing": [],
-          "schema_checks": 24,
-          "schema_errors": [],
           "errors": 0,
           "repeated_calls": 0,
-          "trace_complete": false,
           "call_details": [
             {
               "tool": "competitor_web_search",
@@ -1118,74 +1080,8 @@
                 "stage": 2
               }
             }
-          ],
-          "status": "partial",
-          "dimensions_assessable": 3
-        },
-        "dimensions": {
-          "tool_selection": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_arguments": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_result_use": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
-          },
-          "workflow_sequence": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "No expected workflow sequence was supplied."
-          },
-          "error_handling": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Trace has no failures."
-          },
-          "efficiency": {
-            "status": "assessable",
-            "score": 0.6846,
-            "reason": "The output includes multiple distinct competitor_web_search calls targeting specific pricing queries for Broadcom and Intel, which aligns with gathering relevant information on products and pricing. However, the searches focus narrowly on pricing tiers and subscription costs without explicitly addressing geographic markets, industry verticals, or direct comparison to NVIDIA’s positioning, indicating incomplete coverage. There is no evident repetition of identical tool calls, so redundancy is avoided, but the output lacks a balanced thoroughness by omitting broader market and positioning data requested in the input."
-          }
-        },
-        "checks": [
-          {
-            "check": "tool calls stay within declared/available tools",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "tool arguments satisfy supplied schemas",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "workflow sequence is assessable",
-            "passed": false,
-            "detail": "no expected_sequence/workflow_sequence supplied",
-            "severity": "warn"
-          },
-          {
-            "check": "trace records tool failure handling",
-            "passed": false,
-            "detail": "no errors observed, but trace completeness is not declared",
-            "severity": "warn"
-          },
-          {
-            "check": "trace avoids duplicate tool work",
-            "passed": true,
-            "detail": "0 repeated call(s)",
-            "severity": "warn"
-          }
-        ]
+          ]
+        }
       },
       "checks": [
         {
@@ -1247,12 +1143,6 @@
           "passed": true,
           "detail": "Broadcom, Intel Corp",
           "severity": "error"
-        },
-        {
-          "check": "matrix claims rest on evidence",
-          "passed": true,
-          "detail": "0 cells",
-          "severity": "warn"
         },
         {
           "check": "agent confidence is close to its findings' average (<=0.15)",
@@ -1321,8 +1211,7 @@
           "unit_id": "b7fab574-a4dd-4324-8446-d3db04e441e6",
           "statement": "Broadcom offers a per‑seat AI licence priced at $30 per user per month or $60 per user per month, scaling with headcount regardless of usage.",
           "flags": [
-            "generic_statement",
-            "irrelevant_evidence"
+            "generic_statement"
           ]
         },
         {
@@ -1330,7 +1219,7 @@
           "unit_id": "1ecded6c-2989-489c-9435-d5d0ac3dd08a",
           "statement": "Broadcom’s AI‑accelerated networking products are sold worldwide, with engineering, sales and support operations in North America, Europe (EMEA) and Asia‑Pacific.",
           "flags": [
-            "not_actionable"
+            "generic_statement"
           ]
         },
         {
@@ -1343,10 +1232,19 @@
         },
         {
           "unit_type": "finding",
+          "unit_id": "74e3e0cb-b9c1-4bad-9b2e-f1d60f234910",
+          "statement": "Broadcom targets the data‑center vertical, supplying AI‑accelerated ASICs and networking chips that power the world’s largest hyperscale data centers.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
           "unit_id": "0f34fd8a-2d12-4182-82ad-e7acf650ada9",
           "statement": "Broadcom offers AI accelerators, custom silicon ASICs and AI‑enabled networking chips that are co‑designed with customers, providing functionality that overlaps with NVIDIA’s AI‑accelerated GPUs and inference ASICs.",
           "flags": [
-            "generic_statement"
+            "generic_statement",
+            "irrelevant_evidence"
           ]
         },
         {
@@ -1372,6 +1270,7 @@
           "statement": "Broadcom’s AI offerings are sold under a subscription‑based licensing model; the VMware AI Factory provides a software‑defined AI infrastructure with predictable subscription fees and explicitly states that there is no per‑token pricing.",
           "flags": [
             "unfaithful",
+            "low_relevancy",
             "generic_statement",
             "irrelevant_evidence"
           ]
@@ -1386,10 +1285,10 @@
         },
         {
           "unit_type": "finding",
-          "unit_id": "a5991fa4-76e0-4742-bcd4-d25e86433b2f",
-          "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s portfolio for those markets consists of AI‑accelerated networking ASICs (Jalapeño, XPU), high‑bandwidth Ethernet switches (Tomahawk 6/Ultra, Jericho 4) and AI‑optimized NICs, which are marketed as complementary infrastructure rather than direct GPU compute.",
+          "unit_id": "e45dc73d-cfc9-475c-8021-f7afce66ee54",
+          "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA.",
           "flags": [
-            "generic_statement"
+            "irrelevant_evidence"
           ]
         },
         {
@@ -1440,7 +1339,6 @@
           "unit_id": "b92f6e1b-4ae4-4d2a-91ee-3c0b9ca61f99",
           "statement": "Recent changes: compared with NVIDIA Corporation, Intel Corp is comparable. Intel has launched Xeon processors with AMX, the Arc Pro B70 GPU and the Core Ultra 3 series, reflecting recent expansion of its AI hardware lineup.",
           "flags": [
-            "generic_statement",
             "not_actionable"
           ]
         },
@@ -1450,14 +1348,6 @@
           "statement": "Broadcom offers a per‑seat AI licence priced at $30 or $60 per user per month, with fees scaling by headcount regardless of actual usage.",
           "flags": [
             "missing_despite_grounded_finding"
-          ]
-        },
-        {
-          "unit_type": "requirement",
-          "unit_id": "R3",
-          "statement": "Intel is actively marketing AI computing hardware and software in the United States (e.g., CES 2026, OCP 2026) and in Taiwan (Computex 2026), and is referenced as a key AI hardware player across North America, Europe, and APAC in a market analysis report.",
-          "flags": [
-            "unfaithful"
           ]
         },
         {
@@ -1491,7 +1381,8 @@
           "unit_id": "R10",
           "statement": "Broadcom’s AI pricing models comprise a per‑seat licence of $30 or $60 per user per month and subscription‑based software licences billed per core, ranging from $100 to $400 per core per year for VMware products; API access is bundled under enterprise agreements and the VMware AI Factory is offered on a subscription basis without per‑token fees.",
           "flags": [
-            "ungrounded_numbers"
+            "ungrounded_numbers",
+            "low_relevancy"
           ]
         }
       ]

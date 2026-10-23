@@ -1,0 +1,813 @@
+{
+  "agent": "rag",
+  "generated_at_utc": "2026-10-23T20:47:30.151452+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {},
+  "files": [
+    {
+      "file": "rag_internal_intelligence_attempt_1_48389745-6bc_001.json",
+      "metrics": {
+        "context_precision_score": 1.0,
+        "context_recall_score": 1.0,
+        "context_relevancy_score": 1.0,
+        "context_precision_error": "",
+        "context_recall_error": "",
+        "context_relevancy_error": ""
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          }
+        },
+        "metrics": {
+          "calls": 2,
+          "errors": 0,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 629.4498,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 42.571,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "4/4 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 1.00 because the retrieval context directly addresses the input by detailing NVIDIA's AI computing and data center platform GPU products, including accelerated compute, data-center systems, networking, AI software, and cloud access, which are core capabilities relevant to market expansion.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because all nodes in the retrieval contexts that provide relevant information about NVIDIA's AI computing and data center platform GPU products are ranked higher than any irrelevant nodes, ensuring perfect alignment with the input's focus on current status, release dates, and core capabilities. There are no irrelevant nodes ranked above relevant ones, which justifies the perfect score and reflects excellent precision in the retrieval ranking.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because the first sentence in the expected output aligns with node 1, which lists broad portfolio categories matching the planning references, and the second sentence corresponds to node 2, which advises verifying product capability and availability for specific details. There are no unsupported sentences, indicating full contextual recall from the retrieval context.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_48389745-6bc_002.json",
+      "metrics": {
+        "context_precision_score": 1.0,
+        "context_recall_score": 0.0,
+        "context_relevancy_score": 0.3125,
+        "context_precision_error": "",
+        "context_recall_error": "",
+        "context_relevancy_error": ""
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          }
+        },
+        "metrics": {
+          "calls": 2,
+          "errors": 0,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 67.4925,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 53.0745,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "2/2 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": false,
+          "detail": "The score is 0.31 because while the retrieval context identifies NVIDIA and its AI computing offerings, it lacks specific details on R&D resource allocation, headcount, or budget for next-generation GPU architectures, as highlighted by the irrelevancy reasons stating that evaluation criteria and competitor information do not pertain to internal R&D resource allocation.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because the first node in retrieval contexts, which is relevant, is ranked higher than the second node, which is irrelevant. The first node's reason highlights that it discusses pilot scope information related to NVIDIA's internal plans, while the second node's reason indicates it focuses on customer groups and evaluation criteria, unrelated to R&D resource allocation. This clear separation in ranking justifies the perfect score.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because none of the sentences in the expected output are supported by the retrieval context; nodes 1 and 2 do not mention golden planning references, NVIDIA R&D budget, headcount breakdown, architecture-level resource allocation, internal figures, or synthetic planning material, resulting in no overlap between the expected output and the retrieval context.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_48389745-6bc_003.json",
+      "metrics": {
+        "context_precision_score": 1.0,
+        "context_recall_score": 0.0,
+        "context_relevancy_score": 0.2,
+        "context_precision_error": "",
+        "context_recall_error": "",
+        "context_relevancy_error": ""
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          }
+        },
+        "metrics": {
+          "calls": 2,
+          "errors": 0,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 64.3771,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 56.01,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": false,
+          "detail": "The score is 0.20 because most reasons highlight that the retrieval context contains procedural instructions unrelated to NVIDIA's manufacturing capacity or supply chain constraints, while the only relevant statement notes the absence of approved internal NVIDIA information on supply forecasts, indicating very limited relevant content.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": true,
+          "detail": "The score is 1.00 because the first node in retrieval contexts, which is relevant, is ranked highest and clearly states that no approved internal NVIDIA information was supplied, aligning perfectly with the input's focus on internal assessment and supply constraints. There are no irrelevant nodes ranked above relevant ones, ensuring perfect contextual precision.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because none of the sentences in the expected output are supported by the retrieval context; specifically, the context does not mention supply availability, manufacturing capacity, allocation data, or production lead times for 2024-2025, as noted in the unsupportive reason.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    },
+    {
+      "file": "rag_internal_intelligence_attempt_1_48389745-6bc_004.json",
+      "metrics": {
+        "context_precision_score": 0.0,
+        "context_recall_score": 0.0,
+        "context_relevancy_score": 0.8333,
+        "context_precision_error": "",
+        "context_recall_error": "",
+        "context_relevancy_error": ""
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          }
+        },
+        "metrics": {
+          "calls": 2,
+          "errors": 0,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 41.3749,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 34.6552,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "retrieval query is present",
+          "passed": true,
+          "detail": "query missing",
+          "severity": "error"
+        },
+        {
+          "check": "retrieval returned at least one chunk",
+          "passed": true,
+          "detail": "no retrieved documents",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks contain text",
+          "passed": true,
+          "detail": "0 empty",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are available for observability",
+          "passed": true,
+          "detail": "1/1 have scores",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieval scores are within [0, 1]",
+          "passed": true,
+          "detail": "0 invalid score(s): []",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved chunks are not near-duplicates",
+          "passed": true,
+          "detail": "0 duplicate pairs",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context is relevant to the query",
+          "passed": true,
+          "detail": "The score is 0.83 because while the retrieval context includes relevant comparisons of Broadcom-related alternatives on various technical and operational aspects, it lacks direct information on NVIDIA's internal gaps, risk factors, or dependency constraints, as highlighted by the irrelevancy reason about avoiding inference from press mentions.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context precision meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because the first node in retrieval contexts, which is ranked highest, is irrelevant as it discusses Broadcom-related alternatives without mentioning NVIDIA's internal gaps, risk factors, dependency constraints, or comparisons with Intel. Since there are no relevant nodes ranked above irrelevant ones, the score cannot be higher.",
+          "severity": "warn"
+        },
+        {
+          "check": "retrieved context context recall meets threshold",
+          "passed": false,
+          "detail": "The score is 0.00 because none of the sentences in the expected output are supported by the nodes in the retrieval context. Sentence 1 references planning assumptions and assessment items absent from the retrieval context, which focuses solely on Broadcom-related alternatives and comparison criteria. Sentence 2 mentions roadmap risks, approved plans, and verified comparisons with Broadcom or Intel, none of which are present in the retrieval context nodes.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "trace records tool failure handling",
+          "passed": false,
+          "detail": "no errors observed, but trace completeness is not declared",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

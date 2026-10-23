@@ -1,6 +1,6 @@
 {
   "agent": "market_intelligence",
-  "generated_at_utc": "2026-10-22T21:52:31.190570+00:00",
+  "generated_at_utc": "2026-10-23T14:15:04.077004+00:00",
   "model": "gpt-4.1-mini",
   "dry_run": false,
   "thresholds": {
@@ -13,43 +13,8 @@
   "files": [
     {
       "file": "worker_market_intelligence_attempt_1_5599e9b6-db4.json",
-      "metrics_used": [
-        "faithfulness",
-        "relevancy",
-        "specificity",
-        "insight",
-        "context_relevancy",
-        "execution_quality"
-      ],
       "metrics": {
-        "attempt": 1,
         "status": "completed",
-        "error": "none",
-        "findings": 9,
-        "evidence_in_file": 9,
-        "evidence_collected": null,
-        "evidence_sample_pct": null,
-        "evidence_cited": 9,
-        "evidence_utilization_pct": 100.0,
-        "synthetic_evidence_pct": 0.0,
-        "findings_synthetic_only_pct": 0.0,
-        "distinct_source_domains_cited": 6,
-        "top_domain_share_pct": 33.33,
-        "third_party_evidence_pct": 0.0,
-        "avg_retrieval_score": null,
-        "requirements_total": 0,
-        "requirement_coverage_pct": null,
-        "profiles": 0,
-        "matrix_cells": 0,
-        "matrix_cells_with_evidence_pct": null,
-        "matrix_cells_not_established_pct": null,
-        "gaps": 0,
-        "conflicts": 0,
-        "queries_executed": null,
-        "agent_confidence": 0.72,
-        "avg_finding_confidence": 0.7167,
-        "findings_with_numbers_not_in_evidence": 0,
-        "units_with_absence_claims": 0,
         "units": 9,
         "units_flagged": 4,
         "faithfulness_tested": 9,
@@ -59,39 +24,53 @@
         "relevancy_avg": 1.0,
         "relevancy_pass_pct": 100.0,
         "specificity_tested": 9,
-        "specificity_avg": 0.571,
-        "specificity_pass_pct": 66.67,
+        "specificity_avg": 0.5409,
+        "specificity_pass_pct": 55.56,
         "insight_tested": 9,
-        "insight_avg": 0.6654,
-        "insight_pass_pct": 66.67,
+        "insight_avg": 0.6677,
+        "insight_pass_pct": 77.78,
         "context_relevancy_tested": 9,
-        "context_relevancy_avg": 0.7238,
+        "context_relevancy_avg": 0.7079,
         "context_relevancy_pass_pct": 77.78,
-        "judge_errors": 0,
-        "execution_quality_status": "partial"
+        "judge_errors": 0
       },
       "execution_quality": {
-        "status": "partial",
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6874,
+            "reason": "The output includes multiple distinct tool calls covering various relevant queries about AI computing growth rates, demand drivers, regulatory environment, and competitive intensity across Asia-Pacific and Latin America, addressing the input comprehensively. However, there is some repetition in the use of similar tools (market_search with tool_serper) and overlapping query themes, which could indicate redundant processing. While the output is fairly complete and detailed, it could be more efficient by consolidating queries to reduce repeated calls without losing essential information."
+          }
+        },
         "metrics": {
           "calls": 7,
-          "tools": [
-            "market_search",
-            "market_search",
-            "market_search",
-            "market_search",
-            "market_search",
-            "market_search",
-            "market_search"
-          ],
-          "allowed_tools": null,
-          "available_tools": null,
-          "expected_sequence": null,
-          "sequence_missing": [],
-          "schema_checks": 7,
-          "schema_errors": [],
           "errors": 0,
           "repeated_calls": 0,
-          "trace_complete": false,
           "call_details": [
             {
               "tool": "market_search",
@@ -368,74 +347,8 @@
                 ]
               }
             }
-          ],
-          "status": "partial",
-          "dimensions_assessable": 3
-        },
-        "dimensions": {
-          "tool_selection": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_arguments": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_result_use": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
-          },
-          "workflow_sequence": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "No expected workflow sequence was supplied."
-          },
-          "error_handling": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Trace has no failures."
-          },
-          "efficiency": {
-            "status": "assessable",
-            "score": 0.7321,
-            "reason": "The output covers multiple relevant queries addressing growth rates, demand drivers, regulatory environment, and competitive intensity across Asia-Pacific and Latin America, fulfilling the task comprehensively. However, there is some repetition in tool calls using similar providers and overlapping query themes, which reduces efficiency. The sequence is thorough but could be optimized by consolidating queries to avoid redundant searches."
-          }
-        },
-        "checks": [
-          {
-            "check": "tool calls stay within declared/available tools",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "tool arguments satisfy supplied schemas",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "workflow sequence is assessable",
-            "passed": false,
-            "detail": "no expected_sequence/workflow_sequence supplied",
-            "severity": "warn"
-          },
-          {
-            "check": "trace records tool failure handling",
-            "passed": false,
-            "detail": "no errors observed, but trace completeness is not declared",
-            "severity": "warn"
-          },
-          {
-            "check": "trace avoids duplicate tool work",
-            "passed": true,
-            "detail": "0 repeated call(s)",
-            "severity": "warn"
-          }
-        ]
+          ]
+        }
       },
       "checks": [
         {
@@ -535,8 +448,7 @@
           "unit_id": "0f21a9c4-ed41-4a9e-af67-2459d3cc9a06",
           "statement": "Competitive intensity is high, with a leading vendor holding a dominant market position in the AI accelerator market, capturing a majority share.",
           "flags": [
-            "generic_statement",
-            "no_added_insight"
+            "generic_statement"
           ]
         },
         {
@@ -545,6 +457,7 @@
           "statement": "If BIS cannot verify a foreign party’s reliability through an EUC, the party may face heightened regulatory scrutiny or be placed on the Unverified List or Entity List, creating barriers for AI hardware exporters.",
           "flags": [
             "generic_statement",
+            "no_added_insight",
             "irrelevant_evidence"
           ]
         },
@@ -563,7 +476,7 @@
           "unit_id": "63afac75-e84e-4131-9f09-d7050d10920d",
           "statement": "Broadcom's AI semiconductor revenues surged 143% year‑over‑year to $10.8 billion in Q2 FY2026, highlighting its rapidly expanding market presence in AI accelerators and networking.",
           "flags": [
-            "no_added_insight"
+            "generic_statement"
           ]
         }
       ]

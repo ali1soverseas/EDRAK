@@ -3,7 +3,7 @@
 
 The evaluation logic lives in edrak_eval_agent_enhanced.py so the CLI and graph
 runner share exactly the same evaluators, RAG checks, orchestration checks,
-judge cache, and observability reports.
+judge behavior, and observability reports.
 """
 from __future__ import annotations
 
@@ -61,10 +61,8 @@ def main() -> int:
     metric_group.add_argument("--no-extra-metrics", dest="extra_metrics", action="store_false",
                               help=argparse.SUPPRESS)
     ap.set_defaults(extra_metrics=False)
-    ap.add_argument("--cache", default="edrak_judge_cache.json")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--deep", action="store_true")
-    ap.add_argument("--narrative", action="store_true")
     ap.add_argument(
         "--include-tool-payloads",
         action="store_true",

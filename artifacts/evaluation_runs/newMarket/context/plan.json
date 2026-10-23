@@ -1,0 +1,438 @@
+{
+  "plan_id": "84ce1db3-8f1b-4f25-9572-a1a225608122",
+  "request_id": "842a8fb7165883afd9cdf53c045cb052",
+  "tasks": [
+    {
+      "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+      "parent_request_id": "842a8fb7165883afd9cdf53c045cb052",
+      "worker": "internal_intelligence",
+      "goal": "What are NVIDIA's current capabilities, product roadmap, constraints, and internal gaps that affect entering or expanding in the GPU market?",
+      "focus": "AI computing and data center platform assets, R&D resources, manufacturing capacity, and prior strategic decisions",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [],
+        "offering": null,
+        "target_customers": null,
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "capacity",
+          "entity": "NVIDIA Corporation",
+          "required": true,
+          "definition": "Team or delivery capacity available for the initiative.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "capacity plan",
+            "headcount"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "own_price",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "The company's own price for the offering, from internal documents.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "pricing sheet",
+            "price list"
+          ],
+          "check_rule": null
+        }
+      ]
+    },
+    {
+      "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+      "parent_request_id": "842a8fb7165883afd9cdf53c045cb052",
+      "worker": "competitor_intelligence",
+      "goal": "What GPU products, pricing, packaging, positioning, and recent launches do Broadcom and Intel offer in the GPU market?",
+      "focus": "Broadcom and Intel GPU portfolios, pricing structures, go‑to‑market strategies, and recent product announcements",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [],
+        "offering": null,
+        "target_customers": null,
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom pricing",
+            "Broadcom plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corp pricing",
+            "Intel Corp plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        }
+      ]
+    },
+    {
+      "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+      "parent_request_id": "842a8fb7165883afd9cdf53c045cb052",
+      "worker": "market_intelligence",
+      "goal": "What is the size, growth trajectory, regulatory environment, and technology drivers of the global GPU market?",
+      "focus": "Market demand trends, adoption in AI and data centers, supply chain dynamics, and relevant regulations",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [],
+        "offering": null,
+        "target_customers": null,
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "market_size",
+          "entity": "target market",
+          "required": true,
+          "definition": "Total addressable market value for the offering in the target market.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "target market market size"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "market_cagr",
+          "entity": "target market",
+          "required": true,
+          "definition": "Compound annual growth rate of the market.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "target market CAGR forecast"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "adoption_rate",
+          "entity": "target market",
+          "required": true,
+          "definition": "Share of target customers already using the category.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "target market adoption penetration"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "regulation_events",
+          "entity": "target market",
+          "required": true,
+          "definition": "Dated regulatory changes that affect the offering.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "target market regulation law",
+            "target market export control licensing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "segment_growth",
+          "entity": "target market",
+          "required": false,
+          "definition": "Growth rate of the specific segment the offering targets.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "target market segment growth"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "market_concentration",
+          "entity": "target market",
+          "required": false,
+          "definition": "Share of the market held by the top players.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "target market market share leaders"
+          ],
+          "check_rule": "parts_sum_100=True"
+        }
+      ]
+    },
+    {
+      "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+      "parent_request_id": "842a8fb7165883afd9cdf53c045cb052",
+      "worker": "customer_trends",
+      "goal": "What are the needs, sentiment, purchasing criteria, and pain points of target customers such as AI developers and data‑center operators regarding GPUs?",
+      "focus": "Customer reviews, forum discussions, social sentiment, and search interest related to GPU performance, cost, and support",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "market_entry_expansion",
+        "targets": [
+          "Broadcom",
+          "Intel Corp"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "0368db8dffa68ff62b9a0ecfa1c762ca",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corp",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": "3773e3b2c774c938ea772fbd54fd85f6",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [],
+        "offering": null,
+        "target_customers": null,
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "search_interest",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Relative search interest over time (0-100).",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Intel Corp",
+          "required": false,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-10-23T19:47:56.159000Z",
+  "rationale": "All four intelligence areas are needed to assess NVIDIA's internal readiness, competitor landscape, market conditions, and customer demand for a GPU market entry."
+}

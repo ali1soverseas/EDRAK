@@ -1,6 +1,6 @@
 {
   "agent": "verification",
-  "generated_at_utc": "2026-10-22T21:52:31.204645+00:00",
+  "generated_at_utc": "2026-10-23T14:15:04.081967+00:00",
   "model": "gpt-4.1-mini",
   "dry_run": false,
   "thresholds": {
@@ -10,44 +10,15 @@
   "files": [
     {
       "file": "verification_pass_001.json",
-      "metrics_used": [
-        "faithfulness",
-        "relevancy"
-      ],
       "metrics": {
-        "decision_status": "replan_required",
-        "targeted_actions": 11,
-        "findings": 42,
-        "verified": 39,
-        "not_verified": 3,
-        "verified_pct": 92.86,
-        "false_verification_pct": 5.13,
-        "verified_but_unfaithful": 2,
-        "missed_valid_pct": 100.0,
-        "rejected_but_faithful": 3,
-        "confidence_distinct_values": 4,
-        "confidence_stdev": 0.1504,
-        "avg_confidence": 0.8221,
-        "avg_confidence_verified": 0.8579,
-        "avg_confidence_not_verified": 0.3567,
-        "avg_confidence_high_quality": 0.94,
-        "avg_confidence_medium_quality": 0.7248,
-        "avg_confidence_low_quality": null,
-        "verified_on_synthetic_only": 0,
-        "near_duplicate_findings": 0,
-        "rewritten_vs_worker": 0,
-        "findings_with_contradictions": 1,
-        "control_gaps": 11,
-        "control_conflicts": 1,
-        "control_failures": 0,
         "units": 42,
-        "units_flagged": 19,
+        "units_flagged": 17,
         "faithfulness_tested": 42,
         "faithfulness_avg": 0.9718,
         "faithfulness_pass_pct": 95.24,
         "relevancy_tested": 42,
-        "relevancy_avg": 0.6167,
-        "relevancy_pass_pct": 59.52,
+        "relevancy_avg": 0.6655,
+        "relevancy_pass_pct": 64.29,
         "judge_errors": 0
       },
       "checks": [
@@ -199,14 +170,6 @@
         },
         {
           "unit_type": "finding",
-          "unit_id": "afdbb38c-e7a7-478a-9c9c-e1dd2903a62a",
-          "statement": "Broadcom’s AI pricing models include a per‑seat licence of $30 or $60 per user per month (S1) and, for its software‑based infrastructure products, a per‑core subscription model ranging from $200 to $400 per core per year (VMware Cloud Foundation) or $100 to $200 per core per year (VMware VVF) (S2). No self‑service per‑API price list is published; API access is bundled with enterprise product licences under negotiated agreements (S3).",
-          "flags": [
-            "low_relevancy"
-          ]
-        },
-        {
-          "unit_type": "finding",
           "unit_id": "88d4034c-b794-415e-871c-ecdcaab0189b",
           "statement": "Intel Corp: Intel’s AI computing product portfolio that competes with NVIDIA includes Intel Xeon Scalable processors (4th/5th Gen) with Advanced Matrix Extensions (AMX) for AI inference, Intel Xeon CPU Max Series, Intel Core Ultra Series 3 processors for AI PCs, Intel Arc Pro B70 GPU, and the Intel OpenVINO software toolkit that leverages AMX for accelerated deep‑learning workloads.",
           "flags": [
@@ -231,16 +194,16 @@
         },
         {
           "unit_type": "finding",
-          "unit_id": "2e1a9353-fe05-4bc9-9bed-513c58d1e2b0",
-          "statement": "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is broader. Intel actively markets AI processors and software in the United States, Europe and APAC, giving it presence in all NVIDIA target markets plus APAC.",
+          "unit_id": "e45dc73d-cfc9-475c-8021-f7afce66ee54",
+          "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA.",
           "flags": [
             "low_relevancy"
           ]
         },
         {
           "unit_type": "finding",
-          "unit_id": "e45dc73d-cfc9-475c-8021-f7afce66ee54",
-          "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel offers Xeon Scalable CPUs with AMX, Xeon Max, Arc Pro B70 GPU and the OpenVINO toolkit, directly targeting the same data‑center and cloud AI workloads as NVIDIA.",
+          "unit_id": "14b8cbaf-ed63-4803-bb6d-c68810615d4b",
+          "statement": "Partnerships and distribution: compared with NVIDIA Corporation, Broadcom is comparable. Broadcom operates global sales, engineering and support teams across NA, EMEA and APJ and partners with OpenAI on the Jalapeño ASIC, providing a broad distribution network.",
           "flags": [
             "low_relevancy"
           ]
@@ -282,14 +245,6 @@
           "unit_type": "finding",
           "unit_id": "eded65b2-deff-493a-af70-73f1e2119602",
           "statement": "If BIS cannot verify a foreign party’s reliability through an EUC, the party may face heightened regulatory scrutiny or be placed on the Unverified List or Entity List, creating barriers for AI hardware exporters.",
-          "flags": [
-            "low_relevancy"
-          ]
-        },
-        {
-          "unit_type": "finding",
-          "unit_id": "8923c9b3-2975-483a-959d-cd02a516d34d",
-          "statement": "Amazon Bedrock includes foundation models from multiple leading AI providers (Anthropic, Meta, Mistral AI, and Amazon), reflecting a multi‑vendor licensing model that enhances competitive options for customers.",
           "flags": [
             "low_relevancy"
           ]

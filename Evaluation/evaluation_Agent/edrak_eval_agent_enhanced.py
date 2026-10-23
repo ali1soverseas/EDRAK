@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import csv
 import difflib
 import email.utils
 import glob
@@ -14,9 +13,9 @@ import re
 import statistics
 import subprocess
 import sys
-import tempfile
 import threading
 import time
+import unicodedata
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
@@ -37,7 +36,6 @@ ABSENCE_RE = re.compile(r"\b(?:no|not|none|neither|nor|without)\b[^.;]{0,80}?\b"
                         r"(?:mentioned|stated|specified|disclosed|reported|listed|found|indicated|provided)\b", re.I)
 CONF_WORDS = {"low": 0.3, "medium": 0.6, "high": 0.85}      # some agents report confidence as a word
 EPOCH = datetime.min.replace(tzinfo=timezone.utc)
-_CACHE_FLUSH_LOCK = threading.Lock()
 
 # DeepEval metrics: name -> (DeepEval class, needs retrieval context, flag raised when it fails)
 METRICS = {
@@ -50,7 +48,7 @@ METRICS = {
     "insight":           ("GEval",                      True,  "no_added_insight"),
     "actionability":     ("GEval",                      True,  "not_actionable"),
 }
-# Custom (GEval) metrics: name -> (criteria, uses retrieval context). Changing a criterion invalidates its cache.
+# Custom (GEval) metrics: name -> (criteria, uses retrieval context).
 GEVAL = {
     "specificity": ("Score how specific and decision-useful the statement is. High: concrete facts, names, numbers, "
                     "dates or places that someone could check. Low: vague, generic or boilerplate wording that "
@@ -412,16 +410,6 @@ def count_check(label: str, meta: dict, keys: tuple[str, ...], actual: int) -> d
     return None
 
 
-def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
-    fields = list(dict.fromkeys(k for r in rows for k in r)) if rows else ["empty"]
-    with path.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=fields)
-        w.writeheader()
-        for r in rows:
-            w.writerow({k: json.dumps(v, ensure_ascii=False) if isinstance(v, (list, dict)) else v
-                        for k, v in r.items()})
-
-
 # =============================================================================== 2. shared context
 @dataclass
 class Ctx:
@@ -585,7 +573,7 @@ def build_ctx(loaded: list[tuple[Path, str, dict]], task_override: str = "", as_
     return ctx
 
 
-# =============================================================================== 3. LLM judge (DeepEval, cached)
+# =============================================================================== 3. LLM judge (DeepEval)
 class Cfg:
     """Run settings. `for_agent(kind)` returns a copy holding the metrics and GEval criteria that apply to that agent."""
 
@@ -617,15 +605,12 @@ class Cfg:
 
 
 class Judge:
-    """Thin wrapper around DeepEval metrics. Results are cached on disk by content hash, so reruns are free."""
+    """Thin wrapper around DeepEval metrics."""
 
-    CACHE_FLUSH_EVERY = 25
-
-    def __init__(self, model: str, cache_path: Path, enabled: bool, retries: int = 2, workers: int = 1) -> None:
-        self.model, self.cache_path, self.enabled, self.retries = model, cache_path, enabled, retries
+    def __init__(self, model: str, enabled: bool, retries: int = 2, workers: int = 1) -> None:
+        self.model, self.enabled, self.retries = model, enabled, retries
         self.workers = max(1, workers)
-        self.cache: dict[str, Any] = json.loads(cache_path.read_text(encoding="utf-8")) if cache_path.exists() else {}
-        self.calls = self.successes = self.hits = self.errors = 0
+        self.calls = self.successes = self.errors = 0
         self.skipped = 0
         self.total_latency_seconds = 0.0
         self.metric_calls: Counter[str] = Counter()
@@ -634,31 +619,6 @@ class Judge:
         self.next_allowed_at = 0.0
         self.rate_limit_open = False
         self._lock = threading.RLock()
-        self._unsaved = 0
-
-    def flush(self) -> None:
-        """Write the cache to disk (atomically). Called every CACHE_FLUSH_EVERY new results and at the end of a run."""
-        with self._lock, _CACHE_FLUSH_LOCK:
-            if not self._unsaved:
-                return
-            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
-            tmp_path: Path | None = None
-            try:
-                with tempfile.NamedTemporaryFile(
-                    mode="w",
-                    encoding="utf-8",
-                    dir=self.cache_path.parent,
-                    prefix=f".{self.cache_path.name}.",
-                    suffix=".tmp",
-                    delete=False,
-                ) as tmp:
-                    tmp_path = Path(tmp.name)
-                    json.dump(self.cache, tmp, ensure_ascii=False, indent=1)
-                os.replace(tmp_path, self.cache_path)
-            finally:
-                if tmp_path is not None:
-                    tmp_path.unlink(missing_ok=True)
-            self._unsaved = 0
 
     @staticmethod
     def _root_exception(exc: Exception) -> Exception:
@@ -740,13 +700,6 @@ class Judge:
             return {"score": None, "reason": "", "error": "skipped: expected output is required"}
         if not (output or "").strip():
             return {"score": None, "reason": "", "error": "skipped: empty output"}
-        key = hashlib.sha256(json.dumps([metric, self.model, question, output, ctx, spec, expected_output,
-                                         threshold],
-                                        ensure_ascii=False).encode()).hexdigest()
-        with self._lock:
-            if key in self.cache:
-                self.hits += 1
-                return self.cache[key]
         last = ""
         started_total = time.perf_counter()
         for attempt in range(max(1, self.retries)):
@@ -777,10 +730,6 @@ class Judge:
             with self._lock:
                 self.successes += 1
                 self.total_latency_seconds += time.perf_counter() - started_total
-                self.cache[key] = res
-                self._unsaved += 1
-                if self._unsaved >= self.CACHE_FLUSH_EVERY:
-                    self.flush()
             return res
         with self._lock:
             self.errors += 1
@@ -878,8 +827,42 @@ def llm_stats(rows: list[dict[str, Any]], cfg: Any) -> dict[str, Any]:
     return out
 
 
+def dashboard_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
+    visible = {
+        "status",
+        "units",
+        "units_flagged",
+        "planned_tasks",
+        "result_tasks",
+        "successful_tasks",
+        "task_completion_pct",
+        "workflow_success_pct",
+        "context_relevancy_score",
+        "context_relevancy_error",
+        "context_precision_score",
+        "context_precision_error",
+        "context_recall_score",
+        "context_recall_error",
+    }
+    families: dict[str, set[str]] = defaultdict(set)
+    for key in metrics:
+        match = re.fullmatch(r"(.+)_(tested|avg|pass_pct)", key)
+        if match:
+            families[match.group(1)].add(match.group(2))
+    for family, fields in families.items():
+        if len(fields) >= 2:
+            visible.update(f"{family}_{field}" for field in fields)
+
+    for key, value in metrics.items():
+        if key.startswith("judge_") or isinstance(value, (dict, list)):
+            visible.add(key)
+        elif isinstance(value, str) and re.fullmatch(r"[^=,]+=[^=,]+(?:,\s*[^=,]+=[^=,]+)*", value):
+            visible.add(key)
+    return {key: value for key, value in metrics.items() if key in visible}
+
+
 # =============================================================================== 4. per-agent evaluators
-# Each evaluator receives (path, data, ctx, judge, cfg) and returns {"rows", "metrics", "checks", "metrics_used"}.
+# Evaluators return rows, dashboard metrics, and checks; judged stages also return threshold metric names.
 EVALUATORS: dict[str, Callable] = {}
 
 
@@ -906,7 +889,6 @@ def eval_worker(path, d, ctx, judge, cfg):
     findings = dict_items(d.get("findings"))
     competitors = [c for c in map(comp_name, meta.get("competitors") or ctx.competitors) if c]
     profiles = meta.get("competitor_profiles") or {}
-    matrix = meta.get("comparison_matrix") or {}
     competitor_style = "competitor" in worker.lower()
     internal = "internal" in worker.lower()                            # internal workers may use synthetic evidence
     attempt = int(d.get("attempt") or 1)
@@ -934,12 +916,12 @@ def eval_worker(path, d, ctx, judge, cfg):
         other_rel = sum(x not in (None, "supports") for x in relations)
         bad_relations += other_rel
         doms = [domain(r.get("source_url")) for r in recs]
-        social = bool(recs) and all(ev_meta(r).get("kind") in ("social_post", "social_comment") for r in recs)
+        social = bool(recs) and all(ev_meta(r).get("kind") in ("social_post", "social_comment") for r in recs)  #social media posts
         first_party = bool(recs) and all(ev_meta(r).get("first_party") is True for r in recs)   # a company's own site
         row = {
             "unit_type": "finding", "unit_index": i, "unit_id": fid, "attempt": attempt,
             "category": f.get("category", ""), "statement": statement, "confidence": f.get("confidence", ""),
-            "refs": len(ids), "refs_resolved": len(recs), "synthetic_refs": sum(is_synthetic(r) for r in recs),
+            "refs": len(ids), "refs_resolved": len(recs), "synthetic_refs": sum(is_synthetic(r) for r in recs),  # synthetic evidence
             "distinct_source_domains": len({x for x in doms if x}),
             "third_party_refs": sum(ev_meta(r).get("first_party") is False for r in recs),
             "avg_retrieval_score": mean([retrieval_score(r) for r in recs]),
@@ -951,10 +933,12 @@ def eval_worker(path, d, ctx, judge, cfg):
         if not comp:
             comp = next((c for c in competitors if c.lower() in statement.lower()), "")
         worker_topic = {
+            "competitor_intelligence": "competitor positioning, strategy, or performance",
             "internal_intelligence": "internal capabilities, constraints, and decisions",
             "market_intelligence": "market, economic, industry, or regulatory conditions",
             "customer_trends": "customer needs, sentiment, and behavior",
         }.get(worker, f"competitor {comp or 'positioning'}" if competitor_style else "research findings")
+
         f_question = (
             f"{f.get('category') or 'Overview'} concerning {worker_topic}. "
             f"Overall research goal: {goal}"
@@ -1045,67 +1029,19 @@ def eval_worker(path, d, ctx, judge, cfg):
             row["flags"].append("absence_claim")
         rows.append(row)
 
-    # ---- comparison matrix cells: each one is a claim about a competitor and should rest on evidence
-    cells_n = cells_ev = cells_open = 0
-    for dim in dict_items(matrix.get("dimensions")):
-        for cell in dict_items(dim.get("cells")):
-            cells_n += 1
-            ids = [str(x) for x in cell.get("evidence_ids") or []]
-            texts = [t for t in (ev_text(own[x]) for x in ids if x in own) if t][:MAX_CTX_ITEMS]
-            rel = str(cell.get("relative_to_target", "")).lower()
-            cells_ev += bool(ids)
-            cells_open += rel == "not_established"
-            summary = cell.get("summary", "")
-            row = {"unit_type": "matrix_cell", "unit_index": cells_n, "unit_id": f"{dim.get('dimension')} | {cell.get('competitor')}",
-                   "attempt": attempt, "category": rel, "statement": summary, "confidence": cell.get("confidence"),
-                   "refs": len(ids), "refs_resolved": sum(x in own for x in ids),
-                   "ungrounded_numbers": ungrounded_numbers(summary, texts) if texts else []}
-            row.update(judge_unit(judge, cfg, f"{dim.get('dimension', goal)} of {cell.get('competitor', '')}".strip(),
-                                  summary, texts, only=("faithfulness", "relevancy"),
-                                  skip_note="" if cfg.deep else "skipped (use --deep to judge matrix cells)"))
-            flags = []
-            if rel != "not_established" and not ids:
-                flags.append("cell_claim_without_evidence")
-            if row["refs"] and row["refs_resolved"] < row["refs"]:
-                flags.append("unresolved_refs")
-            if absence_claim(summary):
-                flags.append("absence_claim")
-            flags += [METRICS[m][2] for m in cfg.metrics if row.get(f"{m}_pass") is False]
-            row["flags"] = flags
-            rows.append(row)
-
+#
     fnd = [r for r in rows if r["unit_type"] == "finding"]
-    cited_recs = [own[x] for x in cited_all if x in own]
-    dom = Counter(x for x in (domain(r.get("source_url")) for r in cited_recs) if x)
-    fulfilled = sum(str(r.get("status", "")).lower() == "fulfilled" for r in reqs)
-    synth_only = [r for r in fnd if "synthetic_evidence_only" in r["flags"]]
-    collected = control.get("evidence_count") or meta.get("evidence_count") or meta.get("sources_read")
     fconfs = [conf_num(r["confidence"]) for r in fnd]
     overall = conf_num(d.get("confidence"))
     n_absence = sum("absence_claim" in r["flags"] for r in rows)
+    avg_finding_confidence = mean(fconfs)
+    ungrounded_number_findings = sum(bool(r["ungrounded_numbers"]) for r in fnd)
     metrics = {
-        "attempt": attempt, "status": d.get("status"), "error": d.get("error"), "findings": len(fnd),
-        "evidence_in_file": len(own), "evidence_collected": collected,
-        "evidence_sample_pct": pct(len(own), collected) if is_num(collected) and collected >= len(own) else None,
-        "evidence_cited": len(cited_all & set(own)), "evidence_utilization_pct": pct(len(cited_all & set(own)), len(own)),
-        "synthetic_evidence_pct": pct(sum(is_synthetic(e) for e in own.values()), len(own)),
-        "findings_synthetic_only_pct": pct(len(synth_only), len(fnd)),
-        "distinct_source_domains_cited": len(dom),
-        "top_domain_share_pct": pct(dom.most_common(1)[0][1], sum(dom.values())) if dom else None,
-        "third_party_evidence_pct": pct(sum(ev_meta(e).get("first_party") is False for e in own.values()), len(own)),
-        "avg_retrieval_score": mean([retrieval_score(e) for e in own.values()]),
-        "requirements_total": len(reqs), "requirement_coverage_pct": pct(fulfilled, len(reqs)),
-        "profiles": len(profiles), "matrix_cells": cells_n, "matrix_cells_with_evidence_pct": pct(cells_ev, cells_n),
-        "matrix_cells_not_established_pct": pct(cells_open, cells_n),
-        "gaps": len(d.get("gaps") or []), "conflicts": len(d.get("conflicts") or []),
-        "queries_executed": meta.get("queries_executed") or meta.get("query_count"),
-        "agent_confidence": overall, "avg_finding_confidence": mean(fconfs),
-        "findings_with_numbers_not_in_evidence": sum(bool(r["ungrounded_numbers"]) for r in fnd),
-        "units_with_absence_claims": n_absence,
+        "status": d.get("status"),
         **llm_stats(rows, cfg),
     }
     discarded = {str(x.get("evidence_id")) for x in dict_items(meta.get("discarded_evidence"))}
-    gap = abs(overall - metrics["avg_finding_confidence"]) if overall is not None and metrics["avg_finding_confidence"] is not None else None
+    gap = abs(overall - avg_finding_confidence) if overall is not None and avg_finding_confidence is not None else None
     checks = [
         count_check("findings", meta, ("finding_count", "total_verified_findings"), len(findings)),
         count_check("evidence", meta, ("evidence_count", "total_sources"), len(own)),
@@ -1129,12 +1065,10 @@ def eval_worker(path, d, ctx, judge, cfg):
               not any("missing_despite_grounded_finding" in r["flags"] for r in rows), severity="warn") if reqs else None,
         check("every named competitor has a profile", all(c in profiles for c in competitors), ", ".join(competitors))
         if competitor_style and competitors else None,
-        check("matrix claims rest on evidence", not any("cell_claim_without_evidence" in r["flags"] for r in rows),
-              f"{sum('cell_claim_without_evidence' in r['flags'] for r in rows)} cells", "warn") if cells_n else None,
         check("agent confidence is close to its findings' average (<=0.15)", gap <= 0.15, f"gap={round(gap, 3)}", "warn")
         if gap is not None else None,
-        check("findings do not contain numbers absent from their evidence", metrics["findings_with_numbers_not_in_evidence"] == 0,
-              f"{metrics['findings_with_numbers_not_in_evidence']} findings", "warn"),
+        check("findings do not contain numbers absent from their evidence", ungrounded_number_findings == 0,
+              f"{ungrounded_number_findings} findings", "warn"),
         check("no unit states an absence of evidence as a fact ('not mentioned')", n_absence == 0,
               f"{n_absence} units", "warn"),
         check("run completed (not partial/failed)", d.get("status") in (None, "completed"), str(d.get("status")), "warn"),
@@ -1143,227 +1077,6 @@ def eval_worker(path, d, ctx, judge, cfg):
     return _result(rows, metrics, checks, cfg)
 
 
-@evaluator("metrics")
-def eval_metrics(path, d, ctx, judge, cfg):
-    """Check metric observations and required-metric outcomes against their saved evidence."""
-    results = dict_items(d.get("results"))
-    rows = []
-    observation_count = verified_count = thin_count = conflict_count = unverified_count = 0
-    requirement_count = required_count = found_count = gap_count = 0
-    missing_outcomes = duplicate_outcomes = unresolved_evidence = 0
-    nonterminal_outcomes = orphan_outcomes = required_terminal_outcomes = 0
-    invalid_claims = missing_gap_reasons = found_without_observations = 0
-    captured_metric_data = False
-
-    for result in results:
-        worker = str(result.get("worker") or "")
-        metadata = result.get("metadata") or {}
-        evidence = evidence_map(result.get("evidence"))
-        observations = dict_items(metadata.get("metrics"))
-        requirements = dict_items(metadata.get("requirements"))
-        outcomes = dict_items(metadata.get("requirement_outcomes"))
-        captured_metric_data |= any(
-            key in metadata for key in ("metrics", "requirements", "requirement_outcomes")
-        )
-        outcome_by_key: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
-        observations_by_key: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
-
-        for outcome in outcomes:
-            key = (str(outcome.get("metric_id") or ""), str(outcome.get("entity") or "").casefold())
-            outcome_by_key[key].append(outcome)
-
-        for observation in observations:
-            observation_count += 1
-            metric_id = str(observation.get("metric_id") or "")
-            entity = str(observation.get("entity") or "")
-            key = (metric_id, entity.casefold())
-            observations_by_key[key].append(observation)
-            status = str(observation.get("status") or "").lower()
-            value_text = str(observation.get("value_text") or "")
-            source_id = str(observation.get("evidence_id") or "")
-            source = evidence.get(source_id)
-            source_text = "\n".join(
-                str(source.get(field) or "")
-                for field in ("extracted_fact", "excerpt", "page_text", "text")
-            ) if source else ""
-            source_span = str(observation.get("source_span") or "")
-            normalized_source = re.sub(r"\s+", " ", source_text).strip().casefold()
-            normalized_span = re.sub(r"\s+", " ", source_span).strip().casefold()
-            span_resolves = bool(normalized_span and normalized_span in normalized_source)
-            number_grounded = bool(NUM_RE.findall(value_text)) and not ungrounded_numbers(value_text, [source_text])
-            flags = []
-            if not metric_id:
-                flags.append("missing_metric_id")
-            if not entity.strip():
-                flags.append("missing_metric_entity")
-            if not source:
-                flags.append("unresolved_metric_evidence")
-                unresolved_evidence += 1
-            if not span_resolves:
-                flags.append("source_span_not_in_evidence")
-            if status != "unverified" and not number_grounded:
-                flags.append("metric_value_not_in_evidence")
-            if status not in {"verified", "thin", "conflict", "unverified"}:
-                flags.append("invalid_metric_status")
-            if status != "unverified" and not is_finite_num(observation.get("value")):
-                flags.append("invalid_numeric_value")
-            if flags and status != "unverified":
-                invalid_claims += 1
-            if status == "verified":
-                verified_count += 1
-            elif status == "thin":
-                thin_count += 1
-            elif status == "conflict":
-                conflict_count += 1
-            elif status == "unverified":
-                unverified_count += 1
-            rows.append({
-                "unit_type": "metric_observation",
-                "unit_index": observation_count,
-                "unit_id": f"{worker}:{metric_id}:{entity}:{observation.get('evidence_id') or ''}",
-                "worker": worker,
-                "metric_id": metric_id,
-                "entity": entity,
-                "value_text": value_text,
-                "value": observation.get("value"),
-                "status": status,
-                "evidence_id": source_id,
-                "flags": flags,
-            })
-
-        seen_required: set[tuple[str, str]] = set()
-        for requirement in requirements:
-            requirement_count += 1
-            metric_id = str(requirement.get("metric_id") or "")
-            entity = str(requirement.get("entity") or "")
-            key = (metric_id, entity.casefold())
-            if requirement.get("required", True):
-                required_count += 1
-                seen_required.add(key)
-            matches = outcome_by_key.get(key, [])
-            flags = []
-            if requirement.get("required", True) and not matches:
-                flags.append("required_outcome_missing")
-                missing_outcomes += 1
-            if len(matches) > 1:
-                flags.append("duplicate_requirement_outcomes")
-                duplicate_outcomes += len(matches) - 1
-            outcome = matches[0] if matches else {}
-            outcome_status = str(outcome.get("status") or "").lower()
-            if outcome_status == "found":
-                found_count += 1
-                if requirement.get("required", True):
-                    required_terminal_outcomes += 1
-                supported = any(
-                    str(item.get("status") or "").lower() in {"verified", "thin"}
-                    for item in observations_by_key.get(key, [])
-                )
-                if not supported:
-                    flags.append("found_without_metric_observation")
-                    found_without_observations += 1
-            elif outcome_status == "gap":
-                gap_count += 1
-                if requirement.get("required", True):
-                    required_terminal_outcomes += 1
-                if not outcome.get("reason"):
-                    flags.append("gap_without_reason")
-                    missing_gap_reasons += 1
-            elif outcome_status:
-                flags.append("nonterminal_requirement_outcome")
-                nonterminal_outcomes += 1
-            elif matches:
-                flags.append("invalid_requirement_outcome")
-                nonterminal_outcomes += 1
-            rows.append({
-                "unit_type": "metric_requirement",
-                "unit_index": requirement_count,
-                "unit_id": f"{worker}:{metric_id}:{entity}",
-                "worker": worker,
-                "metric_id": metric_id,
-                "entity": entity,
-                "required": requirement.get("required", True),
-                "outcome": outcome_status or None,
-                "gap_reason": outcome.get("reason"),
-                "flags": flags,
-            })
-
-        for key, matches in outcome_by_key.items():
-            if key not in seen_required and not any(
-                (str(req.get("metric_id") or ""), str(req.get("entity") or "").casefold()) == key
-                for req in requirements
-            ):
-                orphan_outcomes += len(matches)
-                rows.append({
-                    "unit_type": "metric_requirement_outcome",
-                    "unit_index": len(rows) + 1,
-                    "unit_id": f"{worker}:{key[0]}:{key[1]}",
-                    "worker": worker,
-                    "metric_id": key[0],
-                    "entity": matches[0].get("entity"),
-                    "outcome": matches[0].get("status"),
-                    "flags": ["outcome_without_requirement"],
-                })
-
-    metrics = {
-        "worker_results": len(results),
-        "metric_observations": observation_count,
-        "verified_observations": verified_count,
-        "thin_observations": thin_count,
-        "conflicting_observations": conflict_count,
-        "unverified_observations": unverified_count,
-        "requirements": requirement_count,
-        "required_requirements": required_count,
-        "found_outcomes": found_count,
-        "gap_outcomes": gap_count,
-        "required_outcome_coverage_pct": pct(required_terminal_outcomes, required_count),
-        "unresolved_evidence_refs": unresolved_evidence,
-        "invalid_grounded_claims": invalid_claims,
-        "missing_gap_reasons": missing_gap_reasons,
-        "found_without_observations": found_without_observations,
-        "duplicate_outcomes": duplicate_outcomes,
-        "nonterminal_outcomes": nonterminal_outcomes,
-        "orphan_outcomes": orphan_outcomes,
-    }
-    checks = [
-        check(
-            "verified metric observations are grounded in cited sources",
-            invalid_claims == 0,
-            f"{invalid_claims} unsupported or malformed verified/thin/conflicting observation(s)",
-        ),
-        check(
-            "every required metric has a terminal outcome",
-            missing_outcomes == 0 and duplicate_outcomes == 0 and nonterminal_outcomes == 0,
-            f"{missing_outcomes} missing, {duplicate_outcomes} duplicate, "
-            f"and {nonterminal_outcomes} nonterminal outcome(s)",
-        ),
-        check(
-            "metric outcomes map to declared requirements",
-            orphan_outcomes == 0,
-            f"{orphan_outcomes} outcome(s) without a matching requirement",
-        ),
-        check(
-            "every metric gap states a reason",
-            missing_gap_reasons == 0,
-            f"{missing_gap_reasons} gap(s) without a reason",
-        ),
-        check(
-            "found outcomes have supporting metric observations",
-            found_without_observations == 0,
-            f"{found_without_observations} unsupported found outcome(s)",
-        ),
-        check(
-            "metrics-stage data was captured",
-            captured_metric_data,
-            "no worker result contains metric, requirement, or outcome metadata",
-            "warn",
-        ),
-    ]
-    return {
-        "rows": rows,
-        "metrics": metrics,
-        "checks": checks,
-        "metrics_used": ["metric_evidence_integrity", "metric_requirement_coverage"],
-    }
 
 
 # ------------------------------------------------------------------ verification agent
@@ -1398,7 +1111,9 @@ def eval_verification(path, d, ctx, judge, cfg):
             "near_duplicate_of": dup_of, "rewritten_vs_worker": bool(original and norm(original) != norm(statement)),
             "ungrounded_numbers": ungrounded_numbers(statement, judge_ctx),
         }
+       ##-----  
         row.update(judge_unit(judge, cfg, ctx.goal, statement, judge_ctx))
+
         flags = base_flags(row, len(judge_ctx), cfg)
         verified = status in POSITIVE
         if verified and row["faithfulness_pass"] is False:
@@ -1420,36 +1135,16 @@ def eval_verification(path, d, ctx, judge, cfg):
         row["flags"] = flags
         rows.append(row)
 
-    tested = [r for r in rows if r.get("faithfulness_pass") is not None]
-    ver = [r for r in tested if r["verification_status"] in POSITIVE]
-    rej = [r for r in tested if r["verification_status"] not in POSITIVE]
-    fp = sum(r["faithfulness_pass"] is False for r in ver)      # verifier said yes, judge says no
-    fn = sum(r["faithfulness_pass"] is True for r in rej)       # verifier said no, judge says yes
     confs = [conf_num(r["confidence"]) for r in rows if conf_num(r["confidence"]) is not None]
     n_ver = sum(r["verification_status"] in POSITIVE for r in rows)
     n_not = len(rows) - n_ver
     conf_of = lambda sel: mean([conf_num(r["confidence"]) for r in rows if sel(r)])
     by_q = {q: conf_of(lambda r, q=q: r["evidence_quality"] == q) for q in ("high", "medium", "low")}
     with_issue = sum(bool(r["contradictions"]) for r in rows)
-    metrics = {
-        "decision_status": dec.get("status"), "targeted_actions": len(dec.get("targeted_actions") or []),
-        "findings": len(rows), "verified": n_ver, "not_verified": n_not, "verified_pct": pct(n_ver, len(rows)),
-        "false_verification_pct": pct(fp, len(ver)), "verified_but_unfaithful": fp,
-        "missed_valid_pct": pct(fn, len(rej)), "rejected_but_faithful": fn,
-        "confidence_distinct_values": len(set(confs)), "confidence_stdev": stdev(confs), "avg_confidence": mean(confs),
-        "avg_confidence_verified": conf_of(lambda r: r["verification_status"] in POSITIVE),
-        "avg_confidence_not_verified": conf_of(lambda r: r["verification_status"] not in POSITIVE),
-        "avg_confidence_high_quality": by_q["high"], "avg_confidence_medium_quality": by_q["medium"],
-        "avg_confidence_low_quality": by_q["low"],
-        "verified_on_synthetic_only": sum("verified_on_synthetic_only" in r["flags"] for r in rows),
-        "near_duplicate_findings": sum("near_duplicate" in r["flags"] for r in rows),
-        "rewritten_vs_worker": sum(r["rewritten_vs_worker"] for r in rows),
-        "findings_with_contradictions": with_issue,
-        "control_gaps": len(control.get("missing_information") or []),
-        "control_conflicts": len(control.get("conflicts") or []),
-        "control_failures": len(control.get("failures") or []),
-        **llm_stats(rows, cfg),
-    }
+    avg_confidence_verified = conf_of(lambda r: r["verification_status"] in POSITIVE)
+    avg_confidence_not_verified = conf_of(lambda r: r["verification_status"] not in POSITIVE)
+    near_duplicate_findings = sum("near_duplicate" in r["flags"] for r in rows)
+    metrics = llm_stats(rows, cfg)
     worker_ids, ver_ids = set(ctx.worker_findings), {r["unit_id"] for r in rows}
     summary = str(dec.get("summary") or "")
     m_sum = re.search(r"(\d+)\s+of\s+(\d+)", summary)
@@ -1480,21 +1175,21 @@ def eval_verification(path, d, ctx, judge, cfg):
         check("confidence discriminates between findings (>=3 distinct values)", len(set(confs)) >= 3,
               f"{len(set(confs))} distinct, stdev={stdev(confs)}", "warn") if len(rows) >= 3 else None,
         check("confidence is calibrated to the label (verified > not verified)",
-              metrics["avg_confidence_verified"] > metrics["avg_confidence_not_verified"],
-              f"verified={metrics['avg_confidence_verified']} not_verified={metrics['avg_confidence_not_verified']}", "warn")
-        if n_ver and n_not and metrics["avg_confidence_verified"] is not None
-        and metrics["avg_confidence_not_verified"] is not None else None,
+              avg_confidence_verified > avg_confidence_not_verified,
+              f"verified={avg_confidence_verified} not_verified={avg_confidence_not_verified}", "warn")
+        if n_ver and n_not and avg_confidence_verified is not None
+        and avg_confidence_not_verified is not None else None,
         check("confidence follows evidence quality (high >= medium >= low)", q_order == sorted(q_order, reverse=True),
               f"{by_q}", "warn") if len(q_order) >= 2 else None,
         check("no finding's confidence contradicts its label", not any("confidence_contradicts_status" in r["flags"] for r in rows),
               severity="warn"),
-        check("control conflicts match findings with contradictions", metrics["control_conflicts"] == with_issue,
-              f"control={metrics['control_conflicts']} findings={with_issue}", "warn"),
+        check("control conflicts match findings with contradictions", len(control.get("conflicts") or []) == with_issue,
+              f"control={len(control.get('conflicts') or [])} findings={with_issue}", "warn"),
         check("control gaps are not just a copy of next_research_targets",
               control.get("missing_information") != control.get("next_research_targets")
               or not control.get("missing_information")),
-        check("no near-duplicate findings", metrics["near_duplicate_findings"] == 0,
-              f"{metrics['near_duplicate_findings']} duplicates", "warn"),
+        check("no near-duplicate findings", near_duplicate_findings == 0,
+              f"{near_duplicate_findings} duplicates", "warn"),
     ]
     return _result(rows, metrics, checks, cfg)
 
@@ -1566,21 +1261,12 @@ def eval_cross_signal(path, d, ctx, judge, cfg):
     block = d.get("decision_ready_context") or {}
     types = Counter(r["signal_type"] for r in rows)
     n_verified = sum(v.get("verification_status") == "verified" for v in ctx.verified_findings.values())
-    used = {x for sg in signals for x in s_ids(sg)}
+    signals_on_unverified = sum(bool(r["unverified_support"]) for r in rows)
+    signals_entity_not_in_support = sum(bool(r["entities_missing_from_support"]) for r in rows)
+    signals_confidence_exceeds_support = sum("confidence_exceeds_support" in r["flags"] for r in rows)
     metrics = {
-        "status": d.get("status"), "signals": len(rows), "avg_supporting_findings": mean([r["refs"] for r in rows]),
-        "support_resolution_pct": pct(sum(r["refs_resolved"] for r in rows), sum(r["refs"] for r in rows)),
-        "verified_findings_used": len(used), "verified_findings_available": n_verified or None,
-        "finding_usage_pct": pct(len(used), n_verified) if n_verified else None,
-        "signals_single_worker_support": sum(len(r["supporting_workers"]) < 2 for r in rows),
-        "signals_on_unverified_findings": sum(bool(r["unverified_support"]) for r in rows),
-        "signals_entity_not_in_support": sum(bool(r["entities_missing_from_support"]) for r in rows),
-        "signals_confidence_exceeds_support": sum("confidence_exceeds_support" in r["flags"] for r in rows),
-        "signals_with_evidence_gaps": sum(bool(r["evidence_gaps"]) for r in rows),
-        "avg_signal_confidence": mean([conf_num(r["confidence"]) for r in rows]),
+        "status": d.get("status"),
         "signal_types": ", ".join(f"{t}={n}" for t, n in sorted(types.items())),
-        "discarded_missing_support": stats.get("discarded_missing_support"),
-        "discarded_insufficient_support": stats.get("discarded_insufficient_support"),
         **llm_stats(rows, cfg),
     }
     questions = [str(r) for r in block.get("decision_questions") or []]
@@ -1593,8 +1279,8 @@ def eval_cross_signal(path, d, ctx, judge, cfg):
         if (ctx.worker_findings or ctx.verified_findings) else None,
         check("pipeline reported no unresolved support references", not stats.get("support_references_unresolved"),
               f"{stats.get('support_references_unresolved')}") if "support_references_unresolved" in stats else None,
-        check("no signal rests on findings the verifier did not verify", metrics["signals_on_unverified_findings"] == 0,
-              f"{metrics['signals_on_unverified_findings']} signals") if have_status else None,
+        check("no signal rests on findings the verifier did not verify", signals_on_unverified == 0,
+              f"{signals_on_unverified} signals") if have_status else None,
         check("decision_ready_context.key_signals matches signals", len(block.get("key_signals", [])) == len(rows))
         if "key_signals" in block else None,
         check("decision_question_count matches decision_ready_context", stats.get("decision_question_count") == len(questions),
@@ -1603,13 +1289,13 @@ def eval_cross_signal(path, d, ctx, judge, cfg):
         check("every signal's decision_question is listed in decision_ready_context",
               all(str(s.get("decision_question")) in questions for s in signals if s.get("decision_question")), severity="warn")
         if questions else None,
-        check("no signal names an entity absent from its support", metrics["signals_entity_not_in_support"] == 0,
-              f"{metrics['signals_entity_not_in_support']} signals", "warn"),
+        check("no signal names an entity absent from its support", signals_entity_not_in_support == 0,
+              f"{signals_entity_not_in_support} signals", "warn"),
         check("no convergence signal rests on a single worker",
               not any("convergence_from_single_worker" in r["flags"] for r in rows), severity="warn"),
         check("signal domains_involved are backed by its supporting findings",
               not any("domain_not_in_support" in r["flags"] for r in rows), severity="warn"),
-        check("signal confidence never exceeds its support", metrics["signals_confidence_exceeds_support"] == 0, severity="warn"),
+        check("signal confidence never exceeds its support", signals_confidence_exceeds_support == 0, severity="warn"),
         check("warnings list is empty", not d.get("warnings"), "; ".join(map(str, d.get("warnings") or []))[:200], "warn"),
     ]
     return _result(rows, metrics, checks, cfg)
@@ -1703,22 +1389,11 @@ def eval_decision(path, d, ctx, judge, cfg):
     dup_actions = sum(any(near_dup(x, y) for y in norm_actions[:k]) for k, x in enumerate(norm_actions) if x)
     answered = [norm(q.get("question", "")) for q in qrs]
     missing_q = [q for q in ctx.decision_questions if norm(q) not in answered]
+    recommendations_with_new_numbers = sum(bool(r["new_numbers_not_in_signals"]) for r in recs)
+    recommendations_with_past_timeline = sum(bool(r["past_years_mentioned"]) for r in recs)
     metrics = {
-        "status": d.get("status"), "recommendations": len(recs), "opportunities": len(opps), "risks": len(risks),
-        "recommended_actions": len(actions), "priorities": len(prios), "options": len(options),
-        "options_without_content_pct": pct(options_empty, len(options)),
-        "undetermined_priority_pct": pct(undetermined, len(prios)), "human_approval_pct": pct(approvals, len(actions)),
+        "status": d.get("status"),
         "priority_mix": ", ".join(f"{k}={v}" for k, v in sorted(Counter(str(p.get("priority")) for p in prios).items())),
-        "actions_with_success_indicators_pct": pct(sum(bool(a.get("success_indicators")) for a in actions), len(actions)),
-        "actions_with_prerequisites_pct": pct(sum(bool(a.get("prerequisites")) for a in actions), len(actions)),
-        "near_duplicate_actions": dup_actions,
-        "avg_signals_per_recommendation": mean([r["refs"] for r in recs]),
-        "signal_coverage_pct": pct(len(used_signals & valid), len(valid)),
-        "avg_recommendation_confidence": mean([conf_num(r["confidence"]) for r in recs]),
-        "recommendations_with_new_numbers": sum(bool(r["new_numbers_not_in_signals"]) for r in recs),
-        "recommendations_with_past_timeline": sum(bool(r["past_years_mentioned"]) for r in recs),
-        "additional_information_needed": len(d.get("additional_information_needed") or []),
-        "limitations_listed": len(d.get("limitations") or []), "warnings": len(d.get("warnings") or []),
         **llm_stats(rows, cfg),
     }
     bad = {"recommendations": bad_ids([q.get("recommendation") or {} for q in qrs]),
@@ -1752,10 +1427,10 @@ def eval_decision(path, d, ctx, judge, cfg):
         check("no near-duplicate actions", dup_actions == 0, f"{dup_actions} duplicates", "warn") if actions else None,
         check("options carry content (what we would do / trade-offs)", options_empty == 0,
               f"{options_empty}/{len(options)} empty", "warn") if options else None,
-        check("no recommendation has numbers absent from its signals", metrics["recommendations_with_new_numbers"] == 0,
-              f"{metrics['recommendations_with_new_numbers']} recommendations", "warn") if ctx.signals else None,
+        check("no recommendation has numbers absent from its signals", recommendations_with_new_numbers == 0,
+              f"{recommendations_with_new_numbers} recommendations", "warn") if ctx.signals else None,
         check("no recommendation schedules work in a year that is already over",
-              metrics["recommendations_with_past_timeline"] == 0,
+              recommendations_with_past_timeline == 0,
               ", ".join(f"{r['unit_id']}:{r['past_years_mentioned']}" for r in recs if r["past_years_mentioned"]),
               "warn") if ref_year else None,
         check("every action requires human approval", approvals == len(actions), f"{approvals}/{len(actions)}")
@@ -1872,92 +1547,308 @@ def _call_query(call: dict[str, Any]) -> str:
     return str(query).strip() if query is not None else ""
 
 
+import math
+from pathlib import Path
+from typing import Any, Callable
+
+
+def _cosine_similarity(
+    vector_a: list[float],
+    vector_b: list[float],
+) -> float:
+    """Calculate cosine similarity between two embedding vectors."""
+    if len(vector_a) != len(vector_b) or not vector_a:
+        return 0.0
+
+    dot = sum(a * b for a, b in zip(vector_a, vector_b))
+    norm_a = math.sqrt(sum(a * a for a in vector_a))
+    norm_b = math.sqrt(sum(b * b for b in vector_b))
+
+    if norm_a == 0 or norm_b == 0:
+        return 0.0
+
+    return dot / (norm_a * norm_b)
+
+
+
+from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.environ.get("OPENAI_API_KEY")
+client = OpenAI()
+
+
+def embed_texts(texts: list[str]) -> list[list[float]]:
+    """Generate semantic embeddings using OpenAI."""
+    if not texts:
+        return []
+
+    response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=[text.replace("\n", " ") for text in texts],
+    )
+
+    # Preserve the original input order.
+    ordered = sorted(response.data, key=lambda item: item.index)
+    return [item.embedding for item in ordered]
+
+
 def _golden_answer_for_rag(
     rag_payload: dict[str, Any],
     loaded: list[tuple[Path, str, dict[str, Any]]],
+    embed_texts: Callable[[list[str]], list[list[float]]],
     ground_truth_root: Path | None = None,
+    min_similarity: float = 0.35,
+    max_findings: int = 5,
 ) -> tuple[str, str] | None:
-    """Find an independent expected answer for this RAG worker in its use-case golden dataset."""
+    """
+    Select semantically relevant findings from the internal-intelligence
+    golden dataset for RAG evaluation.
+
+    embed_texts(texts) must return one embedding vector per input text,
+    using the same embedding model as the RAG retrieval pipeline.
+    """
+
+    # 1. Validate worker.
     worker = str(rag_payload.get("worker") or "").strip()
-    if not worker or not re.fullmatch(r"[A-Za-z0-9_-]+", worker):
+
+    if worker != "internal_intelligence":
         return None
-    use_case = ""
+
+    # 2. Get the actual RAG query.
+    query = str(
+        rag_payload.get("query")
+        or rag_payload.get("question")
+        or rag_payload.get("user_query")
+        or ""
+    ).strip()
+
+    if not query:
+        return None
+
+    # 3. Get retrieved chunks.
+    raw_chunks = (
+        rag_payload.get("retrieved_chunks")
+        or rag_payload.get("chunks")
+        or rag_payload.get("retrieval_context")
+        or []
+    )
+
+    if isinstance(raw_chunks, str):
+        chunks = [raw_chunks.strip()] if raw_chunks.strip() else []
+    elif isinstance(raw_chunks, list):
+        chunks = []
+
+        for chunk in raw_chunks:
+            if isinstance(chunk, str):
+                chunk_text = chunk
+            elif isinstance(chunk, dict):
+                chunk_text = str(
+                    chunk.get("text")
+                    or chunk.get("content")
+                    or chunk.get("chunk_text")
+                    or ""
+                )
+            else:
+                continue
+
+            if chunk_text.strip():
+                chunks.append(chunk_text.strip())
+    else:
+        chunks = []
+
+    # 4. Identify the current use case.
+    use_cases = set()
+
     for _, kind, data in loaded:
         if kind != "input":
             continue
+
         business_context = data.get("business_context") or {}
-        use_case = str(business_context.get("use_case") or data.get("use_case") or "").strip().casefold()
+
+        use_case = str(
+            business_context.get("use_case")
+            or data.get("use_case")
+            or ""
+        ).strip().casefold()
+
         if use_case:
-            break
-    if not use_case:
+            use_cases.add(use_case)
+
+    if len(use_cases) != 1:
         return None
 
-    root = ground_truth_root or Path(__file__).resolve().parents[2] / "golden" / "ground_truth"
+    use_case = next(iter(use_cases))
+
+    # 5. Find the matching golden dataset.
+    root = (
+        ground_truth_root
+        if ground_truth_root is not None
+        else Path(__file__).resolve().parents[2]
+        / "golden"
+        / "ground_truth"
+    )
+
+    if not root.is_dir():
+        return None
+
     matches = []
+
     for input_path in sorted(root.glob("*/inputs/initial_input.json")):
         golden_input = read_json(input_path)
         business_context = golden_input.get("business_context") or {}
+
         golden_use_case = str(
-            business_context.get("use_case") or golden_input.get("use_case") or ""
+            business_context.get("use_case")
+            or golden_input.get("use_case")
+            or ""
         ).strip().casefold()
+
         if golden_use_case == use_case:
             matches.append(input_path.parent.parent)
+
     if len(matches) > 1:
-        raise ValueError(f"Multiple golden datasets match use case {use_case!r}.")
+        raise ValueError(
+            f"Multiple golden datasets match use case {use_case!r}."
+        )
+
     if not matches:
         return None
 
     dataset = matches[0]
-    worker_path = dataset / "inputs" / f"worker_{worker}.json"
+
+    # Prefer a query-specific answer over the approximate finding selection
+    # below. Normalize typography, case, and whitespace without changing words.
+    rag_golden_path = dataset / "inputs" / "rag_internal_intelligence.json"
+    if rag_golden_path.is_file():
+        rag_golden = read_json(rag_golden_path)
+        def normalize_query(value: Any) -> str:
+            normalized = unicodedata.normalize("NFKC", str(value)).casefold()
+            normalized = re.sub(r"[\u2010-\u2015]", "-", normalized)
+            return " ".join(normalized.split())
+
+        normalized_query = normalize_query(query)
+        matches = [
+            item
+            for item in dict_items(rag_golden.get("queries"))
+            if normalize_query(item.get("query") or "") == normalized_query
+            and str(item.get("expected_output") or "").strip()
+        ]
+        if len(matches) > 1:
+            raise ValueError(
+                f"Multiple golden RAG references match query {query!r}."
+            )
+        if matches:
+            source = (
+                Path("golden")
+                / "ground_truth"
+                / dataset.name
+                / "inputs"
+                / rag_golden_path.name
+            )
+            return str(matches[0]["expected_output"]).strip(), source.as_posix()
+
+    worker_path = (
+        dataset / "inputs" / "worker_internal_intelligence.json"
+    )
+
     if not worker_path.is_file():
         return None
+
     worker_data = read_json(worker_path)
-    expected_output = worker_data.get("expected_output")
-    if isinstance(expected_output, str) and expected_output.strip():
-        source = (Path("golden") / "ground_truth" / dataset.name / "inputs" / worker_path.name).as_posix()
-        return expected_output.strip(), source
-    findings = [
-        str(finding.get("statement") or "").strip()
-        for finding in dict_items(worker_data.get("findings"))
+
+    # 6. Extract candidate golden findings.
+    findings = dict_items(worker_data.get("findings"))
+
+    candidates = [
+        {
+            "statement": str(finding.get("statement") or "").strip(),
+            "finding_id": finding.get("finding_id"),
+        }
+        for finding in findings
         if str(finding.get("statement") or "").strip()
     ]
-    if not findings:
+
+    if not candidates:
         return None
-    source = (Path("golden") / "ground_truth" / dataset.name / "inputs" / worker_path.name).as_posix()
-    return "\n".join(f"- {finding}" for finding in findings), source
 
+    # 7. Embed the query, retrieved chunks, and golden findings together.
+    # A single batch keeps the embedding calls efficient.
+    texts = (
+        [query]
+        + chunks
+        + [candidate["statement"] for candidate in candidates]
+    )
 
-def _observability_entry(result: dict[str, Any], per_call: bool = True) -> dict[str, Any]:
-    """Tool-trace view of one file; metrics and failed checks live in the per-agent report."""
-    quality = result.get("execution_quality") or {}
-    entry: dict[str, Any] = {"file": result["file"], "status": quality.get("status", "not_assessable")}
-    if entry["status"] == "not_assessable":
-        return entry
-    metrics = dict(quality.get("metrics") or {})
-    metrics.pop("status", None)
-    metrics.pop("dimensions_assessable", None)
-    tools = metrics.pop("tools", None)
-    if not per_call:
-        metrics.pop("call_details", None)
-    if tools:
-        metrics["tool_counts"] = dict(Counter(tools))
-    entry["metrics"] = metrics
-    entry["dimensions"] = {
-        name: {key: value for key, value in dim.items() if key in {"status", "score", "reason"}}
-        for name, dim in (quality.get("dimensions") or {}).items()
-        if dim.get("status") != "not_assessable"
-    }
-    return entry
+    vectors = embed_texts(texts)
 
+    if len(vectors) != len(texts):
+        raise ValueError(
+            "embed_texts must return exactly one vector per input text."
+        )
 
-def _drop_nulls(value: Any) -> Any:
-    """Remove null-valued keys so reports list only what was actually measured."""
-    if isinstance(value, dict):
-        return {key: _drop_nulls(item) for key, item in value.items() if item is not None}
-    if isinstance(value, list):
-        return [_drop_nulls(item) for item in value]
-    return value
+    query_vector = vectors[0]
+    chunk_vectors = vectors[1:1 + len(chunks)]
+    finding_vectors = vectors[1 + len(chunks):]
 
+    # 8. Score each golden finding.
+    ranked = []
+
+    for candidate, finding_vector in zip(candidates, finding_vectors):
+        query_score = _cosine_similarity(
+            query_vector,
+            finding_vector,
+        )
+
+        chunk_score = max(
+            (
+                _cosine_similarity(chunk_vector, finding_vector)
+                for chunk_vector in chunk_vectors
+            ),
+            default=None,
+        )
+
+        # Query is primary; retrieved chunks add supporting relevance.
+        if chunk_score is None:
+            score = query_score
+        else:
+            score = 0.70 * query_score + 0.30 * chunk_score
+
+        candidate_result = {
+            **candidate,
+            "score": score,
+            "query_score": query_score,
+            "chunk_score": chunk_score,
+        }
+
+        if score >= min_similarity:
+            ranked.append(candidate_result)
+
+    if not ranked:
+        return None
+
+    # 9. Rank candidates and return the strongest matches.
+    ranked.sort(
+        key=lambda item: item["score"],
+        reverse=True,
+    )
+
+    selected = ranked[:max_findings]
+
+    expected_answer = "\n".join(
+        f"- {item['statement']}"
+        for item in selected
+    )
+
+    source = (
+        Path("golden")
+        / "ground_truth"
+        / dataset.name
+        / "inputs"
+        / worker_path.name
+    ).as_posix()
+
+    return expected_answer, source
 
 def _secret_redacted(value: Any) -> Any:
     """Remove credential-like values before optional tool payloads reach the model judge."""
@@ -2243,7 +2134,7 @@ def eval_execution_trace(payload: dict[str, Any], goal: str, output: str, judge:
         "call_details": [
             {key: value for key, value in summary.items()
              if key in {"tool", "provider", "worker", "task_id", "attempt", "status", "argument_names",
-                            "argument_types", "argument_values", "result_count", "result_summary", "latency_ms",
+                            "argument_types", "argument_values", "result_count", "result_summary", "result", "latency_ms",
                             "error_code", "fallback_used"}
              and value not in (None, "", [], {})}
             for summary in summaries
@@ -2458,15 +2349,6 @@ def eval_orchestration(path, d, ctx, judge, cfg):
         )
     }
     failed = [result_by_name[name] for name in failed_names if name in result_by_name]
-    partial_tasks = sum(
-        1 for name in planned
-        if name in result_by_name
-        and str(result_by_name[name].get("status") or "").strip().casefold() == "partial"
-        and name in successful
-    )
-    dependency_edges = []
-    dependency_violations = 0
-    dependency_unassessable = 0
     deps_missing = []
     for task in tasks:
         name = str(task.get("worker") or task.get("name") or task.get("task_id") or "")
@@ -2474,99 +2356,8 @@ def eval_orchestration(path, d, ctx, judge, cfg):
         if isinstance(deps, str): deps = [deps]
         for dep in deps:
             dep_name = str(dep.get("worker") or dep.get("task_id") or dep) if isinstance(dep, dict) else str(dep)
-            dependency_edges.append((dep_name, name))
             if dep_name not in planned:
                 deps_missing.append(f"{name}->{dep_name}")
-                dependency_violations += 1
-                continue
-            prerequisite, dependent = result_by_name.get(dep_name), result_by_name.get(name)
-            if not prerequisite or dep_name not in successful:
-                dependency_violations += 1
-                continue
-            prerequisite_end = parse_ts(prerequisite.get("completed_at"))
-            dependent_start = parse_ts((dependent or {}).get("started_at"))
-            if prerequisite_end is None or dependent_start is None:
-                dependency_unassessable += 1
-            elif prerequisite_end > dependent_start:
-                dependency_violations += 1
-
-    retries_from_attempts = sum(
-        max(0, int(result.get("attempt") or 1) - 1)
-        for result in results
-        if str(result.get("attempt") or "1").isdigit()
-    )
-    retry_records = _walk_records(d, ("events", "trace_events", "spans"))
-    retry_events = sum(
-        1 for item in retry_records
-        if any(
-            marker in str(item.get("event") or item.get("name") or item.get("type") or "").lower()
-            for marker in ("retry", "replan")
-        )
-    )
-    manifest = getattr(ctx, "run_manifest", {}) or {}
-    replan_stages = sum(
-        1 for stage in dict_items(manifest.get("stages"))
-        if str(stage.get("node") or "").strip().casefold() == "replan"
-    )
-    explicit_replans = d.get("replan_count") or (d.get("metadata") or {}).get("replan_count") or 0
-    try:
-        explicit_replans = max(0, int(explicit_replans))
-    except (TypeError, ValueError):
-        explicit_replans = 0
-    retries = max(retries_from_attempts, retry_events, replan_stages, explicit_replans)
-
-    retried_tasks = {
-        task_key(item)
-        for item in tasks + results
-        if task_key(item) and str(item.get("attempt") or "1").isdigit()
-        and int(item.get("attempt") or 1) > 1
-    }
-    retried_workers: set[str] = set()
-    workers_before_replan: set[str] = set()
-    dispatched_workers: set[str] = set()
-    for stage in dict_items(manifest.get("stages")):
-        node = str(stage.get("node") or "").strip().casefold()
-        if node == "replan":
-            workers_before_replan = set(dispatched_workers)
-            dispatched_workers = set()
-            continue
-        if node != "dispatch":
-            continue
-        for artifact in stage.get("artifacts") or []:
-            match = re.search(r"worker_(.+?)_attempt_\d+_", str(artifact))
-            if not match:
-                continue
-            worker = match.group(1)
-            if worker in workers_before_replan:
-                retried_workers.add(worker)
-            dispatched_workers.add(worker)
-    retried_tasks.update(
-        task_key(task)
-        for task in tasks
-        if task_key(task) and str(task.get("worker") or "") in retried_workers
-    )
-    manifest_artifacts = manifest.get("artifacts") or {}
-    if isinstance(manifest_artifacts, dict):
-        for artifact_key in manifest_artifacts:
-            parts = str(artifact_key).split(":")
-            if len(parts) >= 3 and parts[0] == "worker" and parts[-1].isdigit() and int(parts[-1]) > 1:
-                retried_tasks.add(parts[1])
-    successfully_retried_tasks = len(retried_tasks & successful)
-    workflow_status = str(d.get("status") or manifest.get("status") or "").strip().casefold()
-    start_time = parse_ts(manifest.get("started_at_utc"))
-    end_time = parse_ts(manifest.get("completed_at_utc") or d.get("completed_at"))
-    if start_time is None:
-        task_starts = [parse_ts(r.get("started_at")) for r in results]
-        task_starts = [t for t in task_starts if t is not None]
-        start_time = min(task_starts) if task_starts else None
-    if end_time is None:
-        task_ends = [parse_ts(r.get("completed_at")) for r in results]
-        task_ends = [t for t in task_ends if t is not None]
-        end_time = max(task_ends) if task_ends else None
-    execution_duration = (
-        round((end_time - start_time).total_seconds(), 3)
-        if start_time and end_time and end_time >= start_time else None
-    )
 
     rows = []
     for i, task in enumerate(tasks, 1):
@@ -2578,37 +2369,16 @@ def eval_orchestration(path, d, ctx, judge, cfg):
                      "status":status,"dependencies":task.get("depends_on") or task.get("dependencies") or [],
                      "result_present":bool(result),"flags":(["task_result_missing"] if not result else []) +
                      (["task_failed"] if result in failed else [])})
-    tool_records = _walk_records(d, ("tool_calls", "tools_used", "tool_events"))
     completed_pct = pct(len(successful), len(planned))
-    workflow_success_pct = (
-        completed_pct
-        if workflow_status in {"completed", "success", "succeeded", "ok"} else
-        0.0
-        if workflow_status in {"failed", "error", "partial", "cancelled", "canceled"} else None
-    )
-    dependency_integrity_pct = (
-        pct(len(dependency_edges) - dependency_violations, len(dependency_edges))
-        if dependency_edges and not dependency_unassessable else None
+    manifest = getattr(ctx, "run_manifest", {}) or {}
+    workflow_status = str(d.get("status") or manifest.get("status") or "").strip().casefold()
+    workflow_success_pct = completed_pct if workflow_status in {"completed", "success", "succeeded", "ok"} else (
+        0.0 if workflow_status in {"failed", "error", "partial", "cancelled", "canceled"} else None
     )
     metrics = {"planned_tasks":len(tasks),"result_tasks":len(results),
                "successful_tasks":len(successful),
                "task_completion_pct":completed_pct,
-               "workflow_success_pct":workflow_success_pct,
-               "dependency_integrity_pct":dependency_integrity_pct,
-               "dependency_edges":len(dependency_edges),
-               "dependency_violations":dependency_violations,
-               "dependency_unassessable":dependency_unassessable,
-               "missing_tasks":len(missing),"unexpected_results":len(unexpected),
-               "missing_dependencies":len(deps_missing),"failed_tasks":len(failed_names),
-               "partial_tasks":partial_tasks,
-               "incomplete_tasks":len(planned - successful - failed_names),
-               "failure_rate_pct":pct(len(failed_names),len(planned)),
-               "tool_calls_observed":len(tool_records),"retry_events":retries,
-               "successfully_retried_tasks":successfully_retried_tasks,
-               "retry_rate_pct":pct(successfully_retried_tasks, len(planned)),
-               "execution_duration_seconds":execution_duration,
-               "execution_duration_source":"manifest" if manifest.get("started_at_utc") and manifest.get("completed_at_utc")
-               else "task timestamps" if start_time and end_time else None}
+               "workflow_success_pct":workflow_success_pct}
     checks = [
         check("planned tasks have results", not missing, ", ".join(missing)),
         check("results correspond to planned tasks", not unexpected, ", ".join(unexpected), "warn") if planned else None,
@@ -2617,10 +2387,7 @@ def eval_orchestration(path, d, ctx, judge, cfg):
         check("pipeline status is successful", str(d.get("status","completed")).lower() not in {"failed","error","partial"},
               str(d.get("status","unknown")), "warn")
     ]
-    return {"rows":rows,"metrics":metrics,"checks":[x for x in checks if x],
-            "metrics_used":["orchestration_quality", "task_completion_rate", "workflow_success_rate",
-                            "dependency_integrity", "failure_rate", "retry_rate", "execution_duration"],
-            "orchestration_quality":metrics}
+    return {"rows": rows, "metrics": metrics, "checks": [x for x in checks if x]}
 
 
 @evaluator("rag")
@@ -2630,10 +2397,6 @@ def eval_rag(path, d, ctx, judge, cfg):
     query = str(d.get("query") or d.get("user_query") or d.get("retrieval_query") or "")
     ids = [str(x.get("document_id") or x.get("chunk_id") or x.get("id") or "") for x in docs]
     raw_scores = [rag_document_score(x) for x in docs]
-    valid_scores = [
-        float(score) for score in raw_scores
-        if is_finite_num(score) and 0 <= float(score) <= 1
-    ]
     invalid_scores = [
         score for score in raw_scores
         if score is not None and (
@@ -2650,8 +2413,6 @@ def eval_rag(path, d, ctx, judge, cfg):
     normalized = [norm(x) for x in texts if x.strip()]
     duplicate_pairs = sum(1 for i in range(len(normalized)) for j in range(i+1,len(normalized))
                           if near_dup(normalized[i],normalized[j]))
-    source_names = [domain(x.get("source_url") or x.get("url") or x.get("source")) for x in docs]
-    unique_sources = len({x for x in source_names if x})
     rows = []
     for i, doc in enumerate(docs,1):
         text = str(doc.get("text") or doc.get("content") or doc.get("page_content")
@@ -2718,41 +2479,14 @@ def eval_rag(path, d, ctx, judge, cfg):
     if not expected_output:
         for metric in ("context_precision", "context_recall"):
             rag_judges[metric]["error"] = "not assessable: expected output/reference answer is missing"
-    telemetry_calls = getattr(ctx, "telemetry_calls", [])
-    task_id = str(d.get("task_id") or "")
-    attempt = d.get("attempt")
-    retrieval_calls = [
-        call for call in telemetry_calls
-        if str(call.get("tool") or "").casefold() == "internal_rag.retrieve"
-        and (not task_id or str(call.get("task_id") or "") == task_id)
-        and (attempt is None or call.get("attempt") is None or str(call.get("attempt")) == str(attempt))
-        and _call_query(call) == query
-    ]
-    retrieval_latencies = [
-        float(value) for call in retrieval_calls
-        for value in [call.get("latency_ms", call.get("duration_ms"))]
-        if is_finite_num(value) and float(value) >= 0
-    ]
-    metrics = {"queries":1 if query else 0,"retrieved_chunks":len(docs),
-               "nonempty_chunks_pct":pct(nonempty,len(docs)),"mean_retrieval_score":mean(valid_scores),
-               "chunks_with_score_pct":pct(sum(score is not None for score in raw_scores),len(docs)),
-               "invalid_retrieval_scores":len(invalid_scores),"unique_source_domains":unique_sources,
-               "duplicate_chunk_pairs":duplicate_pairs,"empty_chunks":len(docs)-nonempty,
-               "context_precision_score":rag_judges["context_precision"].get("score"),
-               "context_precision_reason":rag_judges["context_precision"].get("reason"),
-               "context_precision_error":rag_judges["context_precision"].get("error"),
-               "expected_output_source":(
-                   d.get("expected_output_source") or ("RAG record" if expected_output else None)
-               ),
-               "context_recall_score":rag_judges["context_recall"].get("score"),
-               "context_recall_reason":rag_judges["context_recall"].get("reason"),
-               "context_recall_error":rag_judges["context_recall"].get("error"),
-               "context_relevancy_score":rag_judges["context_relevancy"].get("score"),
-               "context_relevancy_reason":rag_judges["context_relevancy"].get("reason"),
-               "context_relevancy_error":rag_judges["context_relevancy"].get("error"),
-               "answer_source":d.get("answer_source") or ("recorded_answer" if answer else None),
-               "retrieval_latency_ms":mean(retrieval_latencies),
-               "retrieval_latency_calls":len(retrieval_latencies)}
+    metrics = {
+        f"{metric}_score": rag_judges[metric].get("score")
+        for metric in ("context_precision", "context_recall", "context_relevancy")
+    }
+    metrics.update({
+        f"{metric}_error": rag_judges[metric].get("error")
+        for metric in ("context_precision", "context_recall", "context_relevancy")
+    })
     if answer:
         rag_row = {
             "unit_type": "rag_answer",
@@ -2805,15 +2539,7 @@ def eval_rag(path, d, ctx, judge, cfg):
                     "warn",
                 )
             )
-    rag_metrics_used = ["rag_retrieval_quality"]
-    if judge_rag_metrics:
-        rag_metrics_used.extend(["context_relevancy"])
-        if expected_output:
-            rag_metrics_used.extend(["context_precision", "context_recall"])
-    if retrieval_latencies:
-        rag_metrics_used.append("retrieval_latency")
-    return {"rows":rows,"metrics":metrics,"checks":[x for x in checks if x],
-            "metrics_used":rag_metrics_used,"rag_quality":metrics}
+    return {"rows": rows, "metrics": metrics, "checks": [x for x in checks if x]}
 
 
 @evaluator("telemetry")
@@ -2842,31 +2568,18 @@ def eval_telemetry(path, d, ctx, judge, cfg):
     }
     error_records = spans + explicit_tool_calls
     errors = [x for x in error_records if x.get("error") or str(x.get("status","")).lower() in {"error","failed"}]
-    durations = []
-    for x in spans + explicit_tool_calls:
-        value = x.get("duration_ms", x.get("latency_ms"))
-        if is_num(value): durations.append(float(value))
-        elif is_num(x.get("duration")): durations.append(float(x["duration"])*1000)
-    ordered_durations = sorted(durations)
-    p95_duration = round(ordered_durations[math.ceil(0.95 * len(ordered_durations)) - 1], 2) if ordered_durations else None
     names = [
         str(x.get("tool") or x.get("tool_name") or (x.get("attributes") or {}).get("edrak.tool.name") or x.get("name") or "")
         for x in tool_calls
     ]
-    metrics = {"spans":len(spans),"tool_calls":len(tool_calls),"observed_errors":len(errors),
-               "worker_spans":len(worker_spans),
-               "worker_task_identity_pct":pct(len(worker_spans)-len(worker_identity_missing),len(worker_spans)),
-               "worker_process_recorded_pct":pct(len(worker_spans)-len(worker_process_missing),len(worker_spans)),
-               "worker_types":sorted({
-                   str((span.get("attributes") or {}).get("edrak.agent.type"))
-                   for span in worker_spans
-                   if (span.get("attributes") or {}).get("edrak.agent.type")
-               }),
-               "error_rate_pct":pct(len(errors),len(error_records)),
-               "duration_samples":len(durations),
-               "mean_duration_ms":mean(durations),"p95_duration_ms":p95_duration,
-               "max_duration_ms":round(max(durations), 2) if durations else None,
-               "unique_tools":len({n for n in names if n}),"tool_names":sorted({n for n in names if n})}
+    metrics = {
+        "worker_types": sorted({
+            str((span.get("attributes") or {}).get("edrak.agent.type"))
+            for span in worker_spans
+            if (span.get("attributes") or {}).get("edrak.agent.type")
+        }),
+        "tool_names": sorted({n for n in names if n}),
+    }
     rows = []
     for i, x in enumerate(spans + explicit_tool_calls, 1):
         attrs = x.get("attributes") or {}
@@ -2916,32 +2629,33 @@ def eval_telemetry(path, d, ctx, judge, cfg):
     execution = eval_execution_trace(
         d, getattr(ctx, "goal", ""), "", judge, getattr(cfg, "include_tool_payloads", False)
     )
-    metrics["execution_quality_status"] = execution["status"]
-    return {"rows":rows,"metrics":metrics,"checks":[*checks, *execution["checks"]],
-            "metrics_used":["observability", "execution_quality"],"execution_quality":execution}
+    metrics["units"] = len(rows)
+    metrics["units_flagged"] = sum(bool(row["flags"]) for row in rows)
+    return {
+        "rows": rows,
+        "metrics": metrics,
+        "checks": [*checks, *execution["checks"]],
+        "execution_quality": execution,
+    }
 
 
 # =============================================================================== 5. pipeline-level checks
-def pipeline_checks(ctx: Ctx, per_agent: dict[str, list[dict]], decision_files: list[dict],
-                    loaded: list[tuple[Path, str, dict]]) -> dict[str, Any]:
+def pipeline_checks(ctx: Ctx, decision_files: list[dict], loaded: list[tuple[Path, str, dict]]) -> dict[str, Any]:
     """End-to-end traceability: decision -> signal -> finding -> evidence. Each check runs only if its stages exist.
     `ctx` is the FINAL state of the run (latest worker attempts, latest verification, latest signals)."""
-    checks, detail = [], {}
+    checks = []
     findings = ctx.verified_findings or ctx.worker_findings
 
     if findings and ctx.evidence:
         bad = [fid for fid, f in findings.items() if not any(e in ctx.evidence for e in f.get("evidence_ids") or [])]
-        detail["findings_without_resolvable_evidence"] = bad
         checks.append(check("every finding traces to evidence", not bad, f"{len(bad)} untraceable"))
 
     if ctx.signals and findings:
         bad = [sid for sid, s in ctx.signals.items() if not any(f in findings for f in s.get("support", []))]
-        detail["signals_without_findings"] = bad
         checks.append(check("every signal traces to a finding", not bad, f"{len(bad)} untraceable"))
         if any(f.get("verification_status") for f in ctx.verified_findings.values()):
             weak = [sid for sid, s in ctx.signals.items()
                     if any(ctx.verified_findings.get(f, {}).get("verification_status") != "verified" for f in s["support"])]
-            detail["signals_resting_on_unverified_findings"] = weak
             checks.append(check("signals only rest on verified findings", not weak, f"{len(weak)} signals", "warn"))
 
     if decision_files and ctx.signals and findings:
@@ -2952,7 +2666,6 @@ def pipeline_checks(ctx: Ctx, per_agent: dict[str, list[dict]], decision_files: 
                 total += 1
                 traced += bool(ids) and all(x in ctx.signals and any(f in findings for f in ctx.signals[x]["support"])
                                             for x in ids)
-        detail["recommendations_fully_traceable_pct"] = pct(traced, total)
         checks.append(check("every recommendation traces to signal -> finding", traced == total, f"{traced}/{total}"))
 
     if ctx.worker_findings and ctx.verified_findings:
@@ -2969,16 +2682,13 @@ def pipeline_checks(ctx: Ctx, per_agent: dict[str, list[dict]], decision_files: 
     for w in reruns["workers"]:
         checks.append(check(f"re-run of {w['worker']} keeps finding ids stable only for unchanged statements",
                             w["ids_reused_with_changed_statement"] == 0,
-                            f"{w['ids_reused_with_changed_statement']} of {w['ids_reused']} reused ids now carry a different statement",
+                            f"{w['ids_reused_with_changed_statement']} reused ids carry a different statement",
                             "warn"))
     for v in reruns["verification"]:
         checks.append(check("second verification pass does not downgrade previously verified findings",
                             v["verified_to_insufficient"] == 0, f"{v['verified_to_insufficient']} downgraded", "warn"))
 
-    detail["synthetic_evidence_pct_overall"] = pct(sum(is_synthetic(e) for e in ctx.evidence.values()), len(ctx.evidence))
-    detail["agents_evaluated"] = sorted(per_agent)
-    detail["worker_attempts_used_by_final_state"] = ctx.worker_attempt
-    return {"checks": checks, "detail": detail, "reruns": reruns}
+    return {"checks": checks}
 
 
 def _by_id(items: Any) -> dict[str, dict]:
@@ -2999,14 +2709,8 @@ def rerun_report(loaded: list[tuple[Path, str, dict]]) -> dict[str, Any]:
             fa, fb = _by_id(a.get("findings")), _by_id(b.get("findings"))
             common = set(fa) & set(fb)
             sa, sb = {norm(f["statement"]) for f in fa.values()}, {norm(f["statement"]) for f in fb.values()}
-            summ = lambda d, f: {"file": None, "attempt": d.get("attempt"), "status": d.get("status"), "findings": len(f),
-                                 "evidence": len(d.get("evidence") or []), "gaps": len(d.get("gaps") or []),
-                                 "agent_confidence": conf_num(d.get("confidence")),
-                                 "avg_finding_confidence": mean([conf_num(x.get("confidence")) for x in f.values()])}
             out["workers"].append({
-                "worker": w, "before": {**summ(a, fa), "file": pa.name}, "after": {**summ(b, fb), "file": pb.name},
-                "statements_kept": len(sa & sb), "statements_new": len(sb - sa), "statements_dropped": len(sa - sb),
-                "ids_reused": len(common),
+                "worker": w,
                 "ids_reused_with_changed_statement": sum(norm(fa[i]["statement"]) != norm(fb[i]["statement"]) for i in common)})
     ver = sorted([(p, d) for p, k, d in loaded if k == "verification"],
                  key=lambda x: file_time("verification", x[1]) or EPOCH)
@@ -3015,58 +2719,10 @@ def rerun_report(loaded: list[tuple[Path, str, dict]]) -> dict[str, Any]:
         common = set(fa) & set(fb)
         same = [i for i in common if norm(fa[i]["statement"]) == norm(fb[i]["statement"])]
         st = lambda f, i: str(f[i].get("verification_status")).lower()
-        stats = lambda d, f: {"status": (d.get("decision") or {}).get("status"), "findings": len(f),
-                              "verified": sum(str(x.get("verification_status")).lower() == "verified" for x in f.values()),
-                              "conflicts": len((d.get("control_summary") or {}).get("conflicts") or []),
-                              "gaps": len((d.get("control_summary") or {}).get("missing_information") or []),
-                              "avg_confidence": mean([conf_num(x.get("confidence")) for x in f.values()])}
-        sa, sb = stats(a, fa), stats(b, fb)
         out["verification"].append({
-            "before": {**sa, "file": pa.name, "verified_pct": pct(sa["verified"], sa["findings"])},
-            "after": {**sb, "file": pb.name, "verified_pct": pct(sb["verified"], sb["findings"])},
-            "findings_dropped": len(set(fa) - set(fb)), "findings_added": len(set(fb) - set(fa)),
-            "ids_reused_with_changed_statement": len(common) - len(same),
-            "insufficient_to_verified": sum(st(fa, i) != "verified" and st(fb, i) == "verified" for i in same),
-            "verified_to_insufficient": sum(st(fa, i) == "verified" and st(fb, i) != "verified" for i in same)})
+            "verified_to_insufficient": sum(st(fa, i) == "verified" and st(fb, i) != "verified" for i in same),
+        })
     return out
-
-
-# =============================================================================== 5b. optional LLM narrative
-NARRATIVE_PROMPT = (
-    "You review the evaluation results of a multi-agent competitive-intelligence pipeline. "
-    "You get a JSON digest of integrity checks, flags and metrics per agent. Write a concise diagnosis: "
-    "(1) the 3-5 most serious problems, most serious first, naming the agent; "
-    "(2) for each, the likely cause and one concrete fix. "
-    "Use ONLY facts and numbers present in the digest. Do not invent or recompute figures. Under 250 words."
-)
-
-
-def digest(per_agent: dict[str, list[dict]], pipeline: dict) -> dict:
-    """Computed numbers only: this is all the narrative LLM is allowed to talk about."""
-    out: dict[str, Any] = {"agents": {}, "pipeline_checks": pipeline.get("checks", [])}
-    for agent, results in per_agent.items():
-        out["agents"][agent] = [{
-            "file": r["file"],
-            "checks_failed": [{"check": c["check"], "detail": c["detail"]} for c in r["checks"] if not c["passed"]],
-            "checks_total": len(r["checks"]),
-            "flag_counts": dict(Counter(f for u in r["rows"] for f in u.get("flags", []))),
-            "metrics": {k: v for k, v in r["metrics"].items() if isinstance(v, (int, float, str))},
-        } for r in results]
-    return out
-
-
-def write_narrative(model: str, per_agent: dict, pipeline: dict) -> str:
-    """Ask the LLM for a short diagnosis; flag any figure it states that is not in the computed digest."""
-    from openai import OpenAI
-    dg = json.dumps(digest(per_agent, pipeline), ensure_ascii=False, default=str)
-    resp = OpenAI().chat.completions.create(
-        model=model, temperature=0,
-        messages=[{"role": "system", "content": NARRATIVE_PROMPT}, {"role": "user", "content": dg}])
-    text = (resp.choices[0].message.content or "").strip()
-    stray = ungrounded_numbers(text, [dg])
-    if stray:
-        text += f"\n\n_Note: figures not found in the computed digest, treat with caution: {', '.join(stray)}_"
-    return text
 
 
 # =============================================================================== 6. the evaluation agent (runner + reports)
@@ -3075,15 +2731,13 @@ class EvalAgent:
         self.a = args
         self.cfg = Cfg(args)
         self.judge = Judge(
-            args.model, Path(args.cache), enabled=not args.dry_run,
+            args.model, enabled=not args.dry_run,
             retries=getattr(args, "retries", 2), workers=getattr(args, "workers", 1),
         )
         self.loaded: list[tuple[Path, str, dict]] = []
         self.errors: list[dict] = []
         self.per_agent: dict[str, list[dict]] = {}
-        self.pipeline: dict = {"checks": [], "detail": {}}
-        self.chain: list[dict] = []
-        self.narrative = ""
+        self.pipeline: dict = {"checks": []}
 
     @staticmethod
     def expand(patterns: list[str]) -> list[Path]:
@@ -3098,58 +2752,87 @@ class EvalAgent:
             try:
                 d = read_json(p)
                 self.loaded.append((p, detect(d), d))
-                kind = self.loaded[-1][1]
-                label = f"worker ({d['worker']}, attempt {d.get('attempt', 1)})" if kind == "worker" else kind
-                print(f"  {p.name}: {label}")
             except Exception as exc:
                 self.errors.append({"file": str(p), "error": f"{type(exc).__name__}: {exc}"})
                 print(f"  ERROR {p}: {exc}", file=sys.stderr)
         return bool(self.loaded)
 
     def keep_final(self) -> None:
-        """Drop superseded files: only the final attempt of each worker, and the last verification, cross-signal,
-        decision and metrics file, are evaluated."""
+        """Keep worker outputs referenced by the final orchestration result and the last downstream stages."""
         latest: dict[str, Path] = {}
         best: dict[str, tuple] = {}
+        orchestration = next(
+            (
+                d
+                for _, kind, d in reversed(self.loaded)
+                if kind == "orchestration" and isinstance(d.get("results"), list)
+            ),
+            None,
+        )
+        worker_paths: set[Path] = set()
+
         for p, kind, d in self.loaded:
             if kind == "worker":
-                key, rank = f"worker:{d.get('worker')}", (int(d.get("attempt") or 1), file_time(kind, d) or EPOCH, p.name)
+                if orchestration is not None:
+                    continue
+                key, rank = f"worker:{d.get('worker')}", (
+                    int(d.get("attempt") or 1),
+                    file_time(kind, d) or EPOCH,
+                    p.name,
+                )
             elif kind in {"verification", "cross_signal", "decision", "metrics"}:
                 key, rank = kind, (0, file_time(kind, d) or EPOCH, p.name)
             else:
                 continue
             if key not in best or rank > best[key]:
                 best[key], latest[key] = rank, p
-        final_tasks = {str(d.get("task_id")) for p, kind, d in self.loaded
-                       if kind == "worker" and latest.get(f"worker:{d.get('worker')}") == p}
+
+        if orchestration is not None:
+            final_worker_results = {
+                str(result.get("worker")): (
+                    str(result.get("task_id")),
+                    str(result["attempt"]) if result.get("attempt") is not None else None,
+                )
+                for result in dict_items(orchestration.get("results"))
+                if result.get("worker") and result.get("task_id")
+            }
+            for p, kind, d in self.loaded:
+                if kind != "worker":
+                    continue
+                expected = final_worker_results.get(str(d.get("worker")))
+                if expected is None:
+                    continue
+                task_id, attempt = expected
+                if str(d.get("task_id")) != task_id:
+                    continue
+                if attempt is not None and str(d.get("attempt") or 1) != attempt:
+                    continue
+                rank = (file_time(kind, d) or EPOCH, p.name)
+                key = str(d.get("worker"))
+                if key not in best or rank > best[key]:
+                    best[key], latest[key] = rank, p
+            worker_paths = {latest[key] for key in final_worker_results if key in latest}
+        else:
+            worker_paths = {path for key, path in latest.items() if key.startswith("worker:")}
+
+        final_tasks = {
+            str(d.get("task_id"))
+            for p, kind, d in self.loaded
+            if kind == "worker" and p in worker_paths and d.get("task_id")
+        }
         kept = []
         for p, kind, d in self.loaded:
-            if kind == "worker" and latest.get(f"worker:{d.get('worker')}") != p:
+            if kind == "worker" and p not in worker_paths:
                 continue
             if kind in {"verification", "cross_signal", "decision", "metrics"} and latest.get(kind) != p:
                 continue
             if kind == "rag" and d.get("task_id") and str(d["task_id"]) not in final_tasks:
                 continue
             kept.append((p, kind, d))
-        print(f"Final-only: evaluating {len(kept)} of {len(self.loaded)} files "
-              f"({len(self.loaded) - len(kept)} superseded files skipped).")
         self.loaded = kept
 
-    def not_evaluated(self) -> list[str]:
-        """Downstream agents with no evaluated file. Without them insight (cross_signal) and the recommendation-level
-        actionability (decision) are not scored, and the end-to-end trace is incomplete."""
-        if self.loaded and all(kind == "telemetry" for _, kind, _ in self.loaded):
-            return []
-        wanted = {"verification", "cross_signal", "decision"}
-        if self.a.agents:
-            wanted &= set(self.a.agents)
-        return sorted(wanted - set(self.per_agent))
-
     def run(self) -> int:
-        try:
-            return self._run()
-        finally:
-            self.judge.flush()   # keep judged results even if the run is interrupted
+        return self._run()
 
     def _run(self) -> int:
         final = build_ctx(self.loaded, self.a.task)
@@ -3158,18 +2841,19 @@ class EvalAgent:
             for _, kind, _ in self.loaded
         )
         if has_output_evaluation and not final.goal:
-            print("WARNING: no research goal found (include the initial-input file or pass --task); "
-                  "relevancy scores will be weak.", file=sys.stderr)
-        # evaluate in pipeline order, so the console reads like the run
+            print(
+                "WARNING: no research goal found (include the initial-input file or pass --task); "
+                "relevancy scores will be weak.",
+                file=sys.stderr,
+            )
+        # Evaluate in pipeline order to preserve the dependency between stages.
         order = {"worker": 0, "metrics": 1, "verification": 2, "cross_signal": 3, "decision": 4}
         for p, kind, d in sorted(self.loaded, key=lambda x: (order.get(x[1], 9), file_time(x[1], x[2]) or EPOCH)):
             if kind == "input":
                 continue
             if kind == "metrics":
-                print(f"Skipped {p.name}: metrics-stage evaluation is disabled")
                 continue
             if kind not in EVALUATORS:
-                print(f"Skipped {p.name}: unrecognised schema")
                 continue
             label = d["worker"] if kind == "worker" else kind
             if self.a.agents and kind not in self.a.agents and label not in self.a.agents:
@@ -3180,7 +2864,11 @@ class EvalAgent:
                 d.get(key) and str(d[key]).strip()
                 for key in ("expected_output", "reference_answer", "ground_truth")
             ):
-                golden_answer = _golden_answer_for_rag(d, self.loaded)
+                golden_answer = _golden_answer_for_rag(
+                    rag_payload=d,
+                    loaded=self.loaded,
+                    embed_texts=embed_texts,
+                )
                 if golden_answer:
                     expected_output, source = golden_answer
                     evaluation_data = {
@@ -3225,44 +2913,24 @@ class EvalAgent:
                     self.judge, self.cfg.include_tool_payloads,
                 )
                 res["execution_quality"] = execution
-                res["metrics"]["execution_quality_status"] = execution["status"]
                 res["checks"].extend(execution["checks"])
-                res["metrics_used"] = list(dict.fromkeys([*res.get("metrics_used", []), "execution_quality"]))
             res["rows"] = [{"file": p.name, "agent": label, **r} for r in res["rows"]]
             res["file"] = p.name
             self.per_agent.setdefault(label, []).append(res)
-            if kind not in {"worker", "telemetry"}:
-                self.chain.append({"file": p.name, "agent": kind, "worker_attempts_seen": ctx.worker_attempt,
-                                   "verification_seen": ctx.verification_file, "cross_signal_seen": ctx.cross_signal_file})
-            err = sum(c["passed"] for c in res["checks"] if c["severity"] == "error")
-            n_err = sum(c["severity"] == "error" for c in res["checks"])
-            warn = sum(not c["passed"] for c in res["checks"] if c["severity"] == "warn")
-            if kind == "telemetry":
-                metrics = res["metrics"]
-                print(
-                    f"[{label}] {p.name}: {metrics['spans']} spans, {metrics['tool_calls']} tool calls, "
-                    f"{metrics['observed_errors']} observed errors, execution quality "
-                    f"{metrics['execution_quality_status']}, {warn} warnings "
-                    "(integrity checks: n/a)"
-                )
-            else:
-                integrity = f"{err}/{n_err} integrity checks passed" if n_err else "integrity checks: n/a (none defined)"
-                print(f"[{label}] {p.name}: {len(res['rows'])} units, {integrity}, {warn} warnings")
+            integrity_checks = [item for item in res["checks"] if item["severity"] == "error"]
+            integrity_failures = sum(not item["passed"] for item in integrity_checks)
+            integrity_status = "FAIL" if integrity_failures else "PASS"
+            units = len(res["rows"])
+            flagged_units = sum(bool(row.get("flags")) for row in res["rows"])
+            print(
+                f"Finished evaluating {label}: integrity {integrity_status} "
+                f"({integrity_failures}/{len(integrity_checks)} failed); "
+                f"units {units} ({flagged_units} flagged)."
+            )
         if not self.per_agent:
             print("ERROR: nothing to evaluate.", file=sys.stderr)
             return 2
-        missing = self.not_evaluated()
-        if missing:
-            print(f"NOTE: not evaluated (no input files): {', '.join(missing)}. "
-                  f"Signal 'insight' and recommendation 'actionability' need the cross-signal and decision JSONs.")
-        self.pipeline = pipeline_checks(final, self.per_agent, [d for _, k, d in self.loaded if k == "decision"], self.loaded)
-        self.pipeline["detail"]["stage_inputs"] = self.chain
-        self.pipeline["detail"]["not_evaluated"] = missing
-        if self.a.narrative and not self.a.dry_run:
-            try:
-                self.narrative = write_narrative(self.a.model, self.per_agent, self.pipeline)
-            except Exception as exc:
-                print(f"narrative failed: {type(exc).__name__}: {exc}", file=sys.stderr)
+        self.pipeline = pipeline_checks(final, [d for _, k, d in self.loaded if k == "decision"], self.loaded)
         self.write_all()
         integrity_failures = [
             check_result
@@ -3315,142 +2983,72 @@ class EvalAgent:
                 matched.append(call)
         return matched
 
-    def metrics_in_use(self) -> list[str]:
-        used = [m for res in sum(self.per_agent.values(), []) for m in res.get("metrics_used", [])]
-        return [m for m in METRICS if m in used]
-
     def write_all(self) -> None:
         out = Path(self.a.out)
         out.mkdir(parents=True, exist_ok=True)
-        for obsolete in ("metrics_report.json", "metrics_units.csv"):
+        obsolete_reports = [
+            "metrics_report.json",
+            "metrics_units.csv",
+            "overview.csv",
+            "summary.md",
+            "observability.json",
+        ]
+        for obsolete in obsolete_reports:
             stale_report = out / obsolete
             if stale_report.is_file():
                 stale_report.unlink()
-        overview = []
         for agent, results in self.per_agent.items():
-            write_csv(out / f"{agent}_units.csv", [r for res in results for r in res["rows"]])
-            used = {m for res in results for m in res.get("metrics_used", [])}    # only thresholds that were applied
+            stale_units = out / f"{agent}_units.csv"
+            if stale_units.is_file():
+                stale_units.unlink()
+            used = {m for res in results for m in res.get("metrics_used", [])}
             report = {
                 "agent": agent, "generated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "model": None if self.a.dry_run else self.a.model, "dry_run": self.a.dry_run,
                 "thresholds": {m: t for m, t in self.cfg.thr.items() if m in used},
-                "files": [{"file": res["file"], "metrics_used": res.get("metrics_used"), "metrics": res["metrics"],
-                           **({"execution_quality": res["execution_quality"]}
-                              if res.get("execution_quality") is not None else {}),
-                           "checks": res["checks"],
-                           "flagged_units": [{k: r.get(k) for k in ("unit_type", "unit_id", "statement", "flags")}
-                                             for r in res["rows"] if r.get("flags")]} for res in results]}
+                "files": [
+                    {
+                        "file": res["file"],
+                        "metrics": dashboard_metrics(res["metrics"]),
+                        **({
+                            "execution_quality": {
+                                "dimensions": res["execution_quality"].get("dimensions", {}),
+                                "metrics": {
+                                    key: value
+                                    for key, value in res["execution_quality"].get("metrics", {}).items()
+                                    if key in {"calls", "errors", "repeated_calls", "call_details"}
+                                },
+                            }
+                        } if res.get("execution_quality") is not None else {}),
+                        "checks": res["checks"],
+                        "flagged_units": [
+                            {key: row.get(key) for key in ("unit_type", "unit_id", "statement", "flags")}
+                            for row in res["rows"] if row.get("flags")
+                        ],
+                    }
+                    for res in results
+                ],
+            }
             (out / f"{agent}_report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str),
                                                       encoding="utf-8")
-            for res in results:
-                bad = [c for c in res["checks"] if not c["passed"]]
-                overview.append({"agent": agent, "file": res["file"],
-                                 "integrity_passed": sum(c["passed"] for c in res["checks"] if c["severity"] == "error"),
-                                 "integrity_total": sum(c["severity"] == "error" for c in res["checks"]),
-                                 "warnings": sum(c["severity"] == "warn" for c in bad),
-                                 "failed_checks": "; ".join(c["check"] for c in bad if c["severity"] == "error"),
-                                 "warning_checks": "; ".join(c["check"] for c in bad if c["severity"] == "warn"),
-                                 **{k: v for k, v in res["metrics"].items() if not isinstance(v, (dict, list))}})
-        write_csv(out / "overview.csv", overview)
-        (out / "pipeline_report.json").write_text(json.dumps(self.pipeline, ensure_ascii=False, indent=2, default=str),
-                                                  encoding="utf-8")
-        obs = {"generated_at_utc": datetime.now(timezone.utc).isoformat(),
-               "judge": {"calls": self.judge.calls, "successful_calls": self.judge.successes,
-                         "cache_hits": self.judge.hits, "errors": self.judge.errors,
-                         "skipped": self.judge.skipped, "rate_limit_circuit_open": self.judge.rate_limit_open,
-                         "total_latency_seconds": round(self.judge.total_latency_seconds, 4),
-                         "calls_by_metric": dict(self.judge.metric_calls),
-                         "failures_by_metric": dict(self.judge.metric_failures),
-                         "skipped_by_metric": dict(self.judge.metric_skips)},
-               "agent_files": {a: [_observability_entry(r, per_call=a != "telemetry") for r in rs]
-                               for a, rs in self.per_agent.items()},
-               "errors": self.errors}
-        (out / "observability.json").write_text(
-            json.dumps(_drop_nulls(obs), ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-        (out / "summary.md").write_text(self.markdown(), encoding="utf-8")
-        print(f"\nDone. Judge requests: {self.judge.calls}, successful scores: {self.judge.successes}, "
-              f"cache hits: {self.judge.hits}, failed metrics: {self.judge.errors}, skipped: {self.judge.skipped}."
-              f" Reports in {out}/ (start with summary.md)")
-
-    def markdown(self) -> str:
-        m_cols = self.metrics_in_use()
-        L = ["# EDRAK evaluation summary", "",
-             f"Generated {datetime.now(timezone.utc).isoformat(timespec='seconds')} | "
-             f"{'dry-run (no LLM scores)' if self.a.dry_run else 'judge model: ' + self.a.model}", "",
-             f"**Agents present in this run:** {', '.join(sorted(self.per_agent))}", ""]
-        missing = self.not_evaluated()
-        if missing:
-            L += [f"**Not evaluated (no input files):** {', '.join(missing)}", ""]
-        if self.narrative:
-            L += ["## Diagnosis (LLM-written from the computed results)", "", self.narrative, ""]
-        L += ["## Scores per file", "",
-              "| Agent | File | Execution quality | Integrity checks | Warnings | Units | Flagged | " + " | ".join(f"{m} avg" for m in m_cols) + " |",
-              "|---|---|---|---|---|---|---|" + "---|" * len(m_cols)]
-        for agent, results in self.per_agent.items():
-            for r in results:
-                m = r["metrics"]
-                errs = [c for c in r["checks"] if c["severity"] == "error"]
-                warn = sum(not c["passed"] for c in r["checks"] if c["severity"] == "warn")
-                cell = lambda x: "-" if m.get(f"{x}_avg") is None else str(m[f"{x}_avg"])
-                execution_status = (r.get("execution_quality") or {}).get("status", "-")
-                integrity = f"{sum(c['passed'] for c in errs)}/{len(errs)}" if errs else "n/a"
-                L.append(f"| {agent} | {r['file']} | {execution_status} | {integrity} | {warn} | {m.get('units')} | "
-                         f"{m.get('units_flagged')} | " + " | ".join(cell(x) if x in r.get("metrics_used", []) else "n/a" for x in m_cols) + " |")
-        L += ["", "## RAG / orchestration / observability", "",
-              "- RAG inputs are checked for retrieval score coverage and range, empty/duplicate chunks; source-domain coverage is recorded. DeepEval scores contextual relevance and, when an answer is supplied, answer relevancy and faithfulness unless `--dry-run` is selected.",
-              "- Orchestration inputs are evaluated for planned-task completion, dependency integrity, failed tasks, retries, and observed tool calls.",
-              "- Worker and downstream-agent quality metrics use DeepEval unless `--dry-run` is selected; `--deep` also judges every recommendation and comparison-matrix cell.",
-              "- Telemetry checks worker-run spans for agent/task identity and successful status/duration, and correlates tool spans with their worker when trace parentage is present.",
-              "- Execution quality is reported for tool-using workers and RAG stages. Verification, cross-signal, decision, and orchestration stages are excluded because they are not judged as tool-execution stages.",
-              "- Tool argument values and result summaries are excluded from DeepEval by default. Use `--include-tool-payloads` to send redacted payloads for argument and result-use judgments.",
-              "- `observability.json` records judge calls, cache hits, judge failures, metric-level failures, evaluation latency, and per-file tool traces (provider, argument names/types/values, latency, results). Per-file metrics and failed checks are in each agent report.",
-              "- The backend exports OpenTelemetry spans as evaluator-readable `spans` JSON. Set `EDRAK_TELEMETRY_EXPORT_PATH` to choose the file; set `OTEL_EXPORTER_OTLP_ENDPOINT` to additionally export to an OTLP collector.",
-              "- Request, orchestration, RAG retrieval, document indexing, and customer-trends tool spans export timing/status metadata, plus safe tool names, providers, and argument names/types/values (secret-named keys redacted and long values truncated; set `EDRAK_TELEMETRY_ARGUMENT_VALUES=0` to omit values); document text and credentials are not exported.", ""]
-        L += ["", "## Failed integrity checks (errors)", ""]
-        fails = [f"- **{a}** / {r['file']}: {c['check']}" + (f" ({c['detail']})" if c["detail"] else "")
-                 for a, rs in self.per_agent.items() for r in rs for c in r["checks"]
-                 if not c["passed"] and c["severity"] == "error"]
-        L += fails or ["None."]
-        L += ["", "## Quality warnings", ""]
-        warns = [f"- **{a}** / {r['file']}: {c['check']}" + (f" ({c['detail']})" if c["detail"] else "")
-                 for a, rs in self.per_agent.items() for r in rs for c in r["checks"]
-                 if not c["passed"] and c["severity"] == "warn"]
-        L += warns or ["None."]
-        L += ["", "## Pipeline-level checks", ""]
-        L += [f"- {'PASS' if c['passed'] else 'FAIL'}{'' if c['severity'] == 'error' else ' (warn)'}: {c['check']}"
-              + (f" ({c['detail']})" if c["detail"] else "") for c in self.pipeline["checks"]] \
-            or ["None applicable (not enough stages in this use case)."]
-        rr = self.pipeline.get("reruns") or {}
-        if rr.get("workers") or rr.get("verification"):
-            L += ["", "## Re-run comparison (phase 1 -> phase 2)", ""]
-            for w in rr.get("workers", []):
-                b, a = w["before"], w["after"]
-                L.append(f"- **{w['worker']}** attempt {b['attempt']} -> {a['attempt']}: findings {b['findings']} -> {a['findings']}, "
-                         f"evidence {b['evidence']} -> {a['evidence']}, gaps {b['gaps']} -> {a['gaps']}, "
-                         f"avg finding confidence {b['avg_finding_confidence']} -> {a['avg_finding_confidence']}; "
-                         f"statements kept {w['statements_kept']}, new {w['statements_new']}, dropped {w['statements_dropped']}; "
-                         f"{w['ids_reused_with_changed_statement']}/{w['ids_reused']} reused finding ids now mean something else")
-            for v in rr.get("verification", []):
-                b, a = v["before"], v["after"]
-                L.append(f"- **verification** {b['file']} -> {a['file']}: status {b['status']} -> {a['status']}, "
-                         f"verified {b['verified']}/{b['findings']} ({b['verified_pct']}%) -> {a['verified']}/{a['findings']} ({a['verified_pct']}%), "
-                         f"conflicts {b['conflicts']} -> {a['conflicts']}, gaps {b['gaps']} -> {a['gaps']}; "
-                         f"insufficient->verified {v['insufficient_to_verified']}, verified->insufficient {v['verified_to_insufficient']}")
-        stages = self.pipeline.get("detail", {}).get("stage_inputs") or []
-        if stages:
-            L += ["", "## Which phase each downstream file was evaluated against", ""]
-            L += [f"- {s['file']} ({s['agent']}): worker attempts {s['worker_attempts_seen']}, verification {s['verification_seen'] or '-'}, "
-                  f"cross-signal {s['cross_signal_seen'] or '-'}" for s in stages]
-        L += ["", "## Flagged units", ""]
-        for agent, results in self.per_agent.items():
-            for r in results:
-                for u in r["rows"]:
-                    if u.get("flags"):
-                        s = (u.get("statement") or "")[:110].replace("\n", " ")
-                        L.append(f"- [{agent}] {r['file']} {u.get('unit_type')} {u.get('unit_id')}: {', '.join(u['flags'])} — {s}")
-        if self.errors:
-            L += ["", "## Errors", ""] + [f"- {e['file']}: {e['error']}" for e in self.errors]
-        return "\n".join(L) + "\n"
+        pipeline_checks = self.pipeline.get("checks", [])
+        pipeline_report = {
+            "total": len(pipeline_checks),
+            "passed": sum(check["passed"] for check in pipeline_checks),
+            "failed": sum(
+                not check["passed"] and check["severity"] == "error"
+                for check in pipeline_checks
+            ),
+            "warnings": sum(
+                not check["passed"] and check["severity"] != "error"
+                for check in pipeline_checks
+            ),
+            "checks": pipeline_checks,
+        }
+        (out / "pipeline_report.json").write_text(
+            json.dumps(pipeline_report, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
 
 
 # =============================================================================== 7. CLI
@@ -3480,10 +3078,8 @@ def main() -> int:
     metric_group.add_argument("--no-extra-metrics", dest="extra_metrics", action="store_false",
                               help=argparse.SUPPRESS)
     ap.set_defaults(extra_metrics=False)
-    ap.add_argument("--cache", default="edrak_judge_cache.json")
     ap.add_argument("--dry-run", action="store_true", help="No LLM calls; deterministic checks only")
-    ap.add_argument("--deep", action="store_true", help="Also judge each recommended action and each matrix cell")
-    ap.add_argument("--narrative", action="store_true", help="Add an LLM-written diagnosis to summary.md")
+    ap.add_argument("--deep", action="store_true", help="Also judge each recommended action")
     ap.add_argument(
         "--include-tool-payloads",
         action="store_true",
@@ -3493,11 +3089,11 @@ def main() -> int:
                     help="Evaluate every attempt and verification pass, not just the final one (default for --run-bundle is final only)")
     ap.add_argument("--compare-to", help="Compare the completed run bundle with this golden/ground_truth folder")
     ap.add_argument("--compare-out", help="Write the comparison report to this path (defaults under the evaluation output directory)")
-    ap.add_argument("--compare-no-llm", action="store_true", help="Use word overlap instead of the LLM comparison judge")
     a = ap.parse_args()
-
     if a.compare_to and not a.run_bundle:
         ap.error("--compare-to requires --run-bundle")
+    if a.compare_to and a.dry_run:
+        ap.error("--compare-to requires LLM calls and cannot be combined with --dry-run")
 
     if a.run_bundle:
         bundle = Path(a.run_bundle)
@@ -3550,8 +3146,6 @@ def main() -> int:
             "--out",
             str(comparison_out),
         ]
-        if a.compare_no_llm or a.dry_run:
-            compare_command.append("--no-llm")
         try:
             comparison = subprocess.run(compare_command, check=False)
         except OSError as exc:

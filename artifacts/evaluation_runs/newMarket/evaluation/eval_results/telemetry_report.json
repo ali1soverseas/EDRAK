@@ -1,0 +1,3630 @@
+{
+  "agent": "telemetry",
+  "generated_at_utc": "2026-10-23T20:34:24.185683+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {},
+  "files": [
+    {
+      "file": "telemetry.json",
+      "metrics": {
+        "worker_types": [
+          "competitor_intelligence",
+          "customer_trends",
+          "internal_intelligence",
+          "market_intelligence"
+        ],
+        "tool_names": [
+          "analyze_text",
+          "competitor_web_search",
+          "compute_metrics",
+          "evidence_query",
+          "internal_rag.retrieve",
+          "market_search",
+          "news_coverage",
+          "reviews_fetch",
+          "search_interest",
+          "social_search",
+          "submit_findings",
+          "web_search"
+        ],
+        "units": 88,
+        "units_flagged": 5
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.7268,
+            "reason": "The actual output shows multiple retrieval attempts with no tool failures and no retries after successful attempts, which aligns with the evaluation steps. However, there are empty results for queries with 'origin' set to 'public_handbook' but no fallback was triggered despite these empty outputs, indicating partial alignment with fallback handling requirements."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6803,
+            "reason": "The output includes multiple retrieval calls with different queries and origins, which is necessary to cover various aspects of entering the GPU market. However, there is some repetition in calls with similar parameters (e.g., repeated queries with different origins) that yield no results, indicating potential inefficiency. The sequence is mostly complete but could be optimized by avoiding calls that return zero results without clear justification."
+          }
+        },
+        "metrics": {
+          "calls": 78,
+          "errors": 5,
+          "repeated_calls": 1,
+          "call_details": [
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 629.4498,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Current status, release dates, and core capabilities of NVIDIA AI computing and data center platform GPU products planned for market expansion",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 42.571,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Current status, release dates, and core capabilities of NVIDIA AI computing and data center platform GPU products planned for market expansion",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 64.3771,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Internal assessment of NVIDIA manufacturing capacity, supply chain constraints, and production lead times for GPUs in 2024‑2025",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 56.01,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Internal assessment of NVIDIA manufacturing capacity, supply chain constraints, and production lead times for GPUs in 2024‑2025",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 67.4925,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Breakdown of R&D resources, headcount, and budget allocated to next‑generation GPU architectures within NVIDIA's AI computing division",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 53.0745,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Breakdown of R&D resources, headcount, and budget allocated to next‑generation GPU architectures within NVIDIA's AI computing division",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 41.3749,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Identified internal gaps, risk factors, and dependency constraints in NVIDIA's GPU product roadmap that could affect entry or expansion against Broadcom and Intel",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 34.6552,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Identified internal gaps, risk factors, and dependency constraints in NVIDIA's GPU product roadmap that could affect entry or expansion against Broadcom and Intel",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 40.8007,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "NVIDIA internal OKRs, adoption metrics, and revenue targets for GPU sales in the data‑center segment for FY2025",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 32.7645,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "NVIDIA internal OKRs, adoption metrics, and revenue targets for GPU sales in the data‑center segment for FY2025",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "dict",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 4,
+              "latency_ms": 36.1278,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [
+                  "Evidence"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.25,
+                "origin": {
+                  "$ne": "public_handbook"
+                },
+                "query": "Customer support tickets, survey responses, and sales notes highlighting performance, feature, or reliability gaps in NVIDIA's current GPU offerings compared to Broadcom and Intel",
+                "top_k": 4,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "internal_rag.retrieve",
+              "worker": "internal_intelligence",
+              "task_id": "48389745-6bcd-4bf4-b1b9-3152a1cb808d",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "min_score",
+                "origin",
+                "query",
+                "top_k",
+                "workspace_id"
+              ],
+              "argument_types": {
+                "min_score": "float",
+                "origin": "str",
+                "query": "str",
+                "top_k": "int",
+                "workspace_id": "str"
+              },
+              "result_count": 0,
+              "latency_ms": 30.501,
+              "result_summary": {
+                "count": 0,
+                "decoded_json": false,
+                "item_keys": [],
+                "item_types": [],
+                "type": "array"
+              },
+              "argument_values": {
+                "min_score": 0.45,
+                "origin": "public_handbook",
+                "query": "Customer support tickets, survey responses, and sales notes highlighting performance, feature, or reliability gaps in NVIDIA's current GPU offerings compared to Broadcom and Intel",
+                "top_k": 3,
+                "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 1,
+              "latency_ms": 2313.1993,
+              "result_summary": {
+                "count": 1,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "global GPU market size 2024 forecast 2030 NVIDIA"
+                ]
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "geo",
+                "keywords",
+                "timeframe"
+              ],
+              "argument_types": {
+                "geo": "NoneType",
+                "keywords": "list",
+                "timeframe": "str"
+              },
+              "latency_ms": 1903.8018,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "geo": null,
+                "keywords": [
+                  "NVIDIA GPU",
+                  "NVIDIA RTX",
+                  "Intel GPU",
+                  "Broadcom AI",
+                  "GPU pricing"
+                ],
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 5796.0145,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom GPU accelerator subscription pricing per seat per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "granularity",
+                "include_related",
+                "keywords",
+                "languages",
+                "max_results",
+                "since",
+                "timeframe",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "granularity": "str",
+                "include_related": "bool",
+                "keywords": "list",
+                "languages": "list",
+                "max_results": "int",
+                "since": "str",
+                "timeframe": "str",
+                "until": "str"
+              },
+              "latency_ms": 788.1624,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "granularity": "",
+                "include_related": true,
+                "keywords": [
+                  "NVIDIA GPU",
+                  "NVIDIA RTX",
+                  "Intel GPU",
+                  "Broadcom AI",
+                  "GPU pricing"
+                ],
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 5,
+                "since": "",
+                "timeframe": "today 12-m",
+                "until": ""
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 7542.4236,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel data center GPU pricing per seat per month",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3237.8188,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI accelerator product names",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2625.4802,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI accelerator technical specifications compute cores memory bandwidth",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2858.6574,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom AI accelerator list price tiered pricing",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 1,
+              "latency_ms": 2002.2308,
+              "result_summary": {
+                "count": 1,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "technology trends driving GPU demand AI data center 2024"
+                ]
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 19387.1452,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforce.experience"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2709.1793,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Broadcom GPU accelerator packaging form factor PCIe M.2 OCuLink reference design",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "gdelt",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 16625.0023,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA data center GPU news",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 2517.1917,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "NVIDIA GeForce Experience Android app package name",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3863.8554,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel data center GPU portfolio AI Xe-HPC Ponte Vecchio Arc product lineup",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 1,
+              "latency_ms": 2967.2481,
+              "result_summary": {
+                "count": 1,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA GPU adoption AI data center 2024"
+                ]
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4353.6652,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel Xe-HPC GPU performance specifications FP16 FP32 memory size interconnect bandwidth",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2490.1822,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel data center GPU pricing MSRP volume discount licensing",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3289.9129,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "Intel Xe-HPC GPU form factor PCIe reference design OEM kit",
+                "stage": 1
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 7888.5576,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA H100 adoption cloud provider",
+                  "NVIDIA A100 data center deployment announcement",
+                  "NVIDIA DGX enterprise AI purchase news"
+                ]
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 24393.6586,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "AI GPU market trends",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4180.5722,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"XPU\" pricing",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 5118.6135,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"Jalapeño\" AI accelerator pricing",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4229.9642,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:intel.com \"Data Center GPU Flex\" pricing",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 58673.969,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "x",
+                "query": "NVIDIA GPU review",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 2544.5648,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:intel.com \"Flex 170\" price",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 1,
+              "latency_ms": 23968.0784,
+              "result_summary": {
+                "count": 1,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "NVIDIA GPU adoption AI data center 2024"
+                ]
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 38929.3806,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Android app Google Play",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4172.2285,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"XPU\" specifications \"compute cores\"",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 1344.5312,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience app Google Play store",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1131.4423,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Google Play package name"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3896.1613,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"MTIA\" accelerator datasheet",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 2671.5757,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "app_store",
+                "target_id_or_url": "com.nvidia.geforcenow"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3296.671,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"AI accelerator\" pricing model",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 25045.1192,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Broadcom",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "Broadcom AI chip announcement",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1542.6791,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 2
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience app Google Play store package name NVIDIA"
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6973.5865,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU export regulations United States 2024",
+                  "EU restrictions on semiconductor GPU sales 2024",
+                  "China licensing requirements for imported GPUs 2024"
+                ]
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3812.0672,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"XPU\" \"tiered pricing\"",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1413.2492,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience Android",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Android app package"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 2720.2748,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA data center GPU news",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3344.9677,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"XPU\" form factor PCIe",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 3109.5338,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "Intel GPU roadmap",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3522.288,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "site:broadcom.com \"Jalapeño\" reference design OEM kit",
+                "stage": 2
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 986.7447,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "num": 10,
+                "query": "NVIDIA data center GPU pricing",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 1,
+              "latency_ms": 1781.5658,
+              "result_summary": {
+                "count": 1,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU supply chain constraints 2024 semiconductor fab capacity"
+                ]
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 3270.9913,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 10,
+                "num": 10,
+                "query": "سعر GPU نيفيديا مراكز البيانات",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 38992.8683,
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "reddit",
+                "query": "NVIDIA GPU review",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 4888.3163,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Intel GPU market share 2024 AI data center",
+                  "Broadcom GPU product roadmap 2024",
+                  "NVIDIA vs Intel GPU pricing AI workloads 2024"
+                ]
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 9162.6393,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "\"Broadcom XPU\" pricing brochure filetype:pdf",
+                "stage": 3
+              }
+            },
+            {
+              "tool": "analyze_text",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "batch_ids",
+                "max_items"
+              ],
+              "argument_types": {
+                "batch_ids": "list",
+                "max_items": "int"
+              },
+              "latency_ms": 15550.8327,
+              "result_summary": {
+                "collection_counts": {
+                  "themes": 15
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "analyzed",
+                  "count",
+                  "languages",
+                  "sentiment",
+                  "status",
+                  "themes",
+                  "themes_total",
+                  "total_items"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "batch_ids": [
+                  "b_cca3f41a1485",
+                  "b_81ed96ede448",
+                  "b_b0776dab2a47",
+                  "b_3381aebe12d9",
+                  "b_d0154d072f3f",
+                  "b_4dfa9fd1ed70"
+                ],
+                "max_items": 200
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 10.6773,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "volume_over_time"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 7.7944,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "platform_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 6.573,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "language_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 7.3343,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "engagement_stats"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric",
+                "params"
+              ],
+              "argument_types": {
+                "metric": "str",
+                "params": "dict"
+              },
+              "latency_ms": 15.3855,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "share_of_voice",
+                "params": {
+                  "competitors": [
+                    "Broadcom",
+                    "Intel Corp"
+                  ],
+                  "entity": "NVIDIA Corporation"
+                }
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.6334,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 8,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {},
+                "limit": 8,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 4.6517,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "GeForce NOW Android download"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.9269,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "geforce experience replacement"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.296,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "Google Play services"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.0867,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "android package name registration"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.6445,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "cloud gaming mobile"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 5.0561,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "geforce now app update"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 3689.0849,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "\"Broadcom\" \"AI accelerator\" subscription model per seat",
+                "stage": 3
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "bef4f6bc-a59d-44fd-8208-af02241bfdb1",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6645.1259,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU export controls licensing requirements",
+                  "semiconductor sanctions global GPU sales",
+                  "NVIDIA AMD Intel export compliance regulations"
+                ]
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4663.9056,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "\"Intel Data Center GPU Flex\" MSRP 2024",
+                "stage": 3
+              }
+            },
+            {
+              "tool": "competitor_web_search",
+              "provider": "tavily",
+              "worker": "competitor_intelligence",
+              "task_id": "85f7a333-6285-42a2-827d-a334bc3817df",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "domains",
+                "query",
+                "stage"
+              ],
+              "argument_types": {
+                "domains": "NoneType",
+                "query": "str",
+                "stage": "int"
+              },
+              "latency_ms": 4095.5496,
+              "result_summary": {
+                "collection_counts": {
+                  "images": 0,
+                  "results": 3
+                },
+                "decoded_json": false,
+                "field_count": 7,
+                "keys": [
+                  "answer",
+                  "follow_up_questions",
+                  "images",
+                  "query",
+                  "request_id",
+                  "response_time",
+                  "results"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "domains": null,
+                "query": "\"Intel Flex\" GPU pricing guide filetype:pdf",
+                "stage": 3
+              }
+            },
+            {
+              "tool": "submit_findings",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "findings"
+              ],
+              "argument_types": {
+                "findings": "list"
+              },
+              "latency_ms": 17.4983,
+              "result_summary": {
+                "collection_counts": {
+                  "accepted": 6,
+                  "adjusted": 3
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "accepted",
+                  "adjusted",
+                  "count",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "truncated": true,
+                "serialized_length": 3119
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "telemetry includes events or spans",
+          "passed": true,
+          "detail": "no recognizable spans/tool calls",
+          "severity": "warn"
+        },
+        {
+          "check": "observed tool and span errors are recorded",
+          "passed": false,
+          "detail": "5 error events",
+          "severity": "warn"
+        },
+        {
+          "check": "worker spans carry agent and task identity",
+          "passed": true,
+          "detail": "0/4 worker span(s) missing agent or task id",
+          "severity": "warn"
+        },
+        {
+          "check": "worker spans record process status and duration",
+          "passed": true,
+          "detail": "0/4 worker span(s) missing success status or valid duration",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "tool failures are handled or explicitly surfaced",
+          "passed": false,
+          "detail": "5 unhandled failure(s) across news_coverage=2, search_interest=2, social_search=1",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": false,
+          "detail": "1 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "trace_event",
+          "unit_id": "156958f41b793c70",
+          "statement": "search_interest",
+          "flags": [
+            "execution_error"
+          ]
+        },
+        {
+          "unit_type": "trace_event",
+          "unit_id": "4125a0b173b3b767",
+          "statement": "search_interest",
+          "flags": [
+            "execution_error"
+          ]
+        },
+        {
+          "unit_type": "trace_event",
+          "unit_id": "1b5e8d3dc22f707e",
+          "statement": "news_coverage",
+          "flags": [
+            "execution_error"
+          ]
+        },
+        {
+          "unit_type": "trace_event",
+          "unit_id": "af1370e19c02aeef",
+          "statement": "social_search",
+          "flags": [
+            "execution_error"
+          ]
+        },
+        {
+          "unit_type": "trace_event",
+          "unit_id": "c50413a18503d919",
+          "statement": "news_coverage",
+          "flags": [
+            "execution_error"
+          ]
+        }
+      ]
+    }
+  ]
+}

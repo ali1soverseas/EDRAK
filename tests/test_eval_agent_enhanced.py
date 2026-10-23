@@ -594,7 +594,7 @@ def test_judge_uses_deepeval_metric_classes_without_calling_a_model(monkeypatch,
     for metric_name in ("FaithfulnessMetric", "AnswerRelevancyMetric", "ContextualRelevancyMetric"):
         monkeypatch.setattr(deepeval_metrics, metric_name, fake_metric(metric_name))
 
-    judge = eval_agent.Judge("offline-test-model", tmp_path / "judge-cache.json", enabled=True, retries=1)
+    judge = eval_agent.Judge("offline-test-model", enabled=True, retries=1)
     for metric_name in ("faithfulness", "relevancy", "context_relevancy"):
         result = judge.run(
             metric_name,

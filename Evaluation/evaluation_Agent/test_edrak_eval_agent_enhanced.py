@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import sys
 import threading
 from argparse import Namespace
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from types import ModuleType, SimpleNamespace
 
 import Evaluation.evaluation_Agent.edrak_eval_agent_enhanced as evaluator_module
 from Evaluation.evaluation_Agent.edrak_eval_agent_enhanced import (
@@ -15,11 +16,17 @@ from Evaluation.evaluation_Agent.edrak_eval_agent_enhanced import (
     detect,
     _execution_calls,
     _golden_answer_for_rag,
+    dashboard_metrics,
+    eval_cross_signal,
+    eval_decision,
     eval_execution_trace,
+    eval_metrics,
     eval_orchestration,
     eval_rag,
     eval_telemetry,
+    eval_verification,
     eval_worker,
+    pipeline_checks,
 )
 from Evaluation.evaluation_Agent.edrak_eval_graph_enhanced import main as graph_main
 
@@ -29,7 +36,6 @@ class StubJudge:
         self.enabled = enabled
         self.calls: list[tuple[str, str, str, list[str], float, tuple | None]] = []
         self.successes = 0
-        self.hits = 0
         self.errors = 0
         self.skipped = 0
         self.rate_limit_open = False
@@ -56,10 +62,6 @@ class StubJudge:
             return {"score": None, "reason": "", "error": "dry-run"}
         self.successes += 1
         return {"score": 0.9, "reason": "stubbed", "error": ""}
-
-    def flush(self) -> None:
-        return None
-
 
 def make_cfg(extra_metrics: bool = True) -> Cfg:
     return Cfg(
@@ -93,6 +95,57 @@ def test_worker_extra_llm_metrics_are_opt_in() -> None:
         "faithfulness", "relevancy", "insight"]
 
 
+def test_dashboard_metric_export_omits_metrics_not_rendered() -> None:
+    metrics = {
+        "status": "completed",
+        "units": 5,
+        "units_flagged": 1,
+        "faithfulness_tested": 2,
+        "faithfulness_avg": 0.9,
+        "faithfulness_pass_pct": 100,
+        "context_relevancy_score": 0.9,
+        "context_relevancy_error": "",
+        "evidence_utilization_pct": 80,
+        "mean_retrieval_score": 0.8,
+        "avg_confidence": 0.7,
+        "tool_names": ["search"],
+        "signal_types": "convergence=2, dependency=1",
+        "planned_tasks": 4,
+        "result_tasks": 4,
+        "successful_tasks": 3,
+        "task_completion_pct": 100,
+        "workflow_success_pct": 75,
+        "dependency_integrity_pct": 100,
+        "queries": 2,
+        "retrieved_chunks": 8,
+        "execution_duration_seconds": 12,
+        "attempt": 2,
+        "judge_errors": 1,
+        "context_relevancy_reason": "judge unavailable",
+    }
+
+    exported = dashboard_metrics(metrics)
+
+    assert set(exported) == {
+        "status",
+        "units",
+        "units_flagged",
+        "faithfulness_tested",
+        "faithfulness_avg",
+        "faithfulness_pass_pct",
+        "context_relevancy_score",
+        "context_relevancy_error",
+        "tool_names",
+        "signal_types",
+        "planned_tasks",
+        "result_tasks",
+        "successful_tasks",
+        "task_completion_pct",
+        "workflow_success_pct",
+        "judge_errors",
+    }
+
+
 def failed_check(result: dict, name: str) -> dict:
     return next(check for check in result["checks"] if check["check"] == name)
 
@@ -108,7 +161,7 @@ def test_judge_retries_using_rate_limit_header_and_unwraps_error(tmp_path: Path,
     class RetryError(Exception):
         last_attempt = Attempt()
 
-    judge = Judge("test-model", tmp_path / "cache.json", enabled=True, retries=2)
+    judge = Judge("test-model", enabled=True, retries=2)
     waits: list[float] = []
     calls = 0
 
@@ -144,7 +197,7 @@ def test_judge_reports_underlying_error_after_retries(tmp_path: Path, monkeypatc
     class RetryError(Exception):
         last_attempt = Attempt()
 
-    judge = Judge("test-model", tmp_path / "cache.json", enabled=True, retries=2)
+    judge = Judge("test-model", enabled=True, retries=2)
     waits: list[float] = []
     calls = 0
 
@@ -171,7 +224,7 @@ def test_judge_stops_new_requests_after_rate_limit_retries(tmp_path: Path, monke
     class RateLimitError(Exception):
         headers = {"retry-after": "0"}
 
-    judge = Judge("test-model", tmp_path / "cache.json", enabled=True, retries=2)
+    judge = Judge("test-model", enabled=True, retries=2)
     calls = 0
 
     def fail(*args):
@@ -193,55 +246,26 @@ def test_judge_stops_new_requests_after_rate_limit_retries(tmp_path: Path, monke
     assert judge.metric_skips == {"relevancy": 1}
 
 
-def test_judge_defers_cache_writes_until_flush(tmp_path: Path, monkeypatch) -> None:
-    cache = tmp_path / "cache.json"
-    judge = Judge("test-model", cache, enabled=True, retries=1)
-    monkeypatch.setattr(judge, "_measure", lambda *a: {"score": 0.9, "reason": "ok", "error": ""})
+def test_judge_does_not_cache_successful_results(monkeypatch) -> None:
+    judge = Judge("test-model", enabled=True, retries=1)
+    calls = 0
 
-    judge.run("faithfulness", "q", "answer", ["evidence"], 0.7)
-    assert not cache.exists()
+    def measure(*args) -> dict[str, object]:
+        nonlocal calls
+        calls += 1
+        return {"score": 0.9, "reason": "fresh score", "error": ""}
 
-    judge.flush()
-    assert len(json.loads(cache.read_text(encoding="utf-8"))) == 1
-    judge.run("faithfulness", "q", "answer", ["evidence"], 0.7)   # served from cache
-    assert judge.calls == 1 and judge.hits == 1
+    monkeypatch.setattr(judge, "_measure", measure)
 
+    first = judge.run("faithfulness", "q", "answer", ["evidence"], 0.7)
+    second = judge.run("faithfulness", "q", "answer", ["evidence"], 0.7)
 
-def test_concurrent_judges_flush_cache_with_unique_temporary_files(tmp_path: Path, monkeypatch) -> None:
-    cache = tmp_path / "cache.json"
-    judges = [
-        Judge("test-model", cache, enabled=True, retries=1),
-        Judge("test-model", cache, enabled=True, retries=1),
-    ]
-    for index, judge in enumerate(judges):
-        judge.cache[f"entry-{index}"] = {"score": index}
-        judge._unsaved = 1
-
-    replace = evaluator_module.os.replace
-    temporary_files: list[Path] = []
-
-    def replace_together(source: str | Path, destination: str | Path) -> None:
-        temporary_files.append(Path(source))
-        replace(source, destination)
-
-    monkeypatch.setattr(evaluator_module.os, "replace", replace_together)
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        futures = [executor.submit(judge.flush) for judge in judges]
-        for future in futures:
-            future.result()
-
-    assert json.loads(cache.read_text(encoding="utf-8")) in (
-        {"entry-0": {"score": 0}},
-        {"entry-1": {"score": 1}},
-    )
-    assert len(temporary_files) == 2
-    assert len(set(temporary_files)) == 2
-    assert not list(tmp_path.glob(".cache.json.*.tmp"))
+    assert first["reason"] == second["reason"] == "fresh score"
+    assert calls == judge.calls == 2
 
 
-def test_judge_cache_key_includes_threshold(tmp_path: Path, monkeypatch) -> None:
-    cache = tmp_path / "cache.json"
-    judge = Judge("test-model", cache, enabled=True, retries=1)
+def test_judge_calls_model_for_each_threshold(monkeypatch) -> None:
+    judge = Judge("test-model", enabled=True, retries=1)
     measured_thresholds: list[float] = []
 
     def measure(metric, question, output, context, threshold, *args):
@@ -254,14 +278,14 @@ def test_judge_cache_key_includes_threshold(tmp_path: Path, monkeypatch) -> None
     judge.run("faithfulness", "q", "answer", ["evidence"], 0.8)
 
     assert measured_thresholds == [0.7, 0.8]
-    assert judge.calls == 2 and judge.hits == 0
+    assert judge.calls == 2
 
 
 def test_judge_unit_runs_metrics_in_parallel_and_keeps_column_order(tmp_path: Path, monkeypatch) -> None:
     import threading
     from Evaluation.evaluation_Agent.edrak_eval_agent_enhanced import judge_unit
 
-    judge = Judge("test-model", tmp_path / "cache.json", enabled=True, retries=1, workers=3)
+    judge = Judge("test-model", enabled=True, retries=1, workers=3)
     barrier = threading.Barrier(2, timeout=5)   # only passes if two metrics are in flight together
 
     def measure(metric, *args):
@@ -302,11 +326,10 @@ def test_rag_evaluation_records_retrieval_quality_only() -> None:
     assert detect(data) == "rag"
     result = eval_rag(Path("rag.json"), data, Ctx(), judge, make_cfg())
 
-    assert result["metrics"]["retrieved_chunks"] == 2
-    assert result["metrics"]["mean_retrieval_score"] == 0.8
-    assert result["metrics"]["invalid_retrieval_scores"] == 1
-    assert result["metrics"]["unique_source_domains"] == 2
-    assert result["metrics"]["duplicate_chunk_pairs"] == 1
+    assert set(result["metrics"]) == {
+        "context_precision_score", "context_recall_score", "context_relevancy_score",
+        "context_precision_error", "context_recall_error", "context_relevancy_error",
+    }
     assert result["metrics"]["context_relevancy_score"] == 0.9
     assert "answer_relevancy_score" not in result["metrics"]
     assert "faithfulness_score" not in result["metrics"]
@@ -316,7 +339,7 @@ def test_rag_evaluation_records_retrieval_quality_only() -> None:
     assert any(row["unit_type"] == "rag_answer" for row in result["rows"])
 
 
-def test_rag_retrieval_latency_is_correlated_by_query() -> None:
+def test_rag_does_not_export_retrieval_latency_metrics() -> None:
     query = "Which products are available?"
     ctx = Ctx(telemetry_calls=[
         {
@@ -342,8 +365,7 @@ def test_rag_retrieval_latency_is_correlated_by_query() -> None:
         make_cfg(),
     )
 
-    assert result["metrics"]["retrieval_latency_calls"] == 1
-    assert result["metrics"]["retrieval_latency_ms"] == 25
+    assert not any("latency" in key for key in result["metrics"])
 
 
 def test_rag_does_not_use_worker_findings_as_answer() -> None:
@@ -362,11 +384,10 @@ def test_rag_does_not_use_worker_findings_as_answer() -> None:
         judge,
         make_cfg(),
     )
-    assert result["metrics"]["answer_source"] is None
-    assert result["metrics"]["answer_source"] is None
+    assert "answer_source" not in result["metrics"]
     assert "faithfulness_score" not in result["metrics"]
     assert "answer_relevancy_score" not in result["metrics"]
-    assert not any("faithfulness" in metric or metric == "relevancy" for metric in result["metrics_used"])
+    assert "metrics_used" not in result
     assert not any(call[0] in {"relevancy", "faithfulness"} for call in judge.calls)
     assert not any(row["unit_type"] == "rag_answer" for row in result["rows"])
 
@@ -423,13 +444,11 @@ def test_eval_agent_does_not_substitute_worker_findings_for_missing_rag_answer(t
         agents=["rag"],
         task="",
         model="test-model",
-        cache=str(tmp_path / "cache.json"),
         dry_run=False,
         deep=False,
         context_relevancy=False,
         no_extra_metrics=False,
         include_tool_payloads=False,
-        narrative=False,
         faithfulness_threshold=0.7,
         relevancy_threshold=0.5,
         context_relevancy_threshold=0.5,
@@ -448,7 +467,7 @@ def test_eval_agent_does_not_substitute_worker_findings_for_missing_rag_answer(t
         result for results in agent.per_agent.values() for result in results
         if result["file"] == rag.name
     )
-    assert rag_result["metrics"]["answer_source"] is None
+    assert "answer_source" not in rag_result["metrics"]
     assert "faithfulness_score" not in rag_result["metrics"]
     assert "answer_relevancy_score" not in rag_result["metrics"]
     assert not any(call[0] in {"relevancy", "faithfulness"} for call in judge.calls)
@@ -486,6 +505,43 @@ def test_golden_rag_reference_is_selected_by_use_case_and_worker(tmp_path: Path)
     assert reference == (
         "Curated reference answer.",
         "golden/ground_truth/nvidia_product_launch_inputs/inputs/worker_internal_intelligence.json",
+    )
+
+
+def test_query_specific_golden_rag_reference_skips_embedding_fallback(tmp_path: Path) -> None:
+    dataset_inputs = tmp_path / "nvidia_product_launch_inputs" / "inputs"
+    dataset_inputs.mkdir(parents=True)
+    (dataset_inputs / "initial_input.json").write_text(
+        json.dumps({"business_context": {"use_case": "product_launch"}}),
+        encoding="utf-8",
+    )
+    (dataset_inputs / "rag_internal_intelligence.json").write_text(
+        json.dumps({
+            "worker": "internal_intelligence",
+            "queries": [{
+                "query": "What is available?",
+                "expected_output": "Only the curated scenario assumptions are available.",
+            }],
+        }),
+        encoding="utf-8",
+    )
+
+    reference = _golden_answer_for_rag(
+        {"worker": "internal_intelligence", "query": "  WHAT is  available?  "},
+        [
+            (
+                Path("initial_input.json"),
+                "input",
+                {"business_context": {"use_case": "product_launch"}},
+            ),
+        ],
+        embed_texts=lambda _: (_ for _ in ()).throw(AssertionError("embedding fallback ran")),
+        ground_truth_root=tmp_path,
+    )
+
+    assert reference == (
+        "Only the curated scenario assumptions are available.",
+        "golden/ground_truth/nvidia_product_launch_inputs/inputs/rag_internal_intelligence.json",
     )
 
 
@@ -527,7 +583,6 @@ def test_rag_uses_provided_reference_for_context_precision_and_recall() -> None:
         make_cfg(),
     )
 
-    assert result["metrics"]["expected_output_source"].startswith("golden/ground_truth/")
     assert result["metrics"]["context_precision_score"] == 0.9
     assert result["metrics"]["context_recall_score"] == 0.9
     assert {call[0] for call in judge.calls} >= {"context_precision", "context_recall"}
@@ -641,6 +696,9 @@ def test_span_tool_results_are_preserved_and_only_payloads_are_judged_opt_in() -
     assert "do-not-send" not in json.dumps(result_use_judgment)
     assert result["metrics"]["call_details"][0]["result_count"] == 2
     assert result["metrics"]["call_details"][0]["result_summary"]["type"] == "array"
+    assert result["metrics"]["call_details"][0]["result"] == [
+        {"excerpt": "Grounded result", "api_key": "[REDACTED]"}
+    ]
 
     older_trace = eval_execution_trace({
         "spans": [{
@@ -721,11 +779,7 @@ def test_telemetry_extracts_tool_spans_and_correlates_worker_context() -> None:
 
     result = eval_telemetry(Path("telemetry.json"), data, Ctx(), StubJudge(), make_cfg())
 
-    assert result["metrics"]["spans"] == 2
-    assert result["metrics"]["tool_calls"] == 1
-    assert result["metrics"]["observed_errors"] == 1
-    assert result["metrics"]["worker_task_identity_pct"] == 100
-    assert result["metrics"]["worker_process_recorded_pct"] == 100
+    assert set(result["metrics"]) == {"worker_types", "tool_names", "units", "units_flagged"}
     assert result["metrics"]["tool_names"] == ["internal_rag.retrieve"]
     tool_row = next(row for row in result["rows"] if row["unit_id"] == "tool-span")
     assert tool_row["worker"] == "internal_intelligence"
@@ -843,18 +897,13 @@ def test_orchestration_counts_partial_worker_output_as_completed_execution() -> 
 
     result = eval_orchestration(Path("orchestration.json"), data, ctx, StubJudge(), make_cfg())
 
-    assert result["metrics"]["successful_tasks"] == 2
-    assert result["metrics"]["task_completion_pct"] == 100.0
-    assert result["metrics"]["workflow_success_pct"] == 100.0
-    assert result["metrics"]["failed_tasks"] == 0
-    assert result["metrics"]["partial_tasks"] == 1
-    assert result["metrics"]["incomplete_tasks"] == 0
-    assert result["metrics"]["failure_rate_pct"] == 0.0
-    assert result["metrics"]["retry_events"] == 1
-    assert result["metrics"]["successfully_retried_tasks"] == 1
-    assert result["metrics"]["retry_rate_pct"] == 50.0
-    assert result["metrics"]["execution_duration_seconds"] == 120.0
-    assert result["metrics"]["dependency_integrity_pct"] is None
+    assert result["metrics"] == {
+        "planned_tasks": 2,
+        "result_tasks": 2,
+        "successful_tasks": 2,
+        "task_completion_pct": 100.0,
+        "workflow_success_pct": 100.0,
+    }
 
 
 def test_orchestration_counts_failed_agent_without_output_as_failure() -> None:
@@ -877,14 +926,14 @@ def test_orchestration_counts_failed_agent_without_output_as_failure() -> None:
 
     assert result["metrics"]["successful_tasks"] == 1
     assert result["metrics"]["task_completion_pct"] == 50.0
-    assert result["metrics"]["failed_tasks"] == 1
-    assert result["metrics"]["failure_rate_pct"] == 50.0
-    assert result["metrics"]["partial_tasks"] == 1
+    assert set(result["metrics"]) == {
+        "planned_tasks", "result_tasks", "successful_tasks", "task_completion_pct", "workflow_success_pct"
+    }
     failed_row = next(row for row in result["rows"] if row["unit_id"] == "b")
     assert "task_failed" in failed_row["flags"]
 
 
-def test_orchestration_retry_rate_counts_only_replanned_tasks_that_succeeded() -> None:
+def test_orchestration_omits_retry_metrics_not_shown_in_dashboard() -> None:
     data = {
         "status": "completed",
         "plan": {"tasks": [{"task_id": "task-a"}, {"task_id": "task-b"}]},
@@ -903,12 +952,10 @@ def test_orchestration_retry_rate_counts_only_replanned_tasks_that_succeeded() -
     assert result["metrics"]["successful_tasks"] == 2
     assert result["metrics"]["task_completion_pct"] == 100.0
     assert result["metrics"]["workflow_success_pct"] == 100.0
-    assert result["metrics"]["retry_events"] == 1
-    assert result["metrics"]["successfully_retried_tasks"] == 1
-    assert result["metrics"]["retry_rate_pct"] == 50.0
+    assert not any("retry" in key for key in result["metrics"])
 
 
-def test_orchestration_replan_matches_replaced_task_ids_by_worker() -> None:
+def test_orchestration_omits_replan_metrics_not_shown_in_dashboard() -> None:
     data = {
         "status": "completed",
         "plan": {"tasks": [
@@ -947,10 +994,59 @@ def test_orchestration_replan_matches_replaced_task_ids_by_worker() -> None:
     assert result["metrics"]["successful_tasks"] == 4
     assert result["metrics"]["task_completion_pct"] == 100.0
     assert result["metrics"]["workflow_success_pct"] == 100.0
-    assert result["metrics"]["partial_tasks"] == 2
-    assert result["metrics"]["retry_events"] == 1
-    assert result["metrics"]["successfully_retried_tasks"] == 3
-    assert result["metrics"]["retry_rate_pct"] == 75.0
+    assert not any("retry" in key or "partial" in key for key in result["metrics"])
+
+
+def test_metrics_stage_exports_only_dashboard_unit_counts() -> None:
+    result = eval_metrics(
+        Path("metrics.json"),
+        {"results": []},
+        Ctx(),
+        StubJudge(),
+        make_cfg(),
+    )
+
+    assert result["metrics"] == {"units": 0, "units_flagged": 0}
+
+
+def test_decision_stages_omit_non_dashboard_aggregate_metrics() -> None:
+    cfg = make_cfg()
+    judge = StubJudge()
+    verification = eval_verification(Path("verification.json"), {}, Ctx(), judge, cfg)
+    cross_signal = eval_cross_signal(Path("cross_signal.json"), {}, Ctx(), judge, cfg)
+    decision = eval_decision(Path("decision.json"), {}, Ctx(), judge, cfg)
+
+    for result in (verification, cross_signal, decision):
+        assert not {
+            "verified_pct", "false_verification_pct", "confidence_stdev", "control_gaps",
+            "signals_on_unverified_findings", "finding_usage_pct", "signal_coverage_pct",
+            "options_without_content_pct", "human_approval_pct", "near_duplicate_actions",
+        }.intersection(result["metrics"])
+        assert dashboard_metrics(result["metrics"])
+
+
+def test_pipeline_keeps_rerun_integrity_checks_without_detail_payloads() -> None:
+    loaded = [
+        (Path("worker_attempt_1.json"), "worker", {
+            "worker": "competitor_intelligence",
+            "attempt": 1,
+            "findings": [{"finding_id": "F1", "statement": "Original statement."}],
+        }),
+        (Path("worker_attempt_2.json"), "worker", {
+            "worker": "competitor_intelligence",
+            "attempt": 2,
+            "findings": [{"finding_id": "F1", "statement": "Changed statement."}],
+        }),
+    ]
+
+    result = pipeline_checks(Ctx(), [], loaded)
+
+    assert set(result) == {"checks"}
+    assert any(
+        check["check"].startswith("re-run of competitor_intelligence")
+        and check["passed"] is False
+        for check in result["checks"]
+    )
 
 
 def test_execution_trace_reports_provider_and_argument_types_and_nullable_domains() -> None:
@@ -1013,12 +1109,11 @@ def test_worker_output_metrics_check_evidence_grounding_and_confidence() -> None
         make_cfg(),
     )
 
-    assert result["metrics"]["findings"] == 1
-    assert result["metrics"]["evidence_in_file"] == 1
-    assert result["metrics"]["evidence_cited"] == 1
-    assert result["metrics"]["evidence_utilization_pct"] == 100
-    assert result["metrics"]["agent_confidence"] == 0.8
-    assert result["metrics"]["avg_finding_confidence"] == 0.8
+    assert result["metrics"]["units"] == len(result["rows"])
+    assert not any(key in result["metrics"] for key in (
+        "findings", "evidence_in_file", "evidence_cited", "evidence_utilization_pct",
+        "agent_confidence", "avg_finding_confidence",
+    ))
     finding = next(row for row in result["rows"] if row["unit_type"] == "finding")
     assert finding["refs"] == finding["refs_resolved"] == 1
     assert finding["faithfulness_score"] is None
@@ -1026,7 +1121,50 @@ def test_worker_output_metrics_check_evidence_grounding_and_confidence() -> None
     assert failed_check(result, "every cited evidence id resolves")["passed"] is True
 
 
-def test_runner_skips_metrics_stage_report_and_cleans_stale_metrics_files(tmp_path: Path) -> None:
+def test_worker_evaluation_ignores_comparison_matrix_cells() -> None:
+    data = {
+        "worker": "competitor_intelligence",
+        "status": "completed",
+        "confidence": 0.8,
+        "metadata": {
+            "research_goal": "Compare competitor capabilities and availability.",
+            "competitors": ["Intel Corp"],
+            "competitor_profiles": {"Intel Corp": {"overview": "Intel develops AI accelerators."}},
+            "comparison_matrix": {
+                "dimensions": [
+                    {
+                        "dimension": "Core capabilities relevant to the goal",
+                        "cells": [
+                            {
+                                "competitor": "Intel Corp",
+                                "relative_to_target": "stronger",
+                                "summary": "No performance benchmark was provided.",
+                            }
+                        ],
+                    }
+                ]
+            },
+        },
+        "evidence": [],
+        "findings": [],
+    }
+
+    result = eval_worker(
+        Path("worker.json"),
+        data,
+        Ctx(goal="Compare competitor capabilities and availability."),
+        StubJudge(),
+        make_cfg(),
+    )
+
+    assert not any(row["unit_type"] == "matrix_cell" for row in result["rows"])
+    assert "matrix_cells" not in result["metrics"]
+    assert "matrix_cells_with_evidence_pct" not in result["metrics"]
+    assert "matrix_cells_not_established_pct" not in result["metrics"]
+    assert not any(check["check"] == "matrix claims rest on evidence" for check in result["checks"])
+
+
+def test_runner_omits_unused_exports_and_cleans_stale_reports(tmp_path: Path, capsys) -> None:
     source = tmp_path / "rag.json"
     source.write_text(
         json.dumps(
@@ -1054,19 +1192,21 @@ def test_runner_skips_metrics_stage_report_and_cleans_stale_metrics_files(tmp_pa
     out.mkdir()
     (out / "metrics_report.json").write_text("stale report", encoding="utf-8")
     (out / "metrics_units.csv").write_text("stale units", encoding="utf-8")
+    (out / "rag_units.csv").write_text("stale unit details", encoding="utf-8")
+    (out / "overview.csv").write_text("stale overview", encoding="utf-8")
+    (out / "summary.md").write_text("stale summary", encoding="utf-8")
+    (out / "observability.json").write_text("stale observability", encoding="utf-8")
     args = Namespace(
         inputs=[str(source), str(metrics_source)],
         out=str(out),
         agents=None,
         task="",
         model="test-model",
-        cache=str(tmp_path / "cache.json"),
         dry_run=True,
         deep=False,
         context_relevancy=False,
         no_extra_metrics=False,
         include_tool_payloads=False,
-        narrative=False,
         faithfulness_threshold=0.7,
         relevancy_threshold=0.5,
         context_relevancy_threshold=0.5,
@@ -1079,18 +1219,54 @@ def test_runner_skips_metrics_stage_report_and_cleans_stale_metrics_files(tmp_pa
     assert agent.load() is True
     assert agent.run() == 0
 
+    output = capsys.readouterr().out
+    rag_result = agent.per_agent["rag"][0]
+    integrity_checks = [item for item in rag_result["checks"] if item["severity"] == "error"]
+    integrity_failures = sum(not item["passed"] for item in integrity_checks)
+    integrity_status = "FAIL" if integrity_failures else "PASS"
+    units = len(rag_result["rows"])
+    flagged_units = sum(bool(row.get("flags")) for row in rag_result["rows"])
+    assert (
+        f"Finished evaluating rag: integrity {integrity_status} "
+        f"({integrity_failures}/{len(integrity_checks)} failed); "
+        f"units {units} ({flagged_units} flagged)."
+    ) in output
+
     report = json.loads((tmp_path / "reports" / "rag_report.json").read_text(encoding="utf-8"))
     metrics = report["files"][0]["metrics"]
     assert report["dry_run"] is True
-    assert "rag_retrieval_quality" in report["files"][0]["metrics_used"]
-    assert metrics["queries"] == 1
-    assert metrics["retrieved_chunks"] == 1
-    assert metrics["mean_retrieval_score"] == 0.9
-    assert metrics["execution_quality_status"] == "not_assessable"
-    overview = (tmp_path / "reports" / "overview.csv").read_text(encoding="utf-8-sig")
-    assert "retrieved_chunks" in overview
+    assert "metrics_used" not in report["files"][0]
+    assert "queries" not in metrics
+    assert "retrieved_chunks" not in metrics
+    assert "mean_retrieval_score" not in metrics
+    assert "context_relevancy_reason" not in metrics
+    assert "execution_quality_status" not in metrics
+    assert set(report["files"][0]["execution_quality"]) == {"dimensions", "metrics"}
+    assert set(report["files"][0]["execution_quality"]["metrics"]) == {
+        "calls", "errors", "repeated_calls", "call_details"
+    }
     assert "metrics_report.json" not in {p.name for p in out.iterdir()}
     assert "metrics_units.csv" not in {p.name for p in out.iterdir()}
+    assert "rag_units.csv" not in {p.name for p in out.iterdir()}
+    assert "overview.csv" not in {p.name for p in out.iterdir()}
+    assert "summary.md" not in {p.name for p in out.iterdir()}
+    assert "observability.json" not in {p.name for p in out.iterdir()}
+    pipeline_report = json.loads((out / "pipeline_report.json").read_text(encoding="utf-8"))
+    assert set(pipeline_report) == {"total", "passed", "failed", "warnings", "checks"}
+    pipeline_checks = agent.pipeline["checks"]
+    assert pipeline_report == {
+        "total": len(pipeline_checks),
+        "passed": sum(check["passed"] for check in pipeline_checks),
+        "failed": sum(
+            not check["passed"] and check["severity"] == "error"
+            for check in pipeline_checks
+        ),
+        "warnings": sum(
+            not check["passed"] and check["severity"] != "error"
+            for check in pipeline_checks
+        ),
+        "checks": pipeline_checks,
+    }
     assert "metrics" not in agent.per_agent
 
 
@@ -1123,13 +1299,11 @@ def test_runner_omits_execution_quality_for_non_tool_stages(tmp_path: Path, monk
         agents=None,
         task="",
         model="test-model",
-        cache=str(tmp_path / "cache.json"),
         dry_run=True,
         deep=False,
         context_relevancy=False,
         no_extra_metrics=False,
         include_tool_payloads=False,
-        narrative=False,
         faithfulness_threshold=0.7,
         relevancy_threshold=0.5,
         context_relevancy_threshold=0.5,
@@ -1183,3 +1357,130 @@ def test_langgraph_entrypoint_runs_the_same_evaluator(tmp_path: Path, monkeypatc
 
     assert graph_main() == 0
     assert (output / "rag_report.json").is_file()
+
+
+def test_compare_to_rejects_dry_run(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "edrak_eval_agent_enhanced.py",
+            "--run-bundle",
+            str(tmp_path / "unused"),
+            "--dry-run",
+            "--compare-to",
+            "nvidia_product_launch_inputs",
+        ],
+    )
+
+    try:
+        evaluator_module.main()
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("Expected --compare-to with --dry-run to be rejected.")
+
+
+def test_keep_final_uses_worker_task_ids_from_final_orchestration() -> None:
+    agent = object.__new__(EvalAgent)
+    old_worker = Path("worker_competitor_intelligence_attempt_1_old.json")
+    final_worker = Path("worker_competitor_intelligence_attempt_1_final.json")
+    old_rag = Path("rag_old.json")
+    final_rag = Path("rag_final.json")
+    orchestration = Path("orchestration_result.json")
+    agent.loaded = [
+        (
+            old_worker,
+            "worker",
+            {
+                "worker": "competitor_intelligence",
+                "task_id": "old-task",
+                "attempt": 1,
+                "findings": [{"finding_id": "old-finding"}],
+            },
+        ),
+        (old_rag, "rag", {"task_id": "old-task"}),
+        (
+            final_worker,
+            "worker",
+            {
+                "worker": "competitor_intelligence",
+                "task_id": "final-task",
+                "attempt": 1,
+                "findings": [{"finding_id": "final-finding"}],
+            },
+        ),
+        (final_rag, "rag", {"task_id": "final-task"}),
+        (
+            orchestration,
+            "orchestration",
+            {
+                "plan": {"tasks": [{"task_id": "final-task"}]},
+                "results": [
+                    {
+                        "worker": "competitor_intelligence",
+                        "task_id": "final-task",
+                        "attempt": 1,
+                    }
+                ],
+            },
+        ),
+    ]
+
+    agent.keep_final()
+
+    kept_paths = {path for path, _, _ in agent.loaded}
+    assert final_worker in kept_paths
+    assert final_rag in kept_paths
+    assert orchestration in kept_paths
+    assert old_worker not in kept_paths
+    assert old_rag not in kept_paths
+
+
+def test_keep_final_uses_orchestrated_retry_attempt_for_same_task() -> None:
+    agent = object.__new__(EvalAgent)
+    first_attempt = Path("worker_competitor_intelligence_attempt_1_task.json")
+    final_attempt = Path("worker_competitor_intelligence_attempt_2_task.json")
+    orchestration = Path("orchestration_result.json")
+    agent.loaded = [
+        (
+            first_attempt,
+            "worker",
+            {
+                "worker": "competitor_intelligence",
+                "task_id": "same-task",
+                "attempt": 1,
+                "findings": [{"finding_id": "first-finding"}],
+            },
+        ),
+        (
+            final_attempt,
+            "worker",
+            {
+                "worker": "competitor_intelligence",
+                "task_id": "same-task",
+                "attempt": 2,
+                "findings": [{"finding_id": "final-finding"}],
+            },
+        ),
+        (
+            orchestration,
+            "orchestration",
+            {
+                "plan": {"tasks": [{"task_id": "same-task"}]},
+                "results": [
+                    {
+                        "worker": "competitor_intelligence",
+                        "task_id": "same-task",
+                        "attempt": 2,
+                    }
+                ],
+            },
+        ),
+    ]
+
+    agent.keep_final()
+
+    kept_paths = {path for path, _, _ in agent.loaded}
+    assert final_attempt in kept_paths
+    assert first_attempt not in kept_paths
+    assert orchestration in kept_paths

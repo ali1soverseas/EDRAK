@@ -1,0 +1,636 @@
+{
+  "research_run_id": "842a8fb7165883afd9cdf53c045cb052",
+  "decision": {
+    "status": "verified",
+    "targeted_actions": [],
+    "summary": "38 of 41 findings are evidence-backed; 3 were insufficient and recorded for follow-up."
+  },
+  "findings": [
+    {
+      "finding_id": "ca4acb9f-5ec6-4fce-a040-06707d9694f8",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA describes its data‑center system‑level offerings under the DGX platform.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "21214a83-0362-4c8e-a341-3f8f5040b924"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "057b3cde-75ae-432e-9cf2-dfcc8646c975",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA’s public data‑center portfolio includes accelerated compute, data‑center systems, networking, AI software, and cloud access.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "21214a83-0362-4c8e-a341-3f8f5040b924"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ae52cb28-0fae-4c8e-af86-5e655a75570a",
+      "worker": "internal_intelligence",
+      "statement": "No approved internal NVIDIA information was supplied for product roadmap, launch dates, regional allocations, supply forecasts, or internal margins.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "eece2e0f-a6af-4c20-b978-dd640ec0bfcb"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "5039b7f4-e60a-4e1a-9abf-a92866a90fa3",
+      "worker": "internal_intelligence",
+      "statement": "The product launch planning document lists research categories such as AI compute component and data‑center system, but does not assert an approved NVIDIA roadmap.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e717d009-8aba-4923-81f4-fe7c640c6790"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "6df1404f-3b83-41b2-b6e5-d317c6dda39c",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom provides AI accelerator products, including its XPU series, the Jalapeño inference chip co‑developed with OpenAI, and the MTIA accelerator line developed with Meta. These silicon offerings are positioned as custom AI compute solutions for data‑center inference and training workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "e3e4a852-a574-4c4e-a7f3-b5b2e75d2e80",
+        "174492ce-7dd2-4030-9a3a-0361afafb764",
+        "0e48c3da-00f6-45e4-ac81-2f23c63c0702"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "f63d2320-4408-4673-8fcb-cc6fc0c5ea66",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel's current data‑center GPU portfolio for AI computing, VDI, and media workloads consists of the Intel® Data Center GPU Flex Series, including the Flex 140 and Flex 170 models, built on the Xe architecture.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "7effc249-2e54-46ee-b98f-fb982a321f01",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Flex 140 GPU incorporates 16 Xe cores and up to four Xe media engines in a 75 W, half‑height PCIe card, supports up to 62 virtual functions via SR‑IOV, and can deliver up to 256 TOPS of AI inference throughput.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "39ce66a8-a87d-48dc-a387-b2de74f19aad",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel lists recommended customer pricing for the Data Center GPU Flex Series (as of 11 Oct 2023) with no royalty or per‑seat licensing fees; actual system‑level cost varies based on server configuration and volume discounts are not disclosed.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "5975d449-214b-40dc-a272-b2926b3c6f61",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Flex 140 is offered in a 75 W, half‑height PCIe form factor, and Intel provides the GPU as a reference design for OEM integration into data‑center servers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e70bb5a2-5351-4709-8930-987abcf0b2a5",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom offers AI accelerator products under its XPU portfolio, including the custom XPU series, the Jalapeño LLM‑optimized intelligence processor co‑developed with OpenAI, and the MTIA accelerator line co‑developed with Meta.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "10d9ae00-5e3d-4e27-b024-2429c6354baf",
+        "012742ee-0867-4c5f-98d3-2c041b03c513",
+        "650ee508-6fe0-46a9-b79b-e5cebce10c4f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "7395f481-f097-4feb-9693-e59710d14c1b",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom: The 3.5D XDSiP (eXtreme Dimension System in Package) platform integrates more than 6,000 mm² of silicon and up to 12 high‑bandwidth memory (HBM) stacks; a face‑to‑face configuration combines four compute dies, one I/O die, and six HBM modules, delivering high‑bandwidth memory interfaces for AI training and inference workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "348e8d60-02ce-4a7a-88b2-eee4fb70c16a",
+        "8a0a018a-150d-4ba3-b5bc-bb1695739fde"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "a96fd67f-f366-41e5-9295-61d70329c69e",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom’s XPU accelerators are delivered in a 3.5D face‑to‑face (F2F) system‑in‑package form factor that bundles multiple compute dies with HBM modules; the company also provides reference designs, OEM kits, and integrated Ethernet networking solutions to enable customers to embed the XPU into servers and AI clusters.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "348e8d60-02ce-4a7a-88b2-eee4fb70c16a",
+        "97ecd2fc-909f-425c-a14a-c9d00266c942",
+        "7a556a75-906e-415d-a5af-aed309306bd0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "1fdec00b-aff9-4645-ae7f-203ed9a54d13",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Intel® Data Center GPU Flex Series also includes the Flex 170V model, expanding the portfolio beyond Flex 140 and Flex 170.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "cf21aceb-7f50-48e1-a31e-10281b976dab",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Flex 170 GPU provides 32 Xe cores, 16 GB of video RAM, 576 GB/s memory bandwidth, and can deliver up to 500 TOPS of AI inference throughput.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "4ecce037-a413-47b8-84a0-c2814e734895",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: The Flex 170 is offered as a 150 W, full‑height PCIe card, while the Flex 140 uses a 75 W, half‑height PCIe form factor; both are supplied as reference designs for OEM integration.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "56fc0293-34bd-4a98-977f-7943043ec1d8",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel announced the Intel® Data Center GPU Flex Series on 24 Aug 2022, describing it as an open GPU solution for the intelligent visual cloud that supports media streaming, cloud gaming, AI visual inference, and virtual desktop infrastructure workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "8627a85f-85c0-4eb4-9d96-f7fe40ea3053"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "a02b463b-e3dc-42b9-92dd-be27e5881d2b",
+      "worker": "competitor_intelligence",
+      "statement": "Presence in the target markets: compared with NVIDIA Corporation, Broadcom is narrower. Broadcom’s XPU, Jalapeño, and MTIA accelerators target data‑center AI training and inference workloads, giving it presence in the AI data‑center market but not in gaming or visualization.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "e3e4a852-a574-4c4e-a7f3-b5b2e75d2e80",
+        "174492ce-7dd2-4030-9a3a-0361afafb764",
+        "0e48c3da-00f6-45e4-ac81-2f23c63c0702"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "3b737c8e-5533-4bf5-9d02-2b17a97ac601",
+      "worker": "competitor_intelligence",
+      "statement": "Presence in the target markets: compared with NVIDIA Corporation, Intel Corp is comparable. Intel’s Data Center GPU Flex Series (Flex 140/170/170V) is aimed at AI, VDI and media workloads in data‑center environments, providing presence in the AI data‑center market similar to NVIDIA’s AI focus.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f",
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f",
+        "8627a85f-85c0-4eb4-9d96-f7fe40ea3053"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "40752194-f8b8-4f93-92c9-467e7c83d5af",
+      "worker": "competitor_intelligence",
+      "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Broadcom is narrower. Broadcom offers custom AI accelerators under the XPU brand, including the Jalapeño inference chip and MTIA line, delivered as system‑in‑package solutions for data‑center AI.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "e3e4a852-a574-4c4e-a7f3-b5b2e75d2e80",
+        "174492ce-7dd2-4030-9a3a-0361afafb764",
+        "0e48c3da-00f6-45e4-ac81-2f23c63c0702"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "f06c3e96-9f84-42bb-aaa4-47d25b774b4a",
+      "worker": "competitor_intelligence",
+      "statement": "Offering and localisation for those markets: compared with NVIDIA Corporation, Intel Corp is narrower. Intel provides the Data Center GPU Flex Series (Flex 140, Flex 170, Flex 170V) built on Xe architecture, supplied as PCIe cards for AI, VDI and media workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f",
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f",
+        "8627a85f-85c0-4eb4-9d96-f7fe40ea3053"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "077fb9d5-4d5b-4ce0-ac91-a06ecc72884d",
+      "worker": "competitor_intelligence",
+      "statement": "Pricing and packaging in those markets: compared with NVIDIA Corporation, Broadcom is different approach. Broadcom’s accelerators use a 3.5D face‑to‑face system‑in‑package form factor with reference designs; pricing details are not disclosed.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "348e8d60-02ce-4a7a-88b2-eee4fb70c16a",
+        "97ecd2fc-909f-425c-a14a-c9d00266c942",
+        "7a556a75-906e-415d-a5af-aed309306bd0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "51d2acf6-dc31-4116-9311-1cd4d6257382",
+      "worker": "competitor_intelligence",
+      "statement": "Pricing and packaging in those markets: compared with NVIDIA Corporation, Intel Corp is different approach. Intel’s Flex GPUs are offered as 75 W half‑height and 150 W full‑height PCIe cards with recommended customer pricing but no public list prices; packaging aligns with standard PCIe form factor.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f",
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "444362d7-a8d5-4938-9640-4973f93e7ad2",
+      "worker": "competitor_intelligence",
+      "statement": "Target customers and positioning: compared with NVIDIA Corporation, Broadcom is narrower. Broadcom positions its XPU family as custom compute solutions for large‑scale AI infrastructure, focusing on data‑center customers.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "e3e4a852-a574-4c4e-a7f3-b5b2e75d2e80",
+        "174492ce-7dd2-4030-9a3a-0361afafb764",
+        "0e48c3da-00f6-45e4-ac81-2f23c63c0702"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "9afc5b98-cb2d-4127-917e-2cf7d921480f",
+      "worker": "competitor_intelligence",
+      "statement": "Target customers and positioning: compared with NVIDIA Corporation, Intel Corp is narrower. Intel markets the Flex series as an open GPU solution for AI, virtual desktop infrastructure, and media workloads, aimed at data‑center OEMs and enterprise customers.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "8dc2b8ad-84b9-4a07-ba84-14c8a80b9c9f",
+        "9baabd6e-127e-40ad-9bd7-59c83eee674f",
+        "8627a85f-85c0-4eb4-9d96-f7fe40ea3053"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "a5d7091d-d389-42e3-8806-7aad1ce392eb",
+      "worker": "market_intelligence",
+      "statement": "The inference segment for data‑center GPUs is projected to grow at a high compound annual growth rate from 2025 to 2030, driven by increasing AI real‑time applications such as chatbots and recommendation engines.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "09fef05a-d70d-4a63-a011-e4fd25492f74"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "0cad8ce9-f6f0-45ef-af51-72590902d49a",
+      "worker": "market_intelligence",
+      "statement": "Advances in generative AI and AI model scaling are driving demand for high‑performance AI training GPUs in data centers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "4560861d-9c88-4ece-8b6c-796e0fd71044"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "531151f0-5ce3-459d-b53e-80e1156ef203",
+      "worker": "market_intelligence",
+      "statement": "Energy‑efficient inference acceleration and scalable multi‑GPU architectures are key technology drivers fueling NVIDIA GPU adoption in data centers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a7421a49-d0be-423e-a465-1954823d3624"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "eb75ccd3-31a7-4739-b0ef-235474455112",
+      "worker": "market_intelligence",
+      "statement": "NVIDIA is partnering with power electronics leaders ABB, Eaton, and Schneider Electric, and construction firm Bechtel to standardize the AI data‑center value chain, highlighting key buyer segments in power infrastructure and construction for AI data‑center deployments.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "7c5bbdf8-e514-4a6a-af2e-a9eb14d29b35"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "78eacb9c-fb57-4460-b6a4-01ae990f291c",
+      "worker": "market_intelligence",
+      "statement": "NVIDIA is directly investing billions of dollars in data‑center projects and acquiring operators such as Aligned Data Centers, demonstrating strong market momentum and ensuring guaranteed demand for its GPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e65c2f9a-35dd-4ee9-aac2-c8bfadae8095"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "35eade0a-a93e-4d8b-84a3-6af55e46878e",
+      "worker": "market_intelligence",
+      "statement": "Nvidia's supply chain is identified as a single point of failure, highlighting a critical bottleneck for GPU manufacturing and AI infrastructure.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "248ad6a0-24bd-4f23-a4f1-b169d931e306"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "26f36fd5-2ea5-4ad4-bd8b-5bda0a8b9640",
+      "worker": "market_intelligence",
+      "statement": "Geopolitical reshoring is prompting a multi‑trillion‑dollar investment shift from just‑in‑time to just‑in‑case manufacturing, reshaping global advanced‑node fab capacity that underpins GPU production.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "815f06c2-857e-4b00-a844-024fa6812d2a"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "5d65b0c5-4776-4c20-8baa-9d26ac2d70bd",
+      "worker": "market_intelligence",
+      "statement": "In 2023, NVIDIA held 65% of the data‑center AI chip market, while Intel captured 22%, highlighting NVIDIA’s dominant competitive position in AI GPUs versus Intel.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "aa01394b-dda2-4f1c-87c8-7090d2a63614"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "7a33891e-a30f-4628-9ac4-5026af213f8d",
+      "worker": "market_intelligence",
+      "statement": "By 2026, NVIDIA is estimated to control 75% to 81% of AI accelerator revenue, indicating a further widening gap over competitors such as Intel.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ad75963b-8661-4f21-890b-beba14c207a1"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "180b8ef7-088e-4ccd-95f9-0dd074a9ebb5",
+      "worker": "market_intelligence",
+      "statement": "The total addressable market for data‑center AI chips was $17.7 billion in 2023, providing a baseline for market size and growth potential.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ed9bcab3-4947-4e20-aa2e-1c0623d89d65"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "0cdf6ef9-a09f-4fb9-a418-4d75a1e88088",
+      "worker": "market_intelligence",
+      "statement": "To obtain a license for exporting the H200 to China, applicants must demonstrate that the shipment will not reduce global semiconductor production capacity for U.S. customers, that the Chinese purchaser has adopted export‑compliance procedures, and that the product has undergone independent third‑party testing in the United States, highlighting stringent licensing requirements affecting GPU sales.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "a8986e48-8c78-4785-8f92-73ec009f647e"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f1",
+      "worker": "customer_trends",
+      "statement": "Data‑center operators such as Aleria are planning deployments of Nvidia Blackwell and Vera Rubin GPUs to expand AI compute capacity in the US and UAE.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "75b3a0c1e8774190"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f2",
+      "worker": "customer_trends",
+      "statement": "A report of illegal Nvidia Blackwell Ultra B300 GPUs found in a state‑owned Chinese telecom network highlights supply‑chain security concerns for data‑center operators.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d7c31ca63fc50f53"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f3",
+      "worker": "customer_trends",
+      "statement": "Nvidia’s Minerva AI‑ops platform is positioned to help data‑center operators detect failing GPU components early, addressing the need for proactive cluster health monitoring.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "760698f66525d9f2",
+        "fd556b5eb333215f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f4",
+      "worker": "customer_trends",
+      "statement": "The share of voice metric shows 0 mentions for Broadcom and Intel, resulting in 0% share of voice for these competitors.",
+      "verification_status": "insufficient",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "1d4e8f5abb3ac99c",
+        "75b3a0c1e8774190"
+      ],
+      "contradictions": [],
+      "missing_information": [
+        "Claim quantity 0 is not in the saved source.",
+        "Claim includes details that are not in the saved source: 0 mentions; 0% share of voice"
+      ],
+      "confidence": 0.37
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f5",
+      "worker": "customer_trends",
+      "statement": "The language mix metric indicates that 96.5% of evidence items are in English while only 2.4% are in Arabic, limiting insight into Arabic‑speaking developer sentiment.",
+      "verification_status": "insufficient",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "1d4e8f5abb3ac99c"
+      ],
+      "contradictions": [],
+      "missing_information": [
+        "Worker confidence below 45%.",
+        "Claim quantity 2.4 is not in the saved source.",
+        "Claim quantity 96.5 is not in the saved source.",
+        "Claim includes details that are not in the saved source: 96.5%; 2.4%"
+      ],
+      "confidence": 0.29
+    },
+    {
+      "finding_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f6",
+      "worker": "customer_trends",
+      "statement": "The platform mix metric shows that 64.7% of evidence items come from web sources and 35.3% from news sources, with no social‑media or forum data, which limits visibility into real‑time developer discussions.",
+      "verification_status": "insufficient",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "1d4e8f5abb3ac99c",
+        "75b3a0c1e8774190",
+        "d7c31ca63fc50f53"
+      ],
+      "contradictions": [],
+      "missing_information": [
+        "Claim quantity 35.3 is not in the saved source.",
+        "Claim quantity 64.7 is not in the saved source.",
+        "Claim includes details that are not in the saved source: 64.7%; 35.3%"
+      ],
+      "confidence": 0.33
+    }
+  ],
+  "control_summary": {
+    "missing_information": [
+      "Claim quantity 0 is not in the saved source.",
+      "Claim includes details that are not in the saved source: 0 mentions; 0% share of voice",
+      "Worker confidence below 45%.",
+      "Claim quantity 2.4 is not in the saved source.",
+      "Claim quantity 96.5 is not in the saved source.",
+      "Claim includes details that are not in the saved source: 96.5%; 2.4%",
+      "Claim quantity 35.3 is not in the saved source.",
+      "Claim quantity 64.7 is not in the saved source.",
+      "Claim includes details that are not in the saved source: 64.7%; 35.3%",
+      "Specific R&D resource allocations and staffing levels for GPU development are not addressed.",
+      "Manufacturing capacity, supply forecasts, and production constraints are not quantified.",
+      "Exact product release dates, version numbers, or roadmap milestones are missing.",
+      "Quantitative market demand or adoption metrics for NVIDIA's data‑center offerings are absent.",
+      "[Broadcom] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Broadcom] Pricing model and disclosed list prices or tiered pricing for Broadcom’s GPU/accelerator offerings.",
+      "the social branch reported an error: the branch did not finish in 100 s",
+      "0 platform(s) have at least 20 items; at least 2 are needed",
+      "no search interest series was collected, so demand over time is unknown",
+      "2 item(s) in 'ar'; at least 10 are needed"
+    ],
+    "conflicts": [],
+    "failures": [],
+    "next_research_targets": [
+      "The share of voice metric shows 0 mentions for Broadcom and Intel, resulting in 0% share of voice for these competitors. — Claim quantity 0 is not in the saved source.",
+      "The language mix metric indicates that 96.5% of evidence items are in English while only 2.4% are in Arabic, limiting insight into Arabic‑speaking developer sentiment. — Worker confidence below 45%.",
+      "The platform mix metric shows that 64.7% of evidence items come from web sources and 35.3% from news sources, with no social‑media or forum data, which limits visibility into real‑time developer discussions. — Claim quantity 35.3 is not in the saved source.",
+      "Specific R&D resource allocations and staffing levels for GPU development are not addressed.",
+      "Manufacturing capacity, supply forecasts, and production constraints are not quantified.",
+      "Exact product release dates, version numbers, or roadmap milestones are missing.",
+      "Quantitative market demand or adoption metrics for NVIDIA's data‑center offerings are absent.",
+      "[Broadcom] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+      "[Broadcom] Pricing model and disclosed list prices or tiered pricing for Broadcom’s GPU/accelerator offerings.",
+      "the social branch reported an error: the branch did not finish in 100 s",
+      "0 platform(s) have at least 20 items; at least 2 are needed",
+      "no search interest series was collected, so demand over time is unknown",
+      "2 item(s) in 'ar'; at least 10 are needed"
+    ]
+  },
+  "metadata": {
+    "workers": [
+      "internal_intelligence",
+      "competitor_intelligence",
+      "market_intelligence",
+      "customer_trends"
+    ],
+    "finding_count": 41,
+    "verified_count": 38,
+    "insufficient_count": 3,
+    "completed_at": "2026-10-23T19:51:11.522752+00:00"
+  },
+  "completed_at": "2026-10-23T19:51:11.522804Z"
+}

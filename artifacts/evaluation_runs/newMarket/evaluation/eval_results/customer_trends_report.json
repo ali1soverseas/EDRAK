@@ -1,0 +1,1865 @@
+{
+  "agent": "customer_trends",
+  "generated_at_utc": "2026-10-23T20:34:24.177665+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_customer_trends_attempt_1_ce37e3e5-f79.json",
+      "metrics": {
+        "status": "partial",
+        "units": 6,
+        "units_flagged": 6,
+        "faithfulness_tested": 6,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 6,
+        "relevancy_avg": 0.9167,
+        "relevancy_pass_pct": 100.0,
+        "insight_tested": 6,
+        "insight_avg": 0.3781,
+        "insight_pass_pct": 16.67,
+        "context_relevancy_tested": 6,
+        "context_relevancy_avg": 0.0794,
+        "context_relevancy_pass_pct": 0.0,
+        "judge_errors": 0
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "partial",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.4523,
+            "reason": "The output shows initial tool failures with 'provider_exhausted' errors for search_interest attempts, but subsequent tools (reviews_fetch and news_coverage) succeeded without fallback usage. However, there is no evidence of retries after failures or fallback triggers, which indicates incomplete handling of failures and retries as per the evaluation steps."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6562,
+            "reason": "The output includes multiple tool calls relevant to gathering insights on customer needs, sentiment, purchasing criteria, and pain points for AI developers and data-center operators regarding GPUs. However, the first two 'search_interest' calls both resulted in errors due to 'provider_exhausted', indicating redundant attempts without new information. The subsequent 'reviews_fetch' and 'news_coverage' calls successfully gathered data, showing a reasonable balance between thoroughness and efficiency. Overall, the execution trace avoids unnecessary repetition beyond the initial failed calls and collects sufficient data to address the input task."
+          }
+        },
+        "metrics": {
+          "calls": 33,
+          "errors": 5,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "geo",
+                "keywords",
+                "timeframe"
+              ],
+              "argument_types": {
+                "geo": "NoneType",
+                "keywords": "list",
+                "timeframe": "str"
+              },
+              "latency_ms": 1903.8018,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "geo": null,
+                "keywords": [
+                  "NVIDIA GPU",
+                  "NVIDIA RTX",
+                  "Intel GPU",
+                  "Broadcom AI",
+                  "GPU pricing"
+                ],
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "granularity",
+                "include_related",
+                "keywords",
+                "languages",
+                "max_results",
+                "since",
+                "timeframe",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "granularity": "str",
+                "include_related": "bool",
+                "keywords": "list",
+                "languages": "list",
+                "max_results": "int",
+                "since": "str",
+                "timeframe": "str",
+                "until": "str"
+              },
+              "latency_ms": 788.1624,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "granularity": "",
+                "include_related": true,
+                "keywords": [
+                  "NVIDIA GPU",
+                  "NVIDIA RTX",
+                  "Intel GPU",
+                  "Broadcom AI",
+                  "GPU pricing"
+                ],
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 5,
+                "since": "",
+                "timeframe": "today 12-m",
+                "until": ""
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 19387.1452,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforce.experience"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "gdelt",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 16625.0023,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA data center GPU news",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 2517.1917,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "NVIDIA GeForce Experience Android app package name",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 24393.6586,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "AI GPU market trends",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 58673.969,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "x",
+                "query": "NVIDIA GPU review",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 38929.3806,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Android app Google Play",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 1344.5312,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience app Google Play store",
+                "search_type": "web"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1131.4423,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Google Play package name"
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 2671.5757,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "app_store",
+                "target_id_or_url": "com.nvidia.geforcenow"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 25045.1192,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Broadcom",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "Broadcom AI chip announcement",
+                "since": "",
+                "source": "gdelt",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1542.6791,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 2
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience app Google Play store package name NVIDIA"
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str"
+              },
+              "latency_ms": 1413.2492,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce Experience Android",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "GeForce Experience Android app package"
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 2720.2748,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "NVIDIA data center GPU news",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "news_coverage",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "query",
+                "since",
+                "source",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "query": "str",
+                "since": "str",
+                "source": "str",
+                "until": "str"
+              },
+              "latency_ms": 3109.5338,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "query": "Intel GPU roadmap",
+                "since": "",
+                "source": "google_news",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 986.7447,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "en"
+                ],
+                "max_results": 10,
+                "num": 10,
+                "query": "NVIDIA data center GPU pricing",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "num",
+                "query",
+                "search_type",
+                "since",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "num": "int",
+                "query": "str",
+                "search_type": "str",
+                "since": "str",
+                "until": "str"
+              },
+              "latency_ms": 3270.9913,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 10,
+                "num": 10,
+                "query": "سعر GPU نيفيديا مراكز البيانات",
+                "search_type": "web",
+                "since": "",
+                "until": ""
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "hashtags",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "hashtags": "list",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 38992.8683,
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "",
+                "hashtags": [],
+                "languages": [
+                  "en"
+                ],
+                "max_results": 30,
+                "platform": "reddit",
+                "query": "NVIDIA GPU review",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "analyze_text",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "batch_ids",
+                "max_items"
+              ],
+              "argument_types": {
+                "batch_ids": "list",
+                "max_items": "int"
+              },
+              "latency_ms": 15550.8327,
+              "result_summary": {
+                "collection_counts": {
+                  "themes": 15
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "analyzed",
+                  "count",
+                  "languages",
+                  "sentiment",
+                  "status",
+                  "themes",
+                  "themes_total",
+                  "total_items"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "batch_ids": [
+                  "b_cca3f41a1485",
+                  "b_81ed96ede448",
+                  "b_b0776dab2a47",
+                  "b_3381aebe12d9",
+                  "b_d0154d072f3f",
+                  "b_4dfa9fd1ed70"
+                ],
+                "max_items": 200
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 10.6773,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "volume_over_time"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 7.7944,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "platform_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 6.573,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "language_mix"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 7.3343,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "engagement_stats"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric",
+                "params"
+              ],
+              "argument_types": {
+                "metric": "str",
+                "params": "dict"
+              },
+              "latency_ms": 15.3855,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 13,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "share_of_voice",
+                "params": {
+                  "competitors": [
+                    "Broadcom",
+                    "Intel Corp"
+                  ],
+                  "entity": "NVIDIA Corporation"
+                }
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.6334,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 8,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {},
+                "limit": 8,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 4.6517,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "GeForce NOW Android download"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.9269,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "geforce experience replacement"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.296,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "Google Play services"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.0867,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "android package name registration"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 6.6445,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "cloud gaming mobile"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 5.0561,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "geforce now app update"
+                },
+                "limit": 3,
+                "sample": "top"
+              }
+            },
+            {
+              "tool": "submit_findings",
+              "worker": "customer_trends",
+              "task_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "findings"
+              ],
+              "argument_types": {
+                "findings": "list"
+              },
+              "latency_ms": 17.4983,
+              "result_summary": {
+                "collection_counts": {
+                  "accepted": 6,
+                  "adjusted": 3
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "accepted",
+                  "adjusted",
+                  "count",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "truncated": true,
+                "serialized_length": 3119
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "control_summary.findings_count matches findings",
+          "passed": true,
+          "detail": "summary=6 actual=6",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.15",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments can be validated against schemas",
+          "passed": false,
+          "detail": "no per-call argument schema supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "workflow sequence is assessable",
+          "passed": false,
+          "detail": "no expected_sequence/workflow_sequence supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "tool failures are handled or explicitly surfaced",
+          "passed": false,
+          "detail": "5 unhandled failure(s) across news_coverage=2, search_interest=2, social_search=1",
+          "severity": "warn"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f1",
+          "statement": "Data‑center operators such as Aleria are planning deployments of Nvidia Blackwell and Vera Rubin GPUs to expand AI compute capacity in the US and UAE.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f2",
+          "statement": "A report of illegal Nvidia Blackwell Ultra B300 GPUs found in a state‑owned Chinese telecom network highlights supply‑chain security concerns for data‑center operators.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f3",
+          "statement": "Nvidia’s Minerva AI‑ops platform is positioned to help data‑center operators detect failing GPU components early, addressing the need for proactive cluster health monitoring.",
+          "flags": [
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f4",
+          "statement": "The share of voice metric shows 0 mentions for Broadcom and Intel, resulting in 0% share of voice for these competitors.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f5",
+          "statement": "The language mix metric indicates that 96.5% of evidence items are in English while only 2.4% are in Arabic, limiting insight into Arabic‑speaking developer sentiment.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce37e3e5-f799-481d-882b-7dbc6883ee66:f6",
+          "statement": "The platform mix metric shows that 64.7% of evidence items come from web sources and 35.3% from news sources, with no social‑media or forum data, which limits visibility into real‑time developer discussions.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#F4F3EE">
+<meta name="theme-color" content="#F4F5F7">
 <meta name="description" content="Quality, integrity and observability results for the EDRAK multi-agent competitive-intelligence pipeline.">
 <title>Evaluation · Edrak</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 172 232%27%3E%3Cg stroke=%27%230B0D38%27 stroke-width=%2710%27%3E%3Cpath d=%27M85.7 143V81M85.7 143v62M85.7 143H23.7M85.7 143h62M85.7 143L37.7 95M85.7 143l48-48M85.7 143l-48 48M85.7 143l48 48%27/%3E%3C/g%3E%3Ccircle cx=%2785.7%27 cy=%27143%27 r=%2720%27 fill=%27%230B0D38%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;1,400&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -46,6 +46,19 @@
   <span id="top-judge" class="chip c-blue">Judge model unavailable</span>
 </header>
 
+<nav class="stagebar" aria-label="Pipeline stages">
+  <div class="wrap">
+    <ol class="sb-track">
+      <li><a class="sb-item" data-stage="orchestration" href="#pipeline"><span class="sb-num" aria-hidden="true">1</span><span class="sb-text"><b>Orchestrator</b><small class="sb-state">Awaiting run</small></span></a></li>
+      <li><a class="sb-item" data-stage="workers" href="#pipeline"><span class="sb-num" aria-hidden="true">2</span><span class="sb-text"><b>Workers</b><small class="sb-state">Awaiting run</small></span></a></li>
+      <li><a class="sb-item" data-stage="rag" href="#pipeline"><span class="sb-num" aria-hidden="true">3</span><span class="sb-text"><b>RAG</b><small class="sb-state">Awaiting run</small></span></a></li>
+      <li><a class="sb-item" data-stage="verification" href="#pipeline"><span class="sb-num" aria-hidden="true">4</span><span class="sb-text"><b>Verification</b><small class="sb-state">Awaiting run</small></span></a></li>
+      <li><a class="sb-item" data-stage="cross_signal" href="#pipeline"><span class="sb-num" aria-hidden="true">5</span><span class="sb-text"><b>Cross signal</b><small class="sb-state">Awaiting run</small></span></a></li>
+      <li><a class="sb-item" data-stage="decision" href="#pipeline"><span class="sb-num" aria-hidden="true">6</span><span class="sb-text"><b>Decision</b><small class="sb-state">Awaiting run</small></span></a></li>
+    </ol>
+  </div>
+</nav>
+
 <main id="main">
 
 <!-- ============================ OVERVIEW ============================ -->
@@ -72,7 +85,6 @@
     <div class="stack">
       <div class="kpis">
         <div class="kpi mid"><div class="label">Integrity checks passed</div><div class="value">64 / 68</div><div class="note">4 deterministic failures</div></div>
-        <div class="kpi good"><div class="label">Pipeline traceability</div><div class="value">6 / 6</div><div class="note">decision → signal → finding → evidence</div></div>
         <div class="kpi"><div class="label">Quality warnings</div><div class="value">27</div><div class="note">across 14 files</div></div>
       </div>
 

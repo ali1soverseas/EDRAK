@@ -1,6 +1,6 @@
 {
   "agent": "cross_signal",
-  "generated_at_utc": "2026-10-22T21:52:31.210092+00:00",
+  "generated_at_utc": "2026-10-23T14:15:04.083849+00:00",
   "model": "gpt-4.1-mini",
   "dry_run": false,
   "thresholds": {
@@ -11,30 +11,11 @@
   "files": [
     {
       "file": "cross_signal.json",
-      "metrics_used": [
-        "faithfulness",
-        "relevancy",
-        "insight"
-      ],
       "metrics": {
         "status": "completed",
-        "signals": 6,
-        "avg_supporting_findings": 2.8333,
-        "support_resolution_pct": 100.0,
-        "verified_findings_used": 13,
-        "verified_findings_available": 39,
-        "finding_usage_pct": 33.33,
-        "signals_single_worker_support": 2,
-        "signals_on_unverified_findings": 0,
-        "signals_entity_not_in_support": 0,
-        "signals_confidence_exceeds_support": 1,
-        "signals_with_evidence_gaps": 6,
-        "avg_signal_confidence": 0.8217,
         "signal_types": "convergence=1, dependency=1, gap=1, momentum=2, timing=1",
-        "discarded_missing_support": 0,
-        "discarded_insufficient_support": 2,
         "units": 6,
-        "units_flagged": 2,
+        "units_flagged": 1,
         "faithfulness_tested": 6,
         "faithfulness_avg": 0.9444,
         "faithfulness_pass_pct": 83.33,
@@ -42,8 +23,8 @@
         "relevancy_avg": 0.9286,
         "relevancy_pass_pct": 100.0,
         "insight_tested": 6,
-        "insight_avg": 0.7398,
-        "insight_pass_pct": 83.33,
+        "insight_avg": 0.783,
+        "insight_pass_pct": 100.0,
         "judge_errors": 0
       },
       "checks": [
@@ -127,14 +108,6 @@
         }
       ],
       "flagged_units": [
-        {
-          "unit_type": "signal",
-          "unit_id": "0467adf1-95db-42b8-a9d7-5673796e6424",
-          "statement": "Intel's launch of Xeon processors with AMX, Arc Pro B70 GPU, and Core Ultra 3 series coincides with active marketing at CES 2026, OCP 2026, and Computex 2026, indicating a coordinated timing of product and market push against NVIDIA.",
-          "flags": [
-            "no_added_insight"
-          ]
-        },
         {
           "unit_type": "signal",
           "unit_id": "d0bccdc8-5971-479c-80b4-f0dc30631033",

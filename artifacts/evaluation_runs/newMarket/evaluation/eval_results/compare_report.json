@@ -1,0 +1,307 @@
+{
+  "ground_truth": "nvidia_new_markets_inputs",
+  "run_bundle": "newMarket",
+  "method": "llm judge (gpt-5.1)",
+  "workers": {
+    "competitor_intelligence": {
+      "truth_items": 9,
+      "matched": 7,
+      "recall": 0.778,
+      "alignment": 0.8,
+      "f1": 0.789,
+      "volume_ratio": 2.22,
+      "not_covered": [
+        {
+          "item": "Broadcom publishes pricing for its AI computing and networking offerings, so its price points can be benchmarked against NVIDIA.",
+          "reason": "rescued: System explicitly says Broadcom pricing details are not disclosed",
+          "verdict": "contradicts"
+        },
+        {
+          "item": "Intel and Broadcom are expanding into emerging markets through regional partnerships and announcements.",
+          "reason": "No mention of regional or emerging‑market expansion activities",
+          "verdict": "none"
+        }
+      ]
+    },
+    "customer_trends": {
+      "truth_items": 6,
+      "matched": 2,
+      "recall": 0.333,
+      "alignment": 0.333,
+      "f1": 0.333,
+      "volume_ratio": 1.0,
+      "not_covered": [
+        {
+          "item": "Cloud service providers and AI developers show strong and rising search interest in AI computing platforms.",
+          "reason": "No mention of rising search interest or cloud providers",
+          "verdict": "none"
+        },
+        {
+          "item": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
+          "reason": "No reference to sovereign or locally hosted AI demand",
+          "verdict": "none"
+        },
+        {
+          "item": "Customer sentiment toward NVIDIA is largely positive, with recurring complaints about price and availability.",
+          "reason": "No customer sentiment toward Nvidia, price, or availability discussed",
+          "verdict": "none"
+        },
+        {
+          "item": "Some customers prefer owned infrastructure, others hosted capacity or managed cloud services, which affects go-to-market choices.",
+          "reason": "No mention of preferences for owned vs hosted infrastructure",
+          "verdict": "none"
+        }
+      ]
+    },
+    "internal_intelligence": {
+      "truth_items": 6,
+      "matched": 1,
+      "recall": 0.167,
+      "alignment": 0.25,
+      "f1": 0.2,
+      "volume_ratio": 0.67,
+      "not_covered": [
+        {
+          "item": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
+          "reason": "No mention of headcount, team capacity, or market concurrency",
+          "verdict": "none"
+        },
+        {
+          "item": "NVIDIA's own price list for its AI computing offerings sets the baseline against which entry pricing in new markets must be judged.",
+          "reason": "Nothing about NVIDIA price lists or pricing baselines",
+          "verdict": "none"
+        },
+        {
+          "item": "Entering a new geographic market requires deployment readiness, including data-center power, cooling and supply availability.",
+          "reason": "No reference to deployment readiness, power, cooling, or supply",
+          "verdict": "none"
+        },
+        {
+          "item": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
+          "reason": "No content on local cloud or systems-integration partners",
+          "verdict": "none"
+        },
+        {
+          "item": "Product and platform gaps, such as missing local hosting, compliance or packaging options, constrain entry into some markets.",
+          "reason": "No mention of product gaps, local hosting, compliance, or packaging",
+          "verdict": "none"
+        }
+      ]
+    },
+    "market_intelligence": {
+      "truth_items": 8,
+      "matched": 6,
+      "recall": 0.75,
+      "alignment": 0.545,
+      "f1": 0.632,
+      "volume_ratio": 1.38,
+      "not_covered": [
+        {
+          "item": "Adoption of AI computing differs widely by region, and many emerging markets still have low penetration.",
+          "reason": "No mention of regional adoption or emerging markets",
+          "verdict": "none"
+        },
+        {
+          "item": "Data-protection and data-residency rules shape how AI computing can be deployed in regulated sectors such as finance and health.",
+          "reason": "No coverage of data‑protection or residency regulation impacts",
+          "verdict": "none"
+        }
+      ]
+    }
+  },
+  "verification": {
+    "truth_items": 29,
+    "matched": 19,
+    "recall": 0.655,
+    "alignment": 0.763,
+    "f1": 0.705,
+    "volume_ratio": 1.31,
+    "not_covered": [
+      {
+        "item": "NVIDIA's delivery capacity, such as headcount and team capacity for a new-market initiative, bounds how many markets it can enter at once.",
+        "reason": "No mention of NVIDIA headcount or capacity limiting market entries",
+        "verdict": "none"
+      },
+      {
+        "item": "Strength of local cloud and systems-integration partners is a precondition for market entry.",
+        "reason": "No discussion of local cloud or SI partner strength as precondition",
+        "verdict": "none"
+      },
+      {
+        "item": "Broadcom publishes pricing for its AI computing and networking offerings, so its price points can be benchmarked against NVIDIA.",
+        "reason": "rescued: Candidate 20 explicitly says Broadcom pricing details are not disclosed.",
+        "verdict": "contradicts"
+      },
+      {
+        "item": "Intel and Broadcom are expanding into emerging markets through regional partnerships and announcements.",
+        "reason": "No mention of Intel or Broadcom expanding via regional partnerships or announcements",
+        "verdict": "none"
+      },
+      {
+        "item": "Adoption of AI computing differs widely by region, and many emerging markets still have low penetration.",
+        "reason": "No regional adoption or penetration comparisons across markets",
+        "verdict": "none"
+      },
+      {
+        "item": "Data-protection and data-residency rules shape how AI computing can be deployed in regulated sectors such as finance and health.",
+        "reason": "No data‑protection or residency rules discussed",
+        "verdict": "none"
+      },
+      {
+        "item": "Cloud service providers and AI developers show strong and rising search interest in AI computing platforms.",
+        "reason": "No search‑interest or similar demand‑signal data provided",
+        "verdict": "none"
+      },
+      {
+        "item": "Customers in many emerging markets want locally hosted or sovereign AI compute because of data-residency concerns.",
+        "reason": "No mention of sovereign or locally hosted AI compute demand",
+        "verdict": "none"
+      },
+      {
+        "item": "Customer sentiment toward NVIDIA is largely positive, with recurring complaints about price and availability.",
+        "reason": "No customer sentiment toward NVIDIA, only adoption drivers and bottlenecks",
+        "verdict": "none"
+      },
+      {
+        "item": "NVIDIA has a larger share of voice in customer discussion of AI computing than Intel or Broadcom.",
+        "reason": "No share‑of‑voice or discussion volume metrics",
+        "verdict": "none"
+      }
+    ]
+  },
+  "cross_signal": {
+    "truth_items": 5,
+    "matched": 3,
+    "recall": 0.6,
+    "alignment": 1.0,
+    "f1": 0.75,
+    "volume_ratio": 1.2,
+    "not_covered": [
+      {
+        "item": "Competitor activity in emerging markets creates a timing risk Intel and Broadcom are already expanding into emerging markets, so a late NVIDIA entry could lose early adopters.",
+        "reason": "System items lack emerging‑market or late‑entry discussion",
+        "verdict": "none"
+      },
+      {
+        "item": "Export-control and data-residency rules change which markets are open Export controls and data-residency rules decide market access and the deployment model NVIDIA can offer.",
+        "reason": "Export controls and data residency not discussed anywhere",
+        "verdict": "none"
+      }
+    ]
+  },
+  "decision": {
+    "executive_summary": {
+      "truth_items": 3,
+      "matched": 1,
+      "recall": 0.333,
+      "alignment": 1.0,
+      "f1": 0.5,
+      "volume_ratio": 0.33,
+      "not_covered": [
+        {
+          "item": "Market access depends on export-control status, data-residency rules and deployment readiness.",
+          "reason": "No mention of export controls, data residency, or deployment readiness factors",
+          "verdict": "none"
+        },
+        {
+          "item": "Speed matters because Intel and Broadcom are already expanding into emerging markets.",
+          "reason": "No reference to competitors, Intel, Broadcom, or speed imperative",
+          "verdict": "none"
+        }
+      ]
+    },
+    "opportunities": {
+      "truth_items": 4,
+      "matched": 3,
+      "recall": 0.75,
+      "alignment": 0.75,
+      "f1": 0.75,
+      "volume_ratio": 3.0,
+      "not_covered": [
+        {
+          "item": "Serve regulated sectors with private AI inference Target finance and other regulated sectors that need private, data-resident inference.",
+          "reason": "No item targets regulated sectors or private, data‑resident inference",
+          "verdict": "none"
+        }
+      ]
+    },
+    "risks": {
+      "truth_items": 4,
+      "matched": 0,
+      "recall": 0.0,
+      "alignment": 0.0,
+      "f1": 0.0,
+      "volume_ratio": 1.5,
+      "not_covered": [
+        {
+          "item": "Late entry loses early adopters to Intel and Broadcom Rival announcements and partnerships may lock in early customers.",
+          "reason": "No mention of competitors, early adopters, or rival lock‑in",
+          "verdict": "none"
+        },
+        {
+          "item": "Export-control and licensing restrictions block or delay a market Regulation may limit which products can be sold in a target market.",
+          "reason": "No reference to regulation, export controls, or licensing limits",
+          "verdict": "none"
+        },
+        {
+          "item": "Power and cooling readiness delay deployments Local data-center infrastructure may not support high-density AI hardware on time.",
+          "reason": "No discussion of power, cooling, or data‑center infrastructure readiness",
+          "verdict": "none"
+        },
+        {
+          "item": "Price competition erodes margins Lower-priced rival offerings may force price concessions.",
+          "reason": "No mention of pricing pressure, rivals’ prices, or margin erosion",
+          "verdict": "none"
+        }
+      ]
+    },
+    "recommended_actions": {
+      "truth_items": 7,
+      "matched": 3,
+      "recall": 0.429,
+      "alignment": 0.286,
+      "f1": 0.343,
+      "volume_ratio": 3.0,
+      "not_covered": [
+        {
+          "item": "Shortlist target markets using market size, growth, adoption and regulation Rank candidate markets on size, growth, adoption and regulatory openness.",
+          "reason": "System does not address market selection or ranking at all",
+          "verdict": "none"
+        },
+        {
+          "item": "Confirm export-control and licensing status per shortlisted market Check official rules for each shortlisted market before committing.",
+          "reason": "No items discuss export controls, licensing, or legal checks",
+          "verdict": "none"
+        },
+        {
+          "item": "Audit deployment readiness in shortlisted markets Assess power, cooling and supply readiness with local operators.",
+          "reason": "No mention of deployment readiness, power, cooling, or facilities",
+          "verdict": "none"
+        },
+        {
+          "item": "Design a private or sovereign hosted offering for regulated sectors Package compliant, locally hosted inference for regulated customers.",
+          "reason": "No design of sovereign or regulated‑sector hosted offerings",
+          "verdict": "none"
+        }
+      ]
+    },
+    "options": {
+      "truth_items": 3,
+      "matched": 3,
+      "recall": 1.0,
+      "alignment": 0.333,
+      "f1": 0.5,
+      "volume_ratio": 1.0,
+      "not_covered": []
+    }
+  },
+  "overview": {
+    "mean_recall": 0.566,
+    "mean_alignment": 0.588,
+    "mean_f1": 0.542,
+    "pooled_recall": 0.591,
+    "stages_with_zero_recall": [
+      "decision/risks"
+    ]
+  }
+}

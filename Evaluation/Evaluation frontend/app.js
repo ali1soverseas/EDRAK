@@ -18,7 +18,7 @@
   // "context_relevancy" -> "Context relevancy"
   const humanize = (s) => {
     const t = String(s ?? "").replace(/_/g, " ").trim();
-    return t.charAt(0).toUpperCase() + t.slice(1);
+    return (t.charAt(0).toUpperCase() + t.slice(1)).replace(/^Rag\b/, "RAG");
   };
   const metricDisplayValue = (key, value) => {
     if (value == null) return /(^|_)error($|_)/i.test(key) ? "None" : "Not available";
@@ -28,41 +28,22 @@
   // "workers/competitor_intelligence" -> "Workers · Competitor intelligence"
   const stageName = (n) => String(n).split("/").map(humanize).join(" · ");
 
-  const KPI_STATUS = { good: "Good", mid: "Needs attention", bad: "Problem" };
-  const kpi = (label, value, note, cls) =>
-    `<div class="kpi ${cls || ""}"><div class="label">${esc(label)}</div>` +
-    `<div class="value">${esc(value)}</div><div class="note">${esc(note || "")}</div>` +
-    (KPI_STATUS[cls] ? `<span class="sr">Status: ${KPI_STATUS[cls]}</span>` : "") + `</div>`;
-
-  // Small tile used for per-metric values (replaces plain "label: value" lists)
-  const kv = (label, value, note) =>
-    `<div class="kv"><span>${esc(label)}</span><b>${esc(value)}</b>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
-
-  // Thin proportional bar used inside table cells
-  const meter = (v, cls) =>
-    isNum(v) ? `<span class="meter ${cls || ""}"><i style="width:${Math.max(0, Math.min(100, v * 100))}%"></i></span>` : "";
-
-  // ---------- Data access ----------
-  async function get(path) {
-    const comparisonMatch = path.match(/^\/comparisons\/([^/]+)$/);
-    if (comparisonMatch && uploadedComparisons.has(decodeURIComponent(comparisonMatch[1]))) {
-      return uploadedComparisons.get(decodeURIComponent(comparisonMatch[1]));
+  function openUploadDb() {
+    if (!("indexedDB" in window)) return Promise.reject(new Error("This browser does not support persistent uploaded runs."));
+    if (!uploadDbPromise) {
+      uploadDbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(UPLOAD_DB, 1);
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains("runs")) {
+            request.result.createObjectStore("runs", { keyPath: "id" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("Could not open uploaded-run storage."));
+        request.onblocked = () => reject(new Error("Uploaded-run storage is blocked by another open dashboard tab."));
+      });
     }
-    const url = API ? API + path : "data" + path + ".json";
-    let r;
-    try {
-      r = await fetch(url, API ? { credentials: "include" } : undefined);
-    } catch (e) {
-      throw new Error(
-        API
-          ? "Couldn't reach the backend at " + LIVE + ". Check the URL and that the server is running."
-          : "Couldn't load the data files. Open this page through a web server (not file://) and make sure the data folder exists."
-      );
-    }
-    if (r.status === 401) throw new Error("Not signed in to the backend. Sign in to the EDRAK app in this browser, then reload.");
-    if (r.status === 404 && !API) throw new Error("No snapshot data found (data" + path + ".json).");
-    if (!r.ok) throw new Error("Request failed (" + r.status + ").");
-    return r.json();
+    return uploadDbPromise;
   }
 
   function renderSidebarSavedRuns() {
@@ -89,40 +70,6 @@
       item.append(button);
       list.append(item);
     });
-  }
-
-  // ---------- UI helpers ----------
-  // kind: "loading" | "error" | "info" | "ok" | "" (clears)
-  function setStatus(el, kind, text) {
-    el.className = "status" + (kind ? " " + kind : "");
-    el.textContent = text || "";
-  }
-
-  function fill(select, items, label, emptyText) {
-    select.innerHTML = items.length
-      ? items.map((i) => `<option value="${esc(i.value)}">${esc(label(i))}</option>`).join("")
-      : `<option value="">${esc(emptyText || "Nothing available")}</option>`;
-    select.disabled = items.length === 0;
-  }
-
-  const tableBox = (tableId) => $(tableId).parentElement;
-
-  function openUploadDb() {
-    if (!("indexedDB" in window)) return Promise.reject(new Error("This browser does not support persistent uploaded runs."));
-    if (!uploadDbPromise) {
-      uploadDbPromise = new Promise((resolve, reject) => {
-        const request = indexedDB.open(UPLOAD_DB, 1);
-        request.onupgradeneeded = () => {
-          if (!request.result.objectStoreNames.contains("runs")) {
-            request.result.createObjectStore("runs", { keyPath: "id" });
-          }
-        };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error || new Error("Could not open uploaded-run storage."));
-        request.onblocked = () => reject(new Error("Uploaded-run storage is blocked by another open dashboard tab."));
-      });
-    }
-    return uploadDbPromise;
   }
 
   async function readSavedUploads() {
@@ -165,8 +112,7 @@
       select.add(new Option(`Uploaded · ${record.run.label}${savedAt ? ` · ${savedAt}` : ""}`, record.id));
     }
     record.comparisons.forEach((comparison, index) => {
-      const id = `${record.id}-comparison-${index + 1}`;
-      uploadedComparisons.set(id, comparison);
+      uploadedComparisons.set(`${record.id}-comparison-${index + 1}`, comparison);
     });
     addUploadedComparisonOptions();
     renderSidebarSavedRuns();
@@ -195,6 +141,119 @@
     if (button) button.disabled = !uploadedRuns.has($("run-select").value);
   }
 
+  const KPI_STATUS = { good: "Good", mid: "Needs attention", bad: "Problem" };
+  const kpi = (label, value, note, cls) =>
+    `<div class="kpi ${cls || ""}"><div class="label">${esc(label)}</div>` +
+    `<div class="value">${esc(value)}</div><div class="note">${esc(note || "")}</div>` +
+    (KPI_STATUS[cls] ? `<span class="sr">Status: ${KPI_STATUS[cls]}</span>` : "") + `</div>`;
+
+  // Small tile used for per-metric values (replaces plain "label: value" lists)
+  const kv = (label, value, note) =>
+    `<div class="kv"><span>${esc(label)}</span><b>${esc(value)}</b>${note ? `<small>${esc(note)}</small>` : ""}</div>`;
+
+  // Thin proportional bar used inside table cells
+  const meter = (v, cls) =>
+    isNum(v) ? `<span class="meter ${cls || ""}"><i style="width:${Math.max(0, Math.min(100, v * 100))}%"></i></span>` : "";
+
+  // ---------- Pipeline stage bar (shown on Overview and Pipeline) ----------
+  // Order here is the order of the bar: Orchestrator, Workers, RAG, Verification, Cross signal, Decision.
+  const PIPELINE_STAGES = [
+    ["orchestration", "Orchestrator", /^orchestrat/i],
+    ["workers", "Workers", /^(workers?|competitor_intelligence|internal_intelligence|market_intelligence|customer_trends)$/i],
+    ["rag", "RAG", /^rag/i],
+    ["verification", "Verification", /^verif/i],
+    ["cross_signal", "Cross signal", /^cross/i],
+    ["decision", "Decision", /^decision/i],
+  ];
+  const isVisibleEvaluationAgent = (agent) =>
+    !["metrics", "telemetry"].includes(String(agent || "").toLowerCase());
+  // Order of the report cards on the Pipeline page: Orchestrator and RAG sit next to each other.
+  const AGENT_ORDER = ["orchestration", "rag", "workers", "verification", "cross_signal", "decision"];
+  function agentRank(agent) {
+    const stage = PIPELINE_STAGES.find(([, , test]) => test.test(String(agent.agent || "")));
+    const rank = stage ? AGENT_ORDER.indexOf(stage[0]) : -1;
+    return rank < 0 ? AGENT_ORDER.length : rank;
+  }
+
+  // Colours each stage from the integrity checks already in the run (no new metrics).
+  function updateStageBar(agents) {
+    document.querySelectorAll(".sb-item").forEach((item) => {
+      const stage = PIPELINE_STAGES.find(([key]) => key === item.dataset.stage);
+      const matched = stage ? agents.filter((a) => stage[2].test(String(a.agent || ""))) : [];
+      const checks = matched.flatMap((a) => (a.file_details || []).flatMap((f) => f.checks || []));
+      const failedN = checks.filter((c) => c.passed !== true && c.severity === "error").length;
+      const warnedN = checks.filter((c) => c.passed !== true && c.severity !== "error").length;
+      const tone = !matched.length ? "" : failedN ? "err" : warnedN ? "warn" : "ok";
+      const text = !matched.length ? (agents.length ? "Not in this run" : "Awaiting run")
+        : failedN ? "Failed checks" : warnedN ? "Warnings only" : "All checks passed";
+      item.classList.remove("ok", "warn", "err");
+      if (tone) item.classList.add(tone);
+      const state = item.querySelector(".sb-state");
+      if (state) state.textContent = text;
+    });
+  }
+
+  // Every stage opens the Pipeline page (the router handles the #pipeline link) and then
+  // jumps to that stage's cards when the run has them.
+  function initStageBar() {
+    const items = [...document.querySelectorAll(".sb-item")];
+    document.addEventListener("click", (e) => {
+      const item = e.target.closest(".sb-item");
+      if (!item) {
+        if (e.target.closest(".tabs a")) items.forEach((i) => i.removeAttribute("aria-current"));
+        return;
+      }
+      items.forEach((i) => (i === item ? i.setAttribute("aria-current", "location") : i.removeAttribute("aria-current")));
+      const stage = PIPELINE_STAGES.find(([key]) => key === item.dataset.stage);
+      requestAnimationFrame(() => {
+        const target = [...document.querySelectorAll("#pipeline-agent-results [data-agent]")]
+          .find((el) => stage && stage[2].test(el.dataset.agent));
+        if (!target) return;
+        if (target.tagName === "DETAILS") target.open = true;
+        target.scrollIntoView({ block: "start" });
+      });
+    });
+  }
+
+  // ---------- Data access ----------
+  async function get(path) {
+    const comparisonMatch = path.match(/^\/comparisons\/([^/]+)$/);
+    if (comparisonMatch && uploadedComparisons.has(decodeURIComponent(comparisonMatch[1]))) {
+      return uploadedComparisons.get(decodeURIComponent(comparisonMatch[1]));
+    }
+    const url = API ? API + path : "data" + path + ".json";
+    let r;
+    try {
+      r = await fetch(url, API ? { credentials: "include" } : undefined);
+    } catch (e) {
+      throw new Error(
+        API
+          ? "Couldn't reach the backend at " + LIVE + ". Check the URL and that the server is running."
+          : "Couldn't load the data files. Open this page through a web server (not file://) and make sure the data folder exists."
+      );
+    }
+    if (r.status === 401) throw new Error("Not signed in to the backend. Sign in to the EDRAK app in this browser, then reload.");
+    if (r.status === 404 && !API) throw new Error("No snapshot data found (data" + path + ".json).");
+    if (!r.ok) throw new Error("Request failed (" + r.status + ").");
+    return r.json();
+  }
+
+  // ---------- UI helpers ----------
+  // kind: "loading" | "error" | "info" | "ok" | "" (clears)
+  function setStatus(el, kind, text) {
+    el.className = "status" + (kind ? " " + kind : "");
+    el.textContent = text || "";
+  }
+
+  function fill(select, items, label, emptyText) {
+    select.innerHTML = items.length
+      ? items.map((i) => `<option value="${esc(i.value)}">${esc(label(i))}</option>`).join("")
+      : `<option value="">${esc(emptyText || "Nothing available")}</option>`;
+    select.disabled = items.length === 0;
+  }
+
+  const tableBox = (tableId) => $(tableId).parentElement;
+
   function clearRun() {
     $("results-kpis").innerHTML = "";
     $("overview-attention").textContent = "";
@@ -209,6 +268,7 @@
     $("overview-lede").textContent = "Run-level quality and integrity summary for the selected evaluation.";
     $("run-goal").hidden = true;
     $("run-goal").innerHTML = "";
+    updateStageBar([]);
   }
 
   function clearCompare() {
@@ -357,7 +417,7 @@
   function uploadedRunFromReports(entries, label) {
     const reports = entries.map((entry) => entry.report);
     const agentReports = reports.filter((report) =>
-      report && typeof report.agent === "string" && report.agent !== "metrics" && Array.isArray(report.files));
+      report && typeof report.agent === "string" && isVisibleEvaluationAgent(report.agent) && Array.isArray(report.files));
     if (!agentReports.length) throw new Error("Select at least one evaluator agent *_report.json file.");
     const names = agentReports.map((report) => report.agent);
     if (new Set(names).size !== names.length) {
@@ -489,7 +549,7 @@
     return { html: html || `<p class="hint">No metrics were recorded for this file.</p>`, status: g.status };
   }
 
-  function toolExecutionPanel(execution) {
+  function toolExecutionPanel(execution, agentName) {
     const metrics = execution?.metrics || execution || {};
     const calls = Array.isArray(execution?.call_details)
       ? execution.call_details
@@ -515,15 +575,27 @@
       const serialized = JSON.stringify(value);
       return serialized === undefined ? String(value) : serialized;
     };
+    const formatToolResult = (call) => {
+      const result = call.result ?? call.result_payload ?? call.result_summary;
+      if (result == null) return "";
+      let text = formatArgumentValue(result);
+      const maxLength = 8000;
+      if (text.length > maxLength) text = `${text.slice(0, maxLength)}\n[Result display truncated]`;
+      return `<div class="tool-call-result"><span>Tool result details</span><pre>${esc(text)}</pre></div>`;
+    };
     const callList = calls.length
       ? `<div class="tool-call-list">${calls.map((call) => {
           const argumentTypes = call.argument_types || {};
           const argumentValues = call.argument_values && typeof call.argument_values === "object"
             ? call.argument_values : {};
+          const competitorCall = [call.worker, agentName]
+            .some((name) => String(name || "").toLowerCase() === "competitor_intelligence");
+          const visibleArgument = (name) =>
+            !(competitorCall && ["domain", "domains"].includes(String(name).toLowerCase()));
           const argumentNames = [...new Set([
             ...(call.argument_names || Object.keys(argumentTypes)),
             ...Object.keys(argumentValues),
-          ])];
+          ])].filter(visibleArgument);
           const argumentDetails = argumentNames.length
             ? argumentNames.map((name) => `<div class="tool-argument-value-row">` +
               `<b>${esc(name)}${argumentTypes[name] ? `<small>${esc(argumentTypes[name])}</small>` : ""}</b>` +
@@ -545,6 +617,7 @@
             `<div><span>Worker</span><b>${esc(call.worker || "Not recorded")}</b></div>` +
             `<div><span>Task</span><b>${esc(call.task_id || "Not recorded")}</b></div>` +
             `<div><span>Result</span><b>${esc(resultSummary(call))}</b></div>` +
+            `${formatToolResult(call)}` +
             `${query}<div class="tool-call-arguments"><span>Arguments</span><div class="tool-argument-values">${argumentDetails}</div></div>` +
             `${call.fallback_used ? `<p class="tool-call-fallback">Fallback was used for this call.</p>` : ""}` +
             `</div></details>`;
@@ -596,11 +669,11 @@
         `${mp.status != null ? `<span class="ar-badges"><span class="b ${statusTone}">${esc(humanize(mp.status))}</span></span>` : ""}</summary>` +
         `<section class="rep-body"><div class="rep-cols"><div class="rep-metrics">${mp.html}</div>` +
         `<div class="rep-side">${sidePanel(checks, flags)}</div></div>` +
-        toolExecutionPanel(file.execution_quality) + `</section></details>`;
+        toolExecutionPanel(file.execution_quality, agent.agent) + `</section></details>`;
     }).join("");
     const cp = agent.checks_passed ?? 0, ct = agent.checks ?? 0, uf = agent.units_flagged ?? 0;
     const agentOpen = (agent.failed_checks || []).length > 0 ? " open" : "";
-    return `<details class="card agent-report"${agentOpen}><summary>` +
+    return `<details class="card agent-report" data-agent="${esc(agent.agent)}"${agentOpen}><summary>` +
       `<span class="ar-title"><b>${esc(humanize(agent.agent))}</b>` +
       `<small>${plural(files.length, "file")}${agent.model ? ` · evaluator ${esc(agent.model)}` : ""}${agent.dry_run ? " · dry run" : ""}</small></span>` +
       `<span class="ar-badges"><span class="b ${cp === ct ? "ok" : "err"}">${esc(cp)}/${esc(ct)} checks passed</span>` +
@@ -631,7 +704,8 @@
       return `<div class="dim ${tone}"><b>${label}</b><span class="b ${badge}">${esc(status)}${isNum(item.score) ? ` · ${pct(item.score)}` : ""}</span>` +
         `${reasons ? `<small>${esc(reasons)}</small>` : ""}</div>`;
     });
-    return `<div class="card"><h3>${esc(humanize(a.agent))} execution quality</h3><div class="dims">${tiles.join("")}</div></div>`;
+    return `<div class="card" data-agent="${esc(a.agent)}"><h3>${esc(humanize(a.agent))} execution quality</h3>` +
+      `<div class="dims">${tiles.join("")}</div></div>`;
   }
 
   function ragCard(d) {
@@ -664,7 +738,7 @@
       ? `<details class="kv-reason"><summary>Source</summary><small>${esc(expectedSource)}</small></details>`
       : `<small>Context precision and recall require an expected answer.</small>`;
     tiles.push(`<div class="kv"><span>Reference answer</span><b>${expectedSource ? "Golden dataset" : "Not provided"}</b>${referenceNote}</div>`);
-    return `<div class="card"><h3>RAG metrics</h3><div class="kvs">${tiles.join("")}</div></div>`;
+    return `<div class="card" data-agent="rag"><h3>RAG metrics</h3><div class="kvs">${tiles.join("")}</div></div>`;
   }
 
   function orchestrationCard(d) {
@@ -690,7 +764,7 @@
       }
       return kv(label, isNum(value) ? (percentage ? pct(value / 100) : `${value} s`) : "Not assessable", note);
     });
-    return `<div class="card"><h3>Orchestration metrics</h3><div class="kvs">${tiles.join("")}</div></div>`;
+    return `<div class="card" data-agent="orchestration"><h3>Orchestration metrics</h3><div class="kvs">${tiles.join("")}</div></div>`;
   }
 
   async function showRun(runId) {
@@ -705,16 +779,13 @@
         : await get("/runs/" + encodeURIComponent(runId));
       if (token !== runToken) return;
 
-      const agents = run.agents || [];
+      const agents = (run.agents || []).filter((agent) => isVisibleEvaluationAgent(agent.agent));
+      updateStageBar(agents);
       const fileDetails = agents.flatMap((agent) => agent.file_details || []);
       const checks = fileDetails.flatMap((file) => file.checks || []);
       const passed = checks.filter((check) => check.passed === true).length;
       const failed = checks.filter((check) => check.passed !== true && check.severity === "error");
       const warnings = checks.filter((check) => check.passed !== true && check.severity !== "error");
-      const pipelineChecks = run.pipeline_report?.checks || [];
-      const pipelinePassed = pipelineChecks.filter((check) => check.passed === true).length;
-      const pipelineFailed = pipelineChecks.filter((check) => check.passed !== true && check.severity === "error");
-      const pipelineWarnings = pipelineChecks.filter((check) => check.passed !== true && check.severity !== "error");
       const totalUnits = agents.reduce((sum, agent) => sum + num(agent.units), 0);
       const flaggedUnits = agents.reduce((sum, agent) => sum +
         (Array.isArray(agent.flagged_units) ? agent.flagged_units.length : num(agent.units_flagged)), 0);
@@ -759,21 +830,16 @@
         kpi("Integrity checks passed", `${passed} / ${checkCount}`, `${failed.length} failed`, failed.length ? "mid" : "good") +
         kpi("Agents evaluated", agents.length, `${reportFileCount} evaluation files`) +
         kpi("Quality warnings", warnings.length, "warning-level checks across this run", warnings.length ? "mid" : "good") +
-        kpi("Flagged units", `${flaggedUnits} / ${totalUnits}`, "across all agents", flaggedUnits ? "mid" : "good") +
-        kpi("Pipeline traceability", pipelineChecks.length
-          ? `${pipelinePassed} / ${pipelineChecks.length}` : "Not recorded",
-          pipelineChecks.length
-            ? `${pipelineFailed.length} failed, ${pipelineWarnings.length} warnings`
-            : "Include pipeline_report.json to show cross-stage checks",
-          pipelineFailed.length ? "bad" : pipelineWarnings.length ? "mid" : pipelineChecks.length ? "good" : "");
+        kpi("Flagged units", `${flaggedUnits} / ${totalUnits}`, "across all agents", flaggedUnits ? "mid" : "good");
 
-      const domainRows = [];
-      agents.forEach((a) => {
-        if (a.execution_quality) domainRows.push(executionCard(a));
+      const orderedAgents = agents.slice().sort((x, y) => agentRank(x) - agentRank(y));
+      const execRows = [];
+      orderedAgents.forEach((a) => {
+        if (a.execution_quality) execRows.push(executionCard(a));
       });
       $("pipeline-agent-results").innerHTML =
-        (domainRows.length ? `<div class="grid g2">${domainRows.join("")}</div>` : "") +
-        agents.map(agentDetailsCard).join("");
+        (execRows.length ? `<div class="grid g2">${execRows.join("")}</div>` : "") +
+        orderedAgents.map(agentDetailsCard).join("");
       setStatus($("overview-attention"), failed.length
         ? "error"
         : warnings.length ? "info" : "", failed.length
@@ -880,6 +946,7 @@
 
       const before = (panels.find((p) => !p.hidden) || {}).id;
       panels.forEach((p) => { p.hidden = p.id !== panel; });
+      document.body.dataset.panel = panel;
       stages.forEach((s) => { s.hidden = s.id !== stage; });
       stageButtons.forEach((b) => {
         const on = b.dataset.stage === stage;
@@ -1014,7 +1081,7 @@
       }));
       const reports = entries.map((entry) => entry.report);
       const evaluationReports = reports.filter((report) =>
-        report && typeof report.agent === "string" && report.agent !== "metrics" && Array.isArray(report.files));
+        report && typeof report.agent === "string" && isVisibleEvaluationAgent(report.agent) && Array.isArray(report.files));
       const runData = uploadedRunFromReports(entries, `Uploaded run · ${evaluationReports.length} agent reports`);
       const record = { ...runData, saved_at_utc: new Date().toISOString() };
       await saveUploadedRun(record);
@@ -1102,6 +1169,7 @@
       .forEach((element) => element.remove());
     document.querySelectorAll("#pipeline .path.on-paper, #pipeline .stage").forEach((element) => element.remove());
     initRouter();
+    initStageBar();
     initRuns().then(initComparisons);
   }
 

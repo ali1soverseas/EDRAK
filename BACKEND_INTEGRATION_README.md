@@ -148,7 +148,7 @@ and integrity checks still run in either mode. The judge model defaults to `gpt-
 (`--workers 1`) to avoid rate-limit bursts; `--retries 2` bounds retries for a metric.
 After repeated rate-limit responses, the evaluator opens a run-scoped circuit breaker and
 skips further judge requests instead of spending the remaining run retrying. Successful
-judge results are cached in `--cache`.
+judge results are evaluated on each run and are not persisted between runs.
 
 To compare the run against a golden dataset immediately after evaluation, add
 `--compare-to <name>` using the folder name under `golden\ground_truth`. The comparison report

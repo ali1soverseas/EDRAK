@@ -276,23 +276,6 @@ def traced(name: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
         tracer = trace.get_tracer("edrak.operations")
         signature = inspect.signature(function)
 
-        if inspect.iscoroutinefunction(function):
-            @functools.wraps(function)
-            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
-                with tracer.start_as_current_span(name) as span:
-                    _set_operation_attributes(span, signature, args, kwargs)
-                    try:
-                        result = await function(*args, **kwargs)
-                    except Exception as error:
-                        mark_current_span_error(error)
-                        raise
-                    if isinstance(result, (list, tuple)):
-                        span.set_attribute("edrak.result.count", len(result))
-                    _set_failed_result(span, result)
-                    return result
-
-            return cast(Callable[P, R], async_wrapper)
-
         @functools.wraps(function)
         def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
             with tracer.start_as_current_span(name) as span:
@@ -586,39 +569,3 @@ def _set_failed_result(span: Any, result: Any) -> None:
         span.set_status(Status(StatusCode.ERROR))
         span.set_attribute("edrak.error.type", "OperationFailure")
 
-
-class TelemetryMiddleware:
-    """ASGI middleware that records request method, route template, and response status."""
-
-    def __init__(self, app: Any) -> None:
-        self.app = app
-        self.tracer = trace.get_tracer("edrak.http")
-
-    async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
-        if scope.get("type") != "http":
-            await self.app(scope, receive, send)
-            return
-
-        status_code = 500
-
-        async def record_response(message: dict[str, Any]) -> None:
-            nonlocal status_code
-            if message["type"] == "http.response.start":
-                status_code = int(message["status"])
-            await send(message)
-
-        with self.tracer.start_as_current_span("http.server.request") as span:
-            span.set_attribute("http.request.method", str(scope.get("method", "UNKNOWN")))
-            try:
-                await self.app(scope, receive, record_response)
-            except Exception as error:
-                mark_current_span_error(error)
-                raise
-
-            span.set_attribute("http.response.status_code", status_code)
-            route = scope.get("route")
-            route_template = getattr(route, "path", None)
-            if route_template:
-                span.set_attribute("http.route", route_template)
-            if status_code >= 500:
-                span.set_status(Status(StatusCode.ERROR))

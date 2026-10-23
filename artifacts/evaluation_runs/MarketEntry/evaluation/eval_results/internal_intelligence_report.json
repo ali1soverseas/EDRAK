@@ -1,6 +1,6 @@
 {
   "agent": "internal_intelligence",
-  "generated_at_utc": "2026-10-22T21:52:31.184383+00:00",
+  "generated_at_utc": "2026-10-23T14:15:04.073973+00:00",
   "model": "gpt-4.1-mini",
   "dry_run": false,
   "thresholds": {
@@ -12,44 +12,10 @@
   "files": [
     {
       "file": "worker_internal_intelligence_attempt_1_c9d27bf7-569.json",
-      "metrics_used": [
-        "faithfulness",
-        "relevancy",
-        "actionability",
-        "context_relevancy",
-        "execution_quality"
-      ],
       "metrics": {
-        "attempt": 1,
         "status": "completed",
-        "error": null,
-        "findings": 5,
-        "evidence_in_file": 12,
-        "evidence_collected": 12,
-        "evidence_sample_pct": 100.0,
-        "evidence_cited": 5,
-        "evidence_utilization_pct": 41.67,
-        "synthetic_evidence_pct": 0.0,
-        "findings_synthetic_only_pct": 0.0,
-        "distinct_source_domains_cited": 2,
-        "top_domain_share_pct": 80.0,
-        "third_party_evidence_pct": 0.0,
-        "avg_retrieval_score": 0.6567,
-        "requirements_total": 0,
-        "requirement_coverage_pct": null,
-        "profiles": 0,
-        "matrix_cells": 0,
-        "matrix_cells_with_evidence_pct": null,
-        "matrix_cells_not_established_pct": null,
-        "gaps": 2,
-        "conflicts": 0,
-        "queries_executed": 6,
-        "agent_confidence": 0.75,
-        "avg_finding_confidence": 0.75,
-        "findings_with_numbers_not_in_evidence": 0,
-        "units_with_absence_claims": 0,
         "units": 5,
-        "units_flagged": 2,
+        "units_flagged": 1,
         "faithfulness_tested": 5,
         "faithfulness_avg": 1.0,
         "faithfulness_pass_pct": 100.0,
@@ -57,41 +23,50 @@
         "relevancy_avg": 0.9667,
         "relevancy_pass_pct": 100.0,
         "actionability_tested": 5,
-        "actionability_avg": 0.5419,
-        "actionability_pass_pct": 60.0,
+        "actionability_avg": 0.592,
+        "actionability_pass_pct": 80.0,
         "context_relevancy_tested": 5,
         "context_relevancy_avg": 0.9333,
         "context_relevancy_pass_pct": 100.0,
-        "judge_errors": 0,
-        "execution_quality_status": "partial"
+        "judge_errors": 0
       },
       "execution_quality": {
-        "status": "partial",
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.6822,
+            "reason": "The output includes multiple tool calls that cover geographic markets and industry verticals, addressing the input query comprehensively. However, there is some redundancy with repeated calls using similar queries and parameters (e.g., two calls for geographic regions with slightly different origins), which could be optimized to avoid unnecessary repetition. The balance between information gathering and efficiency is mostly maintained, but the repeated retrievals with overlapping queries reduce efficiency."
+          }
+        },
         "metrics": {
           "calls": 12,
-          "tools": [
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve",
-            "internal_rag.retrieve"
-          ],
-          "allowed_tools": null,
-          "available_tools": null,
-          "expected_sequence": null,
-          "sequence_missing": [],
-          "schema_checks": 12,
-          "schema_errors": [],
           "errors": 0,
           "repeated_calls": 0,
-          "trace_complete": false,
           "call_details": [
             {
               "tool": "internal_rag.retrieve",
@@ -561,74 +536,8 @@
                 "workspace_id": "ac156a8dd644702db4a5725c7813633d"
               }
             }
-          ],
-          "status": "partial",
-          "dimensions_assessable": 3
-        },
-        "dimensions": {
-          "tool_selection": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_arguments": {
-            "status": "assessable",
-            "score": null,
-            "reason": ""
-          },
-          "tool_result_use": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
-          },
-          "workflow_sequence": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "No expected workflow sequence was supplied."
-          },
-          "error_handling": {
-            "status": "not_assessable",
-            "score": null,
-            "reason": "Trace has no failures."
-          },
-          "efficiency": {
-            "status": "assessable",
-            "score": 0.632,
-            "reason": "The output includes multiple tool calls that are similar but target different data origins, which shows an attempt to gather comprehensive information on geographic markets and industry verticals. However, there is some redundancy in repeated queries with only the 'origin' parameter changing, and some calls return zero results, indicating inefficiency. The output covers the necessary areas from the input but could be more efficient by consolidating queries or avoiding calls that yield no data."
-          }
-        },
-        "checks": [
-          {
-            "check": "tool calls stay within declared/available tools",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "tool arguments satisfy supplied schemas",
-            "passed": true,
-            "detail": "",
-            "severity": "error"
-          },
-          {
-            "check": "workflow sequence is assessable",
-            "passed": false,
-            "detail": "no expected_sequence/workflow_sequence supplied",
-            "severity": "warn"
-          },
-          {
-            "check": "trace records tool failure handling",
-            "passed": false,
-            "detail": "no errors observed, but trace completeness is not declared",
-            "severity": "warn"
-          },
-          {
-            "check": "trace avoids duplicate tool work",
-            "passed": true,
-            "detail": "0 repeated call(s)",
-            "severity": "warn"
-          }
-        ]
+          ]
+        }
       },
       "checks": [
         {
@@ -735,14 +644,6 @@
         }
       ],
       "flagged_units": [
-        {
-          "unit_type": "finding",
-          "unit_id": "3e2eb46e-f1f3-4be2-b54a-07e20585c91f",
-          "statement": "The profile names cloud service providers and AI developers as target customers for NVIDIA’s AI computing and data‑center platforms.",
-          "flags": [
-            "not_actionable"
-          ]
-        },
         {
           "unit_type": "finding",
           "unit_id": "2aa946a6-72c1-4345-888b-7a6393a44936",
