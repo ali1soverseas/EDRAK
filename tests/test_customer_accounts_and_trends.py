@@ -8,9 +8,14 @@ import pytest
 
 from edrak.agents.customer_trends import nodes
 from edrak.agents.customer_trends.providers.base import make_capability
+from edrak.agents.customer_trends.providers.apify.provider import (
+    _fit_trend_window,
+    _trend_actor_timeframe,
+)
 from edrak.agents.customer_trends.providers.config import load_providers_config
 from edrak.agents.customer_trends.schemas.common import Platform, UseCase
 from edrak.agents.customer_trends.schemas.task import QueryPlan, TaskBrief, brief_from_task
+from edrak.agents.customer_trends.schemas.trends import TrendSeries
 from edrak.agents.customer_trends.tools.account_posts import account_target
 from edrak.contracts import (
     BusinessContext,
@@ -88,3 +93,40 @@ def test_trend_period_and_keywords_follow_the_task():
     assert nodes.trend_keywords(brief, None) == ["Paymob", "Online checkout", "Fawry", "Kashier"]
     assert nodes.trend_keywords(brief, QueryPlan(trend_keywords=["bnpl egypt"])) == ["bnpl egypt"]
     assert nodes.trend_timeframe(brief.model_copy(update={"since": None})) == "today 12-m"
+
+
+def test_apify_search_interest_maps_and_fits_the_12_month_window():
+    today = date(2026, 1, 1)
+    series = [
+        TrendSeries(
+            keyword="GitLab Duo",
+            timeframe="today 12-m",
+            granularity="month",
+            points=[
+                (date(2024, 12, 31), 80),
+                (date(2025, 1, 1), 10),
+                (date(2025, 12, 1), 5),
+            ],
+            source="apify",
+            batch_id="pending",
+        ),
+        TrendSeries(
+            keyword="GitHub Copilot",
+            timeframe="today 12-m",
+            granularity="month",
+            points=[(date(2025, 2, 1), 25)],
+            source="apify",
+            batch_id="pending",
+        ),
+    ]
+
+    assert _trend_actor_timeframe("today 12-m") == "today 5-y"
+    assert _trend_actor_timeframe("today 3-m") == "today 3-m"
+    fitted, warnings = _fit_trend_window(series, "today 12-m", today)
+
+    assert [item.points for item in fitted] == [
+        [(date(2025, 1, 1), 40), (date(2025, 12, 1), 20)],
+        [(date(2025, 2, 1), 100)],
+    ]
+    assert all(item.timeframe == "today 12-m" for item in fitted)
+    assert warnings and "source rounding" in warnings[0]

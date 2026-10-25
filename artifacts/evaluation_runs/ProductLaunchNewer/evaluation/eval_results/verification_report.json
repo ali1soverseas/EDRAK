@@ -1,0 +1,158 @@
+{
+  "agent": "verification",
+  "generated_at_utc": "2026-10-24T12:59:29.474504+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5
+  },
+  "files": [
+    {
+      "file": "verification_pass_001.json",
+      "metrics": {
+        "units": 32,
+        "units_flagged": 4,
+        "faithfulness_tested": 32,
+        "faithfulness_avg": 0.9961,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 32,
+        "relevancy_avg": 0.9228,
+        "relevancy_pass_pct": 96.88,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.finding_count matches findings",
+          "passed": true,
+          "detail": "metadata=32 actual=32",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.verified_count matches verified findings",
+          "passed": true,
+          "detail": "metadata=32 actual=32",
+          "severity": "error"
+        },
+        {
+          "check": "metadata.insufficient_count matches insufficient findings",
+          "passed": true,
+          "detail": "metadata=0 actual=0",
+          "severity": "error"
+        },
+        {
+          "check": "replan_required comes with targeted actions; verified comes without",
+          "passed": true,
+          "detail": "status=verified targeted_actions=0",
+          "severity": "error"
+        },
+        {
+          "check": "decision.summary numbers match the findings",
+          "passed": true,
+          "detail": "summary='32 of 32 findings are evidence-backed; 0 were insufficient and recorde' findings=32 verified=32 with_contradictions=0",
+          "severity": "error"
+        },
+        {
+          "check": "every worker finding was verified",
+          "passed": true,
+          "detail": "0 missing",
+          "severity": "error"
+        },
+        {
+          "check": "no unknown finding ids",
+          "passed": true,
+          "detail": "0 ids not in worker output",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "verified findings have no open contradictions/gaps",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no finding is verified on low-quality evidence",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence discriminates between findings (>=3 distinct values)",
+          "passed": false,
+          "detail": "2 distinct, stdev=0.0719",
+          "severity": "warn"
+        },
+        {
+          "check": "confidence follows evidence quality (high >= medium >= low)",
+          "passed": true,
+          "detail": "{'high': 0.94, 'medium': 0.78, 'low': None}",
+          "severity": "warn"
+        },
+        {
+          "check": "no finding's confidence contradicts its label",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "control conflicts match findings with contradictions",
+          "passed": true,
+          "detail": "control=0 findings=0",
+          "severity": "warn"
+        },
+        {
+          "check": "control gaps are not just a copy of next_research_targets",
+          "passed": false,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "no near-duplicate findings",
+          "passed": true,
+          "detail": "0 duplicates",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "f9b9044a-dd50-4d77-9f3c-2c0984a5abca",
+          "statement": "Intel Corp: Intel's rack‑scale AI inference configuration combines Intel Xeon 6+ CPUs (up to 46,000 cores per rack) with a total rack power envelope of approximately 133.45 kW, and Intel GPU D‑series accelerators such as the D270 (350 W per GPU, up to 480 GB LPDDR5X memory, PCIe 5.0, air‑cooled). The design uses standard rack dimensions and does not require liquid‑cooling retrofits, enabling deployment in existing data‑center environments.",
+          "flags": [
+            "low_relevancy"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ee19506f-9239-4b6b-987f-f6f094519f15",
+          "statement": "Multiple cloud providers—including CoreWeave, Crusoe, Firebird, Firmus, GMI Cloud, IREN, Lambda, Nebius, Nscale, Oracle Cloud Infrastructure, and Vultr—are working on cloud deployments of the Azure Maia 300 architecture, indicating adoption of rack‑scale AI inference platforms across major cloud ecosystems.",
+          "flags": [
+            "ungrounded_numbers"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "629ddd4f-8527-4309-b5dd-cdec800357ce",
+          "statement": "Leading hardware vendors such as Dell Technologies, Cisco, HPE, Lenovo, and Supermicro are building infrastructure on the Azure Maia 300 architecture, demonstrating broad ecosystem support for rack‑scale AI inference platforms.",
+          "flags": [
+            "ungrounded_numbers"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "b0a0dd6b-f54a-472f-9239-7677a712ed06",
+          "statement": "The Azure Maia 300 architecture is designed to run on AWS, Google Cloud, and Microsoft Azure, showing cross‑cloud compatibility for rack‑scale AI inference workloads.",
+          "flags": [
+            "ungrounded_numbers"
+          ]
+        }
+      ]
+    }
+  ]
+}

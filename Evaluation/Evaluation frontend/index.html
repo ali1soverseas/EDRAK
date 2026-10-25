@@ -85,7 +85,6 @@
     <div class="stack">
       <div class="kpis">
         <div class="kpi mid"><div class="label">Integrity checks passed</div><div class="value">64 / 68</div><div class="note">4 deterministic failures</div></div>
-        <div class="kpi"><div class="label">Quality warnings</div><div class="value">27</div><div class="note">across 14 files</div></div>
       </div>
 
       <div class="notice" role="note">
@@ -102,7 +101,7 @@
       </div>
 
       <h2 class="section-title">Scores per file</h2>
-      <p class="sub" style="margin-top:-12px">Integrity is the share of deterministic error-severity checks that passed. Warnings are quality signals; flagged units are the ones that triggered them.</p>
+      <p class="sub" style="margin-top:-12px">Integrity is the share of deterministic checks that passed. Review errors and flagged units for issues.</p>
       <div class="files">
         <article class="file bad"><header><b>competitor_intelligence</b><span class="b err">7 / 8</span></header><span class="src">worker_…_attempt_1_011e2c88</span><div class="seg" role="img" aria-label="7 of 8 integrity checks passed"><i style="width:87.5%"></i></div><dl><div><dt>Warnings</dt><dd>5</dd></div><div><dt>Units</dt><dd>38</dd></div><div><dt>Flagged</dt><dd>9</dd></div></dl><footer><span class="b na">not assessable</span></footer></article>
         <article class="file"><header><b>internal_intelligence</b><span class="b ok">6 / 6</span></header><span class="src">worker_…_attempt_1_0c587331</span><div class="seg" role="img" aria-label="6 of 6 integrity checks passed"><i style="width:100%"></i></div><dl><div><dt>Warnings</dt><dd>1</dd></div><div><dt>Units</dt><dd>6</dd></div><div><dt>Flagged</dt><dd>0</dd></div></dl><footer><span class="b na">not assessable</span></footer></article>
@@ -177,7 +176,7 @@
       <button class="node err" role="tab" data-stage="orchestration" aria-selected="true"><span class="lamp">1</span><b>Orchestration</b><small>1 failed task</small></button>
       <button class="node err" role="tab" data-stage="workers" aria-selected="false"><span class="lamp">2</span><b>Workers</b><small>1 failed check</small></button>
       <button class="node warn" role="tab" data-stage="rag" aria-selected="false"><span class="lamp">3</span><b>RAG retrieval</b><small>13 of 16 checks</small></button>
-      <button class="node warn" role="tab" data-stage="verification" aria-selected="false"><span class="lamp">4</span><b>Verification</b><small>10 of 10, 3 warnings</small></button>
+      <button class="node warn" role="tab" data-stage="verification" aria-selected="false"><span class="lamp">4</span><b>Verification</b><small>10 of 10 checks passed</small></button>
       <button class="node err" role="tab" data-stage="cross" aria-selected="false"><span class="lamp">5</span><b>Cross-signal</b><small>1 failed check</small></button>
       <button class="node warn" role="tab" data-stage="decision" aria-selected="false"><span class="lamp">6</span><b>Decision</b><small>13 of 13, 4 flagged</small></button>
     </div>

@@ -88,7 +88,7 @@ Deterministic checks may report errors, warnings, informational observations, or
 
 The comparison aligns the run's outputs with expected reference items for the relevant task. It covers research-worker findings, verified findings, cross-domain signals, and decision outputs such as summaries, opportunities, risks, actions, and options.
 
-Matching can use an LLM judge or a lightweight word-overlap method. The LLM method assesses semantic equivalence rather than requiring identical wording. Unmatched reference items receive a rescue pass against likely candidates to reduce missed matches. Optional settings can test consistency across ordering or split long outputs into smaller claims.
+The comparison uses an LLM judge to assess semantic equivalence rather than requiring identical wording. Unmatched reference items receive a rescue pass: OpenAI text embeddings rank likely candidates by cosine similarity, then the LLM judge rechecks those candidates. Optional settings can test consistency across ordering or split long outputs into smaller claims.
 
 The comparison is organized by stage so the team can see where expected coverage is strong or weak, rather than relying only on one overall score.
 

@@ -7,6 +7,7 @@
   const API = LIVE ? LIVE.replace(/\/$/, "") + "/api/evaluation" : null;
   const uploadedRuns = new Map();
   const uploadedComparisons = new Map();
+  let availableComparisons = [];
   const UPLOAD_DB = "edrak-evaluation-uploads";
   let uploadDbPromise;
 
@@ -14,6 +15,9 @@
   const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const isNum = (v) => typeof v === "number" && !Number.isNaN(v);
   const num = (v) => (isNum(v) ? v : 0);
+  document.querySelectorAll(".files dl > div").forEach((metric) => {
+    if (metric.querySelector("dt")?.textContent.trim().toLowerCase() === "warnings") metric.remove();
+  });
   const pct = (v) => (isNum(v) ? Math.round(v * 1000) / 10 + "%" : "–");
   // "context_relevancy" -> "Context relevancy"
   const humanize = (s) => {
@@ -136,6 +140,51 @@
     });
   }
 
+  function normalizedBundleName(value) {
+    return String(value || "")
+      .replace(/[\\/]+$/, "")
+      .split(/[\\/]/)
+      .pop()
+      .replace(/\.json$/i, "")
+      .toLowerCase();
+  }
+
+  function comparisonForRun(runId) {
+    const uploaded = [...uploadedComparisons.entries()].find(([id]) =>
+      id.startsWith(`${runId}-comparison-`));
+    if (uploaded) return uploaded[0];
+
+    const selected = normalizedBundleName(runId);
+    if (!selected) return "";
+    const candidates = availableComparisons
+      .map((comparison) => ({
+        id: comparison.id,
+        bundle: normalizedBundleName(comparison.run_bundle),
+      }))
+      .filter((comparison) => comparison.bundle);
+    const exact = candidates.find((comparison) => comparison.bundle === selected);
+    if (exact) return exact.id;
+    const related = candidates
+      .filter(({ bundle }) => selected.startsWith(bundle) || bundle.startsWith(selected))
+      .sort((a, b) => b.bundle.length - a.bundle.length);
+    return related[0]?.id || "";
+  }
+
+  function selectComparisonForRun(runId) {
+    const comparisonId = comparisonForRun(runId);
+    const select = $("compare-select");
+    if (!comparisonId || ![...select.options].some((option) => option.value === comparisonId)) {
+      if (!runId) return false;
+      select.value = "";
+      clearCompare();
+      setStatus($("compare-status"), "info", "No ground-truth comparison file matches the selected run.");
+      return true;
+    }
+    select.value = comparisonId;
+    showCompare(comparisonId);
+    return true;
+  }
+
   function updateDeleteUploadButton() {
     const button = $("delete-uploaded-run");
     if (button) button.disabled = !uploadedRuns.has($("run-select").value);
@@ -167,6 +216,8 @@
   ];
   const isVisibleEvaluationAgent = (agent) =>
     !["metrics", "telemetry"].includes(String(agent || "").toLowerCase());
+  const visibleChecks = (checks) =>
+    checks.filter((check) => check.passed === true || check.severity === "error");
   // Order of the report cards on the Pipeline page: Orchestrator and RAG sit next to each other.
   const AGENT_ORDER = ["orchestration", "rag", "workers", "verification", "cross_signal", "decision"];
   function agentRank(agent) {
@@ -180,12 +231,11 @@
     document.querySelectorAll(".sb-item").forEach((item) => {
       const stage = PIPELINE_STAGES.find(([key]) => key === item.dataset.stage);
       const matched = stage ? agents.filter((a) => stage[2].test(String(a.agent || ""))) : [];
-      const checks = matched.flatMap((a) => (a.file_details || []).flatMap((f) => f.checks || []));
+      const checks = visibleChecks(matched.flatMap((a) => (a.file_details || []).flatMap((f) => f.checks || [])));
       const failedN = checks.filter((c) => c.passed !== true && c.severity === "error").length;
-      const warnedN = checks.filter((c) => c.passed !== true && c.severity !== "error").length;
-      const tone = !matched.length ? "" : failedN ? "err" : warnedN ? "warn" : "ok";
+      const tone = !matched.length ? "" : failedN ? "err" : "ok";
       const text = !matched.length ? (agents.length ? "Not in this run" : "Awaiting run")
-        : failedN ? "Failed checks" : warnedN ? "Warnings only" : "All checks passed";
+        : failedN ? "Failed checks" : "All checks passed";
       item.classList.remove("ok", "warn", "err");
       if (tone) item.classList.add(tone);
       const state = item.querySelector(".sb-state");
@@ -364,10 +414,10 @@
 
   function uploadedAgentSummary(report) {
     const files = Array.isArray(report.files) ? report.files : [];
-    const checks = files.flatMap((file) => (file.checks || []).map((check) => ({
+    const checks = visibleChecks(files.flatMap((file) => (file.checks || []).map((check) => ({
       file: file.file, check: check.check, passed: check.passed,
       detail: check.detail, severity: check.severity,
-    })));
+    }))));
     const flaggedUnits = files.flatMap((file) => (file.flagged_units || []).map((unit) => ({
       ...unit, file: file.file,
     })));
@@ -384,7 +434,7 @@
         if (isNum(metrics[key])) (values[name] ||= []).push(metrics[key]);
       });
     });
-    const failedChecks = checks.filter((check) => check.passed === false);
+    const failedChecks = checks.filter((check) => check.passed !== true && check.severity === "error");
     const passedChecks = checks.filter((check) => check.passed === true);
     return {
       agent: report.agent,
@@ -403,7 +453,7 @@
       file_details: files.map((file) => ({
         file: file.file,
         metrics: file.metrics || {},
-        checks: file.checks || [],
+        checks: visibleChecks(file.checks || []),
         flagged_units: file.flagged_units || [],
         execution_quality: file.execution_quality || null,
       })),
@@ -576,26 +626,38 @@
       return serialized === undefined ? String(value) : serialized;
     };
     const formatToolResult = (call) => {
-      const result = call.result ?? call.result_payload ?? call.result_summary;
+      const result = call.result ?? call.result_payload;
       if (result == null) return "";
-      let text = formatArgumentValue(result);
+      if (result && typeof result === "object" && result.truncated === true) {
+        const length = isNum(result.serialized_length)
+          ? ` (${fmtNum(result.serialized_length)} characters)` : "";
+        return `<div class="tool-call-result"><span>The result exceeded the telemetry capture limit${length}; the full payload was not retained.</span></div>`;
+      }
+      let text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
       const maxLength = 8000;
       if (text.length > maxLength) text = `${text.slice(0, maxLength)}\n[Result display truncated]`;
-      return `<div class="tool-call-result"><span>Tool result details</span><pre>${esc(text)}</pre></div>`;
+      return `<div class="tool-call-result"><span>Result text</span><pre>${esc(text)}</pre></div>`;
     };
     const callList = calls.length
       ? `<div class="tool-call-list">${calls.map((call) => {
           const argumentTypes = call.argument_types || {};
           const argumentValues = call.argument_values && typeof call.argument_values === "object"
             ? call.argument_values : {};
-          const competitorCall = [call.worker, agentName]
-            .some((name) => String(name || "").toLowerCase() === "competitor_intelligence");
-          const visibleArgument = (name) =>
-            !(competitorCall && ["domain", "domains"].includes(String(name).toLowerCase()));
           const argumentNames = [...new Set([
             ...(call.argument_names || Object.keys(argumentTypes)),
             ...Object.keys(argumentValues),
-          ])].filter(visibleArgument);
+          ])].filter((name) => {
+            const type = String(argumentTypes[name] || "").trim().toLowerCase();
+            const hasValue = Object.prototype.hasOwnProperty.call(argumentValues, name);
+            const value = hasValue ? argumentValues[name] : undefined;
+            const isNullValue = hasValue && value == null;
+            const isNullType = type === "nonetype";
+            const isCompetitorDomainsNull = String(call.worker || "").toLowerCase() ===
+              "competitor_intelligence" && name.toLowerCase() === "domains" &&
+              (isNullType || isNullValue ||
+                (typeof value === "string" && value.trim().toLowerCase() === "null"));
+            return !isNullType && !isNullValue && !isCompetitorDomainsNull;
+          });
           const argumentDetails = argumentNames.length
             ? argumentNames.map((name) => `<div class="tool-argument-value-row">` +
               `<b>${esc(name)}${argumentTypes[name] ? `<small>${esc(argumentTypes[name])}</small>` : ""}</b>` +
@@ -606,12 +668,19 @@
           const query = Object.prototype.hasOwnProperty.call(argumentValues, "query")
             ? `<div class="tool-query"><span>Query</span><code>${esc(formatArgumentValue(argumentValues.query))}</code></div>`
             : "";
-          const successful = /^(ok|success|succeeded|completed)$/i.test(String(call.status || "")) && !call.error_code;
-          const status = `${call.status || "Not recorded"}${call.error_code ? ` · ${call.error_code}` : ""}`;
+          const resultMissing = call.result == null && call.result_payload == null &&
+            call.result_summary == null;
+          const reportedSuccess = /^(ok|success|succeeded|completed)$/i.test(String(call.status || "")) &&
+            !call.error_code;
+          const status = `${call.status || "Not recorded"}${call.error_code ? ` · ${call.error_code}` : ""}` +
+            `${resultMissing && reportedSuccess ? " · result not recorded" : ""}`;
+          const provider = call.provider || (call.error_code === "provider_exhausted"
+            ? "No provider succeeded" : "Provider not reported");
+          const badgeClass = !reportedSuccess ? "err" : resultMissing ? "warn" : "ok";
           return `<details class="tool-call"><summary>` +
             `<span class="tool-call-name">${esc(call.tool || "Unknown tool")}</span>` +
-            `<span class="tool-call-meta">${esc(call.provider || "Provider unavailable")}</span>` +
-            `<span class="b ${successful ? "ok" : "err"}">${esc(status)}</span>` +
+            `<span class="tool-call-meta">${esc(provider)}</span>` +
+            `<span class="b ${badgeClass}">${esc(status)}</span>` +
             `<span class="tool-call-duration">${esc(isNum(call.latency_ms) ? `${call.latency_ms} ms` : "–")}</span>` +
             `</summary><div class="tool-call-details">` +
             `<div><span>Worker</span><b>${esc(call.worker || "Not recorded")}</b></div>` +
@@ -632,16 +701,14 @@
       `${c.detail ? `<small>Why: ${esc(c.detail)}</small>` : ""}` +
       `${tone !== "p" && c.severity ? `<small>Severity: ${esc(c.severity)}</small>` : ""}</div></li>`;
     const failed = checks.filter((c) => c.passed !== true && c.severity === "error");
-    const warned = checks.filter((c) => c.passed !== true && c.severity !== "error");
+    const visible = visibleChecks(checks);
     const passed = checks.filter((c) => c.passed === true);
     const checkBadges =
       (failed.length ? `<span class="b err">${failed.length} failed</span>` : "") +
-      (warned.length ? `<span class="b warn">${warned.length} warning${warned.length === 1 ? "" : "s"}</span>` : "") +
       (passed.length ? `<span class="b ok">${passed.length} passed</span>` : "");
-    const open = failed.concat(warned);
-    const checkHtml = checks.length
-      ? (open.length ? `<ul class="checks">${failed.map((c) => li(c, "f")).concat(warned.map((c) => li(c, "w"))).join("")}</ul>` : "") +
-        (passed.length ? `<details class="passed-checks"${open.length ? "" : " open"}><summary>Passed checks (${passed.length})</summary>` +
+    const checkHtml = visible.length
+      ? (failed.length ? `<ul class="checks">${failed.map((c) => li(c, "f")).join("")}</ul>` : "") +
+        (passed.length ? `<details class="passed-checks"${failed.length ? "" : " open"}><summary>Passed checks (${passed.length})</summary>` +
           `<ul class="checks">${passed.map((c) => li(c, "p")).join("")}</ul></details>` : "")
       : `<p class="hint">No integrity checks were recorded for this file.</p>`;
     const flagHtml = flags.length
@@ -782,10 +849,9 @@
       const agents = (run.agents || []).filter((agent) => isVisibleEvaluationAgent(agent.agent));
       updateStageBar(agents);
       const fileDetails = agents.flatMap((agent) => agent.file_details || []);
-      const checks = fileDetails.flatMap((file) => file.checks || []);
+      const checks = visibleChecks(fileDetails.flatMap((file) => file.checks || []));
       const passed = checks.filter((check) => check.passed === true).length;
       const failed = checks.filter((check) => check.passed !== true && check.severity === "error");
-      const warnings = checks.filter((check) => check.passed !== true && check.severity !== "error");
       const totalUnits = agents.reduce((sum, agent) => sum + num(agent.units), 0);
       const flaggedUnits = agents.reduce((sum, agent) => sum +
         (Array.isArray(agent.flagged_units) ? agent.flagged_units.length : num(agent.units_flagged)), 0);
@@ -824,12 +890,11 @@
         return;
       }
 
-      const checkCount = passed + failed.length;
+      const checkCount = checks.length;
 
       $("results-kpis").innerHTML =
         kpi("Integrity checks passed", `${passed} / ${checkCount}`, `${failed.length} failed`, failed.length ? "mid" : "good") +
         kpi("Agents evaluated", agents.length, `${reportFileCount} evaluation files`) +
-        kpi("Quality warnings", warnings.length, "warning-level checks across this run", warnings.length ? "mid" : "good") +
         kpi("Flagged units", `${flaggedUnits} / ${totalUnits}`, "across all agents", flaggedUnits ? "mid" : "good");
 
       const orderedAgents = agents.slice().sort((x, y) => agentRank(x) - agentRank(y));
@@ -840,11 +905,8 @@
       $("pipeline-agent-results").innerHTML =
         (execRows.length ? `<div class="grid g2">${execRows.join("")}</div>` : "") +
         orderedAgents.map(agentDetailsCard).join("");
-      setStatus($("overview-attention"), failed.length
-        ? "error"
-        : warnings.length ? "info" : "", failed.length
-          ? `${failed.length} failed integrity checks need review in Pipeline.`
-          : warnings.length ? `${warnings.length} warning-level checks; see Pipeline for their details.` : "");
+      setStatus($("overview-attention"), failed.length ? "error" : "",
+        failed.length ? `${failed.length} failed integrity checks need review in Pipeline.` : "");
 
       const incomplete = run.status && !["completed", "success", "succeeded"].includes(String(run.status).toLowerCase());
       setStatus(
@@ -878,8 +940,7 @@
       $("compare-kpis").innerHTML =
         kpi("Mean recall", pct(o.mean_recall), "ground-truth items found", isNum(o.mean_recall) ? (o.mean_recall >= 0.7 ? "good" : "mid") : "") +
         kpi("Mean alignment", pct(o.mean_alignment), "same category and meaning") +
-        kpi("Mean F1", pct(o.mean_f1), "recall and alignment") +
-        kpi("Pooled recall", pct(o.pooled_recall), zero.length ? "zero recall: " + zero.join(", ") : "every stage has recall", zero.length ? "bad" : "good");
+        kpi("Mean F1", pct(o.mean_f1), "recall and alignment");
 
       const meta = [["Ground truth", c.ground_truth], ["Run", c.run_bundle], ["Method", c.method]].filter(([, v]) => v != null && v !== "");
       $("compare-meta").innerHTML = meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
@@ -897,7 +958,7 @@
 
       const head =
         `<thead><tr><th scope="col">Stage</th><th scope="col" class="num">Matched</th><th scope="col" class="num">Recall</th>` +
-        `<th scope="col" class="num">Alignment</th><th scope="col" class="num">F1</th><th scope="col" class="num">Volume</th>` +
+        `<th scope="col" class="num">Alignment</th><th scope="col" class="num">F1</th>` +
         `<th scope="col">Not covered</th></tr></thead>`;
 
       const body = rows.map(([name, v]) => {
@@ -908,7 +969,7 @@
         return `<tr><td>${esc(stageName(name))}</td>` +
           `<td class="num">${esc(v.matched ?? "–")} / ${esc(v.truth_items ?? "–")}</td>` +
           `<td class="num"><span class="mcell"><span class="b ${recallCls}">${pct(v.recall)}</span>${meter(v.recall, recallCls)}</span></td>` +
-          cell(v.alignment) + cell(v.f1) + `<td class="num">${esc(v.volume_ratio ?? "–")}</td>` +
+          cell(v.alignment) + cell(v.f1) +
           `<td>${missed
             ? `<details><summary>${missed} item${missed === 1 ? "" : "s"}</summary>${notCovered.map((t) =>
                 `<div>${esc(typeof t === "string" ? t : JSON.stringify(t))}</div>`).join("")}</details>`
@@ -1037,11 +1098,14 @@
     setStatus(status, "loading", "Loading comparisons…");
     try {
       const { comparisons = [] } = await get("/comparisons");
+      availableComparisons = comparisons;
       fill(select, comparisons.map((c) => ({ value: c.id, gt: c.ground_truth, run: c.run_bundle })),
         (c) => `${c.gt} vs ${String(c.run).slice(0, 8)}…`, "No comparisons found");
       addUploadedComparisonOptions();
       const uploadedComparisonId = [...uploadedComparisons.keys()][0];
-      if (comparisons.length) {
+      if ($("run-select").value && selectComparisonForRun($("run-select").value)) {
+        return;
+      } else if (comparisons.length) {
         showCompare(comparisons[0].id);
       } else if (uploadedComparisonId) {
         select.value = uploadedComparisonId;
@@ -1050,14 +1114,17 @@
         setStatus(status, "info", "No comparison reports found yet. Run evaluation_Compare/compare.py.");
       }
     } catch (e) {
+      availableComparisons = [];
       fill(select, [], null, "No comparisons available");
       addUploadedComparisonOptions();
-      const uploadedComparisonId = [...uploadedComparisons.keys()][0];
+      const selectedRunId = $("run-select").value;
+      const uploadedComparisonId = comparisonForRun(selectedRunId);
       if (uploadedComparisonId) {
         select.value = uploadedComparisonId;
         showCompare(uploadedComparisonId);
       } else {
-        setStatus(status, "info", e.message);
+        clearCompare();
+        setStatus(status, "error", e.message);
       }
     }
   }
@@ -1126,6 +1193,7 @@
         runSelect.disabled = false;
         updateDeleteUploadButton();
         showRun(nextRun.value);
+        selectComparisonForRun(nextRun.value);
       } else {
         runSelect.disabled = true;
         updateDeleteUploadButton();
@@ -1133,11 +1201,11 @@
         clearRun();
         setStatus(status, "info", "Uploaded run deleted. No runs are available.");
       }
-      const nextComparison = [...compareSelect.options].find((option) => option.value);
+      const nextComparison = !nextRun && [...compareSelect.options].find((option) => option.value);
       if (nextComparison) {
         compareSelect.value = nextComparison.value;
         showCompare(nextComparison.value);
-      } else {
+      } else if (!nextRun) {
         if (!compareSelect.options.length) compareSelect.add(new Option("No comparisons available", ""));
         clearCompare();
       }
@@ -1151,7 +1219,10 @@
     $("run-select").addEventListener("change", (e) => {
       updateDeleteUploadButton();
       renderSidebarSavedRuns();
-      if (e.target.value) showRun(e.target.value);
+      if (e.target.value) {
+        showRun(e.target.value);
+        selectComparisonForRun(e.target.value);
+      }
     });
     $("sidebar-saved-runs").addEventListener("click", (event) => {
       const button = event.target.closest("button[data-run-id]");

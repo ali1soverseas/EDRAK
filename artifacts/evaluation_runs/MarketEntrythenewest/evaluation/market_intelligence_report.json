@@ -1,0 +1,2222 @@
+{
+  "agent": "market_intelligence",
+  "generated_at_utc": "2026-10-24T15:17:03.441055+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_market_intelligence_attempt_1_681a3d4d-fb4.json",
+      "metrics": {
+        "status": "partial",
+        "units": 12,
+        "units_flagged": 10,
+        "faithfulness_tested": 12,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 12,
+        "relevancy_avg": 0.8542,
+        "relevancy_pass_pct": 91.67,
+        "specificity_tested": 12,
+        "specificity_avg": 0.4245,
+        "specificity_pass_pct": 41.67,
+        "insight_tested": 12,
+        "insight_avg": 0.5422,
+        "insight_pass_pct": 50.0,
+        "context_relevancy_tested": 12,
+        "context_relevancy_avg": 0.5,
+        "context_relevancy_pass_pct": 50.0,
+        "judge_errors": 0
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.7852,
+            "reason": "The output effectively uses multiple distinct tool calls to gather comprehensive information on geographic markets beyond Europe and the US, covering demand growth, regulation, and ecosystem support. There is no evident repetition of identical queries or redundant tool calls, demonstrating efficiency. However, the output truncates some results and does not explicitly synthesize or summarize the findings, which slightly limits completeness and clarity for final task fulfillment."
+          }
+        },
+        "metrics": {
+          "calls": 13,
+          "errors": 0,
+          "repeated_calls": 3,
+          "call_details": [
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 5,
+              "latency_ms": 23846.5951,
+              "result_summary": {
+                "count": 5,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing market size Japan",
+                  "AI computing market growth India",
+                  "AI compute demand cloud providers Singapore",
+                  "AI computing market size Brazil",
+                  "AI compute market growth Mexico"
+                ]
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 16544
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "latency_ms": 9995.2086,
+              "result_summary": {
+                "decoded_json": false,
+                "empty": false,
+                "length": 40016,
+                "type": "string"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI cloud computing regulations Singapore",
+                  "data residency rules AI services Brazil",
+                  "AI export control policy Japan",
+                  "cloud provider licensing AI Saudi Arabia"
+                ]
+              },
+              "result": "[{\"title\": \"Technology Sourcing Laws and Regulations 2026 | Singapore\", \"url\": \"https://iclg.com/practice-areas/technology-sourcing-laws-and-regulations/singapore\", \"snippet\": \"9.1 Are there any national laws or regulations that specifically regulate the procurement of cloud computing services (including Software-as-a-Service)?\\n\\nThere are no laws or regulations in Singapore that regulate the procurement of cloud computing services (including Software-as-a-Service) in general. However, sector-specific rules may apply to the procurement of cloud computing services in certain sectors such as in the financial services sector. [...] 10.1 Are there any national laws or regulations that specifically regulate the procurement or use of AI systems?\\n\\nThere are no laws or regulations in Singapore that specifically regulate the procurement or use of AI systems. However, various governmental and regulatory agencies have issued non-binding policy papers and guidelines on matters relating to AI. R"
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 6897.3557,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI data residency regulations",
+                  "AI export control requirements",
+                  "cloud licensing rules for AI platforms"
+                ]
+              },
+              "result": [
+                {
+                  "title": "Data Residency for AI Workloads: Enterprise Cloud Guide",
+                  "url": "https://www.gmicloud.ai/ja/blog/data-residency-for-ai-workloads-what-enterprises-need-to-know-before-choosing-a-cloud-provider",
+                  "snippet": "Which data residency regulations affect enterprise AI workloads in 2026? The key frameworks affecting enterprise AI in 2026 are GDPR for personal data of EU/EEA residents, the EU AI Act for high-risk AI systems (full enforcement August 2, 2026), HIPAA for US healthcare data, China's PIPL for data involving Chinese residents, Japan's APPI for data involving Japanese residents, India's DPDP Act for Indian user data, and at least 34 national data localization laws globally. Most enterprises are [...] 2026年5月22日\n\n.webp)\n\nData residency for AI workloads has become one of the most consequential infrastructure decisions enterprises make in 2026. The combined enforcement of GDPR, the EU AI Act's August 2 high-risk deadline, sector-specific mandates, and at least 34 national data localization laws means that choosing the wrong cloud provider is no longer a compliance risk you manage,  it is a liability you inherit. [...] EU AI Act (full high-risk enforcement: August 2, 2026): High-risk AI syste",
+                  "score": 0.8827621,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI Data Residency: Where Training, Inference and RAG Data Go | Expanso",
+                  "url": "https://expanso.io/blog/ai-data-residency",
+                  "snippet": "AI data residency is the requirement that the regulated data an AI system touches is stored and processed only inside a permitted country or region. For an AI workload that covers four places, and a residency answer has to hold for all of them: the training and fine-tuning data, the prompts sent for inference, the vector store behind retrieval, and the region where the model itself runs. [...] Our guide to data residency requirements covers the legal rules by jurisdiction, including the GDPR, China’s PIPL, and other national regimes. This post covers how those rules apply to the parts of an AI system.\n\nFree guide\n\n### Edge Data Governance\n\nGovern data across distributed environments, from edge to cloud, without sacrificing performance or compliance.\n\nDownload the guideTalk to an engineer\n\nContinue reading\n\nOlder\n\nProcess Data Locally Before You Send It Anywhere [...] No. Article 10 of the AI Act sets data governance and quality requirements for the training, validation, and testing dat",
+                  "score": 0.8727061,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI data residency regulations and challenges - InCountry",
+                  "url": "https://incountry.com/blog/ai-data-residency-regulations-and-challenges",
+                  "snippet": "For instance, if a company in Europe uses AI to process customer information, the data might be required by law to stay within the European Union. This is important because regions like the EU have strict data privacy regulations, such as the General Data Protection Regulation (GDPR). The concept of data residency ensures that sensitive information remains in locations that meet legal and security standards, especially in the era of cloud computing and AI where data can be accessed from [...] Set to take effect in August 2026, establishes risk-based regulations for AI systems, particularly targeting high-risk applications such as biometric surveillance. Although the Act does not explicitly require data residency, these systems will face stringent oversight. Key provisions include a focus on transparency, impact assessments for fundamental rights, and alignment with existing data laws like the GDPR. For example, general-purpose AI models, such as large language models (LLMs), must [...]",
+                  "score": 0.8649622,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI Data Residency Requirements by Region: The Complete Enterprise Compliance Guide",
+                  "url": "https://www.premai.io/blog/ai-data-residency-requirements-by-region-the-complete-enterprise-compliance-guide",
+                  "snippet": "> What is AI data residency?  \n>   \n> AI data residency refers to the physical location where AI-related data, including training data, prompts, model weights, and generated outputs, is stored and processed. Unlike traditional data storage, AI creates multiple residency touchpoints: where the model was trained, where inference runs, where fine-tuning occurs, and where outputs are logged.\n\nThe US CLOUD Act Problem\n\nHere’s the gap most compliance guides miss. [...] Data residency for AI isn’t about checking a compliance box. It’s about understanding that every API call, every fine-tuning job, and every RAG query creates data flows with regulatory implications.\n\nThe €1.2 billion fine to Meta wasn’t for a breach. It was for standard data transfers that regulators deemed non-compliant. [...] ### European Union: Most Complex Regulatory Stack\n\nThe EU doesn’t mandate physical data localization. But the compliance requirements create strong incentives for EU-based processing.\n\nEU AI Act (fully ",
+                  "score": 0.79542017,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "What is Data Residency?",
+                  "url": "https://www.truefoundry.com/blog/data-residency",
+                  "snippet": "For organizations leveraging third-party LLM APIs or global AI platforms, even transient data may pass through jurisdictions with different privacy laws. Under regulations such as the EU GDPR, India’s Digital Personal Data Protection Act (DPDP), or Australia’s Privacy Act, these cross-border transfers create compliance and reputational risks. [...] This is the essence of data residency — ensuring that data remains within a defined geographic or legal boundary. What was once a regulatory checkbox has become a strategic necessity in an increasingly geopolitical AI landscape. [...] Data residency refers to where organizational data is physically stored and legally governed. In the pre-AI era, this typically applied to structured data—databases, CRMs, analytics systems. Today, in the AI era, this extends far beyond storage. Every AI model interaction generates new forms of data: prompts, completions, embeddings, logs, and contextual memory.",
+                  "score": 0.7568076,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "The Geopolitics of Data Residency: Navigating AI Compliance in a Fragmented World",
+                  "url": "https://oxmaint.com/sap-integration/geopolitics-data-residency-ai-compliance",
+                  "snippet": "Data residency is about physical geography—which country hosts your servers. Data sovereignty is about legal jurisdiction—whose laws govern that data regardless of where the hardware sits. For AI systems, this is critical because a U.S.-owned cloud server in Germany is physically in the EU but legally accessible to U.S. authorities through the CLOUD Act. True compliance requires solving both the geographic question and the jurisdictional question simultaneously. Failing to do so creates a [...] Global AI Data Regulation — Where the Rules Diverge\n\nFour regulatory philosophies, four sets of compliance obligations\n\nEU\n\nEuropean Union\n\nRights-Centric, Risk-Based [...] The world's major economies aren't just writing different regulations—they're building fundamentally different philosophies of AI governance. The EU leads with rights-based protection, China mandates state-controlled localization, the U.S. operates through a state-by-state patchwork, and emerging markets are accelerating thei",
+                  "score": 0.7216064,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "Privacy and Data Residency for AI Agents: What GDPR Requires That Static Controls Can't Show - ARMO",
+                  "url": "https://www.armosec.io/blog/privacy-and-data-residency-for-ai-agents",
+                  "snippet": "The residency evidence GDPR and the EU AI Act now expect lives in the runtime trajectory of every AI agent execution, not in the deployment configuration. Your residency compliance dashboard — every workload in eu-west-3, sovereign cloud configured, SCCs signed — cannot produce it. [...] For AI agents, sovereign cloud is necessary and not sufficient. The CISO and DPO walking into a vendor conversation about residency evidence ask three questions of any sovereign cloud configuration before treating it as the answer.\n\nFirst: does it constrain the runtime trajectory or just the data-at-rest location? Most sovereign offerings constrain the latter. The former requires watching what the agent does, not what region the storage lives in. [...] ## FAQ\n\nHow is data residency for AI agents different from data residency for SaaS applications? SaaS applications make residency decisions at provisioning. AI agents make them at inference. The SaaS model — select your region, sign your DPA, you’re cove",
+                  "score": 0.64585793,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "What Is Data Residency? Definition and Compliance | Teradata",
+                  "url": "https://www.teradata.com/insights/data-security/what-is-data-residency",
+                  "snippet": "What are the data residency laws in the United States? The United States has no single federal data residency law. Requirements come from sectoral regulations such as HIPAA and GLBA, state privacy laws, public sector procurement terms, and contractual obligations. Some government and education programs may require in-state or in-country hosting, but specifics vary by jurisdiction and program. [...] Overview\n\nData residency is now a core consideration for enterprises operating across cloud, hybrid, and multi-region environments. As regulations mature and customers demand greater control, organizations need clear, verifiable approaches to ensure data is stored, processed, and backed up in approved locations.",
+                  "score": 0.64020914,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 4,
+              "latency_ms": 7715.96,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI research ecosystem cloud providers India",
+                  "GPU accelerator ecosystem Brazil",
+                  "AI developer community support Mexico",
+                  "AI talent pipeline Singapore cloud services"
+                ]
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 12889
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 7361.0824,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Intel AI compute market share South Korea",
+                  "Broadcom data center AI platform market Latin America",
+                  "Intel AI GPU market share Brazil"
+                ]
+              },
+              "result": [
+                {
+                  "searchParameters": {
+                    "q": "Intel AI compute market share South Korea",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "South Korea Artificial Intelligence Market Size, Share, 2032",
+                      "link": "https://www.fortunebusinessinsights.com/south-korea-artificial-intelligence-market-114036",
+                      "snippet": "The South Korea Artificial Intelligence market size is projected to grow to $7.17 billion in 2025 to $53.87 billion by 2032, exhibiting a CAGR of 33.40%",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "South Korea AI Data Center Market Size & Share Analysis",
+                      "link": "https://www.mordorintelligence.com/industry-reports/south-korea-artificial-intelligence-ai-data-center",
+                      "snippet": "South Korea AI Optimised Data Center Market will more than triple from USD 0.58B in 2025 to USD 1.89B by 2030.",
+                      "date": "Jul 8, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "South Korea AI PC Market (2025-2030)",
+                      "link": "https://www.marketsandmarkets.com/Market-Reports/geography/ai-pc-market/South-Korea",
+                      "snippet": "South Korea's AI PC market is projected to grow from $995.1 million in 2025 to $3,854.8 million by 2030, representing a 25.3% CAGR—significantly outpacing the ...",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "South Korea punches above its weight in AI",
+                      "link": "https://www.fdiintelligence.com/content/63f66b28-d613-4857-8471-a8d47a429914",
+                      "snippet": "South Korea was on par with the US in the world-leading share of its public AI firms in revenues (12.5 per cent) and market capitalisation (38. ...",
+                      "date": "May 6, 2026",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "South Korea Artificial Intelligence Market Report to 2034",
+                      "link": "https://www.imarcgroup.com/south-korea-artificial-intelligence-market",
+                      "snippet": "The South Korea artificial intelligence market size reached at USD 3.9 Billion in 2025 to reach USD 32.4 Billion by 2034, by 2034, exhibiting a ...",
+                      "date": "Jan 30, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "South Korea Data Center Market Size & Share Analysis",
+                      "link": "https://www.arizton.com/market-reports/south-korea-data-center-market-investment-analysis",
+                      "snippet": "The South Korea data center market was valued at USD 5.04 billion in 2025 and is expected to reach USD 16.23 billion by 2031, growing at a CAGR of 21.50%.",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "South Korea's SK Hynix is in talks with Intel about a deal ...",
+                      "link": "https://www.facebook.com/Reuters/videos/the-deal-that-could-see-more-memory-chips-made-in-the-us/1494835939040433/",
+                      "snippet": "South Korea's SK Hynix is in talks with Intel about a deal that would see it manufacture memory chips on US soil for the first time, ...",
+                      "date": "1 month ago",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "South Korea AI Infrastructure Market Size to Reach USD ...",
+                      "link": "https://www.globemarketresearch.com/reports/south-korea-ai-infrastructure-market",
+                      "snippet": "Cloud-Based leads with a 46.9% share, supported by growing demand for scalable AI computing resources, cloud platforms, and enterprise AI ...",
+                      "date": "Oct 9, 2026",
+                      "rating": 4.7,
+                      "ratingCount": 45,
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Is South Korea leading in AI?"
+                    },
+                    {
+                      "question": "What are the big 3 companies in Korea?"
+                    },
+                    {
+                      "question": "Why is AI so big in Korea?"
+                    },
+                    {
+                      "question": "Are there AI data centers in South Korea?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Intel ai compute market share south korea graph"
+                    },
+                    {
+                      "query": "Intel ai compute market share south korea 2022"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Intel AI compute market share South Korea",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Broadcom data center AI platform market Latin America",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "AI Clusters | AI Servers | AI Infrastructure",
+                      "link": "https://www.broadcom.com/solutions/ai-solutions/ai-infrastructure",
+                      "snippet": "Discover Broadcom's next-generation AI networking, connectivity solutions and custom accelerators (AI XPUs), revolutionizing the industry.",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Data Center Solutions Market to Reach US$1.33 Trillion by ...",
+                      "link": "https://finance.yahoo.com/technology/articles/data-center-solutions-market-reach-131600977.html",
+                      "snippet": "Data Center Solutions Market to Reach US$1.33 Trillion by 2031 as AI and Hyperscale Investments Accelerate - Dell Technologies, Broadcom, NVIDIA ...",
+                      "date": "Aug 7, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Data Center | Solutions",
+                      "link": "https://www.broadcom.com/solutions/data-center",
+                      "snippet": "One-of-a-kind solutions that apply AI and ML to rich, granular data captured at the chip level to enable a uniquely automated AI-driven solution for real-time",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Why Broadcom (AVGO) Dominates AI Data Center Spending",
+                      "link": "https://www.youtube.com/watch?v=Jv3KtxMvxp0",
+                      "snippet": "AI data centers now cost up to $60 billion per gigawatt to construct, and Broadcom (NASDAQ: AVGO) has become one of the biggest beneficiaries ...",
+                      "date": "1 month ago",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "China surveys Broadcom switch use in state data centers, ...",
+                      "link": "https://www.reuters.com/world/china/china-surveys-broadcom-switch-use-state-data-centers-ft-reports-2026-09-23/",
+                      "snippet": "Chinese authorities are examining the use of Broadcom's hardware in state-backed data centres as ​part of a drive to boost domestic ...",
+                      "date": "Sep 22, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Broadcom Data and AI Portfolio",
+                      "link": "https://www.vmware.com/docs/broadcom-data-and-ai-portfolio-white-paper",
+                      "snippet": "The Broadcom® Data and AI Portfolio (DAP) integrates Broadcom AI, data, and security software solutions with the VMware Cloud Foundation® ...",
+                      "date": "Jul 15, 2026",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Broadcom",
+                      "link": "https://en.wikipedia.org/wiki/Broadcom",
+                      "snippet": "Broadcom sells a range of semiconductor and infrastructure software applications that serve the data center (mainframes), networking, software, broadband, ...",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Broadcom Inc. | Connecting Everything",
+                      "link": "https://www.broadcom.com/",
+                      "snippet": "Broadcom delivers semiconductors and infrastructure software for global enterprises' most complex, mission-critical needs.",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Who is Broadcom's biggest client?"
+                    },
+                    {
+                      "question": "What AI products does Broadcom make?"
+                    },
+                    {
+                      "question": "Who has the largest AI data center in the world?"
+                    },
+                    {
+                      "question": "Who are the big 5 in data centers?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Broadcom data center locations"
+                    },
+                    {
+                      "query": "Broadcom AI stock"
+                    },
+                    {
+                      "query": "Broadcom products"
+                    },
+                    {
+                      "query": "What is Broadcom VMware"
+                    },
+                    {
+                      "query": "Broadcom office locations"
+                    },
+                    {
+                      "query": "Is Broadcom a Chinese company"
+                    },
+                    {
+                      "query": "Broadcom AI chips"
+                    },
+                    {
+                      "query": "What does Broadcom own"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Broadcom data center AI platform market Latin America",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Intel AI GPU market share Brazil",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Intel GPU market share a big fat 0%",
+                      "link": "https://steamcommunity.com/discussions/forum/11/4843148768109677354/?l=brazilian",
+                      "snippet": "According to PC World, Intel has been kicked out of the GPU market, having a zero percent market share. A year ago Intel held a mere 2% and that gain is ...",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "AI GPU Market Share NVIDIA vs AMD vs Intel: 2026 Statistics",
+                      "link": "https://commandlinux.com/statistics/ai-gpu-market-share-nvidia-vs-amd-vs-intel/",
+                      "snippet": "Intel's AI GPU share sits near 1%, with its Crescent Island GPU not sampling until the second half of 2026. The 2026 data center accelerator ...",
+                      "date": "Jul 18, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Intel GPUs break 1% market share according to Tom ...",
+                      "link": "https://www.reddit.com/r/LinusTechTips/comments/1pcckkp/intel_gpus_break_1_market_share_according_to_tom/",
+                      "snippet": "Intel GPUs break 1% market share according to Tom hardware. Nvidia's GPU market share decreased by 1.2% in Q3'25. It still owns over 90% of the ...",
+                      "date": "10 months ago",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Intel is saving the GPU market...kind of",
+                      "link": "https://www.youtube.com/watch?v=-w8nPRNGFZo",
+                      "snippet": "Intel is saving the GPU market...kind. Added a $200 Intel A770 & Doubled My VRAM — Mixed GPU Local AI That Actually Works Next Tech and AI•42K",
+                      "date": "2 months ago",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Intel aims to boost AI turnaround with new GPU chips ...",
+                      "link": "https://finance.yahoo.com/technology/article/intel-aims-to-boost-ai-turnaround-with-new-gpu-chips-to-take-on-nvidia-192916083.html",
+                      "snippet": "Intel stock is up 183% year to date and roughly 175% over the past 12 months, largely driven by interest in its CPUs.",
+                      "date": "Oct 12, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Brazil Data Center Processor Market Size & Share 2031",
+                      "link": "https://www.mordorintelligence.com/industry-reports/brazil-data-center-processor-market",
+                      "snippet": "The Brazil Data Center Processor Market is expected to reach USD 1.13 billion in 2025. USD 3.96 billion by GPUs. NVIDIA and AMD lead the GPU ...",
+                      "date": "Nov 6, 2024",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Nvidia vs. AMD vs. Intel: Comparing AI Chip Sales",
+                      "link": "https://semiwiki.com/forum/threads/nvidia-vs-amd-vs-intel-comparing-ai-chip-sales.18693/",
+                      "snippet": "In contrast, Intel has seen yearly revenue declines and has virtually no market share in AI chips. The company is better known for making ...",
+                      "date": "Sep 4, 2023",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Intel focuses on 'AI factory' market - Valor International - Globo",
+                      "link": "https://valorinternational.globo.com/business/news/2026/08/24/intel-focuses-on-ai-factory-market.ghtml",
+                      "snippet": "Renewals of older machines account for an average of 35% to 40% of servers sold in Brazil, according to consulting firm IDC Brasil.",
+                      "date": "Aug 24, 2026",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Who is the biggest threat to NVIDIA's AI chip dominance?"
+                    },
+                    {
+                      "question": "Who is richer, AMD or NVIDIA?"
+                    },
+                    {
+                      "question": "Is AMD going to overtake NVIDIA?"
+                    },
+                    {
+                      "question": "What is the strongest GPU in the world for AI?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Intel ai gpu market share brazil reddit"
+                    },
+                    {
+                      "query": "Intel ai gpu market share brazil graph"
+                    },
+                    {
+                      "query": "Intel ai gpu market share brazil price"
+                    },
+                    {
+                      "query": "Nvidia GPU market share"
+                    },
+                    {
+                      "query": "Intel GPU market share"
+                    },
+                    {
+                      "query": "Intel arc gpu market share"
+                    },
+                    {
+                      "query": "Intel gpu d270"
+                    },
+                    {
+                      "query": "Nvidia loses market share as competitors amd and intel gain"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Intel AI GPU market share Brazil",
+                  "method": "serper"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 4,
+              "latency_ms": 14220.6943,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Alibaba Cloud AI compute expansion Japan",
+                  "Google Cloud AI GPU region Brazil",
+                  "Microsoft Azure AI compute launch Mexico",
+                  "AWS AI GPU instance rollout Singapore"
+                ]
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 13506
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 4,
+              "latency_ms": 6155.9174,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "GPU instance pricing AWS Japan",
+                  "Azure AI compute pricing Brazil",
+                  "Google Cloud AI GPU pricing Singapore",
+                  "Alibaba Cloud AI compute pricing Mexico"
+                ]
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 13311
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 3822.2527,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI computing platform market size 2023",
+                  "cloud AI infrastructure revenue growth",
+                  "AI developer platform market forecast"
+                ]
+              },
+              "result": [
+                {
+                  "searchParameters": {
+                    "q": "AI computing platform market size 2023",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "AI Platform Market Report 2025- 2030, By Offering, Geo, Tech",
+                      "link": "https://www.marketsandmarkets.com/Market-Reports/artificial-intelligence-ai-platform-market-113162926.html",
+                      "snippet": "The AI platform market is experiencing strong growth, expected to increase from approximately USD 18.22 billion in 2025 to over USD 94.31 billion by 2030, with ...",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Artificial Intelligence (AI) Software Market Size: 2024 to 2030",
+                      "link": "https://www.abiresearch.com/news-resources/chart-data/report-artificial-intelligence-market-size-global",
+                      "snippet": "The Artificial Intelligence (AI) software market size was valued at US$122 billion in 2024. Growing at a Compound Annual Growth Rate (CAGR) of 25%, the AI ...",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "AI Platform Market Size And Trends | Industry Report, 2033",
+                      "link": "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-platform-market-report",
+                      "snippet": "The global AI platform market size was estimated at USD 14.21 billion in 2024 and is projected to reach USD 251.01 billion by 2033, growing at a CAGR of 38.1% ...",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Artificial Intelligence Market | Global Report 2034",
+                      "link": "https://www.fortunebusinessinsights.com/industry-reports/artificial-intelligence-market-100114",
+                      "snippet": "The global artificial intelligence market size is projected to grow from $375.93 billion in 2026 to $2480.05 billion by 2034, exhibiting a CAGR of 26.60%.",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "AI Edge Computing Market Size & Forecast Report 2031",
+                      "link": "https://www.kbvresearch.com/ai-edge-computing-market/",
+                      "snippet": "The Global AI Edge Computing Market size is expected to reach $64.8 billion by 2031, rising at a market growth of 20.9% CAGR during the forecast period.",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Artificial Intelligence - Worldwide | Market Forecast",
+                      "link": "https://www.statista.com/outlook/tmo/artificial-intelligence/worldwide/?srsltid=AYCX9vLjskIxyIs2Xik_jxsa9uo4rmNaYu4in2II3iziTFT6VS_VmIH1",
+                      "snippet": "AI market size U.S. 2025. 73.98bn USD ; Generative AI market size U.S. 2023. 21.65bn USD ; Growth of the AI market in the United States 2024. 33.4%.",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Artificial Intelligence (AI) Market Size and Forecast 2026 ...",
+                      "link": "https://www.precedenceresearch.com/artificial-intelligence-market",
+                      "snippet": "The global Artificial Intelligence (AI) Market size was USD 757.58 billion in 2025, is calculated at USD 900.00 billion in 2026, and is expected to reach ...",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "AI In Cloud Computing Market Size 2025-2029",
+                      "link": "https://www.technavio.com/report/ai-in-cloud-computing-market-industry-analysis",
+                      "snippet": "According to recent studies, The market is projected to reach a value of USD190.67 billion by 2025, reflecting a significant expansion from its current size.",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "What are the big 3 AI platforms?"
+                    },
+                    {
+                      "question": "How big is the AI market size?"
+                    },
+                    {
+                      "question": "How far away is Agi realistically?"
+                    },
+                    {
+                      "question": "Is the AI bubble bursting?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Ai computing platform market size 2023 usa"
+                    },
+                    {
+                      "query": "Ai computing platform market size 2023 graph"
+                    },
+                    {
+                      "query": "AI market size McKinsey"
+                    },
+                    {
+                      "query": "AI market size 2026"
+                    },
+                    {
+                      "query": "Artificial intelligence market size 2030"
+                    },
+                    {
+                      "query": "Generative AI market size"
+                    },
+                    {
+                      "query": "Global AI market size"
+                    },
+                    {
+                      "query": "AI platform market"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "AI computing platform market size 2023",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "cloud AI infrastructure revenue growth",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Cloud AI Market Size, Share & Growth Analysis Report [2034]",
+                      "link": "https://www.fortunebusinessinsights.com/cloud-ai-market-108878",
+                      "snippet": "The global cloud AI market size was valued at USD 102.09 billion in 2025 and is projected to grow from USD 133.42 billion in 2026 to USD 780.64 billion by 2034,",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Cloud AI Market Size, Growth, Share Analysis & Industry ...",
+                      "link": "https://www.mordorintelligence.com/industry-reports/cloud-ai-market",
+                      "snippet": "The Cloud AI Market worth USD 114.26 billion in 2026 is growing at a CAGR of 18.68% to reach USD 269.02 billion by 2031.",
+                      "date": "Jul 29, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Gartner Says Over $3.5 Trillion of AI Infrastructure ...",
+                      "link": "https://www.gartner.com/en/newsroom/press-releases/2026-10-14-gartner-says-over-us-dollars-three-and-a-half-trillion-of-artificial-intelligence-infrastructure-spending-could-be-exposed-to-impairment-by-the-end-of-2030",
+                      "snippet": "Gartner estimates AI-optimized IaaS spending will grow from $66 billion in 2027 to $174 billion in 2030. “The growth in spending on AI-optimized ...",
+                      "date": "Oct 14, 2026",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "AI Boom: Global Cloud Market to Exceed $500 Billion in 2026",
+                      "link": "https://www.statista.com/chart/34022/cloud-infrastructure-service-revenues/?srsltid=AYCX9vLb8YQqTj9LubC_-kBcBbY8jNMwewOhPZ88TzYw66Z1mCLxSYNu",
+                      "snippet": "According to Synergy Research, cloud infrastructure service revenues jumped $90 billion to $419 billion last year, an almost ninefold increase ...",
+                      "date": "May 5, 2026",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "AI Infrastructure Market Size, Share & Growth Report, 2033",
+                      "link": "https://www.grandviewresearch.com/industry-analysis/ai-infrastructure-market-report",
+                      "snippet": "AI Infrastructure market size was valued at $37.3B in 2025 and is projected to grow from $39.3B in 2026 to $120.7B by 2033, at a CAGR of 17.4%",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Cloud infrastructure market notches first $100B quarter driven ...",
+                      "link": "https://fastforward.boldstart.vc/cloud-infrastructure-market-notches-first-100b-quarter-driven-by-ai/",
+                      "snippet": "Global cloud infrastructure revenue hit a record $100 billion last quarter fueled by surging AI demand as big three all benefited.",
+                      "date": "Nov 6, 2025",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Oracle posts 30% revenue growth fueled by AI cloud demand",
+                      "link": "https://www.cnbc.com/2026/09/11/oracle-stock-q1-earnings-ai-cloud.html",
+                      "snippet": "Cloud revenue rose 62% from a year earlier to $11.6 billion, driven by a 121% jump in cloud infrastructure revenue, while cloud application ...",
+                      "date": "Sep 11, 2026",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "AI infrastructure demand is booming | Deloitte Insights",
+                      "link": "https://www.deloitte.com/us/en/insights/industry/technology/ai-infrastructure-demand-is-booming.html",
+                      "snippet": "HPE cloud and AI revenue reached $7.7 billion in the quarter ended April 30, driven mainly by 33% growth from server revenue,",
+                      "date": "Jul 30, 2026",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Cloud ai infrastructure revenue growth graph"
+                    },
+                    {
+                      "query": "Cloud ai infrastructure revenue growth chart"
+                    },
+                    {
+                      "query": "Cloud ai infrastructure revenue growth 2021"
+                    },
+                    {
+                      "query": "Cloud ai infrastructure revenue growth 2020"
+                    },
+                    {
+                      "query": "Cloud AI market size"
+                    },
+                    {
+                      "query": "Claude AI"
+                    },
+                    {
+                      "query": "AI infrastructure market size"
+                    },
+                    {
+                      "query": "Global AI infrastructure market size"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "cloud AI infrastructure revenue growth",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "AI developer platform market forecast",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "AI Platform Market Report 2025- 2030, By Offering, Geo, Tech",
+                      "link": "https://www.marketsandmarkets.com/Market-Reports/artificial-intelligence-ai-platform-market-113162926.html",
+                      "snippet": "The AI platform market is experiencing strong growth, expected to increase from approximately USD 18.22 billion in 2025 to over USD 94.31 billion by 2030, with ...",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Artificial Intelligence (AI) Software Market Size: 2024 to 2030",
+                      "link": "https://www.abiresearch.com/news-resources/chart-data/report-artificial-intelligence-market-size-global",
+                      "snippet": "The global Artificial Intelligence (AI) software market size is forecast to reach US$174.1 billion in 2025 and grow at a Compound Annual Growth Rate (CAGR) of ...",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "AI Code Tools Market Size, Share & 2031 Growth Trends ...",
+                      "link": "https://www.mordorintelligence.com/industry-reports/artificial-intelligence-code-tools-market",
+                      "snippet": "The AI Code Tools Market worth USD 9.35 billion in 2026 is growing at a CAGR of 26.23% to reach USD 29.96 billion by 2031.",
+                      "date": "Sep 11, 2026",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "AI App Development Market Size, Share | CAGR of 18.60%",
+                      "link": "https://market.us/report/ai-app-development-market/",
+                      "snippet": "The Global AI App Development Market size is expected to be worth around USD 221.9 Billion By 2034, from USD 40.3 Billion in 2024, growing at a CAGR of 18.60%",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "AI Platform Market Size And Trends | Industry Report, 2033",
+                      "link": "https://www.grandviewresearch.com/industry-analysis/artificial-intelligence-ai-platform-market-report",
+                      "snippet": "AI platform market size was estimated at USD 14.21 billion in 2024, is projected to reach USD 251.01 billion by 2033, at a CAGR of 38.1% from 2025 to 2033.",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "AI Development Tool Software - Worldwide | Market Forecast",
+                      "link": "https://www.statista.com/outlook/tmo/software/enterprise-software/ai-development-tool-software/worldwide/?srsltid=AYCX9vIZsh4tLfG9ZTXOBTieRjcF_Kxt4ME7az8WywTEqEus2dYm6c7T",
+                      "snippet": "The AI Development Tool Software market represents a specialized category of enterprise software focused on providing the tools, platforms, and environments ...",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "No-code AI Platform Market Size, Share, Trends 2036",
+                      "link": "https://www.futuremarketinsights.com/reports/no-code-ai-platform-market",
+                      "snippet": "No-code AI Platform Market to grow from USD 8.5 Bn in 2026 to USD 92.5 Bn by 2036 at a 27.0% CAGR. accounts for 20.0% of demand in 2026, 88 times [1] The ...",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "AI Devops Market Analysis, Size, and Forecast 2026-2030",
+                      "link": "https://www.technavio.com/report/ai-devops-market-industry-analysis",
+                      "snippet": "The AI Devops Market size is expected to grow by USD 10959.6 million from 2026-2030 expanding at a CAGR of 26.9% during the forecast period.",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Ai developer platform market forecast 2030"
+                    },
+                    {
+                      "query": "Ai developer platform market forecast 2023"
+                    },
+                    {
+                      "query": "Ai developer platform market forecast pdf"
+                    },
+                    {
+                      "query": "Ai developer platform market forecast 2022"
+                    },
+                    {
+                      "query": "AI platform market"
+                    },
+                    {
+                      "query": "Ai platform market size"
+                    },
+                    {
+                      "query": "AI model market"
+                    },
+                    {
+                      "query": "Leading AI platforms"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "AI developer platform market forecast",
+                  "method": "serper"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "latency_ms": 2751.3386,
+              "result_summary": {
+                "decoded_json": false,
+                "empty": false,
+                "length": 40016,
+                "type": "string"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI cloud computing regulations Singapore",
+                  "data residency rules AI services Brazil",
+                  "AI export control policy Japan",
+                  "cloud provider licensing AI Saudi Arabia"
+                ]
+              },
+              "result": "[{\"title\": \"Technology Sourcing Laws and Regulations 2026 | Singapore\", \"url\": \"https://iclg.com/practice-areas/technology-sourcing-laws-and-regulations/singapore\", \"snippet\": \"9.1 Are there any national laws or regulations that specifically regulate the procurement of cloud computing services (including Software-as-a-Service)?\\n\\nThere are no laws or regulations in Singapore that regulate the procurement of cloud computing services (including Software-as-a-Service) in general. However, sector-specific rules may apply to the procurement of cloud computing services in certain sectors such as in the financial services sector. [...] 10.1 Are there any national laws or regulations that specifically regulate the procurement or use of AI systems?\\n\\nThere are no laws or regulations in Singapore that specifically regulate the procurement or use of AI systems. However, various governmental and regulatory agencies have issued non-binding policy papers and guidelines on matters relating to AI. R"
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 3956.8622,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI data residency regulations",
+                  "AI export control policies",
+                  "cloud licensing requirements for AI platforms"
+                ]
+              },
+              "result": [
+                {
+                  "title": "Data Residency for AI Workloads: Enterprise Cloud Guide",
+                  "url": "https://www.gmicloud.ai/ja/blog/data-residency-for-ai-workloads-what-enterprises-need-to-know-before-choosing-a-cloud-provider",
+                  "snippet": "Which data residency regulations affect enterprise AI workloads in 2026? The key frameworks affecting enterprise AI in 2026 are GDPR for personal data of EU/EEA residents, the EU AI Act for high-risk AI systems (full enforcement August 2, 2026), HIPAA for US healthcare data, China's PIPL for data involving Chinese residents, Japan's APPI for data involving Japanese residents, India's DPDP Act for Indian user data, and at least 34 national data localization laws globally. Most enterprises are [...] 2026年5月22日\n\n.webp)\n\nData residency for AI workloads has become one of the most consequential infrastructure decisions enterprises make in 2026. The combined enforcement of GDPR, the EU AI Act's August 2 high-risk deadline, sector-specific mandates, and at least 34 national data localization laws means that choosing the wrong cloud provider is no longer a compliance risk you manage,  it is a liability you inherit. [...] EU AI Act (full high-risk enforcement: August 2, 2026): High-risk AI syste",
+                  "score": 0.8827621,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI Data Residency: Where Training, Inference and RAG Data Go | Expanso",
+                  "url": "https://expanso.io/blog/ai-data-residency",
+                  "snippet": "AI data residency is the requirement that the regulated data an AI system touches is stored and processed only inside a permitted country or region. For an AI workload that covers four places, and a residency answer has to hold for all of them: the training and fine-tuning data, the prompts sent for inference, the vector store behind retrieval, and the region where the model itself runs. [...] Our guide to data residency requirements covers the legal rules by jurisdiction, including the GDPR, China’s PIPL, and other national regimes. This post covers how those rules apply to the parts of an AI system.\n\nFree guide\n\n### Edge Data Governance\n\nGovern data across distributed environments, from edge to cloud, without sacrificing performance or compliance.\n\nDownload the guideTalk to an engineer\n\nContinue reading\n\nOlder\n\nProcess Data Locally Before You Send It Anywhere [...] No. Article 10 of the AI Act sets data governance and quality requirements for the training, validation, and testing dat",
+                  "score": 0.8727061,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI data residency regulations and challenges - InCountry",
+                  "url": "https://incountry.com/blog/ai-data-residency-regulations-and-challenges",
+                  "snippet": "For instance, if a company in Europe uses AI to process customer information, the data might be required by law to stay within the European Union. This is important because regions like the EU have strict data privacy regulations, such as the General Data Protection Regulation (GDPR). The concept of data residency ensures that sensitive information remains in locations that meet legal and security standards, especially in the era of cloud computing and AI where data can be accessed from [...] Set to take effect in August 2026, establishes risk-based regulations for AI systems, particularly targeting high-risk applications such as biometric surveillance. Although the Act does not explicitly require data residency, these systems will face stringent oversight. Key provisions include a focus on transparency, impact assessments for fundamental rights, and alignment with existing data laws like the GDPR. For example, general-purpose AI models, such as large language models (LLMs), must [...]",
+                  "score": 0.8649622,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "AI Data Residency Requirements by Region: The Complete Enterprise Compliance Guide",
+                  "url": "https://www.premai.io/blog/ai-data-residency-requirements-by-region-the-complete-enterprise-compliance-guide",
+                  "snippet": "> What is AI data residency?  \n>   \n> AI data residency refers to the physical location where AI-related data, including training data, prompts, model weights, and generated outputs, is stored and processed. Unlike traditional data storage, AI creates multiple residency touchpoints: where the model was trained, where inference runs, where fine-tuning occurs, and where outputs are logged.\n\nThe US CLOUD Act Problem\n\nHere’s the gap most compliance guides miss. [...] Data residency for AI isn’t about checking a compliance box. It’s about understanding that every API call, every fine-tuning job, and every RAG query creates data flows with regulatory implications.\n\nThe €1.2 billion fine to Meta wasn’t for a breach. It was for standard data transfers that regulators deemed non-compliant. [...] ### European Union: Most Complex Regulatory Stack\n\nThe EU doesn’t mandate physical data localization. But the compliance requirements create strong incentives for EU-based processing.\n\nEU AI Act (fully ",
+                  "score": 0.79542017,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "What is Data Residency?",
+                  "url": "https://www.truefoundry.com/blog/data-residency",
+                  "snippet": "For organizations leveraging third-party LLM APIs or global AI platforms, even transient data may pass through jurisdictions with different privacy laws. Under regulations such as the EU GDPR, India’s Digital Personal Data Protection Act (DPDP), or Australia’s Privacy Act, these cross-border transfers create compliance and reputational risks. [...] This is the essence of data residency — ensuring that data remains within a defined geographic or legal boundary. What was once a regulatory checkbox has become a strategic necessity in an increasingly geopolitical AI landscape. [...] Data residency refers to where organizational data is physically stored and legally governed. In the pre-AI era, this typically applied to structured data—databases, CRMs, analytics systems. Today, in the AI era, this extends far beyond storage. Every AI model interaction generates new forms of data: prompts, completions, embeddings, logs, and contextual memory.",
+                  "score": 0.7568076,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "The Geopolitics of Data Residency: Navigating AI Compliance in a Fragmented World",
+                  "url": "https://oxmaint.com/sap-integration/geopolitics-data-residency-ai-compliance",
+                  "snippet": "Data residency is about physical geography—which country hosts your servers. Data sovereignty is about legal jurisdiction—whose laws govern that data regardless of where the hardware sits. For AI systems, this is critical because a U.S.-owned cloud server in Germany is physically in the EU but legally accessible to U.S. authorities through the CLOUD Act. True compliance requires solving both the geographic question and the jurisdictional question simultaneously. Failing to do so creates a [...] Global AI Data Regulation — Where the Rules Diverge\n\nFour regulatory philosophies, four sets of compliance obligations\n\nEU\n\nEuropean Union\n\nRights-Centric, Risk-Based [...] The world's major economies aren't just writing different regulations—they're building fundamentally different philosophies of AI governance. The EU leads with rights-based protection, China mandates state-controlled localization, the U.S. operates through a state-by-state patchwork, and emerging markets are accelerating thei",
+                  "score": 0.7216064,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "Privacy and Data Residency for AI Agents: What GDPR Requires That Static Controls Can't Show - ARMO",
+                  "url": "https://www.armosec.io/blog/privacy-and-data-residency-for-ai-agents",
+                  "snippet": "The residency evidence GDPR and the EU AI Act now expect lives in the runtime trajectory of every AI agent execution, not in the deployment configuration. Your residency compliance dashboard — every workload in eu-west-3, sovereign cloud configured, SCCs signed — cannot produce it. [...] For AI agents, sovereign cloud is necessary and not sufficient. The CISO and DPO walking into a vendor conversation about residency evidence ask three questions of any sovereign cloud configuration before treating it as the answer.\n\nFirst: does it constrain the runtime trajectory or just the data-at-rest location? Most sovereign offerings constrain the latter. The former requires watching what the agent does, not what region the storage lives in. [...] ## FAQ\n\nHow is data residency for AI agents different from data residency for SaaS applications? SaaS applications make residency decisions at provisioning. AI agents make them at inference. The SaaS model — select your region, sign your DPA, you’re cove",
+                  "score": 0.64585793,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                },
+                {
+                  "title": "What Is Data Residency? Definition and Compliance | Teradata",
+                  "url": "https://www.teradata.com/insights/data-security/what-is-data-residency",
+                  "snippet": "What are the data residency laws in the United States? The United States has no single federal data residency law. Requirements come from sectoral regulations such as HIPAA and GLBA, state privacy laws, public sector procurement terms, and contractual obligations. Some government and education programs may require in-state or in-country hosting, but specifics vary by jurisdiction and program. [...] Overview\n\nData residency is now a core consideration for enterprises operating across cloud, hybrid, and multi-region environments. As regulations mature and customers demand greater control, organizations need clear, verifiable approaches to ensure data is stored, processed, and backed up in approved locations.",
+                  "score": 0.64020914,
+                  "query_used": "AI data residency regulations",
+                  "method": "web_search"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 4,
+              "latency_ms": 7064.2215,
+              "result_summary": {
+                "count": 4,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AI research ecosystem cloud providers India",
+                  "GPU accelerator ecosystem Brazil",
+                  "AI developer community support Mexico",
+                  "AI talent pipeline Singapore cloud services"
+                ]
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 13424
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5140.2393,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "Intel AI compute market share South Korea",
+                  "Broadcom data center AI platform market Latin America",
+                  "Intel AI GPU market share Brazil"
+                ]
+              },
+              "result": [
+                {
+                  "searchParameters": {
+                    "q": "Intel AI compute market share South Korea",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "South Korea Artificial Intelligence Market Size, Share, 2032",
+                      "link": "https://www.fortunebusinessinsights.com/south-korea-artificial-intelligence-market-114036",
+                      "snippet": "The South Korea Artificial Intelligence market size is projected to grow to $7.17 billion in 2025 to $53.87 billion by 2032, exhibiting a CAGR of 33.40%",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "South Korea AI Data Center Market Size & Share Analysis",
+                      "link": "https://www.mordorintelligence.com/industry-reports/south-korea-artificial-intelligence-ai-data-center",
+                      "snippet": "South Korea AI Optimised Data Center Market will more than triple from USD 0.58B in 2025 to USD 1.89B by 2030.",
+                      "date": "Jul 8, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "South Korea AI PC Market (2025-2030)",
+                      "link": "https://www.marketsandmarkets.com/Market-Reports/geography/ai-pc-market/South-Korea",
+                      "snippet": "South Korea's AI PC market is projected to grow from $995.1 million in 2025 to $3,854.8 million by 2030, representing a 25.3% CAGR—significantly outpacing the ...",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "South Korea punches above its weight in AI",
+                      "link": "https://www.fdiintelligence.com/content/63f66b28-d613-4857-8471-a8d47a429914",
+                      "snippet": "South Korea ranks fourth globally behind the US, China and France for its best-performing frontier AI models in benchmarking tests conducted by ...",
+                      "date": "May 6, 2026",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "South Korea Artificial Intelligence Market Report to 2034",
+                      "link": "https://www.imarcgroup.com/south-korea-artificial-intelligence-market",
+                      "snippet": "The South Korea artificial intelligence market size reached at USD 3.9 Billion in 2025 to reach USD 32.4 Billion by 2034, at a CAGR of ...",
+                      "date": "Jan 30, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "South Korea Data Center Market Size & Share Analysis",
+                      "link": "https://www.arizton.com/market-reports/south-korea-data-center-market-investment-analysis",
+                      "snippet": "The South Korea data center market was valued at USD 5.04 billion in 2025 and is expected to reach USD 16.23 billion by 2031, growing at a CAGR of 21.50%.",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "South Korea's SK Hynix is in talks with Intel about a deal ...",
+                      "link": "https://www.facebook.com/Reuters/videos/the-deal-that-could-see-more-memory-chips-made-in-the-us/1494835939040433/",
+                      "snippet": "South Korea's SK Hynix is in talks with Intel about a deal that would see it manufacture memory chips on US soil for the first time, ...",
+                      "date": "1 month ago",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "South Korea AI Infrastructure Market Size to Reach USD ...",
+                      "link": "https://www.globemarketresearch.com/reports/south-korea-ai-infrastructure-market",
+                      "snippet": "South Korea AI Infrastructure Market is projected to reach USD 31.6 billion by 2035, driven by AI data centers, GPUs, cloud computing, ...",
+                      "date": "Oct 9, 2026",
+                      "rating": 4.7,
+                      "ratingCount": 45,
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Is South Korea leading in AI?"
+                    },
+                    {
+                      "question": "What are the big 3 companies in Korea?"
+                    },
+                    {
+                      "question": "Why is AI so big in Korea?"
+                    },
+                    {
+                      "question": "Are there AI data centers in South Korea?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Intel ai compute market share south korea graph"
+                    },
+                    {
+                      "query": "Intel ai compute market share south korea 2022"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Intel AI compute market share South Korea",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Broadcom data center AI platform market Latin America",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "AI Clusters | AI Servers | AI Infrastructure",
+                      "link": "https://www.broadcom.com/solutions/ai-solutions/ai-infrastructure",
+                      "snippet": "Discover Broadcom's next-generation AI networking, connectivity solutions and custom accelerators (AI XPUs), revolutionizing the industry.",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Why Broadcom (AVGO) Is Up 11.1% After New AI Data ...",
+                      "link": "https://finance.yahoo.com/markets/stocks/articles/why-broadcom-avgo-11-1-002101095.html",
+                      "snippet": "To own Broadcom today, you need to believe its AI data center engine and VMware software platform can keep compounding while non‑AI chip markets ...",
+                      "date": "Jun 1, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Data Center | Solutions",
+                      "link": "https://www.broadcom.com/solutions/data-center",
+                      "snippet": "One-of-a-kind solutions that apply AI and ML to rich, granular data captured at the chip level to enable a uniquely automated AI-driven solution for real ...",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Why Broadcom (AVGO) Dominates AI Data Center Spending",
+                      "link": "https://www.youtube.com/watch?v=Jv3KtxMvxp0",
+                      "snippet": "AI data centers now cost up to $60 billion per gigawatt to construct, and Broadcom (NASDAQ: AVGO) has become one of the biggest ...",
+                      "date": "1 month ago",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Broadcom silicon bridges AI data centres and edge",
+                      "link": "https://www.telecomstechnews.com/news/broadcom-silicon-bridges-ai-data-centres-and-edge/",
+                      "snippet": "Broadcom has announced new AI data centre and edge network platforms designed to unify cloud AI with telecom edge computing infrastructure.",
+                      "date": "Jun 2, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Broadcom Data and AI Portfolio",
+                      "link": "https://www.vmware.com/docs/broadcom-data-and-ai-portfolio-white-paper",
+                      "snippet": "The Broadcom® Data and AI Portfolio (DAP) integrates Broadcom AI, data, and security software solutions with the VMware. Cloud Foundation® ...",
+                      "date": "Jul 15, 2026",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Broadcom Inc. | Connecting Everything",
+                      "link": "https://www.broadcom.com/",
+                      "snippet": "Broadcom delivers semiconductors and infrastructure software for global enterprises' most complex, mission-critical needs.",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Broadcom",
+                      "link": "https://en.wikipedia.org/wiki/Broadcom",
+                      "snippet": "Broadcom sells a range of semiconductor and infrastructure software applications that serve the data center (mainframes), networking, software, broadband, ...",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Who is Broadcom's biggest client?"
+                    },
+                    {
+                      "question": "Who has the largest AI data center in the world?"
+                    },
+                    {
+                      "question": "What AI products does Broadcom make?"
+                    },
+                    {
+                      "question": "Who are the big 5 in data centers?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Broadcom data center locations"
+                    },
+                    {
+                      "query": "Broadcom AI stock"
+                    },
+                    {
+                      "query": "Broadcom office locations"
+                    },
+                    {
+                      "query": "Broadcom products"
+                    },
+                    {
+                      "query": "What is Broadcom VMware"
+                    },
+                    {
+                      "query": "Is Broadcom a Chinese company"
+                    },
+                    {
+                      "query": "Broadcom AI chips"
+                    },
+                    {
+                      "query": "Broadcom manufacturing"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Broadcom data center AI platform market Latin America",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Intel AI GPU market share Brazil",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Intel GPU market share a big fat 0%",
+                      "link": "https://steamcommunity.com/discussions/forum/11/4843148768109677354/?l=brazilian",
+                      "snippet": "According to PC World, Intel has been kicked out of the GPU market, having a zero percent market share. A year ago Intel held a mere 2% and that gain is ...",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "AI GPU Market Share NVIDIA vs AMD vs Intel: 2026 Statistics",
+                      "link": "https://commandlinux.com/statistics/ai-gpu-market-share-nvidia-vs-amd-vs-intel/",
+                      "snippet": "Intel's AI GPU share sits near 1%, with its Crescent Island GPU not sampling until the second half of 2026. The 2026 data center accelerator ...",
+                      "date": "Jul 18, 2026",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Intel GPUs break 1% market share according to Tom ...",
+                      "link": "https://www.reddit.com/r/LinusTechTips/comments/1pcckkp/intel_gpus_break_1_market_share_according_to_tom/",
+                      "snippet": "r/LinusTechTips - Intel GPUs break 1% market share according to Tom hardware. ... JPR says Nvidia's GPU market share decreased by 1.2% in Q3'25.",
+                      "date": "10 months ago",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Intel is saving the GPU market...kind of",
+                      "link": "https://www.youtube.com/watch?v=-w8nPRNGFZo",
+                      "snippet": "Intel is saving the GPU market...kind of. @RaidOwl ... I Added a $200 Intel A770 & Doubled My VRAM — Mixed GPU Local AI That Actually Works.",
+                      "date": "2 months ago",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Intel aims to boost AI turnaround with new GPU chips ...",
+                      "link": "https://finance.yahoo.com/technology/article/intel-aims-to-boost-ai-turnaround-with-new-gpu-chips-to-take-on-nvidia-192916083.html",
+                      "snippet": "Intel has been working to gain a greater foothold in the GPU market, ranging from consumer products to the data center, including its Gaudi AI ...",
+                      "date": "Oct 12, 2026",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Brazil Data Center Processor Market Size & Share 2031",
+                      "link": "https://www.mordorintelligence.com/industry-reports/brazil-data-center-processor-market",
+                      "snippet": "The Brazil Data Center Processor Market is expected to reach USD 1.13 billion in 2025 and grow at a CAGR of 21.32% to reach USD 3.60 billion ...",
+                      "date": "Nov 6, 2024",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Nvidia vs. AMD vs. Intel: Comparing AI Chip Sales",
+                      "link": "https://semiwiki.com/forum/threads/nvidia-vs-amd-vs-intel-comparing-ai-chip-sales.18693/",
+                      "snippet": "In contrast, Intel has seen yearly revenue declines and has virtually no market share in AI chips. The company is better known for making ...",
+                      "date": "Sep 4, 2023",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Intel focuses on 'AI factory' market - Valor International - Globo",
+                      "link": "https://valorinternational.globo.com/business/news/2026/08/24/intel-focuses-on-ai-factory-market.ghtml",
+                      "snippet": "Renewals of older machines account for an average of 35% to 40% of servers sold in Brazil, according to consulting firm IDC Brasil. The global ...",
+                      "date": "Aug 24, 2026",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Who is the biggest threat to NVIDIA's AI chip dominance?"
+                    },
+                    {
+                      "question": "Who is richer, AMD or NVIDIA?"
+                    },
+                    {
+                      "question": "Is AMD going to overtake NVIDIA?"
+                    },
+                    {
+                      "question": "What is the strongest GPU in the world for AI?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Intel ai gpu market share brazil reddit"
+                    },
+                    {
+                      "query": "Intel ai gpu market share brazil graph"
+                    },
+                    {
+                      "query": "Intel ai gpu market share brazil price"
+                    },
+                    {
+                      "query": "Nvidia GPU market share"
+                    },
+                    {
+                      "query": "Intel GPU market share"
+                    },
+                    {
+                      "query": "Intel arc gpu market share"
+                    },
+                    {
+                      "query": "Intel gpu d270"
+                    },
+                    {
+                      "query": "Nvidia loses market share as competitors amd and intel gain"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Intel AI GPU market share Brazil",
+                  "method": "serper"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "681a3d4d-fb4a-4e04-87a8-74a3b3cb89bd",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5213.1724,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "argument_values": {
+                "queries": [
+                  "AWS new GPU instances H100",
+                  "Microsoft Azure AI compute expansion",
+                  "Google Cloud new GPU offering"
+                ]
+              },
+              "result": [
+                {
+                  "searchParameters": {
+                    "q": "AWS new GPU instances H100",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Amazon EC2 P5 Instances",
+                      "link": "https://aws.amazon.com/ec2/instance-types/p5/",
+                      "snippet": "P5 instances provide up to 8 NVIDIA H100 GPUs with a total of up to 640 GB HBM3 GPU memory per instance. P5e and P5en instances provide up to 8 NVIDIA H200 GPUs ...",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Amazon EC2 P5 Instances Powered by NVIDIA H100 ...",
+                      "link": "https://aws.amazon.com/blogs/aws/new-amazon-ec2-p5-instances-powered-by-nvidia-h100-tensor-core-gpus-for-accelerating-generative-ai-and-hpc-applications/",
+                      "snippet": "P5 instances provide 8 x NVIDIA H100 Tensor Core GPUs with 640 GB of high bandwidth GPU memory, 3rd Gen AMD EPYC processors, 2 TB of system ...",
+                      "date": "Jul 26, 2023",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "How to get Nvidia Hardware (single A100's or H100's)?",
+                      "link": "https://www.reddit.com/r/aws/comments/1b5xu5f/i_want_to_migrate_from_gcp_how_to_get_nvidia/",
+                      "snippet": "Introducing NVIDIA H100 Tensor Core GPU Instances: NVIDIA H100 Tensor Core GPUs for Accelerating Generative AI and HPC Applications",
+                      "date": "2 years ago",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "NVIDIA H100 GPUs Now Available on AWS Cloud",
+                      "link": "https://blogs.nvidia.com/blog/aws-cloud-h100/",
+                      "snippet": "The cloud giant officially switched on a new Amazon EC2 P5 instance powered by NVIDIA H100 Tensor Core GPUs. The service lets users scale ...",
+                      "date": "Jul 26, 2023",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Recommended GPU Instances - AWS Deep Learning AMIs",
+                      "link": "https://docs.aws.amazon.com/dlami/latest/devguide/gpu.html",
+                      "snippet": "Amazon EC2 P5 Instances have up to 8 NVIDIA Tesla H100 GPUs. Amazon EC2 P4 Instances have up to 8 NVIDIA Tesla A100 GPUs.",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "New P5 instance with one NVIDIA H100 GPU is now ...",
+                      "link": "https://aws.amazon.com/about-aws/whats-new/2025/08/p5-instance-nvidia-h100-gpu-sagemaker-training-processing-jobs",
+                      "snippet": "P5.4xlarge instances are now available through SageMaker Flexible Training Plans in the following AWS Regions: US East (North Virginia, Ohio), ...",
+                      "date": "Aug 27, 2025",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Amazon EC2 Single GPU P5 instances are now generally ...",
+                      "link": "https://aws.amazon.com/about-aws/whats-new/2025/08/amazon-p5-single-gpu-instances-now-available/",
+                      "snippet": "AWS announces new Amazon Elastic Compute Cloud (Amazon EC2) P5 instance size with one NVIDIA H100 GPU that allows businesses to right-size ...",
+                      "date": "Aug 12, 2025",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "H100 AWS: guide to NVIDIA H100 GPU cloud computing",
+                      "link": "https://www.hivenet.com/post/h100-aws-guide-to-nvidia-h100-gpu-cloud-computing",
+                      "snippet": "Direct answer: AWS offers H100 GPUs through EC2 P5, including single-GPU and eight-GPU configurations. Check current AWS pricing for the exact ...",
+                      "date": "Jul 8, 2026",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Is the H100 GPU end of life?"
+                    },
+                    {
+                      "question": "Which AWS EC2 instances have GPU?"
+                    },
+                    {
+                      "question": "How many H100 GPUs exist?"
+                    },
+                    {
+                      "question": "Is A100 more powerful than H100?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Aws new gpu instances h100 reddit"
+                    },
+                    {
+                      "query": "Aws new gpu instances h100 list"
+                    },
+                    {
+                      "query": "AWS GPU H100 pricing"
+                    },
+                    {
+                      "query": "AWS H100 pricing"
+                    },
+                    {
+                      "query": "AWS H200 instances"
+                    },
+                    {
+                      "query": "AWS GPU instances"
+                    },
+                    {
+                      "query": "AWS NVIDIA GPU instances"
+                    },
+                    {
+                      "query": "AWS H100 GPU"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "AWS new GPU instances H100",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Microsoft Azure AI compute expansion",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Microsoft expands Azure AI and HPC infrastructure with AMD",
+                      "link": "https://blogs.microsoft.com/blog/2026/07/20/microsoft-expands-azure-ai-and-hpc-infrastructure-with-amd/",
+                      "snippet": "Microsoft continues to evolve Azure's infrastructure, including expanding its AI fleet with AMD's most advanced AI and high-performance ...",
+                      "date": "Jul 20, 2026",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "Azure AI Infrastructure",
+                      "link": "https://azure.microsoft.com/en-us/solutions/high-performance-computing/ai-infrastructure",
+                      "snippet": "Azure combines advanced compute, networking, and storage, to seamlessly deliver highly performant, secure, and scalable purpose-built AI Infrastructure",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "Unleashing innovation: The new era of compute powering ...",
+                      "link": "https://azure.microsoft.com/en-us/blog/unleashing-innovation-the-new-era-of-compute-powering-azure-ai-solutions/",
+                      "snippet": "One of Microsoft's advantages in AI is our ability to combine thousands of virtual machines with tens of thousands of GPUs with the best of ...",
+                      "date": "May 21, 2024",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Microsoft and NVIDIA accelerate AI development and ...",
+                      "link": "https://azure.microsoft.com/en-us/blog/microsoft-and-nvidia-accelerate-ai-development-and-performance/",
+                      "snippet": "Azure AI's infrastructure, advanced by NVIDIA accelerated computing, consistently delivers high performance at scale for AI workloads as ...",
+                      "date": "Mar 18, 2025",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Microsoft expands Azure AI and HPC infrastructure with AMD",
+                      "link": "https://www.youtube.com/watch?v=CWEwR9OXzGA",
+                      "snippet": "Microsoft is announcing that Azure will be expanding its AI infrastructure fleet with AMD's most advanced AI and high-performance computing ( ...",
+                      "date": "3 months ago",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "Microsoft Is Powering the Next Generation of AI With a ...",
+                      "link": "https://queueassoc.com/microsoft-is-powering-the-next-generation-of-ai-with-a-massive-expansion-of-azure-maia-technology/",
+                      "snippet": "Microsoft is accelerating enterprise AI innovation with a major expansion of Azure Maia chips in 2027, powering Copilot, intelligent agents, ...",
+                      "date": "5 days ago",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "Accelerating open-source infrastructure development for ...",
+                      "link": "https://azure.microsoft.com/en-us/blog/accelerating-open-source-infrastructure-development-for-frontier-ai-at-scale/",
+                      "snippet": "Microsoft has added more than 2 gigawatts of new capacity and launched the world's most powerful AI datacenter, which delivers 10x the ...",
+                      "date": "Oct 13, 2025",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Azure Compute | Microsoft Azure Blog",
+                      "link": "https://azure.microsoft.com/en-us/blog/product/azure-compute/",
+                      "snippet": "As AI continues to transform industries, Microsoft is expanding its global cloud infrastructure to meet the needs of developers and customers everywhere.",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Is Azure AI the same as ChatGPT?"
+                    },
+                    {
+                      "question": "Who is Azure's biggest customer?"
+                    },
+                    {
+                      "question": "What is replacing Microsoft Azure?"
+                    },
+                    {
+                      "question": "Who is bigger, AWS or Azure?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Microsoft azure ai compute expansion github"
+                    },
+                    {
+                      "query": "Azure AI infrastructure"
+                    },
+                    {
+                      "query": "Azure Machine Learning Studio"
+                    },
+                    {
+                      "query": "Azure AI infrastructure certification"
+                    },
+                    {
+                      "query": "Microsoft Azure ML"
+                    },
+                    {
+                      "query": "Azure AI VM pricing"
+                    },
+                    {
+                      "query": "Azure AI pricing"
+                    },
+                    {
+                      "query": "Microsoft Azure Machine Learning Studio Free"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Microsoft Azure AI compute expansion",
+                  "method": "serper"
+                },
+                {
+                  "searchParameters": {
+                    "q": "Google Cloud new GPU offering",
+                    "type": "search",
+                    "num": 10,
+                    "engine": "google"
+                  },
+                  "organic": [
+                    {
+                      "title": "Cloud GPUs (Graphics Processing Units)",
+                      "link": "https://cloud.google.com/gpu",
+                      "snippet": "Compute Engine provides GPUs that you can add to your virtual machine instances. Learn what you can do with GPUs and what types of GPU hardware are available.",
+                      "position": 1,
+                      "score": 1.0
+                    },
+                    {
+                      "title": "GPU machine types | Compute Engine",
+                      "link": "https://docs.cloud.google.com/compute/docs/gpus",
+                      "snippet": "A3 Ultra machine types have NVIDIA H200 SXM GPUs ( nvidia-h200-141gb ) attached and provide the highest network performance in the A3 series. A3 Ultra machine ...",
+                      "position": 2,
+                      "score": 0.92
+                    },
+                    {
+                      "title": "GPU-Accelerated Google Cloud Platform",
+                      "link": "https://www.nvidia.com/en-us/data-center/gpu-cloud-computing/google-cloud-platform/",
+                      "snippet": "Google Cloud's A4 VMs, accelerated by NVIDIA HGX™ B200, are now generally available. The A4 VM features eight NVIDIA Blackwell GPUs interconnected by fifth- ...",
+                      "position": 3,
+                      "score": 0.84
+                    },
+                    {
+                      "title": "Which GPU should I use on Google Cloud Platform (GCP)",
+                      "link": "https://stackoverflow.com/questions/69674590/which-gpu-should-i-use-on-google-cloud-platform-gcp",
+                      "snippet": "Right now, I'm working on my master's thesis and I need to train a huge Transformer model on GCP. And the fastest way to train deep learning models is ...",
+                      "date": "5 years ago",
+                      "position": 4,
+                      "score": 0.76
+                    },
+                    {
+                      "title": "Google Cloud GPU Pricing: NVIDIA Options & Savings ...",
+                      "link": "https://www.usage.ai/blogs/gcp/ai-ml-cost/vertex-ai/google-cloud-nvidia-enterprise-ai/",
+                      "snippet": "Google Cloud offers NVIDIA GPUs from L4 for inference to H100, H200, and Blackwell systems for advanced AI workloads. 2 H100 VM pricing can reach about $88–$93 ...",
+                      "position": 5,
+                      "score": 0.68
+                    },
+                    {
+                      "title": "NVIDIA solutions | Google Cloud",
+                      "link": "https://cloud.google.com/nvidia",
+                      "snippet": "Diverse GPU Offerings: Compute Engine offers NVIDIA GPUs: RTX PRO 6000, GB300, GB200, B200, H200, H100, L4, P100, P4, T4, V100, A100. Options cover various cost ...",
+                      "position": 6,
+                      "score": 0.6
+                    },
+                    {
+                      "title": "GPU support for services | Cloud Run",
+                      "link": "https://docs.cloud.google.com/run/docs/configuring/services/gpu",
+                      "snippet": "Google provides NVIDIA RTX PRO 6000 Blackwell GPU with 96 GB of GPU memory (VRAM) and NVIDIA L4 GPUs with 24 GB of GPU memory (VRAM), which is separate from the ...",
+                      "position": 7,
+                      "score": 0.52
+                    },
+                    {
+                      "title": "Google's GPU explained: Google Cloud GPUs vs TPUs",
+                      "link": "https://www.hivenet.com/post/googles-gpu-complete-guide-to-understanding-and-using-google-cloud-gpus-and-tpu-alternatives",
+                      "snippet": "As of early 2026, Google's GPU lineup includes high-end Blackwell GPUs for training and specialized GPUs for inference and graphics.",
+                      "date": "Feb 11, 2026",
+                      "position": 8,
+                      "score": 0.44
+                    }
+                  ],
+                  "peopleAlsoAsk": [
+                    {
+                      "question": "Does Google Cloud offer GPUs?"
+                    },
+                    {
+                      "question": "Is Google buying NVIDIA GPUs?"
+                    },
+                    {
+                      "question": "How much does Google Cloud GPU cost?"
+                    },
+                    {
+                      "question": "Is NVIDIA releasing a new GPU in 2026?"
+                    }
+                  ],
+                  "relatedSearches": [
+                    {
+                      "query": "Google cloud new gpu offering price"
+                    },
+                    {
+                      "query": "Google Cloud GPU"
+                    },
+                    {
+                      "query": "NVIDIA GPU cloud free"
+                    },
+                    {
+                      "query": "GPU Google Cloud pricing"
+                    },
+                    {
+                      "query": "Google Cloud H100 GPU pricing"
+                    },
+                    {
+                      "query": "GPU cloud providers"
+                    },
+                    {
+                      "query": "NVIDIA Google partnership"
+                    },
+                    {
+                      "query": "Google Cloud GPU pricing calculator"
+                    }
+                  ],
+                  "credits": 1,
+                  "query_used": "Google Cloud new GPU offering",
+                  "method": "serper"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.005",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": false,
+          "detail": "1 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": false,
+          "detail": "Some research tasks were skipped.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": false,
+          "detail": "3 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "6ed09cf9-8cf7-4203-91ed-db9177b9ef28",
+          "statement": "U.S. export control rules currently omit chips-as-a-service, allowing Chinese companies to benefit from advanced AI chips via cloud while the hardware stays on U.S. soil, highlighting a regulatory gap in AI export controls for cloud-based services.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "e86e198b-0961-4f7d-b86b-d705c89a4ad6",
+          "statement": "Brokers are providing anonymous overseas computing power that enables Chinese engineers to access banned Nvidia AI chips, indicating active demand and circumvention mechanisms despite export restrictions.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "0fd0af16-c439-4541-be67-196c40015e6a",
+          "statement": "IndiaAI Compute provides powerful GPUs at significantly lower costs, ensuring GPU accelerator availability for AI developers in India.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ce7df616-a144-4a05-8574-afa480c1d39d",
+          "statement": "Intel's GPU market share is reported as zero percent, showing negligible presence in the AI computing platform market.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "c39f3e4f-c8e3-4af2-9c4e-376db6f21272",
+          "statement": "Azure offers per‑second billing for compute capacity with no long‑term commitments, enabling flexible consumption for AI workloads.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "f13be3e7-e30d-4302-96dc-a849314da7b4",
+          "statement": "Azure Reserved Virtual Machine Instances provide significant cost reductions compared to pay‑as‑you‑go rates when customers commit to one‑year or three‑year terms, useful for stable AI workloads.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "8868d1ee-d847-4114-8164-255851151d70",
+          "statement": "Alibaba Cloud offers a dedicated Machine Learning Platform for AI with its own pricing page, indicating AI‑compute services are available in the Asian market.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "bf631954-14eb-4e1f-b407-45c8521d8ff8",
+          "statement": "NVIDIA offers free cloud credits through its partners in India, demonstrating an active cloud partner network that facilitates scalable AI development and deployment.",
+          "flags": [
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "aa65cd0d-0f0a-40a9-b300-24c4ae015e70",
+          "statement": "Intel's GPU market share is effectively zero, indicating minimal competition from Intel in AI computing platforms.",
+          "flags": [
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "c6bcc884-8acd-45d6-b041-dbaf414a89d4",
+          "statement": "South Korea's AI data center market is projected to grow from $0.58 billion in 2025 to $1.89 billion by 2030, a 26.61% CAGR, showing strong demand growth for AI computing platforms.",
+          "flags": [
+            "ungrounded_numbers"
+          ]
+        }
+      ]
+    }
+  ]
+}

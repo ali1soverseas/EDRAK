@@ -1,0 +1,516 @@
+{
+  "agent": "customer_trends",
+  "generated_at_utc": "2026-10-24T12:59:29.466191+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_customer_trends_attempt_1_67347656-dd9.json",
+      "metrics": {
+        "status": "no_evidence",
+        "units": 0,
+        "units_flagged": 0,
+        "faithfulness_tested": 0,
+        "faithfulness_avg": null,
+        "faithfulness_pass_pct": null,
+        "relevancy_tested": 0,
+        "relevancy_avg": null,
+        "relevancy_pass_pct": null,
+        "insight_tested": 0,
+        "insight_avg": null,
+        "insight_pass_pct": null,
+        "context_relevancy_tested": 0,
+        "context_relevancy_avg": null,
+        "context_relevancy_pass_pct": null,
+        "judge_errors": 0
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "partial",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.2378,
+            "reason": "The output shows multiple tool failures with error codes like 'provider_exhausted' and 'no_data', indicating tool failures and empty results. There is no evidence of retries after failures or fallback mechanisms being triggered, as 'fallback_used' is null throughout. This lack of retries and fallbacks does not align with the task requirements for handling failures, resulting in poor handling of the query."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          }
+        },
+        "metrics": {
+          "calls": 9,
+          "errors": 7,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 20887.7594,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "social_search:x: no provider could serve it: apify failed (ActorLimitReached), socialcrawl failed (ProviderQuotaExceeded), serper failed (ProviderBadResponse)"
+                ],
+                "error_code": "provider_exhausted"
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 77132.3175
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "geo",
+                "keywords",
+                "timeframe"
+              ],
+              "argument_types": {
+                "geo": "str",
+                "keywords": "list",
+                "timeframe": "str"
+              },
+              "latency_ms": 155879.6805,
+              "error_code": "provider_exhausted",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "search_interest: no provider could serve it: apify failed (RunNotFinished), socialcrawl failed (ProviderQuotaExceeded), google_trends_api failed (ProviderNotConfigured)"
+                ],
+                "error_code": "provider_exhausted"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 972.8321,
+              "error_code": "no_data",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "no stored items match; collect evidence first or widen the filters"
+                ],
+                "error_code": "no_data"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 121.5601,
+              "error_code": "no_data",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "no stored items match; collect evidence first or widen the filters"
+                ],
+                "error_code": "no_data"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 187.1256,
+              "error_code": "no_data",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "no stored items match; collect evidence first or widen the filters"
+                ],
+                "error_code": "no_data"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 194.0867,
+              "error_code": "no_data",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "no stored items match; collect evidence first or widen the filters"
+                ],
+                "error_code": "no_data"
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "metric",
+                "params"
+              ],
+              "argument_types": {
+                "metric": "str",
+                "params": "dict"
+              },
+              "latency_ms": 451.7174,
+              "error_code": "no_data",
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "error_code",
+                  "gaps",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "error",
+                "count": 0,
+                "gaps": [
+                  "no stored items match; collect evidence first or widen the filters"
+                ],
+                "error_code": "no_data"
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "67347656-dd98-4062-bcb9-58d897672365",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 169.4238,
+              "result_summary": {
+                "collection_counts": {
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 3,
+                "keys": [
+                  "count",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "result": {
+                "status": "ok",
+                "count": 0,
+                "warnings": [
+                  "no stored item matches these filters"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "control_summary.findings_count matches findings",
+          "passed": true,
+          "detail": "summary=0 actual=0",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "no_evidence",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments can be validated against schemas",
+          "passed": false,
+          "detail": "no per-call argument schema supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "tool failures are handled or explicitly surfaced",
+          "passed": false,
+          "detail": "7 unhandled failure(s) across compute_metrics=5, search_interest=1, social_search=1",
+          "severity": "error"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": []
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 import re
 import string
 from collections.abc import Callable, Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -34,6 +34,8 @@ DEFAULT_TIMEOUT_S = 240
 _DROP = object()
 _PLACEHOLDER_KEYS = frozenset({"noResults"})
 _STATUS_ID = re.compile(r"/status(?:es)?/(\d+)")
+_APIFY_TREND_TIMEFRAMES = {"today 12-m": "today 5-y"}
+_TREND_WINDOW_DAYS = {"today 12-m": 365}
 _WINDOWS = (
     (1, "day"),
     (7, "week"),
@@ -131,6 +133,47 @@ def render_input(
     """
     rendered = _render(template, values, mappings)
     return {} if rendered is _DROP else rendered
+
+
+def _trend_actor_timeframe(timeframe: str) -> str:
+    """Use a timeframe accepted by the Apify actor; unsupported periods are handled after fetch."""
+    return _APIFY_TREND_TIMEFRAMES.get(timeframe, timeframe)
+
+
+def _fit_trend_window(
+    series: list[TrendSeries], timeframe: str, today: date
+) -> tuple[list[TrendSeries], list[str]]:
+    """Trim/rebase an Apify 5-year series to the requested 12-month comparison window."""
+    days = _TREND_WINDOW_DAYS.get(timeframe)
+    if days is None:
+        return series, []
+
+    cutoff = today - timedelta(days=days)
+    selected = [
+        (item, [(day, value) for day, value in item.points if day >= cutoff])
+        for item in series
+    ]
+    selected = [(item, points) for item, points in selected if points]
+    if not selected:
+        raise ProviderBadResponse(
+            f"{NAME}: no trend points found in the requested {timeframe} window"
+        )
+
+    shared_peak = max(value for _, points in selected for _, value in points)
+    scale = 100 / shared_peak if shared_peak > 0 else 1
+    fitted = [
+        item.model_copy(
+            update={
+                "timeframe": timeframe,
+                "points": [(day, value * scale) for day, value in points],
+            }
+        )
+        for item, points in selected
+    ]
+    return fitted, [
+        "Apify supplied a 5-year range; the last 12 months were selected and "
+        "re-scaled together. Low values may be affected by source rounding."
+    ]
 
 
 def _render(template: Any, values: dict[str, Any], mappings: dict[str, dict[str, str]]) -> Any:
@@ -232,6 +275,8 @@ class ApifyProvider:
         missing = [name for name in spec.requires if values.get(name) is None]
         if missing:
             raise ProviderBadResponse(f"{NAME}: {capability} needs {', '.join(missing)}")
+        if spec.mapper in TREND_MAPPERS:
+            values["timeframe"] = _trend_actor_timeframe(call.timeframe or "")
         run_input = render_input(spec.input, values, spec.values)
         apify = ApifyClient(self._http, self._keys.current, limiter=self._limiter)
         raw = await apify.run(
@@ -248,7 +293,12 @@ class ApifyProvider:
             series: list[TrendSeries] = [
                 s for item in raw if (s := TREND_MAPPERS[spec.mapper](item, ctx)) is not None
             ]
-            return ProviderResult(items=series, raw_count=len(raw), cost_estimate=cost)
+            warnings: list[str] = []
+            if call.timeframe:
+                series, warnings = _fit_trend_window(series, call.timeframe, now.date())
+            return ProviderResult(
+                items=series, raw_count=len(raw), cost_estimate=cost, warnings=warnings
+            )
         mapped: list[EvidenceItem] = [
             e for item in raw if (e := MAPPERS[spec.mapper](item, ctx)) is not None
         ]

@@ -225,10 +225,11 @@ be assessed include:
 | Error handling | Whether observed failures are handled, retried, or surfaced |
 | Efficiency | Whether equivalent tool work is repeated |
 
-Dimensions lacking required trace data are marked not assessable. By default,
-raw argument/result payloads are not sent to the judge. `--include-tool-payloads`
-permits redacted tool arguments/results for eligible judgments and should be
-used only when permitted by data-handling policy.
+Dimensions lacking required trace data are marked not assessable. Redacted,
+bounded tool-result payloads are recorded for the dashboard by default, but
+raw argument/result payloads are not sent to the judge by default.
+`--include-tool-payloads` permits redacted tool arguments/results for eligible
+judgments and should be used only when permitted by data-handling policy.
 
 RAG and worker traces are correlated to task ID, attempt, and retrieval query
 when those values are available.

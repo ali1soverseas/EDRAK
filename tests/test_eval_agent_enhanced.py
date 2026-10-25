@@ -714,6 +714,64 @@ def test_execution_trace_marks_missing_expectations_and_payload_judgments_unasse
     assert any(not item["passed"] and item["severity"] == "warn" for item in result["checks"])
 
 
+def test_execution_trace_reports_redacted_result_without_judge_opt_in():
+    payload = {
+        "execution_trace": {
+            "calls": [{
+                "tool": "internal_search",
+                "result_summary": {"type": "object"},
+                "result_payload": {
+                    "answer": "The actual tool result.",
+                    "api_key": "must be redacted",
+                },
+            }]
+        }
+    }
+
+    result = eval_agent.eval_execution_trace(
+        payload,
+        "Review internal evidence.",
+        "The finding uses the search results.",
+        RecordingJudge(),
+    )
+
+    call = result["metrics"]["call_details"][0]
+    assert call["result"] == {
+        "answer": "The actual tool result.",
+        "api_key": "[REDACTED]",
+    }
+    assert result["dimensions"]["tool_result_use"]["status"] == "not_assessable"
+
+
+def test_execution_trace_omits_non_actionable_sequence_and_completeness_warnings():
+    result = eval_agent.eval_execution_trace(
+        {"execution_trace": {"calls": [{"tool": "web_search", "status": "ok"}]}},
+        "Research the market.",
+        "Summary.",
+        RecordingJudge(),
+    )
+
+    check_names = {item["check"] for item in result["checks"]}
+    assert "workflow sequence is assessable" not in check_names
+    assert "trace records tool failure handling" not in check_names
+
+
+def test_unhandled_tool_failures_are_reported_as_errors():
+    result = eval_agent.eval_execution_trace(
+        {"execution_trace": {"calls": [{"tool": "web_search", "status": "error"}]}},
+        "Research the market.",
+        "",
+        RecordingJudge(),
+    )
+
+    failure_check = next(
+        item for item in result["checks"]
+        if item["check"] == "tool failures are handled or explicitly surfaced"
+    )
+    assert failure_check["passed"] is False
+    assert failure_check["severity"] == "error"
+
+
 def test_execution_trace_schema_detects_missing_and_wrongly_typed_arguments():
     result = eval_agent.eval_execution_trace(
         {
@@ -860,7 +918,7 @@ def test_execution_failure_without_recovery_evidence_is_not_passed():
     assert result["dimensions"]["error_handling"]["status"] == "partial"
     failure_check = next(item for item in result["checks"] if item["check"].startswith("tool failures"))
     assert not failure_check["passed"]
-    assert failure_check["severity"] == "warn"
+    assert failure_check["severity"] == "error"
     assert "1 unhandled failure(s)" in failure_check["detail"]
     assert "web_search=1" in failure_check["detail"]
 

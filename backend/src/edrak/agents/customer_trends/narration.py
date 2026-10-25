@@ -47,9 +47,15 @@ def narrate(event: dict[str, Any]) -> str | None:
             count = event.get("count")
             note = " (partial)" if status == "partial" else ""
             return f"{tool}{where}: {count} item(s){note}" if count is not None else f"{tool}{where}: ok{note}"
-        reason = event.get("error_code") or event.get("message") or status
+        message = event.get("message")
+        error_code = event.get("error_code")
+        reason = (
+            f"{message} [{error_code}]"
+            if message and error_code
+            else message or error_code or status
+        )
         fallback = ", then tried a fallback" if event.get("fallback_used") else ""
-        return f"{tool}{where} failed ({_short(reason, 80)}){fallback}"
+        return f"{tool}{where} failed ({_short(reason, 180)}){fallback}"
     if kind == "gap_found":
         description = event.get("description")
         return f"Gap found: {_short(description)}" if description else "Gap found"

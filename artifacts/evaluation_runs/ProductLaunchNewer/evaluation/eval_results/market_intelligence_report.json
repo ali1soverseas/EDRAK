@@ -1,0 +1,824 @@
+{
+  "agent": "market_intelligence",
+  "generated_at_utc": "2026-10-24T12:59:29.469860+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "specificity": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_market_intelligence_attempt_1_10445487-3c9.json",
+      "metrics": {
+        "status": "partial",
+        "units": 13,
+        "units_flagged": 6,
+        "faithfulness_tested": 13,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 13,
+        "relevancy_avg": 0.8987,
+        "relevancy_pass_pct": 92.31,
+        "specificity_tested": 13,
+        "specificity_avg": 0.5964,
+        "specificity_pass_pct": 69.23,
+        "insight_tested": 13,
+        "insight_avg": 0.7008,
+        "insight_pass_pct": 84.62,
+        "context_relevancy_tested": 13,
+        "context_relevancy_avg": 0.7335,
+        "context_relevancy_pass_pct": 76.92,
+        "judge_errors": 0
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "assessable",
+            "score": null,
+            "reason": "No per-call input schema; value suitability requires opt-in payload judging."
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Trace has no failures."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": null,
+            "reason": "3 exact repeated call(s) with the same tool and arguments."
+          }
+        },
+        "metrics": {
+          "calls": 15,
+          "errors": 0,
+          "repeated_calls": 3,
+          "call_details": [
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 4066.306,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 6327
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 16,
+              "latency_ms": 5340.566,
+              "result_summary": {
+                "count": 16,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 10541
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 9017.0692,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 7119
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 5038.1561,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 10327
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 4203.2102,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 6985
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 6367.9912,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": [
+                {
+                  "status": "ok",
+                  "totalResults": 0,
+                  "articles": [],
+                  "query_used": "AWS announces rack‑scale AI inference deployment",
+                  "method": "newsapi"
+                },
+                {
+                  "status": "ok",
+                  "totalResults": 1,
+                  "articles": [
+                    {
+                      "source": {
+                        "id": "[TRUNCATED]",
+                        "name": "[TRUNCATED]"
+                      },
+                      "author": "Harold Fritts",
+                      "title": "NVIDIA GTC Berlin: 14-Day DSX POD AI Factories, a 2.5x Substrate Buildout, and the OpenShell Reference Architecture",
+                      "description": "NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along with telecom, autonomous vehicle, robotics, and healthcare p…",
+                      "url": "https://www.storagereview.com/news/nvidia-gtc-berlin-2026-dsx-pod-14-day-ai-factory-substrate-openshell-ai-ran",
+                      "urlToImage": "https://www.storagereview.com/wp-content/uploads/2026/10/StorageReview-NVIDIA-DSX-POD-16x9-1.jpg",
+                      "publishedAt": "2026-10-21T18:04:42Z",
+                      "content": "NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along … [+15916 chars]"
+                    }
+                  ],
+                  "query_used": "Azure rack AI inference platform Europe rollout",
+                  "method": "newsapi"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 15762.4678,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 14529
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 16,
+              "latency_ms": 8572.5026,
+              "result_summary": {
+                "count": 16,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 9643
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 10683.6343,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 10074
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 16,
+              "latency_ms": 7408.1739,
+              "result_summary": {
+                "count": 16,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 10541
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 6892.0176,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 7011
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_serper",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 10417.7692,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "credits",
+                  "method",
+                  "organic",
+                  "peopleAlsoAsk",
+                  "query_used",
+                  "relatedSearches",
+                  "searchParameters"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 10149
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 2,
+              "latency_ms": 9120.4005,
+              "result_summary": {
+                "count": 2,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": [
+                {
+                  "status": "ok",
+                  "totalResults": 0,
+                  "articles": [],
+                  "query_used": "AWS announces rack‑scale AI inference deployment",
+                  "method": "newsapi"
+                },
+                {
+                  "status": "ok",
+                  "totalResults": 1,
+                  "articles": [
+                    {
+                      "source": {
+                        "id": "[TRUNCATED]",
+                        "name": "[TRUNCATED]"
+                      },
+                      "author": "Harold Fritts",
+                      "title": "NVIDIA GTC Berlin: 14-Day DSX POD AI Factories, a 2.5x Substrate Buildout, and the OpenShell Reference Architecture",
+                      "description": "NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along with telecom, autonomous vehicle, robotics, and healthcare p…",
+                      "url": "https://www.storagereview.com/news/nvidia-gtc-berlin-2026-dsx-pod-14-day-ai-factory-substrate-openshell-ai-ran",
+                      "urlToImage": "https://www.storagereview.com/wp-content/uploads/2026/10/StorageReview-NVIDIA-DSX-POD-16x9-1.jpg",
+                      "publishedAt": "2026-10-21T18:04:42Z",
+                      "content": "NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along … [+15916 chars]"
+                    }
+                  ],
+                  "query_used": "Azure rack AI inference platform Europe rollout",
+                  "method": "newsapi"
+                }
+              ]
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_newsapi",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 3,
+              "latency_ms": 14595.4534,
+              "result_summary": {
+                "count": 3,
+                "decoded_json": true,
+                "item_keys": [
+                  "articles",
+                  "method",
+                  "query_used",
+                  "status",
+                  "totalResults"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 11531
+              }
+            },
+            {
+              "tool": "market_search",
+              "provider": "tool_web_search",
+              "worker": "market_intelligence",
+              "task_id": "10445487-3c95-42e5-9816-31652973264a",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "queries"
+              ],
+              "argument_types": {
+                "queries": "list"
+              },
+              "result_count": 24,
+              "latency_ms": 11320.1612,
+              "result_summary": {
+                "count": 24,
+                "decoded_json": true,
+                "item_keys": [
+                  "method",
+                  "query_used",
+                  "score",
+                  "snippet",
+                  "title",
+                  "url"
+                ],
+                "item_types": [
+                  "dict"
+                ],
+                "type": "array"
+              },
+              "result": {
+                "truncated": true,
+                "type": "str",
+                "serialized_length": 9558
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.005",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": false,
+          "detail": "3 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": false,
+          "detail": "Some research tasks were skipped.",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments satisfy supplied schemas",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": false,
+          "detail": "3 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "4180a833-0c55-430d-80d0-f64c52ab1ffb",
+          "statement": "Traditional semiconductor supply chains are struggling to meet the unprecedented demand from AI hardware manufacturers, representing a delivery‑risk factor for AI inference platforms.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "b3537e62-ef7d-4264-b311-e3789af4500e",
+          "statement": "Logistics bottlenecks can be mitigated by using AI‑powered third‑party logistics (3PL) providers with strategically placed warehouses, making logistics network design a critical factor for timely delivery of AI inference hardware.",
+          "flags": [
+            "low_relevancy",
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "4c83575c-9684-4fb7-93a1-8b3f6c75005c",
+          "statement": "The United States has implemented export controls specifically targeting AI technologies, making it one of the first countries to regulate AI through export controls.",
+          "flags": [
+            "generic_statement"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "ee19506f-9239-4b6b-987f-f6f094519f15",
+          "statement": "Multiple cloud providers—including CoreWeave, Crusoe, Firebird, Firmus, GMI Cloud, IREN, Lambda, Nebius, Nscale, Oracle Cloud Infrastructure, and Vultr—are working on cloud deployments of the Azure Maia 300 architecture, indicating adoption of rack‑scale AI inference platforms across major cloud ecosystems.",
+          "flags": [
+            "ungrounded_numbers",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "629ddd4f-8527-4309-b5dd-cdec800357ce",
+          "statement": "Leading hardware vendors such as Dell Technologies, Cisco, HPE, Lenovo, and Supermicro are building infrastructure on the Azure Maia 300 architecture, demonstrating broad ecosystem support for rack‑scale AI inference platforms.",
+          "flags": [
+            "ungrounded_numbers",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "b0a0dd6b-f54a-472f-9239-7677a712ed06",
+          "statement": "The Azure Maia 300 architecture is designed to run on AWS, Google Cloud, and Microsoft Azure, showing cross‑cloud compatibility for rack‑scale AI inference workloads.",
+          "flags": [
+            "ungrounded_numbers",
+            "generic_statement",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

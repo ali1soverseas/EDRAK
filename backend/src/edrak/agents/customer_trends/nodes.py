@@ -559,16 +559,21 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
     else:
         warnings.append("theme analysis skipped: no social or review batch was collected")
 
-    requests: dict[str, dict[str, Any]] = {
-        name: {"metric": name}
-        for name in ("volume_over_time", "platform_mix", "language_mix", "engagement_stats")
-    }
-    for series in deps.store.get_trend_series(brief.run_id):
+    run_summary = deps.store.run_summary(brief.run_id)
+    has_evidence = run_summary.evidence_count > 0
+    trend_series = deps.store.get_trend_series(brief.run_id)
+    requests: dict[str, dict[str, Any]] = {}
+    if has_evidence:
+        requests.update({
+            name: {"metric": name}
+            for name in ("volume_over_time", "platform_mix", "language_mix", "engagement_stats")
+        })
+    for series in trend_series:
         requests[f"trend_growth:{series.keyword}"] = {
             "metric": "trend_growth",
             "params": {"keyword": series.keyword},
         }
-    if brief.competitors:
+    if has_evidence and brief.competitors:
         requests["share_of_voice"] = {
             "metric": "share_of_voice",
             "params": {
@@ -577,12 +582,17 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
             },
         }
     # Engagement on each company's own accounts, so findings can compare them with numbers.
-    for owner, ids in (state.get("account_batches") or {}).items():
-        if ids:
-            requests[f"account_engagement:{owner}"] = {
-                "metric": "engagement_stats",
-                "params": {"filters": {"batch_ids": ids}},
-            }
+    if has_evidence:
+        for owner, ids in (state.get("account_batches") or {}).items():
+            if ids:
+                requests[f"account_engagement:{owner}"] = {
+                    "metric": "engagement_stats",
+                    "params": {"filters": {"batch_ids": ids}},
+                }
+    if not requests:
+        warnings.append(
+            "metrics skipped: no collected evidence or search-interest series are available"
+        )
     metric_ids = dict(state.get("metric_ids", {}))
     for name, arguments in requests.items():
         answer = await call_tool(tools["compute_metrics"], arguments)

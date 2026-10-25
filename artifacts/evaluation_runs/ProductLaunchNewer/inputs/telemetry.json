@@ -1,0 +1,1353 @@
+{
+  "spans": [
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "4f3da338553e953c",
+      "start_time": "2026-10-24T12:07:48.404295+00:00",
+      "end_time": "2026-10-24T12:07:48.968556+00:00",
+      "duration_ms": 564.2609,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"List NVIDIA's existing GPU families, interconnect technologies, and software stacks that are qualified for rack‑scale AI inference systems, including performance benchmarks and power/cooling specifications for US and European data center configurations.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":9115}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "4d313392ccec3777",
+      "start_time": "2026-10-24T12:07:48.968640+00:00",
+      "end_time": "2026-10-24T12:07:49.002037+00:00",
+      "duration_ms": 33.3962,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"List NVIDIA's existing GPU families, interconnect technologies, and software stacks that are qualified for rack‑scale AI inference systems, including performance benchmarks and power/cooling specifications for US and European data center configurations.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "03e8b6f9b099d1aa",
+      "start_time": "2026-10-24T12:07:49.002176+00:00",
+      "end_time": "2026-10-24T12:07:49.036956+00:00",
+      "duration_ms": 34.7804,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Describe NVIDIA's current data‑center platform integration experience, including any pre‑validated reference designs or OEM partnerships that combine GPUs, high‑speed networking, and inference software for cloud service providers.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":9144}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "066332d501a7a767",
+      "start_time": "2026-10-24T12:07:49.037039+00:00",
+      "end_time": "2026-10-24T12:07:49.068208+00:00",
+      "duration_ms": 31.17,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Describe NVIDIA's current data‑center platform integration experience, including any pre‑validated reference designs or OEM partnerships that combine GPUs, high‑speed networking, and inference software for cloud service providers.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "65853f2f3a5058ec",
+      "start_time": "2026-10-24T12:07:49.068305+00:00",
+      "end_time": "2026-10-24T12:07:49.104243+00:00",
+      "duration_ms": 35.9379,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Provide details on NVIDIA's supply‑chain and manufacturing capacity for the GPUs, networking ASICs, and software licenses required to deliver a modular, rack‑scale AI inference platform in the United States and Europe.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":8189}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "3fb16fcbabcb9569",
+      "start_time": "2026-10-24T12:07:49.104331+00:00",
+      "end_time": "2026-10-24T12:07:49.136150+00:00",
+      "duration_ms": 31.8186,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Provide details on NVIDIA's supply‑chain and manufacturing capacity for the GPUs, networking ASICs, and software licenses required to deliver a modular, rack‑scale AI inference platform in the United States and Europe.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "ef46d940d4161673",
+      "start_time": "2026-10-24T12:07:49.136266+00:00",
+      "end_time": "2026-10-24T12:07:49.176258+00:00",
+      "duration_ms": 39.9926,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Summarize the internal support and services resources (field engineering, warranty, software updates, and 24/7 support coverage) that NVIDIA can allocate to customers of a rack‑scale AI inference platform, and any known limitations.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":8801}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "becae0acf3f033ff",
+      "start_time": "2026-10-24T12:07:49.176342+00:00",
+      "end_time": "2026-10-24T12:07:49.209167+00:00",
+      "duration_ms": 32.8253,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Summarize the internal support and services resources (field engineering, warranty, software updates, and 24/7 support coverage) that NVIDIA can allocate to customers of a rack‑scale AI inference platform, and any known limitations.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "15c34df419d25b07",
+      "start_time": "2026-10-24T12:07:49.209252+00:00",
+      "end_time": "2026-10-24T12:07:49.247237+00:00",
+      "duration_ms": 37.9854,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Identify internal decisions, roadmaps, or OKRs that affect the ability to launch a pre‑integrated, rack‑scale AI inference offering for cloud providers, including planned product releases, pricing models, and packaging constraints.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":8578}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "02eccc4b26a4b284",
+      "start_time": "2026-10-24T12:07:49.247343+00:00",
+      "end_time": "2026-10-24T12:07:49.277112+00:00",
+      "duration_ms": 29.7694,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Identify internal decisions, roadmaps, or OKRs that affect the ability to launch a pre‑integrated, rack‑scale AI inference offering for cloud providers, including planned product releases, pricing models, and packaging constraints.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "584b3e9227951e1e",
+      "start_time": "2026-10-24T12:07:49.277204+00:00",
+      "end_time": "2026-10-24T12:07:49.313361+00:00",
+      "duration_ms": 36.1572,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.25,\"origin\":{\"$ne\":\"public_handbook\"},\"query\":\"Highlight gaps or missing capabilities in NVIDIA's current AI computing and data‑center portfolio that could limit the development of a modular, scalable AI inference platform for cloud providers, such as networking bandwidth, cooling solutions, or software licensing models.\",\"top_k\":4,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"dict\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 4,
+        "edrak.tool.result.summary": "{\"count\":4,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[\"Evidence\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"list\",\"serialized_length\":8954}"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "ab9edce2f6eea98b",
+      "start_time": "2026-10-24T12:07:49.313470+00:00",
+      "end_time": "2026-10-24T12:07:49.344311+00:00",
+      "duration_ms": 30.8412,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "internal_rag.retrieve",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"min_score\":0.45,\"origin\":\"public_handbook\",\"query\":\"Highlight gaps or missing capabilities in NVIDIA's current AI computing and data‑center portfolio that could limit the development of a modular, scalable AI inference platform for cloud providers, such as networking bandwidth, cooling solutions, or software licensing models.\",\"top_k\":3,\"workspace_id\":\"ac156a8dd644702db4a5725c7813633d\"}",
+        "edrak.tool.argument.names": "min_score,origin,query,top_k,workspace_id",
+        "edrak.tool.argument.types": "{\"min_score\":\"float\",\"origin\":\"str\",\"query\":\"str\",\"top_k\":\"int\",\"workspace_id\":\"str\"}",
+        "edrak.tool.result.count": 0,
+        "edrak.tool.result.summary": "{\"count\":0,\"decoded_json\":false,\"item_keys\":[],\"item_types\":[],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[]"
+      },
+      "parent_span_id": "e257c6cfacf1ea00"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "aef0c0bdd3a5638d",
+      "start_time": "2026-10-24T12:07:49.572736+00:00",
+      "end_time": "2026-10-24T12:07:53.639041+00:00",
+      "duration_ms": 4066.306,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"rack-scale AI inference platform market size United States\",\"rack-scale AI inference platform market size Europe\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":6327}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "e257c6cfacf1ea00",
+      "start_time": "2026-10-24T12:07:43.765034+00:00",
+      "end_time": "2026-10-24T12:07:57.061545+00:00",
+      "duration_ms": 13296.5109,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.agent.type": "internal_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "00184cdf-a844-45d0-9695-7401b4de77fc"
+      },
+      "parent_span_id": "d87e40037e2ae4ce"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "ffa07ef7414b4322",
+      "start_time": "2026-10-24T12:07:52.714034+00:00",
+      "end_time": "2026-10-24T12:07:57.226687+00:00",
+      "duration_ms": 4512.6534,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference solution subscription pricing per seat per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6965}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "073e9053a0953dcc",
+      "start_time": "2026-10-24T12:07:57.238689+00:00",
+      "end_time": "2026-10-24T12:08:00.188436+00:00",
+      "duration_ms": 2949.7469,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom cloud AI platform pricing model seat based monthly fee\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":4999}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "eb723fd30cd2a4a2",
+      "start_time": "2026-10-24T12:08:00.197095+00:00",
+      "end_time": "2026-10-24T12:08:03.668643+00:00",
+      "duration_ms": 3471.5487,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference rack subscription price per seat per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":4972}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "07fe2f013310aaab",
+      "start_time": "2026-10-24T12:08:03.678832+00:00",
+      "end_time": "2026-10-24T12:08:07.148983+00:00",
+      "duration_ms": 3470.1519,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel cloud AI accelerator pricing per user per month\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6516}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "b1f5e9c9d647068e",
+      "start_time": "2026-10-24T12:08:07.163491+00:00",
+      "end_time": "2026-10-24T12:08:09.094712+00:00",
+      "duration_ms": 1931.2214,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference hardware release cadence quarterly\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":4917}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "2a1be580bc45c937",
+      "start_time": "2026-10-24T12:08:09.100468+00:00",
+      "end_time": "2026-10-24T12:08:12.069959+00:00",
+      "duration_ms": 2969.4915,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom product launch timeline AI accelerator rack\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6465}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "2bb4ce0323ef3e36",
+      "start_time": "2026-10-24T12:07:52.559300+00:00",
+      "end_time": "2026-10-24T12:08:13.447060+00:00",
+      "duration_ms": 20887.7594,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\",\"ar\"],\"max_results\":30,\"platform\":\"x\",\"query\":\"NVIDIA AI rack\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"social_search:x: no provider could serve it: apify failed (ActorLimitReached), socialcrawl failed (ProviderQuotaExceeded), serper failed (ProviderBadResponse)\"],\"error_code\":\"provider_exhausted\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d8627fde8ae0694d",
+      "start_time": "2026-10-24T12:08:12.081388+00:00",
+      "end_time": "2026-10-24T12:08:15.312173+00:00",
+      "duration_ms": 3230.7847,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference rack release schedule quarterly shipments\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6135}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "a9fc59638cbcedbf",
+      "start_time": "2026-10-24T12:08:15.331213+00:00",
+      "end_time": "2026-10-24T12:08:17.931910+00:00",
+      "duration_ms": 2600.6962,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel product launch calendar AI accelerator system\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6980}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d2d5ed5fb3dd7083",
+      "start_time": "2026-10-24T12:08:17.951621+00:00",
+      "end_time": "2026-10-24T12:08:21.042473+00:00",
+      "duration_ms": 3090.8513,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom pre‑integrated rack‑scale AI inference solution product name\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":4517}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "0d69e5f5f212c9b6",
+      "start_time": "2026-10-24T12:08:21.064980+00:00",
+      "end_time": "2026-10-24T12:08:25.028868+00:00",
+      "duration_ms": 3963.8879,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference appliance for cloud providers\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"query\":\"Broadcom AI inference appliance for cloud providers\",\"follow_up_questions\":null,\"answer\":null,\"images\":[],\"results\":[{\"url\":\"https://www.youtube.com/watch?v=txT7_sX8Riw\",\"title\":\"Broadcom Thinks Companies Won't Put All Their AI in the ...\",\"content\":\"Broadcom just made a massive play with the announcement of the VMware Private AI Cloud. AI inference inside private clouds\",\"score\":0.64128816,\"raw_content\":null,\"id\":\"c610b5-00\"},{\"url\":\"https://www.youtube.com/watch?v=MhT_71aRKPY\",\"title\":\"Tech Bytes: Bring AI Inferencing on Prem with VMware AI Factory (Sponsored)\",\"content\":\"### Description\\n373 views\\nPosted: 2026-09-28\\nThe early exuberance of AI adoption has run up against hard-nosed business requirements around managing costs, protecting sensitive data, and matching the right model with the right job at the right price.\\nOn today’s show, sponsor Broadcom is here to make a case that private cloud is the place for AI inferencing workloads. We talk about the new VMware AI Factory that combines software and hardware to accelerate deployment and operations, curated models that make it easy to deliver inferencing “as a service” to internal customers, and more.\\nMy guest is Sabina Anja, Chief Technologist | Executive Advisor - VMware Cloud Foundation. [...] ### Transcript\\n[0:04] Welcome to Tech Bites. So, the early exuberance of AI adoption is now running up against hard-nosed business requirements around things like managing costs, protecting sensitive data, and\\n[0:13] matching the right model with the right job at the right price. On today's show, sponsor Broadc\",\"score\":0.62879556,\"raw_content\":\"# Tech Bytes: Bring AI Inferencing on Prem with VMware AI Factory (Sponsored)\\n## Channel: Packet Pushers\\n19.2K subscribers\\n6 likes\\n\\n### Description\\n373 views\\nPosted: 2026-09-28\\nThe early exuberance of AI adoption has run up against hard-nosed business requirements around managing costs, protecting sensitive data, and matching the right model with the right job at the right price.\\nOn today’s show, sponsor Broadcom is here to make a case that private cloud is the place for AI inferencing workloads. We talk about the new VMware AI Factory that combines software and hardware to accelerate deployment and operations, curated models that make it easy to deliver inferencing “as a service” to internal customers, and more.\\nMy guest is Sabina Anja, Chief Technologist | Executive Advisor - VMware Cloud Foundation.\\n\\nLinks:\\nBroadcom Announces VMware AI Factory, Enabling Faster Time to Production AI and Greater Control Over AI Tokenomics - https://www.broadcom.com/company/news...\\nBroadcom Introduces \",\"id\":\"2cf635-01\"},{\"url\":\"https://www.vmware.com/docs/broadcom-data-and-ai-portfolio-white-paper\",\"title\":\"Broadcom Data and AI Portfolio\",\"content\":\"The Broadcom® Data and AI Portfolio (DAP) integrates Broadcom AI, data, and security software solutions with the VMware Cloud Foundation®\",\"score\":0.6213807,\"raw_content\":null,\"id\":\"7ddefd-02\"}],\"response_time\":3.77,\"request_id\":\"aedb1e58-0fbf-4b51-af63-30e3670592ec\"}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "9512f89d422a55d2",
+      "start_time": "2026-10-24T12:08:19.939001+00:00",
+      "end_time": "2026-10-24T12:08:25.279567+00:00",
+      "duration_ms": 5340.566,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"export control regulations for AI hardware\",\"EU AI Act hardware compliance requirements\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 16,
+        "edrak.tool.result.summary": "{\"count\":16,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":10541}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "a332fbcb85f13e2f",
+      "start_time": "2026-10-24T12:08:25.042160+00:00",
+      "end_time": "2026-10-24T12:08:27.130557+00:00",
+      "duration_ms": 2088.3969,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference rack specifications GPU networking power consumption\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":7085}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "92e0c02b532a79ed",
+      "start_time": "2026-10-24T12:08:27.146005+00:00",
+      "end_time": "2026-10-24T12:08:30.101593+00:00",
+      "duration_ms": 2955.5873,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI accelerator rack data sheet US Europe configuration\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":7064}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "183ee00378f43eb8",
+      "start_time": "2026-10-24T12:08:30.113106+00:00",
+      "end_time": "2026-10-24T12:08:32.922659+00:00",
+      "duration_ms": 2809.5531,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference rack pricing US Europe tiered\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":5215}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "b0335d8f0328718e",
+      "start_time": "2026-10-24T12:08:32.925764+00:00",
+      "end_time": "2026-10-24T12:08:38.819510+00:00",
+      "duration_ms": 5893.7456,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI accelerator system cost breakdown by region\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":7155}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "af8e458a17f9758b",
+      "start_time": "2026-10-24T12:08:38.935254+00:00",
+      "end_time": "2026-10-24T12:08:41.316816+00:00",
+      "duration_ms": 2381.5624,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel rack‑scale AI inference platform product name\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6828}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "dd05e585dfc1711e",
+      "start_time": "2026-10-24T12:08:41.367832+00:00",
+      "end_time": "2026-10-24T12:08:44.332676+00:00",
+      "duration_ms": 2964.8446,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference appliance for cloud providers\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6949}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "8663282e6dc7abd9",
+      "start_time": "2026-10-24T12:08:45.089478+00:00",
+      "end_time": "2026-10-24T12:08:48.689663+00:00",
+      "duration_ms": 3600.1853,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference rack hardware configuration GPU accelerator CPU networking power cooling\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":7109}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "b57fbbb7ac9e0c92",
+      "start_time": "2026-10-24T12:08:48.744158+00:00",
+      "end_time": "2026-10-24T12:08:51.598410+00:00",
+      "duration_ms": 2854.2528,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI accelerator rack US European variant specifications\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":4850}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "9ad21228f34cd2d4",
+      "start_time": "2026-10-24T12:08:43.542632+00:00",
+      "end_time": "2026-10-24T12:08:52.559701+00:00",
+      "duration_ms": 9017.0692,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AI hardware supply chain disruptions United States\",\"AI hardware logistics challenges Europe\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":7119}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "9953954e416277af",
+      "start_time": "2026-10-24T12:08:51.600490+00:00",
+      "end_time": "2026-10-24T12:08:55.501127+00:00",
+      "duration_ms": 3900.6372,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference rack pricing model US Europe\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6992}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "69b040f31c862024",
+      "start_time": "2026-10-24T12:08:55.562942+00:00",
+      "end_time": "2026-10-24T12:08:58.105835+00:00",
+      "duration_ms": 2542.8934,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI accelerator system subscription or license fee per rack\",\"stage\":1}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6084}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "810ba65b591b1369",
+      "start_time": "2026-10-24T12:09:03.193932+00:00",
+      "end_time": "2026-10-24T12:09:08.232088+00:00",
+      "duration_ms": 5038.1561,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"rack-scale AI inference platform supply chain risk\",\"semiconductor shortage impact AI inference accelerators\",\"logistics bottlenecks AI hardware delivery timelines\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":10327}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "77c0e91b5d08422e",
+      "start_time": "2026-10-24T12:09:14.844470+00:00",
+      "end_time": "2026-10-24T12:09:18.339412+00:00",
+      "duration_ms": 3494.9421,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom Jalapeño AI inference rack pricing brochure site:broadcom.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":3874}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "2a807dd1ee6beee3",
+      "start_time": "2026-10-24T12:09:15.246949+00:00",
+      "end_time": "2026-10-24T12:09:19.450160+00:00",
+      "duration_ms": 4203.2102,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Broadcom rack-scale AI inference system specifications\",\"Intel AI inference rack solution pricing\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":6985}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "43db7dfa7f0db580",
+      "start_time": "2026-10-24T12:09:18.349796+00:00",
+      "end_time": "2026-10-24T12:09:20.862659+00:00",
+      "duration_ms": 2512.8631,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Broadcom AI inference solution subscription model per seat per month site:broadcom.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":5185}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d1436ae84bc62df2",
+      "start_time": "2026-10-24T12:09:20.868953+00:00",
+      "end_time": "2026-10-24T12:09:24.161473+00:00",
+      "duration_ms": 3292.5197,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference platform pricing guide site:intel.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6951}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "0b235f8432ff139e",
+      "start_time": "2026-10-24T12:09:24.178345+00:00",
+      "end_time": "2026-10-24T12:09:28.522094+00:00",
+      "duration_ms": 4343.7487,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "competitor_web_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"domains\":null,\"query\":\"Intel AI inference rack subscription per seat per month site:intel.com\",\"stage\":2}",
+        "edrak.tool.argument.names": "domains,query,stage",
+        "edrak.tool.argument.types": "{\"domains\":\"NoneType\",\"query\":\"str\",\"stage\":\"int\"}",
+        "edrak.tool.provider": "tavily",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"images\":0,\"results\":3},\"decoded_json\":false,\"field_count\":7,\"keys\":[\"answer\",\"follow_up_questions\",\"images\",\"query\",\"request_id\",\"response_time\",\"results\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"dict\",\"serialized_length\":6999}"
+      },
+      "parent_span_id": "8799aa8fefe9b96b"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "4cacd265f05af57c",
+      "start_time": "2026-10-24T12:08:14.202937+00:00",
+      "end_time": "2026-10-24T12:09:31.335254+00:00",
+      "duration_ms": 77132.3175,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "social_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"depth\":\"standard\",\"entity\":\"NVIDIA\",\"geo\":\"US\",\"languages\":[\"en\",\"ar\"],\"max_results\":30,\"platform\":\"reddit\",\"query\":\"NVIDIA AI rack\",\"since\":\"\",\"sort\":\"top\",\"until\":\"\"}",
+        "edrak.tool.argument.names": "depth,entity,geo,languages,max_results,platform,query,since,sort,until",
+        "edrak.tool.argument.types": "{\"depth\":\"str\",\"entity\":\"str\",\"geo\":\"str\",\"languages\":\"list\",\"max_results\":\"int\",\"platform\":\"str\",\"query\":\"str\",\"since\":\"str\",\"sort\":\"str\",\"until\":\"str\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "8799aa8fefe9b96b",
+      "start_time": "2026-10-24T12:07:43.764343+00:00",
+      "end_time": "2026-10-24T12:09:47.082039+00:00",
+      "duration_ms": 123317.6952,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.agent.type": "competitor_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "3aefcba5-904e-4375-9a20-74edb7665350"
+      },
+      "parent_span_id": "d87e40037e2ae4ce"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "9718b3728f659579",
+      "start_time": "2026-10-24T12:09:44.379754+00:00",
+      "end_time": "2026-10-24T12:09:50.747745+00:00",
+      "duration_ms": 6367.9912,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AWS announces rack‑scale AI inference deployment\",\"Azure rack AI inference platform Europe rollout\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_newsapi",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"articles\",\"method\",\"query_used\",\"status\",\"totalResults\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[{\"status\":\"ok\",\"totalResults\":0,\"articles\":[],\"query_used\":\"AWS announces rack‑scale AI inference deployment\",\"method\":\"newsapi\"},{\"status\":\"ok\",\"totalResults\":1,\"articles\":[{\"source\":{\"id\":\"[TRUNCATED]\",\"name\":\"[TRUNCATED]\"},\"author\":\"Harold Fritts\",\"title\":\"NVIDIA GTC Berlin: 14-Day DSX POD AI Factories, a 2.5x Substrate Buildout, and the OpenShell Reference Architecture\",\"description\":\"NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along with telecom, autonomous vehicle, robotics, and healthcare p…\",\"url\":\"https://www.storagereview.com/news/nvidia-gtc-berlin-2026-dsx-pod-14-day-ai-factory-substrate-openshell-ai-ran\",\"urlToImage\":\"https://www.storagereview.com/wp-content/uploads/2026/10/StorageReview-NVIDIA-DSX-POD-16x9-1.jpg\",\"publishedAt\":\"2026-10-21T18:04:42Z\",\"content\":\"NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along … [+15916 chars]\"}],\"query_used\":\"Azure rack AI inference platform Europe rollout\",\"method\":\"newsapi\"}]"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "0f909722aad45d85",
+      "start_time": "2026-10-24T12:09:54.002353+00:00",
+      "end_time": "2026-10-24T12:10:09.764821+00:00",
+      "duration_ms": 15762.4678,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AWS rack scale AI inference\",\"Azure AI inference rack deployment\",\"Google Cloud rack AI inference platform\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_newsapi",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"articles\",\"method\",\"query_used\",\"status\",\"totalResults\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":14529}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d210aa34a44d2906",
+      "start_time": "2026-10-24T12:07:51.328862+00:00",
+      "end_time": "2026-10-24T12:10:27.208543+00:00",
+      "duration_ms": 155879.6805,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "search_interest",
+        "edrak.tool.argument.values": "{\"geo\":\"US\",\"keywords\":[\"NVIDIA AI inference\",\"GPU inference pricing\",\"Intel AI inference\",\"Broadcom AI networking\",\"rack scale AI\"],\"timeframe\":\"today 12-m\"}",
+        "edrak.tool.argument.names": "geo,keywords,timeframe",
+        "edrak.tool.argument.types": "{\"geo\":\"str\",\"keywords\":\"list\",\"timeframe\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "provider_exhausted",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"search_interest: no provider could serve it: apify failed (RunNotFinished), socialcrawl failed (ProviderQuotaExceeded), google_trends_api failed (ProviderNotConfigured)\"],\"error_code\":\"provider_exhausted\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "068c015cec17fd14",
+      "start_time": "2026-10-24T12:10:31.747019+00:00",
+      "end_time": "2026-10-24T12:10:32.719851+00:00",
+      "duration_ms": 972.8321,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"volume_over_time\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "no_data",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"no stored items match; collect evidence first or widen the filters\"],\"error_code\":\"no_data\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "881c35315abf22d8",
+      "start_time": "2026-10-24T12:10:32.784218+00:00",
+      "end_time": "2026-10-24T12:10:32.905778+00:00",
+      "duration_ms": 121.5601,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"platform_mix\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "no_data",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"no stored items match; collect evidence first or widen the filters\"],\"error_code\":\"no_data\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "04f1cbfcb1aeec9c",
+      "start_time": "2026-10-24T12:10:32.937556+00:00",
+      "end_time": "2026-10-24T12:10:33.124681+00:00",
+      "duration_ms": 187.1256,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"language_mix\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "no_data",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"no stored items match; collect evidence first or widen the filters\"],\"error_code\":\"no_data\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "aaf0748391d48ec3",
+      "start_time": "2026-10-24T12:10:33.129966+00:00",
+      "end_time": "2026-10-24T12:10:33.324052+00:00",
+      "duration_ms": 194.0867,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"engagement_stats\"}",
+        "edrak.tool.argument.names": "metric",
+        "edrak.tool.argument.types": "{\"metric\":\"str\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "no_data",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"no stored items match; collect evidence first or widen the filters\"],\"error_code\":\"no_data\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "b3fce61312308427",
+      "start_time": "2026-10-24T12:10:33.344565+00:00",
+      "end_time": "2026-10-24T12:10:33.796283+00:00",
+      "duration_ms": 451.7174,
+      "status": "error",
+      "attributes": {
+        "edrak.tool.name": "compute_metrics",
+        "edrak.tool.argument.values": "{\"metric\":\"share_of_voice\",\"params\":{\"competitors\":[\"Broadcom\",\"Intel Corp\"],\"entity\":\"NVIDIA Corporation\"}}",
+        "edrak.tool.argument.names": "metric,params",
+        "edrak.tool.argument.types": "{\"metric\":\"str\",\"params\":\"dict\"}",
+        "edrak.tool.status": "error",
+        "edrak.tool.error_code": "no_data",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"gaps\":1},\"decoded_json\":true,\"field_count\":4,\"keys\":[\"count\",\"error_code\",\"gaps\",\"status\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"error\",\"count\":0,\"gaps\":[\"no stored items match; collect evidence first or widen the filters\"],\"error_code\":\"no_data\"}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "1ad97c1967b333fa",
+      "start_time": "2026-10-24T12:10:38.054837+00:00",
+      "end_time": "2026-10-24T12:10:38.224261+00:00",
+      "duration_ms": 169.4238,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "evidence_query",
+        "edrak.tool.argument.values": "{\"filters\":{},\"limit\":8,\"sample\":\"top\"}",
+        "edrak.tool.argument.names": "filters,limit,sample",
+        "edrak.tool.argument.types": "{\"filters\":\"dict\",\"limit\":\"int\",\"sample\":\"str\"}",
+        "edrak.tool.status": "ok",
+        "edrak.tool.result.summary": "{\"collection_counts\":{\"warnings\":1},\"decoded_json\":true,\"field_count\":3,\"keys\":[\"count\",\"status\",\"warnings\"],\"type\":\"object\"}",
+        "edrak.tool.result.payload": "{\"status\":\"ok\",\"count\":0,\"warnings\":[\"no stored item matches these filters\"]}"
+      },
+      "parent_span_id": "e343e88d315cdcb7"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "e343e88d315cdcb7",
+      "start_time": "2026-10-24T12:07:43.788694+00:00",
+      "end_time": "2026-10-24T12:11:08.107648+00:00",
+      "duration_ms": 204318.9543,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.agent.type": "customer_trends",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "67347656-dd98-4062-bcb9-58d897672365"
+      },
+      "parent_span_id": "d87e40037e2ae4ce"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "7921ea39d0d980bf",
+      "start_time": "2026-10-24T12:11:29.756071+00:00",
+      "end_time": "2026-10-24T12:11:38.328574+00:00",
+      "duration_ms": 8572.5026,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"ASHRAE high density AI rack cooling guidelines\",\"EU data center power efficiency standards for AI hardware\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 16,
+        "edrak.tool.result.summary": "{\"count\":16,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":9643}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "0a5adea55309d00f",
+      "start_time": "2026-10-24T12:12:23.541124+00:00",
+      "end_time": "2026-10-24T12:12:34.224758+00:00",
+      "duration_ms": 10683.6343,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"rack scale AI inference market size\",\"AI inference hardware total addressable market\",\"cloud service providers AI inference demand forecast\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":10074}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "101cd29ac8ecfcc7",
+      "start_time": "2026-10-24T12:12:53.006705+00:00",
+      "end_time": "2026-10-24T12:13:00.414879+00:00",
+      "duration_ms": 7408.1739,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"export control regulations for AI hardware\",\"EU AI Act hardware compliance requirements\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 16,
+        "edrak.tool.result.summary": "{\"count\":16,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":10541}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "1e6f6a23692f1dda",
+      "start_time": "2026-10-24T12:13:22.551287+00:00",
+      "end_time": "2026-10-24T12:13:29.443305+00:00",
+      "duration_ms": 6892.0176,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AI hardware supply chain disruptions United States\",\"AI hardware logistics challenges Europe\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":7011}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "869c06495c85411f",
+      "start_time": "2026-10-24T12:13:50.618779+00:00",
+      "end_time": "2026-10-24T12:14:01.036549+00:00",
+      "duration_ms": 10417.7692,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"Broadcom rack scale AI inference performance\",\"Intel Habana Gaudi 2 inference performance benchmarks\",\"Broadcom AI inference accelerator pricing cloud\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_serper",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"credits\",\"method\",\"organic\",\"peopleAlsoAsk\",\"query_used\",\"relatedSearches\",\"searchParameters\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":10149}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "9b52e552c70910dc",
+      "start_time": "2026-10-24T12:14:14.500198+00:00",
+      "end_time": "2026-10-24T12:14:23.620598+00:00",
+      "duration_ms": 9120.4005,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AWS announces rack‑scale AI inference deployment\",\"Azure rack AI inference platform Europe rollout\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_newsapi",
+        "edrak.tool.result.count": 2,
+        "edrak.tool.result.summary": "{\"count\":2,\"decoded_json\":true,\"item_keys\":[\"articles\",\"method\",\"query_used\",\"status\",\"totalResults\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "[{\"status\":\"ok\",\"totalResults\":0,\"articles\":[],\"query_used\":\"AWS announces rack‑scale AI inference deployment\",\"method\":\"newsapi\"},{\"status\":\"ok\",\"totalResults\":1,\"articles\":[{\"source\":{\"id\":\"[TRUNCATED]\",\"name\":\"[TRUNCATED]\"},\"author\":\"Harold Fritts\",\"title\":\"NVIDIA GTC Berlin: 14-Day DSX POD AI Factories, a 2.5x Substrate Buildout, and the OpenShell Reference Architecture\",\"description\":\"NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along with telecom, autonomous vehicle, robotics, and healthcare p…\",\"url\":\"https://www.storagereview.com/news/nvidia-gtc-berlin-2026-dsx-pod-14-day-ai-factory-substrate-openshell-ai-ran\",\"urlToImage\":\"https://www.storagereview.com/wp-content/uploads/2026/10/StorageReview-NVIDIA-DSX-POD-16x9-1.jpg\",\"publishedAt\":\"2026-10-21T18:04:42Z\",\"content\":\"NVIDIA’s GTC Berlin announcements today span containerized Vera Rubin infrastructure, a 2.5x expansion of its substrate supply, and software for AI factory power management and agent security, along … [+15916 chars]\"}],\"query_used\":\"Azure rack AI inference platform Europe rollout\",\"method\":\"newsapi\"}]"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "16a7d8e874d487fb",
+      "start_time": "2026-10-24T12:14:29.174260+00:00",
+      "end_time": "2026-10-24T12:14:43.769714+00:00",
+      "duration_ms": 14595.4534,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"AWS rack-scale AI inference platform\",\"Microsoft Azure AI inference rack deployment\",\"Google Cloud rack-scale AI inference announcement\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_newsapi",
+        "edrak.tool.result.count": 3,
+        "edrak.tool.result.summary": "{\"count\":3,\"decoded_json\":true,\"item_keys\":[\"articles\",\"method\",\"query_used\",\"status\",\"totalResults\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":11531}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "tool.call",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "ac8a3d4bab1d0b18",
+      "start_time": "2026-10-24T12:15:20.681324+00:00",
+      "end_time": "2026-10-24T12:15:32.001485+00:00",
+      "duration_ms": 11320.1612,
+      "status": "ok",
+      "attributes": {
+        "edrak.tool.name": "market_search",
+        "edrak.tool.status": "ok",
+        "edrak.tool.argument.values": "{\"queries\":[\"ASHRAE data center cooling standards\",\"EU energy efficiency directive data center\",\"high density rack scale AI inference power\"]}",
+        "edrak.tool.argument.names": "queries",
+        "edrak.tool.argument.types": "{\"queries\":\"list\"}",
+        "edrak.tool.provider": "tool_web_search",
+        "edrak.tool.result.count": 24,
+        "edrak.tool.result.summary": "{\"count\":24,\"decoded_json\":true,\"item_keys\":[\"method\",\"query_used\",\"score\",\"snippet\",\"title\",\"url\"],\"item_types\":[\"dict\"],\"type\":\"array\"}",
+        "edrak.tool.result.payload": "{\"truncated\":true,\"type\":\"str\",\"serialized_length\":9558}"
+      },
+      "parent_span_id": "d888fa5d3b45b75d"
+    },
+    {
+      "name": "edrak.worker.run",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d888fa5d3b45b75d",
+      "start_time": "2026-10-24T12:07:43.768249+00:00",
+      "end_time": "2026-10-24T12:15:54.318768+00:00",
+      "duration_ms": 490550.5186,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.agent.type": "market_intelligence",
+        "edrak.task.attempt": 1,
+        "edrak.task.id": "10445487-3c95-42e5-9816-31652973264a"
+      },
+      "parent_span_id": "d87e40037e2ae4ce"
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "f7526a4b76040278bce7cd3085419b76",
+      "span_id": "d87e40037e2ae4ce",
+      "start_time": "2026-10-24T12:07:39.612164+00:00",
+      "end_time": "2026-10-24T12:21:58.773434+00:00",
+      "duration_ms": 859161.2702,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.run.resuming": false
+      }
+    },
+    {
+      "name": "fastapi.dependencies",
+      "trace_id": "2bd59f30e63812a474a15ce36f606051",
+      "span_id": "016328944490d1c6",
+      "start_time": "2026-10-24T12:22:08.000938+00:00",
+      "end_time": "2026-10-24T12:22:08.011193+00:00",
+      "duration_ms": 10.2545,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "d34308b39cea0112"
+    },
+    {
+      "name": "fastapi.endpoint",
+      "trace_id": "2bd59f30e63812a474a15ce36f606051",
+      "span_id": "3b2a5fbec5142ce6",
+      "start_time": "2026-10-24T12:22:08.011329+00:00",
+      "end_time": "2026-10-24T12:22:08.104083+00:00",
+      "duration_ms": 92.7541,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "d34308b39cea0112"
+    },
+    {
+      "name": "fastapi.serialization",
+      "trace_id": "2bd59f30e63812a474a15ce36f606051",
+      "span_id": "01da2be5ce2d991f",
+      "start_time": "2026-10-24T12:22:08.104210+00:00",
+      "end_time": "2026-10-24T12:22:08.104285+00:00",
+      "duration_ms": 0.0747,
+      "status": "ok",
+      "attributes": {},
+      "parent_span_id": "d34308b39cea0112"
+    },
+    {
+      "name": "POST /api/analyses/{analysis_id}/review",
+      "trace_id": "2bd59f30e63812a474a15ce36f606051",
+      "span_id": "d34308b39cea0112",
+      "start_time": "2026-10-24T12:22:07.999591+00:00",
+      "end_time": "2026-10-24T12:22:08.104881+00:00",
+      "duration_ms": 105.2899,
+      "status": "ok",
+      "attributes": {
+        "http.request.method": "POST",
+        "http.route": "/api/analyses/{analysis_id}/review",
+        "http.response.status_code": 200
+      }
+    },
+    {
+      "name": "edrak.orchestration.graph",
+      "trace_id": "2bd59f30e63812a474a15ce36f606051",
+      "span_id": "10c0880fcf1f1d8b",
+      "start_time": "2026-10-24T12:22:08.100301+00:00",
+      "end_time": "2026-10-24T12:23:41.250202+00:00",
+      "duration_ms": 93149.9011,
+      "status": "ok",
+      "attributes": {
+        "edrak.run.id": "079addcb9b4206babcf91cad79e12b1f",
+        "edrak.run.resuming": true
+      },
+      "parent_span_id": "3b2a5fbec5142ce6"
+    }
+  ]
+}

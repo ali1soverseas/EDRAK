@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from edrak.agents.customer_trends.schemas.common import ToolResponse, ToolStatus
 from edrak.agents.customer_trends.tools import registry
 from edrak.agents.customer_trends.tools.base import ToolSpec
-from edrak.observability import trace
+from edrak.observability import set_tool_outcome, trace
 
 
 class SearchInput(BaseModel):
@@ -68,3 +68,19 @@ def test_customer_trends_tool_calls_are_traced_with_worker_context(monkeypatch) 
     )
     assert parent.attributes["edrak.agent.type"] == "customer_trends"
     assert parent.attributes["edrak.task.id"] == "customer-task"
+
+
+def test_failed_tool_span_records_that_a_fallback_was_attempted():
+    provider = TracerProvider()
+    tracer = provider.get_tracer("test.customer_trends")
+
+    with tracer.start_as_current_span("tool.call") as span:
+        set_tool_outcome(
+            "error",
+            error_code="provider_exhausted",
+            fallback_used=True,
+        )
+
+    assert span.attributes["edrak.tool.status"] == "error"
+    assert span.attributes["edrak.tool.error_code"] == "provider_exhausted"
+    assert span.attributes["edrak.tool.fallback"] is True

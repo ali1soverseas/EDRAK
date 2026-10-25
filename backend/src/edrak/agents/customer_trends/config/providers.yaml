@@ -8,6 +8,9 @@ providers:
     min_interval_s: 0.25
     max_per_request: 100
     cost_per_call_usd: 0.001
+  tavily:
+    min_interval_s: 0.25
+    max_per_request: 20
   gdelt:
     min_interval_s: 5.0
     max_per_request: 250
@@ -369,11 +372,11 @@ providers:
 # docs/ARCHITECTURE.md for the reasons behind each exception. A name with no registered
 # provider that supports the capability is skipped.
 routing:
-  social_search:x: [apify, socialcrawl, serper]
+  social_search:x: [apify, socialcrawl, serper, tavily]
   social_search:tiktok: [socialcrawl, apify, serper]
   social_search:instagram: [socialcrawl, apify, serper]
   social_search:facebook: [socialcrawl, apify, serper]
-  social_search:reddit: [socialcrawl, apify, serper]
+  social_search:reddit: [socialcrawl, apify, serper, tavily]
   social_search:youtube: [youtube_api, socialcrawl, apify]
   social_comments:x: [apify, socialcrawl]
   social_comments:tiktok: [socialcrawl, apify]
@@ -390,5 +393,5 @@ routing:
   reviews:amazon: [apify]
   news:gdelt: [gdelt]
   news:google_news: [serper]
-  web_search: [serper]
+  web_search: [serper, tavily]
   fetch_page: [direct_http]

@@ -83,6 +83,20 @@ def test_customer_events_read_as_plain_lines():
     assert narrate({"type": "tool_called", "tool": "search", "provider": "apify", "status": "ok", "count": 12}) == "search via apify: 12 item(s)"
     failed = narrate({"type": "tool_called", "tool": "reviews", "provider": "apify", "status": "error", "error_code": "provider_exhausted", "fallback_used": True})
     assert failed == "reviews via apify failed (provider_exhausted), then tried a fallback"
+    detailed = narrate({
+        "type": "tool_called",
+        "tool": "search_interest",
+        "status": "error",
+        "error_code": "provider_exhausted",
+        "message": (
+            "search_interest: no provider could serve it: "
+            "apify ProviderUnavailable (actor run failed)"
+        ),
+    })
+    assert detailed == (
+        "search_interest failed (search_interest: no provider could serve it: "
+        "apify ProviderUnavailable (actor run failed) [provider_exhausted])"
+    )
     assert narrate({"type": "run_finished", "findings": 6, "evidence": 5}) == "Finished: 6 findings from 5 sources"
     # Bookkeeping events are not shown.
     assert narrate({"type": "node_finished", "status": "ok"}) is None

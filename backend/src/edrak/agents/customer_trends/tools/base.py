@@ -373,7 +373,14 @@ async def execute_collection(
     except BudgetExceeded as exc:
         response = error_response("budget_exceeded", f"budget exceeded: {exc}")
     except ProviderExhausted as exc:
-        response = error_response("provider_exhausted", _failure_summary(exc))
+        attempted_providers = [
+            failure for failure in exc.failures if not failure.skipped
+        ]
+        response = error_response(
+            "provider_exhausted",
+            _failure_summary(exc),
+            fallback_used=len(attempted_providers) > 1,
+        )
     except Exception as exc:
         log.error("tool_failed", tool=tool, error=type(exc).__name__)
         response = error_response("tool_error", f"{tool} failed unexpectedly: {type(exc).__name__}")

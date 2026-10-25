@@ -1,0 +1,2946 @@
+{
+  "agent": "customer_trends",
+  "generated_at_utc": "2026-10-24T15:17:03.431334+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "context_relevancy": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "worker_customer_trends_attempt_1_50d38690-772.json",
+      "metrics": {
+        "status": "partial",
+        "units": 4,
+        "units_flagged": 4,
+        "faithfulness_tested": 4,
+        "faithfulness_avg": 1.0,
+        "faithfulness_pass_pct": 100.0,
+        "relevancy_tested": 4,
+        "relevancy_avg": 0.75,
+        "relevancy_pass_pct": 75.0,
+        "insight_tested": 4,
+        "insight_avg": 0.5241,
+        "insight_pass_pct": 75.0,
+        "context_relevancy_tested": 4,
+        "context_relevancy_avg": 0.2423,
+        "context_relevancy_pass_pct": 0.0,
+        "judge_errors": 0
+      },
+      "execution_quality": {
+        "dimensions": {
+          "tool_selection": {
+            "status": "assessable",
+            "score": null,
+            "reason": ""
+          },
+          "tool_arguments": {
+            "status": "partial",
+            "score": null,
+            "reason": ""
+          },
+          "tool_result_use": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "Requires tool result summaries, final output, and --include-tool-payloads."
+          },
+          "workflow_sequence": {
+            "status": "not_assessable",
+            "score": null,
+            "reason": "No expected workflow sequence was supplied."
+          },
+          "error_handling": {
+            "status": "assessable",
+            "score": 0.7024,
+            "reason": "The output shows that the primary tool 'reviews_fetch' was executed with two attempts on different stores, with the first attempt returning no results and the second returning some relevant data. There is no indication of retries beyond the initial attempts or fallback usage despite the first empty result. While the handling partially aligns with task requirements by switching stores, the lack of explicit retries or fallback triggers after the empty first result limits full alignment."
+          },
+          "efficiency": {
+            "status": "assessable",
+            "score": 0.5188,
+            "reason": "The output includes two tool calls to 'reviews_fetch' with different stores ('app_store' and 'google_play'), which is necessary to gather comprehensive data from multiple platforms. However, the first call returns no results and includes a warning advising not to repeat the query, indicating some redundancy and inefficiency. The second call provides relevant review snippets, contributing useful information. Overall, the sequence is somewhat efficient but could be improved by avoiding the initial unproductive call or adjusting parameters to prevent redundant queries."
+          }
+        },
+        "metrics": {
+          "calls": 30,
+          "errors": 2,
+          "repeated_calls": 0,
+          "call_details": [
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 8.4585,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "app_store",
+                "target_id_or_url": "com.nvidia.geforcenow"
+              },
+              "result": {
+                "status": "ok",
+                "count": 0,
+                "provider_used": "apify",
+                "gaps": [
+                  "no results were returned for this request"
+                ],
+                "warnings": [
+                  "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
+                ],
+                "cost_estimate": 0.0001
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 24.4158,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 50,
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforcenow"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_08ae893e136f",
+                "count": 10,
+                "preview": [
+                  {
+                    "id": "ac9e3814c394508b",
+                    "platform": "review",
+                    "language": "en",
+                    "snippet": "just sad. it's never worth it to rent the gaming experience, especially when the ai bubble made the hardware cost extraorbital, because of Nvidia itself unobtainable. I do not support that type of gr…",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=eb1bc29d-6f54-45b2-a332-10a3f5cc6de3"
+                  },
+                  {
+                    "id": "d632551a4cc28bf0",
+                    "platform": "review",
+                    "language": "en",
+                    "snippet": "plays really well for the games that it supports, but it only supports a surprisingly small amount of games. if they support more games I would definitely give 5 stars.",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=14213e04-30b2-42d9-af16-103f730daf25"
+                  },
+                  {
+                    "id": "d8e29c7b71c72510",
+                    "platform": "review",
+                    "language": "en",
+                    "snippet": "Runs poorly performing cloud service without offering refunds. Great business model, guys.",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=73de02a1-5d56-4940-8b13-9675f2590388"
+                  },
+                  {
+                    "id": "69ebeb03f5d11b49",
+                    "platform": "review",
+                    "language": "en",
+                    "snippet": "⚠️I have purchase Performance membership, I have play well Cyberpunk 2077 : Phantom Liberty, ⚠️after 2.5 update it show me aa error ⚠️:This save was created while playing the Phantom Liberty expansio…",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=44f7cb10-76cc-40ec-a886-9616862ee384"
+                  },
+                  {
+                    "id": "7b55060b1f3600a9",
+                    "platform": "review",
+                    "language": null,
+                    "snippet": "it is very good app",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=d6341b42-64c2-4e19-abdf-b9ea4d445637"
+                  }
+                ],
+                "provider_used": "apify",
+                "coverage": {
+                  "languages": {
+                    "en": 7,
+                    "unknown": 1,
+                    "ca": 1,
+                    "es": 1
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "review": 10
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 3216.7819,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 5,
+                "query": "GeForce Now app store id",
+                "search_type": "web"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_3b6a4e24e206",
+                "count": 5,
+                "preview": [
+                  {
+                    "id": "02b95befd8a5a2e5",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Native GeForce now app for ios : r/GeForceNOW. my unofficial native GeForce NOW client for Apple TV is now on the App Store. Is GeForce now worth it on iPhone with a backbone ?",
+                    "url": "https://www.reddit.com/r/GeForceNOW/comments/1t39pea/native_geforce_now_app_for_ios/"
+                  },
+                  {
+                    "id": "13c0638c50395abc",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Download GeForce NOW. Download the GeForce NOW app for the best experience. The GeForce NOW app comes pre-installed on this device. Click on “Download” below to continue.",
+                    "url": "https://www.nvidia.com/en-us/geforce-now/download/"
+                  },
+                  {
+                    "id": "6a1243d64ee74359",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "GeForce NOW. Instantly play the most demanding PC games and seamlessly play across your devices. hundreds of free-to-play favorites",
+                    "url": "https://play.geforcenow.com/mall/"
+                  },
+                  {
+                    "id": "75e35b21ef4c1bbb",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "GeForce NOW iOS Safari Beta Is Live. GeForceNow mobile browser App? (iOS, iPadOS) native iOS app for iPhones and iPads!",
+                    "url": "https://www.nvidia.com/en-us/geforce/forums/gfn-general-chat/20/409298/geforce-now-ios-safari-beta-is-live/"
+                  },
+                  {
+                    "id": "c7f7f4fd97f4a318",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "GeForce NOW Cloud Gaming - Apps on Google Play. NVIDIA GeForce NOW™ transforms your device into a powerful PC gaming rig. Gamers can play PC titles they already own or purchase new games from popular…",
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&hl=en_US"
+                  }
+                ],
+                "provider_used": "serper",
+                "coverage": {
+                  "languages": {
+                    "en": 5
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "web": 5
+                  }
+                },
+                "gaps": [
+                  "snippet-only data: search snippets without the full text or engagement counts"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "reviews_fetch",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "country",
+                "depth",
+                "languages",
+                "max_results",
+                "store",
+                "target_id_or_url"
+              ],
+              "argument_types": {
+                "country": "str",
+                "depth": "str",
+                "languages": "list",
+                "max_results": "int",
+                "store": "str",
+                "target_id_or_url": "str"
+              },
+              "latency_ms": 66.2331,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "country": "US",
+                "depth": "standard",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 100,
+                "store": "google_play",
+                "target_id_or_url": "com.nvidia.geforcenow"
+              },
+              "result": {
+                "status": "ok",
+                "count": 0,
+                "provider_used": "apify",
+                "gaps": [
+                  "all 10 item(s) were already collected in this run"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 9233.5804,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "x",
+                "query": "NVIDIA AI review",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_b75c560552b9",
+                "count": 10,
+                "preview": [
+                  {
+                    "id": "a35546d14816d2cd",
+                    "platform": "x",
+                    "language": "en",
+                    "snippet": "Everyone on planet Earth is talking about local AI right now\n\nAnd for good reason\n\nGovernments are banning models. Hardware prices are 10xing\n\nYou NEED to be getting into local AI. The number 1 quest…",
+                    "url": "https://x.com/AlexFinn/status/2103544286574997671"
+                  },
+                  {
+                    "id": "a036cf185184f7e9",
+                    "platform": "x",
+                    "language": "en",
+                    "snippet": "Before you install that AI skill someone shared on X, scan it.\n\nIn an analysis of 31,132 AI agent skills, 26.1% contained vulnerabilities and 5.2% looked malicious.\n\nNVIDIA open-sourced SkillSpector,…",
+                    "url": "https://x.com/RoundtableSpace/status/2113114370406293672"
+                  },
+                  {
+                    "id": "b8dac05775116fed",
+                    "platform": "x",
+                    "language": null,
+                    "snippet": "https://t.co/hcrqRGJesV",
+                    "url": "https://x.com/JayaGup10/status/2111223952609870085"
+                  },
+                  {
+                    "id": "e9e934ba176d8c9b",
+                    "platform": "x",
+                    "language": "en",
+                    "snippet": "We’re entering a new industrial revolution. This time, intelligence is the product.\n\nAt NVIDIA, we’re building the infrastructure of intelligence and turning computing into a generative force for eve…",
+                    "url": "https://x.com/nvidia/status/1922722612368576530"
+                  },
+                  {
+                    "id": "8accb6f8463b7881",
+                    "platform": "x",
+                    "language": "en",
+                    "snippet": "Nvidia AI chip sales to China stalled by US security review https://t.co/flDwFYuPD3",
+                    "url": "https://x.com/FT/status/2018888785392541952"
+                  }
+                ],
+                "provider_used": "apify",
+                "coverage": {
+                  "languages": {
+                    "en": 9,
+                    "unknown": 1
+                  },
+                  "platforms": {
+                    "x": 10
+                  },
+                  "source_types": {
+                    "social_post": 10
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch"
+                ],
+                "cost_estimate": 0.004
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 1315.3568,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA AI app",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 10,
+                "query": "NVIDIA AI app store",
+                "search_type": "web"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_653674a7acfe",
+                "count": 10,
+                "preview": [
+                  {
+                    "id": "ca813d4e92b9eeb4",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "NVIDIA App - Download and install on Windows. The NVIDIA App is the essential companion for PC gamers and creators. Keep your PC up to date with the latest NVIDIA drivers and technology.",
+                    "url": "https://apps.microsoft.com/detail/xp8clzl93f5z4p?hl=en-US&gl=US"
+                  },
+                  {
+                    "id": "1f106c12a097a63e",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Developers: Get Ready for NVIDIA's NIM-Based AI App Store. NIM (NVIDIA Inference Microservices) is a virtualized container that serves AI features; the technology will power an NVIDIA AI app store.",
+                    "url": "https://thenewstack.io/developers-get-ready-for-nvidias-nim-based-ai-app-store/"
+                  },
+                  {
+                    "id": "0e10da950c3214cd",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "NVIDIA's Unbeatable Advantage: The 'App Store' for AI Chips. NVIDIA's Unbeatable Advantage: The 'App Store' for AI Chips. OpenAI's Vision of 220 Million Paid Users by 2030, Crypto Winter Will Be ...",
+                    "url": "https://www.youtube.com/shorts/Dzt-GBLwhNM"
+                  },
+                  {
+                    "id": "4d193487c3efbc16",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "NVIDIA Software and Applications. Download the right software or application for your use. Browse the entire collection of NVIDIA software for enterprise, gaming, creators, and developers.",
+                    "url": "https://www.nvidia.com/en-us/software/"
+                  },
+                  {
+                    "id": "6ad5eb6516ecbf2b",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "NVIDIA Corporation for iPhone - App Store - Apple. iPad & iPhone ; NVIDIA AI Summit India. NVIDIA AI Summit India 2024 ; NVIDIA Marketplace Admin. Store Admin ; NVIDIA SHIELD TV. Control SHIELD on yo…",
+                    "url": "https://apps.apple.com/us/developer/nvidia-corporation/id527492966"
+                  }
+                ],
+                "provider_used": "serper",
+                "coverage": {
+                  "languages": {
+                    "en": 10
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "web": 10
+                  }
+                },
+                "gaps": [
+                  "snippet-only data: search snippets without the full text or engagement counts"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 960.2443,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 2
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "GeForce NOW iOS app",
+                "geo": "US",
+                "languages": [
+                  "en"
+                ],
+                "num": 5,
+                "query": "GeForce NOW iOS app store id",
+                "search_type": "web"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_68120e5dcb1b",
+                "count": 2,
+                "preview": [
+                  {
+                    "id": "d48b2b7b3985020a",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "IOS Native App : r/GeForceNOW. use the Nexus+ app to access Geforce Now and you will have the proper options for resolution. https://apps.apple.com/ca/app/nexus/id6475538023.",
+                    "url": "https://www.reddit.com/r/GeForceNOW/comments/1n8aexb/ios_native_app/"
+                  },
+                  {
+                    "id": "148bb10542dcf7e6",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Geforce Now on IOS - GFN. There are no plans for an iOS client because GeForce Now, Stadia, and other game streaming services violate the rules of the App Store. There's no way to ...",
+                    "url": "https://www.nvidia.com/en-us/geforce/forums/gfn-general-chat/20/340263/geforce-now-on-ios/"
+                  }
+                ],
+                "provider_used": "serper",
+                "coverage": {
+                  "languages": {
+                    "en": 2
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "web": 2
+                  }
+                },
+                "gaps": [
+                  "snippet-only data: search snippets without the full text or engagement counts"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 949.97,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 2,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel AI accelerator",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "num": 10,
+                "query": "Intel AI accelerator review",
+                "search_type": "web"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_f1608ed6235d",
+                "count": 10,
+                "preview": [
+                  {
+                    "id": "f33b7252359fe6e6",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Intel's roadmap adds mysterious 'hybrid' AI processor .... Intel's roadmap adds mysterious 'hybrid' AI processor featuring x86 CPUs, dedicated AI accelerator, and programmable IP — chip may capitaliz…",
+                    "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/intels-roadmap-adds-mysterious-hybrid-ai-processor-featuring-x86-cpus-dedicated-ai-accelerator-and-programmable-ip-chip-may-capitalize-on-a-market-forgotten-by-nvidia-and-amd"
+                  },
+                  {
+                    "id": "f35c09e3fd0eff9b",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Intel to Expand AI Accelerator Portfolio with New GPU. designed to meet the growing demands of AI inference workloads and will offer high memory capacity and energy-efficient performance.",
+                    "url": "https://semiwiki.com/forum/threads/intel-to-expand-ai-accelerator-portfolio-with-new-gpu.23826/"
+                  },
+                  {
+                    "id": "c5fca6e0c1ef0c66",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Intel Gaudi 3 AI Accelerator Explainer Video | Intel. The Intel Gaudi 3 AI accelerator delivers greater speed, scalability, and developer productivity. requirements of GenAI and large language ...",
+                    "url": "https://www.youtube.com/watch?v=L5kmfRnO-M8"
+                  },
+                  {
+                    "id": "87b09bab10480c83",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "We tested Intel's AMX CPU accelerator for AI. Here's what .... Intel AMX improves the performance of deep-learning training and inference on the CPU, and is ideal for workloads including natural-lang…",
+                    "url": "https://cloud.google.com/blog/products/identity-security/we-tested-intels-amx-cpu-accelerator-for-ai-heres-what-we-learned"
+                  },
+                  {
+                    "id": "6e072fc1e1b8def0",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Intel Launches Gaudi 3 AI Accelerator. Intel this week launched a new AI accelerator which it claims is 40% more power efficient with 50% faster inferencing than Nvidia's H100 GPU ...",
+                    "url": "https://www.cdotrends.com/story/3922/intel-launches-gaudi-3-ai-accelerator"
+                  }
+                ],
+                "provider_used": "serper",
+                "coverage": {
+                  "languages": {
+                    "en": 10
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "web": 10
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch",
+                  "snippet-only data: search snippets without the full text or engagement counts"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "web_search",
+              "provider": "serper",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "num",
+                "query",
+                "search_type"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "num": "int",
+                "query": "str",
+                "search_type": "str"
+              },
+              "latency_ms": 1191.0673,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 4
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "Intel AI accelerator",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "num": 5,
+                "query": "مراجعة مسرّع الذكاء الاصطناعي من إنتل",
+                "search_type": "web"
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_760d8eaa1d56",
+                "count": 4,
+                "preview": [
+                  {
+                    "id": "00ed8a855749e218",
+                    "platform": "web",
+                    "language": "ar",
+                    "snippet": "ما المقصود بمُسرع الذكاء الاصطناعي؟. مُسرع الذكاء الاصطناعي (AI)، المعروف باسم شريحة الذكاء الاصطناعي أو معالج التعلم العميق أو وحدة المعالجة العصبية، هو مُسرع أجهزة لنماذج الذكاء الاصطناعي.",
+                    "url": "https://www.ibm.com/qa-ar/think/topics/ai-accelerator"
+                  },
+                  {
+                    "id": "2554827cc89c56ef",
+                    "platform": "web",
+                    "language": "ar",
+                    "snippet": "ما الذي يجعل معالجات Intel من الجيل الخامس عشر منصة تسريع .... تم تصميم هذه المعالجات المركزية على أساس عملية Intel 4، وهي تعمل على تحسين استهلاك الطاقة مع زيادة الأداء، مما يسمح لمراكز البيانات ومطو…",
+                    "url": "https://www.szwecent.com/ar/what-makes-intel-15th-gen-cpus-the-ultimate-ai-acceleration-platform/"
+                  },
+                  {
+                    "id": "439613423fec9dbf",
+                    "platform": "web",
+                    "language": "ar",
+                    "snippet": "شركة Intel ممكن تلحق موجة الذكاء الاصطناعي ؟ خلال ثورة .... خلال ثورة الذكاء الاصطناعي والنمو الكبير لشركات مثل Nvidia .. شركة Intel كان ظهورها بسيط جداً لكن أعلنت Intel الآن انها ستبدأ بإنتاج وحدات…",
+                    "url": "https://www.facebook.com/UTDSaudi/videos/%D8%B4%D8%B1%D9%83%D8%A9-intel-%D9%85%D9%85%D9%83%D9%86-%D8%AA%D9%84%D8%AD%D9%82-%D9%85%D9%88%D8%AC%D8%A9-%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A-%D8%AE%D9%84%D8%A7%D9%84-%D8%AB%D9%88%D8%B1%D8%A9-%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A-%D9%88%D8%A7%D9%84%D9%86%D9%85%D9%88-%D8%A7%D9%84%D9%83/947140484591492/"
+                  },
+                  {
+                    "id": "a61adba041eaf146",
+                    "platform": "web",
+                    "language": "en",
+                    "snippet": "Deloitte and Intel: AI Solutions and Insights. Deloitte and Intel's AI solutions and accelerators help clients address the full spectrum of AI requirements, from edge to cloud, for a range of use cas…",
+                    "url": "https://www.deloitte.com/us/en/alliances/intel-ai-solutions-and-insights.html"
+                  }
+                ],
+                "provider_used": "serper",
+                "coverage": {
+                  "languages": {
+                    "ar": 3,
+                    "en": 1
+                  },
+                  "platforms": {},
+                  "source_types": {
+                    "web": 4
+                  }
+                },
+                "gaps": [
+                  "snippet-only data: search snippets without the full text or engagement counts"
+                ],
+                "cost_estimate": 0.001
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "socialcrawl",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 44692.5046,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "reddit",
+                "query": "NVIDIA AI pricing",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_f9c0fde4df96",
+                "count": 7,
+                "preview": [
+                  {
+                    "id": "a5869a3a54a3d6f4",
+                    "platform": "reddit",
+                    "language": "en",
+                    "snippet": "Private equity is killing private ownership: first it was housing - now it's the personal computer DRAM and GPU prices aren't going up because of \"AI\" - it's because the wealthy have more money than…",
+                    "url": "https://www.reddit.com/r/pcmasterrace/comments/1px9xwx/private_equity_is_killing_private_ownership_first/"
+                  },
+                  {
+                    "id": "f118011f6534fcd4",
+                    "platform": "reddit",
+                    "language": "en",
+                    "snippet": "Theres price-gouging and then there's Nvidia price-gouging",
+                    "url": "https://www.reddit.com/r/pcmasterrace/comments/ym490j/theres_pricegouging_and_then_theres_nvidia/"
+                  },
+                  {
+                    "id": "7489fa16a0758c5c",
+                    "platform": "reddit",
+                    "language": null,
+                    "snippet": "meirl",
+                    "url": "https://www.reddit.com/r/meirl/comments/1d3y2ub/meirl/"
+                  },
+                  {
+                    "id": "a4d62dec64f7aad3",
+                    "platform": "reddit",
+                    "language": "en",
+                    "snippet": "NVIDIA Tells Retailers To Sell To Gamers, Not Cryptominers As GPU Shortage Causes Extreme Price Gouging",
+                    "url": "https://www.reddit.com/r/technology/comments/7rwjzb/nvidia_tells_retailers_to_sell_to_gamers_not/"
+                  },
+                  {
+                    "id": "2b49b8d81cd7e02b",
+                    "platform": "reddit",
+                    "language": "en",
+                    "snippet": "‘The cost of compute is far beyond the costs of the employees’: Nvidia exec says right now AI is more expensive than paying human workers",
+                    "url": "https://www.reddit.com/r/technology/comments/1syv6qi/the_cost_of_compute_is_far_beyond_the_costs_of/"
+                  }
+                ],
+                "provider_used": "socialcrawl",
+                "coverage": {
+                  "languages": {
+                    "en": 6,
+                    "unknown": 1
+                  },
+                  "platforms": {
+                    "reddit": 7
+                  },
+                  "source_types": {
+                    "social_post": 7
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch"
+                ],
+                "cost_estimate": 0.04
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "socialcrawl",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 10772.5509,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 10,
+                "keys": [
+                  "batch_id",
+                  "cost_estimate",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "next_cursor",
+                  "preview",
+                  "provider_used"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "tiktok",
+                "query": "NVIDIA AI demo",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_b643b0ee3df3",
+                "count": 30,
+                "preview": [
+                  {
+                    "id": "e765c06a9c782d2d",
+                    "platform": "tiktok",
+                    "language": "en",
+                    "snippet": "NVIDIA is bringing AI supercomputer power to your desk. This isn’t your average workstation. 💀 NVIDIA’s DGX Station for Windows is designed to run AI models with up to 1 trillion parameters locally,…",
+                    "url": "https://www.tiktok.com/@dweetle/video/7696894891086974240"
+                  },
+                  {
+                    "id": "db2e67c13df36892",
+                    "platform": "tiktok",
+                    "language": "en",
+                    "snippet": "Jensen Huang's prop is the point. He's holding a machine Nvidia built with Microsoft over four years. A Blackwell GPU with 6,144 CUDA cores wired to a 20-core Grace CPU, up to one petaflop of AI comp…",
+                    "url": "https://www.tiktok.com/@hyperbolic.ai/video/7699909700166487316"
+                  },
+                  {
+                    "id": "7a7dce17605ebb6b",
+                    "platform": "tiktok",
+                    "language": "en",
+                    "snippet": "NVIDIA just launched Skill Spector, a free tool that scans AI agent skills like Claude Code for vulnerabilities and malicious code. It runs 15 security checks in seconds to protect your computer from…",
+                    "url": "https://www.tiktok.com/@ai.honeycove/video/7699235688604093710"
+                  },
+                  {
+                    "id": "8b6556e8390410b1",
+                    "platform": "tiktok",
+                    "language": "en",
+                    "snippet": "At NVIDIA GTC Berlin, CEO Jensen Huang showcased experimental \"Microduck\" bipedal robots capable of following live prompts to walk, nap, and attempt front flips. Powered by Omniverse physics simulati…",
+                    "url": "https://www.tiktok.com/@mr.r4849/video/7699927823313554718"
+                  },
+                  {
+                    "id": "21cf8767bc35ab82",
+                    "platform": "tiktok",
+                    "language": "en",
+                    "snippet": "Microduck AI robot shown at NVIDIA’s GTC event. #robot #nividia #microduck",
+                    "url": "https://www.tiktok.com/@thecuriousmindusa/video/7699999087176731935"
+                  }
+                ],
+                "provider_used": "socialcrawl",
+                "coverage": {
+                  "languages": {
+                    "en": 30
+                  },
+                  "platforms": {
+                    "tiktok": 30
+                  },
+                  "source_types": {
+                    "social_post": 30
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch"
+                ],
+                "warnings": [
+                  "dropped 8 item(s) outside the requested languages ['en', 'ar']"
+                ],
+                "cost_estimate": 0.024,
+                "next_cursor": "sc.eyJ2IjoyLCJjIjoic2MyLmV5SnpJam9pYUNJc0ltTWlPaUp6WXpFdVpYbEtha2xxYjJsUFZFRnBURU5LZWtscWNHSkphbU15VDFSck5VMXFZelJOYWsxNlRWUk5NVTVVVVROTlZHZHBURU5KTTA1cWF6VlBWRmw2VFVSSk0wNVVXVEpPYWxsM1QwUmpORWxwZDJsT2VsazFUMVJuZDAxNldUVk9WR2MxVGtSQk5FOUVhelZOUTBselNXcGpNMDFFUVhkUFZGbDRUVVJyTVUxNlZUUlBWRUV6VFVSSmFVeERTVE5PYW1zMVRtcEJNVTFVWXpCTmFrVXpUbXBqZWs5VWF6UkphWGRwVG5wWk5VOVVaelZOYWxreFRWUnJNazVFWjNoTmFsVXhUbmxKYzBscVl6SlBWR3N5VFhwSk1FNVVRWGxOVkVrelRtcEJORTVVVFdsTVEwa3pUbnBCZDAxRVJUVk5SRmt4VG5wSmQwNVVRVE5PYWxsNFNXbDNhVTU2V1RWUFZHTXdUVVJSTWs5VVVUQk9WRmw0VFVSak0wMXBTWE5KYW1NeVQxUnJNRTVFUlROT2FrRTBUa1JyTWs1RVVUUk5WRkZwVEVOSk0wNXFhelZPZWxGNVRWUkJlRTlFUlhkTlJGVXlUa1JuZDBscGQybE9lbGsxVDFSWmQwMTZSWGhOYWxrelQxUlJNMDVxVlhkTmFVbHpTV3BqZWs5VVkzcE5SR042VG1wRmQwMXFVVEpPUkVsNlRWUkJhVXhEU1ROT2FtczFUbFJKTUU5RVZYcE5SR3MwVDFSak1FNUVaekpKYVhkcFRucGpkMDFFUVRGTlZGa3pUMVJKTkU1cVJUUk9WRWw1VDFOSmMwbHFZekpQVkdzMVQxUnJkMDlFWTNoT2Vsa3pUWHBGTlUxNlZXbE1RMGt6VG1wck5VNVVWWGxQVkUwMVQxUlplVTFFYTNsUFJFRTBTV2wzYVU1NldUVlBWR00xVFhwc"
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "apify",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 5826.5796,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "x",
+                "query": "نڤيديا AI مراجعة",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "count": 0,
+                "provider_used": "apify",
+                "gaps": [
+                  "no results were returned for this request"
+                ],
+                "warnings": [
+                  "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
+                ]
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "socialcrawl",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 16814.4535,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "cost_estimate",
+                  "count",
+                  "gaps",
+                  "provider_used",
+                  "status",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "reddit",
+                "query": "نڤيديا AI سعر",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "count": 0,
+                "provider_used": "socialcrawl",
+                "gaps": [
+                  "no results were returned for this request"
+                ],
+                "warnings": [
+                  "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
+                ],
+                "cost_estimate": 0.016
+              }
+            },
+            {
+              "tool": "social_search",
+              "provider": "youtube_api",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 903.8978,
+              "result_summary": {
+                "collection_counts": {
+                  "gaps": 1,
+                  "preview": 5
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "batch_id",
+                  "count",
+                  "coverage",
+                  "gaps",
+                  "next_cursor",
+                  "preview",
+                  "provider_used",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "en",
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "youtube",
+                "query": "NVIDIA AI benchmark",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              },
+              "result": {
+                "status": "ok",
+                "batch_id": "b_173c35db2648",
+                "count": 29,
+                "preview": [
+                  {
+                    "id": "f43baf62d7b531ae",
+                    "platform": "youtube",
+                    "language": "en",
+                    "snippet": "NVIDIA unveils its most affordable tiny supercomputer\nNvidia packs big AI power into a small, affordable package with the Jetson Orin Nano Super Developer Kit, priced at just $249. \n\nThis upgrade off…",
+                    "url": "https://www.youtube.com/watch?v=rT_bOEzCz74"
+                  },
+                  {
+                    "id": "a56ee304f972bfbe",
+                    "platform": "youtube",
+                    "language": "en",
+                    "snippet": "Nvidia Wouldn't Send Me This $30,000 GPU - H200 Holy $H!T\nGet Grammarly today! http://grammarly.com/lttsept\n\nPurchase a Valkyrie V-Lite AIO at:\nhttps://kont.ly/V-Lite-Shop-LTT\nhttps://kont.ly/V-Lite-…",
+                    "url": "https://www.youtube.com/watch?v=lNumJwHpXIA"
+                  },
+                  {
+                    "id": "8de29595e3add64e",
+                    "platform": "youtube",
+                    "language": "en",
+                    "snippet": "This AI Supercomputer can fit on your desk...\nAccess your devices securely from anywhere with TwinGate: https://ntck.co/dgxspark \n\n\nNVIDIA just sent me their smallest AI supercomputer that fits in th…",
+                    "url": "https://www.youtube.com/watch?v=FYL9e_aqZY0"
+                  },
+                  {
+                    "id": "c42080b2760c3e92",
+                    "platform": "youtube",
+                    "language": "en",
+                    "snippet": "My First 15 Minutes with RTX Spark\nCheck out ThreatLocker's Future of AI Control Webinar using our link! https://lmg.gg/hyC63 \nOctober 20, 2026 - 1:00 p.m. EDT / 6:00 p.m. BST\n\nNVIDIA RTX Spark is fi…",
+                    "url": "https://www.youtube.com/watch?v=sjuisARFWn8"
+                  },
+                  {
+                    "id": "215e6911be52a8e7",
+                    "platform": "youtube",
+                    "language": "en",
+                    "snippet": "This Ridiculous $200 AI GPU Shouldn’t Be This Good\nGo to https://www.piavpn.com/HardwareHaven to get 83% off from our sponsor Private Internet Access with 4 months free!\n\n► Want to support the channe…",
+                    "url": "https://www.youtube.com/watch?v=7DAPd5MGodY"
+                  }
+                ],
+                "provider_used": "youtube_api",
+                "coverage": {
+                  "languages": {
+                    "en": 29
+                  },
+                  "platforms": {
+                    "youtube": 29
+                  },
+                  "source_types": {
+                    "social_post": 29
+                  }
+                },
+                "gaps": [
+                  "no ar items in this batch"
+                ],
+                "next_cursor": "CB4QAA"
+              }
+            },
+            {
+              "tool": "social_search",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "depth",
+                "entity",
+                "geo",
+                "languages",
+                "max_results",
+                "platform",
+                "query",
+                "since",
+                "sort",
+                "until"
+              ],
+              "argument_types": {
+                "depth": "str",
+                "entity": "str",
+                "geo": "str",
+                "languages": "list",
+                "max_results": "int",
+                "platform": "str",
+                "query": "str",
+                "since": "str",
+                "sort": "str",
+                "until": "str"
+              },
+              "latency_ms": 1009.1143,
+              "error_code": "CancelledError",
+              "argument_values": {
+                "depth": "standard",
+                "entity": "NVIDIA",
+                "geo": "US",
+                "languages": [
+                  "ar"
+                ],
+                "max_results": 30,
+                "platform": "instagram",
+                "query": "نڤيديا AI",
+                "since": "",
+                "sort": "top",
+                "until": ""
+              }
+            },
+            {
+              "tool": "search_interest",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "error",
+              "argument_names": [
+                "geo",
+                "keywords",
+                "timeframe"
+              ],
+              "argument_types": {
+                "geo": "str",
+                "keywords": "list",
+                "timeframe": "str"
+              },
+              "latency_ms": 160028.8909,
+              "error_code": "CancelledError",
+              "argument_values": {
+                "geo": "US",
+                "keywords": [
+                  "NVIDIA AI",
+                  "AI computing",
+                  "Broadcom AI",
+                  "Intel AI",
+                  "cloud AI services"
+                ],
+                "timeframe": "today 12-m"
+              }
+            },
+            {
+              "tool": "analyze_text",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "batch_ids",
+                "max_items"
+              ],
+              "argument_types": {
+                "batch_ids": "list",
+                "max_items": "int"
+              },
+              "latency_ms": 52507.2131,
+              "result_summary": {
+                "collection_counts": {
+                  "themes": 15
+                },
+                "decoded_json": true,
+                "field_count": 8,
+                "keys": [
+                  "analyzed",
+                  "count",
+                  "languages",
+                  "sentiment",
+                  "status",
+                  "themes",
+                  "themes_total",
+                  "total_items"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "batch_ids": [
+                  "b_b75c560552b9",
+                  "b_f9c0fde4df96",
+                  "b_b643b0ee3df3",
+                  "b_173c35db2648",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b"
+                ],
+                "max_items": 200
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "analyzed": 117,
+                "total_items": 117,
+                "themes_total": 115,
+                "themes": [
+                  {
+                    "label": "Microduck robot demo",
+                    "count": 5,
+                    "share": 0.043,
+                    "sentiment_mix": {
+                      "mixed": 0.2,
+                      "positive": 0.8
+                    },
+                    "description": "Demonstrations of tiny bipedal robots showcased by NVIDIA."
+                  },
+                  {
+                    "label": "GeForce NOW iOS client",
+                    "count": 3,
+                    "share": 0.026,
+                    "sentiment_mix": {
+                      "neutral": 0.6667,
+                      "positive": 0.3333
+                    },
+                    "description": "Announcement of GeForce NOW iOS Safari beta release."
+                  },
+                  {
+                    "label": "NVIDIA AI app store",
+                    "count": 2,
+                    "share": 0.017,
+                    "sentiment_mix": {
+                      "positive": 1.0
+                    },
+                    "description": "Announcement of NVIDIA's AI app store based on NIM."
+                  },
+                  {
+                    "label": "best cloud gaming app",
+                    "count": 2,
+                    "share": 0.017,
+                    "sentiment_mix": {
+                      "negative": 0.5,
+                      "positive": 0.5
+                    },
+                    "description": "Claim that the app is the best cloud gaming service."
+                  },
+                  {
+                    "label": "budget AI GPU options",
+                    "count": 2,
+                    "share": 0.017,
+                    "sentiment_mix": {
+                      "neutral": 0.5,
+                      "positive": 0.5
+                    },
+                    "description": "Overview of affordable GPUs for local AI tasks."
+                  },
+                  {
+                    "label": "robot AI model",
+                    "count": 2,
+                    "share": 0.017,
+                    "sentiment_mix": {
+                      "positive": 1.0
+                    },
+                    "description": "Introduction of NVIDIA's AI model for smarter robots."
+                  },
+                  {
+                    "label": "AI accelerator comparison",
+                    "count": 1,
+                    "share": 0.009,
+                    "sentiment_mix": {
+                      "neutral": 1.0
+                    },
+                    "description": "Side‑by‑side evaluation of AI accelerator hardware from different vendors."
+                  },
+                  {
+                    "label": "AI accelerator definition",
+                    "count": 1,
+                    "share": 0.009,
+                    "sentiment_mix": {
+                      "neutral": 1.0
+                    },
+                    "description": "Definition of an AI accelerator (مُسرّع الذكاء الاصطناعي)."
+                  }
+                ],
+                "sentiment": {
+                  "counts": {
+                    "positive": 66,
+                    "neutral": 29,
+                    "negative": 13,
+                    "mixed": 9
+                  },
+                  "percent": {
+                    "positive": 56.4,
+                    "neutral": 24.8,
+                    "negative": 11.1,
+                    "mixed": 7.7
+                  }
+                },
+                "languages": {
+                  "en": 112,
+                  "ar": 3,
+                  "es": 1,
+                  "ca": 1
+                }
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 6.1401,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 14
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "volume_over_time"
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "metric_id": "m_36dca174b8b2",
+                "metric": "volume_over_time",
+                "values": {
+                  "total": 117,
+                  "dated": 99,
+                  "undated": 18,
+                  "buckets": {
+                    "2018-01-15": 1,
+                    "2022-05-09": 1,
+                    "2022-09-19": 1,
+                    "2022-10-31": 1,
+                    "2023-10-23": 1,
+                    "2023-11-06": 1,
+                    "2023-12-11": 1,
+                    "2024-04-08": 1,
+                    "2024-05-27": 1,
+                    "2024-06-10": 1,
+                    "2024-10-21": 2,
+                    "2024-12-16": 1,
+                    "2024-12-23": 1,
+                    "2025-01-20": 1,
+                    "2025-02-03": 2,
+                    "2025-02-24": 1,
+                    "2025-03-10": 1,
+                    "2025-05-12": 1,
+                    "2025-07-21": 1,
+                    "2025-09-01": 1,
+                    "2025-09-15": 2,
+                    "2025-09-22": 2,
+                    "2025-10-06": 1,
+                    "2025-10-13": 3,
+                    "2025-10-20": 1,
+                    "2025-11-24": 1,
+                    "2025-12-22": 1,
+                    "2026-01-26": 1,
+                    "2026-02-02": 1,
+                    "2026-02-16": 1,
+                    "2026-03-23": 1,
+                    "2026-04-13": 1,
+                    "2026-04-27": 2,
+                    "2026-05-25": 1,
+                    "2026-06-01": 1,
+                    "2026-06-15": 1,
+                    "2026-07-13": 1,
+                    "2026-08-17": 1,
+                    "2026-08-31": 1,
+                    "2026-09-07": 1
+                  },
+                  "peak_bucket": "2026-10-19",
+                  "peak_count": 39
+                },
+                "params": {
+                  "bucket": "week"
+                },
+                "batch_ids": [
+                  "b_60f6411788f8",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_e1b49138a2c1",
+                  "b_b75c560552b9",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b",
+                  "b_f1608ed6235d"
+                ]
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 5.0519,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 14
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "platform_mix"
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "metric_id": "m_9c3f31c038d8",
+                "metric": "platform_mix",
+                "values": {
+                  "total": 117,
+                  "counts": {
+                    "web": 31,
+                    "tiktok": 30,
+                    "youtube": 29,
+                    "review": 10,
+                    "x": 10,
+                    "reddit": 7
+                  },
+                  "percent": {
+                    "web": 26.5,
+                    "tiktok": 25.6,
+                    "youtube": 24.8,
+                    "review": 8.5,
+                    "x": 8.5,
+                    "reddit": 6.0
+                  }
+                },
+                "batch_ids": [
+                  "b_60f6411788f8",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_e1b49138a2c1",
+                  "b_b75c560552b9",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b",
+                  "b_f1608ed6235d"
+                ]
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 7.1802,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 14
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "language_mix"
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "metric_id": "m_c0ca6d19740a",
+                "metric": "language_mix",
+                "values": {
+                  "total": 117,
+                  "counts": {
+                    "en": 109,
+                    "ar": 3,
+                    "unknown": 3,
+                    "ca": 1,
+                    "es": 1
+                  },
+                  "percent": {
+                    "en": 93.2,
+                    "ar": 2.6,
+                    "unknown": 2.6,
+                    "ca": 0.9,
+                    "es": 0.9
+                  }
+                },
+                "batch_ids": [
+                  "b_60f6411788f8",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_e1b49138a2c1",
+                  "b_b75c560552b9",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b",
+                  "b_f1608ed6235d"
+                ]
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric"
+              ],
+              "argument_types": {
+                "metric": "str"
+              },
+              "latency_ms": 8.1605,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 14
+                },
+                "decoded_json": true,
+                "field_count": 6,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "engagement_stats"
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "metric_id": "m_bbbf04d09031",
+                "metric": "engagement_stats",
+                "values": {
+                  "all": {
+                    "items": 117,
+                    "mean": 8891.87,
+                    "median": 8,
+                    "p90": 21826.0
+                  },
+                  "by_platform": {
+                    "web": {
+                      "items": 31,
+                      "mean": 0.0,
+                      "median": 0,
+                      "p90": 0.0
+                    },
+                    "tiktok": {
+                      "items": 30,
+                      "mean": 840.17,
+                      "median": 23.5,
+                      "p90": 1323.8
+                    },
+                    "youtube": {
+                      "items": 29,
+                      "mean": 25380.48,
+                      "median": 2915,
+                      "p90": 26718.8
+                    },
+                    "review": {
+                      "items": 10,
+                      "mean": 0.0,
+                      "median": 0.0,
+                      "p90": 0.0
+                    },
+                    "x": {
+                      "items": 10,
+                      "mean": 342.2,
+                      "median": 200.5,
+                      "p90": 831.9
+                    },
+                    "reddit": {
+                      "items": 7,
+                      "mean": 39384.0,
+                      "median": 41365,
+                      "p90": 51090.8
+                    }
+                  }
+                },
+                "batch_ids": [
+                  "b_60f6411788f8",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_e1b49138a2c1",
+                  "b_b75c560552b9",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b",
+                  "b_f1608ed6235d"
+                ]
+              }
+            },
+            {
+              "tool": "compute_metrics",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "metric",
+                "params"
+              ],
+              "argument_types": {
+                "metric": "str",
+                "params": "dict"
+              },
+              "latency_ms": 16.8468,
+              "result_summary": {
+                "collection_counts": {
+                  "batch_ids": 14
+                },
+                "decoded_json": true,
+                "field_count": 7,
+                "keys": [
+                  "batch_ids",
+                  "count",
+                  "metric",
+                  "metric_id",
+                  "params",
+                  "status",
+                  "values"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "metric": "share_of_voice",
+                "params": {
+                  "competitors": [
+                    "Broadcom",
+                    "Intel Corp"
+                  ],
+                  "entity": "NVIDIA Corporation"
+                }
+              },
+              "result": {
+                "status": "ok",
+                "count": 117,
+                "metric_id": "m_984568f8e544",
+                "metric": "share_of_voice",
+                "values": {
+                  "items": 117,
+                  "mentions": {
+                    "NVIDIA Corporation": 1,
+                    "Broadcom": 0,
+                    "Intel Corp": 0
+                  },
+                  "percent": {
+                    "NVIDIA Corporation": 100.0,
+                    "Broadcom": 0.0,
+                    "Intel Corp": 0.0
+                  },
+                  "items_without_a_mention": 116
+                },
+                "params": {
+                  "entity": "NVIDIA Corporation",
+                  "competitors": [
+                    "Broadcom",
+                    "Intel Corp"
+                  ]
+                },
+                "batch_ids": [
+                  "b_60f6411788f8",
+                  "b_08ae893e136f",
+                  "b_3b6a4e24e206",
+                  "b_e1b49138a2c1",
+                  "b_b75c560552b9",
+                  "b_653674a7acfe",
+                  "b_68120e5dcb1b",
+                  "b_f1608ed6235d"
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 2.8112,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 8,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {},
+                "limit": 8,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 8,
+                "warnings": [
+                  "109 more matching items were not returned"
+                ],
+                "total": 117,
+                "items": [
+                  {
+                    "id": "f43baf62d7b531ae",
+                    "platform": "youtube",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2024-12-18",
+                    "engagement": {
+                      "likes": 499457,
+                      "replies": 12557,
+                      "views": 22361582
+                    },
+                    "url": "https://www.youtube.com/watch?v=rT_bOEzCz74",
+                    "text": "NVIDIA unveils its most affordable tiny supercomputer\nNvidia packs big AI power into a small, affordable package with the Jetson Orin Nano Super Developer Kit, priced at just $249. \n\nThis upgrade offers a performance boost for AI and robotics projects, with the same hardware as the original Orin Nano but enhanced by a new JetPack update. \n\nNvidia CEO Jensen Huang showcased the new kit in a YouTube video.\n\nConnect with Cheddar!\nOn Facebook: https://facebook.com/cheddar\nOn Instagram: https://inst…"
+                  },
+                  {
+                    "id": "a56ee304f972bfbe",
+                    "platform": "youtube",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2025-09-25",
+                    "engagement": {
+                      "likes": 61512,
+                      "replies": 2494,
+                      "views": 2920780
+                    },
+                    "url": "https://www.youtube.com/watch?v=lNumJwHpXIA",
+                    "text": "Nvidia Wouldn't Send Me This $30,000 GPU - H200 Holy $H!T\nGet Grammarly today! http://grammarly.com/lttsept\n\nPurchase a Valkyrie V-Lite AIO at:\nhttps://kont.ly/V-Lite-Shop-LTT\nhttps://kont.ly/V-Lite-A-LTT\n\nThe H200 is an incredibly powerful generative AI and high-performance computing card that costs tens of thousands of dollars. So of course we tested it and tore it down. For uh, science. \n\nCheck out Level1Techs: https://www.youtube.com/@Level1Techs\n\nCheck out the Labs article: https://www.ltt…"
+                  },
+                  {
+                    "id": "a5869a3a54a3d6f4",
+                    "platform": "reddit",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2025-12-27",
+                    "engagement": {
+                      "replies": 2923,
+                      "upvotes": 48931
+                    },
+                    "url": "https://www.reddit.com/r/pcmasterrace/comments/1px9xwx/private_equity_is_killing_private_ownership_first/",
+                    "text": "Private equity is killing private ownership: first it was housing - now it's the personal computer DRAM and GPU prices aren't going up because of \"AI\" - it's because the wealthy have more money than they know what to do with, so they're buying up all the assets. \"AI\" is just the vehicle (the excuse) - it's not the root of the problem nor is it the ultimate goal. The super rich don't want to hold on to \"liquid\" money - they invest in assets. While they're buying up all the housing, now they're b…"
+                  },
+                  {
+                    "id": "f118011f6534fcd4",
+                    "platform": "reddit",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2022-11-04",
+                    "engagement": {
+                      "replies": 987,
+                      "upvotes": 49595
+                    },
+                    "url": "https://www.reddit.com/r/pcmasterrace/comments/ym490j/theres_pricegouging_and_then_theres_nvidia/",
+                    "text": "Theres price-gouging and then there's Nvidia price-gouging"
+                  },
+                  {
+                    "id": "7489fa16a0758c5c",
+                    "platform": "reddit",
+                    "source_type": "social_post",
+                    "language": null,
+                    "published": "2024-05-30",
+                    "engagement": {
+                      "replies": 495,
+                      "upvotes": 45401
+                    },
+                    "url": "https://www.reddit.com/r/meirl/comments/1d3y2ub/meirl/",
+                    "text": "meirl"
+                  },
+                  {
+                    "id": "a4d62dec64f7aad3",
+                    "platform": "reddit",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2018-01-21",
+                    "engagement": {
+                      "replies": 4417,
+                      "upvotes": 36948
+                    },
+                    "url": "https://www.reddit.com/r/technology/comments/7rwjzb/nvidia_tells_retailers_to_sell_to_gamers_not/",
+                    "text": "NVIDIA Tells Retailers To Sell To Gamers, Not Cryptominers As GPU Shortage Causes Extreme Price Gouging"
+                  },
+                  {
+                    "id": "8de29595e3add64e",
+                    "platform": "youtube",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2025-10-14",
+                    "engagement": {
+                      "likes": 30773,
+                      "replies": 4497,
+                      "views": 1346626
+                    },
+                    "url": "https://www.youtube.com/watch?v=FYL9e_aqZY0",
+                    "text": "This AI Supercomputer can fit on your desk...\nAccess your devices securely from anywhere with TwinGate: https://ntck.co/dgxspark \n\n\nNVIDIA just sent me their smallest AI supercomputer that fits in the palm of my hand. This is the NVIDIA DGX Spark, an AI powerhouse with a Grace Blackwell Superchip that can run up to 200 billion parameter models. In this video, I pin it against my insane dual RTX 4090 AI Server “Terry” to see if this new category of computing can really compete.\n\n\n**Correction:**…"
+                  },
+                  {
+                    "id": "2b49b8d81cd7e02b",
+                    "platform": "reddit",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-04-29",
+                    "engagement": {
+                      "replies": 2065,
+                      "upvotes": 28813
+                    },
+                    "url": "https://www.reddit.com/r/technology/comments/1syv6qi/the_cost_of_compute_is_far_beyond_the_costs_of/",
+                    "text": "‘The cost of compute is far beyond the costs of the employees’: Nvidia exec says right now AI is more expensive than paying human workers"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 2.7402,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3,
+                  "warnings": 1
+                },
+                "decoded_json": true,
+                "field_count": 5,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total",
+                  "warnings"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "Microduck robot demo"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 3,
+                "warnings": [
+                  "2 more matching items were not returned"
+                ],
+                "total": 5,
+                "items": [
+                  {
+                    "id": "8b6556e8390410b1",
+                    "platform": "tiktok",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-23",
+                    "engagement": {
+                      "likes": 509,
+                      "replies": 6,
+                      "shares": 772,
+                      "views": 40051
+                    },
+                    "url": "https://www.tiktok.com/@mr.r4849/video/7699927823313554718",
+                    "text": "At NVIDIA GTC Berlin, CEO Jensen Huang showcased experimental \"Microduck\" bipedal robots capable of following live prompts to walk, nap, and attempt front flips. Powered by Omniverse physics simulation, these tiny physical AI machines are built to learn balance inside virtual worlds before hitting reality. Would you let one of these Microduck robots roam around your living room?  #nvidia #jensenhuang #robotics #physicalai #techttok"
+                  },
+                  {
+                    "id": "21cf8767bc35ab82",
+                    "platform": "tiktok",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-23",
+                    "engagement": {
+                      "likes": 78,
+                      "replies": 1,
+                      "shares": 87,
+                      "views": 4847
+                    },
+                    "url": "https://www.tiktok.com/@thecuriousmindusa/video/7699999087176731935",
+                    "text": "Microduck AI robot shown at NVIDIA’s GTC event. #robot #nividia #microduck"
+                  },
+                  {
+                    "id": "e5a70e1f92b8ac24",
+                    "platform": "tiktok",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-23",
+                    "engagement": {
+                      "likes": 110,
+                      "replies": 4,
+                      "shares": 10,
+                      "views": 2577
+                    },
+                    "url": "https://www.tiktok.com/@otomasiai.com/video/7699793913225219348",
+                    "text": "Robot bebek AI mungil dari NVIDIA sukses mencuri panggung!  Di ajang NVIDIA GTC Berlin 2026 baru-baru ini, CEO NVIDIA Jensen Huang mengejutkan audiens dengan membawa empat robot bebek pintar bernama Microducks ke atas panggung. Tapi, apa yang terjadi saat demo berlangsung justru bikin ngakak sekaligus kagum! 😱 Robot mungil hasil kolaborasi perusahaan robotika Prancis, Pollen Robotics, dan Hugging Face ini mendemonstrasikan bagaimana kecerdasan buatan (AI) mulai keluar dari layar komputer dan ma…"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 2.5889,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 3
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "GeForce NOW iOS client"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 3,
+                "total": 3,
+                "items": [
+                  {
+                    "id": "02b95befd8a5a2e5",
+                    "platform": "web",
+                    "source_type": "web",
+                    "language": "en",
+                    "published": "2026-05-27",
+                    "engagement": {},
+                    "url": "https://www.reddit.com/r/GeForceNOW/comments/1t39pea/native_geforce_now_app_for_ios/",
+                    "text": "Native GeForce now app for ios : r/GeForceNOW. my unofficial native GeForce NOW client for Apple TV is now on the App Store. Is GeForce now worth it on iPhone with a backbone ?",
+                    "snippet_only": true
+                  },
+                  {
+                    "id": "d48b2b7b3985020a",
+                    "platform": "web",
+                    "source_type": "web",
+                    "language": "en",
+                    "published": "2025-10-24",
+                    "engagement": {},
+                    "url": "https://www.reddit.com/r/GeForceNOW/comments/1n8aexb/ios_native_app/",
+                    "text": "IOS Native App : r/GeForceNOW. use the Nexus+ app to access Geforce Now and you will have the proper options for resolution. https://apps.apple.com/ca/app/nexus/id6475538023.",
+                    "snippet_only": true
+                  },
+                  {
+                    "id": "75e35b21ef4c1bbb",
+                    "platform": "web",
+                    "source_type": "web",
+                    "language": "en",
+                    "published": null,
+                    "engagement": {},
+                    "url": "https://www.nvidia.com/en-us/geforce/forums/gfn-general-chat/20/409298/geforce-now-ios-safari-beta-is-live/",
+                    "text": "GeForce NOW iOS Safari Beta Is Live. GeForceNow mobile browser App? (iOS, iPadOS) native iOS app for iPhones and iPads!",
+                    "snippet_only": true
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.0169,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "NVIDIA AI app store"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 2,
+                "total": 2,
+                "items": [
+                  {
+                    "id": "ec67f468ac98e5bd",
+                    "platform": "tiktok",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-16",
+                    "engagement": {
+                      "likes": 80,
+                      "replies": 1,
+                      "shares": 6,
+                      "views": 3324
+                    },
+                    "url": "https://www.tiktok.com/@x1lly/video/7697312875215375630",
+                    "text": "NVIDIA just added a setting that lets AI agents control your NVIDIA App #pc #gaming #nvidia"
+                  },
+                  {
+                    "id": "1f106c12a097a63e",
+                    "platform": "web",
+                    "source_type": "web",
+                    "language": "en",
+                    "published": "2024-06-11",
+                    "engagement": {},
+                    "url": "https://thenewstack.io/developers-get-ready-for-nvidias-nim-based-ai-app-store/",
+                    "text": "Developers: Get Ready for NVIDIA's NIM-Based AI App Store. NIM (NVIDIA Inference Microservices) is a virtualized container that serves AI features; the technology will power an NVIDIA AI app store.",
+                    "snippet_only": true
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 4.592,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "best cloud gaming app"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 2,
+                "total": 2,
+                "items": [
+                  {
+                    "id": "9d46a4baeeb5c92a",
+                    "platform": "review",
+                    "source_type": "review",
+                    "language": "en",
+                    "published": "2026-10-22",
+                    "engagement": {
+                      "likes": 0,
+                      "rating": 5
+                    },
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=19e04336-4f47-469e-9e5f-53f25b215f8f",
+                    "text": "it's a best clud gming app!"
+                  },
+                  {
+                    "id": "12a2463bd924932d",
+                    "platform": "review",
+                    "source_type": "review",
+                    "language": "en",
+                    "published": "2026-10-21",
+                    "engagement": {
+                      "likes": 0,
+                      "rating": 1
+                    },
+                    "url": "https://play.google.com/store/apps/details?id=com.nvidia.geforcenow&reviewId=357b50f9-cefb-43ae-92a4-e368d62f4a0d",
+                    "text": "worst cloud gaming app, totally disappointed"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 2.4575,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "budget AI GPU options"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 2,
+                "total": 2,
+                "items": [
+                  {
+                    "id": "215e6911be52a8e7",
+                    "platform": "youtube",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-05-03",
+                    "engagement": {
+                      "likes": 20872,
+                      "replies": 1044,
+                      "views": 891632
+                    },
+                    "url": "https://www.youtube.com/watch?v=7DAPd5MGodY",
+                    "text": "This Ridiculous $200 AI GPU Shouldn’t Be This Good\nGo to https://www.piavpn.com/HardwareHaven to get 83% off from our sponsor Private Internet Access with 4 months free!\n\n► Want to support the channel and unlock some perks in the process? \nBecome a RAID member on Patreon or YouTube!\n🔓 Patreon: https://www.patreon.com/hardwarehaven\n🔓 YouTube: https://www.youtube.com/channel/UCgdTVe88YVSrOZ9qKumhULQ/join\n \n► Checkout items I used (includes affiliate links from which I may receive compensation):\n🛍…"
+                  },
+                  {
+                    "id": "6062b1e421bc6b3c",
+                    "platform": "youtube",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2025-09-04",
+                    "engagement": {
+                      "likes": 4292,
+                      "replies": 554,
+                      "views": 254834
+                    },
+                    "url": "https://www.youtube.com/watch?v=Vdxco6XML1I",
+                    "text": "Best Budget Local Ai GPU\nLocal Ai GPUs can get expensive fast, I cover the best options around including NVIDIA, INTEL, AMD and MAC options for local ai.\n\n📊 AIO + GPU Price/Performance Tracker 👉 https://digitalspaceport.com/gpus\n\nLocal Ai Budget GPUs 9060 XT 16GB vs 5060 Ti 16GB https://youtu.be/eF2PeRqpsQ4\n\nBudget AI GPUs\n5060Ti 16GB https://geni.us/5060Ti-16GB\n3060 12GB https://geni.us/3060_GPU_12GB\n5050 8GB https://geni.us/5050_8GB\n\nOther AI Hardware Mentioned\n5090 32GB https://geni.us/GPU50…"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "evidence_query",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "filters",
+                "limit",
+                "sample"
+              ],
+              "argument_types": {
+                "filters": "dict",
+                "limit": "int",
+                "sample": "str"
+              },
+              "latency_ms": 3.3271,
+              "result_summary": {
+                "collection_counts": {
+                  "items": 2
+                },
+                "decoded_json": true,
+                "field_count": 4,
+                "keys": [
+                  "count",
+                  "items",
+                  "status",
+                  "total"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "filters": {
+                  "theme": "robot AI model"
+                },
+                "limit": 3,
+                "sample": "top"
+              },
+              "result": {
+                "status": "ok",
+                "count": 2,
+                "total": 2,
+                "items": [
+                  {
+                    "id": "7eda4f5935f4e32d",
+                    "platform": "tiktok",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-23",
+                    "engagement": {
+                      "likes": 36,
+                      "replies": 2,
+                      "shares": 4,
+                      "views": 1618
+                    },
+                    "url": "https://www.tiktok.com/@robotics/video/7699963027566660878",
+                    "text": "NVIDIA has introduced a new AI model designed to make robots smarter and more interactive.  In a demo with Reachy Mini, the robot can hold conversations, understand what it sees and respond with movements, all while running AI locally without relying on the cloud. #Robot #robots #robotics #ai #artificialintelligence"
+                  },
+                  {
+                    "id": "885d72d578959e2b",
+                    "platform": "x",
+                    "source_type": "social_post",
+                    "language": "en",
+                    "published": "2026-10-23",
+                    "engagement": {
+                      "likes": 0,
+                      "replies": 0,
+                      "shares": 0,
+                      "views": 64
+                    },
+                    "url": "https://x.com/ANMOLSAINII/status/2113694442272236029",
+                    "text": "NVIDIA just made a small AI model for robots available.\n\nNemotron 3.5 Bolt E4B is designed to run on local hardware with a 4GB memory target.\n\nIn NVIDIA’s Reachy Mini demo, two models work together.\n\n- Bolt handles conversation and tool use.\n\n- Cosmos handles vision.\n\n- Jetson https://t.co/dLt9iD6r8T"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "submit_findings",
+              "worker": "customer_trends",
+              "task_id": "50d38690-7727-4c7e-b070-6706c9e8907b",
+              "attempt": 1,
+              "status": "ok",
+              "argument_names": [
+                "findings"
+              ],
+              "argument_types": {
+                "findings": "list"
+              },
+              "latency_ms": 14.8492,
+              "result_summary": {
+                "collection_counts": {
+                  "accepted": 4
+                },
+                "decoded_json": true,
+                "field_count": 3,
+                "keys": [
+                  "accepted",
+                  "count",
+                  "status"
+                ],
+                "type": "object"
+              },
+              "argument_values": {
+                "truncated": true,
+                "serialized_length": 2055
+              },
+              "result": {
+                "status": "ok",
+                "count": 4,
+                "accepted": [
+                  "f1",
+                  "f2",
+                  "f3",
+                  "f4"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "checks": [
+        {
+          "check": "control_summary.findings_count matches findings",
+          "passed": true,
+          "detail": "summary=4 actual=4",
+          "severity": "error"
+        },
+        {
+          "check": "every cited evidence id resolves",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "every finding is grounded (has refs)",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "synthetic-only findings carry a limitation note",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "all evidence relations are 'supports'",
+          "passed": true,
+          "detail": "0 other",
+          "severity": "error"
+        },
+        {
+          "check": "no synthetic evidence in an external-research agent",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "agent confidence is close to its findings' average (<=0.15)",
+          "passed": true,
+          "detail": "gap=0.15",
+          "severity": "warn"
+        },
+        {
+          "check": "findings do not contain numbers absent from their evidence",
+          "passed": true,
+          "detail": "0 findings",
+          "severity": "warn"
+        },
+        {
+          "check": "no unit states an absence of evidence as a fact ('not mentioned')",
+          "passed": true,
+          "detail": "0 units",
+          "severity": "warn"
+        },
+        {
+          "check": "run completed (not partial/failed)",
+          "passed": false,
+          "detail": "partial",
+          "severity": "warn"
+        },
+        {
+          "check": "run reported no error",
+          "passed": true,
+          "detail": "None",
+          "severity": "warn"
+        },
+        {
+          "check": "tool calls stay within declared/available tools",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "tool arguments can be validated against schemas",
+          "passed": false,
+          "detail": "no per-call argument schema supplied",
+          "severity": "warn"
+        },
+        {
+          "check": "tool failures are handled or explicitly surfaced",
+          "passed": false,
+          "detail": "2 unhandled failure(s) across search_interest=1, social_search=1",
+          "severity": "error"
+        },
+        {
+          "check": "trace avoids duplicate tool work",
+          "passed": true,
+          "detail": "0 repeated call(s)",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "finding",
+          "unit_id": "50d38690-7727-4c7e-b070-6706c9e8907b:f1",
+          "statement": "AI developers cite high cost of GPU hardware, noting a $200 AI GPU as surprisingly inexpensive but still a budget constraint.",
+          "flags": [
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "50d38690-7727-4c7e-b070-6706c9e8907b:f2",
+          "statement": "Interest in cloud‑gaming on mobile devices is evident from multiple web posts discussing a native GeForce NOW iOS client and Safari beta.",
+          "flags": [
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "50d38690-7727-4c7e-b070-6706c9e8907b:f3",
+          "statement": "AI developers and robotics firms express a need for compact, on‑device inference models, highlighted by NVIDIA’s Nemotron 3.5 Bolt E4B designed for 4 GB memory local hardware.",
+          "flags": [
+            "irrelevant_evidence"
+          ]
+        },
+        {
+          "unit_type": "finding",
+          "unit_id": "50d38690-7727-4c7e-b070-6706c9e8907b:f4",
+          "statement": "The Microduck robot demo generated predominantly positive sentiment, with 80 % of the 5 TikTok mentions classified as positive.",
+          "flags": [
+            "low_relevancy",
+            "no_added_insight",
+            "irrelevant_evidence"
+          ]
+        }
+      ]
+    }
+  ]
+}

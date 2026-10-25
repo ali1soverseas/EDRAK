@@ -10,7 +10,6 @@ import httpx
 from pydantic import ValidationError
 from structlog.contextvars import bound_contextvars
 
-from edrak.core.llm import provider_key
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.apify import ApifyProvider
 from edrak.agents.customer_trends.providers.base import (
@@ -37,7 +36,9 @@ from edrak.agents.customer_trends.providers.google_trends_api import (
 from edrak.agents.customer_trends.providers.http import make_client
 from edrak.agents.customer_trends.providers.serper import SerperProvider
 from edrak.agents.customer_trends.providers.socialcrawl import SocialCrawlProvider
+from edrak.agents.customer_trends.providers.tavily import TavilyProvider
 from edrak.agents.customer_trends.providers.youtube import YouTubeProvider, YouTubeQuota
+from edrak.core.llm import provider_key
 
 if TYPE_CHECKING:
     from edrak.agents.customer_trends.settings import Settings
@@ -123,6 +124,17 @@ class ProviderRegistry:
             )
         else:
             skipped.append(("serper", f"{serper_variable} not set"))
+        tavily_key, tavily_variable = provider_key("TAVILY_API_KEY", "customer_trends")
+        if tavily_key:
+            registry.register(
+                TavilyProvider(
+                    http_client,
+                    tavily_key,
+                    config.providers["tavily"],
+                )
+            )
+        else:
+            skipped.append(("tavily", f"{tavily_variable} not set"))
         registry.register(GdeltProvider(http_client, config.providers["gdelt"], clock=clock))
         registry.register(
             DirectHttpProvider(http_client, config.providers["direct_http"], clock=clock)

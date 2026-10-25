@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import functools
 import inspect
 import json
@@ -34,7 +35,7 @@ _SECRET_KEY = re.compile(
     r"(?:token|secret|password|api[_-]?key|authorization|cookie|credential)", re.IGNORECASE
 )
 _MAX_TOOL_RESULT_ITEMS = 8
-_MAX_TOOL_RESULT_CHARS = 3500
+_MAX_TOOL_RESULT_CHARS = 12000
 _MAX_TOOL_ARGUMENT_CHARS = 2000
 _MAX_TOOL_ARGUMENT_VALUE_CHARS = 300
 _SAFE_SPAN_ATTRIBUTES = {
@@ -307,6 +308,9 @@ def traced_tool(name: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
                     _set_tool_attributes(span, name, function, args, kwargs)
                     try:
                         result = await function(*args, **kwargs)
+                    except asyncio.CancelledError as error:
+                        _set_tool_error(span, error)
+                        raise
                     except Exception as error:
                         _set_tool_error(span, error)
                         raise
@@ -412,7 +416,9 @@ def set_tool_provider(provider: str, *, fallback: bool = False) -> None:
             span.set_attribute("edrak.tool.fallback", True)
 
 
-def set_tool_outcome(status: str, *, error_code: str | None = None) -> None:
+def set_tool_outcome(
+    status: str, *, error_code: str | None = None, fallback_used: bool = False
+) -> None:
     """Record a tool's returned status when failures are represented as response objects."""
     span = trace.get_current_span()
     if not span.is_recording():
@@ -420,6 +426,8 @@ def set_tool_outcome(status: str, *, error_code: str | None = None) -> None:
     span.set_attribute("edrak.tool.status", status)
     if error_code:
         span.set_attribute("edrak.tool.error_code", error_code)
+    if fallback_used:
+        span.set_attribute("edrak.tool.fallback", True)
     if status.lower() in {"error", "failed", "failure", "timeout"}:
         span.set_status(Status(StatusCode.ERROR))
 
@@ -512,7 +520,7 @@ def _set_tool_result(span: Any, result: Any) -> None:
         "edrak.tool.result.summary",
         json.dumps(result_shape, sort_keys=True, separators=(",", ":")),
     )
-    if os.environ.get("EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS", "").strip().lower() in {
+    if os.environ.get("EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS", "true").strip().lower() in {
         "1", "true", "yes", "on",
     }:
         payload = json.dumps(
@@ -568,4 +576,3 @@ def _set_failed_result(span: Any, result: Any) -> None:
     if isinstance(status, str) and status.lower() in {"failed", "error", "timeout"}:
         span.set_status(Status(StatusCode.ERROR))
         span.set_attribute("edrak.error.type", "OperationFailure")
-

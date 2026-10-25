@@ -95,8 +95,8 @@ class Lens:
 
 
 LENSES: dict[str, Lens] = {
-    "alignment": Lens(
-        name="alignment",
+    "strategic_alignment": Lens(
+        name="strategic_alignment",
         signal_types=(
             SignalType.CONVERGENCE,
         ),
@@ -107,8 +107,8 @@ LENSES: dict[str, Lens] = {
             "considered together."
         ),
     ),
-    "structure": Lens(
-        name="structure",
+    "dependencies_and_evidence_gaps": Lens(
+        name="dependencies_and_evidence_gaps",
         signal_types=(
             SignalType.DEPENDENCY,
             SignalType.GAP,
@@ -120,8 +120,8 @@ LENSES: dict[str, Lens] = {
             "as proof that a capability does not exist."
         ),
     ),
-    "dynamics": Lens(
-        name="dynamics",
+    "timing_and_momentum": Lens(
+        name="timing_and_momentum",
         signal_types=(
             SignalType.TIMING,
             SignalType.MOMENTUM,

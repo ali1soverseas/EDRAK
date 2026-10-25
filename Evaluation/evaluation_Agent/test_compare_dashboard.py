@@ -4,7 +4,13 @@ import json
 from pathlib import Path
 
 from Evaluation.evaluation_Agent.build_overall_comparison_report import build_report
-from Evaluation.evaluation_Agent.compare import coverage_overview, merge_verdicts, score
+from Evaluation.evaluation_Agent.compare import (
+    Judge,
+    coverage_overview,
+    merge_verdicts,
+    score,
+    semantic_candidates_for,
+)
 
 
 class StubJudge:
@@ -19,6 +25,84 @@ class StubJudge:
     def rescue(self, label, truth, system, candidates):
         return {}
 
+    def embed(self, texts):
+        return [[1.0, 0.0] for _ in texts]
+
+
+def test_semantic_candidates_rank_by_embedding_similarity() -> None:
+    candidates = semantic_candidates_for(
+        [1.0, 0.0],
+        [
+            [0.1, 0.99],
+            [0.95, 0.1],
+            [0.0, 1.0],
+        ],
+        2,
+    )
+
+    assert candidates == [1, 0]
+
+
+def test_score_uses_semantic_shortlist_for_rescue() -> None:
+    class RecordingJudge:
+        vectors = {
+            "expected idea": [1.0, 0.0],
+            "candidate 0": [0.2, 0.98],
+            "candidate 1": [1.0, 0.0],
+            "candidate 2": [0.8, 0.6],
+            "candidate 3": [0.6, 0.8],
+            "candidate 4": [0.9, 0.1],
+            "candidate 5": [-1.0, 0.0],
+        }
+        rescued_candidates = None
+
+        def match(self, label, truth, system):
+            return [{"verdict": "none", "system": [], "reason": "unmatched"}]
+
+        def embed(self, texts):
+            return [self.vectors[text] for text in texts]
+
+        def rescue(self, label, truth, system, candidates):
+            self.rescued_candidates = candidates
+            return {}
+
+    judge = RecordingJudge()
+    score(
+        {"judge": judge, "consistency": False},
+        "findings",
+        [{"statement": "expected idea"}],
+        [{"statement": f"candidate {index}"} for index in range(6)],
+        ("statement",),
+    )
+
+    assert judge.rescued_candidates == {0: [1, 4, 2, 3, 0]}
+
+
+def test_judge_embeddings_preserve_order_and_blank_positions() -> None:
+    class Embeddings:
+        @staticmethod
+        def create(model, input):
+            assert model == "text-embedding-3-small"
+            assert input == ["first", "last"]
+            return type(
+                "Response",
+                (),
+                {
+                    "data": [
+                        type("Embedding", (), {"index": 1, "embedding": [0.0, 1.0]})(),
+                        type("Embedding", (), {"index": 0, "embedding": [1.0, 0.0]})(),
+                    ]
+                },
+            )()
+
+    judge = object.__new__(Judge)
+    judge.client = type("Client", (), {"embeddings": Embeddings()})()
+
+    assert judge.embed(["first", " ", "last"]) == [
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+    ]
 
 def test_comparison_score_exports_only_dashboard_fields() -> None:
     result = score(

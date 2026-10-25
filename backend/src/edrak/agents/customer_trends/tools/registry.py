@@ -119,7 +119,11 @@ def _structured_tool(ctx: ToolContext, spec: ToolSpec) -> StructuredTool:
         if provider:
             set_tool_provider(provider, fallback=bool(getattr(response, "fallback_used", False)))
         status = getattr(response.status, "value", response.status)
-        set_tool_outcome(str(status), error_code=getattr(response, "error_code", None))
+        set_tool_outcome(
+            str(status),
+            error_code=getattr(response, "error_code", None),
+            fallback_used=bool(getattr(response, "fallback_used", False)),
+        )
         return compact_json(response)
 
     return StructuredTool(

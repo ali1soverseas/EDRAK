@@ -159,9 +159,17 @@ during a model-judged evaluation. Keep the Evaluation frontend open at
 new comparison results every three seconds and opens the newest result automatically.
 Execution-quality reports correlate telemetry spans to matching task IDs and attempts for
 worker and retrieval artifacts. The API exposes the six execution dimensions per evaluated
-agent; dimensions without their required trace evidence remain not assessable. Tool argument
-values are fingerprinted locally for duplicate-call checks and are not sent to DeepEval unless
-`--include-tool-payloads` is explicitly enabled.
+agent; dimensions without their required trace evidence remain not assessable. Tool argument values are redacted in the local dashboard from saved telemetry. They are not sent
+to DeepEval unless `--include-tool-payloads` is explicitly enabled.
+Redacted tool-result payloads, capped at 12,000 serialized characters per call, are recorded
+in telemetry by default for the evaluation dashboard; set
+`EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS=false` to disable capture. Recording results does not
+enable sending them to DeepEval.
+
+Customer-trends search can use Tavily as a last-resort provider for web search and indexed public
+X/Reddit pages. Configure `TAVILY_API_KEY_CUSTOMER_TRENDS` or the shared `TAVILY_API_KEY`.
+Those results are search snippets, not full social posts. Tavily does not provide search-interest
+time series; configure an available Trends provider separately for that data.
 
 **Evaluation dashboard.** The backend serves read-only results at `/api/evaluation/runs`,
 `/api/evaluation/runs/{run_id}`, `/api/evaluation/comparisons` and `/api/evaluation/comparisons/{id}`

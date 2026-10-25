@@ -19,7 +19,8 @@ def _client(tmp_path, monkeypatch) -> TestClient:
     (agent / "decision_report.json").write_text(
         '{"agent":"decision","model":"m","thresholds":{"faithfulness":0.7},"files":[{"file":"f",'
         '"metrics":{"units":4,"units_flagged":1,"faithfulness_avg":0.8},'
-        '"checks":[{"check":"a","passed":true},{"check":"b","passed":false,"detail":"bad","severity":"error"}],'
+        '"checks":[{"check":"a","passed":true},{"check":"b","passed":false,"detail":"bad","severity":"error"},'
+        '{"check":"c","passed":false,"detail":"missing optional trace metadata","severity":"warn"}],'
         '"flagged_units":[{"unit_id":"u1","statement":"example","flags":["unfaithful"]}]}]}',
         encoding="utf-8",
     )
@@ -59,6 +60,7 @@ def test_lists_and_summarises_runs(tmp_path, monkeypatch) -> None:
     assert agent["failed_checks"][0]["check"] == "b"
     assert agent["failed_checks"][0]["passed"] is False
     assert agent["file_details"][0]["file"] == "f"
+    assert [check["check"] for check in agent["file_details"][0]["checks"]] == ["a", "b"]
     assert agent["file_details"][0]["flagged_units"][0]["flags"] == ["unfaithful"]
     assert client.get("/api/evaluation/runs/run1/agents/metrics").status_code == 404
 
@@ -172,6 +174,39 @@ def test_summarises_execution_quality_dimensions() -> None:
     assert summary["file_details"][0]["execution_quality"]["call_details"][0]["result"] == [
         {"excerpt": "retrieved result", "api_token": "[REDACTED]"}
     ]
+
+
+def test_run_summary_recovers_redacted_arguments_from_local_telemetry(tmp_path, monkeypatch) -> None:
+    client = _client(tmp_path, monkeypatch)
+    report_dir = tmp_path / "reports" / "run1" / "customer_trends"
+    report_dir.mkdir()
+    (report_dir / "customer_trends_report.json").write_text(
+        '{"agent":"customer_trends","files":[{"file":"worker.json","execution_quality":'
+        '{"metrics":{"calls":1,"call_details":[{"tool":"social_search",'
+        '"worker":"customer_trends","task_id":"task-1","status":"ok",'
+        '"argument_names":["query","platform"]}]}}}]}',
+        encoding="utf-8",
+    )
+    telemetry_dir = tmp_path / "runs" / "run1" / "inputs"
+    (telemetry_dir / "telemetry.json").write_text(
+        '{"spans":['
+        '{"span_id":"worker-span","attributes":{"edrak.agent.type":"customer_trends",'
+        '"edrak.task.id":"task-1"}},'
+        '{"span_id":"tool-span","parent_span_id":"worker-span","attributes":'
+        '{"edrak.tool.name":"social_search","edrak.tool.status":"ok",'
+        '"edrak.tool.argument.values":"{\\"query\\":\\"NVIDIA AI rack\\",'
+        '\\"platform\\":\\"reddit\\",\\"api_key\\":\\"secret\\"}"}}]}',
+        encoding="utf-8",
+    )
+
+    response = client.get("/api/evaluation/runs/run1").json()
+    customer_agent = next(agent for agent in response["agents"] if agent["agent"] == "customer_trends")
+    call = customer_agent["file_details"][0]["execution_quality"]["call_details"][0]
+    assert call["argument_values"] == {
+        "query": "NVIDIA AI rack",
+        "platform": "reddit",
+        "api_key": "[REDACTED]",
+    }
 
 
 def test_serves_comparisons_and_rejects_bad_ids(tmp_path, monkeypatch) -> None:

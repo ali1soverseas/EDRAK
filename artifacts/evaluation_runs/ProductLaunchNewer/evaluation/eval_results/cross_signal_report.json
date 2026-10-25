@@ -1,0 +1,138 @@
+{
+  "agent": "cross_signal",
+  "generated_at_utc": "2026-10-24T12:59:29.477851+00:00",
+  "model": "gpt-4.1-mini",
+  "dry_run": false,
+  "thresholds": {
+    "faithfulness": 0.7,
+    "relevancy": 0.5,
+    "insight": 0.5
+  },
+  "files": [
+    {
+      "file": "cross_signal.json",
+      "metrics": {
+        "status": "completed",
+        "signal_types": "dependency=2, gap=2, momentum=1, timing=1",
+        "units": 6,
+        "units_flagged": 3,
+        "faithfulness_tested": 6,
+        "faithfulness_avg": 0.8194,
+        "faithfulness_pass_pct": 66.67,
+        "relevancy_tested": 6,
+        "relevancy_avg": 1.0,
+        "relevancy_pass_pct": 100.0,
+        "insight_tested": 6,
+        "insight_avg": 0.7278,
+        "insight_pass_pct": 100.0,
+        "judge_errors": 0
+      },
+      "checks": [
+        {
+          "check": "metadata.final_signals matches signals",
+          "passed": true,
+          "detail": "metadata=6 actual=6",
+          "severity": "error"
+        },
+        {
+          "check": "input_statistics.verified_findings matches the loaded verification",
+          "passed": true,
+          "detail": "stats=32 loaded=32",
+          "severity": "error"
+        },
+        {
+          "check": "every supporting finding id resolves",
+          "passed": true,
+          "detail": "0 unresolved",
+          "severity": "error"
+        },
+        {
+          "check": "pipeline reported no unresolved support references",
+          "passed": true,
+          "detail": "0",
+          "severity": "error"
+        },
+        {
+          "check": "no signal rests on findings the verifier did not verify",
+          "passed": true,
+          "detail": "0 signals",
+          "severity": "error"
+        },
+        {
+          "check": "decision_ready_context.key_signals matches signals",
+          "passed": true,
+          "detail": "",
+          "severity": "error"
+        },
+        {
+          "check": "decision_question_count matches decision_ready_context",
+          "passed": true,
+          "detail": "stats=6 actual=6",
+          "severity": "error"
+        },
+        {
+          "check": "every signal's decision_question is listed in decision_ready_context",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "no signal names an entity absent from its support",
+          "passed": true,
+          "detail": "0 signals",
+          "severity": "warn"
+        },
+        {
+          "check": "no convergence signal rests on a single worker",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "signal domains_involved are backed by its supporting findings",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "signal confidence never exceeds its support",
+          "passed": false,
+          "detail": "",
+          "severity": "warn"
+        },
+        {
+          "check": "warnings list is empty",
+          "passed": true,
+          "detail": "",
+          "severity": "warn"
+        }
+      ],
+      "flagged_units": [
+        {
+          "unit_type": "signal",
+          "unit_id": "0100e844-ec8f-45fb-983e-bcdcb8e8e901",
+          "statement": "Multiple cloud providers (Google Cloud, CoreWeave, etc.) and hardware vendors (Dell, Cisco, HPE, Lenovo, Supermicro) are deploying or planning large‑scale rack‑scale AI inference architectures, indicating strong and growing demand for such solutions.",
+          "flags": [
+            "unfaithful"
+          ]
+        },
+        {
+          "unit_type": "signal",
+          "unit_id": "f147801d-187d-4d2e-8ef7-8951a43bf6c2",
+          "statement": "NVIDIA already has production‑ready deployments (Google Cloud GA) while Broadcom’s and Intel’s rack‑scale offerings remain in announced or preview stages, giving NVIDIA a timing lead for market entry.",
+          "flags": [
+            "unfaithful"
+          ]
+        },
+        {
+          "unit_type": "signal",
+          "unit_id": "adbfd88b-af67-433c-8082-1a04a410c05b",
+          "statement": "NVIDIA’s definition of a rack‑scale platform (F2) requires networking, storage, power/cooling, and orchestration, while its key considerations for cloud providers (F5) list accelerator supply and deployment lead time, indicating that the availability of these subsystems is a prerequisite for delivering a complete pre‑integrated solution.",
+          "flags": [
+            "confidence_exceeds_support"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -82,6 +82,36 @@ class Judge:
                     break
         raise SystemExit(f"Judge call failed: {last}")
 
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        """Create semantic vectors while preserving positions for blank texts."""
+        nonempty = [
+            (index, text.replace("\n", " ").strip())
+            for index, text in enumerate(texts)
+            if text.strip()
+        ]
+        if not nonempty:
+            return [[] for _ in texts]
+
+        response = self.client.embeddings.create(
+            model="text-embedding-3-small",
+            input=[text for _, text in nonempty],
+        )
+        vectors = {item.index: item.embedding for item in response.data}
+        if len(vectors) != len(nonempty) or any(
+            index not in vectors for index in range(len(nonempty))
+        ):
+            raise RuntimeError("Embedding response did not contain every requested vector.")
+
+        dimension = len(next(iter(vectors.values())))
+        vector_by_text = {
+            original_index: vectors[request_index]
+            for request_index, (original_index, _) in enumerate(nonempty)
+        }
+        return [
+            vector_by_text.get(index, [0.0] * dimension)
+            for index in range(len(texts))
+        ]
+
     # --- matching -----------------------------------------------------------------
     @staticmethod
     def _clean(entry: dict, n_sys: int, order: list[int] | None = None) -> dict:
@@ -154,20 +184,6 @@ def final_verification(inputs: Path) -> dict:
     return load(passes[-1]) if passes else {}
 
 
-def tokens(text: str) -> set[str]:
-    return {t for t in re.findall(r"[a-z0-9$%.]+", (text or "").lower()) if len(t) > 3}
-
-
-def overlap(a: str, b: str) -> float:
-    ta, tb = tokens(a), tokens(b)
-    return len(ta & tb) / len(ta | tb) if ta | tb else 0.0
-
-
-def containment(a: str, b: str) -> float:
-    ta, tb = tokens(a), tokens(b)
-    return len(ta & tb) / min(len(ta), len(tb)) if ta and tb else 0.0
-
-
 def text_of(item: dict, keys: tuple[str, ...]) -> str:
     parts: list[str] = []
     for k in keys:
@@ -196,12 +212,30 @@ def merge_verdicts(a: dict, b: dict) -> dict:
 
 
 # ----------------------------------------------------------------------------- scoring
-def candidates_for(t_text: str, g_claims: list[str], k: int) -> list[int]:
-    if not g_claims:
+def semantic_candidates_for(
+    query_vector: list[float], candidate_vectors: list[list[float]], k: int
+) -> list[int]:
+    if not query_vector or k <= 0:
         return []
-    scores = [max(overlap(t_text, claim), containment(t_text, claim) * 0.8) for claim in g_claims]
-    ranked = sorted(range(len(g_claims)), key=scores.__getitem__, reverse=True)[:k]
-    return [i for i in ranked if scores[i] > 0]
+
+    query_norm = sum(value * value for value in query_vector) ** 0.5
+    if query_norm == 0:
+        return []
+
+    scores: list[tuple[float, int]] = []
+    for index, candidate in enumerate(candidate_vectors):
+        if len(candidate) != len(query_vector):
+            raise ValueError("Query and candidate embeddings must have matching dimensions.")
+        candidate_norm = sum(value * value for value in candidate) ** 0.5
+        if candidate_norm == 0:
+            continue
+        similarity = sum(
+            left * right for left, right in zip(query_vector, candidate)
+        ) / (query_norm * candidate_norm)
+        scores.append((similarity, index))
+    return [
+        index for _, index in sorted(scores, key=lambda item: (-item[0], item[1]))[:k]
+    ]
 
 
 def score(ctx: dict, label: str, truth: list[dict], got: list[dict], keys: tuple[str, ...]) -> dict:
@@ -216,10 +250,20 @@ def score(ctx: dict, label: str, truth: list[dict], got: list[dict], keys: tuple
         second = judge.match(label, t_text, claims, reverse=True)
         verdicts = [merge_verdicts(a, b) for a, b in zip(verdicts, second)]
     missed = [i for i, verdict in enumerate(verdicts) if verdict["verdict"] == "none"]
-    candidates = {
-        i: candidates_for(t_text[i], claims, RESCUE_CANDIDATE_LIMIT)
-        for i in missed
-    }
+    candidates = {}
+    if missed and claims:
+        embeddings = judge.embed([t_text[i] for i in missed] + claims)
+        expected_count = len(missed) + len(claims)
+        if len(embeddings) != expected_count:
+            raise RuntimeError("Embedding response count did not match requested texts.")
+        truth_vectors = embeddings[:len(missed)]
+        claim_vectors = embeddings[len(missed):]
+        candidates = {
+            truth_index: semantic_candidates_for(
+                truth_vector, claim_vectors, RESCUE_CANDIDATE_LIMIT
+            )
+            for truth_index, truth_vector in zip(missed, truth_vectors)
+        }
     candidates = {i: items for i, items in candidates.items() if items}
     for i, verdict in judge.rescue(label, t_text, claims, candidates).items():
         if CREDIT[verdict["verdict"]] > 0 or verdict["verdict"] == "contradicts":
@@ -314,7 +358,8 @@ def compare(name: str, bundle: Path, judge: Judge, opts: argparse.Namespace) -> 
         "consistency": opts.consistency,
     }
     report: dict = {"ground_truth": name, "run_bundle": bundle.name,
-                    "method": f"llm judge ({judge.model})"
+                    "method": f"llm judge ({judge.model}) + semantic embedding rescue "
+                              "(text-embedding-3-small)"
                               + ("; consistency x2" if opts.consistency else "")}
 
     g_workers = final_workers(run_in)

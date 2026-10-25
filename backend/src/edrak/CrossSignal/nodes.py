@@ -36,9 +36,9 @@ logger = logging.getLogger(__name__)
 
 
 LENSES = (
-    "strategic_patterns",
+    "strategic_alignment",
+    "dependencies_and_evidence_gaps",
     "timing_and_momentum",
-    "decision_implications",
 )
 
 
@@ -1232,11 +1232,11 @@ Do not prescribe actions.
 Do not use information outside the supplied input.
 """
 
-    if lens == "strategic_patterns":
+    if lens == "strategic_alignment":
 
         return base + """
 
-CURRENT LENS: STRATEGIC PATTERNS
+CURRENT LENS: STRATEGIC ALIGNMENT
 
 Focus on:
 
@@ -1245,18 +1245,35 @@ Focus on:
 - capability relationships
 - competitive relationships
 - differentiation
-- meaningful gaps
 - relationships between the business context and observed developments
 - patterns that may matter to downstream strategic evaluation
 
 Do not convert observations into recommendations.
 """
 
+    if lens == "dependencies_and_evidence_gaps":
+
+        return base + """
+
+CURRENT LENS: DEPENDENCIES & EVIDENCE GAPS
+
+Focus on:
+
+- dependencies
+- prerequisites and enablers
+- bottlenecks and constraints
+- important unanswered business questions
+- gaps in verified evidence coverage
+
+A gap means insufficient verified coverage. It is not proof that a
+capability does not exist.
+"""
+
     if lens == "timing_and_momentum":
 
         return base + """
 
-CURRENT LENS: TIMING AND MOMENTUM
+CURRENT LENS: TIMING & MOMENTUM
 
 Focus on:
 
@@ -1273,32 +1290,7 @@ Focus on:
 
 Do not create multiple signals for the same underlying movement.
 """
-
-    return base + """
-
-CURRENT LENS: DECISION IMPLICATIONS
-
-Focus on:
-
-- dependencies
-- affected business areas
-- opportunity relevance
-- risk relevance
-- decision areas
-- decision questions
-- implications requiring downstream evaluation
-
-A decision question must identify something that requires strategic
-evaluation.
-
-It must NOT prescribe an action.
-
-For example, a valid decision question asks what level of competitive
-response, investment, positioning, packaging, deployment model, or
-priority should be evaluated.
-
-It does not tell the Decision Agent which option to choose.
-"""
+    raise ValueError(f"Unknown Cross-Signal lens: {lens}")
 
 
 def _lens_human_prompt(

@@ -1,0 +1,44 @@
+{
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "warnings": 0,
+  "checks": [
+    {
+      "check": "every finding traces to evidence",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "every signal traces to a finding",
+      "passed": true,
+      "detail": "0 untraceable",
+      "severity": "error"
+    },
+    {
+      "check": "signals only rest on verified findings",
+      "passed": true,
+      "detail": "0 signals",
+      "severity": "warn"
+    },
+    {
+      "check": "every recommendation traces to signal -> finding",
+      "passed": true,
+      "detail": "6/6",
+      "severity": "error"
+    },
+    {
+      "check": "verifier covers all worker findings",
+      "passed": true,
+      "detail": "0 missing",
+      "severity": "error"
+    },
+    {
+      "check": "verification, cross-signal and decision share one research_run_id",
+      "passed": true,
+      "detail": "079addcb9b4206babcf91cad79e12b1f",
+      "severity": "error"
+    }
+  ]
+}

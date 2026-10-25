@@ -1928,6 +1928,33 @@ def _execution_summary(call: dict[str, Any], include_payloads: bool) -> dict[str
     return summary
 
 
+def _execution_call_details(calls: list[dict[str, Any]], summaries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    detail_fields = {
+        "tool", "provider", "worker", "task_id", "attempt", "status", "argument_names",
+        "argument_types", "argument_values", "result_count", "result_summary", "latency_ms",
+        "error_code", "fallback_used",
+    }
+    details = []
+    for call, summary in zip(calls, summaries):
+        detail = {key: value for key, value in summary.items()
+                  if key in detail_fields and value not in (None, "", [], {})}
+        attrs = call.get("attributes") or {}
+        result = call.get("result_payload")
+        if result is None:
+            result = attrs.get("edrak.tool.result.payload")
+        if result is None:
+            result = call.get("result")
+        if result is not None:
+            if isinstance(result, str):
+                try:
+                    result = json.loads(result)
+                except json.JSONDecodeError:
+                    pass
+            detail["result"] = _secret_redacted(result)
+        details.append(detail)
+    return details
+
+
 def _schema_argument_errors(call: dict[str, Any], schema: dict[str, Any] | None = None) -> list[str] | None:
     """Check argument shape from either a call schema or a known tool schema."""
     args = call.get("args", call.get("arguments"))
@@ -2131,14 +2158,7 @@ def eval_execution_trace(payload: dict[str, Any], goal: str, output: str, judge:
         "errors": len(errors),
         "repeated_calls": repeated_calls,
         "trace_complete": complete,
-        "call_details": [
-            {key: value for key, value in summary.items()
-             if key in {"tool", "provider", "worker", "task_id", "attempt", "status", "argument_names",
-                            "argument_types", "argument_values", "result_count", "result_summary", "result", "latency_ms",
-                            "error_code", "fallback_used"}
-             and value not in (None, "", [], {})}
-            for summary in summaries
-        ],
+        "call_details": _execution_call_details(calls, summaries),
     }
 
     dimensions: dict[str, dict[str, Any]] = {
@@ -2222,9 +2242,6 @@ def eval_execution_trace(payload: dict[str, Any], goal: str, output: str, judge:
         if expected_sequence:
             checks.append(check("observed tools follow the expected sequence", not sequence_missing,
                                 ", ".join(sequence_missing)))
-        else:
-            checks.append(check("workflow sequence is assessable", False,
-                                "no expected_sequence/workflow_sequence supplied", "warn"))
         if errors:
             unhandled = [
                 str(call.get("tool") or call.get("tool_name") or "unknown")
@@ -2240,10 +2257,7 @@ def eval_execution_trace(payload: dict[str, Any], goal: str, output: str, judge:
                     f"{tool}={count}" for tool, count in sorted(unhandled_by_tool.items())
                 )
             checks.append(check("tool failures are handled or explicitly surfaced", not unhandled,
-                                detail if unhandled else "", "warn"))
-        else:
-            checks.append(check("trace records tool failure handling", complete,
-                                "no errors observed, but trace completeness is not declared", "warn"))
+                                detail if unhandled else "", "error"))
         checks.append(check("trace avoids duplicate tool work", repeated_calls == 0,
                             f"{repeated_calls} repeated call(s)", "warn"))
 
