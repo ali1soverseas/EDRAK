@@ -19,8 +19,8 @@ from edrak.agents.customer_trends.schemas.common import (
     UseCase,
 )
 from edrak.contracts import ResearchTask
-from edrak.contracts.vocabulary import competitor_names
 from edrak.contracts import UseCase as SharedUseCase
+from edrak.contracts.vocabulary import competitor_names
 
 MAX_TREND_KEYWORDS = 5
 
@@ -37,6 +37,7 @@ class Account(StrictModel):
 class TaskBrief(ScopeBase):
     task_id: NonEmpty
     run_id: RunId
+    parent_request_id: str | None = None
     use_case: UseCase
     entity: NonEmpty
     question: NonEmpty
@@ -161,6 +162,7 @@ def brief_from_task(task: ResearchTask, *, today: date | None = None) -> TaskBri
     return TaskBrief(
         task_id=task.task_id,
         run_id=run_id_for(task),
+        parent_request_id=task.parent_request_id,
         use_case=use_case,
         entity=task.company_profile.name,
         question=task.goal,

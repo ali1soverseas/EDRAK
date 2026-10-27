@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Any, TypeVar, TypedDict
+from typing import Annotated, Any, TypedDict, TypeVar
 
 from ..contracts import (
     BusinessRequest,
@@ -11,7 +11,6 @@ from ..contracts import (
     WorkerResult,
 )
 from ..contracts.verification import VerificationDecision, VerificationResult
-
 
 RESET = "__edrak_reset__"
 """Sentinel telling a reducer channel to discard its current value.
@@ -61,6 +60,7 @@ class OrchestrationState(TypedDict, total=False):
     verification: VerificationDecision | None
     verification_result: VerificationResult | None
     cross_signal: dict[str, Any] | None
+    cross_signal_error: str | None
     decision_analysis: dict[str, Any] | None
     replan_count: int
     status: str | None

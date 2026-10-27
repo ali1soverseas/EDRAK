@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import AsyncGenerator, Optional
 
 import aiosqlite
-from fastapi import Cookie, Depends, Header, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, Request, status
 
 from edrak.api.auth import resolve_session
 from edrak.api.schemas import SessionOut, UserOut, WorkspaceOut
@@ -31,13 +31,15 @@ def _token(session_token: Optional[str], authorization: Optional[str]) -> Option
 
 
 async def get_current_session(
+    request: Request,
     session_token: Optional[str] = Cookie(None),
     authorization: Optional[str] = Header(None),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> SessionOut:
     """The signed-in user and their workspace. 401 when there is no live session."""
     token = _token(session_token, authorization)
-    resolved = await resolve_session(db, token) if token else None
+    touch_session = request.method.upper() not in {"GET", "HEAD", "OPTIONS"}
+    resolved = await resolve_session(db, token, touch=touch_session) if token else None
     if not resolved:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not_signed_in")
     user, workspace = resolved

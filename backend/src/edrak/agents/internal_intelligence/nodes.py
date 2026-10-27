@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 import uuid
 
 from edrak.agents.internal_intelligence.prompts import (
@@ -12,7 +12,7 @@ from edrak.agents.internal_intelligence.prompts import (
     INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
 )
 from edrak.agents.internal_intelligence.state import InternalAgentState
-from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation, SourceType
+from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation
 from edrak.contracts.result import Conflict, Finding, FindingCategory, WorkerResult, WorkerStatus
 from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.contracts.vocabulary import competitor_names, describe_context
@@ -22,6 +22,7 @@ from edrak.core.llm import get_json_object
 from edrak.rag.reconcile import restore_missing_workspace_chunks
 from edrak.rag.retriever import InternalRetriever
 from edrak.rag.text_utils import clean_markdown
+from edrak.agents.internal_intelligence.tracing import trace_internal_node
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +104,7 @@ def _parse_conflicts(
     return conflicts, unlinked
 
 
+@trace_internal_node("internal_intelligence.plan_queries")
 def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
     """Generates targeted natural-language search queries dynamically using LLM with deterministic fallback."""
     log_action("internal_intelligence", "planning search queries")
@@ -165,6 +167,7 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
     return {"queries": deduped, "started_at": started_at, "llm_used": llm_planned}
 
 
+@trace_internal_node("internal_intelligence.retrieve_evidence")
 def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     """Retrieves candidates across internal docs and handbook, then cross-scores and reranks."""
     log_action("internal_intelligence", "retrieving internal evidence")
@@ -219,13 +222,13 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
         ev_text = f"{ev.source_title} {ev.extracted_fact} {ev.excerpt}".lower()
         ev_tokens = set(re.findall(r"\w+", ev_text))
         overlap = len(goal_tokens & ev_tokens) / max(1, len(goal_tokens))
-        
+
         # The company's own documents get a strategic priority boost
         own = ev.metadata.get("origin") != "public_handbook"
         boost = 0.15 if own else 0.0
         # Handbook pages with no goal token overlap get penalized
         penalty = -0.20 if (not own and overlap < 0.05) else 0.0
-        
+
         return round(base_score * 0.6 + overlap * 0.4 + boost + penalty, 3)
 
     scored_candidates = [(ev, _score_candidate(ev)) for ev in candidates]
@@ -257,6 +260,7 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     return {"retrieved_evidence": final_evidence}
 
 
+@trace_internal_node("internal_intelligence.analyze_and_synthesize")
 def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     """Deeply investigates evidence and synthesizes structured, grounded findings via LLM."""
     log_action("internal_intelligence", "summarizing findings from retrieved evidence")
@@ -460,6 +464,7 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     }
 
 
+@trace_internal_node("internal_intelligence.format_worker_result")
 def format_worker_result_node(state: InternalAgentState) -> Dict[str, Any]:
     """Packages findings and evidence into the standard WorkerResult contract."""
     log_action("internal_intelligence", "writing worker result")

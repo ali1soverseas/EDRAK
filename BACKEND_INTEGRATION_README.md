@@ -124,14 +124,13 @@ npm run dev
 5. **Review the Brief**:
    - Once completed, the final Brief is loaded with evidence chips (E-numbers), worker lenses, cross-signal hypotheses, and strategic options (A, B, C).
 
-## 4. Evaluation Artifacts and Tracing
+## 4. Evaluation Artifacts
 
 Each backend run writes evaluator inputs and stage history under
 `artifacts/evaluation_runs/<analysis_id>/`. Internal retrievals are recorded as RAG inputs;
 worker, verification, metrics, synthesis, and decision outputs are retained as their stages
 complete. The run-bundle evaluator reads metrics-stage artifacts as pipeline context, but does
-not emit a separate evaluation report for the metrics stage. Worker and tool spans are exported
-to the run bundle's `inputs/telemetry.json`.
+not emit a separate evaluation report for the metrics stage.
 
 Evaluate a completed or paused run locally without calling a model:
 
@@ -157,14 +156,10 @@ the comparison use word overlap without a model; use `--compare-no-llm` to force
 during a model-judged evaluation. Keep the Evaluation frontend open at
 `http://localhost:5500/?api=http://localhost:8000` (and signed in to the backend); it checks for
 new comparison results every three seconds and opens the newest result automatically.
-Execution-quality reports correlate telemetry spans to matching task IDs and attempts for
-worker and retrieval artifacts. The API exposes the six execution dimensions per evaluated
-agent; dimensions without their required trace evidence remain not assessable. Tool argument values are redacted in the local dashboard from saved telemetry. They are not sent
-to DeepEval unless `--include-tool-payloads` is explicitly enabled.
-Redacted tool-result payloads, capped at 12,000 serialized characters per call, are recorded
-in telemetry by default for the evaluation dashboard; set
-`EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS=false` to disable capture. Recording results does not
-enable sending them to DeepEval.
+Execution-quality reports use structured tool-call data when it is present in evaluation
+artifacts. Dimensions without required evidence remain not assessable. Tool argument values
+are redacted in the local dashboard and are not sent to DeepEval unless
+`--include-tool-payloads` is explicitly enabled.
 
 Customer-trends search can use Tavily as a last-resort provider for web search and indexed public
 X/Reddit pages. Configure `TAVILY_API_KEY_CUSTOMER_TRENDS` or the shared `TAVILY_API_KEY`.
@@ -176,9 +171,6 @@ time series; configure an available Trends provider separately for that data.
 (sign-in required; reports are read from `reports/`, override with `EDRAK_EVAL_REPORTS_DIR`).
 To view them, start the backend, sign in, then serve the dashboard:
 `cd "Evaluation frontend"; python -m http.server 5500` and open `http://localhost:5500/?api=http://localhost:8000`.
-Telemetry can also be sent to an OTLP collector by setting
-`OTEL_EXPORTER_OTLP_ENDPOINT`; `EDRAK_TELEMETRY_EXPORT_PATH` selects the local span export file.
-
 ---
 
 ## 5. How to Run Automated Tests

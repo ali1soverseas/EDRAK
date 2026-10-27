@@ -12,12 +12,14 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from edrak.api.deps import get_current_session
 from edrak.api.schemas import SessionOut
-from edrak.observability import redact_tool_argument_values
 
 router = APIRouter(prefix="/evaluation", tags=["evaluation"], dependencies=[Depends(get_current_session)])
 
 _REPO = Path(__file__).resolve().parents[5]
 _SAFE_ID = re.compile(r"^[A-Za-z0-9_.-]{1,80}$")
+_SECRET_KEY = re.compile(
+    r"(?:token|secret|password|api[_-]?key|authorization|cookie|credential)", re.IGNORECASE
+)
 
 
 def _reports_root() -> Path:
@@ -75,6 +77,23 @@ def _safe(value: str) -> str:
     return value
 
 
+def _redact_tool_values(value: Any, depth: int = 0) -> Any:
+    if depth >= 4:
+        return "[TRUNCATED]"
+    if isinstance(value, str):
+        return value[:300]
+    if isinstance(value, dict):
+        return {
+            str(key): "[REDACTED]" if _SECRET_KEY.search(str(key)) else _redact_tool_values(item, depth + 1)
+            for key, item in list(value.items())[:20]
+        }
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [_redact_tool_values(item, depth + 1) for item in list(value)[:8]]
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    return f"<{type(value).__name__}>"
+
+
 def _safe_tool_calls(file: dict[str, Any]) -> list[dict[str, Any]]:
     execution = file.get("execution_quality") or {}
     metrics = execution.get("metrics") or {}
@@ -92,96 +111,11 @@ def _safe_tool_calls(file: dict[str, Any]) -> list[dict[str, Any]]:
             **{key: call[key] for key in safe_fields if key in call},
         }
         if "argument_values" in call:
-            safe_call["argument_values"] = redact_tool_argument_values(call["argument_values"])
+            safe_call["argument_values"] = _redact_tool_values(call["argument_values"])
         for key in ("result", "result_payload"):
             if key in call:
-                safe_call[key] = redact_tool_argument_values(call[key])
+                safe_call[key] = _redact_tool_values(call[key])
         calls.append(safe_call)
-    return calls
-
-
-def _telemetry_tool_calls(run_id: str) -> list[dict[str, Any]]:
-    telemetry = _read(_artifact_runs_dir() / run_id / "inputs" / "telemetry.json")
-    spans = telemetry.get("spans") if isinstance(telemetry, dict) else None
-    if not isinstance(spans, list):
-        return []
-
-    spans_by_id = {
-        str(span["span_id"]): span
-        for span in spans
-        if isinstance(span, dict) and span.get("span_id")
-    }
-    calls = []
-    for span in spans:
-        if not isinstance(span, dict):
-            continue
-        attributes = span.get("attributes") or {}
-        tool = attributes.get("edrak.tool.name")
-        if not tool:
-            continue
-
-        current = span
-        visited: set[str] = set()
-        worker = task_id = ""
-        attempt = None
-        while current:
-            parent_attributes = current.get("attributes") or {}
-            if parent_attributes.get("edrak.agent.type"):
-                worker = str(parent_attributes["edrak.agent.type"])
-                task_id = str(parent_attributes.get("edrak.task.id") or "")
-                attempt = parent_attributes.get("edrak.task.attempt")
-                break
-            parent_id = str(current.get("parent_span_id") or "")
-            if not parent_id or parent_id in visited:
-                break
-            visited.add(parent_id)
-            current = spans_by_id.get(parent_id, {})
-
-        call = {
-            "tool": str(tool),
-            "worker": worker,
-            "task_id": task_id,
-            "attempt": attempt,
-        }
-        for field, attribute in (
-            ("provider", "edrak.tool.provider"),
-            ("status", "edrak.tool.status"),
-            ("error_code", "edrak.tool.error_code"),
-            ("fallback_used", "edrak.tool.fallback"),
-            ("argument_values", "edrak.tool.argument.values"),
-            ("result", "edrak.tool.result.payload"),
-        ):
-            if attribute not in attributes:
-                continue
-            value = attributes[attribute]
-            if field in {"argument_values", "result"} and isinstance(value, str):
-                try:
-                    value = json.loads(value)
-                except ValueError:
-                    pass
-            call[field] = redact_tool_argument_values(value)
-        calls.append(call)
-    return calls
-
-
-def _enrich_tool_calls(
-    calls: list[dict[str, Any]], telemetry_calls: list[dict[str, Any]]
-) -> list[dict[str, Any]]:
-    consumed: set[int] = set()
-    for call in calls:
-        for index, telemetry_call in enumerate(telemetry_calls):
-            if index in consumed or any(
-                call.get(field) != telemetry_call.get(field)
-                for field in ("tool", "worker", "task_id")
-            ):
-                continue
-            consumed.add(index)
-            for field in ("provider", "argument_values", "result", "error_code", "fallback_used"):
-                if call.get(field) in (None, "", [], {}) and telemetry_call.get(field) not in (
-                    None, "", [], {},
-                ):
-                    call[field] = telemetry_call[field]
-            break
     return calls
 
 
@@ -219,9 +153,7 @@ def _execution_quality(files: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _agent_summary(
-    report: dict[str, Any], telemetry_calls: list[dict[str, Any]] | None = None
-) -> dict[str, Any]:
+def _agent_summary(report: dict[str, Any]) -> dict[str, Any]:
     files = report.get("files") or []
     checks = [
         c for f in files for c in f.get("checks") or []
@@ -236,9 +168,6 @@ def _agent_summary(
         execution_quality = _execution_quality([f]) if f.get("execution_quality") else None
         if execution_quality is not None:
             execution_quality.pop("dimensions")
-            execution_quality["call_details"] = _enrich_tool_calls(
-                execution_quality["call_details"], telemetry_calls or []
-            )
         file_details.append({
             "file": f.get("file"),
             "metrics": f.get("metrics") or {},
@@ -280,13 +209,12 @@ async def get_run(run_id: str) -> dict[str, Any]:
     for rid, eval_dir, paths in _runs():
         if rid != run_id:
             continue
-        telemetry_calls = _telemetry_tool_calls(run_id)
         agents = []
         for name in sorted(paths):
             report = _read(paths[name])
             if isinstance(report, dict) and report.get("files"):
                 agents.append({
-                    **_agent_summary(report, telemetry_calls),
+                    **_agent_summary(report),
                     "agent": report.get("agent") or name,
                 })
         if agents:

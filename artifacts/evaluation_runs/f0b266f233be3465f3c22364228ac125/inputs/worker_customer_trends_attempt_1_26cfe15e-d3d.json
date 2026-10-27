@@ -1,0 +1,535 @@
+{
+  "task_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f1",
+      "statement": "Multiple cloud service providers list NVIDIA H100 GPUs in their AI/ML offerings, indicating strong adoption of NVIDIA accelerators among cloud platforms.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "ec91854622aff427",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "d286f590b99bbba2",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "7997f6a6b6b678ab",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Evidence comes only from web sources.",
+        "All items are in English.",
+        "Sample size is limited to three providers.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f2",
+      "statement": "AMD Instinct MI300X GPUs are available through AMD’s developer cloud and Oracle Cloud Infrastructure, showing emerging but more limited cloud adoption compared with NVIDIA.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "9f4dd0aecabf54dc",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "0fbbd1aa5d7e7a68",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "3eafbfff0551c556",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "All evidence is from web sources and English language.",
+        "No quantitative usage data is provided.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f3",
+      "statement": "Public posts on X highlight negative sentiment around NVIDIA’s AI chip sales to China being stalled by U.S. security reviews.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "7f423b564622aa83",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "8e1e893a55ebf1cf",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "96c4f92a187407ee",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Evidence is limited to a single social platform (X).",
+        "Posts are brief and lack detailed context.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f4",
+      "statement": "NVIDIA DGX Spark receives positive remarks on X, with reviewers praising its GB10 Superchip performance for AI inference.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "66751075f991d3b9",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "84c5c5a840c87dc6",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "9e7ce3f41b88119e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "All evidence originates from X posts.",
+        "No quantitative performance data is provided.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ec91854622aff427",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.runpod.io/articles/guides/top-cloud-gpu-providers",
+      "publisher": "www.runpod.io",
+      "extracted_fact": "Top 12 Cloud GPU Providers for AI and ML in 2026. Lambda Labs offers a GPU cloud platform tailored for AI developers and researchers, , powered by NVIDIA H100 GPUs (available as of 2023-2024), ...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:42.535521Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "published_at": "2026-10-21T13:59:42.535521+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "d286f590b99bbba2",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://northflank.com/blog/best-cloud-providers-for-nvidia-h100-gpus",
+      "publisher": "northflank.com",
+      "extracted_fact": "Best NVIDIA H100 cloud providers for AI inference in 2026. What are the best cloud providers for NVIDIA H100 GPUs? · 1. Northflank · 2. Runpod · 3. Lambda · 4. CoreWeave · 5. Google Cloud · 6. Amazon EC2 · 7.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:42.535521Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "published_at": "2026-07-31T00:00:00+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "7997f6a6b6b678ab",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.reddit.com/r/sysadmin/comments/1xas1ed/for_those_whose_company_moved_gpu_work_off_the/",
+      "publisher": "www.reddit.com",
+      "extracted_fact": "For those whose company moved GPU work off the big .... Putting together a public comparison of US H100 pricing and supply, and I'd rather have first-hand experience than vendor pages.\n\nIf your team needed ...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:42.535521Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "published_at": "2026-10-20T13:59:42.535521+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "9f4dd0aecabf54dc",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.phoronix.com/review/amd-developer-cloud",
+      "publisher": "www.phoronix.com",
+      "extracted_fact": "Trying Out The AMD Developer Cloud For Quickly .... As of writing, creating a GPU Droplet with the AMD Developer Cloud allows either creating a single GPU AMD Instinct MI300X or 8 x GPU Instinct ...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:45.671449Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "published_at": "2025-06-16T00:00:00+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "0fbbd1aa5d7e7a68",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.instagram.com/reel/CtwtFjNArgY/",
+      "publisher": "www.instagram.com",
+      "extracted_fact": "The AMD Instinct MI300X GPU is dubbed by AMD as “The Most .... 2777 likes, 40 comments - storagereview on June 21, 2023: \"The AMD Instinct MI300X GPU is dubbed by AMD as “The Most Advanced Generative Al ...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:45.671449Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "3eafbfff0551c556",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.reddit.com/r/AMD_Stock/comments/1fpvohn/amd_instinct_mi300x_accelerators_available_on/",
+      "publisher": "www.reddit.com",
+      "extracted_fact": "AMD Instinct MI300X Accelerators Available on Oracle Cloud Infrastructure ...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:02:15.658982Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "7f423b564622aa83",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/FT/status/2018888785392541952",
+      "publisher": "x",
+      "extracted_fact": "Financial Times on X: \"Nvidia AI chip sales to China stalled by US security review https://t.co/flDwFYuPD3\" / X. Title: Financial Times on X: \"Nvidia AI chip sales to China stalled by US security review https://t.co/flDwFYuPD3\" / X\n## Post. Nvidia AI chip sales to China stalled…",
+      "excerpt": "Financial Times on X: \"Nvidia AI chip sales to China stalled by US security review https://t.co/flDwFYuPD3\" / X. Title: Financial Times on X: \"Nvidia AI chip sales to China stalled by US security review https://t.co/flDwFYuPD3\" / X\n## Post. Nvidia AI chip sales to China stalled by US security review. Nvidia AI chip sales to China stalled by US security reviewFrom ft.com. 3:26 AM · Feb 4, 202645.6KViews.",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "8e1e893a55ebf1cf",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/DeItaone/status/2001833028172062849",
+      "publisher": "x",
+      "extracted_fact": "*Walter Bloomberg on X: \"REVIEW OF NVIDIA AI CHIP SALES TO CHINA\n\nThe Trump administration has begun a review of Nvidia’s proposed sales of H200 AI chips to China. The Commerce Department has submitted license applications to the State, Energy, and Defense Departments for a 30-d…",
+      "excerpt": "*Walter Bloomberg on X: \"REVIEW OF NVIDIA AI CHIP SALES TO CHINA\n\nThe Trump administration has begun a review of Nvidia’s proposed sales of H200 AI chips to China. The Commerce Department has submitted license applications to the State, Energy, and Defense Departments for a 30-day review period. If .... / X\n*Walter Bloomberg on X: \"REVIEW OF NVIDIA AI CHIP SALES TO CHINA The Trump administration has begun a review of Nvidia’s proposed sales of H200 AI chips to China. The Commerce Department has…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "96c4f92a187407ee",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/CNBCi/status/2018951603953287491",
+      "publisher": "x",
+      "extracted_fact": "CNBC International on X: \"Nvidia AI chip sales to China stalled by U.S. security review, FT reports https://t.co/ikEIVDDbZ7\" / X. Title: CNBC International on X: \"Nvidia AI chip sales to China stalled by U.S. security review, FT reports https://t.co/ikEIVDDbZ7\" / X\n## Post. # CN…",
+      "excerpt": "CNBC International on X: \"Nvidia AI chip sales to China stalled by U.S. security review, FT reports https://t.co/ikEIVDDbZ7\" / X. Title: CNBC International on X: \"Nvidia AI chip sales to China stalled by U.S. security review, FT reports https://t.co/ikEIVDDbZ7\" / X\n## Post. # CNBC International on X: \"Nvidia AI chip sales to China stalled by U.S. security review, FT reports https://t.co/ikEIVDDbZ7\". Nvidia AI chip sales to China stalled by U.S. security review, FT reports. Nvidia AI chip sales…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "66751075f991d3b9",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/yukke_/status/1977952212820386262",
+      "publisher": "x",
+      "extracted_fact": "yukke on X: \"NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI Inference\nhttps://t.co/743zkR0kzu\" / X. yukke on X: \"NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI Inference \" / X. Don’t miss what’s happening. People on X are the first to know. NVIDIA D…",
+      "excerpt": "yukke on X: \"NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI Inference\nhttps://t.co/743zkR0kzu\" / X. yukke on X: \"NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI Inference \" / X. Don’t miss what’s happening. People on X are the first to know. NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI Inference. NVIDIA DGX Spark In-Depth Review: A New Standard for Local AI... Also check out our blog post about NVIDIA DGX Spark: benchmark results are in! 4:18 AM · O…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "84c5c5a840c87dc6",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/tomshardware/status/2016155161740394839",
+      "publisher": "x",
+      "extracted_fact": "Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X. Title: Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that…",
+      "excerpt": "Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X. Title: Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X\n## Post. # Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "9e7ce3f41b88119e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/tomshardware/status/2016155161740394839?lang=en",
+      "publisher": "x",
+      "extracted_fact": "Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X. Title: Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that…",
+      "excerpt": "Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X. Title: Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://t.co/oXrAJZBn7U\" / X\n## Post. # Tom's Hardware on X: \"Nvidia DGX Spark review: the GB10 Superchip powers a fast and fun AI toolbox that beats out AMD’s Ryzen AI Max+ 395 https://…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T13:59:51.071881Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    }
+  ],
+  "gaps": [
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "0 platform(s) have at least 20 items; at least 2 are needed",
+    "1 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.6,
+  "started_at": "2026-10-27T13:59:12.632381Z",
+  "completed_at": "2026-10-27T14:02:11.482381Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "Evidence spans 117 items (40% web, 33% news, 16% X, 11% reviews) mostly English (97%) covering GPU cloud providers (8 mentions), Intel Gaudi 3 (7), AI chip sales (3) and others; however no platform reaches 20 items, Arabic coverage is only 1 item and social data is missing.",
+      "overall_confidence": "medium",
+      "findings_count": 4,
+      "evidence_count": 117,
+      "coverage": {
+        "by_platform": {
+          "unknown": 98,
+          "x": 19
+        },
+        "by_source_type": {
+          "web": 47,
+          "news": 38,
+          "social_post": 19,
+          "review": 13
+        },
+        "by_language": {
+          "en": 114,
+          "unknown": 2,
+          "ar": 1
+        }
+      },
+      "gaps": [
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "0 platform(s) have at least 20 items; at least 2 are needed",
+        "1 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [
+        "finding f2 was dropped: numbers in the claim are not in metrics: 3; copy each into metrics as written (45% is 45), or cite a compute_metrics result as metric_id"
+      ],
+      "budget_used": {
+        "tool_calls": 18.0,
+        "cost_usd": 0.012000000000000004,
+        "seconds": 178.85
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\f0b266f233be3465f3c22364228ac125\\customer_trends_26cfe15e-d3d1-43b6-ab97-d9fd09f2946d.a1_result.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 117,
+      "batch_ids": [
+        "b_a293654d3d86",
+        "b_0fdcb8752f2d",
+        "b_c1ccbb276f48",
+        "b_a9cf932f0dad",
+        "b_52998c6b7f8e",
+        "b_b4176fde98b7",
+        "b_28fc899f4370",
+        "b_192e1b939109",
+        "b_7e314c726640",
+        "b_f50ab77847fd",
+        "b_28a9f8aa9c2f",
+        "b_d7bfcd452618",
+        "b_46e3ef6c297c",
+        "b_0793242551b8",
+        "b_f0e1d168a875",
+        "b_116f4da405e5"
+      ]
+    },
+    "finding_metrics": {
+      "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f1": {},
+      "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f2": {},
+      "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f3": {},
+      "26cfe15e-d3d1-43b6-ab97-d9fd09f2946d:f4": {}
+    },
+    "themes": [
+      {
+        "theme_label": "GPU cloud providers",
+        "count": 8,
+        "share": 0.1111,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": 1.727
+      },
+      {
+        "theme_label": "Intel Gaudi 3",
+        "count": 7,
+        "share": 0.0972,
+        "sentiment_mix": {
+          "neutral": 0.5714,
+          "positive": 0.4286
+        },
+        "recent_growth": -0.697
+      },
+      {
+        "theme_label": "AI chip sales",
+        "count": 3,
+        "share": 0.0417,
+        "sentiment_mix": {
+          "negative": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD Instinct MI300X",
+        "count": 3,
+        "share": 0.0417,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": -1.0
+      },
+      {
+        "theme_label": "DGX Spark review",
+        "count": 3,
+        "share": 0.0417,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI slowdown rejection",
+        "count": 2,
+        "share": 0.0278,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD GPU cloud services",
+        "count": 2,
+        "share": 0.0278,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD Instinct MI350",
+        "count": 2,
+        "share": 0.0278,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "Gaudi 3 AI accelerators",
+        "count": 2,
+        "share": 0.0278,
+        "sentiment_mix": {
+          "neutral": 0.5,
+          "positive": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "NVIDIA H100 GPU",
+        "count": 2,
+        "share": 0.0278,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [],
+    "official_accounts": [],
+    "stance_counts": {
+      "Intel Corp": {
+        "positive": 5,
+        "neutral": 4,
+        "negative": 0,
+        "mixed": 0,
+        "total": 9
+      },
+      "NVIDIA Corporation": {
+        "positive": 6,
+        "neutral": 6,
+        "negative": 1,
+        "mixed": 0,
+        "total": 13
+      }
+    },
+    "research_goal": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding NVIDIA, AMD Instinct, and Intel Gaudi accelerators?",
+    "research_focus": "Cloud service providers, AI developers, reviews, social conversation, purchase intent, usage challenges"
+  }
+}

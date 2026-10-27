@@ -33,6 +33,12 @@ from edrak.verification.quality import (
     vendor_hosts,
 )
 from edrak.verification.state import VerificationState
+from edrak.verification.tracing import (
+    observe,
+    save_verification_span,
+    trace_node,
+    update_current_span,
+)
 
 _MAX_ACTIONS_PER_WORKER = 5
 
@@ -93,10 +99,29 @@ class _LLMReview(BaseModel):
     invented_details: list[str]
 
 
+@observe(type="llm")
 def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
     """Ground the claim in saved source text. None means keep the deterministic result."""
     from edrak.core.llm import get_structured, schema_instruction
 
+    source_packet = _source_packet(evidence)
+    trace_input = {
+        "claim_statement": statement,
+        "evidence_count": len(evidence),
+        "source_packet": source_packet,
+        "evidence": [
+            {
+                "evidence_id": item.evidence_id,
+                "source_title": item.source_title,
+                "source_url": item.source_url,
+                "source_type": item.source_type.value,
+                "excerpt": item.excerpt,
+                "extracted_fact": item.extracted_fact,
+            }
+            for item in evidence
+        ],
+    }
+    update_current_span(input=trace_input, metadata={"component": "verification_llm_review"})
     try:
         # The schema must also be stated in the prompt, not just bound on the
         # model. json_schema steers the reply without hard-constraining the
@@ -107,22 +132,37 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
             [
                 {
                     "role": "user",
-                    "content": review_prompt(statement, _source_packet(evidence)),
+                    "content": review_prompt(statement, source_packet),
                 },
                 schema_instruction(_LLMReview),
             ]
         )
     except Exception as exc:
+        save_verification_span(
+            "llm_review",
+            input=trace_input,
+            output=None,
+            metadata={"component": "verification_llm_review"},
+            status="error",
+            error=f"{type(exc).__name__}: {exc}",
+            span_type="llm",
+        )
         print(f"[verification] WARNING: LLM review failed: {exc}")
         return None
 
     if reply is None:
+        output = {"result": None, "reason": "no parsable reply"}
+        update_current_span(output=output)
+        save_verification_span("llm_review", input=trace_input, output=output, metadata={"component": "verification_llm_review"}, span_type="llm")
         print("[verification] WARNING: LLM review returned no parsable reply")
         return None
 
     data = reply.model_dump()
     supported = data.get("supported")
     if not isinstance(supported, bool):
+        output = {"result": data, "reason": "missing supported boolean"}
+        update_current_span(output=output)
+        save_verification_span("llm_review", input=trace_input, output=output, metadata={"component": "verification_llm_review"}, span_type="llm")
         print("[verification] WARNING: LLM review returned no supported flag")
         return None
 
@@ -136,7 +176,16 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
         for item in (data.get("invented_details") or [])
         if str(item).strip()
     ]
-    return {"supported": supported, "contradictions": contradictions, "invented": invented}
+    result = {"supported": supported, "contradictions": contradictions, "invented": invented}
+    update_current_span(output=result)
+    save_verification_span(
+        "llm_review",
+        input=trace_input,
+        output=result,
+        metadata={"component": "verification_llm_review", "evidence_count": len(evidence)},
+        span_type="llm",
+    )
+    return result
 
 
 def _confidence_too_low(finding: Finding) -> bool:
@@ -261,6 +310,7 @@ def _assess_one(
     )
 
 
+@trace_node("assess_findings", span_type="node")
 def assess_findings(state: VerificationState) -> dict:
     print("\n[verification] NODE: assess_findings")
     payload: VerificationInput = state["payload"]
@@ -284,6 +334,7 @@ def _worker_error(result: WorkerResult) -> str | None:
     return f"{result.worker.value}: {error}"
 
 
+@trace_node("decide", span_type="node")
 def decide(state: VerificationState) -> dict:
     print("\n[verification] NODE: decide")
     payload: VerificationInput = state["payload"]

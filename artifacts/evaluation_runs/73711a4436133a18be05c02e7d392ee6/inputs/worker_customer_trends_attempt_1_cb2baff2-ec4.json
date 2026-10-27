@@ -1,0 +1,383 @@
+{
+  "task_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37:f1",
+      "statement": "AI developers note that NVIDIA H100 rental costs roughly $1.40 per hour, with longer‑term deals exceeding $2.40 per hour, indicating price sensitivity.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "24c1574d4daaf50e",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "55558e89441238d5",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Evidence comes only from X social posts in English; sample size is small (2 items).",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37:f2",
+      "statement": "Chip shortages keep NVIDIA H100 prices high, leading AI labs to continue purchasing proven hardware despite limited supply.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "45a4159aa32dbae5",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Only a single X social post provides this observation; no corroborating sources.",
+        "single_source",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37:f3",
+      "statement": "The NVIDIA H100 GPU’s 700 W power consumption is highlighted as a concern compared with low‑power alternatives.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "4cf6adce90b283ca",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Evidence limited to one X post; no broader data on energy efficiency.",
+        "single_source",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37:f4",
+      "statement": "Developers share detailed NVIDIA H100 architecture specifications, such as 132 SMs and 128 CUDA cores per SM, reflecting interest in hardware capabilities.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "7c33c6fa1192fd64",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Only one X post provides these technical details; no additional sources.",
+        "single_source",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "24c1574d4daaf50e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/thebillyboone/status/2114839739992084973",
+      "publisher": "x",
+      "extracted_fact": "the bubble bull case leans on one assumption: a GPU loses most of its value in about 3 years.\n\nSo far the rental market disagrees.\n\nAn Nvidia H100 costs roughly $1.40 an hour to build and run.\n\nEarlier this year AI labs were signing 2 and 3 year deals above $2.40.\n\nBy September…",
+      "excerpt": "the bubble bull case leans on one assumption: a GPU loses most of its value in about 3 years.\n\nSo far the rental market disagrees.\n\nAn Nvidia H100 costs roughly $1.40 an hour to build and run.\n\nEarlier this year AI labs were signing 2 and 3 year deals above $2.40.\n\nBy September one index had H100 rents at $3.28, up 22% in a month.\n\nA 3-year-old chip is renting for more than it did new.\n\nThe world can't build unlimited new chips, so the old ones get priced on what they can earn today.\n\nAnd one H…",
+      "page_text": null,
+      "retrieved_at": "2026-10-26T23:32:34.588642Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T22:01:00+00:00",
+        "engagement": {
+          "likes": 0,
+          "replies": 0,
+          "shares": 0,
+          "views": 133
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "55558e89441238d5",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/veroeffiong46/status/2114855963127668842",
+      "publisher": "x",
+      "extracted_fact": "AI companies aren't only competing for better models. They're competing for access to the GPUs needed to train and run them.\n\n@Injective's new $SICI market puts the rental prices of five NVIDIA GPUs into one index that traders can access through onchain perpetuals. 🧵 https://t.c…",
+      "excerpt": "AI companies aren't only competing for better models. They're competing for access to the GPUs needed to train and run them.\n\n@Injective's new $SICI market puts the rental prices of five NVIDIA GPUs into one index that traders can access through onchain perpetuals. 🧵 https://t.co/zEjmLJhhrf",
+      "page_text": null,
+      "retrieved_at": "2026-10-26T23:32:34.588642Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T23:05:28+00:00",
+        "engagement": {
+          "likes": 12,
+          "replies": 1,
+          "shares": 0,
+          "views": 640
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "45a4159aa32dbae5",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/WarGuy_/status/2112919151744364884",
+      "publisher": "x",
+      "extracted_fact": "Older AI chips are still selling in a tight market.\n\nPrices for Nvidia’s H100 remain high because chip shortages are still limiting supply.\n\nThe demand shows that AI companies are still willing to buy proven hardware when newer accelerators are difficult to secure. As long as sh…",
+      "excerpt": "Older AI chips are still selling in a tight market.\n\nPrices for Nvidia’s H100 remain high because chip shortages are still limiting supply.\n\nThe demand shows that AI companies are still willing to buy proven hardware when newer accelerators are difficult to secure. As long as shortages persist, older chips can remain commercially valuable and raise the cost of expanding AI computing capacity.\n\nhttps://x.com/business/status/2112906698658611546/video/1",
+      "page_text": null,
+      "retrieved_at": "2026-10-26T23:32:34.588642Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-21T14:49:16+00:00",
+        "engagement": {
+          "likes": 0,
+          "replies": 0,
+          "shares": 0,
+          "views": 48
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "4cf6adce90b283ca",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/MIAM_Schwan/status/2114638585919864995",
+      "publisher": "x",
+      "extracted_fact": "⭐️ BrainChip\n\nNvidia’s H100 GPU consumes 700 watts; the brain: 20 watts. Akida: milliwatts to a few watts!\n\n\"If spiking AI took over most inferences starting in 2031, the energy consumption of DCs would fall by 60% to 90%, while water usage would be cut in half.\"\n@BrainChip_inc…",
+      "excerpt": "⭐️ BrainChip\n\nNvidia’s H100 GPU consumes 700 watts; the brain: 20 watts. Akida: milliwatts to a few watts!\n\n\"If spiking AI took over most inferences starting in 2031, the energy consumption of DCs would fall by 60% to 90%, while water usage would be cut in half.\"\n@BrainChip_inc https://t.co/BsYMcO9hhg",
+      "page_text": null,
+      "retrieved_at": "2026-10-26T23:32:34.588642Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T08:41:41+00:00",
+        "engagement": {
+          "likes": 31,
+          "replies": 1,
+          "shares": 7,
+          "views": 583
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "7c33c6fa1192fd64",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/Ankit__Jodhani/status/2114631172601131498",
+      "publisher": "x",
+      "extracted_fact": "3/15\n\ninside the chip:\n→ an H100 has 132 SMs\n→ each SM packs 128 CUDA cores\n→ a CUDA core is one math lane. a thread is the work it runs\n\nso instead of a loop, you launch thousands of threads\none item, one worker https://t.co/GcFHTnsBwc",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-26T23:32:34.588642Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T08:12:14+00:00",
+        "engagement": {
+          "likes": 2,
+          "replies": 1,
+          "shares": 0,
+          "views": 15
+        },
+        "provider": "socialcrawl"
+      }
+    }
+  ],
+  "gaps": [
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "0 platform(s) have at least 20 items; at least 2 are needed",
+    "0 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-10-27T15:20:42.179297Z",
+  "completed_at": "2026-10-27T15:23:02.509297Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "cb2baff2-ec49-44b3-b414-bf28d973ba37.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "Across 46 English items (28 news = 61%, 13 X = 28%, 5 web = 11%) the main theme is GPU‑rental pricing (3 mentions); other single‑item notes cover architecture, index weighting, performance, shortage, memory, cost and energy. X posts have higher engagement (mean ≈ 32). No Arabic sources and no platform reaches 20 items, leaving social‑branch data incomplete.",
+      "overall_confidence": "low",
+      "findings_count": 4,
+      "evidence_count": 46,
+      "coverage": {
+        "by_platform": {
+          "unknown": 33,
+          "x": 13
+        },
+        "by_source_type": {
+          "news": 28,
+          "social_post": 13,
+          "web": 5
+        },
+        "by_language": {
+          "en": 46
+        }
+      },
+      "gaps": [
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "0 platform(s) have at least 20 items; at least 2 are needed",
+        "0 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [],
+      "budget_used": {
+        "tool_calls": 10.0,
+        "cost_usd": 0.013000000000000001,
+        "seconds": 140.33
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\73711a4436133a18be05c02e7d392ee6\\customer_trends_cb2baff2-ec49-44b3-b414-bf28d973ba37.a1_result.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 46,
+      "batch_ids": [
+        "b_e35db7a3fc91",
+        "b_7478fb8bcaab",
+        "b_55b22b699604",
+        "b_7584bef42592",
+        "b_c67ff1a8d816",
+        "b_99dbea440801",
+        "b_a64c1bc3a018",
+        "b_860d494683a3"
+      ]
+    },
+    "finding_metrics": {
+      "cb2baff2-ec49-44b3-b414-bf28d973ba37:f1": {
+        "hourly_cost": 1.4,
+        "long_term_cost": 2.4
+      },
+      "cb2baff2-ec49-44b3-b414-bf28d973ba37:f2": {},
+      "cb2baff2-ec49-44b3-b414-bf28d973ba37:f3": {
+        "power_watts": 700
+      },
+      "cb2baff2-ec49-44b3-b414-bf28d973ba37:f4": {
+        "SM_count": 132,
+        "CUDA_cores_per_SM": 128
+      }
+    },
+    "themes": [
+      {
+        "theme_label": "GPU rental pricing",
+        "count": 3,
+        "share": 0.2308,
+        "sentiment_mix": {
+          "neutral": 0.6667,
+          "positive": 0.3333
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU architecture details",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU index weighting",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "chip performance comparison",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "chip shortage impact",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "core memory bottleneck",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "cost per output",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "energy consumption",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "mixed": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "entry-level chip",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "low-power AI",
+        "count": 1,
+        "share": 0.0769,
+        "sentiment_mix": {
+          "mixed": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [],
+    "official_accounts": [],
+    "stance_counts": {},
+    "research_goal": "What are the adoption patterns, satisfaction levels, and feedback from cloud service providers and AI developers regarding NVIDIA, AMD Instinct, and Intel Gaudi accelerators?",
+    "research_focus": "Cloud service providers and AI developers"
+  }
+}

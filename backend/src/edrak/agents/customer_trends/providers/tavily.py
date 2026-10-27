@@ -104,8 +104,6 @@ class TavilyProvider:
                 )
             )
 
-        if not items:
-            raise ProviderBadResponse(f"{NAME}: no usable results")
         return ProviderResult(
             items=items[: call.wanted],
             raw_count=len(data["results"]),

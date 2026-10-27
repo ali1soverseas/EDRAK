@@ -1,7 +1,5 @@
 import json
-import inspect
 
-from edrak import observability
 from edrak.contracts import (
     BusinessContext,
     BusinessRequest,
@@ -22,7 +20,6 @@ from edrak.contracts.verification import (
     VerificationStatus,
 )
 from edrak.evaluation_artifacts import EvaluationArtifactBundle
-from edrak.observability import spans_for_run
 
 from Evaluation.evaluation_Agent import edrak_eval_agent_enhanced as evaluator
 
@@ -153,72 +150,3 @@ def test_run_bundle_saves_metrics_stage_for_evaluation(tmp_path, monkeypatch):
     assert evaluator.detect(metrics_data) == "metrics"
     assert metrics_data["results"][0]["metadata"]["requirement_outcomes"] == []
 
-
-def test_spans_for_run_filters_to_run_tagged_trace(tmp_path, monkeypatch):
-    telemetry_path = tmp_path / "spans.json"
-    telemetry_path.write_text(
-        json.dumps(
-            {
-                "spans": [
-                    {
-                        "trace_id": "trace-one",
-                        "span_id": "root-one",
-                        "attributes": {"edrak.run.id": "analysis-1"},
-                    },
-                    {"trace_id": "trace-one", "span_id": "tool-one", "attributes": {}},
-                    {
-                        "trace_id": "trace-two",
-                        "span_id": "root-two",
-                        "attributes": {"edrak.run.id": "analysis-2"},
-                    },
-                    {
-                        "trace_id": "trace-three",
-                        "span_id": "worker-one",
-                        "attributes": {"edrak.run.id": "analysis-1"},
-                    },
-                ]
-            }
-        ),
-        encoding="utf-8",
-    )
-    monkeypatch.setenv("EDRAK_TELEMETRY_EXPORT_PATH", str(telemetry_path))
-    monkeypatch.setattr(observability, "flush_telemetry", lambda: None)
-
-    spans = spans_for_run("analysis-1", "trace-one")
-
-    assert [span["span_id"] for span in spans] == ["root-one", "tool-one", "worker-one"]
-
-
-def test_worker_operation_spans_include_parent_run_id():
-    request = _request()
-    task = _plan(request).tasks[0]
-
-    class RecordingSpan:
-        attributes = {}
-
-        def set_attribute(self, key, value):
-            self.attributes[key] = value
-
-    span = RecordingSpan()
-    observability._set_operation_attributes(
-        span,
-        inspect.signature(lambda task: None),
-        (task,),
-        {},
-    )
-
-    assert span.attributes["edrak.run.id"] == request.request_id
-
-
-def test_run_bundle_keeps_spans_across_resume(tmp_path, monkeypatch):
-    monkeypatch.setenv("EDRAK_EVALUATION_ARTIFACTS_DIR", str(tmp_path))
-    request = _request()
-    bundle = EvaluationArtifactBundle(request.request_id, request, _plan(request))
-
-    bundle.save_telemetry([{"trace_id": "trace-one", "span_id": "span-one"}])
-    bundle.save_telemetry([{"trace_id": "trace-two", "span_id": "span-two"}])
-
-    payload = json.loads((bundle.inputs / "telemetry.json").read_text(encoding="utf-8"))
-    manifest = json.loads(bundle.manifest_path.read_text(encoding="utf-8"))
-    assert {span["trace_id"] for span in payload["spans"]} == {"trace-one", "trace-two"}
-    assert manifest["telemetry_spans"] == 2

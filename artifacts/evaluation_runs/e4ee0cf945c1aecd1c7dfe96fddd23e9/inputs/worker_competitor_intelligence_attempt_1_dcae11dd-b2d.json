@@ -1,0 +1,337 @@
+{
+  "task_id": "dcae11dd-b2da-4356-9ce9-fbeca7088de2",
+  "worker": "competitor_intelligence",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "b28d52c7-f9cc-476c-bc34-2547eae675e2",
+      "statement": "Broadcom's AI licence is sold on a per‑seat basis at $30 per user per month for the standard tier and $60 per user per month for the premium tier.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "9fd670bf-36d1-4598-8bd1-c59b1fffe27b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.72,
+      "limitations": []
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "9fd670bf-36d1-4598-8bd1-c59b1fffe27b",
+      "source_type": "web_page",
+      "source_title": "Per-Seat AI Is Priced Against a Falling Floor",
+      "source_url": "https://ibl.ai/blog/inference-cost-floor-jalapeno-published-benchmarks",
+      "publisher": "ibl.ai",
+      "extracted_fact": "| Per-seat licence @ $30/user/mo | $360,000/yr | $1,800,000/yr | Scales with headcount, used or not | | Per-seat licence @ $60/user/mo | $720,000/yr | $3,600,000/yr | Scales with headcount, used or not | Combined with inference costs falling roughly 95% in two years, every per-seat AI licence is priced against a collapsing floor. Inference costs have fallen roughly 95% in two years, and every per-seat AI licence is priced against a floor that keeps dropping.",
+      "excerpt": "Hardware competition. Jalapeño, Microsoft's Maia, Meta's MTIA, Amazon's Inferentia and Trainium, Google's TPUs. Every hyperscaler building inference silicon pushes the floor down for everyone, including for the open-weight models an enterprise runs itself.\n\n| Cost model | 1,000 users | 5,000 users | Behaviour as usage grows |\n ---  --- |\n| Per-seat licence @ $30/user/mo | $360,000/yr | $1,800,000/yr | Scales with headcount, used or not |\n| Per-seat licence @ $60/user/mo | $720,000/yr | $3,600,000/yr | Scales with headcount, used or not |\n| Self-hosted on owned hardware | GPU + power | GPU + power | Scales with actual work; absorbs every cost decline | [...] Deployed on your infrastructure or our cloud\n 1–2 production agents wired to a slice of your data\n One integration (LMS / SIS / SSO / data source)\n Weekly working sessions with our engineers\n Pilot fee credits toward a full engagement\n\nScope a pilot\n\nMost common\n\n### Integration & Deployment\n\n$25K – $80K\n\none-time · not a subscription\n\nFull deployment integrated with your data and systems. Engineering hours scale with scope.\n\nBest for: Organizations rolling ibl.ai out across a department, campus, or business unit.\n\n Platform deployed in your VPC, on-prem, or air-gapped\n Integrated with your data + identity (SSO / SAML)\n Multiple custom agents built to your workflows\n Engineering hours proportional to scope\n You own the data · run any LLM you choose\n\nPlan a deployment\n\nFull ownership [...] ## The Short Answer\n\nOpenAI publis",
+      "page_text": "Hardware competition. Jalapeño, Microsoft's Maia, Meta's MTIA, Amazon's Inferentia and Trainium, Google's TPUs. Every hyperscaler building inference silicon pushes the floor down for everyone, including for the open-weight models an enterprise runs itself.\n\n| Cost model | 1,000 users | 5,000 users | Behaviour as usage grows |\n ---  --- |\n| Per-seat licence @ $30/user/mo | $360,000/yr | $1,800,000/yr | Scales with headcount, used or not |\n| Per-seat licence @ $60/user/mo | $720,000/yr | $3,600,000/yr | Scales with headcount, used or not |\n| Self-hosted on owned hardware | GPU + power | GPU + power | Scales with actual work; absorbs every cost decline | [...] Deployed on your infrastructure or our cloud\n 1–2 production agents wired to a slice of your data\n One integration (LMS / SIS / SSO / data source)\n Weekly working sessions with our engineers\n Pilot fee credits toward a full engagement\n\nScope a pilot\n\nMost common\n\n### Integration & Deployment\n\n$25K – $80K\n\none-time · not a subscription\n\nFull deployment integrated with your data and systems. Engineering hours scale with scope.\n\nBest for: Organizations rolling ibl.ai out across a department, campus, or business unit.\n\n Platform deployed in your VPC, on-prem, or air-gapped\n Integrated with your data + identity (SSO / SAML)\n Multiple custom agents built to your workflows\n Engineering hours proportional to scope\n You own the data · run any LLM you choose\n\nPlan a deployment\n\nFull ownership [...] ## The Short Answer\n\nOpenAI published Jalapeño's benchmarks at Hot Chips 2026: 1.5–1.9x more throughput per kilowatt and 1.7–3.6x lower latency than NVIDIA's GB200 and GB300, at 700W against up to 1,400W. Combined with inference costs falling roughly 95% in two years, every per-seat AI licence is priced against a collapsing floor. On ibl.ai you own all the code and the data, so each cost reduction reaches you instead of a vendor's margin.\n\nThe chip is interesting. The pricing consequence is the part that belongs in a budget conversation.\n\n## What did OpenAI actually publish about Jalapeño?\n\nJalapeño is an inference ASIC OpenAI co-developed with Broadcom, detailed at Hot Chips 2026 in late August. The published comparisons, against NVIDIA's GB200 and GB300 rack systems:\n## ibl.ai Agentic AI Blog\n\nInsights on building and deploying agentic AI systems. Our blog covers AI agent architectures, LLM infrastructure, MCP servers, enterprise deployment strategies, and real-world implementation guides. Whether you are a developer building AI agents, a CTO evaluating agentic platforms, or a technical leader driving AI adoption, you will find practical guidance here.\n\n## Topics We Cover\n\n* AI Agents: Building, deploying, and managing autonomous agents across industries\n* LLM Infrastructure: Model selection, hosting, fine-tuning, and cost optimization\n* Enterprise AI: Strategies for deploying AI at scale with governance and compliance\n* Developer Tools: MCP servers, CLIs, SDKs, and open source tooling for AI platforms\n* Industry Applications: AI in education, healthcare, finance, government, and more\n\n## Featured Research and Reports\n\nWe analyze key research from leading institutions and labs including Google DeepMind, Anthropic, OpenAI, Meta AI, McKinsey, and the World Economic Forum. Our content includes detailed analysis of reports on AI agents, foundation models, and enterprise AI strategy.\n\n## For Technical Leaders\n\nCTOs, engineering leads, and AI architects turn to our blog for guidance on agent orchestration, model evaluation, infrastructure planning, and building production-ready AI systems. We provide frameworks for responsible AI deployment that balance capability with safety and reliability.\n\n[🇺🇸News](https://iblnews.org/ \"Daily News on Generative Agentic AI - IBL News\")|[🏛️Case Studies](/case-studies)\n\n[📅 Book a 30-min Demo](https://cal.com/iblai/30min)[📞 Call/text (571) 293-0242](tel:+15712930242)\n\n[Back to Blog](/blog)\n\n# Per-Seat AI Is Priced Against a Falling Floor\n\n[Miguel Amigot](/miguel)September 1, 2026\n\nPremium\n\nOpenAI published Jalapeño's benchmarks at Hot Chips 2026: 1.5–1.9x throughput per kilowatt and 1.7–3.6x lower latency than NVIDIA's GB200 and GB300, at 700W against 1,400W. Inference costs have fallen roughly 95% in two years, and every per-seat AI licence is priced against a floor that keeps dropping.\n\n## The Short Answer\n\n**OpenAI published Jalapeño's benchmarks at Hot Chips 2026: 1.5–1.9x more throughput per kilowatt and 1.7–3.6x lower latency than NVIDIA's GB200 and GB300, at 700W against up to 1,400W. Combined with inference costs falling roughly 95% in two years, every per-seat AI licence is priced against a collapsing floor. On ibl.ai you own all the code and the data, so each cost reduction reaches you instead of a vendor's margin.**\n\nThe chip is interesting. The pricing consequence is the part that belongs in a budget conversation.\n\n## What did OpenAI actually publish about Jalapeño?\n\nJalapeño is an inference ASIC OpenAI co-developed with Broadcom, detailed at Hot Chips 2026 in late August. The published comparisons, against NVIDIA's GB200 and GB300 rack systems:\n\n* **1.5x to 1.9x more throughput per kilowatt**\n* **1.7x to 3.6x lower end-to-end latency**\n* **2.1x to 4.1x higher performance** on highly interactive workloads\n\nNote the ranges. Most coverage has quoted the top of each — \"1.9x and 3.6x\" — which is the best case, not the result.\n\nThe hardware: **216GB of HBM4**, up to **13.4 MXFP4 PFLOPS**, a NUMA-style architecture built around **64 memory/core slices**, drawing **700W**. NVIDIA's comparators draw roughly **1,200W (GB200)** and **1,400W (GB300)**.\n\nOpenAI reports moving from initial design to manufacturing tapeout in **nine months**, using AI in the design loop for implementation exploration, verification and arithmetic circuit optimisation.\n\nDeployment into its own infrastructure is planned by the end of 2026 — alongside, not instead of, continued NVIDIA purchases.\n\nThat last detail is the honest one. This is not",
+      "retrieved_at": "2026-10-27T15:48:38.314070Z",
+      "is_synthetic": false,
+      "metadata": {
+        "first_party": false,
+        "competitor": "Broadcom",
+        "requirement_id": "R1",
+        "query": "Broadcom AI accelerator subscription pricing per seat",
+        "stage": 2,
+        "provider": "tavily",
+        "published_date": null,
+        "score": 0.6227582
+      }
+    }
+  ],
+  "gaps": [
+    "[Broadcom] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+    "[Intel Corp] List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+    "[Broadcom] Number of paying customers or subscribers. (paid_subscribers)",
+    "[Intel Corp] Number of paying customers or subscribers. (paid_subscribers)",
+    "[Broadcom] Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+    "[Intel Corp] Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+    "[Broadcom] Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+    "[Intel Corp] Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+    "[Broadcom] Releases shipped per month or quarter. (release_cadence)",
+    "[Intel Corp] Releases shipped per month or quarter. (release_cadence)"
+  ],
+  "conflicts": [],
+  "confidence": 0.72,
+  "started_at": null,
+  "completed_at": null,
+  "error": null,
+  "metadata": {
+    "company": "NVIDIA Corporation",
+    "competitors": [
+      {
+        "name": "Broadcom",
+        "website": null,
+        "official_domains": [],
+        "social_accounts": [],
+        "discovered_by": "user",
+        "discovery_reason": null,
+        "discovery_confidence": null
+      },
+      {
+        "name": "Intel Corp",
+        "website": null,
+        "official_domains": [],
+        "social_accounts": [],
+        "discovered_by": "user",
+        "discovery_reason": null,
+        "discovery_confidence": null
+      }
+    ],
+    "research_stages_completed": 2,
+    "queries_executed": 20,
+    "sources_read": 22,
+    "sources_set_aside": 30,
+    "requirement_checks": [
+      {
+        "requirement_id": "R1",
+        "competitor": "Broadcom",
+        "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R2",
+        "competitor": "Intel Corp",
+        "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R3",
+        "competitor": "Broadcom",
+        "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R4",
+        "competitor": "Intel Corp",
+        "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R5",
+        "competitor": "Broadcom",
+        "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R6",
+        "competitor": "Intel Corp",
+        "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R7",
+        "competitor": "Broadcom",
+        "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R8",
+        "competitor": "Intel Corp",
+        "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R9",
+        "competitor": "Broadcom",
+        "requirement": "Releases shipped per month or quarter. (release_cadence)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      },
+      {
+        "requirement_id": "R10",
+        "competitor": "Intel Corp",
+        "requirement": "Releases shipped per month or quarter. (release_cadence)",
+        "status": "missing",
+        "evidence_found": "",
+        "missing_reason": "No source found yet that establishes this.",
+        "confidence": null,
+        "evidence_quality": "none"
+      }
+    ],
+    "comparison_matrix": {
+      "company": "NVIDIA Corporation",
+      "executive_summary": "",
+      "dimensions": [],
+      "areas_where_target_appears_ahead": [],
+      "areas_where_competitors_appear_ahead": [],
+      "limitations": []
+    },
+    "competitor_profiles": {
+      "Broadcom": {
+        "overview": "Broadcom provides an AI software licence that is sold on a per‑seat basis. The licence is offered in at least two tiers: a standard tier priced at $30 per user per month and a premium tier priced at $60 per user per month. This offering is part of Broadcom’s AI portfolio aimed at data‑center and enterprise customers. No publicly verified data were found on subscriber numbers, usage‑based pricing, revenue, or release cadence.",
+        "requirements": [
+          {
+            "requirement_id": "R1",
+            "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+            "status": "missing",
+            "missing_reason": "Only third-party sources so far; this figure needs the company's own page.",
+            "release_status": "not_stated",
+            "confidence": 0.72,
+            "evidence_quality": "third_party_only",
+            "summary": "Broadcom's AI licence is sold per seat at $30 per user per month for the standard tier and $60 per user per month for the premium tier.",
+            "sources": [
+              {
+                "url": "https://ibl.ai/blog/inference-cost-floor-jalapeno-published-benchmarks",
+                "title": "Per-Seat AI Is Priced Against a Falling Floor",
+                "first_party": false
+              }
+            ]
+          },
+          {
+            "requirement_id": "R3",
+            "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R5",
+            "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R7",
+            "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R9",
+            "requirement": "Releases shipped per month or quarter. (release_cadence)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "The information was not established by the verified evidence.",
+            "sources": []
+          }
+        ],
+        "caveats": [
+          "Pricing details are derived from a third‑party blog post (S1); no direct Broadcom pricing page was identified.",
+          "No evidence was found for subscriber counts, usage‑based pricing, revenue, or release cadence.",
+          "R1: supported only by third-party sources. These sources were accepted because they directly supported the research requirement."
+        ],
+        "verified_findings_count": 1
+      },
+      "Intel Corp": {
+        "overview": "No verified findings were established for this competitor.",
+        "requirements": [
+          {
+            "requirement_id": "R2",
+            "requirement": "List price of each paid plan, per seat per month unless stated. (price_per_tier)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R4",
+            "requirement": "Number of paying customers or subscribers. (paid_subscribers)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R6",
+            "requirement": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance. (effective_price_usage)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R8",
+            "requirement": "Annual revenue or annual recurring revenue, if publicly reported. (revenue_arr)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Not established by the verified evidence.",
+            "sources": []
+          },
+          {
+            "requirement_id": "R10",
+            "requirement": "Releases shipped per month or quarter. (release_cadence)",
+            "status": "missing",
+            "missing_reason": "No source found yet that establishes this.",
+            "release_status": "not_stated",
+            "confidence": null,
+            "evidence_quality": "none",
+            "summary": "Not established by the verified evidence.",
+            "sources": []
+          }
+        ],
+        "caveats": [],
+        "verified_findings_count": 0
+      }
+    },
+    "research_goal": "What are the capabilities, software ecosystem, pricing, availability, customer adoption, and market momentum of AMD Instinct and Intel Gaudi data center AI accelerators?",
+    "research_focus": "AMD Instinct series and Intel Gaudi accelerators, including competitor sites and public data"
+  }
+}

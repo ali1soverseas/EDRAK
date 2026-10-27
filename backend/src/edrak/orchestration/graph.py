@@ -1,3 +1,9 @@
+"""Traced version of Edrak orchestration/graph.py.
+
+This is based on the graph.py shared in the conversation. Replace the existing
+file with this version, or copy the traced_route_after_review wrapper and import
+into the existing file. Existing route_after_review logic remains authoritative.
+"""
 from __future__ import annotations
 
 from typing import Any
@@ -19,20 +25,62 @@ from .nodes import (
 from .review import human_review_node, route_after_review
 from .routing import route_from_plan
 from .state import OrchestrationState
+from .tracing import trace_event
+
+
+def _route_label(route: Any) -> Any:
+    """Make LangGraph route return values readable without changing them."""
+    if isinstance(route, (str, int, float, bool)) or route is None:
+        return route
+    if isinstance(route, (list, tuple)):
+        return [_route_label(item) for item in route]
+    name = getattr(route, "name", None)
+    value = getattr(route, "value", None)
+    if name is not None:
+        return str(name)
+    if value is not None:
+        return str(value)
+    return repr(route)
+
+
+def traced_route_after_review(state: OrchestrationState) -> Any:
+    """Run the original review router and trace its actual result and context."""
+    verification = state.get("verification")
+    verification_result = state.get("verification_result")
+    review_keys = (
+        "human_review", "review", "review_decision", "review_action", "approval",
+        "approved", "review_feedback", "review_notes", "replan_count", "replan_tasks",
+        "error", "status",
+    )
+    review_context = {key: state.get(key) for key in review_keys if key in state}
+    try:
+        route = route_after_review(state)
+        trace_event(
+            "post_verification_routing",
+            state,
+            router="route_after_review",
+            verification=verification,
+            verification_result=verification_result,
+            review_context=review_context,
+            selected_route=_route_label(route),
+            rationale="Actual return value from the existing route_after_review function; routing logic was not changed.",
+        )
+        return route
+    except Exception as exc:
+        trace_event(
+            "post_verification_routing_error",
+            state,
+            router="route_after_review",
+            verification=verification,
+            review_context=review_context,
+            error_type=type(exc).__name__,
+            error=str(exc),
+        )
+        raise
 
 
 def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
-    """Compile the orchestrator.
-
-    Workers are dispatched in parallel via ``Send``: ``route_from_plan`` emits
-    one ``Send`` per task, LangGraph runs them concurrently in a thread pool,
-    and ``verify`` runs once after the whole superstep completes.
-    A verified run then enters ``cross_signal`` before finalize.
-
-    After verification the run always stops at ``human_review`` (checkpoint 2) until a person
-    decides: continue to synthesis, re-plan, or stop. Pausing needs a ``checkpointer``; the run
-    then resumes with ``Command(resume=...)`` on the same ``thread_id``.
-    """
+    """Compile the orchestrator with tracing around the post-verification route."""
     graph = StateGraph(OrchestrationState)
 
     graph.add_node("plan", plan_node)
@@ -55,24 +103,17 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
     )
 
     graph.add_edge("dispatch", "verify")
-
     graph.add_edge("verify", "metrics")
     graph.add_edge("metrics", "human_review")
     graph.add_conditional_edges(
         "human_review",
-        route_after_review,
+        traced_route_after_review,
         ["dispatch", "cross_signal", "replan", "finalize"],
     )
     graph.add_edge("cross_signal", "decision_analysis")
     graph.add_edge("decision_analysis", "finalize")
 
-    # A replan routes back through the plan router because either shape needs a
-    # dispatch. A targeted replan keeps the original task ids and narrows
-    # replan_tasks to the workers that contradicted, so it re-runs those workers
-    # only; the plan itself stays whole so the untouched workers' results remain
-    # attributable. The fallback replan mints a fresh plan with fresh task ids
-    # and clears the results. Going straight to verify would grade an empty result
-    # set and loop until the limits ran out.
+    # Replan routes back through the plan router; this preserves existing behavior.
     graph.add_conditional_edges(
         "replan",
         route_from_plan,

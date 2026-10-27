@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_chat_model, schema_instruction
-from edrak.observability import set_tool_provider, traced_tool
 from dotenv import load_dotenv
+from deepeval.tracing import observe, update_current_span
 from tavily import TavilyClient
 
 from edrak.contracts.result import (
@@ -45,10 +45,12 @@ from edrak.guardrails.content import sanitize as sanitize_text
 
 from .sources import (
     best_passage,
+    domain_of,
     is_official as _is_official_source,
     judge as judge_source,
     official_domains,
 )
+from .tracing import save_competitor_span
 
 from .state import (
     CONFIDENCE_RANK,
@@ -1128,9 +1130,18 @@ def is_official(
 # NODE 1: IDENTIFY RESEARCH REQUIREMENTS
 # ============================================================
 
+@observe(type="node", name="competitor_intelligence.identify_research_requirements")
 def identify_research_requirements_node(
     state: CompetitorState,
 ):
+    span_input = {
+        "company": state.get("company"),
+        "competitors": state.get("competitors", []),
+        "business_context": state.get("business_context", {}),
+        "metric_requirements": state.get("metric_requirements", []),
+    }
+    span_metadata = {"research_stage": state.get("research_stage", 1)}
+    update_current_span(input=span_input, metadata=span_metadata)
     log_action("competitor_intelligence", "identifying research requirements")
     _banner("NODE: identify_requirements")
 
@@ -1223,26 +1234,35 @@ def identify_research_requirements_node(
         sort_dicts=False,
     )
 
-    save_node_output(
-        "research_requirements",
-        {
-            "research_requirements": requirements
-        },
-        state.get(
-            "research_stage",
-            1,
-        ),
-    )
+    # save_node_output(
+    #     "research_requirements",
+    #     {
+    #         "research_requirements": requirements
+    #     },
+    #     state.get(
+    #         "research_stage",
+    #         1,
+    #     ),
+    # )
 
-    return {
+    output = {
         "research_requirements": requirements
     }
+    update_current_span(output=output)
+    save_competitor_span(
+        "competitor_intelligence.identify_research_requirements",
+        input=span_input,
+        output=output,
+        metadata=span_metadata,
+    )
+    return output
 
 
 # ============================================================
 # NODE 2: GENERATE SEARCH QUERIES
 # ============================================================
 
+@observe(type="node", name="competitor_intelligence.generate_queries")
 def generate_queries_node(
     state: CompetitorState,
 ):
@@ -1256,6 +1276,15 @@ def generate_queries_node(
         stage,
         "targeted_missing_requirements",
     )
+    span_input = {
+        "research_stage": stage,
+        "research_strategy": strategy,
+        "research_requirements": state.get("research_requirements", []),
+        "missing_information": state.get("missing_information", []),
+        "executed_query_count": len(state.get("executed_queries", [])),
+    }
+    span_metadata = {"research_stage": stage}
+    update_current_span(input=span_input, metadata=span_metadata)
 
     _banner(f"NODE: generate_queries  STAGE {stage}: {strategy.upper()}")
 
@@ -1292,10 +1321,18 @@ def generate_queries_node(
     if not targets:
         print("No targets for this stage.")
 
-        return {
+        output = {
             "search_queries": [],
             "research_strategy": strategy,
         }
+        update_current_span(output=output)
+        save_competitor_span(
+            "competitor_intelligence.generate_queries",
+            input=span_input,
+            output=output,
+            metadata=span_metadata,
+        )
+        return output
 
     target_competitors = {
         t["competitor"]
@@ -1395,7 +1432,7 @@ def generate_queries_node(
 
         competitor = target["competitor"]
 
-        text = q.query.strip()
+        text, domain_hint = _query_without_site_operator(q.query.strip())
 
         key = (
             competitor.lower(),
@@ -1432,6 +1469,7 @@ def generate_queries_node(
                     "requirement"
                 ],
                 "query": text,
+                "domain_hint": domain_hint,
                 "purpose": q.purpose,
                 "search_type": strategy,
             }
@@ -1460,20 +1498,28 @@ def generate_queries_node(
             "survived validation."
         )
 
-    save_node_output(
-        "generate_queries",
-        {
-            "research_stage": stage,
-            "research_strategy": strategy,
-            "search_queries": queries,
-        },
-        stage,
-    )
+    # save_node_output(
+    #     "generate_queries",
+    #     {
+    #         "research_stage": stage,
+    #         "research_strategy": strategy,
+    #         "search_queries": queries,
+    #     },
+    #     stage,
+    # )
 
-    return {
+    output = {
         "search_queries": queries,
         "research_strategy": strategy,
     }
+    update_current_span(output=output)
+    save_competitor_span(
+        "competitor_intelligence.generate_queries",
+        input=span_input,
+        output=output,
+        metadata=span_metadata,
+    )
+    return output
 
 
 def after_queries_router(
@@ -1490,15 +1536,53 @@ def after_queries_router(
     return "finish"
 
 
+def _query_without_site_operator(query: str) -> tuple[str, list[str]]:
+    """Move any site: operator out of the search text into a domain hint."""
+    hinted = re.findall(r"(?:^|\s)site:([a-z0-9.-]+)", query, flags=re.IGNORECASE)
+    clean_query = re.sub(
+        r"(?:^|\s)site:[a-z0-9.-]+",
+        " ",
+        query,
+        flags=re.IGNORECASE,
+    )
+    clean_query = re.sub(r"\s+", " ", clean_query).strip()
+    domains = sorted({domain_of(domain) for domain in hinted if domain_of(domain)})
+    return clean_query, domains
+
+
+def _search_domains(
+    competitor: str,
+    query: str,
+    strategy: str,
+    domain_hint: list[str] | None = None,
+) -> list[str]:
+    """Use registered official domains, or the planner's explicit site: scope."""
+    if strategy != "official_sources":
+        return []
+
+    registered = official_domains(competitor)
+    if registered:
+        return registered
+
+    if domain_hint:
+        return sorted({domain_of(domain) for domain in domain_hint if domain_of(domain)})
+    _, hinted = _query_without_site_operator(query)
+    return hinted
+
+
 # ============================================================
 # NODE 3: TAVILY SEARCH
 # ============================================================
 
-@traced_tool("competitor_web_search")
+@observe(
+    type="tool",
+    name="tavily_search",
+    description="Search the web for competitor intelligence evidence."
+)
 def run_tavily(
     query: str,
     stage: int,
-    domains: List[str] | None,
+    domains: list[str] | None,
 ):
     params = dict(
         query=query,
@@ -1507,19 +1591,169 @@ def run_tavily(
         include_raw_content=True,
         chunks_per_source=3,
     )
-    # No time_range filter: evergreen pricing, docs and product pages often carry no recent date.
+
     if domains:
-        # The official-sources stage reads the competitor's own site first.
         params["include_domains"] = domains
-    set_tool_provider("tavily")
-    return tavily().search(**params)
+
+    span_input = {
+        "query": query,
+        "stage": stage,
+        "domains": domains,
+    }
+    span_metadata = {
+        "stage": stage,
+        "domain_restricted": bool(domains),
+    }
+    try:
+        response = tavily().search(**params)
+        results = response.get("results", [])
+    except Exception as exc:
+        save_competitor_span(
+            "tavily_search",
+            input=span_input,
+            metadata=span_metadata,
+            status="error",
+            error=f"{type(exc).__name__}: {exc}",
+        )
+        raise
+
+    span_output = {
+        "provider": "tavily",
+        "result_count": len(results),
+        "results": [
+            {
+                "title": r.get("title", ""),
+                "url": r.get("url", ""),
+                "score": r.get("score"),
+                "published_date": r.get("published_date"),
+                "content": sanitize_text(
+                    result_text(r, MAX_STORE_CHARS)
+                )[0],
+            }
+            for r in results
+        ],
+    }
+    update_current_span(
+        input=span_input,
+        output=span_output,
+        metadata=span_metadata,
+    )
+    save_competitor_span(
+        "tavily_search",
+        input=span_input,
+        output=span_output,
+        metadata=span_metadata,
+    )
+
+    return response
 
 
+@observe(
+    type="tool",
+    name="serper_search",
+    description="Fallback web search for competitor intelligence evidence.",
+)
+def run_serper(query: str, stage: int) -> tuple[dict[str, Any] | None, int | None]:
+    span_input = {"query": query, "stage": stage}
+    span_metadata = {"provider": "serper", "research_stage": stage}
+    update_current_span(input=span_input, metadata=span_metadata)
+    serper_key = os.getenv("SERPER_API_KEY", "").strip()
+    if not serper_key:
+        span_output = {"status": "skipped", "reason": "missing_api_key"}
+        update_current_span(output=span_output)
+        save_competitor_span(
+            "serper_search",
+            input=span_input,
+            output=span_output,
+            metadata=span_metadata,
+        )
+        return None, None
+
+    try:
+        response = requests.post(
+            "https://google.serper.dev/search",
+            headers={
+                "X-API-KEY": serper_key,
+                "Content-Type": "application/json",
+            },
+            json={"q": query, "num": MAX_RESULTS_PER_QUERY},
+            timeout=15,
+        )
+    except Exception as exc:
+        save_competitor_span(
+            "serper_search",
+            input=span_input,
+            metadata=span_metadata,
+            status="error",
+            error=f"{type(exc).__name__}: {exc}",
+        )
+        raise
+
+    if response.status_code != 200:
+        span_output = {"status": response.status_code, "result_count": 0}
+        update_current_span(output=span_output)
+        save_competitor_span(
+            "serper_search",
+            input=span_input,
+            output=span_output,
+            metadata=span_metadata,
+        )
+        return None, response.status_code
+
+    try:
+        data = response.json()
+    except Exception as exc:
+        save_competitor_span(
+            "serper_search",
+            input=span_input,
+            metadata=span_metadata,
+            status="error",
+            error=f"{type(exc).__name__}: {exc}",
+        )
+        raise
+
+    organic = data.get("organic", [])
+    span_output = {
+        "status": response.status_code,
+        "result_count": len(organic),
+        "results": [
+            {
+                "title": item.get("title", ""),
+                "url": item.get("link", ""),
+                "snippet": item.get("snippet", ""),
+                "date": item.get("date"),
+            }
+            for item in organic
+        ],
+    }
+    update_current_span(output=span_output)
+    save_competitor_span(
+        "serper_search",
+        input=span_input,
+        output=span_output,
+        metadata=span_metadata,
+    )
+    return data, response.status_code
+
+
+@observe(
+    type="node",
+    name="search_node",
+    description="Search for competitor intelligence sources using Tavily and Serper."
+)
 def search_node(state: CompetitorState):
     log_action("competitor_intelligence", "searching sources")
 
     stage = state.get("research_stage", 1)
     strategy = state.get("research_strategy", "discovery")
+    span_input = {
+        "research_stage": stage,
+        "research_strategy": strategy,
+        "search_queries": state.get("search_queries", []),
+        "existing_source_count": len(state.get("search_results", [])),
+    }
+    span_metadata = {"research_stage": stage}
+    update_current_span(input=span_input, metadata=span_metadata)
 
     _banner(f"NODE: search {strategy.upper()}")
 
@@ -1542,7 +1776,13 @@ def search_node(state: CompetitorState):
         print(f"\n[{competitor}] Query: {query}")
 
         try:
-            domains = official_domains(competitor) if strategy == "official_sources" else []
+            domains = _search_domains(
+                competitor,
+                query,
+                strategy,
+                item.get("domain_hint"),
+            )
+            print(f"Domain-restricted search: {domains }")
             response = run_tavily(
                 query,
                 stage,
@@ -1597,78 +1837,52 @@ def search_node(state: CompetitorState):
             )
 
             try:
-                serper_key = os.getenv(
-                    "SERPER_API_KEY", ""
-                ).strip()
+                serper_data, serper_status = run_serper(query, stage)
 
-                if serper_key:
-                    resp = requests.post(
-                        "https://google.serper.dev/search",
-                        headers={
-                            "X-API-KEY": serper_key,
-                            "Content-Type": "application/json",
-                        },
-                        json={
-                            "q": query,
-                            "num": MAX_RESULTS_PER_QUERY,
-                        },
-                        timeout=15,
+                if serper_status == 200 and serper_data is not None:
+                    serper_items = serper_data.get("organic", [])
+
+                    print(
+                        "Serper fallback results: "
+                        f"{len(serper_items)}"
                     )
 
-                    if resp.status_code == 200:
-                        serper_data = resp.json()
-                        serper_items = serper_data.get(
-                            "organic", []
-                        )
+                    for s_res in serper_items:
+                        url = normalize_url(s_res.get("link", ""))
 
-                        print(
-                            "Serper fallback results: "
-                            f"{len(serper_items)}"
-                        )
+                        # Do not reject a source based only on its domain belonging to
+                        # another configured competitor.
+                        if not url:
+                            continue
 
-                        for s_res in serper_items:
-                            url = normalize_url(
-                                s_res.get("link", "")
-                            )
+                        key = (competitor, url)
 
-                            # Do not reject a source based only
-                            # on its domain belonging to another
-                            # configured competitor.
-                            if not url:
-                                continue
+                        if key in known:
+                            continue
 
-                            key = (competitor, url)
+                        known[key] = {
+                            "competitor": competitor,
+                            "requirement_id": item.get("requirement_id", ""),
+                            "query": query,
+                            "purpose": item.get("purpose", ""),
+                            "search_type": strategy,
+                            "stage": stage,
+                            "title": s_res.get("title", ""),
+                            "url": url,
+                            "text": s_res.get("snippet", ""),
+                            "published_date": s_res.get("date"),
+                            "score": 0.8,
+                            "provider": "serper",
+                            "publisher": s_res.get("displayedLink", ""),
+                        }
 
-                            if key in known:
-                                continue
+                        added += 1
 
-                            known[key] = {
-                                "competitor": competitor,
-                                "requirement_id": item.get(
-                                    "requirement_id", ""
-                                ),
-                                "query": query,
-                                "purpose": item.get("purpose", ""),
-                                "search_type": strategy,
-                                "stage": stage,
-                                "title": s_res.get("title", ""),
-                                "url": url,
-                                "text": s_res.get("snippet", ""),
-                                "published_date": s_res.get("date"),
-                                "score": 0.8,
-                                "provider": "serper",
-                                "publisher": s_res.get(
-                                    "displayedLink", ""
-                                ),
-                            }
-
-                            added += 1
-
-                    else:
-                        print(
-                            "Serper returned HTTP "
-                            f"{resp.status_code}"
-                        )
+                elif serper_status is not None:
+                    print(
+                        "Serper returned HTTP "
+                        f"{serper_status}"
+                    )
                 else:
                     print(
                         "Serper fallback skipped: "
@@ -1716,23 +1930,39 @@ def search_node(state: CompetitorState):
     print(f"\nAdded {added} new results.")
     print(f"Total sources: {len(results)}")
 
-    save_node_output(
-        "search_results",
-        {
-            "research_stage": stage,
-            "research_strategy": strategy,
-            "new_sources": added,
-            "search_results": results,
-        },
-        stage,
-    )
+    # save_node_output(
+    #     "search_results",
+    #     {
+    #         "research_stage": stage,
+    #         "research_strategy": strategy,
+    #         "new_sources": added,
+    #         "search_results": results,
+    #     },
+    #     stage,
+    # )
 
-    return {
+    output = {
         "search_results": results,
         "executed_queries": executed,
         "new_sources_this_stage": max(0, added),
         "dropped_sources": dropped[-300:],
     }
+    span_output = {
+        "research_stage": stage,
+        "new_source_count": max(0, added),
+        "total_source_count": len(results),
+        "executed_query_count": len(executed),
+        "dropped_source_count": len(dropped),
+        "providers": sorted({item.get("provider", "") for item in results}),
+    }
+    update_current_span(output=span_output)
+    save_competitor_span(
+        "competitor_intelligence.search",
+        input=span_input,
+        output=span_output,
+        metadata=span_metadata,
+    )
+    return output
 
 # ============================================================
 # NODE 4: SYNTHESIZE
@@ -1912,14 +2142,14 @@ def synthesize_node(
         f"Accumulated findings: {len(findings)}"
     )
 
-    save_node_output(
-        "findings",
-        {
-            "findings": findings,
-            "new_findings_this_stage": truly_new,
-        },
-        stage,
-    )
+    # save_node_output(
+    #     "findings",
+    #     {
+    #         "findings": findings,
+    #         "new_findings_this_stage": truly_new,
+    #     },
+    #     stage,
+    # )
 
     return {
         "findings": findings,
@@ -1963,6 +2193,7 @@ def grounding_problem(statement: str, source_text: str) -> str | None:
     return None
 
 
+@observe(type="node", name="competitor_intelligence.verify")
 def verify_node(
     state: CompetitorState,
 ):
@@ -1971,6 +2202,14 @@ def verify_node(
     There is no second model pass here any more: the pipeline's verification stage reviews every
     finding from every worker, so a review inside this worker only doubled the cost and the time.
     """
+    span_input = {
+        "research_stage": state.get("research_stage", 1),
+        "new_findings": state.get("new_findings", []),
+        "previously_verified_count": len(state.get("verified_findings", [])),
+        "search_result_count": len(state.get("search_results", [])),
+    }
+    span_metadata = {"research_stage": state.get("research_stage", 1)}
+    update_current_span(input=span_input, metadata=span_metadata)
     log_action("competitor_intelligence", "checking each finding against the sources it cites")
     stage = state.get("research_stage", 1)
     _banner(f"NODE: ground  STAGE {stage}")
@@ -2002,8 +2241,21 @@ def verify_node(
         "competitor_intelligence",
         f"{added} finding(s) grounded in their sources this stage, {rejected} set aside",
     )
-    save_node_output("verified_findings", {"verified_findings": verified, "new_this_stage": added}, stage)
-    return {"verified_findings": verified, "new_verified_this_stage": added}
+    # save_node_output("verified_findings", {"verified_findings": verified, "new_this_stage": added}, stage)
+    output = {"verified_findings": verified, "new_verified_this_stage": added}
+    span_output = {
+        "verified_findings": verified,
+        "new_verified_this_stage": added,
+        "rejected_finding_count": rejected,
+    }
+    update_current_span(output=span_output)
+    save_competitor_span(
+        "competitor_intelligence.verify",
+        input=span_input,
+        output=span_output,
+        metadata=span_metadata,
+    )
+    return output
 
 
 # ============================================================
@@ -2056,7 +2308,7 @@ def check_research_requirements_node(
         "competitor_intelligence",
         f"{len(checks) - len(missing)} of {len(checks)} requirement(s) established",
     )
-    save_node_output("requirement_check", {"checks": checks, "missing_information": missing}, stage)
+    # save_node_output("requirement_check", {"checks": checks, "missing_information": missing}, stage)
     return {"requirement_checks": checks, "missing_information": missing}
 
 
@@ -2700,9 +2952,20 @@ def render_markdown(
     return "\n".join(lines)
 
 
+@observe(type="node", name="competitor_intelligence.final_report")
 def final_report_node(
     state: CompetitorState,
 ):
+    span_input = {
+        "company": state.get("company"),
+        "research_goal": state.get("research_goal"),
+        "competitors": state.get("competitors", []),
+        "research_stage": state.get("research_stage", 1),
+        "verified_finding_count": len(state.get("verified_findings", [])),
+        "source_count": len(state.get("search_results", [])),
+        "missing_information": state.get("missing_information", []),
+    }
+    update_current_span(input=span_input)
     log_action("competitor_intelligence", "writing the final report")
     _banner("NODE: final_report")
 
@@ -2819,25 +3082,31 @@ def final_report_node(
         "final_report": final_report
     }
 
-    save_node_output(
-        "final_report",
-        output,
-        state.get(
-            "research_stage",
-            1,
-        ),
+    # save_node_output(
+    #     "final_report",
+    #     output,
+    #     state.get(
+    #         "research_stage",
+    #         1,
+    #     ),
+    # )
+
+    # md_path = OUTPUT_DIR / "final_report.md"
+    # if _settings.EDRAK_DEBUG:
+    #     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    #     md_path.write_text(render_markdown(final_report), encoding="utf-8")
+
+    # print(
+    #     f"Saved markdown report -> "
+    #     f"{md_path}"
+    # )
+
+    update_current_span(output=output)
+    save_competitor_span(
+        "competitor_intelligence.final_report",
+        input=span_input,
+        output=output,
     )
-
-    md_path = OUTPUT_DIR / "final_report.md"
-    if _settings.EDRAK_DEBUG:
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        md_path.write_text(render_markdown(final_report), encoding="utf-8")
-
-    print(
-        f"Saved markdown report -> "
-        f"{md_path}"
-    )
-
     return output
 
 
@@ -2845,355 +3114,355 @@ def final_report_node(
 # NODE 9: COMPARE TARGET COMPANY WITH COMPETITORS
 # ============================================================
 
-def comparison_node(
-    state: CompetitorState,
-):
-    log_action("competitor_intelligence", "building the comparison")
-    _banner("NODE: comparison")
+# def comparison_node(
+#     state: CompetitorState,
+# ):
+#     log_action("competitor_intelligence", "building the comparison")
+#     _banner("NODE: comparison")
 
-    report = state[
-        "final_report"
-    ]
+#     report = state[
+#         "final_report"
+#     ]
 
-    company = state[
-        "company"
-    ]
+#     company = state[
+#         "company"
+#     ]
 
-    competitors = state[
-        "competitors"
-    ]
+#     competitors = state[
+#         "competitors"
+#     ]
 
-    profiles = report.get(
-        "competitor_profiles",
-        {},
-    )
+#     profiles = report.get(
+#         "competitor_profiles",
+#         {},
+#     )
 
-    compact = {}
-    req_index = {}
+#     compact = {}
+#     req_index = {}
 
-    for c, prof in profiles.items():
-        compact[c] = {
-            "overview": prof[
-                "overview"
-            ],
-            "requirements": [
-                {
-                    k: r[k]
-                    for k in (
-                        "requirement_id",
-                        "requirement",
-                        "status",
-                        "release_status",
-                        "confidence",
-                        "evidence_quality",
-                        "summary",
-                    )
-                }
-                for r in prof[
-                    "requirements"
-                ]
-            ],
-            "caveats": prof[
-                "caveats"
-            ],
-        }
+#     for c, prof in profiles.items():
+#         compact[c] = {
+#             "overview": prof[
+#                 "overview"
+#             ],
+#             "requirements": [
+#                 {
+#                     k: r[k]
+#                     for k in (
+#                         "requirement_id",
+#                         "requirement",
+#                         "status",
+#                         "release_status",
+#                         "confidence",
+#                         "evidence_quality",
+#                         "summary",
+#                     )
+#                 }
+#                 for r in prof[
+#                     "requirements"
+#                 ]
+#             ],
+#             "caveats": prof[
+#                 "caveats"
+#             ],
+#         }
 
-        for r in prof[
-            "requirements"
-        ]:
-            req_index[
-                (
-                    c,
-                    r["requirement_id"],
-                )
-            ] = r
+#         for r in prof[
+#             "requirements"
+#         ]:
+#             req_index[
+#                 (
+#                     c,
+#                     r["requirement_id"],
+#                 )
+#             ] = r
 
-    prompt = comparison_prompt(
-        state,
-        compact,
-    )
+#     prompt = comparison_prompt(
+#         state,
+#         compact,
+#     )
 
-    result = call_structured(
-        prompt,
-        ComparisonReport,
-        strong=True,
-    )
+#     result = call_structured(
+#         prompt,
+#         ComparisonReport,
+#         strong=True,
+#     )
 
-    if result is None:
-        report["comparison"] = {
-            "error": (
-                "comparison call failed "
-                "(no structured output)"
-            )
-        }
+#     if result is None:
+#         report["comparison"] = {
+#             "error": (
+#                 "comparison call failed "
+#                 "(no structured output)"
+#             )
+#         }
 
-        output = {
-            "final_report": report
-        }
+#         output = {
+#             "final_report": report
+#         }
 
-        save_node_output(
-            "final_report",
-            output,
-            state.get(
-                "research_stage",
-                1,
-            ),
-        )
+#         save_node_output(
+#             "final_report",
+#             output,
+#             state.get(
+#                 "research_stage",
+#                 1,
+#             ),
+#         )
 
-        if _settings.EDRAK_DEBUG:
-            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-            (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
+#         if _settings.EDRAK_DEBUG:
+#             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+#             (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
 
-        return output
+#         return output
 
-    canonical = {
-        c.lower(): c
-        for c in competitors
-    }
+#     canonical = {
+#         c.lower(): c
+#         for c in competitors
+#     }
 
-    dims = []
+#     dims = []
 
-    for d in result.dimensions:
-        assessments: Dict[
-            str,
-            Dict[str, Any],
-        ] = {}
+#     for d in result.dimensions:
+#         assessments: Dict[
+#             str,
+#             Dict[str, Any],
+#         ] = {}
 
-        for a in d.assessments:
-            comp = canonical.get(
-                a.competitor.strip().lower()
-            )
+#         for a in d.assessments:
+#             comp = canonical.get(
+#                 a.competitor.strip().lower()
+#             )
 
-            if not comp or comp in assessments:
-                continue
+#             if not comp or comp in assessments:
+#                 continue
 
-            rids = [
-                rid
-                for rid in dict.fromkeys(
-                    x.strip()
-                    for x in a.requirement_ids
-                )
-                if (
-                    comp,
-                    rid,
-                ) in req_index
-            ]
+#             rids = [
+#                 rid
+#                 for rid in dict.fromkeys(
+#                     x.strip()
+#                     for x in a.requirement_ids
+#                 )
+#                 if (
+#                     comp,
+#                     rid,
+#                 ) in req_index
+#             ]
 
-            cited = [
-                req_index[
-                    (
-                        comp,
-                        rid,
-                    )
-                ]
-                for rid in rids
-            ]
+#             cited = [
+#                 req_index[
+#                     (
+#                         comp,
+#                         rid,
+#                     )
+#                 ]
+#                 for rid in rids
+#             ]
 
-            relative = (
-                a.relative_to_target
-            )
+#             relative = (
+#                 a.relative_to_target
+#             )
 
-            # ------------------------------------------------
-            # Evidence-grounded comparison confidence
-            # ------------------------------------------------
+#             # ------------------------------------------------
+#             # Evidence-grounded comparison confidence
+#             # ------------------------------------------------
 
-            llm_confidence = normalize_confidence_value(
-                a.confidence
-            )
+#             llm_confidence = normalize_confidence_value(
+#                 a.confidence
+#             )
 
-            cited_confidences = [
-                normalize_confidence_value(
-                    r.get("confidence")
-                )
-                for r in cited
-            ]
+#             cited_confidences = [
+#                 normalize_confidence_value(
+#                     r.get("confidence")
+#                 )
+#                 for r in cited
+#             ]
 
-            cited_confidences = [
-                value
-                for value in cited_confidences
-                if value is not None
-            ]
+#             cited_confidences = [
+#                 value
+#                 for value in cited_confidences
+#                 if value is not None
+#             ]
 
-            has_evidence = any(
-                r.get("evidence_quality")
-                != "none"
-                for r in cited
-            )
+#             has_evidence = any(
+#                 r.get("evidence_quality")
+#                 != "none"
+#                 for r in cited
+#             )
 
-            if not cited or not has_evidence:
-                relative = "not_established"
-                confidence = "low"
+#             if not cited or not has_evidence:
+#                 relative = "not_established"
+#                 confidence = "low"
 
-            else:
-                # The comparison cannot be more confident
-                # than the evidence underneath it.
-                #
-                # Example:
-                # LLM says "high" = 0.85
-                # underlying evidence = 0.72
-                # final = 0.72
-                #
-                # Third-party evidence is NOT discounted here.
-                # Its confidence was already determined during
-                # verification.
-                evidence_confidence = min(
-                    cited_confidences
-                ) if cited_confidences else None
+#             else:
+#                 # The comparison cannot be more confident
+#                 # than the evidence underneath it.
+#                 #
+#                 # Example:
+#                 # LLM says "high" = 0.85
+#                 # underlying evidence = 0.72
+#                 # final = 0.72
+#                 #
+#                 # Third-party evidence is NOT discounted here.
+#                 # Its confidence was already determined during
+#                 # verification.
+#                 evidence_confidence = min(
+#                     cited_confidences
+#                 ) if cited_confidences else None
 
-                if (
-                    llm_confidence is not None
-                    and evidence_confidence is not None
-                ):
-                    confidence_value = min(
-                        llm_confidence,
-                        evidence_confidence,
-                    )
+#                 if (
+#                     llm_confidence is not None
+#                     and evidence_confidence is not None
+#                 ):
+#                     confidence_value = min(
+#                         llm_confidence,
+#                         evidence_confidence,
+#                     )
 
-                elif evidence_confidence is not None:
-                    confidence_value = (
-                        evidence_confidence
-                    )
+#                 elif evidence_confidence is not None:
+#                     confidence_value = (
+#                         evidence_confidence
+#                     )
 
-                else:
-                    confidence_value = (
-                        llm_confidence
-                    )
+#                 else:
+#                     confidence_value = (
+#                         llm_confidence
+#                     )
 
-                if confidence_value is None:
-                    relative = "not_established"
-                    confidence = "low"
-                else:
-                    confidence = round(
-                        confidence_value,
-                        3,
-                    )
+#                 if confidence_value is None:
+#                     relative = "not_established"
+#                     confidence = "low"
+#                 else:
+#                     confidence = round(
+#                         confidence_value,
+#                         3,
+#                     )
 
-            urls = []
+#             urls = []
 
-            for r in cited:
-                for src in r[
-                    "sources"
-                ]:
-                    if src["url"] not in urls:
-                        urls.append(
-                            src["url"]
-                        )
+#             for r in cited:
+#                 for src in r[
+#                     "sources"
+#                 ]:
+#                     if src["url"] not in urls:
+#                         urls.append(
+#                             src["url"]
+#                         )
 
-            assessments[comp] = {
-                "competitor": comp,
-                "relative_to_target": relative,
-                "confidence": confidence,
-                "summary": a.summary.strip(),
-                "requirement_ids": rids,
-                "sources": urls,
-            }
+#             assessments[comp] = {
+#                 "competitor": comp,
+#                 "relative_to_target": relative,
+#                 "confidence": confidence,
+#                 "summary": a.summary.strip(),
+#                 "requirement_ids": rids,
+#                 "sources": urls,
+#             }
 
-        for comp in competitors:
-            if comp not in assessments:
-                assessments[comp] = {
-                    "competitor": comp,
-                    "relative_to_target": (
-                        "not_established"
-                    ),
-                    "confidence": "low",
-                    "summary": (
-                        "Not assessed for "
-                        "this dimension."
-                    ),
-                    "requirement_ids": [],
-                    "sources": [],
-                }
+#         for comp in competitors:
+#             if comp not in assessments:
+#                 assessments[comp] = {
+#                     "competitor": comp,
+#                     "relative_to_target": (
+#                         "not_established"
+#                     ),
+#                     "confidence": "low",
+#                     "summary": (
+#                         "Not assessed for "
+#                         "this dimension."
+#                     ),
+#                     "requirement_ids": [],
+#                     "sources": [],
+#                 }
 
-        dims.append(
-            {
-                "dimension": d.dimension,
-                "target_position": (
-                    d.target_position.strip()
-                ),
-                "assessments": [
-                    assessments[c]
-                    for c in competitors
-                ],
-                "takeaway": d.takeaway.strip(),
-            }
-        )
+#         dims.append(
+#             {
+#                 "dimension": d.dimension,
+#                 "target_position": (
+#                     d.target_position.strip()
+#                 ),
+#                 "assessments": [
+#                     assessments[c]
+#                     for c in competitors
+#                 ],
+#                 "takeaway": d.takeaway.strip(),
+#             }
+#         )
 
-    limitations = list(
-        result.limitations
-    )
+#     limitations = list(
+#         result.limitations
+#     )
 
-    third_party_only = sum(
-        1
-        for (_, _), r in req_index.items()
-        if r["evidence_quality"]
-        == "third_party_only"
-    )
+#     third_party_only = sum(
+#         1
+#         for (_, _), r in req_index.items()
+#         if r["evidence_quality"]
+#         == "third_party_only"
+#     )
 
-    if third_party_only:
-        limitations.append(
-            f"{third_party_only} competitor "
-            "requirement(s) were supported by "
-            "third-party sources. These sources "
-            "were accepted because the evidence "
-            "was verified as relevant to the "
-            "research requirement."
-        )
+#     if third_party_only:
+#         limitations.append(
+#             f"{third_party_only} competitor "
+#             "requirement(s) were supported by "
+#             "third-party sources. These sources "
+#             "were accepted because the evidence "
+#             "was verified as relevant to the "
+#             "research requirement."
+#         )
 
-    unresolved = len(
-        report.get(
-            "remaining_unresolved_requirements",
-            [],
-        )
-    )
+#     unresolved = len(
+#         report.get(
+#             "remaining_unresolved_requirements",
+#             [],
+#         )
+#     )
 
-    if unresolved:
-        limitations.append(
-            f"{unresolved} requirement(s) "
-            "remained unresolved after research."
-        )
+#     if unresolved:
+#         limitations.append(
+#             f"{unresolved} requirement(s) "
+#             "remained unresolved after research."
+#         )
 
-    report["comparison"] = {
-        "executive_summary": (
-            result.executive_summary.strip()
-        ),
-        "dimensions": dims,
-        "areas_where_target_appears_ahead": (
-            result.areas_where_target_appears_ahead
-        ),
-        "areas_where_competitors_appear_ahead": (
-            result.areas_where_competitors_appear_ahead
-        ),
-        "limitations": list(
-            dict.fromkeys(
-                limitations
-            )
-        ),
-    }
+#     report["comparison"] = {
+#         "executive_summary": (
+#             result.executive_summary.strip()
+#         ),
+#         "dimensions": dims,
+#         "areas_where_target_appears_ahead": (
+#             result.areas_where_target_appears_ahead
+#         ),
+#         "areas_where_competitors_appear_ahead": (
+#             result.areas_where_competitors_appear_ahead
+#         ),
+#         "limitations": list(
+#             dict.fromkeys(
+#                 limitations
+#             )
+#         ),
+#     }
 
-    print(
-        f"Comparison built: "
-        f"{len(dims)} dimensions x "
-        f"{len(competitors)} competitors"
-    )
+#     print(
+#         f"Comparison built: "
+#         f"{len(dims)} dimensions x "
+#         f"{len(competitors)} competitors"
+#     )
 
-    output = {
-        "final_report": report
-    }
+#     output = {
+#         "final_report": report
+#     }
 
-    save_node_output(
-        "final_report",
-        output,
-        state.get(
-            "research_stage",
-            1,
-        ),
-    )
+#     save_node_output(
+#         "final_report",
+#         output,
+#         state.get(
+#             "research_stage",
+#             1,
+#         ),
+#     )
 
-    if _settings.EDRAK_DEBUG:
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
+#     if _settings.EDRAK_DEBUG:
+#         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+#         (OUTPUT_DIR / "final_report.md").write_text(render_markdown(report), encoding="utf-8")
 
-    return output
+#     return output
 
 
 # ============================================================

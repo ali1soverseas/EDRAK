@@ -29,7 +29,6 @@ from edrak.agents.competitor_intelligence.socials import USER_AGENT, find_offici
 from edrak.agents.competitor_intelligence.sources import compact, domain_of, host_of
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_structured, provider_key, schema_instruction
-from edrak.observability import set_tool_provider, traced_tool
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +74,6 @@ def _queries(company: str, offerings: list[str], industry: Optional[str], market
     return seen[:MAX_QUERIES]
 
 
-@traced_tool("competitor_web_search")
 def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[str, str]]:
     """Tavily first, Serper as a fallback. Returns [{title, url, content}]."""
     key, tavily_variable = provider_key("TAVILY_API_KEY", "competitor")
@@ -84,7 +82,6 @@ def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[st
         try:
             from tavily import TavilyClient
 
-            set_tool_provider("tavily")
             response = TavilyClient(api_key=key).search(query=query, search_depth="basic", max_results=max_results)
             return [
                 {"title": r.get("title", ""), "url": r.get("url", ""), "content": r.get("content", "")}
@@ -103,7 +100,6 @@ def web_search(query: str, max_results: int = RESULTS_PER_QUERY) -> list[dict[st
             "Competitor search needs TAVILY_API_KEY or SERPER_API_KEY in the project .env."
         )
 
-    set_tool_provider("serper", fallback=tavily_error is not None)
     try:
         resp = httpx.post(
             "https://google.serper.dev/search",

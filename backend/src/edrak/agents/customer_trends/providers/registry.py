@@ -18,7 +18,11 @@ from edrak.agents.customer_trends.providers.base import (
     ProviderError,
     ProviderExhausted,
     ProviderFailure,
+    ProviderNotConfigured,
+    ProviderQuotaExceeded,
+    ProviderRateLimited,
     ProviderResult,
+    ProviderUnavailable,
     parse_capability,
 )
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
@@ -299,18 +303,33 @@ class ProviderRegistry:
                     result = await provider.call(capability, params)
             except ProviderError as exc:
                 failure = ProviderFailure(name, type(exc).__name__, str(exc))
+                should_record_failure = isinstance(
+                    exc,
+                    (
+                        ProviderNotConfigured,
+                        ProviderQuotaExceeded,
+                        ProviderRateLimited,
+                        ProviderUnavailable,
+                    ),
+                )
             except (ValidationError, KeyError, TypeError, ValueError) as exc:
                 bad = ProviderBadResponse(f"{name}: unexpected {type(exc).__name__}: {exc}")
                 failure = ProviderFailure(name, type(bad).__name__, str(bad))
+                should_record_failure = False
             else:
                 self._breaker.record_success(name)
                 if self._cache:
                     self._cache.put(name, capability, params, result)
                 return self._tag(result, name, position)
-            self._breaker.record_failure(name)
+            if should_record_failure:
+                self._breaker.record_failure(name)
             failures.append(failure)
             log.warning(
-                "provider_failed", capability=capability, provider=name, error=failure.error
+                "provider_failed",
+                capability=capability,
+                provider=name,
+                error=failure.error,
+                detail=failure.message[:200],
             )
         raise ProviderExhausted(capability, failures)
 

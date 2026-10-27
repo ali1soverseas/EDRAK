@@ -1642,22 +1642,16 @@ class CrossSignalNodes:
     # DETECTION
     # ========================================================================
 
+
     async def detect_signals(
         self,
         state: CrossSignalState,
     ) -> dict[str, Any]:
 
-        findings_digest = state[
-            "findings_digest"
-        ]
+        findings_digest = state["findings_digest"]
+        business_digest = state["business_digest"]
 
-        business_digest = state[
-            "business_digest"
-        ]
-
-        all_signals: list[
-            CrossSignal
-        ] = []
+        all_signals: list[CrossSignal] = []
 
         per_lens_limit = min(
             self.settings.max_signals_per_lens,
@@ -1669,45 +1663,29 @@ class CrossSignalNodes:
             len(LENSES),
         )
 
-        # json_schema stated explicitly, plus the schema restated in the prompt
-        # at each call site. Both are required: left to the library default with
-        # no instruction this scored 0/5, returning the bare signals array
-        # instead of the object wrapping it. With both, 5/5.
+        # Use the existing structured-output schema.
         structured_llm = self.llm.with_structured_output(
-            SignalDetectionResult, method="json_schema"
+            SignalDetectionResult,
+            method="json_schema",
         )
 
         for lens in LENSES:
+            try:
+                logger.info("Running Cross-Signal lens=%s", lens)
 
-            logger.info(
-                "Running Cross-Signal lens=%s",
-                lens,
-            )
+                system_prompt = _lens_system_prompt(lens)
 
-            system_prompt = (
-                _lens_system_prompt(
-                    lens
-                )
-            )
-
-            human_prompt = (
-                _lens_human_prompt(
+                human_prompt = _lens_human_prompt(
                     lens=lens,
                     business_digest=business_digest,
                     findings_digest=findings_digest,
                     max_signals=per_lens_limit,
                 )
-            )
 
-            response = await (
-                structured_llm.ainvoke(
+                response = await structured_llm.ainvoke(
                     [
-                        SystemMessage(
-                            content=system_prompt
-                        ),
-                        HumanMessage(
-                            content=human_prompt
-                        ),
+                        SystemMessage(content=system_prompt),
+                        HumanMessage(content=human_prompt),
                         HumanMessage(
                             content=schema_instruction(
                                 SignalDetectionResult
@@ -1715,52 +1693,84 @@ class CrossSignalNodes:
                         ),
                     ]
                 )
-            )
 
-            if isinstance(
-                response,
-                SignalDetectionResult,
-            ):
+                if isinstance(response, SignalDetectionResult):
+                    signals = response.signals
+                else:
+                    # Handle dictionary-like structured output.
+                    parsed = SignalDetectionResult.model_validate(response)
+                    signals = parsed.signals
 
-                signals = response.signals
+                accepted = 0
+                discarded = 0
 
-            else:
+                for signal in signals:
+                    try:
+                        # ------------------------------------------------
+                        # Reject candidates without two distinct support
+                        # references before adding them to the pipeline.
+                        # ------------------------------------------------
+                        support_ids = {
+                            _support_finding_id(item)
+                            for item in signal.supporting_findings
+                            if _support_finding_id(item)
+                        }
 
-                signals = (
-                    SignalDetectionResult
-                    .model_validate(
-                        response
-                    )
-                    .signals
+                        if len(support_ids) < 2:
+                            discarded += 1
+                            logger.warning(
+                                "Discarding weak signal from lens=%s: "
+                                "only %d distinct supporting finding(s).",
+                                lens,
+                                len(support_ids),
+                            )
+                            continue
+
+                        signal.signal_id = new_id()
+                        all_signals.append(signal)
+                        accepted += 1
+
+                    except Exception:
+                        discarded += 1
+                        logger.exception(
+                            "Discarding malformed candidate from lens=%s",
+                            lens,
+                        )
+                        continue
+
+                logger.info(
+                    "Lens %s completed: accepted=%d discarded=%d",
+                    lens,
+                    accepted,
+                    discarded,
                 )
 
-            logger.info(
-                "Lens %s produced %d candidates",
-                lens,
-                len(signals),
-            )
-
-            for signal in signals:
-
-                # Do not apply keyword-based recommendation filtering.
-                #
-                # The LLM is explicitly instructed in the system/human
-                # prompt to keep Cross-Signal analytical and leave
-                # recommendations to the Decision stage.
-
-                signal.signal_id = new_id()
-
-                all_signals.append(
-                    signal
+            except Exception as exc:
+                # A failure in one lens must not stop the remaining lenses.
+                logger.exception(
+                    "Cross-Signal lens=%s failed; continuing to next lens. "
+                    "Error: %s",
+                    lens,
+                    exc,
                 )
+                continue
 
         logger.info(
-            "Detection completed: candidates=%d",
+            "Cross-Signal detection completed: total_candidates=%d",
             len(all_signals),
         )
 
+        # Always return a valid state update, even if every lens fails.
         return {
             "candidate_signals": all_signals,
+            "warnings": (
+                state.get("warnings", [])
+                + (
+                    ["Cross-Signal detection produced no valid candidates."]
+                    if not all_signals
+                    else []
+                )
+            ),
         }
 
     # ========================================================================

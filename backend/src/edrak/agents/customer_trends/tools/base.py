@@ -46,7 +46,7 @@ NO_RESULTS_HINT = (
     "nothing matched: try 2 to 4 plain words, or another platform; do not repeat this query"
 )
 _ARG_SUMMARY_CHARS = 80
-_ERROR_MESSAGE_CHARS = 200
+_ERROR_MESSAGE_CHARS = 500
 _ARG_SUMMARY_ITEMS = 5
 
 Emitter = Callable[[dict[str, Any]], None]

@@ -7,13 +7,18 @@ import pprint
 from datetime import date
 from typing import Any
 
+from deepeval.tracing import observe, update_current_span
+
+from backend.src.edrak.agents.competitor_intelligence.state import CompetitorState
+
+from ...contracts.result import WorkerResult, WorkerStatus
 from ...contracts.task import ResearchTask, WorkerType
 from ...contracts.vocabulary import competitor_names, markets_of
-from ...contracts.result import WorkerResult, WorkerStatus
 from ...core.action_log import log_action
 from .graph import app
-from .nodes import build_worker_result, save_node_output
+from .nodes import build_worker_result
 from .sources import domain_of, register_official_domains
+from .tracing import bind_trace_task, reset_trace_task
 
 logger = logging.getLogger(__name__)
 
@@ -86,24 +91,24 @@ def _competitors_for(task: ResearchTask) -> tuple[list[str], dict[str, dict[str,
     return names, info
 
 
-def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
+def _task_to_initial_state(task: ResearchTask) -> CompetitorState:
     """The shared ResearchTask as the competitor graph's state."""
     profile = task.company_profile
     context = task.business_context
     competitors, info = _competitors_for(task)
-    return {
-        "task_id": task.task_id,
-        "attempt": task.attempt,
-        "today": date.today().isoformat(),
-        "company": profile.name,
-        "company_profile": {
+    return CompetitorState(
+        task_id=task.task_id,
+        attempt=task.attempt,
+        today=date.today().isoformat(),
+        company=profile.name,
+        company_profile={
             "name": profile.name,
             "aliases": list(profile.aliases),
             "products": list(profile.products),
             "notes": profile.notes,
             "website": profile.website,
         },
-        "business_context": {
+        business_context={
             "use_case": context.use_case.value,
             "competitors": competitors,
             "markets": markets_of(context),
@@ -113,44 +118,68 @@ def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
             "time_window_days": context.time_window_days,
             "constraints": list(context.constraints),
         },
-        "research_goal": task.goal,
-        "research_focus": task.focus,
-        "competitors": competitors,
-        "competitor_info": info,
-        "metric_requirements": [r.model_dump(mode="json") for r in task.requirements],
-        "research_stage": 1,
-        "search_results": [],
-        "executed_queries": [],
-        "findings": [],
-        "verified_findings": [],
-        "requirement_checks": [],
-        "missing_information": [],
-        "dropped_sources": [],
-    }
+        research_goal=task.goal,
+        research_focus=task.focus,
+        competitors=competitors,
+        competitor_info=info,
+        metric_requirements=[r.model_dump(mode="json") for r in task.requirements],
+        research_stage=1,
+        search_results=[],
+        executed_queries=[],
+        findings=[],
+        verified_findings=[],
+        requirement_checks=[],
+        missing_information=[],
+        dropped_sources=[],
+        next_stage_plan=None,
+        final_report=None,
+        comparison=None,
+    )
 
 
+@observe(type="agent", name="competitor_intelligence.run_research")
 def run_research(
     task: ResearchTask,
     recursion_limit: int = 60,
     print_result: bool = True,
 ) -> WorkerResult:
     """Run competitor research for one task and return the shared WorkerResult."""
+    update_current_span(
+        input={
+            "task": task.model_dump(mode="json"),
+            "recursion_limit": recursion_limit,
+        },
+        metadata={"task_id": task.task_id, "worker": task.worker.value},
+    )
     if task.worker != WorkerType.COMPETITOR_INTELLIGENCE:
         raise ValueError(f"Expected COMPETITOR_INTELLIGENCE task, got {task.worker}")
 
     initial_state = _task_to_initial_state(task)
     if not initial_state["competitors"]:
-        return WorkerResult(
+        worker_result = WorkerResult(
             task_id=task.task_id,
             worker=WorkerType.COMPETITOR_INTELLIGENCE,
             status=WorkerStatus.NO_EVIDENCE,
             attempt=task.attempt,
-            gaps=["No competitors were named and none could be found from the company profile."],
+            gaps=[
+                "No competitors were named and none could be found from the company profile."
+            ],
         )
-    save_node_output("initial_input", initial_state, 1)
+        update_current_span(output=worker_result.model_dump(mode="json"))
+        return worker_result
+    
+    # save_node_output("initial_input", initial_state, 1)
 
-    result = app.invoke(initial_state, config={"recursion_limit": recursion_limit})
+    trace_token = bind_trace_task(task)
+    try:
+        result = app.invoke(
+            initial_state,
+            config={"recursion_limit": recursion_limit},
+        )
+    finally:
+        reset_trace_task(trace_token)
     worker_result = build_worker_result(result)
+    update_current_span(output=worker_result.model_dump(mode="json"))
 
     if print_result:
         print("\n" + "=" * 80)

@@ -88,7 +88,7 @@ RULES (apply strictly):
 
 STAGE_INSTRUCTIONS = {
     "discovery": """
-STAGE 1 - DISCOVERY
+STAGE 2 - DISCOVERY
 
 Discover what actually exists today. Product and feature names are not known yet.
 
@@ -100,7 +100,7 @@ products. The goal is to learn real product/feature terminology.
 """,
 
     "official_sources": """
-STAGE 2 - OFFICIAL SOURCES
+STAGE 1 - OFFICIAL SOURCES
 
 Do NOT repeat broad discovery. Reuse the concrete product/feature/plan names
 found in the known findings and previous queries. Target first-party sources:
@@ -136,13 +136,12 @@ specific source that would establish the specific missing fact.
 
 STAGE_SYNTH_GUIDANCE = {
     1: (
-        "STAGE 1 (discovery): findings may be preliminary. Do not assume a "
-        "discovery result proves detailed behavior, availability, pricing or "
-        "limitations unless the text says so."
+        "STAGE 1 (official sources): prioritize first-party evidence. Do not "
+        "manufacture confirmation or treat a third-party claim as official."
     ),
     2: (
-        "STAGE 2 (official sources): validate and enrich earlier discoveries "
-        "with first-party evidence. Do not manufacture confirmation."
+        "STAGE 2 (discovery): use relevant third-party sources to find facts "
+        "that official sources did not establish. Treat findings as preliminary."
     ),
     3: (
         "STAGE 3 (documentation): prioritize how things work, supported plans, "
@@ -266,6 +265,14 @@ def queries_prompt(
     scope_text,
 ) -> str:
     """Query Planning Agent: generate the next web search queries."""
+    company_context = _company_context(state)
+    company_profile = company_context.get("company_profile")
+    if isinstance(company_profile, dict):
+        company_context["company_profile"] = {
+            key: value
+            for key, value in company_profile.items()
+            if key != "website"
+        }
 
     return f"""
 
@@ -279,7 +286,7 @@ TARGET COMPANY: {state.get("company", "")}
 TARGET COMPANY CONTEXT (factual baseline only; competitors may not have
 the same products):
 
-{json.dumps(_company_context(state), indent=2, ensure_ascii=False)}
+{json.dumps(company_context, indent=2, ensure_ascii=False)}
 
 RESEARCH GOAL:
 
@@ -317,6 +324,12 @@ PRINCIPLES
 
 - Ask: what do we already know, which entities were discovered, what evidence
   is missing, which exact source would establish it?
+
+- Refer to the target company by name only in queries. Do NOT include its
+  website or domain; for official-source searches, use only the competitor
+  domain listed in COMPETITOR SCOPE.
+- Do not put `site:domain` operators in query text. The search system applies
+  official competitor domains separately.
 
 - Reuse discovered product/feature/plan names exactly.
 

@@ -20,14 +20,17 @@ class DecisionAnalysisState(TypedDict, total=False):
     request: Any
     cross_signal: Any
 
-    # Intermediate context used by the analysis node
+    # Intermediate context and draft used by the analysis pipeline
     context: dict[str, Any]
+    prepared_context: dict[str, Any]
+    draft: Any
 
     # Intermediate recommendation pairs
     question_recommendations: list[QuestionRecommendation]
 
     # Distinct strategic options (A/B/C)
     options: list[Any]
+    options_warnings: list[str]
 
     # Diagnostics and execution status
     warnings: list[str]

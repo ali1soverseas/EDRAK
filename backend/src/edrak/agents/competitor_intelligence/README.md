@@ -99,8 +99,8 @@ Current strategy labels in `state.py` are:
 
 | Stage | Strategy | Purpose |
 |---|---|---|
-| 1 | `discovery` | Find relevant product, capability and market facts without assuming a competitor has an equivalent offering. |
-| 2 | `official_sources` | Seek first-party documentation and product/pricing details for gaps. |
+| 1 | `official_sources` | Seek first-party documentation and product/pricing details first. |
+| 2 | `discovery` | Use broader sources to find relevant product, capability and market facts for remaining gaps. |
 | 3 | `targeted_missing_requirements` | Search only for facts still missing after earlier stages. |
 
 If there are no valid queries, `after_queries_router` routes directly to
@@ -109,7 +109,7 @@ If there are no valid queries, `after_queries_router` routes directly to
 ### 3. Search and source selection
 
 `search_node` runs each query through `run_tavily`. In the official-source
-strategy it restricts the search to the registered competitor domains first;
+strategy (stage 1) it restricts the search to the registered competitor domains first;
 if that produces no results, it retries the query without the domain
 restriction. If the Tavily operation fails, this node attempts a direct Serper
 HTTP request when `SERPER_API_KEY` is configured. Each attempted query is

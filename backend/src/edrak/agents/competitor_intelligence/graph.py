@@ -5,7 +5,6 @@ from langgraph.graph import END, START, StateGraph
 from .nodes import (
     after_queries_router,
     check_research_requirements_node,
-    comparison_node,
     final_report_node,
     generate_queries_node,
     identify_research_requirements_node,
@@ -42,7 +41,7 @@ graph.add_node("prepare_next_stage", prepare_next_stage_node)
 
 graph.add_node("final_report", final_report_node)
 
-graph.add_node("comparison", comparison_node)
+# graph.add_node("comparison", comparison_node)
 
 graph.add_edge(START, "identify_requirements")
 
@@ -69,8 +68,8 @@ graph.add_conditional_edges(
 
 graph.add_edge("prepare_next_stage", "generate_queries")
 
-graph.add_edge("final_report", "comparison")
+# graph.add_edge("final_report", "comparison")
 
-graph.add_edge("comparison", END)
+graph.add_edge("final_report", END)
 
 app = graph.compile()

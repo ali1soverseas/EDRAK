@@ -36,8 +36,8 @@ DUPLICATE_SIMILARITY = 0.85
 INCLUDE_RAW_FINDINGS = False
 
 STAGE_STRATEGY = {
-    1: "discovery",
-    2: "official_sources",
+    1: "official_sources",
+    2: "discovery",
     3: "targeted_missing_requirements",
 }
 

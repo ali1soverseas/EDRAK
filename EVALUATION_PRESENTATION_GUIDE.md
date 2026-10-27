@@ -29,7 +29,7 @@ Business request
       ↓
 EDRAK executes its planned research and decision workflow
       ↓
-Run artifacts and telemetry are saved
+Run artifacts are saved
       ↓
 Run evaluation checks integrity, quality, and execution
       ↓
@@ -42,9 +42,7 @@ Findings inform human review and system improvement
 
 ### 1. Run EDRAK and capture the evidence
 
-An evaluation uses a completed run bundle, normally saved under `artifacts\evaluation_runs\<run-id>`. The evaluator needs the request and plan, worker outputs, verification and downstream artifacts, run status, and available telemetry. It uses these saved artifacts; it does not replay workers or repeat retrievals.
-
-Telemetry records workflow and tool-call information, such as task identity, status, duration, and result counts. It supports execution and traceability checks without requiring the evaluator to repeat tool calls.
+An evaluation uses a completed run bundle, normally saved under `artifacts\evaluation_runs\<run-id>`. The evaluator reads the request and plan, worker outputs, verification and downstream artifacts, and run status. It uses these saved artifacts; it does not replay workers or repeat retrievals.
 
 The default run-bundle behavior selects final worker attempts and the latest relevant downstream artifacts. This prevents superseded results from being counted as if they were part of the final answer. Use the all-attempts option only when the goal is to diagnose retries or changes between attempts.
 
@@ -56,10 +54,10 @@ The evaluation agent produces several kinds of findings:
 |---|---|
 | Deterministic integrity | Structure and references, evidence resolution, required coverage, declared dependencies, and other checks that can be verified directly from saved artifacts. |
 | LLM-judged quality | Where the necessary context is available, whether outputs are faithful to evidence and relevant to the request. Optional metrics can assess qualities such as specificity, insight, and actionability. |
-| Retrieval (RAG) | Whether retrieval records are structurally sound and whether retrieved context is relevant when judge inputs are available. Latency comes from recorded telemetry. |
+| Retrieval (RAG) | Whether retrieval records are structurally sound and whether retrieved context is relevant when judge inputs are available. |
 | Verification and synthesis | Whether verification labels and support are coherent, and whether cross-domain signals resolve to appropriate findings and evidence. |
 | Decisions and recommendations | Whether recommendations and related options, risks, and opportunities trace back to supporting signals and evidence. |
-| Orchestration and telemetry | Planned-task completion, failures, retries, dependencies, workflow status, duration, and the quality of the recorded execution trace. |
+| Orchestration | Planned-task completion, failures, retries, dependencies, and workflow status. |
 | Pipeline traceability | Whether references connect the decision back through signals and findings to evidence. |
 
 Deterministic checks and quality judgments are reported separately. A passed integrity check does not by itself mean an output is high quality; likewise, a missing or unavailable score is not a zero.
@@ -74,13 +72,13 @@ Deterministic checks and quality judgments are reported separately. A passed int
 | Cross-signal synthesis | Whether supporting findings resolve, support is diverse and verified where required, and confidence is appropriate to that support. |
 | Decision and recommendations | Whether risks, opportunities, options, and actions trace to signals and evidence, and whether assumptions, prerequisites, limitations, and success criteria are clear. |
 | Orchestration | Whether planned tasks have results, dependencies are consistent, failures and partial results are visible, and retries/replans are recorded. |
-| Telemetry and pipeline | Whether trace data is recognizable and useful, and whether references connect decisions to signals, findings, and evidence. |
+| Pipeline traceability | Whether references connect decisions to signals, findings, and evidence. |
 
 #### Quality judgments and assessability
 
 Faithfulness asks whether a statement is supported by the supplied evidence. Relevancy asks whether it addresses the request. Optional judgments can assess specificity, insight, actionability, or evidence-context relevance. These judgments are applied to selected output units with the relevant goal, evidence, or retrieval context.
 
-Some metrics require inputs that a run may not contain. For example, retrieval context precision/recall needs an expected answer, and retrieval latency needs a matching telemetry span with duration. In these cases the report should say unavailable or not assessable and give a reason. Do not interpret missing judge results as zero or as a pass.
+Some metrics require inputs that a run may not contain. For example, retrieval context precision/recall needs an expected answer. In these cases the report should say unavailable or not assessable and give a reason. Do not interpret missing judge results as zero or as a pass.
 
 Deterministic checks may report errors, warnings, informational observations, or not-assessable results. An error identifies a concrete integrity issue; a warning calls for review and is not always proof that the content is wrong. Review the check detail and affected unit before deciding on severity.
 

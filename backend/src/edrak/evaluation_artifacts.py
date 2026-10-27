@@ -233,26 +233,6 @@ class EvaluationArtifactBundle:
         self._record_artifact("orchestration_result", path)
         self._save_manifest()
 
-    def save_telemetry(self, spans: list[dict[str, Any]]) -> None:
-        path = self.inputs / "telemetry.json"
-        previous: list[dict[str, Any]] = []
-        if path.exists():
-            existing = json.loads(path.read_text(encoding="utf-8"))
-            previous = existing.get("spans", []) if isinstance(existing, dict) else []
-        by_span_id = {
-            (span.get("trace_id"), span.get("span_id")): span
-            for span in previous + spans
-            if isinstance(span, dict) and span.get("span_id")
-        }
-        combined = list(by_span_id.values())
-        _write_json(path, {"spans": combined})
-        self._record_artifact("telemetry", path)
-        self.manifest["telemetry_spans"] = len(combined)
-        self.manifest["telemetry_trace_ids"] = sorted({
-            str(span["trace_id"]) for span in combined if span.get("trace_id")
-        })
-        self._save_manifest()
-
     def add_warning(self, message: str) -> None:
         self.manifest["warnings"].append(message)
         self._save_manifest()

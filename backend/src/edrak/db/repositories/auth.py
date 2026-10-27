@@ -116,7 +116,9 @@ async def create_session(db: aiosqlite.Connection, token: str, user_id: str, use
     await db.commit()
 
 
-async def resolve_session(db: aiosqlite.Connection, token: str) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
+async def resolve_session(
+    db: aiosqlite.Connection, token: str, *, touch: bool = True
+) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
     """The user and workspace behind a live session, or None when it is unknown or expired."""
     row = await fetch_one(
         db,
@@ -137,7 +139,7 @@ async def resolve_session(db: aiosqlite.Connection, token: str) -> Optional[tupl
         await db.commit()
         return None
     # Refresh last_seen_at at most once a minute; every request would otherwise write.
-    if row["last_seen_at"] <= now_iso(timedelta(minutes=-1)):
+    if touch and row["last_seen_at"] <= now_iso(timedelta(minutes=-1)):
         await db.execute("UPDATE sessions SET last_seen_at = ? WHERE token_hash = ?", (now_iso(), hash_token(token)))
         await db.commit()
     user = {"user_id": row["user_id"], "email": row["email"], "name": row["full_name"], "title": row["job_title"]}

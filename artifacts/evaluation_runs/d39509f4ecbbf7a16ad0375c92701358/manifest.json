@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "analysis_id": "d39509f4ecbbf7a16ad0375c92701358",
+  "status": "failed",
+  "started_at_utc": "2026-10-27T03:39:53.244515+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-10-27T03:39:55.294147+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-27T03:45:10.884583+00:00",
+      "artifacts": [
+        "inputs\\worker_customer_trends_attempt_1_3591acef-4b4.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-10-27T03:47:52.537132+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_02d7d378-f31.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:3591acef-4b4f-4070-ba14-37edd35b3f06:1": "inputs\\worker_customer_trends_attempt_1_3591acef-4b4.json",
+    "worker:02d7d378-f313-4226-8a50-f6b7be8b9e3e:1": "inputs\\worker_competitor_intelligence_attempt_1_02d7d378-f31.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-10-27T03:48:18.142457+00:00",
+  "completed_at_utc": "2026-10-27T03:48:18.141819+00:00"
+}

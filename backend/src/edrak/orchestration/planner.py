@@ -58,24 +58,106 @@ class PlannerPlan(BaseModel):
     rationale: str | None = None
 
 
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+from deepeval.tracing import observe, update_current_span
+
+
 class LlmPlanner:
-    def __init__(self, *, max_repair_attempts: int = MAX_REPAIR_ATTEMPTS) -> None:
+    def __init__(
+        self,
+        *,
+        max_repair_attempts: int = MAX_REPAIR_ATTEMPTS,
+    ) -> None:
         self.max_repair_attempts = max_repair_attempts
 
+    @observe(type="agent", name="orchestrator_planning")
     def plan(self, request: BusinessRequest) -> ResearchPlan:
         context = self._build_context(request)
+
+        update_current_span(
+            input={
+                "request_id": request.request_id,
+                "business_objective": request.goal,
+                "planning_context": context,
+            }
+        )
 
         try:
             reply = self._invoke(context)
         except PlanningError as exc:
             if self.max_repair_attempts < 1:
                 raise
+
             reply = self._invoke(
                 f"{context}\n\nYour previous reply was rejected: {exc.reason}\n"
                 "Return a corrected plan covering the relevant workers."
             )
 
-        return self._build_plan(request, reply)
+        result = self._build_plan(request, reply)
+
+        update_current_span(
+            output={
+                "request_id": result.request_id,
+                "final_tasks": [
+                    {
+                        "worker": task.worker.value,
+                        "goal": task.goal,
+                        "focus": task.focus,
+                    }
+                    for task in result.tasks
+                ],
+                "rationale": result.rationale,
+            }
+        )
+
+        self._save_planning_record(
+            request=request,
+            context=context,
+            reply=reply,
+            result=result,
+        )
+
+        return result
+
+    def _save_planning_record(
+        self,
+        *,
+        request: BusinessRequest,
+        context: str,
+        reply: PlannerPlan,
+        result: ResearchPlan,
+    ) -> None:
+        output_path = (
+            Path("artifacts")
+            / "runs"
+            / str(request.request_id)
+            / "orchestrator_planning.json"
+        )
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        record = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "request_id": str(request.request_id),
+            "business_objective": request.goal,
+            "planning_context": context,
+            "final_tasks": [
+                {
+                    "worker": task.worker.value,
+                    "goal": task.goal,
+                    "focus": task.focus,
+                }
+                for task in result.tasks
+            ],
+            "rationale": result.rationale,
+        }
+
+        output_path.write_text(
+            json.dumps(record, indent=2, ensure_ascii=False, default=str),
+            encoding="utf-8",
+        )
 
     def _invoke(self, prompt: str) -> PlannerPlan:
         """Ask for a plan, validated against the assignment schema.

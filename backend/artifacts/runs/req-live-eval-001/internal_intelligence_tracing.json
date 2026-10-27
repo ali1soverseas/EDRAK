@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "request_id": "req-live-eval-001",
+  "run_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a.a1",
+  "worker": "internal_intelligence",
+  "spans": [
+    {
+      "name": "plan_queries_node",
+      "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+      "run_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a.a1",
+      "attempt": 1,
+      "timestamp": "2026-10-27T02:24:08.083387+00:00",
+      "status": "ok",
+      "input": {
+        "task": {
+          "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+          "goal": "Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot",
+          "focus": "GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness",
+          "workspace_id": null
+        }
+      },
+      "output": {
+        "queries": [
+          "architecture and component diagram of the GitLab Duo Agent Platform, including data flow and integration points with AI Gateway",
+          "internal OKRs and success metrics for GitLab Duo (including Duo Agent Platform, AI Gateway, and Duo Self-Hosted) for the current fiscal year",
+          "pricing, packaging, and credit consumption model for GitLab Duo, GitLab Credits, and any bundled offerings with GitLab Duo Agent Platform",
+          "implementation details of zero‑retention data privacy controls in the GitLab Duo Agent Platform and AI Gateway",
+          "self‑hosted readiness documentation for GitLab Duo Self‑Hosted, covering deployment prerequisites, supported environments, and migration guidelines",
+          "competitive assessment report comparing GitLab Duo (Agent Platform, AI Gateway, and self‑hosted version) with GitHub Copilot, focusing on feature gaps, roadmap alignment, and market positioning"
+        ],
+        "started_at": "2026-10-27T02:24:04.177941+00:00",
+        "llm_used": true
+      },
+      "metadata": {
+        "span_type": "agent",
+        "duration_ms": 3908.79
+      }
+    },
+    {
+      "name": "retrieve_evidence_node",
+      "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+      "run_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a.a1",
+      "attempt": 1,
+      "timestamp": "2026-10-27T02:24:08.221005+00:00",
+      "status": "ok",
+      "input": {
+        "task": {
+          "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+          "goal": "Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot",
+          "focus": "GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness",
+          "workspace_id": null
+        },
+        "queries": [
+          "architecture and component diagram of the GitLab Duo Agent Platform, including data flow and integration points with AI Gateway",
+          "internal OKRs and success metrics for GitLab Duo (including Duo Agent Platform, AI Gateway, and Duo Self-Hosted) for the current fiscal year",
+          "pricing, packaging, and credit consumption model for GitLab Duo, GitLab Credits, and any bundled offerings with GitLab Duo Agent Platform",
+          "implementation details of zero‑retention data privacy controls in the GitLab Duo Agent Platform and AI Gateway",
+          "self‑hosted readiness documentation for GitLab Duo Self‑Hosted, covering deployment prerequisites, supported environments, and migration guidelines",
+          "competitive assessment report comparing GitLab Duo (Agent Platform, AI Gateway, and self‑hosted version) with GitHub Copilot, focusing on feature gaps, roadmap alignment, and market positioning"
+        ]
+      },
+      "output": {
+        "retrieved_evidence": []
+      },
+      "metadata": {
+        "span_type": "retriever",
+        "duration_ms": 56.27
+      }
+    },
+    {
+      "name": "analyze_and_synthesize_node",
+      "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+      "run_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a.a1",
+      "attempt": 1,
+      "timestamp": "2026-10-27T02:24:08.254524+00:00",
+      "status": "ok",
+      "input": {
+        "task": {
+          "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+          "goal": "Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot",
+          "focus": "GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness",
+          "workspace_id": null
+        },
+        "retrieved_chunks": []
+      },
+      "output": {
+        "findings": [],
+        "summary": "No matching internal documents or handbook entries found for task: 'Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot'.",
+        "limitations_and_gaps": [
+          "Internal vector index returned 0 matching results for all queries."
+        ],
+        "dropped_findings": [],
+        "conflicts": [],
+        "llm_used": false
+      },
+      "metadata": {
+        "span_type": "agent",
+        "duration_ms": 1.33
+      }
+    },
+    {
+      "name": "format_worker_result_node",
+      "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+      "run_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a.a1",
+      "attempt": 1,
+      "timestamp": "2026-10-27T02:24:08.295932+00:00",
+      "status": "ok",
+      "input": {
+        "task": {
+          "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+          "goal": "Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot",
+          "focus": "GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness",
+          "workspace_id": null
+        },
+        "findings": [],
+        "retrieved_chunks": [],
+        "summary": "No matching internal documents or handbook entries found for task: 'Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot'."
+      },
+      "output": {
+        "worker_result": {
+          "task_id": "c7f7869e-e4cd-45c2-beaf-2e640642ca3a",
+          "worker": "internal_intelligence",
+          "status": "no_evidence",
+          "attempt": 1,
+          "findings": [],
+          "evidence": [],
+          "gaps": [
+            "Internal vector index returned 0 matching results for all queries."
+          ],
+          "conflicts": [],
+          "confidence": 0.0,
+          "started_at": "2026-10-27T02:24:04.177941Z",
+          "completed_at": "2026-10-27T02:24:08.264597Z",
+          "error": null,
+          "metadata": {
+            "query_count": 6,
+            "evidence_count": 0,
+            "finding_count": 0,
+            "discarded_count": 0,
+            "discarded_evidence": [],
+            "llm_used": false,
+            "summary": "No matching internal documents or handbook entries found for task: 'Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot'."
+          }
+        }
+      },
+      "metadata": {
+        "span_type": "agent",
+        "duration_ms": 5.12
+      }
+    }
+  ]
+}

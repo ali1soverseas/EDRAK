@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
+from deepeval.tracing import observe, update_current_span
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableConfig
 from structlog.contextvars import bound_contextvars
@@ -40,6 +41,11 @@ from edrak.agents.customer_trends.settings import Settings, get_settings
 from edrak.agents.customer_trends.state import initial_state
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
 from edrak.agents.customer_trends.store.sink import LocalSink, ResultSink
+from edrak.agents.customer_trends.tracing import (
+    bind_trace_context,
+    reset_trace_context,
+    save_customer_span,
+)
 from edrak.agents.customer_trends.usecases import load_use_cases
 from edrak.contracts import ResearchTask, WorkerResult, WorkerStatus, WorkerType
 
@@ -70,6 +76,7 @@ def make_deps(
     *,
     store: EvidenceStore,
     settings: Settings,
+    parent_request_id: str,
     sink: ResultSink | None,
     providers: ProviderRegistry | None,
     llm: LlmSource,
@@ -90,7 +97,12 @@ def make_deps(
         providers=providers,
         budget=providers.budget,
         breaker=providers.breaker,
-        sink=sink or LocalSink(store, settings.artifacts_dir),
+        sink=sink
+        or LocalSink(
+            store,
+            settings.artifacts_dir,
+            parent_request_id=parent_request_id,
+        ),
         llm=_llm_factory(llm, settings, brief),
         bus=EventBus(brief.run_id, brief.task_id),
         use_cases=load_use_cases(),
@@ -204,19 +216,41 @@ async def _session(
     llm: LlmSource,
     settings: Settings,
     listener: Listener | None = None,
+    request_id: str | None = None,
 ) -> AsyncIterator[WorkerDeps]:
     """The dependencies of one run, with the store and any providers built here closed after."""
-    store = EvidenceStore.from_settings(settings)
-    deps = make_deps(brief, store=store, settings=settings, sink=sink, providers=providers, llm=llm)
-    if listener is not None:
-        deps.bus.subscribe(listener)
+    trace_token = bind_trace_context(
+        brief,
+        request_id=request_id or brief.parent_request_id,
+        artifacts_dir=settings.artifacts_dir,
+    )
+    store: EvidenceStore | None = None
+    deps: WorkerDeps | None = None
     try:
+        store = EvidenceStore.from_settings(settings)
+        deps = make_deps(
+            brief,
+            store=store,
+            settings=settings,
+            parent_request_id=request_id or brief.parent_request_id or brief.run_id,
+            sink=sink,
+            providers=providers,
+            llm=llm,
+        )
+        if listener is not None:
+            deps.bus.subscribe(listener)
         with bound_contextvars(run_id=brief.run_id, task_id=brief.task_id):
             yield deps
     finally:
-        if providers is None:
-            await deps.providers.aclose()
-        store.close()
+        try:
+            if providers is None and deps is not None:
+                await deps.providers.aclose()
+        finally:
+            try:
+                if store is not None:
+                    store.close()
+            finally:
+                reset_trace_context(trace_token)
 
 
 async def run_task(
@@ -267,6 +301,7 @@ async def stream_task(
         await asyncio.gather(task, return_exceptions=True)
 
 
+@observe(type="agent", name="customer_trends.run_worker")
 async def arun_worker(
     task: ResearchTask,
     *,
@@ -280,13 +315,24 @@ async def arun_worker(
     Never raises. A task that cannot be run, or a run that crashes before it has a result, comes
     back as a `failed` result with the reason; the full artifact stays with the sink and the store.
     """
+    update_current_span(
+        input={"task": task.model_dump(mode="json")},
+        metadata={"task_id": task.task_id, "worker": task.worker.value},
+    )
     settings = settings or get_settings()
     try:
         brief = brief_from_task(task)
-        async with _session(brief, sink, providers, llm, settings) as deps:
+        async with _session(
+            brief,
+            sink,
+            providers,
+            llm,
+            settings,
+            request_id=task.parent_request_id,
+        ) as deps:
             result = await _execute(brief, deps)
             cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
-            return to_worker_result(
+            worker_result = to_worker_result(
                 result,
                 deps.store.get_items(brief.run_id, cited),
                 task=task,
@@ -311,17 +357,27 @@ async def arun_worker(
                     "stance_counts": deps.store.stance_counts(brief.run_id),
                 },
             )
+            update_current_span(output=worker_result.model_dump(mode="json"))
+            save_customer_span(
+                "customer_trends.run_worker",
+                input={"task": task.model_dump(mode="json")},
+                output=worker_result.model_dump(mode="json"),
+                metadata={"task_id": task.task_id, "worker": task.worker.value},
+            )
+            return worker_result
     except Exception as exc:
         log.error(
             "worker_failed", task_id=task.task_id, error=type(exc).__name__, detail=str(exc)[:200]
         )
-        return WorkerResult(
+        worker_result = WorkerResult(
             task_id=task.task_id,
             worker=WorkerType.CUSTOMER_TRENDS,
             status=WorkerStatus.FAILED,
             attempt=task.attempt,
             error=f"{type(exc).__name__}: {str(exc)[:300]}",
         )
+        update_current_span(output=worker_result.model_dump(mode="json"))
+        return worker_result
 
 
 def run_worker(

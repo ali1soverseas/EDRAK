@@ -1,0 +1,427 @@
+{
+  "task_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623:f1",
+      "statement": "Benchmark posts claim AMD MI300X provides 2.4× more memory capacity and 1.6× higher bandwidth than Nvidia H100, highlighting a perceived performance advantage for AMD among some AI developers.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "1a968d3dfdaefa6f",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Based on a single social‑post on X; limited language coverage (English/Korean) and no corroborating sources.",
+        "single_source",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623:f2",
+      "statement": "NVIDIA promotes its A100 Tensor Core GPU as delivering up to 20× higher performance over the prior generation, reflecting strong positive messaging about performance among cloud providers.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "1344c864a54ad170",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Single web‑based marketing page; no independent validation in the sample.",
+        "single_source",
+        "gap: platforms"
+      ]
+    },
+    {
+      "finding_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623:f3",
+      "statement": "Vultr announced a 20 MW AMD AI supercluster deployment in India, indicating significant adoption of AMD GPUs by a cloud service provider.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "d1026e1ce356023c",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "f99a44c58c870f2e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Both items are news articles focused on an Indian deployment; no evidence of similar AMD deployments in the US or Europe.",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623:f4",
+      "statement": "NVIDIA A100 GPUs are listed for up to $22,000 on retail sites, suggesting high acquisition cost that may deter some cloud operators or AI developers.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "b831c02b283e0444",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Price shown on a retail listing; does not reflect negotiated cloud‑service pricing.",
+        "single_source",
+        "gap: platforms"
+      ]
+    },
+    {
+      "finding_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623:f5",
+      "statement": "Fireworks AI states that it offers Llama inference using both Nvidia and AMD GPUs, suggesting developers view both vendors as viable for inference workloads.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "64c642db77af2280",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "8fc082b9774a41b8",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Both sources are social‑media posts on X; no quantitative performance or cost data provided.",
+        "gap: platforms"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "1a968d3dfdaefa6f",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/TensorWaveCloud/status/1889826818254848188",
+      "publisher": "x",
+      "extracted_fact": "TensorWave on X: \"Performance Deep Dive: MI300X vs H100\n\nOur latest benchmarks show 2.4x more memory capacity and 1.6x higher bandwidth than the H100. See the full comparison and what it means for your AI workloads. \n\nhttps://t.co/3z3mOYeFvs\" / X. Title: TensorWave on X: \"Perfor…",
+      "excerpt": "TensorWave on X: \"Performance Deep Dive: MI300X vs H100\n\nOur latest benchmarks show 2.4x more memory capacity and 1.6x higher bandwidth than the H100. See the full comparison and what it means for your AI workloads. \n\nhttps://t.co/3z3mOYeFvs\" / X. Title: TensorWave on X: \"Performance Deep Dive: MI300X vs H100\n\nOur latest benchmarks show 2.4x more memory capacity and 1.6x higher bandwidth than the H100. See the full comparison and what it means for your AI workloads. \n\nhttps://t.co/3z3mOYeFvs\" /…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:57:44.148118Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "1344c864a54ad170",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.nvidia.com/en-us/data-center/a100/",
+      "publisher": "www.nvidia.com",
+      "extracted_fact": "NVIDIA A100 Tensor Core GPU. The NVIDIA A100 Tensor Core GPU powers the modern data center by accelerating AI and HPC at every scale. up to 20X higher performance over the prior generation",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:57:38.377806Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "d1026e1ce356023c",
+      "source_type": "news_article",
+      "source_title": null,
+      "source_url": "https://datacentremagazine.com/news/vultr-to-deploy-a-20mw-amd-ai-supercluster-in-chennai-india",
+      "publisher": "datacentremagazine.com",
+      "extracted_fact": "Vultr to Deploy a 20MW AMD AI Supercluster in Chennai, India. Vultr CEO J.J. Kardwell announces a 20MW data centre expansion in India using AMD GPUs to meet rising data sovereignty and local AI...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:58:02.234948Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "news",
+        "language": "en",
+        "published_at": "2026-10-26T15:58:02.234948+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "f99a44c58c870f2e",
+      "source_type": "news_article",
+      "source_title": null,
+      "source_url": "https://www.thefastmode.com/technology-solutions/51176-vultr-and-amd-deploy-20-mw-ai-supercluster-in-india",
+      "publisher": "www.thefastmode.com",
+      "extracted_fact": "Vultr and AMD Deploy 20 MW AI Supercluster in India. Vultr, the world's largest privately-held cloud infrastructure company, announced a major expansion of its AMD powered infrastructure for...",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:58:02.234948Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "news",
+        "language": "en",
+        "published_at": "2026-10-26T15:58:02.234948+00:00",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "b831c02b283e0444",
+      "source_type": "search_result",
+      "source_title": null,
+      "source_url": "https://www.amazon.com/nvidia-a100/s?k=nvidia+a100",
+      "publisher": "www.amazon.com",
+      "extracted_fact": "Nvidia A100. Discover NVIDIA A100 graphics cards designed for high-performance computing. Find options with up to 80GB memory for your data center needs. to $22,000",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:57:32.873097Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "web",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "serper"
+      }
+    },
+    {
+      "evidence_id": "64c642db77af2280",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/FireworksAI_HQ/status/1815961825415962864",
+      "publisher": "x",
+      "extracted_fact": "Fireworks on X: \"Looking to run inference on state-of-the-art infrastructure? Fireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to providing the best hardware for unmatched performance and cost efficiency. With Nvidia H100 and…",
+      "excerpt": "Fireworks on X: \"Looking to run inference on state-of-the-art infrastructure? Fireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to providing the best hardware for unmatched performance and cost efficiency. With Nvidia H100 and AMD Instinct MI… / X. Title: Fireworks on X: \"Looking to run inference on state-of-the-art infrastructure? Fireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to provid…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:57:44.148118Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "8fc082b9774a41b8",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://twitter.com/FireworksAI_HQ/status/1815961825415962864",
+      "publisher": "x",
+      "extracted_fact": "Fireworks AI on X: \"Looking to run inference on state-of-the-art infrastructure? \n\nFireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to providing the best hardware for unmatched performance and cost efficiency. \n\nWith Nvidia H…",
+      "excerpt": "Fireworks AI on X: \"Looking to run inference on state-of-the-art infrastructure? \n\nFireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to providing the best hardware for unmatched performance and cost efficiency. \n\nWith Nvidia H100 and AMD Instinct\".... Fireworks AI on X: \"Looking to run inference on state-of-the-art infrastructure? Fireworks AI is the first to offer Llama 3.1 inference using both Nvidia and AMD GPUs. We’re committed to providi…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T15:57:44.148118Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    }
+  ],
+  "gaps": [
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "1 platform(s) have at least 20 items; at least 2 are needed",
+    "5 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-10-27T15:57:10.385906Z",
+  "completed_at": "2026-10-27T15:59:44.105906Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "4c488dd1-45a2-4fd9-9510-ce77e066d623.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "118 evidence items (94% English, 4% Arabic) across web (45%), news (30%), X (17%) and reviews (9%) show modest discussion of AMD vs Nvidia performance (6 items) and NVIDIA A100 GPU (8 items); gaps remain in social‑media data, a second high‑volume platform, and Arabic coverage (only 5 of 10 needed).",
+      "overall_confidence": "low",
+      "findings_count": 5,
+      "evidence_count": 118,
+      "coverage": {
+        "by_platform": {
+          "unknown": 98,
+          "x": 20
+        },
+        "by_source_type": {
+          "web": 53,
+          "news": 35,
+          "social_post": 20,
+          "review": 10
+        },
+        "by_language": {
+          "en": 111,
+          "ar": 5,
+          "ko": 2
+        }
+      },
+      "gaps": [
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "1 platform(s) have at least 20 items; at least 2 are needed",
+        "5 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [],
+      "budget_used": {
+        "tool_calls": 19.0,
+        "cost_usd": 0.033,
+        "seconds": 153.72
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\85ad74300912576c6421afdcfa88e2d9\\customer_trends_4c488dd1-45a2-4fd9-9510-ce77e066d623.a1_result.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 118,
+      "batch_ids": [
+        "b_010d36cf7b52",
+        "b_9ef5c2184fe2",
+        "b_a5012ce5c005",
+        "b_9cbabc61e582",
+        "b_ed5be198950d",
+        "b_6a7f35c7731e",
+        "b_93d2a045d4f3",
+        "b_238f0590eff3",
+        "b_642e6ac89a1f",
+        "b_317bb5dd64c2",
+        "b_85f614287559",
+        "b_d2a4df66a1e5",
+        "b_ae14560bdd21",
+        "b_0ea6d9cbed56",
+        "b_2e3409dcaeb6",
+        "b_2774df953c46"
+      ]
+    },
+    "finding_metrics": {
+      "4c488dd1-45a2-4fd9-9510-ce77e066d623:f1": {
+        "memory_capacity_multiplier": 2.4,
+        "bandwidth_multiplier": 1.6
+      },
+      "4c488dd1-45a2-4fd9-9510-ce77e066d623:f2": {
+        "performance_multiplier": 20
+      },
+      "4c488dd1-45a2-4fd9-9510-ce77e066d623:f3": {
+        "power_mw": 20
+      },
+      "4c488dd1-45a2-4fd9-9510-ce77e066d623:f4": {
+        "price_usd": 22000
+      },
+      "4c488dd1-45a2-4fd9-9510-ce77e066d623:f5": {}
+    },
+    "themes": [
+      {
+        "theme_label": "AMD vs Nvidia performance",
+        "count": 6,
+        "share": 0.0938,
+        "sentiment_mix": {
+          "mixed": 0.1667,
+          "neutral": 0.8333
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "NVIDIA A100 GPU",
+        "count": 4,
+        "share": 0.0625,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "NVIDIA A100 listing",
+        "count": 4,
+        "share": 0.0625,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU comparison",
+        "count": 2,
+        "share": 0.0312,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "NVIDIA A100 performance",
+        "count": 2,
+        "share": 0.0312,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "Nvidia and AMD inference",
+        "count": 2,
+        "share": 0.0312,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "A100 cost",
+        "count": 1,
+        "share": 0.0156,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "A100 price comparison",
+        "count": 1,
+        "share": 0.0156,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI performance benchmark",
+        "count": 1,
+        "share": 0.0156,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD Instinct inference",
+        "count": 1,
+        "share": 0.0156,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [],
+    "official_accounts": [],
+    "stance_counts": {
+      "NVIDIA Corporation": {
+        "positive": 7,
+        "neutral": 30,
+        "negative": 5,
+        "mixed": 0,
+        "total": 42
+      }
+    },
+    "research_goal": "What is the level of adoption, satisfaction, and feedback from cloud service providers and AI developers for NVIDIA, AMD, and Intel data center AI accelerators?",
+    "research_focus": "Cloud service providers and AI developers"
+  }
+}

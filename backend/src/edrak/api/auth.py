@@ -69,5 +69,7 @@ async def end_session(db: aiosqlite.Connection, token: str) -> None:
     await auth_repo.delete_session(db, token)
 
 
-async def resolve_session(db: aiosqlite.Connection, token: str) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
-    return await auth_repo.resolve_session(db, token)
+async def resolve_session(
+    db: aiosqlite.Connection, token: str, *, touch: bool = True
+) -> Optional[tuple[dict[str, Any], dict[str, Any]]]:
+    return await auth_repo.resolve_session(db, token, touch=touch)

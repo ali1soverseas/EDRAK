@@ -176,7 +176,7 @@ def test_summarises_execution_quality_dimensions() -> None:
     ]
 
 
-def test_run_summary_recovers_redacted_arguments_from_local_telemetry(tmp_path, monkeypatch) -> None:
+def test_run_summary_does_not_read_legacy_telemetry(tmp_path, monkeypatch) -> None:
     client = _client(tmp_path, monkeypatch)
     report_dir = tmp_path / "reports" / "run1" / "customer_trends"
     report_dir.mkdir()
@@ -202,11 +202,7 @@ def test_run_summary_recovers_redacted_arguments_from_local_telemetry(tmp_path, 
     response = client.get("/api/evaluation/runs/run1").json()
     customer_agent = next(agent for agent in response["agents"] if agent["agent"] == "customer_trends")
     call = customer_agent["file_details"][0]["execution_quality"]["call_details"][0]
-    assert call["argument_values"] == {
-        "query": "NVIDIA AI rack",
-        "platform": "reddit",
-        "api_key": "[REDACTED]",
-    }
+    assert "argument_values" not in call
 
 
 def test_serves_comparisons_and_rejects_bad_ids(tmp_path, monkeypatch) -> None:

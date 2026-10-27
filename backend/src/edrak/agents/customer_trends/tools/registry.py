@@ -3,6 +3,7 @@
 import json
 from typing import Any
 
+from deepeval.tracing import observe, update_current_span
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel
 
@@ -21,7 +22,7 @@ from edrak.agents.customer_trends.tools import (
     web_search,
 )
 from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, invoke_tool
-from edrak.observability import set_tool_outcome, set_tool_provider, traced_tool
+from edrak.agents.customer_trends.tracing import save_customer_span
 
 COLLECTION_SPECS: tuple[ToolSpec, ...] = (
     web_search.SPEC,
@@ -112,19 +113,37 @@ def compact_json(response: ToolResponse | ProcessingResponse) -> str:
 
 
 def _structured_tool(ctx: ToolContext, spec: ToolSpec) -> StructuredTool:
-    @traced_tool(spec.name)
+    @observe(type="tool", name=f"customer_trends.{spec.name}")
     async def run(**arguments: Any) -> str:
-        response = await invoke_tool(ctx, spec, arguments)
-        provider = getattr(response, "provider_used", None)
-        if provider:
-            set_tool_provider(provider, fallback=bool(getattr(response, "fallback_used", False)))
-        status = getattr(response.status, "value", response.status)
-        set_tool_outcome(
-            str(status),
-            error_code=getattr(response, "error_code", None),
-            fallback_used=bool(getattr(response, "fallback_used", False)),
+        update_current_span(
+            input=arguments,
+            metadata={"branch": ctx.branch, "run_id": ctx.run_id},
         )
-        return compact_json(response)
+        try:
+            response = await invoke_tool(ctx, spec, arguments)
+        except Exception as exc:
+            span_output = {"error_type": type(exc).__name__, "error": str(exc)[:1000]}
+            update_current_span(output=span_output)
+            save_customer_span(
+                f"customer_trends.{spec.name}",
+                input=arguments,
+                output=span_output,
+                status="error",
+                error=f"{type(exc).__name__}: {str(exc)[:1000]}",
+                metadata={"branch": ctx.branch, "run_id": ctx.run_id},
+            )
+            raise
+        compact_response = compact_json(response)
+        result = json.loads(compact_response)
+        update_current_span(output=result)
+        save_customer_span(
+            f"customer_trends.{spec.name}",
+            input=arguments,
+            output=result,
+            status=result.get("status", "ok"),
+            metadata={"branch": ctx.branch, "run_id": ctx.run_id},
+        )
+        return compact_response
 
     return StructuredTool(
         name=spec.name,

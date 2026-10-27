@@ -161,9 +161,11 @@ def _auto_decision(state: OrchestrationState) -> dict[str, Any] | None:
     """Monitor runs with auto-approval skip the checkpoint when verification passed."""
     request = state.get("request")
     decision = state.get("verification")
-    if request is None or not request.extras.get("auto_review"):
+    extras = request.get("extras", {}) if isinstance(request, dict) else getattr(request, "extras", {})
+    if not isinstance(extras, dict) or not extras.get("auto_review"):
         return None
-    if decision is not None and decision.status is VerificationStatus.VERIFIED:
+    status = decision.get("status") if isinstance(decision, dict) else getattr(decision, "status", None)
+    if getattr(status, "value", status) == VerificationStatus.VERIFIED.value:
         return {"decision": "continue", "auto": True}
     return None
 

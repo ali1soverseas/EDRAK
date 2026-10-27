@@ -106,6 +106,44 @@ async def review_run(
     return {"status": "resumed", "decision": body.decision}
 
 
+@router.post("/{analysis_id}/cross-signal/start")
+async def start_cross_signal(
+    analysis_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> dict[str, Any]:
+    """Run Cross-Signal using this run's verified findings in orchestrator_planning.json."""
+    await _require(db, session, analysis_id)
+    try:
+        result = await run_manager.start_cross_signal_from_planning(analysis_id)
+    except ValueError as exc:
+        message = str(exc)
+        if message in {"not_found", "planning_artifact_not_found"}:
+            status_code = 404
+        elif message in {
+            "verification_routing_trace_not_found",
+            "cross_signal_not_selected_by_orchestrator",
+        }:
+            status_code = 409
+        else:
+            status_code = 422
+        raise HTTPException(status_code=status_code, detail=message) from exc
+
+    await audit_repo.record(
+        db,
+        workspace_id=session.workspace.workspace_id,
+        action="run.cross_signal_started",
+        target_type="run",
+        target_id=analysis_id,
+        actor_id=session.user.user_id,
+        metadata={
+            "status": result.get("status"),
+            "signal_count": len(result.get("signals") or []),
+        },
+    )
+    return result
+
+
 @router.post("/{analysis_id}/pause")
 async def pause_run(
     analysis_id: str,

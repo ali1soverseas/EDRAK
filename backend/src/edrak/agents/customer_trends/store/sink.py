@@ -21,16 +21,30 @@ class ResultSink(Protocol):
 
 
 class LocalSink:
-    """Writes `<artifacts_dir>/runs/<run_id>/customer_trends/result.json` and registers it."""
+    """Writes each attempt in its parent-request folder and registers the result."""
 
-    def __init__(self, store: EvidenceStore, artifacts_dir: Path) -> None:
+    def __init__(
+        self,
+        store: EvidenceStore,
+        artifacts_dir: Path,
+        *,
+        parent_request_id: str,
+    ) -> None:
         self._store = store
         self._root = artifacts_dir
+        self._parent_request_id = parent_request_id
 
     def result_path(self, run_id: str) -> Path:
         if not _RUN_ID.fullmatch(run_id):
             raise ValueError(f"invalid run_id: {run_id!r}")
-        return self._root / "runs" / run_id / "customer_trends" / "result.json"
+        if not _RUN_ID.fullmatch(self._parent_request_id):
+            raise ValueError(f"invalid parent_request_id: {self._parent_request_id!r}")
+        return (
+            self._root
+            / "runs"
+            / self._parent_request_id
+            / f"customer_trends_{run_id}_result.json"
+        )
 
     def write_result(self, result: CustomerTrendsResult) -> str:
         path = self.result_path(result.run_id)

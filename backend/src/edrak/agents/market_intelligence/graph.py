@@ -1,16 +1,17 @@
+from datetime import datetime
+
 from langgraph.graph import END, START, StateGraph
 
 from edrak.agents.market_intelligence.nodes import (
+    bind_trace_context,
     fill_gaps,
     log_block,
     output_node,
+    reset_trace_context,
     task_executor,
     task_planner,
 )
 from edrak.agents.market_intelligence.state import MarketAgentState, empty_market_state
-from datetime import datetime
-
-from edrak.contracts.vocabulary import competitor_names
 from edrak.contracts import (
     Evidence,
     EvidenceRef,
@@ -23,6 +24,7 @@ from edrak.contracts import (
     WorkerType,
     utcnow,
 )
+from edrak.contracts.vocabulary import competitor_names
 
 _STATUS_CONFIDENCE = {
     WorkerStatus.COMPLETED: 0.8,
@@ -227,17 +229,25 @@ def run(task: ResearchTask) -> WorkerResult:
     """Accept ResearchTask, run the market graph, return WorkerResult."""
     started_at = utcnow()
     app = get_graph()
-    final_state = app.invoke(
-        empty_market_state(
-            run_id=task.parent_request_id,
-            goal=task.goal,
-            business_context=format_task_context(task),
-        ),
-        config={
-            "recursion_limit": 100,
-            "configurable": {"thread_id": f"market-{task.task_id}"},
-        },
+    trace_token = bind_trace_context(
+        str(task.parent_request_id),
+        str(task.task_id),
+        task.attempt,
     )
+    try:
+        final_state = app.invoke(
+            empty_market_state(
+                run_id=task.parent_request_id,
+                goal=task.goal,
+                business_context=format_task_context(task),
+            ),
+            config={
+                "recursion_limit": 100,
+                "configurable": {"thread_id": f"market-{task.task_id}"},
+            },
+        )
+    finally:
+        reset_trace_context(trace_token)
     return worker_result_from_state(task, final_state, started_at=started_at)
 
 

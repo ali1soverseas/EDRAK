@@ -3,13 +3,21 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from typing import ClassVar
 
 import httpx
 import pytest
+
+from edrak.agents.customer_trends.providers.base import (
+    ProviderBadResponse,
+    ProviderExhausted,
+    ProviderUnavailable,
+)
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.config import (
     ProviderConfig,
+    ProvidersConfig,
     load_providers_config,
 )
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
@@ -94,12 +102,31 @@ def test_tavily_returns_site_scoped_search_capabilities_only() -> None:
     }
 
 
+def test_tavily_empty_results_are_a_successful_empty_result() -> None:
+    def handler(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"results": []})
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            provider = TavilyProvider(client, "test-key", ProviderConfig())
+            return await provider.call(
+                "web_search",
+                {"run_id": "run", "task_id": "task", "query": "no matching pages"},
+            )
+
+    result = asyncio.run(run())
+    assert result.items == []
+    assert result.raw_count == 0
+
+
 def test_provider_routing_uses_tavily_as_last_resort() -> None:
     routing = load_providers_config().routing
     assert routing["social_search:x"][-1] == "tavily"
     assert routing["social_search:reddit"][-1] == "tavily"
     assert routing["web_search"][-1] == "tavily"
     assert "tavily" not in routing["search_interest"]
+    assert "apify" not in routing["search_interest"]
+    assert routing["search_interest"] == ["socialcrawl", "google_trends_api"]
 
 
 def test_registry_uses_configured_tavily_key_for_web_search(
@@ -156,3 +183,43 @@ def test_registry_uses_configured_tavily_key_for_web_search(
     assert json.loads(requests[0].content)["api_key"] == "test-key"
     assert result.provider == "tavily"
     assert result.fallback_used is True
+
+
+@pytest.mark.parametrize(
+    ("error", "expected_open"),
+    [
+        (ProviderBadResponse("query was rejected"), False),
+        (ProviderUnavailable("provider timed out"), True),
+    ],
+)
+def test_registry_only_opens_breaker_for_provider_health_failures(
+    error, expected_open
+) -> None:
+    class FailingProvider:
+        name = "test"
+        capabilities: ClassVar[set[str]] = {"web_search"}
+
+        async def call(self, _capability, _params):
+            raise error
+
+    config = ProvidersConfig(
+        providers={"test": ProviderConfig()},
+        routing={"web_search": ["test"]},
+    )
+    breaker = CircuitBreaker(threshold=1)
+    registry = ProviderRegistry(
+        config,
+        budget=BudgetTracker(Budget()),
+        breaker=breaker,
+        providers=[FailingProvider()],
+    )
+
+    with pytest.raises(ProviderExhausted, match=str(error)):
+        asyncio.run(
+            registry.call(
+                "web_search",
+                {"run_id": "run", "task_id": "task", "query": "example"},
+            )
+        )
+
+    assert breaker.is_open("test") is expected_open

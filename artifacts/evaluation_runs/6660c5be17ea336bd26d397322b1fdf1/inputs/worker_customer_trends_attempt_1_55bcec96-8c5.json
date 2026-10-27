@@ -1,0 +1,683 @@
+{
+  "task_id": "55bcec96-8c57-4809-9998-93274be6433c",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "55bcec96-8c57-4809-9998-93274be6433c:f1",
+      "statement": "Among the collected social posts, discussions of NVIDIA GPU performance show a largely positive sentiment.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "6a45b29e634637c5",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "78e69e54c3dd5c46",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "90883d258cc366c1",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "93195084351552e0",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "945aeb40f542f8de",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "ade665b19ad2c2e1",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "b0df000f82143eea",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "bde44c814579fa8c",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "c59d807b6c8c2f9e",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "c745b64059e205ea",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Evidence comes exclusively from X (Twitter) posts.",
+        "Data is overwhelmingly in English (95 out of 97 items).",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "55bcec96-8c57-4809-9998-93274be6433c:f2",
+      "statement": "Social posts about AMD GPU support express uniformly positive sentiment.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "6a45b29e634637c5",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "7199996676b36e6a",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "b0df000f82143eea",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "c59d807b6c8c2f9e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "All evidence is from X (Twitter).",
+        "Only English language content is represented.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "55bcec96-8c57-4809-9998-93274be6433c:f3",
+      "statement": "Cloud providers are offering NVIDIA H100 GPU hosts at reduced hourly rates, indicating growing adoption and price sensitivity among AI developers.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "7d07d0d2f1ca18f7",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "0ace479d243d83be",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "1fbe541e3095e7cd",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "6aafcaf0bbfd79f5",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "767355e653ff34bb",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "2d91c261cffc6a3b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Evidence is limited to social media posts without broader market data.",
+        "English‑only content dominates the sample.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "55bcec96-8c57-4809-9998-93274be6433c:f4",
+      "statement": "Intel data‑center AI accelerators are not mentioned in any of the collected evidence, while AMD and NVIDIA accelerators appear in multiple posts, indicating lower visibility of Intel in the sampled discourse.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "6a45b29e634637c5",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "78e69e54c3dd5c46",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "90883d258cc366c1",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "6aafcaf0bbfd79f5",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "7d07d0d2f1ca18f7",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "The finding is based on the absence of Intel mentions rather than explicit statements.",
+        "Sample is heavily weighted toward X posts and English language.",
+        "gap: platforms",
+        "gap: language_ar"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "6a45b29e634637c5",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/abhi_venigalla/status/1674795311171276803",
+      "publisher": "x",
+      "extracted_fact": "Abhi Venigalla on X: \"Ready for GPU independence weekend?\n\nPyTorch 2.0 and LLM Foundry now work out of the box on ** AMD GPUs! ** We profiled MPT 1B-13B models on AMD MI250 and saw perf within 80% of A100-40GB, which could go up to 94% with better software.\n\nIt. Just. Works.\n\nht…",
+      "excerpt": "Abhi Venigalla on X: \"Ready for GPU independence weekend?\n\nPyTorch 2.0 and LLM Foundry now work out of the box on ** AMD GPUs! ** We profiled MPT 1B-13B models on AMD MI250 and saw perf within 80% of A100-40GB, which could go up to 94% with better software.\n\nIt. Just. Works.\n\nhttps://t.co/X5MeQzHIyS.... X\nAbhi Venigalla on X: \"Ready for GPU independence weekend? PyTorch 2.0 and LLM Foundry now work out of the box on ** AMD GPUs! ** We profiled MPT 1B-13B models on AMD MI250 and saw perf within…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:19.719156Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "78e69e54c3dd5c46",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/minchoi/status/2103525225061388745",
+      "publisher": "x",
+      "extracted_fact": "Min Choi on X: \"@betraidx about ~2.53x of H100\" / X. Title: Min Choi on X: \"@betraidx about ~2.53x of H100\" / X\n## Post. # Min Choi on X: \"@betraidx about ~2.53x of H100\". about ~2.53x of H100. 4:41 PM · Sep 25, 2026·472. breaking it down before it breaks out. does the 3.3M coun…",
+      "excerpt": "Min Choi on X: \"@betraidx about ~2.53x of H100\" / X. Title: Min Choi on X: \"@betraidx about ~2.53x of H100\" / X\n## Post. # Min Choi on X: \"@betraidx about ~2.53x of H100\". about ~2.53x of H100. 4:41 PM · Sep 25, 2026·472. breaking it down before it breaks out. does the 3.3M count GB300 as one H100-equivalent each or more?",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:12.910261Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "90883d258cc366c1",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/LandingAI/status/1777415075046785353",
+      "publisher": "x",
+      "extracted_fact": "LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, see which GPU fits your AI projects. \n\nExplore our blog ➡️ https://t.co/WekCvvNtSY\n\n#MachineLearning #GPUBen…",
+      "excerpt": "LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, see which GPU fits your AI projects. \n\nExplore our blog ➡️ https://t.co/WekCvvNtSY\n\n#MachineLearning #GPUBenchmarking https://t.c.... cGpvqtLD\" / X\nTitle: LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, se…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:19.719156Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "93195084351552e0",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/Theta_Network/status/2000758540122919176",
+      "publisher": "x",
+      "extracted_fact": "Theta Network on X: \"New Infrastructure upgrade for Theta EdgeCloud announced. All users of Nvidia H100 get the new H200 GPUs at the same price, 141 GB VRAM and up to 2.5x faster speeds for training + inference.\" / X. 02:43:02 AM · 12/16/2025·35.4K\n\nViews\n\n29\n\n @Theta_Network…",
+      "excerpt": "Theta Network on X: \"New Infrastructure upgrade for Theta EdgeCloud announced. All users of Nvidia H100 get the new H200 GPUs at the same price, 141 GB VRAM and up to 2.5x faster speeds for training + inference.\" / X. 02:43:02 AM · 12/16/2025·35.4K\n\nViews\n\n29\n\n @Theta_Network\n\n  Theta Network@Theta\\_Network\n\n  New Infrastructure upgrade for Theta EdgeCloud announced. All users of Nvidia H100 get the new H200 GPUs at the same price, 141 GB VRAM and up to 2.5x faster speeds for training + inferen…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "945aeb40f542f8de",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/Yuchenj_UW/status/1835364260060561796",
+      "publisher": "x",
+      "extracted_fact": "Yuchen Jin on X: \"GPU tradeoff series: GPT-2 (124M) training on a Single 4090 vs. H100 🧑‍🍳 GPU Perf and Price: - 4090: 330 fp16 TFLOPs, $1,749 - H100: 989 fp16 TFLOPs, $25,000 > H100 is 14.3X more expensive Traning speed with llm.c: - H100: 481K tokens/s - 4090: 153K tokens/s >…",
+      "excerpt": "Yuchen Jin on X: \"GPU tradeoff series: GPT-2 (124M) training on a Single 4090 vs. H100 🧑‍🍳 GPU Perf and Price: - 4090: 330 fp16 TFLOPs, $1,749 - H100: 989 fp16 TFLOPs, $25,000 > H100 is 14.3X more expensive Traning speed with llm.c: - H100: 481K tokens/s - 4090: 153K tokens/s > H100 is 3.1X fas… / X. Title: Yuchen Jin on X: \"GPU tradeoff series: GPT-2 (124M) training on a Single 4090 vs. H100 🧑‍🍳 GPU Perf and Price: - 4090: 330 fp16 TFLOPs, $1,749 - H100: 989 fp16 TFLOPs, $25,000 > H100 is 14.3…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:12.910261Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "ade665b19ad2c2e1",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/EugeneNg/status/1770040688702566490",
+      "publisher": "x",
+      "extracted_fact": "Eugene Ng on X: \"NVIDIA DGX B200 vs H100 GPU Performance: - Training 3X vs H100 - Inference 15X vs H100\" / X. ## Post\n\nLog inSign up\n\n## Post\n\nLog inSign up\n\n# Eugene Ng on X: \"NVIDIA DGX B200 vs H100 GPU Performance: - Training 3X vs H100 - Inference 15X vs H100\"\n\n@EugeneNg\n\nEu…",
+      "excerpt": "Eugene Ng on X: \"NVIDIA DGX B200 vs H100 GPU Performance: - Training 3X vs H100 - Inference 15X vs H100\" / X. ## Post\n\nLog inSign up\n\n## Post\n\nLog inSign up\n\n# Eugene Ng on X: \"NVIDIA DGX B200 vs H100 GPU Performance: - Training 3X vs H100 - Inference 15X vs H100\"\n\n@EugeneNg\n\nEugene Ng@EugeneNg\n\nNVIDIA DGX B200 vs H100 GPU Performance: - Training 3X vs H100 - Inference 15X vs H100\n\n10:52:40 AM · 03/19/2024·3,126\n\nViews\n\n @EugeneNg\n\n  Eugene Ng@EugeneNg\n\n  NVIDIA DGX B200 vs H100 GPU Performance…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:12.910261Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "b0df000f82143eea",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/Marktechpost/status/1852504241249890462",
+      "publisher": "x",
+      "extracted_fact": "Marktechpost AI on X: \"AMD Open Sources AMD OLMo: A Fully Open-Source 1B Language Model Series that is Trained from Scratch by AMD on AMD Instinct™ MI250 GPUs AMD recently released AMD OLMo: a fully open-source 1B model series trained from scratch by AMD on AMD Instinct™ MI250 G…",
+      "excerpt": "Marktechpost AI on X: \"AMD Open Sources AMD OLMo: A Fully Open-Source 1B Language Model Series that is Trained from Scratch by AMD on AMD Instinct™ MI250 GPUs AMD recently released AMD OLMo: a fully open-source 1B model series trained from scratch by AMD on AMD Instinct™ MI250 GPUs. The AMD OLMo’s… .... Title: Marktechpost AI on X: \"AMD Open Sources AMD OLMo: A Fully Open-Source 1B Language Model Series that is Trained from Scratch by AMD on AMD Instinct™ MI250 GPUs AMD recently released AMD OL…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:19.719156Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "bde44c814579fa8c",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/NaveenGRao/status/1651687511847215104",
+      "publisher": "x",
+      "extracted_fact": "Naveen Rao on X: \"First Nvidia H100 perf is out! We @mosaicml have enabled the H100 in our stack for training, tuning, serving large AI model. Results: -3x faster for 7B GPT models - 30% more cost effective (perf/$) Thanks @nvidia and @CoreWeave for the partnership!\" / X. 04/27/…",
+      "excerpt": "Naveen Rao on X: \"First Nvidia H100 perf is out! We @mosaicml have enabled the H100 in our stack for training, tuning, serving large AI model. Results: -3x faster for 7B GPT models - 30% more cost effective (perf/$) Thanks @nvidia and @CoreWeave for the partnership!\" / X. 04/27/2023\n\nHow good are @nvidia H100s actually? In collaboration with @CoreWeave, we benchmarked A100 vs H100 performance for large language model training. Here's what we found: [1/6] mosaicml.com/blog/coreweave…\n\n08:39:24 P…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "c59d807b6c8c2f9e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://twitter.com/AMD/status/1674852367798239235",
+      "publisher": "x",
+      "extracted_fact": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. AMD on…",
+      "excerpt": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:19.719156Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "c745b64059e205ea",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/DrJimFan/status/1673739736136163328",
+      "publisher": "x",
+      "extracted_fact": "Jim Fan on X: \"Benchmark LLMs on H100:\n▸ One of the best public testing report of H100.\n▸ Training a 7B GPT model with H100 + FP8 precision is 3x faster than A100 + BF16 precision.\n▸ Integrates NVIDIA's Transformer Engine that offers native FP8 optimizations for H100\n\nhttps://t.…",
+      "excerpt": "Jim Fan on X: \"Benchmark LLMs on H100:\n▸ One of the best public testing report of H100.\n▸ Training a 7B GPT model with H100 + FP8 precision is 3x faster than A100 + BF16 precision.\n▸ Integrates NVIDIA's Transformer Engine that offers native FP8 optimizations for H100\n\nhttps://t.co/2agc56QxKp https:/.... o/cf65FxW3bi\" / X\nTitle: Jim Fan on X: \"Benchmark LLMs on H100:\n▸ One of the best public testing report of H100.\n▸ Training a 7B GPT model with H100 + FP8 precision is 3x faster than A100 + BF16…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:12.910261Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "7199996676b36e6a",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://twitter.com/get_hydrahost/status/1765834042870821045",
+      "publisher": "x",
+      "extracted_fact": "Hydra Host on X: \"New GPUs on our site! AMD Radeon Instinct MI250 and AMD Radeon Instinct MI300\n\nTo shop, go to https://t.co/Z8AdFaJcvo and select GPUs to see our full selection.\n\n#AMD #ArtificialIntelligence #MachineLearning #DeepLearning https://t.co/FAgIjy6fX9\" / X. Hydra Hos…",
+      "excerpt": "Hydra Host on X: \"New GPUs on our site! AMD Radeon Instinct MI250 and AMD Radeon Instinct MI300\n\nTo shop, go to https://t.co/Z8AdFaJcvo and select GPUs to see our full selection.\n\n#AMD #ArtificialIntelligence #MachineLearning #DeepLearning https://t.co/FAgIjy6fX9\" / X. Hydra Host on X: \"New GPUs on our site! AMD Radeon Instinct MI250 and AMD Radeon Instinct MI300 To shop, go to and select GPUs to see our full selection. #AMD #ArtificialIntelligence #MachineLearning #DeepLearning \" / X. Don’t mi…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:19.719156Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "7d07d0d2f1ca18f7",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/nebiusai/status/1830607570488226215",
+      "publisher": "x",
+      "extracted_fact": "Nebius on X: \"🔥 Price drop: @NVIDIA H100 One #GPU host with H100 is now priced at $3.50 per hour when paying as you go, down from the previous $4.85. The prices for hosts reserved for 3, 6 or 12 months are also down. Check out our pricing for details: https://t.co/GWjLfqQ6ic\" /…",
+      "excerpt": "Nebius on X: \"🔥 Price drop: @NVIDIA H100 One #GPU host with H100 is now priced at $3.50 per hour when paying as you go, down from the previous $4.85. The prices for hosts reserved for 3, 6 or 12 months are also down. Check out our pricing for details: https://t.co/GWjLfqQ6ic\" / X. Nebius@nebiusai\n\n🔥 Price drop: @NVIDIA H100 One #GPU host with H100 is now priced at $3.50 per hour when paying as you go, down from the previous $4.85. The prices for hosts reserved for 3, 6 or 12 months are also dow…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "0ace479d243d83be",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/nehadesaraju/status/2002088060927049876",
+      "publisher": "x",
+      "extracted_fact": "neha 🔲 on X: \"we've been tracking H100 prices across the market there's never been more evidence of a regime change in gpu rental pricing\" / X. Squaretower has been tracking the price of one of the most liquid parts of the AI infra stack, the Nvidia H100. On its own, the on-dema…",
+      "excerpt": "neha 🔲 on X: \"we've been tracking H100 prices across the market there's never been more evidence of a regime change in gpu rental pricing\" / X. Squaretower has been tracking the price of one of the most liquid parts of the AI infra stack, the Nvidia H100. On its own, the on-demand rental price of a single H100 hour is a useful metric for AI\n\n06:46:05 PM · 12/19/2025·416\n\nViews\n\n1\n\n @nehadesaraju\n\n  neha 🔲@nehadesaraju\n\n  we've been tracking H100 prices across the market there's never been more…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "1fbe541e3095e7cd",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/_philschmid/status/1845013626710565011",
+      "publisher": "x",
+      "extracted_fact": "Philipp Schmid on X: \"H100 GPU costs plummet, but will Cloud Providers follow? 🤔 The @nvidia GPU landscape is undergoing a shift. Prices are dropping, and once-scarced resources slowly turn into oversupplied commodities. 👀 TL;DR: 🎢 H100 rental dropped from $8/hr to as low as $1-…",
+      "excerpt": "Philipp Schmid on X: \"H100 GPU costs plummet, but will Cloud Providers follow? 🤔 The @nvidia GPU landscape is undergoing a shift. Prices are dropping, and once-scarced resources slowly turn into oversupplied commodities. 👀 TL;DR: 🎢 H100 rental dropped from $8/hr to as low as $1-2/hr in just 18… / X. # Philipp Schmid on X: \"H100 GPU costs plummet, but will Cloud Providers follow? 🤔 The @nvidia GPU landscape is undergoing a shift. Prices are dropping, and once-scarced resources slowly turn into o…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "6aafcaf0bbfd79f5",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/ConsensusGurus/status/1937915781452308768",
+      "publisher": "x",
+      "extracted_fact": "Consensus Media on X: \"The Great GPU Paradox: Why H100 Rental Prices Are Plummeting While AI Stocks Soar (per Gemini) A seeming contradiction is playing out in the artificial intelligence hardware market: the rental price for NVIDIA's powerful H100 GPUs is in a significant downt…",
+      "excerpt": "Consensus Media on X: \"The Great GPU Paradox: Why H100 Rental Prices Are Plummeting While AI Stocks Soar (per Gemini) A seeming contradiction is playing out in the artificial intelligence hardware market: the rental price for NVIDIA's powerful H100 GPUs is in a significant downturn, while the stoc… / X. unused time at lower prices. Compounding this is the anticipation of NVIDIA's even more powerful and cost-effective Blackwell GB200 superchips. Many potential customers are holding off on large-…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "767355e653ff34bb",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/averageguy62/status/1893372232958652778",
+      "publisher": "x",
+      "extracted_fact": "Average X Guy on X: \"Interestingly, despite the US sanctions, NVIDIA's H100 and A100 AI GPUs are readily available in China, which is why the rental costs are much lower than in other regions. According to a Chinese startup founder, it is estimated that more than 100,000 of NVID…",
+      "excerpt": "Average X Guy on X: \"Interestingly, despite the US sanctions, NVIDIA's H100 and A100 AI GPUs are readily available in China, which is why the rental costs are much lower than in other regions. According to a Chinese startup founder, it is estimated that more than 100,000 of NVIDIA's H100 AI acceler… / X. @stocktavia\n\n  Ładne mi rzeczy · Stocktavian August@stocktavia\n\n  02/22/2025\n\n  FT.\n\n  \n\n  06:48:12 PM · 02/22/2025·2,955\n\n  Views\n\n  1 [...] @stocktavia\n\nŁadne mi rzeczy · Stocktavian August@s…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:07.679651Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "2d91c261cffc6a3b",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/squaretower_/article/2002087412772569368",
+      "publisher": "x",
+      "extracted_fact": "H100 pricing and volatility report | Squaretower (@squaretower_) on X. Title: H100 pricing and volatility report | Squaretower (@squaretower_) on X\n# H100 pricing and volatility report. Cover image for H100 pricing and volatility report. Squaretower has been tracking the price o…",
+      "excerpt": "H100 pricing and volatility report | Squaretower (@squaretower_) on X. Title: H100 pricing and volatility report | Squaretower (@squaretower_) on X\n# H100 pricing and volatility report. Cover image for H100 pricing and volatility report. Squaretower has been tracking the price of one of the most liquid parts of the AI infra stack, the Nvidia H100. On its own, the on-demand rental price of a single H100 hour is a useful metric for AI compute buyers to benchmark their spend and GPU cloud provider…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T16:26:12.910261Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    }
+  ],
+  "gaps": [
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "1 platform(s) have at least 20 items; at least 2 are needed",
+    "2 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.6,
+  "started_at": "2026-10-27T16:25:37.637078Z",
+  "completed_at": "2026-10-27T16:28:20.297078Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "55bcec96-8c57-4809-9998-93274be6433c.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "Across 97 English‑dominant posts (95 en, 2 ar) from X (60 %), news (29 %) and web (10 %), the most discussed topics are GPU performance (11 items) and pricing (10 items), with smaller coverage of H100 price shifts and AMD training; evidence lacks broader platform diversity and Arabic content.",
+      "overall_confidence": "medium",
+      "findings_count": 4,
+      "evidence_count": 97,
+      "coverage": {
+        "by_platform": {
+          "x": 59,
+          "unknown": 38
+        },
+        "by_source_type": {
+          "social_post": 59,
+          "news": 28,
+          "web": 10
+        },
+        "by_language": {
+          "en": 95,
+          "ar": 2
+        }
+      },
+      "gaps": [
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "1 platform(s) have at least 20 items; at least 2 are needed",
+        "2 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [],
+      "budget_used": {
+        "tool_calls": 11.0,
+        "cost_usd": 0.005,
+        "seconds": 162.66
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\6660c5be17ea336bd26d397322b1fdf1\\customer_trends_55bcec96-8c57-4809-9998-93274be6433c.a1_result.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 97,
+      "batch_ids": [
+        "b_3cfde35da860",
+        "b_d02e2d890e0b",
+        "b_cc9da9404d4e",
+        "b_b75d67f87809",
+        "b_68d9feadc7de",
+        "b_5c35c0cfc4ff",
+        "b_3e04b4f11de6",
+        "b_ef19788e6558",
+        "b_ff04f0a31644"
+      ]
+    },
+    "finding_metrics": {
+      "55bcec96-8c57-4809-9998-93274be6433c:f1": {},
+      "55bcec96-8c57-4809-9998-93274be6433c:f2": {},
+      "55bcec96-8c57-4809-9998-93274be6433c:f3": {},
+      "55bcec96-8c57-4809-9998-93274be6433c:f4": {
+        "intel_mentions": 0,
+        "metric_id": "m_9bd20cab5b3a"
+      }
+    },
+    "themes": [
+      {
+        "theme_label": "GPU performance",
+        "count": 11,
+        "share": 0.1864,
+        "sentiment_mix": {
+          "mixed": 0.0909,
+          "neutral": 0.2727,
+          "positive": 0.6364
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU pricing",
+        "count": 10,
+        "share": 0.1695,
+        "sentiment_mix": {
+          "mixed": 0.1,
+          "negative": 0.2,
+          "neutral": 0.3,
+          "positive": 0.4
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "H100 price change",
+        "count": 7,
+        "share": 0.1186,
+        "sentiment_mix": {
+          "negative": 0.4286,
+          "neutral": 0.5714
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD model training",
+        "count": 5,
+        "share": 0.0847,
+        "sentiment_mix": {
+          "neutral": 0.2,
+          "positive": 0.8
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD GPU support",
+        "count": 4,
+        "share": 0.0678,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "Bitcoin treasury company",
+        "count": 4,
+        "share": 0.0678,
+        "sentiment_mix": {
+          "neutral": 0.5,
+          "positive": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU availability",
+        "count": 2,
+        "share": 0.0339,
+        "sentiment_mix": {
+          "neutral": 0.5,
+          "positive": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU benchmark",
+        "count": 2,
+        "share": 0.0339,
+        "sentiment_mix": {
+          "neutral": 0.5,
+          "positive": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU hardware architecture",
+        "count": 2,
+        "share": 0.0339,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI accelerator comparison",
+        "count": 1,
+        "share": 0.0169,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [],
+    "official_accounts": [],
+    "stance_counts": {
+      "Broadcom": {
+        "positive": 1,
+        "neutral": 0,
+        "negative": 0,
+        "mixed": 0,
+        "total": 1
+      },
+      "NVIDIA Corporation": {
+        "positive": 3,
+        "neutral": 15,
+        "negative": 1,
+        "mixed": 0,
+        "total": 19
+      }
+    },
+    "research_goal": "What is the level of adoption and sentiment among cloud service providers and AI developers for NVIDIA, AMD, and Intel data center AI accelerators?",
+    "research_focus": "Target customers (cloud service providers, AI developers) regarding the three accelerators"
+  }
+}

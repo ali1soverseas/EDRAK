@@ -8,7 +8,7 @@ This guide explains what the EDRAK evaluation agent evaluates, how it produces s
 EDRAK run artifacts
         |
         v
-Load and classify input JSON + telemetry
+Load and classify input JSON
         |
         v
 Keep final worker attempts (default for run bundles)
@@ -28,39 +28,9 @@ Per-agent reports + pipeline checks
 Read-only evaluation API and dashboard
 ```
 
-## OpenTelemetry to evaluation agent flow
-
-The evaluation pipeline starts with OpenTelemetry spans emitted by the backend, not from a separate agent replay. In `backend/src/edrak/observability.py`, `configure_telemetry()` installs a tracer provider and adds a JSON-file span exporter. Each operation or tool call is wrapped with `@traced(...)` or `@traced_tool(...)`, which records attributes such as `edrak.run.id`, `edrak.task.id`, `edrak.task.attempt`, `edrak.tool.name`, `edrak.tool.status`, and result counts without capturing raw tool payloads.
-
-When the run is complete, `spans_for_run()` reads the merged export file, filters spans by `trace_id` and `edrak.run.id`, and returns only the spans relevant to that analysis. The run manager then bundles those spans with the run manifest, worker outputs, verification results, and cross-signal artifacts under `artifacts/evaluation_runs/<analysis-id>/`.
-
-```text
-Backend execution
-  │
-  ├─ @traced() for workflows and agent stages
-  ├─ @traced_tool() for tool calls
-  ├─ safe OTEL attributes: run/task/tool identity, status, durations, result counts
-  └─ JsonFileSpanExporter -> data/telemetry/observability-<pid>.json
-            │
-            ▼
-     EDRAK_TELEMETRY_EXPORT_PATH (optional override)
-            │
-            ▼
-  spans_for_run(analysis_id, trace_id)
-            │
-            ▼
-  EvaluationArtifactBundle + run manifest + inputs/outputs
-            │
-            ▼
-  Evaluation agent loads run bundle + telemetry
-            │
-            ├─ deterministic integrity checks
-            ├─ execution traces and tool-use checks
-            ├─ DeepEval quality metrics (Faithfulness, Relevancy, etc.)
-            └─ report JSON dashboard output
-```
-
-This flow means the evaluator can reconstruct what happened in a run from the recorded trace and the persisted artifacts, even without rerunning the pipeline. The exporter is intentionally lightweight: it keeps only a safe subset of attributes, avoids raw argument values, and optionally mirrors to OTLP when `OTEL_EXPORTER_OTLP_ENDPOINT` is set.
+Backend runs save evaluator inputs and stage outputs under
+`artifacts/evaluation_runs/<analysis-id>/`. The evaluator reads those JSON artifacts directly;
+it does not rerun workers or collect runtime telemetry.
 
 ## 1. Inputs and scope
 
@@ -68,13 +38,13 @@ Backend runs save evaluator inputs under:
 
 ```text
 artifacts/evaluation_runs/<run-id>/
-├── inputs/       # workers, RAG retrievals, verification, synthesis, decisions, telemetry
+├── inputs/       # workers, RAG retrievals, verification, synthesis, decisions
 ├── outputs/      # stage outputs such as metrics and human review
 ├── manifest.json # run status and timestamps
 └── evaluation/   # generated evaluation reports
 ```
 
-The evaluator recognizes artifacts by their JSON structure. It builds shared run context from inputs such as the research goal, worker findings, evidence, verified findings, signals, and telemetry. That context lets checks compare stages and keeps each downstream evaluation grounded in what was available at that point in the run.
+The evaluator recognizes artifacts by their JSON structure. It builds shared run context from inputs such as the research goal, worker findings, evidence, verified findings, and signals. That context lets checks compare stages and keeps each downstream evaluation grounded in what was available at that point in the run.
 
 For run bundles, the default is to evaluate the final worker attempt and latest verification/downstream artifacts. Superseded worker and retrieval artifacts are skipped where they belong to an earlier attempt. `--all-attempts` opts into evaluating prior attempts and verification passes too.
 
@@ -84,7 +54,7 @@ The metrics stage is intentionally not evaluated as a separate agent. Its artifa
 
 ### Deterministic checks
 
-These checks use the recorded JSON and telemetry directly. They do not require an LLM and still run in `--dry-run` mode. Examples include:
+These checks use the recorded JSON directly. They do not require an LLM and still run in `--dry-run` mode. Examples include:
 
 - Whether findings cite evidence and meet structural requirements.
 - Whether verification covers worker findings and whether downstream references resolve.
@@ -170,9 +140,7 @@ Orchestration evaluation uses the plan and task results:
 
 Partial results with generated worker output count as completed executions. Missing results reduce task completion and are separately flagged by the planned-task integrity check. Unrendered retry, dependency, failure-rate, and duration aggregates are not calculated or exported.
 
-### Telemetry and pipeline-wide checks
-
-Telemetry evaluation checks the run's recorded spans/events: whether they are recognizable, whether observed errors are recorded, and whether worker spans include agent/task identity and valid status/duration. The dashboard receives tool and worker names, unit counts, and execution-quality details—not unrendered error-rate or latency aggregates.
+### Pipeline-wide checks
 
 The pipeline report performs cross-stage checks such as decision → signal → finding → evidence traceability, verifier coverage, research-run ID consistency, and stability of finding IDs/statements across reruns. It records both summary counts and the individual check results. Checks only run when the relevant stages and evidence are present.
 
@@ -191,7 +159,7 @@ The evaluator can report up to six dimensions for an artifact with a structured 
 | Error handling | Observed failures and evidence that they were handled, retried, or surfaced. |
 | Efficiency | Complete argument evidence (or fingerprints) to determine whether equivalent calls were repeated. |
 
-Dimensions with missing evidence are marked **not assessable** rather than inferred. Worker and retrieval traces are correlated to telemetry by task ID and attempt where those identifiers are present. Tool argument values can be fingerprinted locally for duplicate checks; by default, raw values are not sent to DeepEval.
+Dimensions with missing evidence are marked **not assessable** rather than inferred. Tool argument values can be fingerprinted locally for duplicate checks; by default, raw values are not sent to DeepEval.
 
 ## 5. Runtime and rate-limit safeguards
 
@@ -203,7 +171,7 @@ Current defaults are intentionally conservative:
 - At most two attempts per metric (`--retries 2`).
 - After repeated rate-limit responses for a metric, a run-scoped circuit breaker skips subsequent judge requests instead of spending the remainder of the run retrying.
 
-Observability distinguishes judge attempts, successful scores, failed metrics, and skipped requests. The circuit breaker limits wasted time during rate limiting; it cannot guarantee faster evaluation when the judge service is responding normally.
+Judge reporting distinguishes successful scores, failed metrics, and skipped requests. The circuit breaker limits wasted time during rate limiting; it cannot guarantee faster evaluation when the judge service is responding normally.
 
 ## 6. Reports and dashboard
 
@@ -228,7 +196,7 @@ recall remain not assessable when neither source provides a reference answer.
 The Competitive Intelligence golden record includes an explicit scope-constraint reference for internal
 RAG queries: no confidential NVIDIA data was supplied, so use only public, source-supported evidence.
 
-The dashboard Overview shows run-level health and metadata from the selected reports. Include `initial_input.json` and `manifest.json` with the agent reports when available to populate the goal and run ID. Include `pipeline_report.json` to show cross-stage traceability checks. The Pipeline page displays these checks in a separate **Pipeline-wide checks** panel above the per-agent reports. Use the per-agent cards for stage metrics, integrity checks, execution quality, and flagged units. Failed warning-level checks are omitted from the dashboard; it shows passed checks, error-severity failures, and flagged units. Tool execution displays recorded argument values and result text for each agent; older runs without captured values or payloads cannot display them. Tool-result payloads are captured in redacted, bounded form by default and can be disabled with `EDRAK_TELEMETRY_INCLUDE_TOOL_PAYLOADS=false`. They are included in local evaluation reports but are not sent to the judge unless `--include-tool-payloads` is explicitly enabled. Unflagged unit-level rows and metrics not rendered by the dashboard are not exported in agent reports. The comparison view is a separate ground-truth comparison and should not be confused with integrity checks or LLM-judged averages.
+The dashboard Overview shows run-level health and metadata from the selected reports. Include `initial_input.json` and `manifest.json` with the agent reports when available to populate the goal and run ID. Include `pipeline_report.json` to show cross-stage traceability checks. The Pipeline page displays these checks in a separate **Pipeline-wide checks** panel above the per-agent reports. Use the per-agent cards for stage metrics, integrity checks, execution quality, and flagged units. Failed warning-level checks are omitted from the dashboard; it shows passed checks, error-severity failures, and flagged units. If an evaluation input contains tool-call arguments or results, those are redacted in local reports and are sent to the judge only when `--include-tool-payloads` is explicitly enabled. Unflagged unit-level rows and metrics not rendered by the dashboard are not exported in agent reports. The comparison view is a separate ground-truth comparison and should not be confused with integrity checks or LLM-judged averages.
 Execution-quality/tool-trace checks are included for tool-using workers and RAG stages. Verification,
 cross-signal, decision, and orchestration are not treated as tool-execution stages and do not receive
 the "no structured trace evidence" check.

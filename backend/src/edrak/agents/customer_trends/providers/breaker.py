@@ -1,4 +1,4 @@
-"""Per-run circuit breaker: a provider that keeps failing is skipped for the rest of the run."""
+"""Per-run breaker for provider-health failures, scoped to the run's provider."""
 
 import threading
 from collections import defaultdict

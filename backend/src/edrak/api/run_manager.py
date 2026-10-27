@@ -10,43 +10,193 @@ one opened after a restart, is rebuilt from those tables.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import re
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any, Optional
+
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.types import Command
+from pydantic import ValidationError
 
 from edrak.api.brief_builder import build_brief
 from edrak.api.schemas import RunEvent, RunEventCallout, RunTaskView, RunViewOut
 from edrak.api.streaming import EventStream
 from edrak.contracts import (
+    BusinessContext,
     BusinessRequest,
+    CompanyProfile,
+    CompetitorRef,
+    Conflict,
+    ControlSummary,
+    CrossSignal,
+    CrossSignalInput,
+    CrossSignalOutput,
+    CrossSignalSummary,
+    DecisionReadyContext,
+    DecisionRelevance,
+    Evidence,
+    EvidenceQuality,
+    EvidenceRef,
+    EvidenceRelation,
+    Finding,
+    FindingCategory,
+    FindingCheckStatus,
+    FindingVerdict,
     OrchestrationResult,
     ResearchPlan,
+    ResearchTask,
     RunStatus,
+    SignalEvidence,
+    SignalType,
+    SocialAccount,
+    SocialPlatform,
+    SourceType,
+    TargetedAction,
+    TriggerType,
+    Urgency,
     UseCase,
+    VerificationDecision,
+    VerificationInput,
     VerificationResult,
+    VerificationStatus,
+    WorkerOutcome,
     WorkerResult,
     WorkerStatus,
     WorkerType,
+    build_cross_signal_input,
+)
+from edrak.contracts.metrics import (
+    GapReason,
+    MetricObservation,
+    MetricRequirement,
+    MetricScope,
+    MetricStatus,
+    OutcomeStatus,
+    RequirementOutcome,
 )
 from edrak.core import action_log
+from edrak.core.config import settings
 from edrak.db.connection import get_db
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import briefs as briefs_repo
 from edrak.db.repositories import guardrails as guardrails_repo
 from edrak.db.repositories import notifications as notifications_repo
-from edrak.guardrails.output import check_brief
 from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
-from edrak.core.config import settings
 from edrak.evaluation_artifacts import EvaluationArtifactBundle
+from edrak.guardrails.output import check_brief
 from edrak.orchestration.graph import build_graph
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from langgraph.types import Command
 from edrak.orchestration.registry import get_default_registry
 
 logger = logging.getLogger(__name__)
+
+
+def _planning_artifact_path(analysis_id: str) -> Path:
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,120}", analysis_id):
+        raise ValueError("invalid_analysis_id")
+    repo_root = Path(__file__).resolve().parents[4]
+    return repo_root / "artifacts" / "runs" / analysis_id / "orchestrator_planning.json"
+
+
+def _verification_from_planning_artifact(path: Path, analysis_id: str) -> VerificationResult:
+    try:
+        artifact = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise ValueError("planning_artifact_not_found") from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError("planning_artifact_invalid_json") from exc
+
+    if not isinstance(artifact, dict) or artifact.get("request_id") != analysis_id:
+        raise ValueError("planning_artifact_request_mismatch")
+
+    events = artifact.get("trace_events")
+    routing_event = next(
+        (
+            event
+            for event in reversed(events)
+            if isinstance(event, dict) and event.get("stage") == "post_verification_routing"
+        ),
+        None,
+    ) if isinstance(events, list) else None
+    if routing_event is None:
+        raise ValueError("verification_routing_trace_not_found")
+    if routing_event.get("selected_route") != "cross_signal":
+        raise ValueError("cross_signal_not_selected_by_orchestrator")
+
+    raw_verification = routing_event.get("verification_result")
+    if not isinstance(raw_verification, dict):
+        raise ValueError("verification_result_not_found")
+    try:
+        verification = VerificationResult.model_validate(raw_verification)
+    except ValidationError as exc:
+        raise ValueError("verification_result_invalid") from exc
+    if verification.research_run_id != analysis_id:
+        raise ValueError("verification_result_request_mismatch")
+    return verification
+
+
+def _checkpoint_serializer() -> JsonPlusSerializer:
+    """Allow only EDRAK contract types required to restore orchestration state."""
+    return JsonPlusSerializer(
+        allowed_msgpack_modules=[
+            BusinessContext,
+            BusinessRequest,
+            CompanyProfile,
+            CompetitorRef,
+            Conflict,
+            ControlSummary,
+            CrossSignal,
+            CrossSignalInput,
+            CrossSignalOutput,
+            CrossSignalSummary,
+            DecisionReadyContext,
+            DecisionRelevance,
+            Evidence,
+            EvidenceQuality,
+            EvidenceRef,
+            EvidenceRelation,
+            Finding,
+            FindingCategory,
+            FindingCheckStatus,
+            FindingVerdict,
+            GapReason,
+            MetricObservation,
+            MetricRequirement,
+            MetricScope,
+            MetricStatus,
+            OrchestrationResult,
+            OutcomeStatus,
+            RequirementOutcome,
+            ResearchPlan,
+            ResearchTask,
+            RunStatus,
+            SignalEvidence,
+            SignalType,
+            SocialAccount,
+            SocialPlatform,
+            SourceType,
+            TargetedAction,
+            TriggerType,
+            UseCase,
+            Urgency,
+            VerificationDecision,
+            VerificationInput,
+            VerificationResult,
+            VerificationStatus,
+            WorkerOutcome,
+            WorkerResult,
+            WorkerStatus,
+            WorkerType,
+        ]
+    )
+
 
 # The run screen calls task states queued/running/done/failed; the table calls them queued/working/finished/failed.
 VIEW_TO_DB_STATE = {"queued": "queued", "running": "working", "done": "finished", "failed": "failed"}
@@ -85,6 +235,13 @@ class RunManager:
 
     def __init__(self) -> None:
         self._runs: dict[str, ActiveRun] = {}
+        self._db_write_lock = asyncio.Lock()
+
+    @asynccontextmanager
+    async def _write_db(self) -> AsyncIterator[Any]:
+        """Serialize this process's run writes; SQLite permits only one writer at a time."""
+        async with self._db_write_lock, get_db() as db:
+            yield db
 
     def get_stream(self, analysis_id: str) -> Optional[EventStream]:
         active = self._runs.get(analysis_id)
@@ -237,7 +394,7 @@ class RunManager:
             return
         request_id = active.run_view.analysis_id
         try:
-            async with get_db() as db:
+            async with self._write_db() as db:
                 for channel, task_id, actor, text in lines:
                     await runs_repo.add_event(
                         db, request_id, channel=channel, actor=actor, kind="progress", message=text,
@@ -285,7 +442,7 @@ class RunManager:
         active.run_view.events.append(event)
         await active.stream.emit("event", event.model_dump(mode="json"))
         try:
-            async with get_db() as db:
+            async with self._write_db() as db:
                 await runs_repo.add_event(
                     db, active.run_view.analysis_id, channel="supervisor_log", actor=source, kind=kind,
                     message=message, callout=callout.model_dump() if callout else None, occurred_at=event.at,
@@ -297,7 +454,7 @@ class RunManager:
 
     async def start_run(self, analysis_id: str, *, user_id: Optional[str], approver_name: str, auto: bool = False) -> None:
         """Start the run of an analysis whose plan was just approved (checkpoint 1)."""
-        async with get_db() as db:
+        async with self._write_db() as db:
             row = await analyses_repo.get_request(db, analysis_id)
             if not row:
                 raise ValueError("not_found")
@@ -360,7 +517,7 @@ class RunManager:
             active.run_view.finished_at = now
             await active.stream.emit("complete", {"state": "cancelled", "brief_id": None})
             active.stream.close()
-        async with get_db() as db:
+        async with self._write_db() as db:
             run = await runs_repo.get_run(db, analysis_id)
             if not run or run["status"] not in runs_repo.ACTIVE:
                 return False
@@ -376,7 +533,7 @@ class RunManager:
     # ------------------------------------------------------------------ the run itself
 
     async def _store_results(self, results: list[WorkerResult], request_id: str, workspace_id: Optional[str]) -> None:
-        async with get_db() as db:
+        async with self._write_db() as db:
             for wr in results:
                 try:
                     await results_repo.write_worker_result(db, request_id, wr, commit=False)
@@ -420,7 +577,7 @@ class RunManager:
         from edrak.db.repositories import metrics as metrics_repo
 
         try:
-            async with get_db() as db:
+            async with self._write_db() as db:
                 for wr in node_output.get("results") or []:
                     await results_repo.add_evidence(db, request_id, wr, commit=False)
                     await self._store_metrics(db, request_id, wr)
@@ -467,7 +624,7 @@ class RunManager:
         for m in verification.control_summary.missing_information:
             gaps.append({"subject": m, "suggested_action": "investigate"})
         try:
-            async with get_db() as db:
+            async with self._write_db() as db:
                 vid = await results_repo.write_verification(db, verification, commit=False)
                 await results_repo.write_gaps(db, request_id, gaps, commit=False)
                 await db.commit()
@@ -477,7 +634,7 @@ class RunManager:
             return None
 
     async def _store_replan_tasks(self, plan_id: str, request_id: str, tasks: list[Any], reasons: dict[str, str]) -> None:
-        async with get_db() as db:
+        async with self._write_db() as db:
             known = await analyses_repo.task_ids(db, plan_id)
             position = len(known)
             for task in tasks:
@@ -494,6 +651,49 @@ class RunManager:
     @staticmethod
     def _graph_config(request_id: str) -> dict[str, Any]:
         return {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+
+    async def start_cross_signal_from_planning(self, analysis_id: str) -> dict[str, Any]:
+        """Start Cross-Signal from the verified output recorded in this run's planning artifact."""
+        artifact_path = _planning_artifact_path(analysis_id)
+        verification = _verification_from_planning_artifact(artifact_path, analysis_id)
+        async with get_db() as db:
+            row = await analyses_repo.get_request(db, analysis_id)
+        if row is None:
+            raise ValueError("not_found")
+
+        request = analyses_repo.request_contract(row)
+        if request.request_id != analysis_id:
+            raise ValueError("planning_artifact_request_mismatch")
+        cross_signal_input = build_cross_signal_input(verification, request)
+
+        from edrak.CrossSignal.graph import run_cross_signal
+        from edrak.CrossSignal.tracing import trace_cross_signal
+
+        trace_context = {"request_id": analysis_id}
+        trace_cross_signal(
+            "manual_start",
+            trace_context,
+            artifact_path=str(artifact_path),
+            verified_findings=len(cross_signal_input.verified_findings),
+        )
+        try:
+            output = await run_cross_signal(cross_signal_input)
+        except Exception as exc:
+            trace_cross_signal(
+                "manual_failed",
+                trace_context,
+                error_type=type(exc).__name__,
+                error=str(exc),
+            )
+            raise
+
+        result = output.model_dump(mode="json")
+        trace_cross_signal(
+            "manual_completed",
+            trace_context,
+            output=result,
+        )
+        return result
 
     async def _execute_run(
         self,
@@ -520,8 +720,6 @@ class RunManager:
         sub_token = None
         flusher = asyncio.create_task(self._flusher(active))
         resuming = resume is not None or from_checkpoint
-        run_span_scope = None
-        run_span = None
         bundle = active.evaluation_bundle
 
         try:
@@ -531,23 +729,6 @@ class RunManager:
                     active.evaluation_bundle = bundle
                 except Exception:
                     logger.exception("Could not create evaluation artifact bundle for %s", analysis_id)
-
-            try:
-                from opentelemetry import trace
-
-                from edrak.observability import configure_telemetry
-
-                configure_telemetry()
-                run_span_scope = trace.get_tracer("edrak.orchestration").start_as_current_span(
-                    "edrak.orchestration.graph"
-                )
-                run_span = run_span_scope.__enter__()
-                run_span.set_attribute("edrak.run.id", analysis_id)
-                run_span.set_attribute("edrak.run.resuming", resuming)
-            except Exception:
-                logger.exception("Could not initialize telemetry for %s", analysis_id)
-                run_span_scope = None
-                run_span = None
 
             if not resuming:
                 run_view.stage = "dispatch"
@@ -572,6 +753,7 @@ class RunManager:
             )
             config = self._graph_config(analysis_id)
             async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
+                saver.serde = _checkpoint_serializer()
                 graph = build_graph(get_default_registry(), checkpointer=saver)
                 if resuming:
                     snapshot = await graph.aget_state(config)
@@ -636,11 +818,6 @@ class RunManager:
             stream.close()
 
         except Exception as exc:  # noqa: BLE001
-            if run_span is not None and run_span.is_recording():
-                from opentelemetry.trace import Status, StatusCode
-
-                run_span.record_exception(exc)
-                run_span.set_status(Status(StatusCode.ERROR))
             if bundle is not None:
                 try:
                     await asyncio.to_thread(bundle.finish, "failed")
@@ -654,7 +831,7 @@ class RunManager:
             await stream.emit("error", {"message": str(exc)})
             await stream.emit("complete", {"state": "failed", "brief_id": None})
             stream.close()
-            async with get_db() as db:
+            async with self._write_db() as db:
                 await runs_repo.update_run(db, analysis_id, status="failed", completed_at=now, error=str(exc)[:1000], commit=False)
                 await analyses_repo.set_request_status(db, analysis_id, "failed", failure_reason=str(exc)[:1000], commit=False)
                 await db.commit()
@@ -663,24 +840,6 @@ class RunManager:
             flusher.cancel()
             await self._flush(active)
             action_log.unsubscribe(analysis_id, sub_token)
-            trace_id = None
-            if run_span is not None:
-                span_context = run_span.get_span_context()
-                if span_context.is_valid:
-                    trace_id = f"{span_context.trace_id:032x}"
-            if run_span_scope is not None:
-                try:
-                    run_span_scope.__exit__(None, None, None)
-                except Exception:
-                    logger.exception("Could not close telemetry span for %s", analysis_id)
-            if bundle is not None and trace_id is not None:
-                try:
-                    from edrak.observability import spans_for_run
-
-                    spans = await asyncio.to_thread(spans_for_run, analysis_id, trace_id)
-                    await asyncio.to_thread(bundle.save_telemetry, spans)
-                except Exception:
-                    logger.exception("Could not save telemetry for evaluation bundle %s", analysis_id)
 
     # ------------------------------------------------------------------ checkpoint 2 and pausing
 
@@ -688,7 +847,7 @@ class RunManager:
         """The graph stopped at checkpoint 2. Record what the person must review and tell them."""
         view = active.run_view
         request_id = view.analysis_id
-        async with get_db() as db:
+        async with self._write_db() as db:
             latest = await results_repo.latest_verification(db, request_id)
             review = await runs_repo.open_review(
                 db, request_id, verification_id=latest["id"] if latest else None, payload=payload,
@@ -725,7 +884,7 @@ class RunManager:
         """Resume a run waiting at checkpoint 2 with the person's decision."""
         if decision not in ("continue", "replan", "stop"):
             raise ValueError("invalid_decision")
-        async with get_db() as db:
+        async with self._write_db() as db:
             review = await runs_repo.pending_review(db, analysis_id)
             if review is None:
                 raise ValueError("no_pending_review")
@@ -758,7 +917,7 @@ class RunManager:
     async def _mark_paused(self, active: ActiveRun) -> None:
         active.pause_requested = False
         active.run_view.state = "paused"
-        async with get_db() as db:
+        async with self._write_db() as db:
             await runs_repo.update_run(db, active.run_view.analysis_id, status="paused", commit=False)
             await analyses_repo.set_request_status(db, active.run_view.analysis_id, "paused", commit=False)
             await db.commit()
@@ -766,7 +925,7 @@ class RunManager:
         await active.stream.emit("paused", {"state": "paused"})
 
     async def resume_run(self, analysis_id: str) -> None:
-        async with get_db() as db:
+        async with self._write_db() as db:
             run = await runs_repo.get_run(db, analysis_id)
             if not run or run["status"] != "paused":
                 raise ValueError("not_paused")
@@ -809,7 +968,7 @@ class RunManager:
         return active
 
     async def notify_instead(self, analysis_id: str) -> None:
-        async with get_db() as db:
+        async with self._write_db() as db:
             await runs_repo.update_run(db, analysis_id, notify_instead=1)
         active = self._runs.get(analysis_id)
         if active:
@@ -1000,7 +1159,7 @@ class RunManager:
             except Exception:
                 logger.exception("Could not finalize evaluation artifacts for %s", analysis_id)
 
-        async with get_db() as db:
+        async with self._write_db() as db:
             requested_by = None
             if active.requested_by_id:
                 user = await fetch_one(db, "SELECT full_name FROM users WHERE id = ?", (active.requested_by_id,))

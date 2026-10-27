@@ -1,0 +1,1444 @@
+{
+  "task_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f1",
+      "statement": "Discussions compare NVIDIA H100/H200 as best‑in‑class for large‑scale training, while AMD MI300X is highlighted for higher bandwidth and cost‑efficiency for inference, with no clear winner, reflecting mixed sentiment.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "e07f02643da5fea2",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "3c0425808adf304d",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Only two X posts in English; small sample size."
+      ]
+    },
+    {
+      "finding_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f2",
+      "statement": "Users describe NVIDIA H100 as delivering massive parallel compute via advanced Tensor Cores, powering large‑scale model training and inference, indicating strong positive sentiment among AI developers.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "6ab1aee8a96ce3f4",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Single X post; limited perspective.",
+        "single_source"
+      ]
+    },
+    {
+      "finding_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f3",
+      "statement": "Some community members argue that GPU price increases are driven by wealthy investors rather than AI demand, reflecting negative sentiment toward AI hype.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "a5869a3a54a3d6f4",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Single Reddit post; may not represent broader cloud provider or developer views.",
+        "single_source"
+      ]
+    },
+    {
+      "finding_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f4",
+      "statement": "Market weighting shows NVIDIA H100 accounts for about 40% of AI GPU usage, B200 25%, H200 15%, A100 10%, and RTX 4090 another 10% for cheaper inference, indicating tiered adoption among cloud providers and developers.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "be9a26e19e5109a1",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "3b033f5a27087bdf",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.6,
+      "limitations": [
+        "Evidence limited to X platform posts; no corroborating data from other sources."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "e07f02643da5fea2",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/CanopyWave_CW/status/1985361334087856596",
+      "publisher": "x",
+      "extracted_fact": "🚀#NVIDIA vs #AMD in 2025 — the real GPU showdown\n\n• NVIDIA #H100/#H200 → best-in-class for large-scale training, #CUDA still unmatched\n• AMD #MI300X → 192GB HBM3, higher bandwidth, open ecosystem, cost-efficient for inference\n\nNo absolute winner. The right choice depends on your…",
+      "excerpt": "🚀#NVIDIA vs #AMD in 2025 — the real GPU showdown\n\n• NVIDIA #H100/#H200 → best-in-class for large-scale training, #CUDA still unmatched\n• AMD #MI300X → 192GB HBM3, higher bandwidth, open ecosystem, cost-efficient for inference\n\nNo absolute winner. The right choice depends on your workload, budget & software stack. \nAnd the real competitive edge? \nNot just GPUs — but the infra team that turns them into production performance.\n\nThat’s what we do at Canopy Wave: enterprise-grade H100/H200/#B200/#GB…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:21.680647Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2025-11-03T15:00:02+00:00",
+        "engagement": {
+          "likes": 7,
+          "replies": 0,
+          "shares": 5,
+          "views": 345
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "3c0425808adf304d",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/grok/status/2114262170435244300",
+      "publisher": "x",
+      "extracted_fact": "Not sequential gens like Snapdragon. These are NVIDIA AI/data-center GPUs from different architectures:\n\nA100 (Ampere 2020): older, 40-80GB HBM2e.\nH100 (Hopper 2022): big leap, 80GB HBM3, FP8, far faster AI.\nH200 (Hopper): same as H100 but 141GB faster HBM3e for bigger models/co…",
+      "excerpt": "Not sequential gens like Snapdragon. These are NVIDIA AI/data-center GPUs from different architectures:\n\nA100 (Ampere 2020): older, 40-80GB HBM2e.\nH100 (Hopper 2022): big leap, 80GB HBM3, FP8, far faster AI.\nH200 (Hopper): same as H100 but 141GB faster HBM3e for bigger models/context.\nB200 (Blackwell): next arch, 180-192GB HBM3e, FP4, much higher throughput.\nRTX PRO 6000 (Blackwell workstation): 96GB GDDR7, more affordable PCIe option for mid-size AI + graphics.",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:21.680647Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-25T07:45:57+00:00",
+        "engagement": {
+          "likes": 1,
+          "replies": 0,
+          "shares": 0,
+          "views": 101
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "6ab1aee8a96ce3f4",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/grok/status/2112724119598907597",
+      "publisher": "x",
+      "extracted_fact": "@toomanytrips1 @firesidealpha H100s are NVIDIA's Hopper-architecture GPUs built for AI. They deliver massive parallel compute via advanced Tensor Cores, powering large-scale model training and inference in data centers. In the thread, Elon references them as high-demand AI chips…",
+      "excerpt": "@toomanytrips1 @firesidealpha H100s are NVIDIA's Hopper-architecture GPUs built for AI. They deliver massive parallel compute via advanced Tensor Cores, powering large-scale model training and inference in data centers. In the thread, Elon references them as high-demand AI chips that remain scarce.",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:21.680647Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-21T01:54:17+00:00",
+        "engagement": {
+          "likes": 0,
+          "replies": 1,
+          "shares": 0,
+          "views": 78
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "a5869a3a54a3d6f4",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://www.reddit.com/r/pcmasterrace/comments/1px9xwx/private_equity_is_killing_private_ownership_first/",
+      "publisher": "reddit",
+      "extracted_fact": "Private equity is killing private ownership: first it was housing - now it's the personal computer DRAM and GPU prices aren't going up because of \"AI\" - it's because the wealthy have more money than they know what to do with, so they're buying up all the assets. \"AI\" is just the…",
+      "excerpt": "Private equity is killing private ownership: first it was housing - now it's the personal computer DRAM and GPU prices aren't going up because of \"AI\" - it's because the wealthy have more money than they know what to do with, so they're buying up all the assets. \"AI\" is just the vehicle (the excuse) - it's not the root of the problem nor is it the ultimate goal. The super rich don't want to hold on to \"liquid\" money - they invest in assets. While they're buying up all the housing, now they're b…",
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:38.646675Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "reddit",
+        "language": "en",
+        "published_at": "2025-12-27T22:04:00+00:00",
+        "engagement": {
+          "replies": 2923,
+          "upvotes": 48931
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "be9a26e19e5109a1",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/Preshieed/status/2114828737304760432",
+      "publisher": "x",
+      "extracted_fact": "The weighting looks like this:  \nH100 at 40% (still the main one for training)  \n\nB200 at 25% (next-gen cards)  \nH200 at 15%  \n\nA100 at 10%  \nRTX 4090 at 10% for cheaper inference.",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:21.680647Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T21:17:17+00:00",
+        "engagement": {
+          "likes": 4,
+          "replies": 1,
+          "shares": 0,
+          "views": 27
+        },
+        "provider": "socialcrawl"
+      }
+    },
+    {
+      "evidence_id": "3b033f5a27087bdf",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/veroeffiong46/status/2114855977572782384",
+      "publisher": "x",
+      "extracted_fact": "@injective The index doesn't treat every GPU equally:\n\n• H100  > 40%\n• B200 > 25%\n• H200 > 15%\n• A100  >  10%\n• RTX 4090 > 10%\n\nThe H100 has the biggest influence, while the RTX 4090 also captures demand from smaller developers running AI models. https://t.co/YsXBCCl7zh",
+      "excerpt": null,
+      "page_text": null,
+      "retrieved_at": "2026-10-27T04:05:21.680647Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "published_at": "2026-10-26T23:05:31+00:00",
+        "engagement": {
+          "likes": 3,
+          "replies": 1,
+          "shares": 0,
+          "views": 19
+        },
+        "provider": "socialcrawl"
+      }
+    }
+  ],
+  "gaps": [
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "1 platform(s) have at least 20 items; at least 2 are needed",
+    "1 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-10-27T04:04:46.496927Z",
+  "completed_at": "2026-10-27T04:08:09.716927Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "56b96575-5386-412a-bd5c-0acc8bfcc6f9.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "Across 95 evidence items (90 with metrics) from news (41), social posts (39) and Reddit (9) – 92% English, 1 Arabic – the dominant theme is GPU rental price hikes (8 items, 75% negative). Gaps: only one platform reaches 20+ items and Arabic coverage is far below the 10‑item target.",
+      "overall_confidence": "low",
+      "findings_count": 4,
+      "evidence_count": 95,
+      "coverage": {
+        "by_platform": {
+          "unknown": 56,
+          "x": 30,
+          "reddit": 9
+        },
+        "by_source_type": {
+          "news": 41,
+          "social_post": 39,
+          "web": 10,
+          "trend_point": 5
+        },
+        "by_language": {
+          "en": 88,
+          "unknown": 6,
+          "ar": 1
+        }
+      },
+      "gaps": [
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "1 platform(s) have at least 20 items; at least 2 are needed",
+        "1 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [
+        "finding f1 was dropped: numbers in the claim are not in metrics: 6000; copy each into metrics as written (45% is 45), or cite a compute_metrics result as metric_id",
+        "finding f5 was dropped: numbers in the claim are not in metrics: 83.3; copy each into metrics as written (45% is 45), or cite a compute_metrics result as metric_id"
+      ],
+      "budget_used": {
+        "tool_calls": 11.0,
+        "cost_usd": 0.10300000000000001,
+        "seconds": 203.22
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\4f9764fa1512747bfef596f3106b726c\\customer_trends_56b96575-5386-412a-bd5c-0acc8bfcc6f9.a1_result.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 95,
+      "batch_ids": [
+        "b_903d953ed277",
+        "b_4c43c427231f",
+        "b_914f3db8c6aa",
+        "b_a7ff99bbe2a5",
+        "b_e9ead4b4a6f4",
+        "b_055ea9e47ee0",
+        "b_a9d156e7d2b9",
+        "b_1c7a78737826",
+        "b_c81fb7ab6f81",
+        "b_9c2102d1f987"
+      ]
+    },
+    "finding_metrics": {
+      "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f1": {},
+      "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f2": {},
+      "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f3": {},
+      "56b96575-5386-412a-bd5c-0acc8bfcc6f9:f4": {
+        "H100_weight_pct": 40,
+        "B200_weight_pct": 25,
+        "H200_weight_pct": 15,
+        "A100_weight_pct": 10,
+        "RTX4090_weight_pct": 10,
+        "RTX_4090_model": 4090
+      }
+    },
+    "themes": [
+      {
+        "theme_label": "GPU rental price increase",
+        "count": 8,
+        "share": 0.2051,
+        "sentiment_mix": {
+          "negative": 0.75,
+          "neutral": 0.25
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU comparison",
+        "count": 2,
+        "share": 0.0513,
+        "sentiment_mix": {
+          "mixed": 0.5,
+          "neutral": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU market weighting",
+        "count": 2,
+        "share": 0.0513,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI GPU demand",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI compute value",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI hype criticism",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "negative": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI image generation",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU access competition",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU cloud offering",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "GPU core-memory bottleneck",
+        "count": 1,
+        "share": 0.0256,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [
+      {
+        "keyword": "NVIDIA AI",
+        "geo": "US",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            27.0
+          ],
+          [
+            "2025-11-02",
+            35.0
+          ],
+          [
+            "2025-11-09",
+            27.0
+          ],
+          [
+            "2025-11-16",
+            44.0
+          ],
+          [
+            "2025-11-23",
+            35.0
+          ],
+          [
+            "2025-11-30",
+            32.0
+          ],
+          [
+            "2025-12-07",
+            31.0
+          ],
+          [
+            "2025-12-14",
+            29.0
+          ],
+          [
+            "2025-12-21",
+            27.0
+          ],
+          [
+            "2025-12-28",
+            26.0
+          ],
+          [
+            "2026-01-04",
+            33.0
+          ],
+          [
+            "2026-01-11",
+            24.0
+          ],
+          [
+            "2026-01-18",
+            24.0
+          ],
+          [
+            "2026-01-25",
+            26.0
+          ],
+          [
+            "2026-02-01",
+            28.0
+          ],
+          [
+            "2026-02-08",
+            21.0
+          ],
+          [
+            "2026-02-15",
+            25.0
+          ],
+          [
+            "2026-02-22",
+            39.0
+          ],
+          [
+            "2026-03-01",
+            49.0
+          ],
+          [
+            "2026-03-08",
+            41.0
+          ],
+          [
+            "2026-03-15",
+            63.0
+          ],
+          [
+            "2026-03-22",
+            37.0
+          ],
+          [
+            "2026-03-29",
+            36.0
+          ],
+          [
+            "2026-04-05",
+            34.0
+          ],
+          [
+            "2026-04-12",
+            47.0
+          ],
+          [
+            "2026-04-19",
+            43.0
+          ],
+          [
+            "2026-04-26",
+            38.0
+          ],
+          [
+            "2026-05-03",
+            43.0
+          ],
+          [
+            "2026-05-10",
+            54.0
+          ],
+          [
+            "2026-05-17",
+            78.0
+          ],
+          [
+            "2026-05-24",
+            78.0
+          ],
+          [
+            "2026-05-31",
+            100.0
+          ],
+          [
+            "2026-06-07",
+            79.0
+          ],
+          [
+            "2026-06-14",
+            56.0
+          ],
+          [
+            "2026-06-21",
+            61.0
+          ],
+          [
+            "2026-06-28",
+            75.0
+          ],
+          [
+            "2026-07-05",
+            64.0
+          ],
+          [
+            "2026-07-12",
+            29.0
+          ],
+          [
+            "2026-07-19",
+            29.0
+          ],
+          [
+            "2026-07-26",
+            26.0
+          ],
+          [
+            "2026-08-02",
+            21.0
+          ],
+          [
+            "2026-08-09",
+            28.0
+          ],
+          [
+            "2026-08-16",
+            22.0
+          ],
+          [
+            "2026-08-23",
+            15.0
+          ],
+          [
+            "2026-08-30",
+            12.0
+          ],
+          [
+            "2026-09-06",
+            12.0
+          ],
+          [
+            "2026-09-13",
+            12.0
+          ],
+          [
+            "2026-09-20",
+            11.0
+          ],
+          [
+            "2026-09-27",
+            12.0
+          ],
+          [
+            "2026-10-04",
+            11.0
+          ],
+          [
+            "2026-10-11",
+            12.0
+          ],
+          [
+            "2026-10-18",
+            11.0
+          ],
+          [
+            "2026-10-25",
+            15.0
+          ]
+        ]
+      },
+      {
+        "keyword": "AMD Instinct",
+        "geo": "US",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            0.0
+          ],
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            1.0
+          ],
+          [
+            "2025-11-16",
+            1.0
+          ],
+          [
+            "2025-11-23",
+            1.0
+          ],
+          [
+            "2025-11-30",
+            1.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-21",
+            1.0
+          ],
+          [
+            "2025-12-28",
+            1.0
+          ],
+          [
+            "2026-01-04",
+            1.0
+          ],
+          [
+            "2026-01-11",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            1.0
+          ],
+          [
+            "2026-02-08",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            1.0
+          ],
+          [
+            "2026-03-01",
+            1.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            2.0
+          ],
+          [
+            "2026-04-12",
+            2.0
+          ],
+          [
+            "2026-04-19",
+            2.0
+          ],
+          [
+            "2026-04-26",
+            2.0
+          ],
+          [
+            "2026-05-03",
+            2.0
+          ],
+          [
+            "2026-05-10",
+            2.0
+          ],
+          [
+            "2026-05-17",
+            2.0
+          ],
+          [
+            "2026-05-24",
+            2.0
+          ],
+          [
+            "2026-05-31",
+            3.0
+          ],
+          [
+            "2026-06-07",
+            3.0
+          ],
+          [
+            "2026-06-14",
+            2.0
+          ],
+          [
+            "2026-06-21",
+            3.0
+          ],
+          [
+            "2026-06-28",
+            2.0
+          ],
+          [
+            "2026-07-05",
+            2.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            1.0
+          ],
+          [
+            "2026-07-26",
+            0.0
+          ],
+          [
+            "2026-08-02",
+            1.0
+          ],
+          [
+            "2026-08-09",
+            1.0
+          ],
+          [
+            "2026-08-16",
+            0.0
+          ],
+          [
+            "2026-08-23",
+            0.0
+          ],
+          [
+            "2026-08-30",
+            0.0
+          ],
+          [
+            "2026-09-06",
+            0.0
+          ],
+          [
+            "2026-09-13",
+            0.0
+          ],
+          [
+            "2026-09-20",
+            0.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ],
+          [
+            "2026-10-18",
+            0.0
+          ],
+          [
+            "2026-10-25",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "Intel Gaudi",
+        "geo": "US",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            0.0
+          ],
+          [
+            "2025-11-02",
+            0.0
+          ],
+          [
+            "2025-11-09",
+            0.0
+          ],
+          [
+            "2025-11-16",
+            0.0
+          ],
+          [
+            "2025-11-23",
+            0.0
+          ],
+          [
+            "2025-11-30",
+            0.0
+          ],
+          [
+            "2025-12-07",
+            0.0
+          ],
+          [
+            "2025-12-14",
+            0.0
+          ],
+          [
+            "2025-12-21",
+            0.0
+          ],
+          [
+            "2025-12-28",
+            0.0
+          ],
+          [
+            "2026-01-04",
+            0.0
+          ],
+          [
+            "2026-01-18",
+            0.0
+          ],
+          [
+            "2026-01-25",
+            0.0
+          ],
+          [
+            "2026-02-01",
+            0.0
+          ],
+          [
+            "2026-02-08",
+            0.0
+          ],
+          [
+            "2026-02-15",
+            0.0
+          ],
+          [
+            "2026-02-22",
+            0.0
+          ],
+          [
+            "2026-03-01",
+            0.0
+          ],
+          [
+            "2026-03-08",
+            0.0
+          ],
+          [
+            "2026-03-15",
+            0.0
+          ],
+          [
+            "2026-03-22",
+            0.0
+          ],
+          [
+            "2026-03-29",
+            0.0
+          ],
+          [
+            "2026-04-05",
+            0.0
+          ],
+          [
+            "2026-04-12",
+            0.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            0.0
+          ],
+          [
+            "2026-05-03",
+            0.0
+          ],
+          [
+            "2026-05-10",
+            0.0
+          ],
+          [
+            "2026-05-17",
+            1.0
+          ],
+          [
+            "2026-05-24",
+            1.0
+          ],
+          [
+            "2026-05-31",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            1.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-21",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            0.0
+          ],
+          [
+            "2026-07-26",
+            0.0
+          ],
+          [
+            "2026-08-02",
+            0.0
+          ],
+          [
+            "2026-08-16",
+            0.0
+          ],
+          [
+            "2026-09-06",
+            0.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ],
+          [
+            "2026-10-18",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "AI accelerators",
+        "geo": "US",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            0.0
+          ],
+          [
+            "2025-11-02",
+            1.0
+          ],
+          [
+            "2025-11-09",
+            1.0
+          ],
+          [
+            "2025-11-16",
+            0.0
+          ],
+          [
+            "2025-11-23",
+            1.0
+          ],
+          [
+            "2025-11-30",
+            1.0
+          ],
+          [
+            "2025-12-07",
+            1.0
+          ],
+          [
+            "2025-12-14",
+            1.0
+          ],
+          [
+            "2025-12-21",
+            1.0
+          ],
+          [
+            "2025-12-28",
+            1.0
+          ],
+          [
+            "2026-01-04",
+            1.0
+          ],
+          [
+            "2026-01-11",
+            1.0
+          ],
+          [
+            "2026-01-18",
+            1.0
+          ],
+          [
+            "2026-01-25",
+            1.0
+          ],
+          [
+            "2026-02-01",
+            1.0
+          ],
+          [
+            "2026-02-08",
+            1.0
+          ],
+          [
+            "2026-02-15",
+            1.0
+          ],
+          [
+            "2026-02-22",
+            1.0
+          ],
+          [
+            "2026-03-01",
+            2.0
+          ],
+          [
+            "2026-03-08",
+            1.0
+          ],
+          [
+            "2026-03-15",
+            1.0
+          ],
+          [
+            "2026-03-22",
+            1.0
+          ],
+          [
+            "2026-03-29",
+            1.0
+          ],
+          [
+            "2026-04-05",
+            1.0
+          ],
+          [
+            "2026-04-12",
+            1.0
+          ],
+          [
+            "2026-04-19",
+            1.0
+          ],
+          [
+            "2026-04-26",
+            1.0
+          ],
+          [
+            "2026-05-03",
+            2.0
+          ],
+          [
+            "2026-05-10",
+            1.0
+          ],
+          [
+            "2026-05-17",
+            2.0
+          ],
+          [
+            "2026-05-24",
+            2.0
+          ],
+          [
+            "2026-05-31",
+            3.0
+          ],
+          [
+            "2026-06-07",
+            2.0
+          ],
+          [
+            "2026-06-14",
+            2.0
+          ],
+          [
+            "2026-06-21",
+            2.0
+          ],
+          [
+            "2026-06-28",
+            2.0
+          ],
+          [
+            "2026-07-05",
+            2.0
+          ],
+          [
+            "2026-07-12",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            1.0
+          ],
+          [
+            "2026-07-26",
+            0.0
+          ],
+          [
+            "2026-08-02",
+            0.0
+          ],
+          [
+            "2026-08-09",
+            0.0
+          ],
+          [
+            "2026-08-16",
+            0.0
+          ],
+          [
+            "2026-08-30",
+            0.0
+          ],
+          [
+            "2026-09-06",
+            0.0
+          ],
+          [
+            "2026-09-13",
+            0.0
+          ],
+          [
+            "2026-09-20",
+            0.0
+          ],
+          [
+            "2026-09-27",
+            0.0
+          ],
+          [
+            "2026-10-04",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ],
+          [
+            "2026-10-18",
+            0.0
+          ],
+          [
+            "2026-10-25",
+            0.0
+          ]
+        ]
+      },
+      {
+        "keyword": "cloud AI GPUs",
+        "geo": "US",
+        "timeframe": "today 12-m",
+        "granularity": "week",
+        "source": "socialcrawl",
+        "points": [
+          [
+            "2025-10-26",
+            0.0
+          ],
+          [
+            "2025-11-02",
+            0.0
+          ],
+          [
+            "2025-11-09",
+            0.0
+          ],
+          [
+            "2025-11-16",
+            0.0
+          ],
+          [
+            "2025-11-23",
+            0.0
+          ],
+          [
+            "2025-11-30",
+            0.0
+          ],
+          [
+            "2025-12-07",
+            0.0
+          ],
+          [
+            "2025-12-14",
+            0.0
+          ],
+          [
+            "2025-12-21",
+            0.0
+          ],
+          [
+            "2025-12-28",
+            0.0
+          ],
+          [
+            "2026-01-04",
+            0.0
+          ],
+          [
+            "2026-01-11",
+            0.0
+          ],
+          [
+            "2026-01-18",
+            0.0
+          ],
+          [
+            "2026-01-25",
+            0.0
+          ],
+          [
+            "2026-02-01",
+            0.0
+          ],
+          [
+            "2026-02-08",
+            0.0
+          ],
+          [
+            "2026-02-15",
+            0.0
+          ],
+          [
+            "2026-02-22",
+            0.0
+          ],
+          [
+            "2026-03-01",
+            0.0
+          ],
+          [
+            "2026-03-08",
+            0.0
+          ],
+          [
+            "2026-03-15",
+            0.0
+          ],
+          [
+            "2026-03-22",
+            0.0
+          ],
+          [
+            "2026-03-29",
+            0.0
+          ],
+          [
+            "2026-04-05",
+            0.0
+          ],
+          [
+            "2026-04-12",
+            0.0
+          ],
+          [
+            "2026-04-19",
+            0.0
+          ],
+          [
+            "2026-04-26",
+            0.0
+          ],
+          [
+            "2026-05-03",
+            0.0
+          ],
+          [
+            "2026-05-10",
+            1.0
+          ],
+          [
+            "2026-05-17",
+            1.0
+          ],
+          [
+            "2026-05-24",
+            1.0
+          ],
+          [
+            "2026-05-31",
+            1.0
+          ],
+          [
+            "2026-06-07",
+            1.0
+          ],
+          [
+            "2026-06-14",
+            1.0
+          ],
+          [
+            "2026-06-21",
+            1.0
+          ],
+          [
+            "2026-06-28",
+            1.0
+          ],
+          [
+            "2026-07-05",
+            1.0
+          ],
+          [
+            "2026-07-19",
+            0.0
+          ],
+          [
+            "2026-07-26",
+            0.0
+          ],
+          [
+            "2026-09-13",
+            0.0
+          ],
+          [
+            "2026-10-11",
+            0.0
+          ],
+          [
+            "2026-10-18",
+            0.0
+          ]
+        ]
+      }
+    ],
+    "official_accounts": [],
+    "stance_counts": {
+      "NVIDIA Corporation": {
+        "positive": 11,
+        "neutral": 6,
+        "negative": 10,
+        "mixed": 0,
+        "total": 27
+      }
+    },
+    "research_goal": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding NVIDIA, AMD Instinct, and Intel Gaudi accelerators?",
+    "research_focus": "Feedback, reviews, and usage trends from target customers in Europe and the United States across public forums, social media, and search interest"
+  }
+}

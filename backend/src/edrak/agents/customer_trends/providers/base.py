@@ -117,7 +117,15 @@ class ProviderExhausted(ProviderError):
     def __init__(self, capability: str, failures: list[ProviderFailure]) -> None:
         self.capability = capability
         self.failures = failures
-        detail = "; ".join(f"{f.provider}: {f.error}" for f in failures) or "no provider routed"
+        detail = (
+            "; ".join(
+                f"{f.provider}: {f.error}: {f.message[:200]}"
+                if f.message != f.error
+                else f"{f.provider}: {f.error}"
+                for f in failures
+            )
+            or "no provider routed"
+        )
         super().__init__(f"{capability}: all providers failed ({detail})")
 
 

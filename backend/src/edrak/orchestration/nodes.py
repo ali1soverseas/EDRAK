@@ -26,7 +26,6 @@ from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
 from ..core.action_log import log_action
 from ..DecisionAnalysis.service import run_decision_analysis
-from ..observability import traced
 from .planner import LlmPlanner, PlanningError
 from .state import RESET, OrchestrationState
 
@@ -163,7 +162,6 @@ def plan_node(state: OrchestrationState) -> OrchestrationState:
     return {**state, "plan": plan}
 
 
-@traced("edrak.worker.run")
 def run_task(task: ResearchTask, registry: WorkerRegistry) -> WorkerResult:
     """Run one task and always come back with a valid WorkerResult.
 

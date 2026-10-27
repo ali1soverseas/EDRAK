@@ -233,8 +233,8 @@ def test_metrics_evaluator_rejects_missing_required_outcome():
         {"tool_events": [{"tool": "web_search", "duration_ms": 10}]},
     ],
 )
-def test_detect_recognizes_event_only_telemetry(payload):
-    assert eval_agent.detect(payload) == "telemetry"
+def test_detect_does_not_classify_events_or_tool_calls_as_pipeline_inputs(payload):
+    assert eval_agent.detect(payload) == "unknown"
 
 
 def test_detect_keeps_orchestration_payload_with_events_as_orchestration():
@@ -247,99 +247,6 @@ def test_detect_keeps_worker_payload_with_events_as_worker():
     assert eval_agent.detect({"worker": "market_intelligence", "findings": [], "events": []}) == "worker"
 
 
-def test_telemetry_p95_uses_nearest_rank_for_small_sample():
-    result = eval_agent.eval_telemetry(
-        Path("telemetry.json"),
-        {"events": [{"name": "fast", "duration_ms": 10}, {"name": "slow", "duration_ms": 100}]},
-        None,
-        None,
-        None,
-    )
-
-    assert result["metrics"]["spans"] == 2
-    assert result["metrics"]["p95_duration_ms"] == 100
-
-
-def test_telemetry_checks_worker_task_identity_and_correlates_tool_policy():
-    result = eval_agent.eval_telemetry(
-        Path("telemetry.json"),
-        {
-            "spans": [
-                {
-                    "name": "edrak.worker.run",
-                    "span_id": "worker-1",
-                    "duration_ms": 20,
-                    "status": "ok",
-                    "attributes": {
-                        "edrak.agent.type": "competitor_intelligence",
-                        "edrak.task.id": "task-1",
-                        "edrak.task.attempt": 1,
-                    },
-                },
-                {
-                    "name": "tool.call",
-                    "span_id": "tool-1",
-                    "parent_span_id": "worker-1",
-                    "duration_ms": 10,
-                    "status": "ok",
-                    "attributes": {
-                        "edrak.tool.name": "competitor_web_search",
-                        "edrak.tool.argument.names": "query,max_results",
-                        "edrak.tool.argument.types": '{"max_results":"int","query":"str"}',
-                        "edrak.tool.status": "ok",
-                    },
-                },
-            ]
-        },
-        None,
-        None,
-        None,
-    )
-
-    assert result["metrics"]["worker_task_identity_pct"] == 100.0
-    assert result["metrics"]["worker_process_recorded_pct"] == 100.0
-    assert result["execution_quality"]["dimensions"]["tool_selection"]["status"] == "assessable"
-    assert result["execution_quality"]["dimensions"]["tool_arguments"]["status"] == "assessable"
-    assert result["rows"][1]["worker"] == "competitor_intelligence"
-    assert result["rows"][1]["task_id"] == "task-1"
-    assert all(
-        item["passed"]
-        for item in result["checks"]
-        if item["check"] in {
-            "worker spans carry agent and task identity",
-            "worker spans record process status and duration",
-        }
-    )
-
-
-def test_telemetry_warns_when_worker_trace_omits_task_id():
-    result = eval_agent.eval_telemetry(
-        Path("telemetry.json"),
-        {
-            "spans": [
-                {
-                    "name": "edrak.worker.run",
-                    "span_id": "worker-1",
-                    "duration_ms": 20,
-                    "status": "ok",
-                    "attributes": {"edrak.agent.type": "internal_intelligence"},
-                }
-            ]
-        },
-        None,
-        None,
-        None,
-    )
-
-    identity_check = next(
-        item for item in result["checks"]
-        if item["check"] == "worker spans carry agent and task identity"
-    )
-    assert not identity_check["passed"]
-    assert "1/1" in identity_check["detail"]
-    assert result["rows"][0]["flags"] == ["missing_worker_task_identity"]
-
-
 def test_cli_evaluates_a_run_bundle_without_manual_input_glob(tmp_path, monkeypatch):
     bundle = tmp_path / "analysis-1"
     inputs = bundle / "inputs"
@@ -347,11 +254,6 @@ def test_cli_evaluates_a_run_bundle_without_manual_input_glob(tmp_path, monkeypa
     outputs = bundle / "outputs"
     outputs.mkdir()
     (bundle / "manifest.json").write_text('{"analysis_id": "analysis-1"}', encoding="utf-8")
-    (inputs / "telemetry.json").write_text(
-        '{"spans": [{"name": "edrak.orchestration.graph", "trace_id": "trace-1", "span_id": "span-1", '
-        '"status": "ok", "duration_ms": 10, "attributes": {}}]}',
-        encoding="utf-8",
-    )
     (outputs / "metrics_001.json").write_text(
         '{"metrics_stage": true, "results": []}',
         encoding="utf-8",
@@ -367,7 +269,7 @@ def test_cli_evaluates_a_run_bundle_without_manual_input_glob(tmp_path, monkeypa
     )
 
     assert eval_agent.main() == 0
-    assert (bundle / "evaluation" / "telemetry_report.json").is_file()
+    assert not (bundle / "evaluation" / "telemetry_report.json").exists()
     assert (bundle / "evaluation" / "metrics_report.json").is_file()
 
 
@@ -378,16 +280,11 @@ def test_cli_runs_comparison_after_run_bundle_evaluation(tmp_path, monkeypatch):
     outputs = bundle / "outputs"
     outputs.mkdir()
     (bundle / "manifest.json").write_text('{"analysis_id": "analysis-compare"}', encoding="utf-8")
-    (inputs / "telemetry.json").write_text(
-        '{"spans": [{"name": "edrak.orchestration.graph", "trace_id": "trace-1", "span_id": "span-1", '
-        '"status": "ok", "duration_ms": 10, "attributes": {}}]}',
-        encoding="utf-8",
-    )
     (outputs / "metrics_001.json").write_text('{"metrics_stage": true, "results": []}', encoding="utf-8")
     comparison_calls = []
 
     def run_comparison(command, check):
-        assert (bundle / "evaluation" / "telemetry_report.json").is_file()
+        assert not (bundle / "evaluation" / "telemetry_report.json").exists()
         comparison_calls.append((command, check))
         return SimpleNamespace(returncode=0)
 

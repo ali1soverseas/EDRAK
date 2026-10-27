@@ -6,7 +6,7 @@ from datetime import UTC, date, datetime
 from functools import partial
 from typing import Any, Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from edrak.agents.customer_trends.providers.base import (
     CallParams,
@@ -61,6 +61,17 @@ class SearchInterestInput(RequestBase):
         default="week", description="A hint: Google picks the resolution from the timeframe."
     )
     include_related: bool = Field(default=True, description="Also keep related queries.")
+
+    @field_validator("granularity", mode="before")
+    @classmethod
+    def normalize_granularity(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return {
+                "daily": "day",
+                "weekly": "week",
+                "monthly": "month",
+            }.get(value.strip().lower(), value)
+        return value
 
 
 def trend_direction(

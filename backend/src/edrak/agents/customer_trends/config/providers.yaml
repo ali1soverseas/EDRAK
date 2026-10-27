@@ -185,8 +185,8 @@ providers:
             maxItems: "{max_results}"
           requires: [keywords]
           cost_per_item_usd: 0.003
-          timeout_s: 150
-          note: A browser actor; one live run took 80 seconds and an earlier one timed out at 240. The worker now calls it once by itself before the demand branch starts, outside the branch's clock, so it gets 150 seconds before SocialCrawl takes over.
+          timeout_s: 45
+          note: Bound the browser actor so search interest cannot consume the collection window needed by other branches and finalization.
         # The posts of one official account. `target` is the X handle, or the full profile URL for
         # Instagram and Facebook. The same mappers as the search actors read the output.
         account_posts:x:
@@ -384,7 +384,7 @@ routing:
   social_comments:facebook: [socialcrawl, apify]
   social_comments:reddit: [socialcrawl, apify]
   social_comments:youtube: [youtube_api, socialcrawl, apify]
-  search_interest: [apify, socialcrawl, google_trends_api]
+  search_interest: [socialcrawl, google_trends_api]
   account_posts:x: [apify]
   account_posts:instagram: [apify]
   account_posts:facebook: [apify]

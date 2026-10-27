@@ -1,13 +1,16 @@
 import asyncio
 from types import SimpleNamespace
 
-from pydantic import BaseModel
-
 from edrak.agents.customer_trends import nodes
-from edrak.agents.customer_trends.providers.base import ProviderExhausted, ProviderFailure
+from edrak.agents.customer_trends.providers.base import (
+    ProviderExhausted,
+    ProviderFailure,
+)
 from edrak.agents.customer_trends.schemas.common import UseCase
 from edrak.agents.customer_trends.schemas.task import TaskBrief
 from edrak.agents.customer_trends.tools.base import execute_collection
+from edrak.agents.customer_trends.tools.search_interest import SearchInterestInput
+from pydantic import BaseModel
 
 
 class _Input(BaseModel):
@@ -82,3 +85,30 @@ def test_analyze_skips_metrics_when_collection_produced_no_data(monkeypatch):
     assert calls == []
     assert result["analysis_done"] is True
     assert any("metrics skipped" in warning for warning in result["warnings"])
+
+
+def test_search_interest_timeout_is_bounded_by_collection_budget(monkeypatch):
+    monkeypatch.setattr(nodes, "TREND_TIMEOUT_S", 75)
+
+    assert nodes._search_interest_timeout(
+        SimpleNamespace(budget=SimpleNamespace(collection_seconds_left=lambda: 30))
+    ) == 30
+    assert nodes._search_interest_timeout(
+        SimpleNamespace(budget=SimpleNamespace(collection_seconds_left=lambda: 200))
+    ) == 75
+    assert nodes._search_interest_timeout(
+        SimpleNamespace(budget=SimpleNamespace(collection_seconds_left=lambda: -5))
+    ) == 0
+
+
+def test_search_interest_accepts_common_granularity_words():
+    base = {
+        "run_id": "run",
+        "task_id": "task",
+        "keywords": ["NVIDIA"],
+        "timeframe": "today 12-m",
+    }
+
+    assert SearchInterestInput(**base, granularity="monthly").granularity == "month"
+    assert SearchInterestInput(**base, granularity="weekly").granularity == "week"
+    assert SearchInterestInput(**base, granularity="daily").granularity == "day"
