@@ -1,0 +1,154 @@
+[
+  {
+    "test_case_id": "VER-NVIDIA-001",
+    "worker": "internal_intelligence",
+    "finding_id": "89476b81-8db6-4b96-a3ff-7eb031120809",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The internal company-context document explicitly describes the pilot scope as AI computing/data-center platforms, identifies cloud providers and AI developers as target customers, and lists the US and Europe as markets. The claim says 'is described as', so it is verified as a statement about the supplied EDRAK context, not as independent proof of NVIDIA's actual commercial targeting."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-002",
+    "worker": "internal_intelligence",
+    "finding_id": "201e6e2a-36f1-450e-9485-29d4ca3fcc6b",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The internal source register explicitly lists the NVIDIA data-center product portfolio at the exact URL in the finding. This verifies the locator/reference claim, but it does not verify the live page contents, product availability, or product specifications."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-003",
+    "worker": "internal_intelligence",
+    "finding_id": "a0ee6e56-dc25-4e9b-9561-08bf8565e001",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The attached internal context document states that accelerated compute consists of GPU-based systems and related processors for AI and high-performance computing workloads. The wording closely matches the evidence."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-004",
+    "worker": "internal_intelligence",
+    "finding_id": "daf17c8c-70c2-4920-96c0-03df5ad1179d",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The same internal context document explicitly says NVIDIA's software ecosystem includes CUDA and AI software offerings. The evidence directly supports this broad statement."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-005",
+    "worker": "competitor_intelligence",
+    "finding_id": "72c9e985-cb7e-4dba-b495-c67955189ca9",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The cited iBL.ai article's $30 and $60 per-user figures appear in a generic cost-model comparison for Jalapeño/per-seat inference licensing. The evidence does not attribute these tiers to Broadcom. The company attribution is unsupported."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-006",
+    "worker": "competitor_intelligence",
+    "finding_id": "85029089-0b3a-42a5-9fdb-acfd9cd20780",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The Tickeron evidence excerpt explicitly reports $16.7 billion AI semiconductor revenue, 56% of total revenue, and approximately $58 billion FY2026 AI revenue guidance. The second attached Investing.com source concerns Q1 FY2026 and does not corroborate these Q3 figures, so only the Tickeron item supports the claim."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-007",
+    "worker": "competitor_intelligence",
+    "finding_id": "cfeb0e93-3e5f-4d57-a1ed-e512ae4d6df3",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The Broadcom newsroom excerpt lists a number of announcements, but it mixes product announcements, financial results, facilities, consortium initiatives, and software/security offerings. The captured excerpt is incomplete and does not establish the stated counts or the general rate of three to four public product releases per quarter."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-008",
+    "worker": "competitor_intelligence",
+    "finding_id": "1abb898d-c669-4426-8773-3b2bf813263f",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The Globes article supports that analysts made an approximately $500 million Gaudi 3 revenue forecast at the time of the product launch. However, the forecast is from an older article and the finding omits the forecast year/time context. In a 2026 snapshot, the unqualified 'by the end of the year' wording is temporally ambiguous and cannot be treated as a current forecast."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-009",
+    "worker": "competitor_intelligence",
+    "finding_id": "c42929f7-3969-4d53-bdb7-e559b6d51dfc",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The Manufacturing Dive evidence excerpt directly states Intel's data-center and AI products generated $6.3 billion in Q2 2026 revenue, up 59% year over year."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-010",
+    "worker": "competitor_intelligence",
+    "finding_id": "9d63f996-b964-4208-8699-5394753b2c03",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The Broadcom announcement describes a $63 billion financing transaction intended to enable AI compute capacity for Anthropic using Broadcom technology, with expected deliveries beginning in 2027. It does not establish that Anthropic is already a paying customer purchasing Broadcom AI accelerator offerings directly. The finding adds an unsupported customer/payment/product inference."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-011",
+    "worker": "market_intelligence",
+    "finding_id": "3ffd8dba-3277-48ca-88a7-e3489fa6bf3b",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The Mordor Intelligence evidence explicitly projects the United States artificial-intelligence data-center market to reach $42.39 billion by 2031. The finding accurately states that broader market measure."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-012",
+    "worker": "market_intelligence",
+    "finding_id": "12156014-d381-406b-bc03-815b07cb250a",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The attached market excerpt explicitly states that hardware spending is projected to grow at a 30.56% CAGR through 2031. The extracted fact omitted that sentence, but the full excerpt contains it."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-013",
+    "worker": "market_intelligence",
+    "finding_id": "a81ca8ad-7008-4b8f-8a7a-4c45b37ccbdc",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The cited Kiteworks page discusses data residency, but the finding overstates the legal position by claiming GDPR mandates personal data to be stored and processed in specific geographic locations and thereby compels accelerator deployments in EU data centers. The evidence does not establish that broad mandatory localization rule or the deployment conclusion."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-014",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f1",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The Register excerpt supports Broadcom's involvement in Google's TPU work and describes Meta as approaching/engaging Broadcom, but it does not firmly establish a completed Meta collaboration. The second source concerns Broadcom 112G SerDes and OAI contributors, not Google or Meta. The combined claim about collaborations with both companies is not fully supported."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-015",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f2",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "Data Center Dynamics explicitly identifies Gcore as a European cloud provider and reports that it launched a generative-AI cluster using NVIDIA A100 and H100 Tensor Core GPUs. Business Wire provides a second source for the cluster and GPU models."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-016",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f3",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The T Cloud Public excerpt describes H100 GPUs as bringing additional computing power and efficiency, while GreenNode describes them as designed for cloud-AI compute demands and reduced data bottlenecks. This supports the carefully worded claim that H100 is portrayed positively; it does not establish a quantitative benchmark."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-017",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f4",
+    "agent_status": "verified",
+    "expected_status": "insufficient",
+    "reason": "The Computerworld headline references new AI chips and pricing strategies, and its extracted fact supports competitive positioning for Intel Lunar Lake and AMD Instinct MI325X. However, the supplied extracted facts do not establish the specific pricing strategies, and the evidence is from 2024 while the finding uses present-tense 'are launching' in a 2026 snapshot. The complete current claim is therefore not adequately supported."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-018",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f5",
+    "agent_status": "insufficient",
+    "expected_status": "insufficient",
+    "reason": "One Arabic-language article about AI chips and US export controls does not establish that the research corpus contains only one Arabic item, nor does it support a conclusion about sentiment coverage in Arabic-speaking markets. The item-count claim needs corpus-level metadata, not a single article as source evidence."
+  },
+  {
+    "test_case_id": "VER-NVIDIA-019",
+    "worker": "customer_trends",
+    "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f6",
+    "agent_status": "verified",
+    "expected_status": "verified",
+    "reason": "The Interesting Engineering evidence explicitly states that Broadcom unveiled its 3.5D XDSiP platform to meet rising GenAI chip demand, directly supporting the claim."
+  }
+]

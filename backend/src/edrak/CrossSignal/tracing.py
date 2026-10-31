@@ -1,22 +1,19 @@
-"""Dedicated Cross-Signal tracing into the existing orchestrator_planning.json.
-
-This module does not create a separate trace JSON. It appends each event to:
-  orchestrator_planning.json['trace_events']
-  orchestrator_planning.json['cross_signal_trace']['history']
+"""Dedicated Cross-Signal tracing into cross_signal_tracing.json.
 
 Path resolution order:
-1. EDRAK_ORCHESTRATOR_PLANNING_JSON environment variable.
-2. artifacts/runs/<research_run_id>/orchestrator_planning.json.
-3. The most recently modified orchestrator_planning.json under artifacts/runs.
+1. EDRAK_CROSS_SIGNAL_TRACE_JSON environment variable.
+2. The sibling of EDRAK_ORCHESTRATOR_PLANNING_JSON.
+3. artifacts/runs/<research_run_id>/cross_signal_tracing.json.
+4. A sibling of the most recently modified planning artifact.
 
-If no planning file exists but a research_run_id is available, it creates the
-expected per-run planning file while preserving all existing data when present.
+The Cross-Signal trace is kept separate from planning and other run artifacts.
 """
 from __future__ import annotations
 
 import json
 import logging
 import os
+import re
 import threading
 from datetime import datetime, timezone
 from enum import Enum
@@ -90,39 +87,41 @@ def _find_runs_root() -> Path:
 
 
 def _resolve_path(state: Any = None) -> Path:
-    explicit = os.getenv("EDRAK_ORCHESTRATOR_PLANNING_JSON", "").strip()
+    explicit = os.getenv("EDRAK_CROSS_SIGNAL_TRACE_JSON", "").strip()
     if explicit:
         return Path(explicit).expanduser().resolve()
+
+    explicit_planning = os.getenv("EDRAK_ORCHESTRATOR_PLANNING_JSON", "").strip()
+    if explicit_planning:
+        return Path(explicit_planning).expanduser().resolve().with_name(
+            "cross_signal_tracing.json"
+        )
 
     runs_root = _find_runs_root()
     run_id = _run_id_from(state)
     if run_id:
-        candidate = runs_root / run_id / "orchestrator_planning.json"
-        if candidate.exists():
-            return candidate
+        safe_run_id = re.sub(r"[^A-Za-z0-9_.-]+", "_", run_id)[:120]
+        if safe_run_id:
+            return runs_root / safe_run_id / "cross_signal_tracing.json"
 
-    existing = list(runs_root.glob("**/orchestrator_planning.json")) if runs_root.exists() else []
+    existing = (
+        list(runs_root.glob("**/orchestrator_planning.json"))
+        if runs_root.exists()
+        else []
+    )
     if existing:
-        # Prefer the file belonging to this run when the run ID is present in its path.
-        if run_id:
-            matches = [p for p in existing if run_id in p.parts]
-            if matches:
-                return max(matches, key=lambda p: p.stat().st_mtime)
-        return max(existing, key=lambda p: p.stat().st_mtime)
+        return max(existing, key=lambda p: p.stat().st_mtime).with_name(
+            "cross_signal_tracing.json"
+        )
 
-    # Keep the established per-run layout if the planning file has not been created yet.
-    if run_id:
-        return runs_root / run_id / "orchestrator_planning.json"
-
-    # No run ID available: don't invent a new unrelated file.
     raise FileNotFoundError(
-        "Cannot locate orchestrator_planning.json. Set "
-        "EDRAK_ORCHESTRATOR_PLANNING_JSON or provide research_run_id in state."
+        "Cannot locate Cross-Signal trace path. Set "
+        "EDRAK_CROSS_SIGNAL_TRACE_JSON or provide research_run_id in state."
     )
 
 
 def trace_cross_signal(stage: str, state: Any = None, **payload: Any) -> None:
-    """Append one Cross-Signal trace event without replacing existing planning data.
+    """Append one Cross-Signal trace event to its own JSON artifact.
 
     Tracing failures are logged and swallowed so observability cannot fail the agent.
     """
@@ -140,14 +139,16 @@ def trace_cross_signal(stage: str, state: Any = None, **payload: Any) -> None:
                 try:
                     data = json.loads(path.read_text(encoding="utf-8"))
                     if not isinstance(data, dict):
-                        data = {"existing_planning_data": data}
+                        data = {"existing_cross_signal_data": data}
                 except json.JSONDecodeError:
-                    logger.exception("Cannot append Cross-Signal trace: invalid JSON in %s", path)
+                    logger.exception(
+                        "Cannot append Cross-Signal trace: invalid JSON in %s", path
+                    )
                     return
             else:
                 data = {}
 
-            # Unified timeline shared with the orchestrator trace writer.
+            # Keep the event structure consistent with other run trace artifacts.
             timeline = data.setdefault("trace_events", [])
             if not isinstance(timeline, list):
                 timeline = data["trace_events"] = []

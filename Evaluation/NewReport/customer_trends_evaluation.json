@@ -1,0 +1,1301 @@
+{
+  "worker": "customer_trends",
+  "task_goal": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding AI accelerators from NVIDIA, Broadcom, and Intel in Europe and the United States?",
+  "deterministic_checks": {
+    "finding_count": 6,
+    "evidence_item_count": 16,
+    "gap_count": 4,
+    "evidence_reference_rate": 1.0,
+    "reference_resolution_rate": 1.0,
+    "quote_verification_rate": null,
+    "findings_with_unsupported_numbers": 0,
+    "status_claim_conflicts": 0,
+    "mean_numeric_confidence": null,
+    "per_finding": [
+      {
+        "finding_id": "f1",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "f2",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "f3",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "f4",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "f5",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "f6",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": null,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      }
+    ],
+    "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+  },
+  "ground_truth_snapshot_date": null,
+  "ground_truth_dataset_version": "customer-trends-v1.0",
+  "finding_count": 13,
+  "mandatory_finding_count": 13,
+  "coverage_score": 0.5,
+  "strict_coverage_score": 0.4615,
+  "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+  "evaluation_config": {
+    "thresholds": {
+      "covered": 0.7,
+      "partial": 0.4
+    },
+    "embeddings": {
+      "provider": "sentence-transformers",
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "device": null,
+      "batch_size": 32
+    },
+    "scoring": {
+      "mandatory_only": true,
+      "partial_credit": 0.5
+    },
+    "worker_quality": {
+      "enabled": true,
+      "metrics": {},
+      "thresholds": {
+        "pass": 0.7,
+        "partial": 0.4
+      },
+      "max_report_chars": 30000,
+      "max_evidence_chars": 18000
+    }
+  },
+  "second_pass_summary": {
+    "enabled": true,
+    "top_k": 5,
+    "retrieval_method": "embeddings_cosine",
+    "passage_count": 22,
+    "initial_missing_count": 6,
+    "initial_partial_count": 1,
+    "findings_reviewed": 7,
+    "findings_skipped_partial": 0,
+    "findings_upgraded": 0,
+    "embedding_error": null,
+    "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+    "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+  },
+  "additional_claim_summary": {
+    "extracted_claim_count": 7,
+    "additional_candidates": 0,
+    "additional_candidates_supported_by_trace": 0,
+    "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+  },
+  "scope_compliance": {
+    "enabled": false,
+    "required_entities": [],
+    "comparison_targets": [],
+    "entity_presence": {},
+    "all_required_entities_present": true,
+    "all_in_scope_competitors_present": true,
+    "competitor_presence": {},
+    "excluded_entities": [],
+    "excluded_entity_mentions": {},
+    "scope_violations": [],
+    "scope_policy_pass": true,
+    "policy": ""
+  },
+  "finding_results": [
+    {
+      "finding_id": "CT01",
+      "requirement_id": "SCOPE",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "missing: The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States. — The actual output mentions cloud service providers, NVIDIA, Broadcom, Intel, and Europe in substantive findings, but it lacks explicit discussion of AI developers and the United States, which are required elements. While the mentions that do appear are part of analytical claims, the missing elements mean the response does not fully satisfy the evaluation criteria.",
+      "criteria_results": [
+        {
+          "criterion": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The actual output mentions cloud service providers, NVIDIA, Broadcom, Intel, and Europe in substantive findings, but it lacks explicit discussion of AI developers and the United States, which are required elements. While the mentions that do appear are part of analytical claims, the missing elements mean the response does not fully satisfy the evaluation criteria."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.3,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT01",
+        "requirement_id": "SCOPE",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output mentions cloud service providers, AI developers, NVIDIA, Broadcom, Europe, and the United States in a question, but provides substantive claims only for cloud providers in Europe (Passage 2), NVIDIA (Passages 2‑3), and Broadcom (Passages 4‑5). Intel and the United States are not covered with any substantive content, and the question does not count as a full analysis. Because at least one criterion (Intel, United States) is missing, the overall result is \"Missing,\" leading to a low score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.task_goal",
+            "text": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding AI accelerators from NVIDIA, Broadcom, and Intel in Europe and the United States?",
+            "similarity": 0.515621
+          },
+          {
+            "source_path": "$.findings[1].claim",
+            "text": "European cloud provider Gcore launched generative AI clusters using NVIDIA A100 and H100 GPUs, showing adoption of NVIDIA accelerators by cloud services in Europe.",
+            "similarity": 0.435674
+          },
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "NVIDIA H100 GPUs are portrayed positively for delivering high compute performance and efficiency in cloud AI workloads.",
+            "similarity": 0.420297
+          },
+          {
+            "source_path": "$.summary",
+            "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+            "similarity": 0.387914
+          },
+          {
+            "source_path": "$.findings[0].claim",
+            "text": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+            "similarity": 0.334582
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.3,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT02",
+      "requirement_id": "SAMPLE_SENTIMENT",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "missing: The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment. — The Actual Output lacks any section that reports the sentiment breakdown of the 34-item sample, so the required numbers (24 positive, 7 neutral, 2 negative, 1 mixed) are not present, nor is there an explicit statement that the breakdown is limited to the sample. Consequently steps 1‑3 are not satisfied, resulting in a score of zero.",
+      "criteria_results": [
+        {
+          "criterion": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output lacks any section that reports the sentiment breakdown of the 34-item sample, so the required numbers (24 positive, 7 neutral, 2 negative, 1 mixed) are not present, nor is there an explicit statement that the breakdown is limited to the sample. Consequently steps 1‑3 are not satisfied, resulting in a score of zero."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.0,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT02",
+        "requirement_id": "SAMPLE_SENTIMENT",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The evaluation requires the Actual Output to contain a passage reporting the sentiment distribution of the 34‑item sample (24 positive, 7 neutral, 2 negative, 1 mixed). None of the five provided passages mention any sentiment counts, so the required numbers are absent, resulting in a Missing classification.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[4].caveats[1]",
+            "text": "Overall language mix is 97% English",
+            "similarity": 0.361031
+          },
+          {
+            "source_path": "$.gaps[3]",
+            "text": "1 item(s) in 'ar'; at least 10 are needed",
+            "similarity": 0.321553
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Evidence is from web‑based promotional content",
+            "similarity": 0.299833
+          },
+          {
+            "source_path": "$.findings[4].claim",
+            "text": "Arabic language coverage is limited to a single item, restricting insight into sentiments from Arabic‑speaking markets.",
+            "similarity": 0.266438
+          },
+          {
+            "source_path": "$.findings[5].caveats[1]",
+            "text": "No direct customer feedback cited",
+            "similarity": 0.256025
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.0,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT03",
+      "requirement_id": "BROADCOM_SENTIMENT",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets.",
+      "priority": "mandatory",
+      "score": 1.0,
+      "status": "covered",
+      "reason": "covered: Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets. — The Actual Output includes a finding (f1) that explicitly states Broadcom's collaborations with Google and Meta are described positively with low confidence, and the caveats note that the evidence comes only from news snippets. This matches the required claim in the Expected Output, and the retrieval context is separate and not used as part of the claim. All evaluation steps are satisfied.",
+      "criteria_results": [
+        {
+          "criterion": "Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output includes a finding (f1) that explicitly states Broadcom's collaborations with Google and Meta are described positively with low confidence, and the caveats note that the evidence comes only from news snippets. This matches the required claim in the Expected Output, and the retrieval context is separate and not used as part of the claim. All evaluation steps are satisfied."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 1.0,
+      "initial_status": "covered",
+      "final_score": 1.0,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "CT04",
+      "requirement_id": "NVIDIA_ADOPTION",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets.",
+      "priority": "mandatory",
+      "score": 1.0,
+      "status": "covered",
+      "reason": "covered: European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets. — The Actual Output includes a finding (f2) that explicitly states the European cloud provider Gcore launched generative‑AI clusters using NVIDIA A100 and H100 GPUs, exactly matching the required claim in the Expected Output. All required elements (provider name, cloud service, generative‑AI clusters, GPU models) are present, and the Retrieval Context is correctly treated as supporting evidence only.",
+      "criteria_results": [
+        {
+          "criterion": "European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output includes a finding (f2) that explicitly states the European cloud provider Gcore launched generative‑AI clusters using NVIDIA A100 and H100 GPUs, exactly matching the required claim in the Expected Output. All required elements (provider name, cloud service, generative‑AI clusters, GPU models) are present, and the Retrieval Context is correctly treated as supporting evidence only."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 1.0,
+      "initial_status": "covered",
+      "final_score": 1.0,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "CT05",
+      "requirement_id": "SEARCH_INTEREST_GAP",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+      "priority": "mandatory",
+      "score": 0.5,
+      "status": "partial",
+      "reason": "partial: No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred. — The Actual Output notes that no search‑interest series was collected (step 1) and does not infer demand over time (step 3), but it fails to explicitly state that Socialcrawl exceeded its quota and that Google Trends was not configured (step 2). Retrieval Context is correctly ignored (step 4).",
+      "criteria_results": [
+        {
+          "criterion": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output notes that no search‑interest series was collected (step 1) and does not infer demand over time (step 3), but it fails to explicitly state that Socialcrawl exceeded its quota and that Google Trends was not configured (step 2). Retrieval Context is correctly ignored (step 4)."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.5,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "CT05",
+        "requirement_id": "SEARCH_INTEREST_GAP",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "Only Passage 1 mentions that no search‑interest series was collected and that demand over time is unknown, which addresses part of the acceptance criterion. It does not include the required qualifiers about Socialcrawl exceeding quota and Google Trends not being configured, and none of the other passages provide this information. Therefore the criterion is only partially covered, leading to a moderate score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[2]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.632073
+          },
+          {
+            "source_path": "$.findings[3].caveats[1]",
+            "text": "No quantitative pricing data provided",
+            "similarity": 0.365381
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "the social branch reported an error: the branch did not finish in 100 s",
+            "similarity": 0.345422
+          },
+          {
+            "source_path": "$.findings[5].caveats[1]",
+            "text": "No direct customer feedback cited",
+            "similarity": 0.327577
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Evidence is from web‑based promotional content",
+            "similarity": 0.296398
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.5,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "CT06",
+      "requirement_id": "SOCIAL_COLLECTION_GAP",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The social branch did not finish within 100 seconds; planned platform queries are not collected social posts.",
+      "priority": "mandatory",
+      "score": 1.0,
+      "status": "covered",
+      "reason": "covered: The social branch did not finish within 100 seconds; planned platform queries are not collected social posts. — The Actual Output includes the gap entry \"the social branch reported an error: the branch did not finish in 100 s,\" explicitly stating the 100‑second failure. The Expected Output likewise contains the exact phrasing \"The social branch did not finish within 100 seconds;...\" confirming the same requirement. The Retrieval Context does not mention this statement, satisfying the background‑only condition. Both outputs meet the explicit 100‑second failure criterion, warranting a top score.",
+      "criteria_results": [
+        {
+          "criterion": "The social branch did not finish within 100 seconds; planned platform queries are not collected social posts.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output includes the gap entry \"the social branch reported an error: the branch did not finish in 100 s,\" explicitly stating the 100‑second failure. The Expected Output likewise contains the exact phrasing \"The social branch did not finish within 100 seconds;...\" confirming the same requirement. The Retrieval Context does not mention this statement, satisfying the background‑only condition. Both outputs meet the explicit 100‑second failure criterion, warranting a top score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 1.0,
+      "initial_status": "covered",
+      "final_score": 1.0,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "CT07",
+      "requirement_id": "NEWS_EVIDENCE_QUALITY",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts.",
+      "priority": "mandatory",
+      "score": 0.7,
+      "status": "covered",
+      "reason": "covered: The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts. — The Actual Output explicitly states the run collected 29 news and 5 web items, satisfying step 1. It also mentions that evidence comes from news snippets in several caveats, addressing the snippet‑only requirement of step 2, though it does not directly state the absence of full article text or engagement counts. Because the snippet‑only condition is implied rather than explicitly confirmed, the response does not fully meet the Expected Output criteria, resulting in a moderate score.",
+      "criteria_results": [
+        {
+          "criterion": "The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts.",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The Actual Output explicitly states the run collected 29 news and 5 web items, satisfying step 1. It also mentions that evidence comes from news snippets in several caveats, addressing the snippet‑only requirement of step 2, though it does not directly state the absence of full article text or engagement counts. Because the snippet‑only condition is implied rather than explicitly confirmed, the response does not fully meet the Expected Output criteria, resulting in a moderate score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.7,
+      "initial_status": "covered",
+      "final_score": 0.7,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "CT08",
+      "requirement_id": "LANGUAGE_BIAS",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions.",
+      "priority": "mandatory",
+      "score": 0.7,
+      "status": "covered",
+      "reason": "covered: There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions. — The Actual Output correctly reports \"33\" English and \"1\" Arabic items (step 1). It mentions limited Arabic coverage and lack of depth, but does not use the explicit phrasing \"insufficient for robust Arabic‑language conclusions\" required by step 2, so the statement is only partially clear. The Expected Output does contain the exact count and insufficiency claim, showing alignment on that front (step 3). Retrieval Context is correctly ignored (step 4).",
+      "criteria_results": [
+        {
+          "criterion": "There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions.",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The Actual Output correctly reports \"33\" English and \"1\" Arabic items (step 1). It mentions limited Arabic coverage and lack of depth, but does not use the explicit phrasing \"insufficient for robust Arabic‑language conclusions\" required by step 2, so the statement is only partially clear. The Expected Output does contain the exact count and insufficiency claim, showing alignment on that front (step 3). Retrieval Context is correctly ignored (step 4)."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.7,
+      "initial_status": "covered",
+      "final_score": 0.7,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "CT09",
+      "requirement_id": "TEMPORAL_SIGNAL",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "missing: Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum. — The Actual Output does not contain a section listing dated items, so it cannot count how many of the 34 items have explicit dates (step 1). It also lacks any identification of a peak date or count, let alone confirming that the peak is 2024‑06‑03 with three items (step 2). Moreover, the report does not mention that the peak does not demonstrate sustained momentum, which is required to match the Expected Output (step 3). Consequently, the response fails all evaluation steps.",
+      "criteria_results": [
+        {
+          "criterion": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not contain a section listing dated items, so it cannot count how many of the 34 items have explicit dates (step 1). It also lacks any identification of a peak date or count, let alone confirming that the peak is 2024‑06‑03 with three items (step 2). Moreover, the report does not mention that the peak does not demonstrate sustained momentum, which is required to match the Expected Output (step 3). Consequently, the response fails all evaluation steps."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.0,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT09",
+        "requirement_id": "TEMPORAL_SIGNAL",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output contains no mention of the required details (33 of 34 items dated, peak date 2024-06-03, or 3 items on that date). All sub‑elements are missing, resulting in a 'Missing' classification.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[2]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.387304
+          },
+          {
+            "source_path": "$.gaps[3]",
+            "text": "1 item(s) in 'ar'; at least 10 are needed",
+            "similarity": 0.359389
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "0 platform(s) have at least 20 items; at least 2 are needed",
+            "similarity": 0.302441
+          },
+          {
+            "source_path": "$.findings[3].caveats[1]",
+            "text": "No quantitative pricing data provided",
+            "similarity": 0.299022
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "the social branch reported an error: the branch did not finish in 100 s",
+            "similarity": 0.268349
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.0,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT10",
+      "requirement_id": "SHARE_OF_VOICE",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "missing: Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity. — The actual output does not explicitly state the required counts (Broadcom 9, NVIDIA 0, Intel 0, 25 items with no vendor mention) nor does it note that these counts are not market share or reliable popularity, so it fails steps 1 and 2 and does not match the expected wording.",
+      "criteria_results": [
+        {
+          "criterion": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output does not explicitly state the required counts (Broadcom 9, NVIDIA 0, Intel 0, 25 items with no vendor mention) nor does it note that these counts are not market share or reliable popularity, so it fails steps 1 and 2 and does not match the expected wording."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.0,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT10",
+        "requirement_id": "SHARE_OF_VOICE",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The actual output only mentions Broadcom's 9 mentions (Passage 1) but does not include the required details about NVIDIA and Intel having zero mentions, the 25 items with no vendor mention, or the statement that this is not market share or reliable popularity. Therefore the acceptance criterion is only partially satisfied.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.summary",
+            "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+            "similarity": 0.379709
+          },
+          {
+            "source_path": "$.findings[0].claim",
+            "text": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+            "similarity": 0.372968
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "0 platform(s) have at least 20 items; at least 2 are needed",
+            "similarity": 0.360251
+          },
+          {
+            "source_path": "$.gaps[3]",
+            "text": "1 item(s) in 'ar'; at least 10 are needed",
+            "similarity": 0.358982
+          },
+          {
+            "source_path": "$.findings[5].claim",
+            "text": "Broadcom introduced a new XDSiP platform to address rising demand for higher‑density AI accelerator integration.",
+            "similarity": 0.321609
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.0,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT11",
+      "requirement_id": "ENGAGEMENT_METRICS",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "missing: Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement. — The actual output does not contain any explicit statement that engagement mean, median, and p90 were zero while counts were unavailable, which is required by step 1; consequently the subsequent steps cannot be satisfied.",
+      "criteria_results": [
+        {
+          "criterion": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output does not contain any explicit statement that engagement mean, median, and p90 were zero while counts were unavailable, which is required by step 1; consequently the subsequent steps cannot be satisfied."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.0,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT11",
+        "requirement_id": "ENGAGEMENT_METRICS",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The cited passages discuss pricing data, customer feedback, item counts, a branch error, and missing search interest series, none of which mention engagement mean, median, p90, zero values, unavailable counts, or the conclusion about real‑world engagement, so the acceptance criterion is not addressed at all.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[3].caveats[1]",
+            "text": "No quantitative pricing data provided",
+            "similarity": 0.300153
+          },
+          {
+            "source_path": "$.findings[5].caveats[1]",
+            "text": "No direct customer feedback cited",
+            "similarity": 0.295201
+          },
+          {
+            "source_path": "$.gaps[3]",
+            "text": "1 item(s) in 'ar'; at least 10 are needed",
+            "similarity": 0.274501
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "the social branch reported an error: the branch did not finish in 100 s",
+            "similarity": 0.257668
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.238597
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.0,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT12",
+      "requirement_id": "VENDOR_COMPARABILITY",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "missing: Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe. — The Actual Output contains a few vendor‑specific statements (e.g., Broadcom sentiment, NVIDIA adoption in Europe, Intel pricing competition) but it does not provide balanced, substantive comparisons across NVIDIA, Broadcom, and Intel for both the US and Europe, nor does it explicitly claim that evidence is insufficient as required by the Expected Output. Consequently, it only partially meets the evaluation criteria, resulting in a low score.",
+      "criteria_results": [
+        {
+          "criterion": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output contains a few vendor‑specific statements (e.g., Broadcom sentiment, NVIDIA adoption in Europe, Intel pricing competition) but it does not provide balanced, substantive comparisons across NVIDIA, Broadcom, and Intel for both the US and Europe, nor does it explicitly claim that evidence is insufficient as required by the Expected Output. Consequently, it only partially meets the evaluation criteria, resulting in a low score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.2,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "CT12",
+        "requirement_id": "VENDOR_COMPARABILITY",
+        "test_case_id": "CT-SINGLE-RUN-001",
+        "title": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+        "priority": "mandatory",
+        "score": 0.1,
+        "status": "missing",
+        "reason": "The provided passages do not contain balanced vendor‑specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe; they only pose a question, note missing customer feedback, and mention pricing competition without the required comparative depth, resulting in a Missing coverage assessment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.task_goal",
+            "text": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding AI accelerators from NVIDIA, Broadcom, and Intel in Europe and the United States?",
+            "similarity": 0.414206
+          },
+          {
+            "source_path": "$.findings[5].caveats[1]",
+            "text": "No direct customer feedback cited",
+            "similarity": 0.391056
+          },
+          {
+            "source_path": "$.findings[3].claim",
+            "text": "AMD and Intel are launching new AI chips with pricing strategies aimed at challenging NVIDIA's market position.",
+            "similarity": 0.374201
+          },
+          {
+            "source_path": "$.summary",
+            "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+            "similarity": 0.362274
+          },
+          {
+            "source_path": "$.findings[3].caveats[0]",
+            "text": "Both items are news articles focusing on pricing competition",
+            "similarity": 0.333425
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.2,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "CT13",
+      "requirement_id": "OVERALL_CONFIDENCE_AND_GAPS",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth.",
+      "priority": "mandatory",
+      "score": 1.0,
+      "status": "covered",
+      "reason": "covered: The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth. — The Actual Output explicitly states \"status\": \"partial\" and \"confidence\": 0.3, and its \"gaps\" list directly mentions social collection, platform coverage, search interest, and Arabic sample depth, matching the Expected Output's required phrasing. No reliance on Retrieval Context is needed, so all evaluation steps are satisfied.",
+      "criteria_results": [
+        {
+          "criterion": "The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output explicitly states \"status\": \"partial\" and \"confidence\": 0.3, and its \"gaps\" list directly mentions social collection, platform coverage, search interest, and Arabic sample depth, matching the Expected Output's required phrasing. No reliance on Retrieval Context is needed, so all evaluation steps are satisfied."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 1.0,
+      "initial_status": "covered",
+      "final_score": 1.0,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    }
+  ],
+  "second_pass_results": [
+    {
+      "finding_id": "CT01",
+      "requirement_id": "SCOPE",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "The Actual Output mentions cloud service providers, AI developers, NVIDIA, Broadcom, Europe, and the United States in a question, but provides substantive claims only for cloud providers in Europe (Passage 2), NVIDIA (Passages 2‑3), and Broadcom (Passages 4‑5). Intel and the United States are not covered with any substantive content, and the question does not count as a full analysis. Because at least one criterion (Intel, United States) is missing, the overall result is \"Missing,\" leading to a low score.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.task_goal",
+          "text": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding AI accelerators from NVIDIA, Broadcom, and Intel in Europe and the United States?",
+          "similarity": 0.515621
+        },
+        {
+          "source_path": "$.findings[1].claim",
+          "text": "European cloud provider Gcore launched generative AI clusters using NVIDIA A100 and H100 GPUs, showing adoption of NVIDIA accelerators by cloud services in Europe.",
+          "similarity": 0.435674
+        },
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "NVIDIA H100 GPUs are portrayed positively for delivering high compute performance and efficiency in cloud AI workloads.",
+          "similarity": 0.420297
+        },
+        {
+          "source_path": "$.summary",
+          "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+          "similarity": 0.387914
+        },
+        {
+          "source_path": "$.findings[0].claim",
+          "text": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+          "similarity": 0.334582
+        }
+      ]
+    },
+    {
+      "finding_id": "CT02",
+      "requirement_id": "SAMPLE_SENTIMENT",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The evaluation requires the Actual Output to contain a passage reporting the sentiment distribution of the 34‑item sample (24 positive, 7 neutral, 2 negative, 1 mixed). None of the five provided passages mention any sentiment counts, so the required numbers are absent, resulting in a Missing classification.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[4].caveats[1]",
+          "text": "Overall language mix is 97% English",
+          "similarity": 0.361031
+        },
+        {
+          "source_path": "$.gaps[3]",
+          "text": "1 item(s) in 'ar'; at least 10 are needed",
+          "similarity": 0.321553
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Evidence is from web‑based promotional content",
+          "similarity": 0.299833
+        },
+        {
+          "source_path": "$.findings[4].claim",
+          "text": "Arabic language coverage is limited to a single item, restricting insight into sentiments from Arabic‑speaking markets.",
+          "similarity": 0.266438
+        },
+        {
+          "source_path": "$.findings[5].caveats[1]",
+          "text": "No direct customer feedback cited",
+          "similarity": 0.256025
+        }
+      ]
+    },
+    {
+      "finding_id": "CT05",
+      "requirement_id": "SEARCH_INTEREST_GAP",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+      "priority": "mandatory",
+      "score": 0.5,
+      "status": "partial",
+      "reason": "Only Passage 1 mentions that no search‑interest series was collected and that demand over time is unknown, which addresses part of the acceptance criterion. It does not include the required qualifiers about Socialcrawl exceeding quota and Google Trends not being configured, and none of the other passages provide this information. Therefore the criterion is only partially covered, leading to a moderate score.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[2]",
+          "text": "no search interest series was collected, so demand over time is unknown",
+          "similarity": 0.632073
+        },
+        {
+          "source_path": "$.findings[3].caveats[1]",
+          "text": "No quantitative pricing data provided",
+          "similarity": 0.365381
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "the social branch reported an error: the branch did not finish in 100 s",
+          "similarity": 0.345422
+        },
+        {
+          "source_path": "$.findings[5].caveats[1]",
+          "text": "No direct customer feedback cited",
+          "similarity": 0.327577
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Evidence is from web‑based promotional content",
+          "similarity": 0.296398
+        }
+      ]
+    },
+    {
+      "finding_id": "CT09",
+      "requirement_id": "TEMPORAL_SIGNAL",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output contains no mention of the required details (33 of 34 items dated, peak date 2024-06-03, or 3 items on that date). All sub‑elements are missing, resulting in a 'Missing' classification.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[2]",
+          "text": "no search interest series was collected, so demand over time is unknown",
+          "similarity": 0.387304
+        },
+        {
+          "source_path": "$.gaps[3]",
+          "text": "1 item(s) in 'ar'; at least 10 are needed",
+          "similarity": 0.359389
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "0 platform(s) have at least 20 items; at least 2 are needed",
+          "similarity": 0.302441
+        },
+        {
+          "source_path": "$.findings[3].caveats[1]",
+          "text": "No quantitative pricing data provided",
+          "similarity": 0.299022
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "the social branch reported an error: the branch did not finish in 100 s",
+          "similarity": 0.268349
+        }
+      ]
+    },
+    {
+      "finding_id": "CT10",
+      "requirement_id": "SHARE_OF_VOICE",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "The actual output only mentions Broadcom's 9 mentions (Passage 1) but does not include the required details about NVIDIA and Intel having zero mentions, the 25 items with no vendor mention, or the statement that this is not market share or reliable popularity. Therefore the acceptance criterion is only partially satisfied.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.summary",
+          "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+          "similarity": 0.379709
+        },
+        {
+          "source_path": "$.findings[0].claim",
+          "text": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+          "similarity": 0.372968
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "0 platform(s) have at least 20 items; at least 2 are needed",
+          "similarity": 0.360251
+        },
+        {
+          "source_path": "$.gaps[3]",
+          "text": "1 item(s) in 'ar'; at least 10 are needed",
+          "similarity": 0.358982
+        },
+        {
+          "source_path": "$.findings[5].claim",
+          "text": "Broadcom introduced a new XDSiP platform to address rising demand for higher‑density AI accelerator integration.",
+          "similarity": 0.321609
+        }
+      ]
+    },
+    {
+      "finding_id": "CT11",
+      "requirement_id": "ENGAGEMENT_METRICS",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The cited passages discuss pricing data, customer feedback, item counts, a branch error, and missing search interest series, none of which mention engagement mean, median, p90, zero values, unavailable counts, or the conclusion about real‑world engagement, so the acceptance criterion is not addressed at all.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[3].caveats[1]",
+          "text": "No quantitative pricing data provided",
+          "similarity": 0.300153
+        },
+        {
+          "source_path": "$.findings[5].caveats[1]",
+          "text": "No direct customer feedback cited",
+          "similarity": 0.295201
+        },
+        {
+          "source_path": "$.gaps[3]",
+          "text": "1 item(s) in 'ar'; at least 10 are needed",
+          "similarity": 0.274501
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "the social branch reported an error: the branch did not finish in 100 s",
+          "similarity": 0.257668
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "no search interest series was collected, so demand over time is unknown",
+          "similarity": 0.238597
+        }
+      ]
+    },
+    {
+      "finding_id": "CT12",
+      "requirement_id": "VENDOR_COMPARABILITY",
+      "test_case_id": "CT-SINGLE-RUN-001",
+      "title": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+      "priority": "mandatory",
+      "score": 0.1,
+      "status": "missing",
+      "reason": "The provided passages do not contain balanced vendor‑specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe; they only pose a question, note missing customer feedback, and mention pricing competition without the required comparative depth, resulting in a Missing coverage assessment.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.task_goal",
+          "text": "What are the sentiments, needs, and adoption patterns of cloud service providers and AI developers regarding AI accelerators from NVIDIA, Broadcom, and Intel in Europe and the United States?",
+          "similarity": 0.414206
+        },
+        {
+          "source_path": "$.findings[5].caveats[1]",
+          "text": "No direct customer feedback cited",
+          "similarity": 0.391056
+        },
+        {
+          "source_path": "$.findings[3].claim",
+          "text": "AMD and Intel are launching new AI chips with pricing strategies aimed at challenging NVIDIA's market position.",
+          "similarity": 0.374201
+        },
+        {
+          "source_path": "$.summary",
+          "text": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+          "similarity": 0.362274
+        },
+        {
+          "source_path": "$.findings[3].caveats[0]",
+          "text": "Both items are news articles focusing on pricing competition",
+          "similarity": 0.333425
+        }
+      ]
+    }
+  ],
+  "additional_claim_results": [
+    {
+      "claim_id": "CLAIM-001",
+      "claim": "34 recent items (29 news, 5 web) in English (33) and Arabic (1) discuss AI chip topics—pricing competition, cloud acceleration, collaborations, generative clusters, 3.5D tech, export controls, sales comparison, hardware acquisition—dominated by Broadcom mentions (9 of 34); however social data, broader platform mix, trend series and Arabic depth are lacking.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The actual output only restates a few facts from the expected claims (e.g., 34 items, 29 news, 5 web, 33 English, 1 Arabic, Broadcom 9 mentions, and lack of Arabic depth). Most required findings—such as the sentiment breakdown, vendor coverage (NVIDIA, Intel), specific collaborations, Gcore launch details, social branch timing, engagement metrics, and confidence level—are absent, so the output does not match the majority of the factual claims. The few partial overlaps are insufficient for a higher score.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-002",
+      "claim": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The actual output only addresses CT03 by noting a positive description of Broadcom's collaborations with Google and Meta, but it omits the required qualifiers of \"low‑confidence\" and \"based only on news snippets,\" making it an incomplete restatement rather than a full match. All other mandatory findings (CT01, CT02, CT04‑CT13) are not mentioned at all, resulting in very low overall alignment with the expected output.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-003",
+      "claim": "European cloud provider Gcore launched generative AI clusters using NVIDIA A100 and H100 GPUs, showing adoption of NVIDIA accelerators by cloud services in Europe.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The actual output correctly paraphrases the CT04 claim about Gcore launching generative‑AI clusters with NVIDIA A100 and H100 GPUs, which is a match. However, it does not address any of the other mandatory findings (CT01‑CT03, CT05‑CT13), so the majority of required facts are missing, resulting in low overall alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-004",
+      "claim": "NVIDIA H100 GPUs are portrayed positively for delivering high compute performance and efficiency in cloud AI workloads.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.0,
+      "novelty_reason": "The actual output only states that NVIDIA H100 GPUs are portrayed positively for performance and efficiency, which does not match any of the 13 required factual claims in the expected output. No expected claims (e.g., sample sentiment breakdown, vendor mention counts, collection details) are found, and the sole fact presented is unrelated, so the response fails the evaluation criteria.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-005",
+      "claim": "AMD and Intel are launching new AI chips with pricing strategies aimed at challenging NVIDIA's market position.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.1,
+      "novelty_reason": "The actual output mentions AMD and Intel launching AI chips, which does not correspond to any of the 13 factual claims listed in the expected output. All expected claims (e.g., sample composition, vendor mention counts, Gcore GPU usage) are absent, and the provided statement introduces unrelated information, making it an additional fact rather than a match or contradiction.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-006",
+      "claim": "Arabic language coverage is limited to a single item, restricting insight into sentiments from Arabic‑speaking markets.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The actual output only restates the CT08 fact about a single Arabic item, matching that claim. None of the other 12 required findings (CT01‑CT07, CT09‑CT13) appear in the actual output, so the response covers just one of many mandatory facts, resulting in very low alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-007",
+      "claim": "Broadcom introduced a new XDSiP platform to address rising demand for higher‑density AI accelerator integration.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.1,
+      "novelty_reason": "The actual output only mentions Broadcom launching a new XDSiP platform, which does not correspond to any of the specific factual claims listed in the expected output (e.g., sample sentiment percentages, vendor mention counts, or collaboration details). While this statement is an extra fact and not a direct contradiction, it fails to match any required findings, resulting in minimal alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    }
+  ],
+  "worker_result_quality": {
+    "enabled": true,
+    "metric_count": 4,
+    "scoreable_metric_count": 4,
+    "overall_score": 0.475,
+    "overall_status": "partial",
+    "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+    "metrics": {
+      "relevancy": {
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The output identifies the research goal and lists findings about NVIDIA, Broadcom, and Intel, but it only covers a European cloud provider and omits US providers and AI developers, so it does not fully address all target entities and markets. The content stays on topic, yet the evidence is narrow (34 items, mostly English news) and lacks diverse platforms, social data, and time‑series, which the evaluation criteria deem insufficient. The conclusions are low‑confidence and heavily caveated, reflecting the limited evidence, and while they are logically linked to the cited items, the gaps noted (e.g., missing US data, insufficient language coverage) reduce alignment with the goal.",
+        "method": "DeepEval G-Eval"
+      },
+      "correctness": {
+        "score": 0.3,
+        "status": "fail",
+        "reason": "The actual output correctly cites retrieval‑context items for its six findings, so the factual alignment (step 1) is solid. However, most of the expected conclusions (e.g., CT02 sentiment percentages, CT09 temporal signal, CT10 share‑of‑voice, CT11 engagement metrics, CT12 vendor comparability) are absent or only implied, and therefore are not directly supported by the cited evidence (step 2). The evidence breadth is limited to news and web snippets, English‑dominant language, and lacks social data, search‑interest series, and broader platform coverage, which the expected output assumes (step 3). Consequently, many expected claims should be marked unverified due to evidence gaps, reducing overall alignment.",
+        "method": "DeepEval G-Eval"
+      },
+      "faithfulness": {
+        "score": 0.9,
+        "status": "pass",
+        "reason": "All six claims are linked to evidence IDs that exist in the Retrieval Context and the content of those sources directly supports the statements, with accurate figures and attributions. Minor concern: one of the two evidence items for claim f4 (9b1cffa037b0d3ee) does not explicitly mention AMD/Intel pricing, though the other item does, so the support is not fully comprehensive for that claim.",
+        "method": "DeepEval G-Eval"
+      },
+      "completeness": {
+        "score": 0.3,
+        "status": "fail",
+        "reason": "The actual output mentions some of the requested entities (cloud providers, NVIDIA, Broadcom) and discloses gaps, but it omits AI developers, US coverage, and many benchmark findings listed in the expected output (e.g., detailed sentiment breakdown, search‑interest gap, social‑branch timeout, language bias, share‑of‑voice, engagement metrics, vendor comparability). While gaps are honestly reported, the substantive information does not satisfy the full set of required CT items, resulting in only partial alignment.",
+        "method": "DeepEval G-Eval"
+      }
+    },
+    "limitations": [
+      "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+      "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+      "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+      "Missing trace evidence is not proof that a claim is false.",
+      "An overall mean can hide a weak individual dimension; inspect each reason."
+    ]
+  },
+  "agent_improvement_review": {
+    "enabled": true,
+    "status": "generated",
+    "limitations": [
+      {
+        "limitation": "The analysis omits AI developers and United States coverage, focusing only on European cloud providers.",
+        "evidence": "CT01 finding notes missing AI developers and US discussion; the report only mentions European cloud provider Gcore and Broadcom collaborations.",
+        "impact": "Fails the mandatory scope requirement, reducing relevance and completeness of the research."
+      },
+      {
+        "limitation": "Sentiment breakdown of the 34-item sample (24 positive, 7 neutral, 2 negative, 1 mixed) is not reported.",
+        "evidence": "CT02 is marked missing because the output lacks any section presenting these sentiment percentages.",
+        "impact": "Violates the mandatory sentiment sampling requirement, preventing assessment of overall sentiment distribution."
+      },
+      {
+        "limitation": "Temporal signal is absent; no dated items count, peak date, or assessment of sustained momentum is provided.",
+        "evidence": "CT09 final_status is missing; the report does not list dated items or identify the 2024-06-03 peak.",
+        "impact": "Prevents evaluation of trend dynamics, a mandatory benchmark criterion."
+      },
+      {
+        "limitation": "Share‑of‑voice metrics are not presented; counts of vendor mentions and the statement that they do not reflect market share are missing.",
+        "evidence": "CT10 is marked missing; the output does not give the 9 Broadcom, 0 NVIDIA/Intel, 25 no‑vendor counts.",
+        "impact": "Fails a mandatory requirement for assessing relative vendor visibility."
+      },
+      {
+        "limitation": "Engagement metrics (mean, median, p90) are not reported, and raw engagement counts are unavailable.",
+        "evidence": "CT11 final_status is missing; the report contains no engagement statistics.",
+        "impact": "Limits ability to gauge real‑world interest and violates a mandatory evidence quality criterion."
+      },
+      {
+        "limitation": "Social media data collection timed out after 100 seconds, resulting in no social posts.",
+        "evidence": "CT06 is covered but indicates the social branch did not finish; the gap is listed in the report.",
+        "impact": "Creates a material data gap, lowering confidence and preventing social sentiment analysis."
+      },
+      {
+        "limitation": "Search‑interest series were not collected due to quota exhaustion and missing Google Trends configuration.",
+        "evidence": "CT05 is partially covered; the report notes no series were collected but does not explain quota/execution details.",
+        "impact": "Eliminates longitudinal demand insight, a mandatory component of the analysis."
+      },
+      {
+        "limitation": "Language bias: only 1 Arabic item versus 33 English items, insufficient for robust Arabic‑language conclusions.",
+        "evidence": "CT08 is covered; the report states the 33/1 split and notes limited Arabic coverage.",
+        "impact": "Reduces geographic and linguistic representativeness, especially for Middle‑East markets."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Expand the data‑collection plan to explicitly target AI developers and US‑based cloud providers, adding relevant query terms and sources.",
+        "addresses": "CT01 scope gap and missing US/AI developer coverage",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Implement a sentiment aggregation step that calculates and reports the positive/neutral/negative/mixed percentages for the full sample.",
+        "addresses": "CT02 missing sentiment breakdown",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Capture and store publication dates for all items, then compute dated‑item count, peak date, and assess momentum over time.",
+        "addresses": "CT09 temporal signal missing",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Add a vendor‑mention counting routine and explicitly report share‑of‑voice figures, with a disclaimer that they are not market‑share estimates.",
+        "addresses": "CT10 share‑of‑voice missing",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Retrieve full article texts (or at least extended excerpts) and extract engagement metrics (views, shares, comments) to compute mean/median/p90 values.",
+        "addresses": "CT07 news quality, CT11 engagement metrics missing",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Increase the social‑data timeout limit and allocate sufficient compute resources to ensure the social branch completes; add fallback queries for alternative platforms.",
+        "addresses": "CT06 social collection gap",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Configure Google Trends integration and monitor Socialcrawl quota; implement automatic quota‑reset or alternative providers to guarantee search‑interest series collection.",
+        "addresses": "CT05 search‑interest gap",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Broaden language coverage by adding Arabic‑language sources and setting a minimum target (e.g., ≥10 Arabic items) for balanced multilingual analysis.",
+        "addresses": "CT08 language bias",
+        "priority": "medium"
+      }
+    ],
+    "method": "Ollama LLM judge"
+  },
+  "limitations": [
+    {
+      "limitation": "The analysis omits AI developers and United States coverage, focusing only on European cloud providers.",
+      "evidence": "CT01 finding notes missing AI developers and US discussion; the report only mentions European cloud provider Gcore and Broadcom collaborations.",
+      "impact": "Fails the mandatory scope requirement, reducing relevance and completeness of the research."
+    },
+    {
+      "limitation": "Sentiment breakdown of the 34-item sample (24 positive, 7 neutral, 2 negative, 1 mixed) is not reported.",
+      "evidence": "CT02 is marked missing because the output lacks any section presenting these sentiment percentages.",
+      "impact": "Violates the mandatory sentiment sampling requirement, preventing assessment of overall sentiment distribution."
+    },
+    {
+      "limitation": "Temporal signal is absent; no dated items count, peak date, or assessment of sustained momentum is provided.",
+      "evidence": "CT09 final_status is missing; the report does not list dated items or identify the 2024-06-03 peak.",
+      "impact": "Prevents evaluation of trend dynamics, a mandatory benchmark criterion."
+    },
+    {
+      "limitation": "Share‑of‑voice metrics are not presented; counts of vendor mentions and the statement that they do not reflect market share are missing.",
+      "evidence": "CT10 is marked missing; the output does not give the 9 Broadcom, 0 NVIDIA/Intel, 25 no‑vendor counts.",
+      "impact": "Fails a mandatory requirement for assessing relative vendor visibility."
+    },
+    {
+      "limitation": "Engagement metrics (mean, median, p90) are not reported, and raw engagement counts are unavailable.",
+      "evidence": "CT11 final_status is missing; the report contains no engagement statistics.",
+      "impact": "Limits ability to gauge real‑world interest and violates a mandatory evidence quality criterion."
+    },
+    {
+      "limitation": "Social media data collection timed out after 100 seconds, resulting in no social posts.",
+      "evidence": "CT06 is covered but indicates the social branch did not finish; the gap is listed in the report.",
+      "impact": "Creates a material data gap, lowering confidence and preventing social sentiment analysis."
+    },
+    {
+      "limitation": "Search‑interest series were not collected due to quota exhaustion and missing Google Trends configuration.",
+      "evidence": "CT05 is partially covered; the report notes no series were collected but does not explain quota/execution details.",
+      "impact": "Eliminates longitudinal demand insight, a mandatory component of the analysis."
+    },
+    {
+      "limitation": "Language bias: only 1 Arabic item versus 33 English items, insufficient for robust Arabic‑language conclusions.",
+      "evidence": "CT08 is covered; the report states the 33/1 split and notes limited Arabic coverage.",
+      "impact": "Reduces geographic and linguistic representativeness, especially for Middle‑East markets."
+    }
+  ],
+  "recommended_enhancements": [
+    {
+      "enhancement": "Expand the data‑collection plan to explicitly target AI developers and US‑based cloud providers, adding relevant query terms and sources.",
+      "addresses": "CT01 scope gap and missing US/AI developer coverage",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Implement a sentiment aggregation step that calculates and reports the positive/neutral/negative/mixed percentages for the full sample.",
+      "addresses": "CT02 missing sentiment breakdown",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Capture and store publication dates for all items, then compute dated‑item count, peak date, and assess momentum over time.",
+      "addresses": "CT09 temporal signal missing",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Add a vendor‑mention counting routine and explicitly report share‑of‑voice figures, with a disclaimer that they are not market‑share estimates.",
+      "addresses": "CT10 share‑of‑voice missing",
+      "priority": "medium"
+    },
+    {
+      "enhancement": "Retrieve full article texts (or at least extended excerpts) and extract engagement metrics (views, shares, comments) to compute mean/median/p90 values.",
+      "addresses": "CT07 news quality, CT11 engagement metrics missing",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Increase the social‑data timeout limit and allocate sufficient compute resources to ensure the social branch completes; add fallback queries for alternative platforms.",
+      "addresses": "CT06 social collection gap",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Configure Google Trends integration and monitor Socialcrawl quota; implement automatic quota‑reset or alternative providers to guarantee search‑interest series collection.",
+      "addresses": "CT05 search‑interest gap",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Broaden language coverage by adding Arabic‑language sources and setting a minimum target (e.g., ≥10 Arabic items) for balanced multilingual analysis.",
+      "addresses": "CT08 language bias",
+      "priority": "medium"
+    }
+  ],
+  "evaluation_limitations": [
+    "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+    "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+    "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+    "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+    "Scope checks are deterministic string-based checks and can miss semantic references.",
+    "No-judge token overlap is a rough diagnostic; it does not evaluate factuality or acceptance criteria semantically."
+  ]
+}

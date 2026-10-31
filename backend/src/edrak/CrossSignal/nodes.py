@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import json
@@ -26,6 +27,7 @@ from .state import (
     CrossSignalState,
     SignalDetectionResult,
 )
+from .tracing import trace_cross_signal
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +70,6 @@ def _safe_json(value: Any) -> str:
         )
 
     except Exception:
-
         return str(value)
 
 
@@ -85,7 +86,6 @@ def _finding_id(
         finding,
         "finding_id",
     ):
-
         return str(
             finding.finding_id
         ).strip()
@@ -94,7 +94,6 @@ def _finding_id(
         finding,
         dict,
     ):
-
         return str(
             finding.get(
                 "finding_id",
@@ -113,7 +112,6 @@ def _finding_statement(
         finding,
         "statement",
     ):
-
         return str(
             finding.statement
         ).strip()
@@ -122,7 +120,6 @@ def _finding_statement(
         finding,
         dict,
     ):
-
         return str(
             finding.get(
                 "statement",
@@ -149,7 +146,6 @@ def _finding_worker(
         finding,
         "worker",
     ):
-
         return getattr(
             finding,
             "worker",
@@ -159,7 +155,6 @@ def _finding_worker(
         finding,
         dict,
     ):
-
         return finding.get(
             "worker"
         )
@@ -192,7 +187,6 @@ def _finding_quality(
         finding,
         "evidence_quality",
     ):
-
         return _enum_value(
             finding.evidence_quality
         )
@@ -201,7 +195,6 @@ def _finding_quality(
         finding,
         dict,
     ):
-
         return str(
             finding.get(
                 "evidence_quality",
@@ -220,9 +213,7 @@ def _finding_confidence(
         finding,
         "confidence",
     ):
-
         try:
-
             return float(
                 finding.confidence
             )
@@ -231,16 +222,13 @@ def _finding_confidence(
             TypeError,
             ValueError,
         ):
-
             return 0.0
 
     if isinstance(
         finding,
         dict,
     ):
-
         try:
-
             return float(
                 finding.get(
                     "confidence",
@@ -252,7 +240,6 @@ def _finding_confidence(
             TypeError,
             ValueError,
         ):
-
             return 0.0
 
     return 0.0
@@ -300,7 +287,6 @@ def _support_finding_id(
         support,
         "finding_id",
     ):
-
         return str(
             support.finding_id
         ).strip()
@@ -309,7 +295,6 @@ def _support_finding_id(
         support,
         dict,
     ):
-
         return str(
             support.get(
                 "finding_id",
@@ -329,7 +314,6 @@ def _set_support_finding_id(
         support,
         dict,
     ):
-
         support[
             "finding_id"
         ] = finding_id
@@ -337,22 +321,18 @@ def _set_support_finding_id(
         return support
 
     try:
-
         support.finding_id = finding_id
 
         return support
 
     except Exception:
-
         pass
 
     if hasattr(
         support,
         "model_copy",
     ):
-
         try:
-
             return support.model_copy(
                 update={
                     "finding_id": finding_id
@@ -360,7 +340,6 @@ def _set_support_finding_id(
             )
 
         except Exception:
-
             pass
 
     return support
@@ -421,7 +400,6 @@ def _extract_reference_candidates(
             candidate
             and candidate not in candidates
         ):
-
             candidates.append(
                 candidate
             )
@@ -434,10 +412,7 @@ def _extract_reference_candidates(
         raw.upper()
     )
 
-    # ------------------------------------------------------------------
     # F1 / F01 / f1 / F-1 / F_1
-    # ------------------------------------------------------------------
-
     match = re.search(
         r"\bF[\s_-]*(\d+)\b",
         raw,
@@ -445,7 +420,6 @@ def _extract_reference_candidates(
     )
 
     if match:
-
         number = int(
             match.group(1)
         )
@@ -458,10 +432,7 @@ def _extract_reference_candidates(
             f"F{number:02d}"
         )
 
-    # ------------------------------------------------------------------
     # finding_1 / finding 1 / Finding F1
-    # ------------------------------------------------------------------
-
     match = re.search(
         r"\bfinding[\s_-]*f?(\d+)\b",
         raw,
@@ -469,7 +440,6 @@ def _extract_reference_candidates(
     )
 
     if match:
-
         number = int(
             match.group(1)
         )
@@ -482,15 +452,11 @@ def _extract_reference_candidates(
             f"F{number:02d}"
         )
 
-    # ------------------------------------------------------------------
     # Pure number
-    # ------------------------------------------------------------------
-
     if re.fullmatch(
         r"\d+",
         raw,
     ):
-
         number = int(
             raw
         )
@@ -521,20 +487,12 @@ def _resolve_finding_id(
     if not candidates:
         return None
 
-    # ------------------------------------------------------------------
     # Exact actual finding ID.
-    # ------------------------------------------------------------------
-
     for candidate in candidates:
-
         if candidate in findings_by_id:
-
             return candidate
 
-    # ------------------------------------------------------------------
     # Case-insensitive actual ID.
-    # ------------------------------------------------------------------
-
     actual_ids = {
         str(actual_id)
         .strip()
@@ -544,19 +502,14 @@ def _resolve_finding_id(
     }
 
     for candidate in candidates:
-
         actual_id = actual_ids.get(
             candidate.lower()
         )
 
         if actual_id:
-
             return actual_id
 
-    # ------------------------------------------------------------------
     # Alias resolution.
-    # ------------------------------------------------------------------
-
     aliases = {
         str(alias)
         .strip()
@@ -566,13 +519,11 @@ def _resolve_finding_id(
     }
 
     for candidate in candidates:
-
         actual_id = aliases.get(
             candidate.upper()
         )
 
         if actual_id:
-
             return actual_id
 
     return None
@@ -601,7 +552,6 @@ def _actual_supporting_findings(
     for support in (
         signal.supporting_findings
     ):
-
         raw_id = _support_finding_id(
             support
         )
@@ -667,7 +617,6 @@ def _actual_domains(
     )
 
     for finding in findings:
-
         worker = _finding_worker(
             finding
         )
@@ -743,7 +692,6 @@ def _weakest_quality(
     )
 
     if not findings:
-
         return signal.evidence_quality
 
     qualities: list[
@@ -751,12 +699,10 @@ def _weakest_quality(
     ] = []
 
     for finding in findings:
-
         if hasattr(
             finding,
             "evidence_quality",
         ):
-
             quality = (
                 finding.evidence_quality
             )
@@ -765,13 +711,11 @@ def _weakest_quality(
             finding,
             dict,
         ):
-
             quality = finding.get(
                 "evidence_quality"
             )
 
         else:
-
             quality = None
 
         qualities.append(
@@ -782,7 +726,6 @@ def _weakest_quality(
         )
 
     if not qualities:
-
         return signal.evidence_quality
 
     _, weakest = min(
@@ -806,7 +749,7 @@ def _weakest_quality(
 # This normalization is ONLY for deterministic duplicate detection.
 #
 # It is NOT used to determine whether a relationship exists.
-#
+# ============================================================================
 
 
 def _normalize_text(
@@ -971,18 +914,15 @@ def _is_duplicate_signal(
         same_type
         and support_overlap >= 0.75
     ):
-
         return True
 
     if (
         support_overlap >= 0.60
         and text_similarity >= 0.50
     ):
-
         return True
 
     if text_similarity >= 0.78:
-
         return True
 
     return False
@@ -1071,7 +1011,6 @@ def _build_findings_digest(
         findings,
         start=1,
     ):
-
         actual_id = _finding_id(
             finding
         )
@@ -1117,7 +1056,6 @@ def _build_business_digest(
     )
 
     try:
-
         payload = (
             business_request.model_dump(
                 mode="json"
@@ -1125,7 +1063,6 @@ def _build_business_digest(
         )
 
     except AttributeError:
-
         payload = dict(
             business_request
         )
@@ -1233,7 +1170,6 @@ Do not use information outside the supplied input.
 """
 
     if lens == "strategic_alignment":
-
         return base + """
 
 CURRENT LENS: STRATEGIC ALIGNMENT
@@ -1252,7 +1188,6 @@ Do not convert observations into recommendations.
 """
 
     if lens == "dependencies_and_evidence_gaps":
-
         return base + """
 
 CURRENT LENS: DEPENDENCIES & EVIDENCE GAPS
@@ -1270,7 +1205,6 @@ capability does not exist.
 """
 
     if lens == "timing_and_momentum":
-
         return base + """
 
 CURRENT LENS: TIMING & MOMENTUM
@@ -1290,6 +1224,7 @@ Focus on:
 
 Do not create multiple signals for the same underlying movement.
 """
+
     raise ValueError(f"Unknown Cross-Signal lens: {lens}")
 
 
@@ -1500,6 +1435,11 @@ class CrossSignalNodes:
         state: CrossSignalState,
     ) -> dict[str, Any]:
 
+        trace_cross_signal(
+            "prepare.started",
+            state,
+        )
+
         cross_input = state[
             "input"
         ]
@@ -1518,10 +1458,7 @@ class CrossSignalNodes:
             str,
         ] = {}
 
-        # ------------------------------------------------------------------
         # Index verified findings.
-        # ------------------------------------------------------------------
-
         for index, finding in enumerate(
             findings,
             start=1,
@@ -1594,7 +1531,7 @@ class CrossSignalNodes:
             len(finding_aliases),
         )
 
-        return {
+        result = {
             "findings_by_id": findings_by_id,
 
             "finding_aliases": finding_aliases,
@@ -1627,6 +1564,18 @@ class CrossSignalNodes:
             },
         }
 
+        trace_cross_signal(
+            "prepare.completed",
+            state,
+            verified_findings=len(findings),
+            indexed_findings=len(findings_by_id),
+            finding_aliases=len(finding_aliases),
+            lens_count=len(LENSES),
+            warnings=warnings,
+        )
+
+        return result
+
     # ========================================================================
     # ROUTING
     # ========================================================================
@@ -1642,11 +1591,16 @@ class CrossSignalNodes:
     # DETECTION
     # ========================================================================
 
-
     async def detect_signals(
         self,
         state: CrossSignalState,
     ) -> dict[str, Any]:
+
+        trace_cross_signal(
+            "detect_signals.started",
+            state,
+            lens_count=len(LENSES),
+        )
 
         findings_digest = state["findings_digest"]
         business_digest = state["business_digest"]
@@ -1671,6 +1625,13 @@ class CrossSignalNodes:
 
         for lens in LENSES:
             try:
+                trace_cross_signal(
+                    "detect_signals.lens_started",
+                    state,
+                    lens=lens,
+                    max_signals=per_lens_limit,
+                )
+
                 logger.info("Running Cross-Signal lens=%s", lens)
 
                 system_prompt = _lens_system_prompt(lens)
@@ -1706,10 +1667,8 @@ class CrossSignalNodes:
 
                 for signal in signals:
                     try:
-                        # ------------------------------------------------
                         # Reject candidates without two distinct support
                         # references before adding them to the pipeline.
-                        # ------------------------------------------------
                         support_ids = {
                             _support_finding_id(item)
                             for item in signal.supporting_findings
@@ -1745,6 +1704,16 @@ class CrossSignalNodes:
                     discarded,
                 )
 
+                trace_cross_signal(
+                    "detect_signals.lens_completed",
+                    state,
+                    lens=lens,
+                    accepted=accepted,
+                    discarded=discarded,
+                    returned_signals=len(signals),
+                    total_candidates=len(all_signals),
+                )
+
             except Exception as exc:
                 # A failure in one lens must not stop the remaining lenses.
                 logger.exception(
@@ -1753,11 +1722,27 @@ class CrossSignalNodes:
                     lens,
                     exc,
                 )
+
+                trace_cross_signal(
+                    "detect_signals.lens_failed",
+                    state,
+                    lens=lens,
+                    error=str(exc),
+                    error_type=type(exc).__name__,
+                )
+
                 continue
 
         logger.info(
             "Cross-Signal detection completed: total_candidates=%d",
             len(all_signals),
+        )
+
+        trace_cross_signal(
+            "detect_signals.completed",
+            state,
+            total_candidates=len(all_signals),
+            lenses=len(LENSES),
         )
 
         # Always return a valid state update, even if every lens fails.
@@ -1781,6 +1766,14 @@ class CrossSignalNodes:
         self,
         state: CrossSignalState,
     ) -> dict[str, Any]:
+
+        trace_cross_signal(
+            "collect_signals.started",
+            state,
+            candidate_count=len(
+                state.get("candidate_signals", [])
+            ),
+        )
 
         request_entities = _request_entities(state["input"])
         candidates = list(
@@ -1815,10 +1808,7 @@ class CrossSignalNodes:
 
         references_seen = 0
 
-        # ------------------------------------------------------------------
         # Process candidates.
-        # ------------------------------------------------------------------
-
         for signal_index, signal in enumerate(
             candidates,
             start=1,
@@ -1868,7 +1858,6 @@ class CrossSignalNodes:
                     continue
 
                 if resolved_id in seen_ids:
-
                     continue
 
                 support = (
@@ -1892,10 +1881,7 @@ class CrossSignalNodes:
                 normalized_support
             )
 
-            # ----------------------------------------------------------------
             # Minimum two distinct findings.
-            # ----------------------------------------------------------------
-
             if (
                 len(
                     signal.supporting_findings
@@ -1918,10 +1904,7 @@ class CrossSignalNodes:
 
                 continue
 
-            # ----------------------------------------------------------------
             # Recover actual findings.
-            # ----------------------------------------------------------------
-
             actual_findings = (
                 _actual_supporting_findings(
                     signal,
@@ -1959,10 +1942,7 @@ class CrossSignalNodes:
                 )
                 continue
 
-            # ----------------------------------------------------------------
             # Derive domains from actual findings.
-            # ----------------------------------------------------------------
-
             signal.domains_involved = (
                 _actual_domains(
                     signal,
@@ -1985,10 +1965,7 @@ class CrossSignalNodes:
 
                 continue
 
-            # ----------------------------------------------------------------
             # Derive evidence quality from actual findings.
-            # ----------------------------------------------------------------
-
             signal.evidence_quality = (
                 _weakest_quality(
                     signal,
@@ -2022,10 +1999,7 @@ class CrossSignalNodes:
                 signal
             )
 
-        # ------------------------------------------------------------------
         # Rank candidates.
-        # ------------------------------------------------------------------
-
         normalized.sort(
             key=lambda signal: (
                 _signal_strength(
@@ -2037,10 +2011,7 @@ class CrossSignalNodes:
             reverse=True,
         )
 
-        # ------------------------------------------------------------------
         # Deduplicate.
-        # ------------------------------------------------------------------
-
         final_signals: list[
             CrossSignal
         ] = []
@@ -2067,21 +2038,13 @@ class CrossSignalNodes:
                 len(final_signals)
                 >= self.settings.max_signals
             ):
-
                 break
 
-        # ------------------------------------------------------------------
         # Fresh IDs.
-        # ------------------------------------------------------------------
-
         for signal in final_signals:
-
             signal.signal_id = new_id()
 
-        # ------------------------------------------------------------------
         # Diagnostics.
-        # ------------------------------------------------------------------
-
         stats = {
             **state.get(
                 "stats",
@@ -2156,6 +2119,22 @@ class CrossSignalNodes:
             len(unresolved_references),
         )
 
+        trace_cross_signal(
+            "collect_signals.completed",
+            state,
+            candidate_signals=len(candidates),
+            normalized_signals=len(normalized),
+            final_signals=len(final_signals),
+            support_references_seen=references_seen,
+            support_references_resolved=resolved_reference_count,
+            candidate_support_references_unresolved=len(
+                unresolved_references
+            ),
+            discarded_missing_support=discarded_missing_support,
+            discarded_insufficient_support=discarded_insufficient_support,
+            stats=stats,
+        )
+
         return {
             "signals": final_signals,
             "stats": stats,
@@ -2169,6 +2148,14 @@ class CrossSignalNodes:
         self,
         state: CrossSignalState,
     ) -> dict[str, Any]:
+
+        trace_cross_signal(
+            "summarize.started",
+            state,
+            signal_count=len(
+                state.get("signals", [])
+            ),
+        )
 
         signals = list(
             state.get(
@@ -2204,7 +2191,6 @@ class CrossSignalNodes:
             )
 
             if signal.signal:
-
                 dominant_patterns.append(
                     signal.signal
                 )
@@ -2218,19 +2204,16 @@ class CrossSignalNodes:
             )
 
             if signal_type == "timing":
-
                 timing_signals.append(
                     signal.title
                 )
 
             if signal_type == "momentum":
-
                 momentum_signals.append(
                     signal.title
                 )
 
             if signal.opportunity_relevance:
-
                 opportunity_signals.append(
                     (
                         f"{signal.title}: "
@@ -2239,7 +2222,6 @@ class CrossSignalNodes:
                 )
 
             if signal.risk_relevance:
-
                 risk_signals.append(
                     (
                         f"{signal.title}: "
@@ -2252,7 +2234,6 @@ class CrossSignalNodes:
             )
 
             if signal.strategic_relevance:
-
                 strategic_themes.append(
                     signal.strategic_relevance
                 )
@@ -2334,13 +2315,28 @@ class CrossSignalNodes:
             )
         )
 
-        return {
+        result = {
             "summary": summary,
 
             "decision_ready_context": (
                 decision_ready_context
             ),
         }
+
+        trace_cross_signal(
+            "summarize.completed",
+            state,
+            signal_count=len(signals),
+            dominant_patterns=len(summary.dominant_patterns),
+            important_dependencies=len(summary.important_dependencies),
+            business_impacts=len(summary.business_impacts),
+            evidence_gaps=len(summary.evidence_gaps),
+            decision_questions=len(
+                decision_ready_context.decision_questions
+            ),
+        )
+
+        return result
 
     # ========================================================================
     # DECISION-READY CONTEXT
@@ -2367,7 +2363,6 @@ class CrossSignalNodes:
         )
 
         if not business_goal:
-
             business_goal = (
                 "Evaluate the strategic implications "
                 "of the verified intelligence."
@@ -2406,7 +2401,6 @@ class CrossSignalNodes:
             )
 
             if signal.opportunity_relevance:
-
                 opportunity_indicators.append(
                     (
                         f"{signal.title}: "
@@ -2415,7 +2409,6 @@ class CrossSignalNodes:
                 )
 
             if signal.risk_relevance:
-
                 risk_indicators.append(
                     (
                         f"{signal.title}: "
@@ -2434,13 +2427,11 @@ class CrossSignalNodes:
             )
 
             if signal_type == "timing":
-
                 timing_signals.append(
                     signal.title
                 )
 
             if signal_type == "momentum":
-
                 momentum_signals.append(
                     signal.title
                 )
@@ -2450,7 +2441,6 @@ class CrossSignalNodes:
             )
 
             if signal.decision_question:
-
                 decision_questions.append(
                     signal.decision_question
                 )
@@ -2551,6 +2541,11 @@ class CrossSignalNodes:
         state: CrossSignalState,
     ) -> dict[str, Any]:
 
+        trace_cross_signal(
+            "assemble.started",
+            state,
+        )
+
         cross_input = state[
             "input"
         ]
@@ -2623,6 +2618,22 @@ class CrossSignalNodes:
             ),
         )
 
+        trace_cross_signal(
+            "assemble.completed",
+            state,
+            status="completed",
+            final_signal_count=len(signals),
+            decision_question_count=len(
+                decision_ready_context.decision_questions
+            ),
+            decision_area_count=len(
+                decision_ready_context.decision_areas
+            ),
+            stats=stats,
+            warnings=output.warnings,
+            output=output.model_dump(mode="json"),
+        )
+
         return {
             "output": output,
             "status": "completed",
@@ -2680,7 +2691,6 @@ def _unique_nonempty(
             limit is not None
             and len(result) >= limit
         ):
-
             break
 
     return result

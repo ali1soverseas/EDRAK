@@ -1,0 +1,1756 @@
+{
+  "worker": "internal_intelligence",
+  "task_goal": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+  "deterministic_checks": {
+    "finding_count": 4,
+    "evidence_item_count": 12,
+    "gap_count": 3,
+    "evidence_reference_rate": 1.0,
+    "reference_resolution_rate": null,
+    "quote_verification_rate": 1.0,
+    "findings_with_unsupported_numbers": 0,
+    "status_claim_conflicts": 0,
+    "mean_numeric_confidence": 0.75,
+    "per_finding": [
+      {
+        "finding_id": "89476b81-8db6-4b96-a3ff-7eb031120809",
+        "has_evidence_reference": true,
+        "references_resolve": null,
+        "reference_note": "trace truncated evidence ids ('<max depth>'); not evaluable",
+        "quote_found": true,
+        "unsupported_numbers": null,
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "201e6e2a-36f1-450e-9485-29d4ca3fcc6b",
+        "has_evidence_reference": true,
+        "references_resolve": null,
+        "reference_note": "trace truncated evidence ids ('<max depth>'); not evaluable",
+        "quote_found": true,
+        "unsupported_numbers": null,
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "a0ee6e56-dc25-4e9b-9561-08bf8565e001",
+        "has_evidence_reference": true,
+        "references_resolve": null,
+        "reference_note": "trace truncated evidence ids ('<max depth>'); not evaluable",
+        "quote_found": true,
+        "unsupported_numbers": null,
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "daf17c8c-70c2-4920-96c0-03df5ad1179d",
+        "has_evidence_reference": true,
+        "references_resolve": null,
+        "reference_note": "trace truncated evidence ids ('<max depth>'); not evaluable",
+        "quote_found": true,
+        "unsupported_numbers": null,
+        "status_claim_conflict": null
+      }
+    ],
+    "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+  },
+  "ground_truth_snapshot_date": "2026-10-29",
+  "ground_truth_dataset_version": "1.1.0-single-case-multi-finding",
+  "finding_count": 12,
+  "mandatory_finding_count": 12,
+  "coverage_score": 0.4167,
+  "strict_coverage_score": 0.0833,
+  "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+  "evaluation_config": {
+    "thresholds": {
+      "covered": 0.7,
+      "partial": 0.4
+    },
+    "embeddings": {
+      "provider": "sentence_transformers",
+      "model": "all-MiniLM-L6-v2",
+      "device": null,
+      "batch_size": 64
+    },
+    "scoring": {
+      "mandatory_only": true,
+      "partial_credit": 0.5
+    },
+    "worker_quality": {
+      "enabled": true,
+      "metrics": {},
+      "thresholds": {
+        "pass": 0.7,
+        "partial": 0.4
+      },
+      "max_report_chars": 30000,
+      "max_evidence_chars": 18000
+    }
+  },
+  "second_pass_summary": {
+    "enabled": true,
+    "top_k": 5,
+    "retrieval_method": "embeddings_cosine",
+    "passage_count": 27,
+    "initial_missing_count": 3,
+    "initial_partial_count": 8,
+    "findings_reviewed": 11,
+    "findings_skipped_partial": 0,
+    "findings_upgraded": 0,
+    "embedding_error": null,
+    "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+    "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+  },
+  "additional_claim_summary": {
+    "extracted_claim_count": 5,
+    "additional_candidates": 0,
+    "additional_candidates_supported_by_trace": 0,
+    "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+  },
+  "scope_compliance": {
+    "enabled": true,
+    "required_entities": [
+      "NVIDIA"
+    ],
+    "comparison_targets": [],
+    "entity_presence": {
+      "NVIDIA": true
+    },
+    "all_required_entities_present": true,
+    "all_in_scope_competitors_present": true,
+    "competitor_presence": {
+      "NVIDIA": true
+    },
+    "excluded_entities": [],
+    "excluded_entity_mentions": {},
+    "scope_violations": [],
+    "scope_policy_pass": true,
+    "policy": "Stay focused on NVIDIA data-center AI accelerators, supporting software, pricing, availability, and customer adoption in Europe and the United States. Separate verified facts from internal planning material, assumptions, and missing evidence."
+  },
+  "finding_results": [
+    {
+      "finding_id": "INT-CAP-01",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Relevant NVIDIA accelerator portfolio",
+      "priority": "mandatory",
+      "score": 0.10000000000000002,
+      "status": "missing",
+      "reason": "missing: Names relevant data-center accelerators such as H100, H200, B200 or A100 when supported by sources. — The Actual Output does not list any of the required accelerator names (H100, H200, B200, A100) in its hardware component section, nor does it provide substantive mentions of them. Consequently it fails to meet the Expected Output's acceptance criteria, which require at least one of those names supported by sources.; missing: Distinguishes accelerator chips from systems/platforms such as HGX or DGX. — The actual output only mentions generic \"GPU‑based systems\" and does not name specific accelerator chips (e.g., H100, A100) nor any systems/platforms such as HGX or DGX, and it provides no explicit contrast between chips and systems. This falls far short of the expected requirement to list chip families and distinguish them from system/platform names.; missing: Provides source links or identifies missing evidence rather than presenting an unsupported product list as verified. — The actual output lists several product claims but only one includes a public URL; the other claims rely on internal documents without source links or explicit missing‑evidence notices. Moreover, it fails to identify specific NVIDIA accelerator families (e.g., H100, A100) as required by the expected output, providing only generic descriptions. Consequently, it does not satisfy the mandatory verification and source‑link criteria.",
+      "criteria_results": [
+        {
+          "criterion": "Names relevant data-center accelerators such as H100, H200, B200 or A100 when supported by sources.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not list any of the required accelerator names (H100, H200, B200, A100) in its hardware component section, nor does it provide substantive mentions of them. Consequently it fails to meet the Expected Output's acceptance criteria, which require at least one of those names supported by sources."
+        },
+        {
+          "criterion": "Distinguishes accelerator chips from systems/platforms such as HGX or DGX.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output only mentions generic \"GPU‑based systems\" and does not name specific accelerator chips (e.g., H100, A100) nor any systems/platforms such as HGX or DGX, and it provides no explicit contrast between chips and systems. This falls far short of the expected requirement to list chip families and distinguish them from system/platform names."
+        },
+        {
+          "criterion": "Provides source links or identifies missing evidence rather than presenting an unsupported product list as verified.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output lists several product claims but only one includes a public URL; the other claims rely on internal documents without source links or explicit missing‑evidence notices. Moreover, it fails to identify specific NVIDIA accelerator families (e.g., H100, A100) as required by the expected output, providing only generic descriptions. Consequently, it does not satisfy the mandatory verification and source‑link criteria."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.10000000000000002,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "INT-CAP-01",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Relevant NVIDIA accelerator portfolio",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The response fails to name specific accelerators (H100, H200, B200, A100) and does not distinguish chips from platforms like HGX or DGX, so the first two acceptance criteria are missing. It does include a source link to NVIDIA's product page, satisfying the third criterion, resulting in only partial overall coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[1].claim",
+            "text": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+            "similarity": 0.564977
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.556687
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+            "similarity": 0.555305
+          },
+          {
+            "source_path": "$.findings[0].caveats[2]",
+            "text": "Scope: NVIDIA data‑center offering",
+            "similarity": 0.552943
+          },
+          {
+            "source_path": "$.summary",
+            "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+            "similarity": 0.538187
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.10000000000000002,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "INT-CAP-02",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Specific technical capabilities and performance",
+      "priority": "mandatory",
+      "score": 0.175,
+      "status": "missing",
+      "reason": "missing: Includes concrete specifications or benchmark results when available. — The report contains only generic statements about NVIDIA's data‑center offering (e.g., GPU‑based systems, CUDA) and does not provide any concrete specifications, benchmark numbers, workload details, or system configurations required by the expected criteria. Consequently, it fails to meet the acceptance criteria for including concrete specifications or benchmark results, resulting in a low alignment score.; missing: Identifies workload, precision, system configuration, or benchmark context when relevant. — The actual output contains only generic statements about NVIDIA's data‑center offerings and does not provide any concrete workload, precision, system configuration, or benchmark context required by the mandatory finding. It also fails to mark missing technical specifications or benchmark results as gaps, so it does not meet the acceptance criteria for specific technical capabilities and performance.; missing: Avoids unsupported performance comparisons and distinguishes vendor claims from independent measurements. — The Actual Output does not contain an explicit statement that performance comparisons are only made when supported by evidence nor that vendor claims are separated from independent measurements. It only lists internal claims and gaps without addressing the required distinction, so it only partially meets the criteria, resulting in a low score.; missing: Explicitly marks missing specifications or benchmarks as gaps when not established. — The Expected Output requires explicit gap markings for missing technical specifications or benchmark data. The Actual Output includes a clear \"gaps\" list, but it only notes absent pricing, inventory, and adoption metrics—not the required missing specifications or benchmarks. While the gap statements are substantive and no Retrieval Context content is misused, the core criterion is only partially met, resulting in a low‑to‑intermediate score.",
+      "criteria_results": [
+        {
+          "criterion": "Includes concrete specifications or benchmark results when available.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The report contains only generic statements about NVIDIA's data‑center offering (e.g., GPU‑based systems, CUDA) and does not provide any concrete specifications, benchmark numbers, workload details, or system configurations required by the expected criteria. Consequently, it fails to meet the acceptance criteria for including concrete specifications or benchmark results, resulting in a low alignment score."
+        },
+        {
+          "criterion": "Identifies workload, precision, system configuration, or benchmark context when relevant.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output contains only generic statements about NVIDIA's data‑center offerings and does not provide any concrete workload, precision, system configuration, or benchmark context required by the mandatory finding. It also fails to mark missing technical specifications or benchmark results as gaps, so it does not meet the acceptance criteria for specific technical capabilities and performance."
+        },
+        {
+          "criterion": "Avoids unsupported performance comparisons and distinguishes vendor claims from independent measurements.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output does not contain an explicit statement that performance comparisons are only made when supported by evidence nor that vendor claims are separated from independent measurements. It only lists internal claims and gaps without addressing the required distinction, so it only partially meets the criteria, resulting in a low score."
+        },
+        {
+          "criterion": "Explicitly marks missing specifications or benchmarks as gaps when not established.",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Expected Output requires explicit gap markings for missing technical specifications or benchmark data. The Actual Output includes a clear \"gaps\" list, but it only notes absent pricing, inventory, and adoption metrics—not the required missing specifications or benchmarks. While the gap statements are substantive and no Retrieval Context content is misused, the core criterion is only partially met, resulting in a low‑to‑intermediate score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.175,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "INT-CAP-02",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Specific technical capabilities and performance",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The passages contain a generic claim about NVIDIA's accelerated compute (Passage 5) and a gap about missing pricing (Passage 2), but none provide concrete specifications, benchmark results, workload details, or distinguish vendor claims from independent measurements as required by the acceptance criteria. Consequently, the expected criteria are largely absent, resulting in minimal coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[2].caveats[2]",
+            "text": "Scope: Accelerated compute",
+            "similarity": 0.44297
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+            "similarity": 0.366343
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.352864
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Derived from internal competitive‑intelligence planning document.",
+            "similarity": 0.315696
+          },
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+            "similarity": 0.313325
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.175,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "INT-CAP-03",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Data-center system and scale-up/scale-out context",
+      "priority": "mandatory",
+      "score": 0.5,
+      "status": "partial",
+      "reason": "missing: Covers system/platform context beyond naming a GPU alone. — The actual output only mentions generic \"GPU‑based systems\" and a software ecosystem, without detailing memory, interconnect, scaling, or system integration. The expected output requires substantive system/platform context beyond naming a GPU, which is not provided, resulting in a low alignment score.; missing: Addresses memory, interconnect/networking, scaling, or system integration when supported. — The actual output only mentions GPU‑based systems and a software ecosystem, without any discussion of memory, interconnect/networking, scaling, or system integration. The expected output requires coverage of system/platform context beyond naming a GPU and explicit treatment of those topics. Since the actual output lacks this detail, it only tangentially touches the subject, resulting in a low score.; covered: Does not treat general planning questions as confirmed technical findings. — The Actual Output contains only factual claims with explicit caveats and does not present any general planning questions as confirmed findings. This aligns with the Expected Output's requirement that planning questions remain speculative, resulting in a high alignment score.",
+      "criteria_results": [
+        {
+          "criterion": "Covers system/platform context beyond naming a GPU alone.",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The actual output only mentions generic \"GPU‑based systems\" and a software ecosystem, without detailing memory, interconnect, scaling, or system integration. The expected output requires substantive system/platform context beyond naming a GPU, which is not provided, resulting in a low alignment score."
+        },
+        {
+          "criterion": "Addresses memory, interconnect/networking, scaling, or system integration when supported.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output only mentions GPU‑based systems and a software ecosystem, without any discussion of memory, interconnect/networking, scaling, or system integration. The expected output requires coverage of system/platform context beyond naming a GPU and explicit treatment of those topics. Since the actual output lacks this detail, it only tangentially touches the subject, resulting in a low score."
+        },
+        {
+          "criterion": "Does not treat general planning questions as confirmed technical findings.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output contains only factual claims with explicit caveats and does not present any general planning questions as confirmed findings. This aligns with the Expected Output's requirement that planning questions remain speculative, resulting in a high alignment score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.5,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-CAP-03",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Data-center system and scale-up/scale-out context",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The actual output mentions NVIDIA's data‑center platforms and GPU‑based systems, satisfying the first criterion of providing some system context, but it lacks any discussion of memory, interconnect, scaling, or system integration, so the second criterion is not met. It does not treat planning questions as confirmed findings, meeting the third criterion. Because only one of three criteria is substantively covered, the overall coverage is partially covered, resulting in a low to moderate score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[0].caveats[2]",
+            "text": "Scope: NVIDIA data‑center offering",
+            "similarity": 0.579414
+          },
+          {
+            "source_path": "$.summary",
+            "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+            "similarity": 0.569039
+          },
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+            "similarity": 0.556024
+          },
+          {
+            "source_path": "$.findings[1].caveats[2]",
+            "text": "Scope: NVIDIA data‑center portfolio",
+            "similarity": 0.54096
+          },
+          {
+            "source_path": "$.findings[0].claim",
+            "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+            "similarity": 0.522317
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.5,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-EVID-04",
+      "requirement_id": "REQ-EVIDENCE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Traceable and appropriately qualified product evidence",
+      "priority": "mandatory",
+      "score": 0.775,
+      "status": "partial",
+      "reason": "partial: Includes source titles and URLs for externally verifiable claims where available. — The Actual Output includes one externally verifiable claim with a URL, but it lacks a source title and does not provide citations for the other claims. While the URL is present in the output itself (meeting step 2), the missing titles and incomplete citation coverage mean only some required citations are provided, resulting in an intermediate score.; covered: Clearly labels internal documents as internal rather than independent external confirmation. — The output consistently labels sources as internal (e.g., \"Derived from internal planning document\" and \"internal_claim\"), satisfying step 1. It also avoids using the retrieval context as evidence, meeting step 3. However, it includes a statement that a public URL was accessed (\"public product portfolio is referenced via a URL (accessed 2026-10-22)\"), which conflicts with the expected criterion to avoid claiming external verification unless directly supported. This ambiguity lowers the score from high to intermediate.; covered: Avoids claiming that a referenced URL was accessed or verified unless the trace supports that statement. — The Actual Output includes a claim that a public URL was accessed (the NVIDIA data‑center portfolio page) and the Retrieval Context contains explicit entries noting the same URL was accessed on 2026‑10‑22, providing concrete trace evidence. The output also clearly labels the source as an internal planning document and distinguishes it from external verification, matching the Expected Output’s requirement to avoid unsupported URL‑access statements and to label internal evidence appropriately.; covered: States evidence limitations transparently. — The Actual Output explicitly notes that the evidence comes from internal planning documents, lacks pricing and adoption data, and flags possible outdatedness, satisfying the requirement for transparent evidence limitations. The Expected Output mandates clear disclosure of such limitations, which the response provides through summary statements and caveats. While the disclosure is thorough, minor phrasing (e.g., stating the URL was accessed) could be tighter, so the score reflects a strong but not perfect alignment.",
+      "criteria_results": [
+        {
+          "criterion": "Includes source titles and URLs for externally verifiable claims where available.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output includes one externally verifiable claim with a URL, but it lacks a source title and does not provide citations for the other claims. While the URL is present in the output itself (meeting step 2), the missing titles and incomplete citation coverage mean only some required citations are provided, resulting in an intermediate score."
+        },
+        {
+          "criterion": "Clearly labels internal documents as internal rather than independent external confirmation.",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The output consistently labels sources as internal (e.g., \"Derived from internal planning document\" and \"internal_claim\"), satisfying step 1. It also avoids using the retrieval context as evidence, meeting step 3. However, it includes a statement that a public URL was accessed (\"public product portfolio is referenced via a URL (accessed 2026-10-22)\"), which conflicts with the expected criterion to avoid claiming external verification unless directly supported. This ambiguity lowers the score from high to intermediate."
+        },
+        {
+          "criterion": "Avoids claiming that a referenced URL was accessed or verified unless the trace supports that statement.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output includes a claim that a public URL was accessed (the NVIDIA data‑center portfolio page) and the Retrieval Context contains explicit entries noting the same URL was accessed on 2026‑10‑22, providing concrete trace evidence. The output also clearly labels the source as an internal planning document and distinguishes it from external verification, matching the Expected Output’s requirement to avoid unsupported URL‑access statements and to label internal evidence appropriately."
+        },
+        {
+          "criterion": "States evidence limitations transparently.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The Actual Output explicitly notes that the evidence comes from internal planning documents, lacks pricing and adoption data, and flags possible outdatedness, satisfying the requirement for transparent evidence limitations. The Expected Output mandates clear disclosure of such limitations, which the response provides through summary statements and caveats. While the disclosure is thorough, minor phrasing (e.g., stating the URL was accessed) could be tighter, so the score reflects a strong but not perfect alignment."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.775,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-EVID-04",
+        "requirement_id": "REQ-EVIDENCE",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Traceable and appropriately qualified product evidence",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The actual output meets two of the four acceptance criteria: it clearly labels documents as internal and transparently states evidence limitations (e.g., \"internal planning document; may not reflect latest public announcements\"). However, it does not provide source titles or URLs for external claims, and it incorrectly claims a URL was accessed without sufficient trace support. Consequently, coverage is partial.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[0].caveats[1]",
+            "text": "Claim type: internal_claim",
+            "similarity": 0.498386
+          },
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.483733
+          },
+          {
+            "source_path": "$.findings[0].caveats[0]",
+            "text": "Derived from internal planning document; may not reflect latest public announcements.",
+            "similarity": 0.430735
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Derived from internal competitive‑intelligence planning document.",
+            "similarity": 0.40754
+          },
+          {
+            "source_path": "$.findings[1].caveats[0]",
+            "text": "Derived from internal document referencing a public URL accessed on 2026-10-22; page contents may change.",
+            "similarity": 0.397232
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.775,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-SW-05",
+      "requirement_id": "REQ-SOFTWARE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "NVIDIA AI software ecosystem",
+      "priority": "mandatory",
+      "score": 0.25,
+      "status": "partial",
+      "reason": "missing: Identifies relevant software components and their purpose rather than only listing names. — The actual output only names a software component (CUDA) and notes its inclusion in the ecosystem, but it does not explain the purpose of CUDA or any other components as required by the expected output. No description of how the software supports developer workflows, inference/training, or licensing is provided, resulting in a low alignment with the evaluation criteria.; missing: Connects software to developer workflows, inference/training, libraries, or deployment where evidence supports it. — The Actual Output only lists NVIDIA's software ecosystem (e.g., CUDA) without describing how these components support developer workflows, inference/training, libraries, or deployment. This lacks the substantive connection required by the evaluation steps, and therefore does not meet the Expected Output's criteria.; missing: Distinguishes open-source/free components from paid enterprise offerings where verified. — The Actual Output does not contain any statement that separates open‑source/free software components from paid enterprise offerings, nor does it provide citations or version numbers to verify such a distinction. Consequently, it fails the core acceptance criterion that requires a verifiable distinction, resulting in a very low alignment score.; partial: Calls out missing details rather than inventing coverage. — The report explicitly lists gaps for pricing, inventory, and adoption, satisfying step 1, and it does not fabricate coverage of absent details, meeting step 2 and step 3. However, the required finding focuses on the AI software ecosystem and expects identification of specific components (e.g., cuDNN, TensorRT) and their purposes, which the report only mentions generically as \"CUDA and AI software offerings\" and does not call out the missing detailed software information. This partial acknowledgment leads to a medium score.",
+      "criteria_results": [
+        {
+          "criterion": "Identifies relevant software components and their purpose rather than only listing names.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output only names a software component (CUDA) and notes its inclusion in the ecosystem, but it does not explain the purpose of CUDA or any other components as required by the expected output. No description of how the software supports developer workflows, inference/training, or licensing is provided, resulting in a low alignment with the evaluation criteria."
+        },
+        {
+          "criterion": "Connects software to developer workflows, inference/training, libraries, or deployment where evidence supports it.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output only lists NVIDIA's software ecosystem (e.g., CUDA) without describing how these components support developer workflows, inference/training, libraries, or deployment. This lacks the substantive connection required by the evaluation steps, and therefore does not meet the Expected Output's criteria."
+        },
+        {
+          "criterion": "Distinguishes open-source/free components from paid enterprise offerings where verified.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output does not contain any statement that separates open‑source/free software components from paid enterprise offerings, nor does it provide citations or version numbers to verify such a distinction. Consequently, it fails the core acceptance criterion that requires a verifiable distinction, resulting in a very low alignment score."
+        },
+        {
+          "criterion": "Calls out missing details rather than inventing coverage.",
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The report explicitly lists gaps for pricing, inventory, and adoption, satisfying step 1, and it does not fabricate coverage of absent details, meeting step 2 and step 3. However, the required finding focuses on the AI software ecosystem and expects identification of specific components (e.g., cuDNN, TensorRT) and their purposes, which the report only mentions generically as \"CUDA and AI software offerings\" and does not call out the missing detailed software information. This partial acknowledgment leads to a medium score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.25,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-SW-05",
+        "requirement_id": "REQ-SOFTWARE",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "NVIDIA AI software ecosystem",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output only lists CUDA as part of NVIDIA's software ecosystem and provides no identification of relevant components, their purposes, workflow connections, or distinctions between open‑source and paid offerings, nor does it note missing details. Consequently, all acceptance criteria are missing, leading to a completely uncovered evaluation.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[3].quote",
+            "text": "NVIDIA's software ecosystem includes CUDA and AI software offerings",
+            "similarity": 0.775562
+          },
+          {
+            "source_path": "$.findings[3].claim",
+            "text": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+            "similarity": 0.766307
+          },
+          {
+            "source_path": "$.summary",
+            "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+            "similarity": 0.634461
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.58708
+          },
+          {
+            "source_path": "$.findings[0].claim",
+            "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+            "similarity": 0.560792
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.25,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-SW-06",
+      "requirement_id": "REQ-SOFTWARE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Framework support and version compatibility",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "partial",
+      "reason": "missing: Addresses framework support such as PyTorch or TensorFlow when evidenced. — The actual output contains no explicit statements about supporting PyTorch, TensorFlow, or any AI framework; it only references CUDA. Since the expected output requires clear coverage of framework support and version compatibility, the report fails to meet this requirement, resulting in a low score.; missing: Provides compatibility/version details or explicitly identifies them as unverified or missing. — The actual output contains no statements about AI framework support, version compatibility, or even an explicit note that such information is unverified or missing, which fails the expected requirement for framework compatibility details.; missing: Uses official documentation or attributable sources for compatibility claims. — The actual output does not provide any framework compatibility claims (e.g., PyTorch or TensorFlow versions) and only makes a generic statement that NVIDIA's software ecosystem includes CUDA. It lacks official documentation citations for compatibility and does not address the required finding of framework support, failing the acceptance criteria.; covered: Does not infer version compatibility from a generic statement that CUDA is used. — The Actual Output mentions CUDA in the summary and a finding, but it never claims a specific CUDA version or infers version compatibility, satisfying the evaluation steps that require no such inference.",
+      "criteria_results": [
+        {
+          "criterion": "Addresses framework support such as PyTorch or TensorFlow when evidenced.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output contains no explicit statements about supporting PyTorch, TensorFlow, or any AI framework; it only references CUDA. Since the expected output requires clear coverage of framework support and version compatibility, the report fails to meet this requirement, resulting in a low score."
+        },
+        {
+          "criterion": "Provides compatibility/version details or explicitly identifies them as unverified or missing.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output contains no statements about AI framework support, version compatibility, or even an explicit note that such information is unverified or missing, which fails the expected requirement for framework compatibility details."
+        },
+        {
+          "criterion": "Uses official documentation or attributable sources for compatibility claims.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output does not provide any framework compatibility claims (e.g., PyTorch or TensorFlow versions) and only makes a generic statement that NVIDIA's software ecosystem includes CUDA. It lacks official documentation citations for compatibility and does not address the required finding of framework support, failing the acceptance criteria."
+        },
+        {
+          "criterion": "Does not infer version compatibility from a generic statement that CUDA is used.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output mentions CUDA in the summary and a finding, but it never claims a specific CUDA version or infers version compatibility, satisfying the evaluation steps that require no such inference."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.3,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-SW-06",
+        "requirement_id": "REQ-SOFTWARE",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Framework support and version compatibility",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output only repeats generic statements about NVIDIA's software ecosystem and CUDA, without mentioning specific frameworks like PyTorch or TensorFlow, providing any version or compatibility details, or citing official documentation. Consequently, none of the acceptance criteria are substantively addressed, resulting in a missing coverage classification.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[3].claim",
+            "text": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+            "similarity": 0.56219
+          },
+          {
+            "source_path": "$.findings[3].quote",
+            "text": "NVIDIA's software ecosystem includes CUDA and AI software offerings",
+            "similarity": 0.557172
+          },
+          {
+            "source_path": "$.summary",
+            "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+            "similarity": 0.498513
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.390554
+          },
+          {
+            "source_path": "$.findings[0].claim",
+            "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+            "similarity": 0.378965
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.3,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-PRICE-07",
+      "requirement_id": "REQ-PRICING",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Pricing and commercial model",
+      "priority": "mandatory",
+      "score": 0.725,
+      "status": "partial",
+      "reason": "missing: Distinguishes direct purchase, cloud rental, systems pricing, and software subscription/licensing where relevant. — The Actual Output does not contain any statements that differentiate direct purchase, cloud rental, systems pricing, or software subscription/licensing, which are required by the Expected Output. It only lists product features and notes that pricing information is missing, without providing the four required categories. Consequently, the response fails to meet the acceptance criteria, resulting in a low score.; covered: Includes currency, date, configuration, and source for quoted prices when available. — The Actual Output contains no quoted price statements, so there are no instances that could miss the required currency, date, configuration, and source details. It correctly follows the Expected Output's acceptance criteria by explicitly noting the absence of pricing information in the gaps section, rather than fabricating numbers. This alignment with the requirement to report missing pricing earns a high score.; covered: Does not present reseller asking prices or estimates as official list prices without qualification. — The response contains no reseller price statements and explicitly notes the absence of pricing information in the gaps section, thereby fully complying with the requirement to avoid presenting unqualified prices.; covered: If pricing is absent from the evidence, explicitly reports the gap rather than fabricating a number. — The response explicitly notes that no concrete pricing information is present and lists a pricing gap, matching the requirement to report missing pricing rather than fabricate values. The expected criteria demand a clear statement of unavailable pricing, which the output provides. The retrieval context contains no pricing data, so the gap declaration is appropriate. No price guesses are made, resulting in a high alignment score.",
+      "criteria_results": [
+        {
+          "criterion": "Distinguishes direct purchase, cloud rental, systems pricing, and software subscription/licensing where relevant.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output does not contain any statements that differentiate direct purchase, cloud rental, systems pricing, or software subscription/licensing, which are required by the Expected Output. It only lists product features and notes that pricing information is missing, without providing the four required categories. Consequently, the response fails to meet the acceptance criteria, resulting in a low score."
+        },
+        {
+          "criterion": "Includes currency, date, configuration, and source for quoted prices when available.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The Actual Output contains no quoted price statements, so there are no instances that could miss the required currency, date, configuration, and source details. It correctly follows the Expected Output's acceptance criteria by explicitly noting the absence of pricing information in the gaps section, rather than fabricating numbers. This alignment with the requirement to report missing pricing earns a high score."
+        },
+        {
+          "criterion": "Does not present reseller asking prices or estimates as official list prices without qualification.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The response contains no reseller price statements and explicitly notes the absence of pricing information in the gaps section, thereby fully complying with the requirement to avoid presenting unqualified prices."
+        },
+        {
+          "criterion": "If pricing is absent from the evidence, explicitly reports the gap rather than fabricating a number.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The response explicitly notes that no concrete pricing information is present and lists a pricing gap, matching the requirement to report missing pricing rather than fabricate values. The expected criteria demand a clear statement of unavailable pricing, which the output provides. The retrieval context contains no pricing data, so the gap declaration is appropriate. No price guesses are made, resulting in a high alignment score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.725,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-PRICE-07",
+        "requirement_id": "REQ-PRICING",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Pricing and commercial model",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The response only addresses the gap‑reporting criterion by stating that pricing information is missing, which satisfies the requirement to explicitly note the absence of data. However, it provides no evidence distinguishing direct purchase, cloud rental, systems pricing, or software licensing, nor does it include any currency, date, configuration, or source details for quoted prices. Consequently, three of the four acceptance criteria are missing, leading to a low overall alignment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.555901
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+            "similarity": 0.537053
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.384802
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+            "similarity": 0.350355
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+            "similarity": 0.349711
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.725,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-COM-08",
+      "requirement_id": "REQ-PRICING",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Total-cost and commercial caveats",
+      "priority": "mandatory",
+      "score": 0.13333333333333333,
+      "status": "missing",
+      "reason": "missing: Considers system configuration, networking, power/cooling, cloud instance pricing, or software licensing when relevant and supported. — The expected output requires explicit consideration of system configuration, networking, power/cooling, cloud instance pricing, or software licensing. The actual output only lists product features and notes missing pricing and availability, without any substantive discussion of those cost‑related factors, so it fails to meet the acceptance criteria.; missing: Labels estimates and assumptions clearly. — The Actual Output contains no statements that explicitly label estimates or assumptions (e.g., using \"estimate\", \"assume\", or \"approximate\"), while the Expected Output requires such labeling. Consequently, the response fails to meet the primary criterion of clearly marking estimates and assumptions, resulting in a low alignment score.; missing: States when total-cost comparison cannot be made from available evidence. — The actual output does not contain an explicit statement that a total‑cost comparison cannot be performed; it only notes missing pricing and inventory data. The expected output requires a clear declaration of inability to make the total‑cost comparison. Because this explicit requirement is absent, the response aligns poorly with the evaluation steps.",
+      "criteria_results": [
+        {
+          "criterion": "Considers system configuration, networking, power/cooling, cloud instance pricing, or software licensing when relevant and supported.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The expected output requires explicit consideration of system configuration, networking, power/cooling, cloud instance pricing, or software licensing. The actual output only lists product features and notes missing pricing and availability, without any substantive discussion of those cost‑related factors, so it fails to meet the acceptance criteria."
+        },
+        {
+          "criterion": "Labels estimates and assumptions clearly.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output contains no statements that explicitly label estimates or assumptions (e.g., using \"estimate\", \"assume\", or \"approximate\"), while the Expected Output requires such labeling. Consequently, the response fails to meet the primary criterion of clearly marking estimates and assumptions, resulting in a low alignment score."
+        },
+        {
+          "criterion": "States when total-cost comparison cannot be made from available evidence.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output does not contain an explicit statement that a total‑cost comparison cannot be performed; it only notes missing pricing and inventory data. The expected output requires a clear declaration of inability to make the total‑cost comparison. Because this explicit requirement is absent, the response aligns poorly with the evaluation steps."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.13333333333333333,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "INT-COM-08",
+        "requirement_id": "REQ-PRICING",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Total-cost and commercial caveats",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The actual output only states that pricing details are missing (Passage 1 and 2), which satisfies the criterion of stating that a total‑cost comparison cannot be made. It does not consider system configuration, networking, power/cooling, cloud pricing, or licensing, nor does it label any estimates or assumptions, so the first two acceptance criteria are not met. Overall coverage is therefore partial.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+            "similarity": 0.545005
+          },
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.457575
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.396462
+          },
+          {
+            "source_path": "$.findings[2].caveats[2]",
+            "text": "Scope: Accelerated compute",
+            "similarity": 0.393474
+          },
+          {
+            "source_path": "$.findings[0].caveats[2]",
+            "text": "Scope: NVIDIA data‑center offering",
+            "similarity": 0.304233
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.13333333333333333,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "INT-AVL-09",
+      "requirement_id": "REQ-AVAILABILITY",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Current product availability and supply constraints",
+      "priority": "mandatory",
+      "score": 0.275,
+      "status": "partial",
+      "reason": "missing: Uses dated evidence for availability, lead times, launches, or supply constraints. — The output only contains a date for when a URL was accessed (2026-10-22), which does not provide concrete evidence of product availability, lead times, launches, or supply constraints. No substantive dated statements about inventory or supply are present, so the required dated evidence for availability is missing, failing the acceptance criteria.; missing: Distinguishes announced launch, orderability, cloud availability, and physical inventory. — The actual output does not contain any statements that differentiate announced launch, orderability, cloud availability, or physical inventory, which are required by the expected output. Consequently, none of the four categories are covered, resulting in a low alignment score.; missing: Does not claim real-time stock levels without a source that supports them. — The actual output contains no statements asserting current stock or availability levels, so it cannot be evaluated for citation compliance. Because the required finding (current product availability or supply constraints) is missing, the response fails to meet the mandatory criterion, resulting in a low score.; covered: Clearly marks missing availability evidence. — The Actual Output includes a clear gap statement that inventory and regional availability evidence are missing, which aligns with the Expected Output's requirement to explicitly mark missing availability evidence. The marking is present in the 'gaps' list and matches the criterion, while the Retrieval Context does not contain this marking. However, the phrasing is not a dedicated explicit tag (e.g., \"Missing availability evidence\"), so the alignment is strong but not perfect.",
+      "criteria_results": [
+        {
+          "criterion": "Uses dated evidence for availability, lead times, launches, or supply constraints.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The output only contains a date for when a URL was accessed (2026-10-22), which does not provide concrete evidence of product availability, lead times, launches, or supply constraints. No substantive dated statements about inventory or supply are present, so the required dated evidence for availability is missing, failing the acceptance criteria."
+        },
+        {
+          "criterion": "Distinguishes announced launch, orderability, cloud availability, and physical inventory.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output does not contain any statements that differentiate announced launch, orderability, cloud availability, or physical inventory, which are required by the expected output. Consequently, none of the four categories are covered, resulting in a low alignment score."
+        },
+        {
+          "criterion": "Does not claim real-time stock levels without a source that supports them.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output contains no statements asserting current stock or availability levels, so it cannot be evaluated for citation compliance. Because the required finding (current product availability or supply constraints) is missing, the response fails to meet the mandatory criterion, resulting in a low score."
+        },
+        {
+          "criterion": "Clearly marks missing availability evidence.",
+          "score": 0.8,
+          "status": "covered",
+          "reason": "The Actual Output includes a clear gap statement that inventory and regional availability evidence are missing, which aligns with the Expected Output's requirement to explicitly mark missing availability evidence. The marking is present in the 'gaps' list and matches the criterion, while the Retrieval Context does not contain this marking. However, the phrasing is not a dedicated explicit tag (e.g., \"Missing availability evidence\"), so the alignment is strong but not perfect."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.275,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-AVL-09",
+        "requirement_id": "REQ-AVAILABILITY",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Current product availability and supply constraints",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The actual output marks missing availability evidence (Passage 1) and avoids claiming real‑time stock levels, satisfying two of the four acceptance criteria. However, it provides no dated evidence of supply constraints and does not distinguish between launch, orderability, cloud availability, or physical inventory, leaving those criteria unmet. Overall coverage is partial.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[1]",
+            "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+            "similarity": 0.5044
+          },
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.460249
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+            "similarity": 0.429062
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.406833
+          },
+          {
+            "source_path": "$.findings[1].claim",
+            "text": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+            "similarity": 0.388201
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.275,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-REG-10",
+      "requirement_id": "REQ-REGIONS",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Europe versus United States coverage",
+      "priority": "mandatory",
+      "score": 0.6,
+      "status": "partial",
+      "reason": "covered: Explicitly covers both Europe and the United States. — The Actual Output explicitly names both Europe and the United States and states that the offering targets these regions. It also acknowledges the lack of region‑specific pricing, availability, and adoption data, clearly explaining the evidence gaps and avoiding any implication that the target‑region statement alone proves regional activity. This aligns with the Expected Output’s requirement to cover both regions and discuss gaps, though no concrete regional evidence is provided.; partial: Provides region-specific availability, pricing, or deployment evidence when available. — The actual output mentions both Europe and the United States as target markets, satisfying the explicit coverage requirement, and it clearly notes the absence of pricing, inventory, and adoption data, addressing the evidence‑gap criterion. However, it does not provide any region‑specific availability, pricing, or deployment evidence, which is required for a full match. Consequently, the response only partially fulfills the acceptance criteria, leading to an intermediate score.; covered: Explains regional evidence gaps and avoids treating global announcements as proof of regional deployment. — The actual output explicitly mentions both Europe and the United States and lists the missing pricing, inventory, and adoption data as regional evidence gaps, satisfying the requirement to explain gaps. It does not rely on global announcements as proof of regional deployment, using the URL only as a reference. However, it does not directly state that it is avoiding extrapolation from global statements, which is a minor omission relative to the expected criteria.; missing: Does not imply that the trace's stated target regions alone prove region-specific activity. — The Actual Output does not contain any statement denying that the listed target regions (United States and Europe) alone prove region‑specific activity, nor does it qualify that claim. While it mentions the regions as targets, it lacks the required explicit disclaimer required by the Expected Output’s acceptance criteria. Consequently, it fails to meet the high‑scoring condition and receives a low score.",
+      "criteria_results": [
+        {
+          "criterion": "Explicitly covers both Europe and the United States.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The Actual Output explicitly names both Europe and the United States and states that the offering targets these regions. It also acknowledges the lack of region‑specific pricing, availability, and adoption data, clearly explaining the evidence gaps and avoiding any implication that the target‑region statement alone proves regional activity. This aligns with the Expected Output’s requirement to cover both regions and discuss gaps, though no concrete regional evidence is provided."
+        },
+        {
+          "criterion": "Provides region-specific availability, pricing, or deployment evidence when available.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The actual output mentions both Europe and the United States as target markets, satisfying the explicit coverage requirement, and it clearly notes the absence of pricing, inventory, and adoption data, addressing the evidence‑gap criterion. However, it does not provide any region‑specific availability, pricing, or deployment evidence, which is required for a full match. Consequently, the response only partially fulfills the acceptance criteria, leading to an intermediate score."
+        },
+        {
+          "criterion": "Explains regional evidence gaps and avoids treating global announcements as proof of regional deployment.",
+          "score": 0.8,
+          "status": "covered",
+          "reason": "The actual output explicitly mentions both Europe and the United States and lists the missing pricing, inventory, and adoption data as regional evidence gaps, satisfying the requirement to explain gaps. It does not rely on global announcements as proof of regional deployment, using the URL only as a reference. However, it does not directly state that it is avoiding extrapolation from global statements, which is a minor omission relative to the expected criteria."
+        },
+        {
+          "criterion": "Does not imply that the trace's stated target regions alone prove region-specific activity.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not contain any statement denying that the listed target regions (United States and Europe) alone prove region‑specific activity, nor does it qualify that claim. While it mentions the regions as targets, it lacks the required explicit disclaimer required by the Expected Output’s acceptance criteria. Consequently, it fails to meet the high‑scoring condition and receives a low score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.6,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-REG-10",
+        "requirement_id": "REQ-REGIONS",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Europe versus United States coverage",
+        "priority": "mandatory",
+        "score": 0.1,
+        "status": "missing",
+        "reason": "The actual output only notes that Europe and United States data are missing and that the sources are internal planning documents; it provides no explicit region‑specific availability, pricing, or deployment evidence, nor does it explain gaps while avoiding reliance on global statements. Consequently, none of the acceptance criteria are substantively met, leading to a Missing classification and a low alignment score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[1]",
+            "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+            "similarity": 0.355368
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+            "similarity": 0.345396
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Derived from internal competitive‑intelligence planning document.",
+            "similarity": 0.330848
+          },
+          {
+            "source_path": "$.findings[0].caveats[0]",
+            "text": "Derived from internal planning document; may not reflect latest public announcements.",
+            "similarity": 0.310859
+          },
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.306949
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.6,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-ADOPT-11",
+      "requirement_id": "REQ-ADOPTION",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Current customer adoption and deployments",
+      "priority": "mandatory",
+      "score": 0.55,
+      "status": "partial",
+      "reason": "missing: Names customers or cloud providers and cites dated sources where evidence exists. — The actual output does not mention any customers or cloud providers, provides no dated citations for such names, and therefore fails to meet the required adoption finding and citation criteria outlined in the expected output.; missing: Separates plans/announcements from generally available services and confirmed production deployments. — The Actual Output lists product features and market coverage but does not explicitly separate planned or announced offerings from services that are already generally available or in production. While it notes the source documents are internal planning materials, it provides no clear distinction between future announcements and confirmed deployments, which the Expected Output requires. Consequently, the response only partially addresses the criterion, resulting in a low score.; covered: Does not infer customer adoption from a product feature, planning document, or generic market statement. — The Actual Output contains no statements that infer customer adoption from product features, planning documents, or generic market statements; it explicitly notes the absence of concrete adoption data and records adoption‑metric gaps, which matches the Expected Output's requirement to avoid such inferences.; covered: Explicitly records adoption-metric gaps when quantitative evidence is absent. — The Actual Output explicitly lists adoption‑metric gaps, including the absence of quantitative customer adoption data, which directly satisfies the requirement to record such gaps. The Expected Output’s acceptance criteria also demand explicit recording of adoption‑metric gaps when quantitative evidence is missing, so the Actual Output aligns perfectly with the expected behavior. No reliance on Retrieval Context is needed, and the gap statements are clear and specific, warranting a top score.",
+      "criteria_results": [
+        {
+          "criterion": "Names customers or cloud providers and cites dated sources where evidence exists.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The actual output does not mention any customers or cloud providers, provides no dated citations for such names, and therefore fails to meet the required adoption finding and citation criteria outlined in the expected output."
+        },
+        {
+          "criterion": "Separates plans/announcements from generally available services and confirmed production deployments.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output lists product features and market coverage but does not explicitly separate planned or announced offerings from services that are already generally available or in production. While it notes the source documents are internal planning materials, it provides no clear distinction between future announcements and confirmed deployments, which the Expected Output requires. Consequently, the response only partially addresses the criterion, resulting in a low score."
+        },
+        {
+          "criterion": "Does not infer customer adoption from a product feature, planning document, or generic market statement.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output contains no statements that infer customer adoption from product features, planning documents, or generic market statements; it explicitly notes the absence of concrete adoption data and records adoption‑metric gaps, which matches the Expected Output's requirement to avoid such inferences."
+        },
+        {
+          "criterion": "Explicitly records adoption-metric gaps when quantitative evidence is absent.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output explicitly lists adoption‑metric gaps, including the absence of quantitative customer adoption data, which directly satisfies the requirement to record such gaps. The Expected Output’s acceptance criteria also demand explicit recording of adoption‑metric gaps when quantitative evidence is missing, so the Actual Output aligns perfectly with the expected behavior. No reliance on Retrieval Context is needed, and the gap statements are clear and specific, warranting a top score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.55,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "INT-ADOPT-11",
+        "requirement_id": "REQ-ADOPTION",
+        "test_case_id": "INT-NVIDIA-001",
+        "title": "Current customer adoption and deployments",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output only satisfies the fourth acceptance criterion by explicitly noting adoption‑metric gaps, but it fails to name customers or cloud providers with dated sources, does not separate announcements from GA services, and relies on internal planning documents, which infers adoption and violates the third criterion. Thus only one of four criteria is substantively covered, resulting in a partial coverage classification.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[2]",
+            "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+            "similarity": 0.501081
+          },
+          {
+            "source_path": "$.summary",
+            "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+            "similarity": 0.481021
+          },
+          {
+            "source_path": "$.findings[0].caveats[0]",
+            "text": "Derived from internal planning document; may not reflect latest public announcements.",
+            "similarity": 0.377182
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+            "similarity": 0.35416
+          },
+          {
+            "source_path": "$.findings[2].caveats[0]",
+            "text": "Derived from internal competitive‑intelligence planning document.",
+            "similarity": 0.335676
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.55,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "INT-GAP-12",
+      "requirement_id": "REQ-EVIDENCE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Evidence completeness and limitations",
+      "priority": "mandatory",
+      "score": 1.0,
+      "status": "covered",
+      "reason": "covered: Separates evidence-backed findings from missing information and limitations. — The Actual Output cleanly separates evidence-backed findings (the \"findings\" array with quotes and caveats) from missing information (the \"gaps\" list). It also flags internal planning documents as limited evidence, matching the expected criteria of distinguishing supported claims from limitations. The separation is explicit and complete, fulfilling the high‑score requirement.; covered: Recognizes that internal planning documents are not equivalent to external market/customer verification. — The Actual Output explicitly states that the documents are internal planning materials and not verified external sources, matching the Expected Output’s requirement to recognize that internal planning documents are not equivalent to market or customer verification. It also lists the missing pricing, availability, and adoption details, separating evidence-backed findings from gaps. The Retrieval Context lacks this distinction, as required, and the response fully satisfies the acceptance criteria.; covered: Does not treat query strings or research questions as evidence of a fact. — The actual output never presents the task goal or query string as factual evidence; it treats the internal documents as sources, flags them as internal claims, and clearly separates evidence-backed findings from identified gaps. This aligns with the acceptance criteria that require avoiding the query as evidence and reporting limitations honestly.; covered: Reports the trace's gaps honestly and avoids unsupported certainty. — The report explicitly lists the missing pricing, inventory, and adoption details in a dedicated \"gaps\" section and notes their absence in the summary, clearly separating evidence-backed findings from unknown information. It qualifies the internal planning documents with caveats, avoiding any unwarranted certainty, which aligns with the expected requirement to honestly report trace gaps. Consequently, the response fully satisfies the acceptance criteria.",
+      "criteria_results": [
+        {
+          "criterion": "Separates evidence-backed findings from missing information and limitations.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output cleanly separates evidence-backed findings (the \"findings\" array with quotes and caveats) from missing information (the \"gaps\" list). It also flags internal planning documents as limited evidence, matching the expected criteria of distinguishing supported claims from limitations. The separation is explicit and complete, fulfilling the high‑score requirement."
+        },
+        {
+          "criterion": "Recognizes that internal planning documents are not equivalent to external market/customer verification.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output explicitly states that the documents are internal planning materials and not verified external sources, matching the Expected Output’s requirement to recognize that internal planning documents are not equivalent to market or customer verification. It also lists the missing pricing, availability, and adoption details, separating evidence-backed findings from gaps. The Retrieval Context lacks this distinction, as required, and the response fully satisfies the acceptance criteria."
+        },
+        {
+          "criterion": "Does not treat query strings or research questions as evidence of a fact.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The actual output never presents the task goal or query string as factual evidence; it treats the internal documents as sources, flags them as internal claims, and clearly separates evidence-backed findings from identified gaps. This aligns with the acceptance criteria that require avoiding the query as evidence and reporting limitations honestly."
+        },
+        {
+          "criterion": "Reports the trace's gaps honestly and avoids unsupported certainty.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The report explicitly lists the missing pricing, inventory, and adoption details in a dedicated \"gaps\" section and notes their absence in the summary, clearly separating evidence-backed findings from unknown information. It qualifies the internal planning documents with caveats, avoiding any unwarranted certainty, which aligns with the expected requirement to honestly report trace gaps. Consequently, the response fully satisfies the acceptance criteria."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 1.0,
+      "initial_status": "covered",
+      "final_score": 1.0,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    }
+  ],
+  "second_pass_results": [
+    {
+      "finding_id": "INT-CAP-01",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Relevant NVIDIA accelerator portfolio",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "The response fails to name specific accelerators (H100, H200, B200, A100) and does not distinguish chips from platforms like HGX or DGX, so the first two acceptance criteria are missing. It does include a source link to NVIDIA's product page, satisfying the third criterion, resulting in only partial overall coverage.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[1].claim",
+          "text": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+          "similarity": 0.564977
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.556687
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+          "similarity": 0.555305
+        },
+        {
+          "source_path": "$.findings[0].caveats[2]",
+          "text": "Scope: NVIDIA data‑center offering",
+          "similarity": 0.552943
+        },
+        {
+          "source_path": "$.summary",
+          "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+          "similarity": 0.538187
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-CAP-02",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Specific technical capabilities and performance",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "The passages contain a generic claim about NVIDIA's accelerated compute (Passage 5) and a gap about missing pricing (Passage 2), but none provide concrete specifications, benchmark results, workload details, or distinguish vendor claims from independent measurements as required by the acceptance criteria. Consequently, the expected criteria are largely absent, resulting in minimal coverage.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[2].caveats[2]",
+          "text": "Scope: Accelerated compute",
+          "similarity": 0.44297
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+          "similarity": 0.366343
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.352864
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Derived from internal competitive‑intelligence planning document.",
+          "similarity": 0.315696
+        },
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+          "similarity": 0.313325
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-CAP-03",
+      "requirement_id": "REQ-CAPABILITIES",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Data-center system and scale-up/scale-out context",
+      "priority": "mandatory",
+      "score": 0.4,
+      "status": "partial",
+      "reason": "The actual output mentions NVIDIA's data‑center platforms and GPU‑based systems, satisfying the first criterion of providing some system context, but it lacks any discussion of memory, interconnect, scaling, or system integration, so the second criterion is not met. It does not treat planning questions as confirmed findings, meeting the third criterion. Because only one of three criteria is substantively covered, the overall coverage is partially covered, resulting in a low to moderate score.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[0].caveats[2]",
+          "text": "Scope: NVIDIA data‑center offering",
+          "similarity": 0.579414
+        },
+        {
+          "source_path": "$.summary",
+          "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+          "similarity": 0.569039
+        },
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+          "similarity": 0.556024
+        },
+        {
+          "source_path": "$.findings[1].caveats[2]",
+          "text": "Scope: NVIDIA data‑center portfolio",
+          "similarity": 0.54096
+        },
+        {
+          "source_path": "$.findings[0].claim",
+          "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+          "similarity": 0.522317
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-EVID-04",
+      "requirement_id": "REQ-EVIDENCE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Traceable and appropriately qualified product evidence",
+      "priority": "mandatory",
+      "score": 0.5,
+      "status": "partial",
+      "reason": "The actual output meets two of the four acceptance criteria: it clearly labels documents as internal and transparently states evidence limitations (e.g., \"internal planning document; may not reflect latest public announcements\"). However, it does not provide source titles or URLs for external claims, and it incorrectly claims a URL was accessed without sufficient trace support. Consequently, coverage is partial.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[0].caveats[1]",
+          "text": "Claim type: internal_claim",
+          "similarity": 0.498386
+        },
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.483733
+        },
+        {
+          "source_path": "$.findings[0].caveats[0]",
+          "text": "Derived from internal planning document; may not reflect latest public announcements.",
+          "similarity": 0.430735
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Derived from internal competitive‑intelligence planning document.",
+          "similarity": 0.40754
+        },
+        {
+          "source_path": "$.findings[1].caveats[0]",
+          "text": "Derived from internal document referencing a public URL accessed on 2026-10-22; page contents may change.",
+          "similarity": 0.397232
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-SW-05",
+      "requirement_id": "REQ-SOFTWARE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "NVIDIA AI software ecosystem",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output only lists CUDA as part of NVIDIA's software ecosystem and provides no identification of relevant components, their purposes, workflow connections, or distinctions between open‑source and paid offerings, nor does it note missing details. Consequently, all acceptance criteria are missing, leading to a completely uncovered evaluation.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[3].quote",
+          "text": "NVIDIA's software ecosystem includes CUDA and AI software offerings",
+          "similarity": 0.775562
+        },
+        {
+          "source_path": "$.findings[3].claim",
+          "text": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+          "similarity": 0.766307
+        },
+        {
+          "source_path": "$.summary",
+          "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+          "similarity": 0.634461
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.58708
+        },
+        {
+          "source_path": "$.findings[0].claim",
+          "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+          "similarity": 0.560792
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-SW-06",
+      "requirement_id": "REQ-SOFTWARE",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Framework support and version compatibility",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output only repeats generic statements about NVIDIA's software ecosystem and CUDA, without mentioning specific frameworks like PyTorch or TensorFlow, providing any version or compatibility details, or citing official documentation. Consequently, none of the acceptance criteria are substantively addressed, resulting in a missing coverage classification.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[3].claim",
+          "text": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+          "similarity": 0.56219
+        },
+        {
+          "source_path": "$.findings[3].quote",
+          "text": "NVIDIA's software ecosystem includes CUDA and AI software offerings",
+          "similarity": 0.557172
+        },
+        {
+          "source_path": "$.summary",
+          "text": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA.",
+          "similarity": 0.498513
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.390554
+        },
+        {
+          "source_path": "$.findings[0].claim",
+          "text": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+          "similarity": 0.378965
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-PRICE-07",
+      "requirement_id": "REQ-PRICING",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Pricing and commercial model",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "The response only addresses the gap‑reporting criterion by stating that pricing information is missing, which satisfies the requirement to explicitly note the absence of data. However, it provides no evidence distinguishing direct purchase, cloud rental, systems pricing, or software licensing, nor does it include any currency, date, configuration, or source details for quoted prices. Consequently, three of the four acceptance criteria are missing, leading to a low overall alignment.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.555901
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+          "similarity": 0.537053
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.384802
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+          "similarity": 0.350355
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+          "similarity": 0.349711
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-COM-08",
+      "requirement_id": "REQ-PRICING",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Total-cost and commercial caveats",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "The actual output only states that pricing details are missing (Passage 1 and 2), which satisfies the criterion of stating that a total‑cost comparison cannot be made. It does not consider system configuration, networking, power/cooling, cloud pricing, or licensing, nor does it label any estimates or assumptions, so the first two acceptance criteria are not met. Overall coverage is therefore partial.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[0]",
+          "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+          "similarity": 0.545005
+        },
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.457575
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.396462
+        },
+        {
+          "source_path": "$.findings[2].caveats[2]",
+          "text": "Scope: Accelerated compute",
+          "similarity": 0.393474
+        },
+        {
+          "source_path": "$.findings[0].caveats[2]",
+          "text": "Scope: NVIDIA data‑center offering",
+          "similarity": 0.304233
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-AVL-09",
+      "requirement_id": "REQ-AVAILABILITY",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Current product availability and supply constraints",
+      "priority": "mandatory",
+      "score": 0.4,
+      "status": "partial",
+      "reason": "The actual output marks missing availability evidence (Passage 1) and avoids claiming real‑time stock levels, satisfying two of the four acceptance criteria. However, it provides no dated evidence of supply constraints and does not distinguish between launch, orderability, cloud availability, or physical inventory, leaving those criteria unmet. Overall coverage is partial.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[1]",
+          "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+          "similarity": 0.5044
+        },
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.460249
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "Specific pricing models or SKU costs for NVIDIA AI accelerators are not provided.",
+          "similarity": 0.429062
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.406833
+        },
+        {
+          "source_path": "$.findings[1].claim",
+          "text": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+          "similarity": 0.388201
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-REG-10",
+      "requirement_id": "REQ-REGIONS",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Europe versus United States coverage",
+      "priority": "mandatory",
+      "score": 0.1,
+      "status": "missing",
+      "reason": "The actual output only notes that Europe and United States data are missing and that the sources are internal planning documents; it provides no explicit region‑specific availability, pricing, or deployment evidence, nor does it explain gaps while avoiding reliance on global statements. Consequently, none of the acceptance criteria are substantively met, leading to a Missing classification and a low alignment score.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[1]",
+          "text": "Current inventory levels or regional availability (e.g., stock in Europe vs. United States) are missing.",
+          "similarity": 0.355368
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+          "similarity": 0.345396
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Derived from internal competitive‑intelligence planning document.",
+          "similarity": 0.330848
+        },
+        {
+          "source_path": "$.findings[0].caveats[0]",
+          "text": "Derived from internal planning document; may not reflect latest public announcements.",
+          "similarity": 0.310859
+        },
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.306949
+        }
+      ]
+    },
+    {
+      "finding_id": "INT-ADOPT-11",
+      "requirement_id": "REQ-ADOPTION",
+      "test_case_id": "INT-NVIDIA-001",
+      "title": "Current customer adoption and deployments",
+      "priority": "mandatory",
+      "score": 0.3,
+      "status": "missing",
+      "reason": "The Actual Output only satisfies the fourth acceptance criterion by explicitly noting adoption‑metric gaps, but it fails to name customers or cloud providers with dated sources, does not separate announcements from GA services, and relies on internal planning documents, which infers adoption and violates the third criterion. Thus only one of four criteria is substantively covered, resulting in a partial coverage classification.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[2]",
+          "text": "Quantitative customer adoption metrics (e.g., number of deployments, revenue cohorts) for Europe and the United States are absent.",
+          "similarity": 0.501081
+        },
+        {
+          "source_path": "$.summary",
+          "text": "No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+          "similarity": 0.481021
+        },
+        {
+          "source_path": "$.findings[0].caveats[0]",
+          "text": "Derived from internal planning document; may not reflect latest public announcements.",
+          "similarity": 0.377182
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+          "similarity": 0.35416
+        },
+        {
+          "source_path": "$.findings[2].caveats[0]",
+          "text": "Derived from internal competitive‑intelligence planning document.",
+          "similarity": 0.335676
+        }
+      ]
+    }
+  ],
+  "additional_claim_results": [
+    {
+      "claim_id": "CLAIM-001",
+      "claim": "The internal documents describe NVIDIA's data‑center AI offering as AI computing and data‑center platforms targeting the United States and Europe, with an accelerated‑compute stack built on GPU‑based systems and a software ecosystem that includes CUDA. The public product portfolio is referenced via a URL (accessed 2026-10-22). No concrete pricing, inventory, or customer‑adoption figures are present in the evidence, and the documents are internal planning materials rather than verified external sources.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The actual output only restates a few high‑level facts (internal documents, US/Europe targeting, lack of pricing or adoption data) which loosely align with the evidence‑traceability requirement, but it does not address the majority of the primary claims and acceptance criteria such as naming specific accelerators, providing specifications or benchmarks, describing system integration, detailing software components beyond CUDA, covering framework compatibility, pricing, availability, regional differences, or customer adoption. No contradictions are present, but most expected factual claims are missing, resulting in very low alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-002",
+      "claim": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.1,
+      "novelty_reason": "The Expected Output lists many required findings and criteria, but contains no concrete factual claims to compare. The Actual Output provides a single generic statement about NVIDIA's offering and target regions, which does not correspond to any specific claim in the Expected Output, resulting in essentially no alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-003",
+      "claim": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.0,
+      "novelty_reason": "The Actual Output contains only a single statement about a URL for NVIDIA's data‑center product list, while the Expected Output lists numerous specific factual claims (e.g., accelerator names, performance specs, pricing, availability, regional coverage, adoption examples). No corresponding claims are restated, paraphrased, or contradicted in the Actual Output, resulting in a complete lack of alignment with the evaluation steps.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-004",
+      "claim": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.0,
+      "novelty_reason": "The actual output only gives a generic statement about NVIDIA data‑center accelerated compute and does not contain any of the specific factual claims required by the expected output (e.g., accelerator names, specifications, pricing, availability, regional coverage, adoption examples, evidence links). Consequently, all expected claims are missing and no matches or contradictions are present.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-005",
+      "claim": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.1,
+      "novelty_reason": "The Actual Output contains a single, vague claim that NVIDIA's AI software ecosystem includes CUDA and AI software offerings. The Expected Output lists many mandatory findings across ten IDs, especially requiring detailed coverage of software components (INT‑SW‑05) with specific names, roles, and evidence. The actual response only touches on one component and provides no supporting details, sources, or the other required claims, resulting in a near‑total mismatch.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    }
+  ],
+  "worker_result_quality": {
+    "enabled": true,
+    "metric_count": 4,
+    "scoreable_metric_count": 4,
+    "overall_score": 0.5,
+    "overall_status": "partial",
+    "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+    "metrics": {
+      "relevancy": {
+        "score": 0.7,
+        "status": "pass",
+        "reason": "The response correctly identified the required entity (NVIDIA), markets (Europe and United States), and topics (capabilities, software ecosystem, pricing, availability, adoption). It addressed capabilities, software ecosystem, and market coverage, and explicitly disclosed missing pricing, availability, and adoption data, satisfying steps 3 and 4. However, it failed to provide the requested pricing, availability, and customer adoption details, so not all required elements are covered, reducing the overall alignment.",
+        "method": "DeepEval G-Eval"
+      },
+      "correctness": {
+        "score": 0.2,
+        "status": "fail",
+        "reason": "The actual output provides only generic internal claims about NVIDIA's data‑center offering, a URL reference, and notes gaps in pricing, availability, and adoption. It does not address the mandatory requirement items listed in the expected output (e.g., specific accelerator families, performance specs, system context, software components beyond CUDA, framework compatibility, regional coverage, pricing details, or customer adoption). Consequently, most acceptance criteria are unmet, resulting in very low alignment with the expected benchmark.",
+        "method": "DeepEval G-Eval"
+      },
+      "faithfulness": {
+        "score": 0.9,
+        "status": "pass",
+        "reason": "The response correctly identifies factual claims and provides quotes that match passages in the retrieval context (e.g., AI computing and data‑center platforms targeting the US and Europe, GPU‑based accelerated compute, CUDA ecosystem, and the portfolio URL). No invented details are present, and the summary accurately notes missing pricing, availability, and adoption data, aligning with the identified gaps. The only shortcoming is the use of placeholder \"<max depth>\" for evidence IDs instead of concrete references, which slightly reduces completeness.",
+        "method": "DeepEval G-Eval"
+      },
+      "completeness": {
+        "score": 0.2,
+        "status": "fail",
+        "reason": "The actual output only provides a brief internal summary of NVIDIA's data‑center offering and mentions CUDA, leaving out most required dimensions such as specific accelerator families, technical specifications, system architecture, framework compatibility, detailed pricing, total‑cost considerations, regional availability, and concrete adoption examples. While it lists gaps for pricing, inventory, and adoption, it does not acknowledge the many other missing items mandated by the expected output (e.g., product portfolio details, software components beyond CUDA, evidence traceability, regional coverage). Consequently, the response fails to meet the majority of the benchmark findings and does not fully and transparently disclose all omissions.",
+        "method": "DeepEval G-Eval"
+      }
+    },
+    "limitations": [
+      "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+      "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+      "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+      "Missing trace evidence is not proof that a claim is false.",
+      "An overall mean can hide a weak individual dimension; inspect each reason."
+    ]
+  },
+  "agent_improvement_review": {
+    "enabled": true,
+    "status": "generated",
+    "limitations": [
+      {
+        "limitation": "The report does not name any specific NVIDIA data‑center accelerator families (e.g., H100, A100, H200, B200) despite the benchmark requiring at least one named chip.",
+        "evidence": "Finding INT-CAP-01 was marked \"missing\" because the output only mentions generic \"GPU‑based systems\" and provides no accelerator model names.",
+        "impact": "Fails the mandatory capability requirement and prevents downstream analysis of performance, pricing, and availability."
+      },
+      {
+        "limitation": "No concrete technical specifications, benchmark results, or workload context are provided for the accelerators.",
+        "evidence": "INT-CAP-02 was marked \"missing\"; the report contains only high‑level statements like \"GPU‑based systems\" without specs, precision, or benchmark citations.",
+        "impact": "Prevents assessment of suitability for target AI workloads and violates the technical capabilities criteria."
+      },
+      {
+        "limitation": "System‑level architecture (memory, interconnect, scaling, networking) is not described beyond a vague \"GPU‑based systems\" phrase.",
+        "evidence": "INT-CAP-03 was marked \"partial\"; the report lacks discussion of memory, NVLink, PCIe, or cluster scaling details.",
+        "impact": "Limits understanding of how accelerators fit into data‑center deployments, breaching the platform architecture requirement."
+      },
+      {
+        "limitation": "Software ecosystem coverage is limited to naming CUDA; other key components (cuDNN, TensorRT, NCCL, NVIDIA AI Enterprise) are omitted and no purpose or workflow context is given.",
+        "evidence": "INT-SW-05 marked \"partial\"; only CUDA is mentioned without explanation of its role or relation to other tools.",
+        "impact": "Does not satisfy the software ecosystem requirement, leaving stakeholders uninformed about the full stack."
+      },
+      {
+        "limitation": "Framework support and version compatibility (e.g., PyTorch, TensorFlow, CUDA version) are absent and not flagged as missing.",
+        "evidence": "INT-SW-06 marked \"partial\"; the report contains no statements about supported frameworks or version matrices.",
+        "impact": "Prevents developers from evaluating integration effort and violates the compatibility criterion."
+      },
+      {
+        "limitation": "Pricing information is entirely absent; the report only notes a gap without providing any price ranges, currency, date, or source.",
+        "evidence": "INT-PRICE-07 marked \"partial\"; no price data, only a statement that pricing is missing.",
+        "impact": "Fails the mandatory pricing requirement and hampers cost‑benefit analysis."
+      },
+      {
+        "limitation": "Availability evidence is missing; the report does not provide dated lead‑time, launch, or supply‑constraint data for Europe or the United States.",
+        "evidence": "INT-AVL-09 marked \"partial\"; only a URL access date is given, with no actual availability statements.",
+        "impact": "Violates the availability requirement and leaves decision‑makers without critical procurement information."
+      },
+      {
+        "limitation": "Customer adoption examples are not provided; no customers, cloud providers, or deployment statuses are cited.",
+        "evidence": "INT-ADOPT-11 marked \"partial\"; the report lacks any named adopters or production usage evidence.",
+        "impact": "Fails the adoption requirement, making it impossible to gauge market traction."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Extend data collection to query NVIDIA public product pages (e.g., https://www.nvidia.com/en-us/data-center/products/) and recent SEC filings for explicit accelerator family names and generations.",
+        "addresses": "Limitations 1, 2, 3",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Harvest technical specification tables and benchmark reports (e.g., MLPerf, NVIDIA performance whitepapers) and embed concrete numbers, workload types, precision, and system configuration details.",
+        "addresses": "Limitations 2, 3",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Collect and summarize NVIDIA software stack components beyond CUDA (cuDNN, TensorRT, NCCL, NVIDIA AI Enterprise) with brief purpose statements and links to official documentation.",
+        "addresses": "Limitation 4",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Add a framework compatibility matrix (PyTorch, TensorFlow, JAX, etc.) with supported CUDA/cuDNN versions, citing NVIDIA developer guides.",
+        "addresses": "Limitation 5",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Search for publicly listed pricing (NVIDIA price lists, reseller quotes, cloud instance rates) and record currency, date, configuration, and source; if unavailable, explicitly note the gap.",
+        "addresses": "Limitation 6",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Gather recent availability data (launch announcements, lead‑time reports, supply‑constraint news) for Europe and the United States, citing dates and sources.",
+        "addresses": "Limitation 7",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Identify and cite at least three real‑world customer or cloud provider deployments (e.g., AWS, Azure, Google Cloud, enterprise users) with dates and source links, distinguishing production from announced pilots.",
+        "addresses": "Limitation 8",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Improve evidence handling: capture source titles, URLs, access dates, and generate unique trace IDs for each claim; replace placeholder \"<max depth>\" with actual IDs.",
+        "addresses": "Limitation 9",
+        "priority": "high"
+      }
+    ],
+    "method": "Ollama LLM judge"
+  },
+  "limitations": [
+    {
+      "limitation": "The report does not name any specific NVIDIA data‑center accelerator families (e.g., H100, A100, H200, B200) despite the benchmark requiring at least one named chip.",
+      "evidence": "Finding INT-CAP-01 was marked \"missing\" because the output only mentions generic \"GPU‑based systems\" and provides no accelerator model names.",
+      "impact": "Fails the mandatory capability requirement and prevents downstream analysis of performance, pricing, and availability."
+    },
+    {
+      "limitation": "No concrete technical specifications, benchmark results, or workload context are provided for the accelerators.",
+      "evidence": "INT-CAP-02 was marked \"missing\"; the report contains only high‑level statements like \"GPU‑based systems\" without specs, precision, or benchmark citations.",
+      "impact": "Prevents assessment of suitability for target AI workloads and violates the technical capabilities criteria."
+    },
+    {
+      "limitation": "System‑level architecture (memory, interconnect, scaling, networking) is not described beyond a vague \"GPU‑based systems\" phrase.",
+      "evidence": "INT-CAP-03 was marked \"partial\"; the report lacks discussion of memory, NVLink, PCIe, or cluster scaling details.",
+      "impact": "Limits understanding of how accelerators fit into data‑center deployments, breaching the platform architecture requirement."
+    },
+    {
+      "limitation": "Software ecosystem coverage is limited to naming CUDA; other key components (cuDNN, TensorRT, NCCL, NVIDIA AI Enterprise) are omitted and no purpose or workflow context is given.",
+      "evidence": "INT-SW-05 marked \"partial\"; only CUDA is mentioned without explanation of its role or relation to other tools.",
+      "impact": "Does not satisfy the software ecosystem requirement, leaving stakeholders uninformed about the full stack."
+    },
+    {
+      "limitation": "Framework support and version compatibility (e.g., PyTorch, TensorFlow, CUDA version) are absent and not flagged as missing.",
+      "evidence": "INT-SW-06 marked \"partial\"; the report contains no statements about supported frameworks or version matrices.",
+      "impact": "Prevents developers from evaluating integration effort and violates the compatibility criterion."
+    },
+    {
+      "limitation": "Pricing information is entirely absent; the report only notes a gap without providing any price ranges, currency, date, or source.",
+      "evidence": "INT-PRICE-07 marked \"partial\"; no price data, only a statement that pricing is missing.",
+      "impact": "Fails the mandatory pricing requirement and hampers cost‑benefit analysis."
+    },
+    {
+      "limitation": "Availability evidence is missing; the report does not provide dated lead‑time, launch, or supply‑constraint data for Europe or the United States.",
+      "evidence": "INT-AVL-09 marked \"partial\"; only a URL access date is given, with no actual availability statements.",
+      "impact": "Violates the availability requirement and leaves decision‑makers without critical procurement information."
+    },
+    {
+      "limitation": "Customer adoption examples are not provided; no customers, cloud providers, or deployment statuses are cited.",
+      "evidence": "INT-ADOPT-11 marked \"partial\"; the report lacks any named adopters or production usage evidence.",
+      "impact": "Fails the adoption requirement, making it impossible to gauge market traction."
+    }
+  ],
+  "recommended_enhancements": [
+    {
+      "enhancement": "Extend data collection to query NVIDIA public product pages (e.g., https://www.nvidia.com/en-us/data-center/products/) and recent SEC filings for explicit accelerator family names and generations.",
+      "addresses": "Limitations 1, 2, 3",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Harvest technical specification tables and benchmark reports (e.g., MLPerf, NVIDIA performance whitepapers) and embed concrete numbers, workload types, precision, and system configuration details.",
+      "addresses": "Limitations 2, 3",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Collect and summarize NVIDIA software stack components beyond CUDA (cuDNN, TensorRT, NCCL, NVIDIA AI Enterprise) with brief purpose statements and links to official documentation.",
+      "addresses": "Limitation 4",
+      "priority": "medium"
+    },
+    {
+      "enhancement": "Add a framework compatibility matrix (PyTorch, TensorFlow, JAX, etc.) with supported CUDA/cuDNN versions, citing NVIDIA developer guides.",
+      "addresses": "Limitation 5",
+      "priority": "medium"
+    },
+    {
+      "enhancement": "Search for publicly listed pricing (NVIDIA price lists, reseller quotes, cloud instance rates) and record currency, date, configuration, and source; if unavailable, explicitly note the gap.",
+      "addresses": "Limitation 6",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Gather recent availability data (launch announcements, lead‑time reports, supply‑constraint news) for Europe and the United States, citing dates and sources.",
+      "addresses": "Limitation 7",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Identify and cite at least three real‑world customer or cloud provider deployments (e.g., AWS, Azure, Google Cloud, enterprise users) with dates and source links, distinguishing production from announced pilots.",
+      "addresses": "Limitation 8",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Improve evidence handling: capture source titles, URLs, access dates, and generate unique trace IDs for each claim; replace placeholder \"<max depth>\" with actual IDs.",
+      "addresses": "Limitation 9",
+      "priority": "high"
+    }
+  ],
+  "evaluation_limitations": [
+    "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+    "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+    "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+    "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+    "Scope checks are deterministic string-based checks and can miss semantic references.",
+    "No-judge token overlap is a rough diagnostic; it does not evaluate factuality or acceptance criteria semantically."
+  ]
+}

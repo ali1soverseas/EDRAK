@@ -1,7 +1,8 @@
 """Non-fatal JSON tracing for EDRAK Decision Analysis.
 
-Events are appended to the orchestrator's existing orchestrator_planning.json.
-The destination can be overridden with EDRAK_ORCHESTRATOR_PLANNING_JSON.
+Events are written to decision_analysis_tracing.json beside the run's
+orchestrator_planning.json. The destination can be overridden with
+EDRAK_DECISION_ANALYSIS_TRACE_JSON.
 Tracing errors are intentionally swallowed so observability cannot fail a run.
 """
 from __future__ import annotations
@@ -9,6 +10,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import tempfile
 import threading
 from datetime import datetime, timezone
@@ -48,26 +50,28 @@ def _jsonable(value: Any) -> Any:
 
 
 def _find_trace_file(research_run_id: Any = None) -> Path | None:
-    configured = os.getenv("EDRAK_ORCHESTRATOR_PLANNING_JSON")
+    configured = os.getenv("EDRAK_DECISION_ANALYSIS_TRACE_JSON")
     if configured:
         return Path(configured).expanduser()
 
+    configured_planning = os.getenv("EDRAK_ORCHESTRATOR_PLANNING_JSON")
+    if configured_planning:
+        return Path(configured_planning).expanduser().with_name(
+            "decision_analysis_tracing.json"
+        )
+
     root = Path.cwd() / "artifacts" / "runs"
     run_id = str(research_run_id).strip() if research_run_id else ""
+    if run_id:
+        safe_run_id = re.sub(r"[^A-Za-z0-9_.-]", "-", run_id).strip("-._")
+        if safe_run_id:
+            return root / safe_run_id / "decision_analysis_tracing.json"
     if root.exists():
-        if run_id:
-            candidates = [
-                root / run_id / "orchestrator_planning.json",
-                root / f"{run_id}" / "orchestrator_planning.json",
-            ]
-            for candidate in candidates:
-                if candidate.exists():
-                    return candidate
         matches = list(root.glob("**/orchestrator_planning.json"))
         if matches:
-            return max(matches, key=lambda p: p.stat().st_mtime)
-        if run_id:
-            return root / run_id / "orchestrator_planning.json"
+            return max(matches, key=lambda p: p.stat().st_mtime).with_name(
+                "decision_analysis_tracing.json"
+            )
     return None
 
 
@@ -77,11 +81,11 @@ def trace_decision_analysis(
     research_run_id: Any = None,
     **payload: Any,
 ) -> None:
-    """Append a Decision Analysis event to orchestrator_planning.json.
+    """Append a Decision Analysis event to its own JSON artifact.
 
-    Existing JSON keys are preserved. Each event is stored in both
-    ``trace_events`` and ``decision_analysis_trace.history`` for convenient
-    inspection. Any tracing exception is logged and ignored.
+    Each event is stored in both ``trace_events`` and
+    ``decision_analysis_trace.history`` for convenient inspection. Any tracing
+    exception is logged and ignored.
     """
     try:
         event = {
@@ -93,7 +97,7 @@ def trace_decision_analysis(
         }
         path = _find_trace_file(research_run_id)
         if path is None:
-            logger.debug("Decision Analysis trace skipped: no trace path found")
+            logger.debug("Decision Analysis trace skipped: no run folder found")
             return
 
         with _LOCK:
@@ -103,10 +107,12 @@ def trace_decision_analysis(
                     with path.open("r", encoding="utf-8") as stream:
                         document = json.load(stream)
                     if not isinstance(document, dict):
-                        document = {"orchestrator_planning_data": document}
+                        document = {"decision_analysis_trace_data": document}
                 except (OSError, json.JSONDecodeError):
                     # Do not overwrite a corrupt/unreadable existing trace file.
-                    logger.warning("Cannot read trace file %s; event was not written", path)
+                    logger.warning(
+                        "Cannot read trace file %s; event was not written", path
+                    )
                     return
             else:
                 document = {}
@@ -131,7 +137,9 @@ def trace_decision_analysis(
             )
             try:
                 with os.fdopen(fd, "w", encoding="utf-8") as stream:
-                    json.dump(document, stream, ensure_ascii=False, indent=2, default=str)
+                    json.dump(
+                        document, stream, ensure_ascii=False, indent=2, default=str
+                    )
                     stream.flush()
                     os.fsync(stream.fileno())
                 os.replace(temp_name, path)

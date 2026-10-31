@@ -1,0 +1,291 @@
+{
+  "agent": "market_intelligence",
+  "description": "Goal-derived evaluation rubric for AI data-center accelerator market momentum in Europe and the United States. Requirements are not assertions that a particular market estimate or legal interpretation is true.",
+  "dataset_version": "1.0.0-goal-derived",
+  "snapshot_date": "2026-10-29",
+  "worker_definition": {
+    "worker": "market_intelligence",
+    "goal": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+    "company": "NVIDIA Corporation",
+    "aliases": [
+      "NVIDIA",
+      "Nvidia"
+    ],
+    "products": [
+      "AI computing",
+      "Data center platforms"
+    ],
+    "competitors": [
+      "Broadcom",
+      "Intel Corp"
+    ],
+    "markets": [
+      "Europe",
+      "United States"
+    ],
+    "target_customers": [
+      "Cloud service providers",
+      "AI developers"
+    ],
+    "task_focus": "Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+    "use_case": "competitive_intelligence"
+  },
+  "scope_conflict": {
+    "excluded_entities": [],
+    "require_exclusion_label": false,
+    "policy": "Keep analysis focused on AI computing accelerators in data centers in Europe and the United States, with implications for NVIDIA. Broadcom and Intel are relevant competitors. Do not treat unresearched tasks as completed findings.",
+    "configured_competitors": [
+      "NVIDIA"
+    ],
+    "comparison_targets": []
+  },
+  "evaluation_config": {
+    "covered_threshold": 0.7,
+    "partial_threshold": 0.4,
+    "second_pass_top_k": 5,
+    "partial_credit": 0.5
+  },
+  "research_requirements": [
+    {
+      "id": "REQ-MARKET-SIZE",
+      "requirement": "Quantify the defined AI accelerator market and distinguish it from the broader AI data-center market."
+    },
+    {
+      "id": "REQ-REGIONS",
+      "requirement": "Provide a comparable view of the United States and Europe."
+    },
+    {
+      "id": "REQ-ADOPTION",
+      "requirement": "Research adoption announcements and distinguish announcements from deployments."
+    },
+    {
+      "id": "REQ-COMPETITORS",
+      "requirement": "Assess Broadcom and Intel competitive signals where supported."
+    },
+    {
+      "id": "REQ-REGULATION",
+      "requirement": "Analyze regulatory influences accurately without overclaiming data-localization mandates."
+    },
+    {
+      "id": "REQ-TECHNOLOGY",
+      "requirement": "Identify technology signals that may affect demand."
+    }
+  ],
+  "test_cases": [
+    {
+      "test_case": {
+        "id": "MKT-01",
+        "title": "Market size, growth and regional comparability",
+        "description": "Assess whether the report measures the correct market and compares Europe with the United States."
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "MKT-TAM-01",
+            "requirement_id": "MKT-TAM-01",
+            "finding": "Define and quantify the AI data-center accelerator market",
+            "primary_claim": "The report quantifies the data-center AI accelerator market, distinguishing accelerator hardware from the broader AI data-center infrastructure market.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Defines the market being measured and distinguishes accelerator hardware from broader data-center market revenue.",
+              "Provides market size and reference year or forecast period.",
+              "Identifies source and methodology or scope where available.",
+              "Does not relabel a broader AI data-center estimate as accelerator TAM without justification."
+            ],
+            "priority": "mandatory",
+            "category": "market_size"
+          },
+          {
+            "id": "MKT-US-02",
+            "requirement_id": "MKT-US-02",
+            "finding": "United States market size and growth",
+            "primary_claim": "The report provides US-specific market size and growth estimates for AI accelerators or clearly labels a proxy market when accelerator-specific data is unavailable.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Provides US-specific value and year or forecast period.",
+              "Reports CAGR and period if available.",
+              "Names and links the source.",
+              "Separates accelerator-market estimates from overall AI data-center-market estimates."
+            ],
+            "priority": "mandatory",
+            "category": "US_market"
+          },
+          {
+            "id": "MKT-EU-03",
+            "requirement_id": "MKT-EU-03",
+            "finding": "European market size and growth",
+            "primary_claim": "The report provides Europe-specific market size and growth estimates on a clearly defined basis.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Provides Europe-specific value and year or explicitly reports that a reliable estimate was not found.",
+              "Reports CAGR and period if available.",
+              "Names and links the source.",
+              "Does not substitute US results or global data for European figures without labelling the limitation."
+            ],
+            "priority": "mandatory",
+            "category": "Europe_market"
+          },
+          {
+            "id": "MKT-COMP-04",
+            "requirement_id": "MKT-COMP-04",
+            "finding": "Comparable US versus Europe analysis",
+            "primary_claim": "The report compares the US and European markets using compatible definitions, periods, and units, and explains material comparability limits.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Compares both regions explicitly.",
+              "Identifies differences in definitions, base years, forecast windows, or currency where relevant.",
+              "Avoids presenting non-comparable estimates as like-for-like.",
+              "States when regional data is missing or insufficient."
+            ],
+            "priority": "mandatory",
+            "category": "regional_comparison"
+          }
+        ]
+      }
+    },
+    {
+      "test_case": {
+        "id": "MKT-02",
+        "title": "Demand, adoption and competitive signals",
+        "description": "Assess adoption evidence and technology/competitor signals relevant to AI accelerator demand."
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "MKT-ADOPT-05",
+            "requirement_id": "MKT-ADOPT-05",
+            "finding": "Cloud provider and customer adoption",
+            "primary_claim": "The report documents recent, attributable AI accelerator adoption or deployment signals from major cloud providers and AI developers across the target regions.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Covers AWS, Microsoft Azure, and Google Cloud, or explains evidence gaps.",
+              "Distinguishes announced plans, preview, general availability, and actual customer deployment.",
+              "Includes dates, source links, and regional availability where supported.",
+              "Does not infer regional deployment from a global announcement alone."
+            ],
+            "priority": "mandatory",
+            "category": "adoption"
+          },
+          {
+            "id": "MKT-COMP-06",
+            "requirement_id": "MKT-COMP-06",
+            "finding": "Competitor activity affecting accelerator demand",
+            "primary_claim": "The report assesses relevant Broadcom and Intel activity and distinguishes verified evidence from gaps.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Addresses both Broadcom and Intel or explicitly documents evidence gaps.",
+              "Covers relevant product launches, custom ASICs/accelerators, pricing, market share, or deployments when supported.",
+              "Uses source-backed statements and dates.",
+              "Does not treat a search query or planned task as evidence of activity."
+            ],
+            "priority": "mandatory",
+            "category": "competitor_signals"
+          },
+          {
+            "id": "MKT-TECH-07",
+            "requirement_id": "MKT-TECH-07",
+            "finding": "Technology signals that may shift demand",
+            "primary_claim": "The report evaluates GPU architectures, custom accelerators, memory, interconnects, power/cooling, and explains their potential demand implications.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Identifies concrete technology signals with evidence and dates.",
+              "Explains plausible demand or competitive implications.",
+              "Separates observed facts from interpretation or forecast.",
+              "Does not claim market-share shifts without supporting evidence."
+            ],
+            "priority": "mandatory",
+            "category": "technology_signals"
+          },
+          {
+            "id": "MKT-MOM-08",
+            "requirement_id": "MKT-MOM-08",
+            "finding": "Synthesize market momentum",
+            "primary_claim": "The report synthesizes evidence into a reasoned view of AI accelerator market momentum rather than listing isolated estimates.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Connects market size/growth with adoption, supply/infrastructure, or technology indicators.",
+              "Distinguishes observed momentum from projections.",
+              "Identifies uncertainties or conflicting signals.",
+              "Provides an evidence-linked conclusion for both regions."
+            ],
+            "priority": "mandatory",
+            "category": "synthesis"
+          }
+        ]
+      }
+    },
+    {
+      "test_case": {
+        "id": "MKT-03",
+        "title": "Regulation, source quality and report completeness",
+        "description": "Check regulatory accuracy, evidence provenance, and honest handling of research gaps."
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "MKT-REG-09",
+            "requirement_id": "MKT-REG-09",
+            "finding": "Accurate regulatory and data-residency analysis",
+            "primary_claim": "The report accurately explains how relevant US and European regulation, data governance, sovereignty, and residency may influence workload placement without overstating legal mandates.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Distinguishes GDPR personal-data protection/transfer rules from a blanket requirement to store all personal data only in the EU.",
+              "Does not claim GDPR universally mandates EU-only storage/processing without a specific applicable basis.",
+              "Explains EU AI Act or other regulation only as supported and identifies scope/timing when stated.",
+              "Separates legal requirements from customer preferences, procurement policy, sovereignty goals, and practical incentives.",
+              "Covers US-specific rules only with attributable evidence."
+            ],
+            "priority": "mandatory",
+            "category": "regulation"
+          },
+          {
+            "id": "MKT-SOURCE-10",
+            "requirement_id": "MKT-SOURCE-10",
+            "finding": "Traceable, credible and time-relevant evidence",
+            "primary_claim": "Material market claims are traceable to relevant sources and the report distinguishes source evidence from inference.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Material numerical claims have URLs and supporting excerpts/citations.",
+              "Market estimates identify publisher and scope.",
+              "Recent announcements include publication dates where available.",
+              "Does not treat an LLM-generated claim or search snippet alone as verified primary evidence.",
+              "Discloses material contradictory estimates or methodological limitations."
+            ],
+            "priority": "mandatory",
+            "category": "source_quality"
+          },
+          {
+            "id": "MKT-GAP-11",
+            "requirement_id": "MKT-GAP-11",
+            "finding": "Honest handling of skipped tasks and research gaps",
+            "primary_claim": "The report transparently identifies material research gaps when planned tasks were skipped or yielded no usable evidence.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Reports missing adoption, competitor, or technology evidence as gaps.",
+              "Does not present skipped tasks as completed research.",
+              "Provides limitations/confidence caveats where evidence is missing.",
+              "Does not claim complete US-Europe coverage when a region or topic is unsupported."
+            ],
+            "priority": "mandatory",
+            "category": "completeness"
+          },
+          {
+            "id": "MKT-NVIDIA-12",
+            "requirement_id": "MKT-NVIDIA-12",
+            "finding": "Implications for NVIDIA and target customers",
+            "primary_claim": "The report explains implications for NVIDIA, cloud service providers, and AI developers without overstating unsupported competitive conclusions.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Connects evidence to NVIDIA market exposure or competitive position.",
+              "Addresses cloud providers and AI developers where evidence supports it.",
+              "Identifies potential upside, risks, or substitution threats from custom ASICs and alternatives.",
+              "Labels forward-looking implications as analysis."
+            ],
+            "priority": "mandatory",
+            "category": "business_implications"
+          }
+        ]
+      }
+    }
+  ]
+}
