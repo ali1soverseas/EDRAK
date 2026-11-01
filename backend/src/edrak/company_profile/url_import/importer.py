@@ -163,6 +163,12 @@ async def _render(renderer: Renderer, urls: list[str]) -> Optional[dict[str, str
         return None
 
 
+async def _robots_message(site: SiteFetcher, url: str) -> str:
+    if await site.robots_unreadable(url):
+        return "The website did not answer when its robots.txt was requested, so its pages were not read."
+    return "The website's robots.txt does not allow reading its pages."
+
+
 async def collect_site(site: SiteFetcher, start_url: str, renderer: Renderer) -> Collected:
     """Read the site at `start_url` into SourceDocuments, links and warnings. Raises when the first page cannot be read."""
     out = Collected()
@@ -171,11 +177,11 @@ async def collect_site(site: SiteFetcher, start_url: str, renderer: Renderer) ->
 
     await site.check(start_url)
     if not await site.allowed(start_url):
-        raise SiteUnreachable("The website's robots.txt does not allow reading its pages.")
+        raise SiteUnreachable(await _robots_message(site, start_url))
     first = await site.get(start_url)
     home_url = first.url
     if not await site.allowed(home_url):
-        raise SiteUnreachable("The website's robots.txt does not allow reading its pages.")
+        raise SiteUnreachable(await _robots_message(site, home_url))
     home = await _read_page(first.text(), home_url)
 
     # A site that shows almost nothing without scripts is read again in a browser, if there is one.

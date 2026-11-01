@@ -64,6 +64,17 @@ def test_scores_follow_path_and_link_text_and_depth():
     assert score_url("https://x.example/about?lang=ar")[0] > 0
 
 
+def test_a_keyword_buried_in_a_long_or_numbered_slug_is_not_a_section_page():
+    # chapters and articles that merely contain the word
+    assert score_url("https://x.example/gettingreal/01.2-about-basecamp")[0] == 0
+    assert score_url("https://x.example/gettingreal/05.6-human-solutions")[0] == 0
+    assert score_url("https://x.example/how-we-think-about-our-customers-and-their-needs")[0] == 0
+    # real section pages, in the shapes sites use
+    for url in ("https://x.example/about-us", "https://x.example/who-we-are", "https://x.example/about-the-company",
+                "https://x.example/about.html", "https://x.example/en/products-and-services", "https://x.example/our_solutions"):
+        assert score_url(url)[0] > 0, url
+
+
 # ------------------------------------------------------------------ Arabic site
 
 

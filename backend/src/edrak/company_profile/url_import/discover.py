@@ -54,6 +54,9 @@ _DETAIL_PARENTS = frozenset(
 _DATED_POST = re.compile(r"/(19|20)\d\d/\d{1,2}(/|$)")
 _LANG_SEGMENT = re.compile(r"^(ar|en)(?:[-_][a-z]{2})?$", re.I)
 _LANG_QUERY = frozenset({"lang", "l", "locale", "hl", "language"})
+# A keyword in a path counts only in a short segment with no numbers: "about-us" and "who-we-are" are
+# section pages, "01.2-about-basecamp" is a chapter or an article that happens to contain the word.
+_MAX_SLUG_TOKENS = 4
 _NAV_BONUS = 1
 _PER_SECTION = 2  # pages kept per section, so five product pages do not crowd out the rest
 _MAX_SITEMAP_URLS = 5000
@@ -124,11 +127,21 @@ def _is_junk(url: str) -> bool:
     return any(k.lower() not in _LANG_QUERY for k, _ in query)
 
 
+def _path_key(url: str) -> str:
+    """The words of the path's section-like segments, folded for keyword matching."""
+    kept = []
+    for segment in _segments(url):
+        tokens = [t for t in re.split(r"[-_.+\s]+", segment) if t]
+        if len(tokens) <= _MAX_SLUG_TOKENS and not any(t.isdigit() for t in tokens):
+            kept.append(" ".join(tokens))
+    return search_key(" ".join(kept))
+
+
 def score_url(url: str, text: str = "", in_nav: bool = False) -> tuple[int, str]:
     """(score, section) for a page, from the words in its path and in its link text. 0 means not worth reading."""
     if _is_junk(url):
         return 0, OTHER
-    path_key = search_key(re.sub(r"[-_/.+]+", " ", path_of(url)))
+    path_key = _path_key(url)
     text_key = search_key(text)
     best, section = 0, OTHER
     for name, (weight, patterns) in _PATTERNS.items():

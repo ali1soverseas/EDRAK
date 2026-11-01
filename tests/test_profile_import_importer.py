@@ -120,6 +120,19 @@ def test_pages_robots_disallows_are_skipped_with_a_warning_and_a_blocked_site_fa
         run("acme.example", site)
 
 
+def test_an_unreadable_robots_file_is_reported_as_unanswered_not_as_a_ban():
+    def handler(request):
+        if request.url.path == "/robots.txt":
+            raise httpx.ReadTimeout("slow", request=request)
+        return httpx.Response(200, html=fx("en_home.html"))
+
+    async def public(h, p):
+        return ["93.184.216.34"]
+
+    with pytest.raises(SiteUnreachable, match="did not answer"):
+        run("acme.example", SiteFetcher(transport=httpx.MockTransport(handler), resolver=public))
+
+
 def test_an_unreachable_homepage_is_an_error():
     site, _ = make_site({"/": (500, "boom", "text/html")})
     with pytest.raises(SiteUnreachable):

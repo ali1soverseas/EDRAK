@@ -184,14 +184,23 @@ class SiteFetcher:
         rules = await self._rules(f"{parts.scheme}://{parts.netloc}")
         return rules is None or rules.can_fetch(ROBOTS_AGENT, url)
 
+    async def robots_unreadable(self, url: str) -> bool:
+        """Whether robots.txt for `url`'s site could not be read (so it is treated as disallowing everything)."""
+        parts = urlsplit(url)
+        return isinstance(await self._rules(f"{parts.scheme}://{parts.netloc}"), _Unreadable)
+
     async def sitemaps(self, origin: str) -> list[str]:
         """Sitemap URLs the site's robots.txt lists."""
         rules = await self._rules(origin)
         return list(rules.site_maps() or []) if rules is not None else []
 
 
+class _Unreadable(RobotFileParser):
+    """Stands in for a robots.txt that could not be read: it disallows everything."""
+
+
 def _disallow_all() -> RobotFileParser:
-    rules = RobotFileParser()
+    rules = _Unreadable()
     rules.parse(["User-agent: *", "Disallow: /"])
     return rules
 
