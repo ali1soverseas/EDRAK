@@ -11,15 +11,13 @@ from edrak.agents.customer_trends.deps import WorkerDeps
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.providers.budget import FINISH_RESERVE
 from edrak.agents.customer_trends.relevance import accounting
+from edrak.agents.customer_trends.relevance.cascade import free_stages
 from edrak.agents.customer_trends.relevance.classify import classify
 from edrak.agents.customer_trends.relevance.models import (
-    TERM_MATCH,
     UNKNOWN_PLATFORM,
     Comment,
-    Verdict,
 )
 from edrak.agents.customer_trends.relevance.parents import PostIndex
-from edrak.agents.customer_trends.relevance.rules import stage_a
 from edrak.agents.customer_trends.relevance.terms import TermMatcher, match_terms
 from edrak.agents.customer_trends.schemas.common import SourceType
 from edrak.agents.customer_trends.schemas.task import TaskBrief
@@ -113,16 +111,7 @@ async def filter_run(deps: WorkerDeps, brief: TaskBrief) -> PassResult:
             )
         )
 
-    matcher = TermMatcher(match_terms(brief))
-    verdicts, duplicates = stage_a(comments, matcher)
-    pending: list[Comment] = []
-    for comment in comments:
-        if comment.already or comment.id in verdicts:
-            continue
-        if matcher(comment.text):
-            verdicts[comment.id] = Verdict("relevant", TERM_MATCH, "b")
-        else:
-            pending.append(comment)
+    verdicts, pending, duplicates = free_stages(comments, TermMatcher(match_terms(brief)))
 
     outcome = await classify(
         pending,
