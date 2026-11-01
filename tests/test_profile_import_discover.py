@@ -46,7 +46,8 @@ def test_english_site_picks_the_high_value_pages_and_drops_the_rest():
 def test_scores_follow_path_and_link_text_and_depth():
     assert score_url("https://x.example/about")[0] > score_url("https://x.example/about/team")[0] > 0
     assert score_url("https://x.example/about")[1] == ABOUT
-    assert score_url("https://x.example/x", text="About us")[0] > 0  # the link text alone is enough
+    assert score_url("https://x.example/x", text="About us", in_nav=True)[0] > 0  # the link text alone is enough in a nav
+    assert score_url("https://x.example/x", text="About us")[0] == 0  # but not in the page body
     assert score_url("https://x.example/about", in_nav=True)[0] == score_url("https://x.example/about")[0] + 1
     assert score_url("https://x.example/accompany")[0] == 0  # whole words only
     for url in (
@@ -69,6 +70,9 @@ def test_a_keyword_buried_in_a_long_or_numbered_slug_is_not_a_section_page():
     assert score_url("https://x.example/gettingreal/01.2-about-basecamp")[0] == 0
     assert score_url("https://x.example/gettingreal/05.6-human-solutions")[0] == 0
     assert score_url("https://x.example/how-we-think-about-our-customers-and-their-needs")[0] == 0
+    assert score_url("https://x.example/projects/company-offsite")[0] == 0
+    assert score_url("https://x.example/projects/new-product-line")[0] == 0
+    assert score_url("https://x.example/projects/company-offsite", text="Company Offsite")[0] == 0  # a body card
     # real section pages, in the shapes sites use
     for url in ("https://x.example/about-us", "https://x.example/who-we-are", "https://x.example/about-the-company",
                 "https://x.example/about.html", "https://x.example/en/products-and-services", "https://x.example/our_solutions"):
@@ -89,10 +93,11 @@ def test_arabic_site_scores_arabic_paths_and_link_text():
 
 
 def test_arabic_keywords_match_across_spelling_variants():
-    assert score_url("https://x.example/a", text="منتجاتنا")[0] > 0
-    assert score_url("https://x.example/a", text="الأسعار")[0] == score_url("https://x.example/a", text="الاسعار")[0] > 0
-    assert score_url("https://x.example/a", text="عن الشركة")[1] == ABOUT
-    assert score_url("https://x.example/a", text="اتصل بنا")[0] > 0
+    nav = {"in_nav": True}
+    assert score_url("https://x.example/a", text="منتجاتنا", **nav)[0] > 0
+    assert score_url("https://x.example/a", text="الأسعار", **nav)[0] == score_url("https://x.example/a", text="الاسعار", **nav)[0] > 0
+    assert score_url("https://x.example/a", text="عن الشركة", **nav)[1] == ABOUT
+    assert score_url("https://x.example/a", text="اتصل بنا", **nav)[0] > 0
 
 
 # ------------------------------------------------------------------ bilingual site
@@ -186,6 +191,15 @@ def test_sitemap_candidates_are_same_site_and_filtered():
     found = candidates_from_urls(locs, home_url="https://acme.example/")
     urls = {c.url for c in found}
     assert urls == {"https://acme.example/about", "https://acme.example/solutions", "https://acme.example/who-we-are"}
+
+
+def test_link_text_in_the_body_does_not_make_a_section_page_unless_the_page_has_no_nav():
+    from edrak.company_profile.url_import.parse import Link
+
+    body = [Link("https://x.example/projects/company-offsite", "Company Offsite", in_nav=False), Link("https://x.example/about", "About", in_nav=True)]
+    assert [c.url for c in candidates_from_links(body, home_url="https://x.example/")] == ["https://x.example/about"]
+    divs = [Link("https://x.example/p/1", "About us", in_nav=False), Link("https://x.example/p/2", "Our products", in_nav=False)]
+    assert {c.url for c in candidates_from_links(divs, home_url="https://x.example/")} == {"https://x.example/p/1", "https://x.example/p/2"}
 
 
 def test_a_page_found_twice_is_kept_once_with_its_link_text():

@@ -54,9 +54,11 @@ _DETAIL_PARENTS = frozenset(
 _DATED_POST = re.compile(r"/(19|20)\d\d/\d{1,2}(/|$)")
 _LANG_SEGMENT = re.compile(r"^(ar|en)(?:[-_][a-z]{2})?$", re.I)
 _LANG_QUERY = frozenset({"lang", "l", "locale", "hl", "language"})
-# A keyword in a path counts only in a short segment with no numbers: "about-us" and "who-we-are" are
-# section pages, "01.2-about-basecamp" is a chapter or an article that happens to contain the word.
-_MAX_SLUG_TOKENS = 4
+# A keyword in a path counts only in a segment made of nothing but section words and filler:
+# "about-us", "who-we-are" and "products-and-services" are section pages, while "company-offsite",
+# "new-product-line" and "01.2-about-basecamp" are an example, an article or a chapter that happens
+# to contain the word. Link text is not held to this, so "About Acme" still counts.
+_FILLER = frozenset({"us", "our", "the", "we", "are", "a", "an", "of", "and", "who", "what", "do", "page", "html", "htm", "php", "aspx", "en", "ar", "eg", "sa"})
 _NAV_BONUS = 1
 _PER_SECTION = 2  # pages kept per section, so five product pages do not crowd out the rest
 _MAX_SITEMAP_URLS = 5000
@@ -127,22 +129,34 @@ def _is_junk(url: str) -> bool:
     return any(k.lower() not in _LANG_QUERY for k, _ in query)
 
 
+def _vocabulary() -> frozenset[str]:
+    words = {search_key(t) for _, (_, keywords) in _SECTIONS.items() for k in keywords for t in re.split(r"[\s\-]+", k) if t}
+    return frozenset(words | {search_key(f) for f in _FILLER})
+
+
+_VOCABULARY = _vocabulary()
+
+
 def _path_key(url: str) -> str:
     """The words of the path's section-like segments, folded for keyword matching."""
     kept = []
     for segment in _segments(url):
-        tokens = [t for t in re.split(r"[-_.+\s]+", segment) if t]
-        if len(tokens) <= _MAX_SLUG_TOKENS and not any(t.isdigit() for t in tokens):
+        tokens = [search_key(t) for t in re.split(r"[-_.+\s]+", segment) if t]
+        if tokens and all(t in _VOCABULARY for t in tokens):
             kept.append(" ".join(tokens))
-    return search_key(" ".join(kept))
+    return " ".join(kept)
 
 
 def score_url(url: str, text: str = "", in_nav: bool = False) -> tuple[int, str]:
-    """(score, section) for a page, from the words in its path and in its link text. 0 means not worth reading."""
+    """(score, section) for a page, from the words in its path and in its link text. 0 means not worth reading.
+
+    Link text counts only for links in a nav, header or footer, where a site names its sections. A
+    card in the page body that says "Company Offsite" is not an About page.
+    """
     if _is_junk(url):
         return 0, OTHER
     path_key = _path_key(url)
-    text_key = search_key(text)
+    text_key = search_key(text) if in_nav else ""
     best, section = 0, OTHER
     for name, (weight, patterns) in _PATTERNS.items():
         hits = 0
@@ -165,11 +179,14 @@ def candidates_from_links(
 ) -> list[Candidate]:
     """Scored pages among the same-site `links`, leaving out the homepage and anything not worth reading."""
     home = identity(home_url)
+    links = list(links)
+    # A page with no nav, header or footer element at all keeps its section names in plain divs.
+    any_nav = any(link.in_nav for link in links)
     out: list[Candidate] = []
     for link in links:
         if not same_site(link.url, home_url) or identity(link.url) == home:
             continue
-        score, section = score_url(link.url, link.text, link.in_nav)
+        score, section = score_url(link.url, link.text, link.in_nav or not any_nav)
         if score <= 0:
             continue
         lang = url_language(link.url) or language_hint(link.lang or "")
