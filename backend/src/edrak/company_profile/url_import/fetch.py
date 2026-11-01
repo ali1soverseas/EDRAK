@@ -92,6 +92,14 @@ class SiteFetcher:
             await self._client.aclose()
             self._client = None
 
+    async def check(self, url: str) -> None:
+        """Raise UrlBlocked if `url` is not public, or SiteUnreachable if its host does not resolve.
+
+        Called before anything else, so a refused address is reported as such and not as a
+        robots.txt that could not be read.
+        """
+        await ensure_public(url, self._resolver)
+
     async def get(
         self, url: str, *, kinds: frozenset[str] = HTML_TYPES, raise_for_status: bool = True
     ) -> Fetched:

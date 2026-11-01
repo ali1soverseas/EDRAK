@@ -129,6 +129,21 @@ def test_an_unreachable_homepage_is_an_error():
         run("acme.example", site)
 
 
+def test_a_private_or_unresolvable_start_address_is_reported_as_such_not_as_robots():
+    from edrak.company_profile.url_import.errors import UrlBlocked
+
+    async def private(host, port):
+        return ["10.0.0.9"]
+
+    async def nothing(host, port):
+        return []
+
+    for resolver, error, text in ((private, UrlBlocked, "private"), (nothing, SiteUnreachable, "could not be found")):
+        fetcher = SiteFetcher(transport=httpx.MockTransport(lambda r: pytest.fail("no request may be sent")), resolver=resolver)
+        with pytest.raises(error, match=text):
+            run("acme.example", fetcher)
+
+
 def test_a_redirect_off_the_site_is_not_read():
     def handler(request):
         if request.url.path == "/robots.txt":

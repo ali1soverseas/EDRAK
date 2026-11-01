@@ -169,6 +169,7 @@ async def collect_site(site: SiteFetcher, start_url: str, renderer: Renderer) ->
     parts = urlsplit(start_url)
     origin = f"{parts.scheme}://{parts.netloc}"
 
+    await site.check(start_url)
     if not await site.allowed(start_url):
         raise SiteUnreachable("The website's robots.txt does not allow reading its pages.")
     first = await site.get(start_url)
