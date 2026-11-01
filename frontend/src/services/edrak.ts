@@ -61,6 +61,19 @@ export interface Preview {
   chunks: { id: string; chunk_index: number; content: string; locator: string | null; flags: string[]; excluded: boolean }[];
   message: string | null;
 }
+/** What an importer drafts from a website or a PDF. It is shown for review and never saved by the server. */
+export interface ProfileDraft {
+  profile: {
+    name: string | null; aliases: string[]; notes: string | null; products: string[];
+    industry: string | null; markets: string[]; goals: string[];
+  };
+  links: { platform: string; url: string }[];
+  /** Field name to the ids (S1, S2, ...) of the sources that state it. */
+  field_sources: Record<string, string[]>;
+  gaps: string[];
+  warnings: string[];
+  sources: { id: string; type: "web_page" | "pdf_page" | "page_metadata"; ref: string; title: string }[];
+}
 export type Dict = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export interface StreamEvent { type: "step" | "answer" | "error"; data: Dict }
@@ -72,6 +85,13 @@ export const edrak = {
   saveOnboarding: (patch: Dict) => req<Onboarding>("PUT", "/onboarding", patch),
   completeOnboarding: () => req<Onboarding>("POST", "/onboarding/complete"),
   discover: (limit = 5) => req<Candidate[]>("POST", "/entities/discover", { limit }),
+
+  importFromUrl: (url: string) => req<ProfileDraft>("POST", "/company/profile/import/url", { url }),
+  importFromPdf: (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return req<ProfileDraft>("POST", "/company/profile/import/pdf", fd);
+  },
 
   documents: () => req<Doc[]>("GET", "/documents"),
   upload: (files: File[]) => {
