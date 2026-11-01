@@ -240,5 +240,7 @@ def test_the_fake_llm_setting_selects_the_demo_models(tmp_path: Path, store: Evi
 
 def test_the_demo_relevance_model_keeps_every_comment_it_is_shown() -> None:
     model = demo_llm(load_brief())("relevance")
-    reply = model.invoke([HumanMessage(content="Post P1: x\n  c1: a\n  c2: b\nPost P2: y\n  c3: c")])
+    reply = model.invoke(
+        [HumanMessage(content="Post P1: x\n  c1: a\n  c2: b\nPost P2: y\n  c3: c")]
+    )
     assert json.loads(str(reply.content)) == {"relevant": ["c1", "c2", "c3"]}

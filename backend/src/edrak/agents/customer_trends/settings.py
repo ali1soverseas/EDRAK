@@ -97,7 +97,11 @@ class Settings(BaseSettings):
         """The environment gives one string: `social_comment,review` or a JSON list."""
         if isinstance(value, str):
             text = value.strip()
-            return json.loads(text) if text.startswith("[") else [p.strip() for p in text.split(",") if p.strip()]
+            return (
+                json.loads(text)
+                if text.startswith("[")
+                else [p.strip() for p in text.split(",") if p.strip()]
+            )
         return value
 
     @property

@@ -61,7 +61,9 @@ def test_relevance_role_uses_low_reasoning_and_its_own_model_when_set() -> None:
     s = make_settings(ollama_api_key="k", ollama_model="base", ollama_model_relevance="small")
     model = get_chat_model("relevance", settings=s)
     assert model.model == "small" and model.reasoning == "low"
-    plain = get_chat_model("relevance", settings=make_settings(ollama_api_key="k", ollama_model="base"))
+    plain = get_chat_model(
+        "relevance", settings=make_settings(ollama_api_key="k", ollama_model="base")
+    )
     assert plain.model == "base"
 
 

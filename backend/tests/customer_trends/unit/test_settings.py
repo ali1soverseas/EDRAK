@@ -135,7 +135,11 @@ def test_relevance_filter_defaults() -> None:
     s = make()
     assert s.relevance_filter_enabled is True
     assert [t.value for t in s.relevance_item_types] == ["social_comment"]
-    assert (s.relevance_batch_size, s.relevance_parent_chars, s.relevance_comment_chars) == (40, 300, 280)
+    assert (s.relevance_batch_size, s.relevance_parent_chars, s.relevance_comment_chars) == (
+        40,
+        300,
+        280,
+    )
     assert (s.relevance_concurrency, s.relevance_min_relevant) == (2, 5)
     assert s.relevance_timeout_s == 60 and s.relevance_reasoning == "low"
     assert s.ollama_model_relevance is None
