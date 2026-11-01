@@ -62,7 +62,7 @@ class SourceDocument(BaseModel):
     priority: int = 0
 
     @model_validator(mode="after")
-    def _detect_language(self) -> "SourceDocument":
+    def _detect_language(self) -> SourceDocument:
         if self.language is None:
             self.language = detect_language(self.text)
         return self
