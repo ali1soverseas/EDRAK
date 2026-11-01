@@ -96,6 +96,15 @@ class Settings(BaseSettings):
     # Evaluation after each run: a model judges a sample of findings (faithfulness, relevance).
     EVALUATION_JUDGE: bool = True
 
+    # Company profile import: source text goes to the model in one labeled, budgeted block.
+    # The model is OLLAMA_MODEL. Reasoning effort is passed to the client as given ("" turns the option off).
+    PROFILE_IMPORT_CONTEXT_CHARS: int = 48000
+    PROFILE_IMPORT_MIN_CHARS: int = 400
+    PROFILE_IMPORT_REASONING: str = "low"
+    PROFILE_IMPORT_MAX_LIST_ITEMS: int = 20
+    PROFILE_IMPORT_MAX_ITEM_CHARS: int = 200
+    PROFILE_IMPORT_MAX_NOTES_CHARS: int = 600
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
