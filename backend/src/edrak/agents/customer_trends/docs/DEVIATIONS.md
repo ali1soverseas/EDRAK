@@ -90,3 +90,9 @@ pointers; the evidence the spec sketch calls `preview` is at most five items of 
 - SPEC 6.7 gives the rule for `high` confidence (10 evidence ids, 2 platforms or source types). `submit_findings` also lowers a `high` finding that lists `related_gaps` to `medium`, and the `high_confidence` check reports one that kept it. This is stricter than SPEC and follows its own principle that gaps are a first-class output.
 - `ActorSpec.timeout_s` and the per-run memory of an actor over its monthly limit are additions to the Apify configuration described in SPEC section 8; `provenance.calls` is an addition to the provenance of SPEC 6.8.
 - SPEC section 10 replans once "while budget remains". The replan edge also needs enough collection time (`MIN_REPLAN_S` 30 s after the 30 percent kept for analysis and writing), and a branch's time limit is the smaller of `BRANCH_TIMEOUT_S` and that remaining time.
+
+## Relevance filter
+
+- `TaskBrief` gained `aliases`, `products` and `focus_terms`, filled from the company profile and the task's focus areas by `brief_from_task`. The filter's keyword stage needs them and the brief held only the company name and the competitors.
+- The filter's verdict is stored in the evidence item's `metadata` (no new column, no migration), and `EvidenceStore` hides irrelevant items from `query`, `count_by` and `existing_ids` unless `include_irrelevant` is passed. Because of that, a coverage count (`evidence_total`, `platforms`) counts only comments the filter kept, and a finding cannot cite a filtered comment.
+- `Role` has a fifth value, `relevance`, with its own optional model (`OLLAMA_MODEL_RELEVANCE`) and a low reasoning effort.

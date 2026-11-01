@@ -185,3 +185,14 @@ Verification (2026-10-06, Apify FREE plan, SocialCrawl 100 free credits):
 - The call log keeps the error message of a failed call (`message`).
 - Instagram search takes its hashtag page from the first planned hashtag, else from the query run together; before, the query and every hashtag were joined into one meaningless tag. Hashtags make no difference on Reddit search (2 items with and without one, checked on 2026-10-07).
 - Measured: the Apify search interest actor did not finish within 60 s in either pass, so every demand branch pays 60 s before SocialCrawl answers (about 10 s when the key has credits). Reddit through SocialCrawl costs 4 to 5 credits a call for 2 to 18 items.
+
+## Relevance filter
+
+- SPEC.md is not in the repository (it is ignored), so `docs/ARCHITECTURE.md` is the spec this layer updates. Code comments still point at "SPEC section 10" for the graph.
+- The token figures are characters divided by four. That is a rough rule, not a measurement, and the real ratio differs for Arabic; the result labels them as an estimate. No claim about savings has been measured yet: the evaluation script exists, and it needs a labeled CSV.
+- A letter repeated three or more times is written once, which suits brand names ("gitlaaab") and elongated words ("جداااا") but turns "goood" into "god". The collapsed text is used for matching and duplicates only.
+- Duplicates are found per platform, because the store already merges exact repeats per platform and a short comment can honestly be the same on two sites.
+- The "focus keywords" are the task's `focus_areas` (free phrases such as "AI-assisted development"). `TaskBrief.focus` holds four fixed labels (pain points, demand, ...), which are not words a comment would contain.
+- A comment's parent post is found from what each provider stores (`post_url`, `video_id`, `post_id` and the URL of TikTok and YouTube comments). X replies and SocialCrawl comments carry no such hint, so they are sent under "the post was not collected".
+- The filter's model calls may use at most half of the finish reserve (15 percent of `max_seconds`, 45 s for a 300 s run) and never more than `RELEVANCE_TIMEOUT_S`; comments not classified in time are kept.
+- Defaults (batch 40, parent 300 and comment 280 characters, concurrency 2, minimum 5 relevant comments) are the values the design asked for. They were not tuned on data.

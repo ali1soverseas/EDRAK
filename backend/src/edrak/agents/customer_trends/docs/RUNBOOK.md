@@ -174,6 +174,19 @@ words, the viewer lacks an Arabic font or right-to-left support (the UI renders 
 `dir="rtl"`). `evals.customer_trends.checks` verifies that stored Arabic items hold Arabic letters
 and no escape sequences.
 
+## The comment filter dropped too much, or warned
+
+The result's `control_summary.coverage["relevance_filter"]` says what it did: comments judged, the
+number dropped per reason, how many went to the model and how many were kept, per platform. A
+warning that starts with "the relevance filter" means a model batch failed, ran out of time or the
+model could not be built; those comments were kept, so nothing was lost, only not filtered. To see
+what was dropped, read the items with `include_irrelevant` (`EvidenceStore.query(run_id, filters,
+include_irrelevant=True)`): each carries `metadata.relevance_reason` and `metadata.filter_stage`. A
+platform with the gap `relevant_comments_<platform>` kept fewer than `RELEVANCE_MIN_RELEVANT`
+comments; collect under more posts, or check the queries. To turn the filter off for a run, set
+`RELEVANCE_FILTER_ENABLED=false`. To measure it, use `scripts/customer_trends/eval_relevance_filter.py`
+on a labeled CSV (see the README).
+
 ## Checks
 
 `uv run python -m evals.customer_trends.checks --run-id RUN_ID` re-checks a stored run: schema,

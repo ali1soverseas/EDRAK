@@ -14,8 +14,9 @@ Python import path: `edrak.agents.customer_trends`. Run every command below from
 
 ## Architecture
 
-A LangGraph graph with three parallel collection branches (social, demand, reviews), then
-analysis, a coverage check with one bounded replan, findings and a result. The diagram, the node
+A LangGraph graph with three parallel collection branches (social, demand, reviews), a filter
+that removes irrelevant comments, then analysis, a coverage check with one bounded replan, findings
+and a result. The diagram, the node
 table, the data flow, the storage layout, the provider routing and the mapping to the shared
 contracts are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
@@ -97,6 +98,26 @@ A run produces three things:
 
 The status of a result is `complete`, `partial` (a critical gap remains) or `insufficient` (too
 little evidence); a run with no evidence at all is a valid result, not an error.
+
+## Comment relevance filter
+
+Between collection and analysis, `relevance_filter` marks the social comments that are noise
+(greetings, tagged friends, ads, spam, duplicates) so the analysis model never reads them. Free
+rules and a keyword match decide first and a model sorts what is left, in batches; when anything is
+unsure or fails, the comment is kept. Nothing is deleted: irrelevant comments stay in the store
+with the reason, and the counts and an estimated token saving are in the result's
+`control_summary.coverage["relevance_filter"]`. How it works and its settings
+(`RELEVANCE_*`, below) are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#relevance-filter).
+
+To measure it on comments you labeled (template in `evals/customer_trends/relevance/template.csv`):
+
+```bash
+uv run python ../scripts/customer_trends/eval_relevance_filter.py evals/customer_trends/relevance/data/labeled.csv \
+    --brief evals/customer_trends/briefs/competitive_intelligence.json --alias "GitLab Inc." --product Duo
+```
+
+It prints precision and recall of the relevant class, the drop rate and the estimated token
+reduction. `--no-llm` runs only the free stages.
 
 ## Configuration
 

@@ -438,6 +438,17 @@ token figures are characters divided by four, labeled as an estimate in `token_e
 not a measured token count. Each pass also emits one `relevance_filtered` event. A platform with
 fewer than `RELEVANCE_MIN_RELEVANT` relevant comments gets the gap `relevant_comments_<platform>`.
 
+**Evaluation.** `scripts/customer_trends/eval_relevance_filter.py` runs the filter on a CSV of
+comments you labeled (columns `id`, `platform`, `parent_text`, `comment_text`, `label` with the label
+`relevant` or `irrelevant`) and prints the precision and recall of the relevant class, the drop rate
+and the estimated token reduction, plus how many comments each stage decided and a list of the
+relevant comments it dropped and the irrelevant ones it kept. It runs the same free stages and the
+same batched model call as a worker (`relevance/evaluation.py`), but reads and writes no store.
+`--no-llm` skips the model and counts what the free stages cannot decide as kept. The template is
+`backend/evals/customer_trends/relevance/template.csv`; real labeled files go in
+`backend/evals/customer_trends/relevance/data/`, which git ignores. No labeled data and no result
+are committed.
+
 ## Worker graph
 
 The graph of SPEC section 10 is built in `graph.py`, its node functions are in `nodes.py`, the
