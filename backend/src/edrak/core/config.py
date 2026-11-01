@@ -104,6 +104,14 @@ class Settings(BaseSettings):
     PROFILE_IMPORT_MAX_LIST_ITEMS: int = 20
     PROFILE_IMPORT_MAX_ITEM_CHARS: int = 200
     PROFILE_IMPORT_MAX_NOTES_CHARS: int = 600
+    # Importing from a website: how much of the site is read and how.
+    PROFILE_IMPORT_MAX_PAGES: int = 8  # including the homepage
+    PROFILE_IMPORT_FETCH_TIMEOUT_S: float = 10.0
+    PROFILE_IMPORT_MAX_BYTES: int = 2_000_000  # per response
+    PROFILE_IMPORT_CONCURRENCY: int = 3
+    PROFILE_IMPORT_MAX_REDIRECTS: int = 5
+    # A homepage with less main text than this is retried in a headless browser, when one is installed.
+    PROFILE_IMPORT_RENDER_MIN_CHARS: int = 300
 
     # Sessions
     SESSION_DAYS: int = 30
