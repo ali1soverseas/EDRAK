@@ -17,8 +17,8 @@ ARABIC_HEADING = "من نحن"
 
 # Fonts with real Arabic glyphs, by platform. The tests skip when none is installed.
 _ARABIC_FONTS = (
-    "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
     "/System/Library/Fonts/Supplemental/Baghdad.ttc",
+    "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
     "/usr/share/fonts/truetype/noto/NotoNaskhArabic-Regular.ttf",
     "/usr/share/fonts/opentype/noto/NotoNaskhArabic-Regular.ttf",
@@ -34,7 +34,11 @@ def arabic_font() -> str:
 
 
 def _save(doc, path: Path, **kwargs) -> Path:
-    doc.save(str(path), **kwargs)
+    try:
+        doc.subset_fonts()  # an embedded system font can be tens of MB; keep only the glyphs used
+    except Exception:
+        pass
+    doc.save(str(path), garbage=4, deflate=True, **kwargs)
     doc.close()
     return path
 

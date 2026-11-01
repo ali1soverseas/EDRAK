@@ -38,6 +38,14 @@ async def lifespan(app: FastAPI):
 
     from edrak.monitoring.scheduler import run_forever
 
+    # Say once whether scanned PDFs can be read. The check never stops the server from starting.
+    try:
+        from edrak.company_profile.pdf_import import log_ocr_status
+
+        log_ocr_status()
+    except Exception:
+        logger.exception("Could not check OCR availability")
+
     scheduler = asyncio.create_task(run_forever())
     yield
     scheduler.cancel()
