@@ -303,6 +303,12 @@ PYTHONPATH=backend/src uvicorn edrak.main:app --port 8000
 cd frontend && npm install && npm run dev     # http://localhost:5173
 ```
 
+Importing a company profile from a PDF reads scanned pages with OCR when the Tesseract program is
+installed together with Arabic and English language data (`brew install tesseract tesseract-lang`, or
+`apt install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng`). It is optional: without it the import
+still works and names the scanned pages it could not read. The server logs at startup whether OCR is
+available.
+
 The database (`data/edrak.db`) is created on first start. A database from the earlier MVP layout is
 migrated automatically; the original is kept as `data/edrak.v1.bak.db`.
 
