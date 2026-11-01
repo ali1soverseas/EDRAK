@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { ProfileImport } from "../components/company/ProfileImport";
 import { LanguageSwitch } from "../components/shell/AppShell";
 import { ChoiceChips, TagInput } from "../components/ui/Controls";
 import { DotField } from "../components/ui/DotField";
@@ -141,6 +142,11 @@ export function Onboarding() {
     }
   };
 
+  const industryLabel = (key: string) => {
+    const i = INDUSTRIES.find((x) => x[0] === key);
+    return i ? L(i[1], i[2]) : key;
+  };
+
   const titles: Record<number, [string, string, string, string]> = {
     1: ["Your company", "شركتك", "Edrak compares everything against this baseline.", "يقارن إدراك كل شيء بهذا الأساس."],
     2: ["What you offer", "ما تقدمه", "Your products or services, and who they are for.", "منتجاتك أو خدماتك ولمن هي."],
@@ -175,6 +181,7 @@ export function Onboarding() {
 
           {step === 1 && (
             <div className="stack gap16">
+              <ProfileImport form={d} onApply={setD} industryLabel={industryLabel} />
               <label className="field"><span>{L("Company name", "اسم الشركة")}</span>
                 <input className="input" autoFocus value={d.name} onChange={(e) => set("name", e.target.value)} dir="auto" /></label>
               <TagInput values={d.aliases} onChange={(v) => set("aliases", v)} label={L("Also known as", "يُعرف أيضًا باسم")} showLabel
