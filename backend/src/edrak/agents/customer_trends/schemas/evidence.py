@@ -46,6 +46,23 @@ class EvidenceItem(StrictModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @property
+    def relevance(self) -> str | None:
+        """`relevant` or `irrelevant` once the relevance filter has judged the item, else None."""
+        value = self.metadata.get("relevance")
+        return value if isinstance(value, str) else None
+
+    @property
+    def relevance_reason(self) -> str | None:
+        value = self.metadata.get("relevance_reason")
+        return value if isinstance(value, str) else None
+
+    @property
+    def filter_stage(self) -> str | None:
+        """`a` (rules), `b` (keywords) or `c` (model): where the filter decided."""
+        value = self.metadata.get("filter_stage")
+        return value if isinstance(value, str) else None
+
+    @property
     def engagement_total(self) -> int:
         """Sum of interaction counts: ratings and view counts are not interactions."""
         return sum(v for k, v in self.engagement.items() if k not in _NOT_ENGAGEMENT)
