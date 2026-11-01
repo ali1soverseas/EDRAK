@@ -11,12 +11,14 @@ from edrak.company_profile.pdf_import.extract import PageText
 from edrak.company_profile.url_import.parse import social_profiles
 
 _SOCIAL_HOSTS = "|".join(re.escape(h) for hosts in PLATFORM_HOSTS.values() for h in hosts)
-# A web address with a scheme or "www.", or a social profile written without either.
+# A web address with a scheme or "www.", or a social profile written without either. A "*" ends it:
+# the page text is markdown, and **www.example.com** is a bold address, not one that contains asterisks. A "*" ends it:
+# the page text is markdown, and **www.example.com** is a bold address, not one that contains asterisks.
 _URL = re.compile(
-    rf"(?:https?://|www\.)[^\s<>\"'‎‏]+|(?<![\w@.])(?:[\w-]+\.)?(?:{_SOCIAL_HOSTS})/[^\s<>\"'‎‏]+",
+    rf"(?:https?://|www\.)[^\s<>\"'*‎‏]+|(?<![\w@.])(?:[\w-]+\.)?(?:{_SOCIAL_HOSTS})/[^\s<>\"'*‎‏]+",
     re.IGNORECASE,
 )
-_TRAILING = ".,;:!?)]}»›\"'"
+_TRAILING = ".,;:!?)]}»›\"'_"
 
 
 def _clean(raw: str) -> str:

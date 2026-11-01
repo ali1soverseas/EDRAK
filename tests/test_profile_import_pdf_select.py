@@ -122,6 +122,12 @@ def test_urls_are_found_in_text_and_hyperlinks_without_trailing_punctuation():
     assert "https://facebook.com/acmepay" in urls and "https://instagram.com/acme.pay" in urls
 
 
+def test_markdown_emphasis_around_an_address_is_not_part_of_it():
+    pages = [page(1, "Web: **www.egyptian-steel.com** and *https://www.egyptian-steel.com/contact* or __https://x.com/steel__")]
+    assert urls_in(pages) == ["https://www.egyptian-steel.com", "https://www.egyptian-steel.com/contact", "https://x.com/steel"]
+    assert links_from_pages(pages)[0] == {"platform": "website", "url": "https://www.egyptian-steel.com"}
+
+
 def test_social_profiles_and_the_website_come_out_as_extra_links():
     pages = [
         page(1, "Our site: https://www.acmepay.example/about  Twitter: https://twitter.com/acmepay"),
