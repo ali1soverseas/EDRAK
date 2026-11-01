@@ -4,7 +4,7 @@ import httpx
 import pytest
 
 from edrak.company_profile.url_import.errors import SiteUnreachable, UrlBlocked
-from edrak.company_profile.url_import.fetch import ANY_TYPE, SiteFetcher
+from edrak.company_profile.url_import.fetch import SiteFetcher
 from edrak.company_profile.url_import.urls import ensure_public, normalize_url, registered_domain, same_site
 from edrak.core.config import settings
 
