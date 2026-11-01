@@ -112,6 +112,13 @@ class Settings(BaseSettings):
     PROFILE_IMPORT_MAX_REDIRECTS: int = 5
     # A homepage with less main text than this is retried in a headless browser, when one is installed.
     PROFILE_IMPORT_RENDER_MIN_CHARS: int = 300
+    # Importing from a PDF: upload limits, and when a page counts as a scan that needs OCR.
+    PROFILE_IMPORT_PDF_MAX_MB: int = 20
+    PROFILE_IMPORT_PDF_MAX_PAGES: int = 60
+    PROFILE_IMPORT_SCANNED_MIN_CHARS: int = 50
+    # Tesseract language codes joined with "+". Both need their language data installed.
+    PROFILE_IMPORT_OCR_LANGUAGE: str = "ara+eng"
+    PROFILE_IMPORT_OCR_DPI: int = 300
 
     # Sessions
     SESSION_DAYS: int = 30
