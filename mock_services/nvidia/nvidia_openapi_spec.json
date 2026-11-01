@@ -1,0 +1,225 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NVIDIA Internal Enterprise Operations API",
+    "description": "Operational microservices API for real-time cluster telemetry, pricing rules, and supply chain constraints.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8088",
+      "description": "Local Mock NVIDIA Enterprise Service"
+    }
+  ],
+  "paths": {
+    "/v1/telemetry/gpu-clusters": {
+      "get": {
+        "summary": "Retrieve Global GPU Cluster Telemetry",
+        "description": "Returns live operational metrics on NVIDIA global compute cluster utilization, deployed Blackwell units, and uptime.",
+        "operationId": "get_cluster_telemetry_v1_telemetry_gpu_clusters_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterTelemetryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/pricing/discount-matrix": {
+      "get": {
+        "summary": "Get Volume Discount Policy & Deal Desk Matrix",
+        "description": "Returns current discount approval thresholds, volume tiers, and minimum margin floors enforced by the Deal Desk.",
+        "operationId": "get_discount_matrix_v1_pricing_discount_matrix_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingDiscountMatrixResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply-chain/lead-times": {
+      "get": {
+        "summary": "Get Hardware Lead Times & Packaging Allocation",
+        "description": "Returns estimated customer shipment lead times by GPU model and advanced CoWoS packaging allocation.",
+        "operationId": "get_supply_chain_lead_times_v1_supply_chain_lead_times_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyChainLeadTimesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClusterTelemetryResponse": {
+        "properties": {
+          "cluster_status": {
+            "type": "string",
+            "title": "Cluster Status",
+            "description": "Operational health status of global compute clusters."
+          },
+          "fleet_total_gpus": {
+            "type": "integer",
+            "title": "Fleet Total Gpus",
+            "description": "Total GPU count across all global datacenters."
+          },
+          "active_fleet_utilization_pct": {
+            "type": "number",
+            "title": "Active Fleet Utilization Pct",
+            "description": "Current real-time fleet utilization percentage."
+          },
+          "blackwell_ramp_units_deployed": {
+            "type": "integer",
+            "title": "Blackwell Ramp Units Deployed",
+            "description": "Number of newly deployed Blackwell B200/GB200 units."
+          },
+          "power_efficiency_pue": {
+            "type": "number",
+            "title": "Power Efficiency Pue",
+            "description": "Global average Power Usage Effectiveness (PUE)."
+          },
+          "average_cluster_uptime_pct": {
+            "type": "number",
+            "title": "Average Cluster Uptime Pct",
+            "description": "30-day trailing uptime percentage."
+          },
+          "telemetry_timestamp": {
+            "type": "string",
+            "title": "Telemetry Timestamp",
+            "description": "ISO timestamp of telemetry snapshot."
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster_status",
+          "fleet_total_gpus",
+          "active_fleet_utilization_pct",
+          "blackwell_ramp_units_deployed",
+          "power_efficiency_pue",
+          "average_cluster_uptime_pct",
+          "telemetry_timestamp"
+        ],
+        "title": "ClusterTelemetryResponse"
+      },
+      "DiscountTierRule": {
+        "properties": {
+          "min_units": {
+            "type": "integer",
+            "title": "Min Units"
+          },
+          "max_discount_pct": {
+            "type": "number",
+            "title": "Max Discount Pct"
+          },
+          "requires_vp_approval": {
+            "type": "boolean",
+            "title": "Requires Vp Approval"
+          },
+          "approver": {
+            "type": "string",
+            "title": "Approver"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min_units",
+          "max_discount_pct",
+          "requires_vp_approval",
+          "approver"
+        ],
+        "title": "DiscountTierRule"
+      },
+      "PricingDiscountMatrixResponse": {
+        "properties": {
+          "policy_version": {
+            "type": "string",
+            "title": "Policy Version"
+          },
+          "margin_floor_pct": {
+            "type": "number",
+            "title": "Margin Floor Pct"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/DiscountTierRule"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
+          "sovereign_ai_cap_pct": {
+            "type": "number",
+            "title": "Sovereign Ai Cap Pct"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "policy_version",
+          "margin_floor_pct",
+          "rules",
+          "sovereign_ai_cap_pct",
+          "notes"
+        ],
+        "title": "PricingDiscountMatrixResponse"
+      },
+      "SupplyChainLeadTimesResponse": {
+        "properties": {
+          "as_of_quarter": {
+            "type": "string",
+            "title": "As Of Quarter"
+          },
+          "cowos_packaging_allocation_pct": {
+            "type": "number",
+            "title": "Cowos Packaging Allocation Pct"
+          },
+          "lead_times_weeks": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Lead Times Weeks"
+          },
+          "bottlenecks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Bottlenecks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of_quarter",
+          "cowos_packaging_allocation_pct",
+          "lead_times_weeks",
+          "bottlenecks"
+        ],
+        "title": "SupplyChainLeadTimesResponse"
+      }
+    }
+  }
+}
