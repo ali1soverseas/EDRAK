@@ -53,6 +53,14 @@ def test_a_competitive_intelligence_task_becomes_the_pilot_brief() -> None:
     assert brief.notes == "Focus: Customer sentiment and pain points around AI-assisted development"
 
 
+def test_the_company_names_and_focus_areas_reach_the_brief_for_the_comment_filter() -> None:
+    brief = brief_from_task(research_task(), today=TODAY)
+    assert brief.aliases == ["GitLab Inc."] and brief.products == ["Duo"]
+    assert brief.focus_terms == ["customer pain points", "sentiment"]
+    bare = brief_from_task(research_task(context={"focus_areas": []}), today=TODAY)
+    assert bare.focus_terms == []
+
+
 def test_the_market_entry_value_of_the_shared_enum_maps_and_targets_describe_the_market() -> None:
     task = research_task(
         goal="Is there demand for specialty coffee delivery in Saudi Arabia?",

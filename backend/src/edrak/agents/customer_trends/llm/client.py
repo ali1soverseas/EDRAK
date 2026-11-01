@@ -17,7 +17,7 @@ from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt, wait
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.settings import Settings, get_settings
 
-Role = Literal["planner", "analyst", "writer", "branch"]
+Role = Literal["planner", "analyst", "writer", "branch", "relevance"]
 
 _RETRY_ATTEMPTS = 3
 _TRANSIENT_STATUS = frozenset({429, 500, 502, 503, 504})
@@ -38,15 +38,20 @@ def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllam
     s = settings or get_settings()
     if s.ollama_api_key is None or not s.ollama_api_key.get_secret_value():
         raise LLMConfigError("OLLAMA_API_KEY is not set: add it to .env at the repository root")
-    model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
+    override = {"analyst": s.ollama_model_analysis, "relevance": s.ollama_model_relevance}.get(role)
+    # The relevance filter only sorts comments into two piles, so it asks for little reasoning.
+    effort: dict[str, Any] = {}
+    if role == "relevance" and s.relevance_reasoning:
+        effort["reasoning"] = s.relevance_reasoning
     return ChatOllama(
-        model=model or s.ollama_model,
+        model=override or s.ollama_model,
         base_url=s.ollama_base_url,
         temperature=s.ollama_temperature,
         client_kwargs={
             "headers": {"Authorization": f"Bearer {s.ollama_api_key.get_secret_value()}"},
             "timeout": s.ollama_timeout_s,
         },
+        **effort,
     )
 
 

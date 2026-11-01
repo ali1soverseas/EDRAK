@@ -8,6 +8,7 @@ serve those same phrases, so a run in fixture mode ends with themes, trends and 
 """
 
 import json
+import re
 from collections.abc import Callable, Sequence
 from typing import Any, NamedTuple
 
@@ -311,6 +312,16 @@ def branch_router(brief: TaskBrief) -> BranchRouter:
     )
 
 
+def relevance_model() -> FunctionChatModel:
+    """Keeps every comment: a demo run has no real noise to remove."""
+
+    def respond(messages: list[BaseMessage]) -> Scripted:
+        text = "\n".join(str(m.content) for m in messages)
+        return {"relevant": sorted(set(re.findall(r"^\s*(c\d+):", text, flags=re.MULTILINE)))}
+
+    return FunctionChatModel(responses=[], responder=respond)
+
+
 def demo_llm(brief: TaskBrief) -> Callable[[Role], BaseChatModel]:
     """The model factory of a demo run: one fake model per role, built once for the brief."""
     models: dict[str, BaseChatModel] = {
@@ -318,6 +329,7 @@ def demo_llm(brief: TaskBrief) -> Callable[[Role], BaseChatModel]:
         "analyst": analyst_model(),
         "writer": writer_model(),
         "branch": branch_router(brief),
+        "relevance": relevance_model(),
     }
 
     def build(role: Role) -> BaseChatModel:

@@ -1,11 +1,14 @@
 """Worker configuration: one pydantic-settings model, single source of config."""
 
+import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import AliasChoices, Field, SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AliasChoices, Field, SecretStr, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+from edrak.agents.customer_trends.schemas.common import SourceType
 
 _REPO_MARKER = "AGENTS.md"
 
@@ -44,6 +47,7 @@ class Settings(BaseSettings):
     ollama_model: str = "gpt-oss:120b"
     ollama_api_key: SecretStr | None = None
     ollama_model_analysis: str | None = None
+    ollama_model_relevance: str | None = None
     ollama_temperature: float = 0.2
     ollama_timeout_s: float = 120.0
 
@@ -68,12 +72,33 @@ class Settings(BaseSettings):
     edrak_fake_llm: bool = False
     branch_max_steps: int = Field(default=8, ge=1)  # model calls per collection branch
     branch_timeout_s: float = Field(default=100.0, gt=0)  # wall clock per collection branch
+    # Relevance filter: drops comments that are noise before the analysis step reads them
+    relevance_filter_enabled: bool = True
+    relevance_item_types: Annotated[list[SourceType], NoDecode] = Field(
+        default_factory=lambda: [SourceType.SOCIAL_COMMENT]
+    )  # a list, or a comma separated string in the environment
+    relevance_batch_size: int = Field(default=40, ge=1)  # comments per model call
+    relevance_parent_chars: int = Field(default=300, ge=1)  # parent post text sent to the model
+    relevance_comment_chars: int = Field(default=280, ge=1)  # comment text sent to the model
+    relevance_concurrency: int = Field(default=2, ge=1)  # model calls in flight at once
+    relevance_min_relevant: int = Field(default=5, ge=0)  # fewer relevant comments is a gap note
+    relevance_timeout_s: float = Field(default=60.0, gt=0)  # wall clock for all model calls
+    relevance_reasoning: str = "low"  # reasoning effort of the relevance model; empty leaves it off
     youtube_daily_quota: int = 10000
     youtube_search_daily_cap: int = 100
 
     # Optional tracing
     langsmith_tracing: bool = False
     langsmith_api_key: SecretStr | None = None
+
+    @field_validator("relevance_item_types", mode="before")
+    @classmethod
+    def _split_item_types(cls, value: Any) -> Any:
+        """The environment gives one string: `social_comment,review` or a JSON list."""
+        if isinstance(value, str):
+            text = value.strip()
+            return json.loads(text) if text.startswith("[") else [p.strip() for p in text.split(",") if p.strip()]
+        return value
 
     @property
     def repo_root(self) -> Path:

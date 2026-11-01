@@ -129,3 +129,30 @@ def test_the_environment_name_reads_the_shared_env_key_or_its_own(
     monkeypatch.delenv("ENV")
     monkeypatch.delenv("EDRAK_ENV")
     assert Settings(_env_file=None, edrak_env="prod").is_production is True
+
+
+def test_relevance_filter_defaults() -> None:
+    s = make()
+    assert s.relevance_filter_enabled is True
+    assert [t.value for t in s.relevance_item_types] == ["social_comment"]
+    assert (s.relevance_batch_size, s.relevance_parent_chars, s.relevance_comment_chars) == (40, 300, 280)
+    assert (s.relevance_concurrency, s.relevance_min_relevant) == (2, 5)
+    assert s.relevance_timeout_s == 60 and s.relevance_reasoning == "low"
+    assert s.ollama_model_relevance is None
+
+
+def test_relevance_item_types_read_from_the_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RELEVANCE_ITEM_TYPES", "social_comment, review")
+    assert [t.value for t in make().relevance_item_types] == ["social_comment", "review"]
+    monkeypatch.setenv("RELEVANCE_ITEM_TYPES", '["social_comment"]')
+    assert [t.value for t in make().relevance_item_types] == ["social_comment"]
+    monkeypatch.setenv("RELEVANCE_ITEM_TYPES", "nonsense")
+    with pytest.raises(ValueError, match="relevance_item_types"):
+        make()
+
+
+def test_relevance_limits_must_be_positive() -> None:
+    for name in ("relevance_batch_size", "relevance_concurrency", "relevance_parent_chars"):
+        with pytest.raises(ValueError, match=name):
+            make(**{name: 0})
+    assert make(relevance_min_relevant=0).relevance_min_relevant == 0  # 0 turns the gap note off

@@ -57,6 +57,22 @@ def test_analyst_role_falls_back_to_base_model() -> None:
     assert get_chat_model("analyst", settings=s).model == "base"
 
 
+def test_relevance_role_uses_low_reasoning_and_its_own_model_when_set() -> None:
+    s = make_settings(ollama_api_key="k", ollama_model="base", ollama_model_relevance="small")
+    model = get_chat_model("relevance", settings=s)
+    assert model.model == "small" and model.reasoning == "low"
+    plain = get_chat_model("relevance", settings=make_settings(ollama_api_key="k", ollama_model="base"))
+    assert plain.model == "base"
+
+
+def test_only_the_relevance_role_gets_a_reasoning_effort_and_it_can_be_turned_off() -> None:
+    s = make_settings(ollama_api_key="k")
+    for role in ("planner", "analyst", "writer", "branch"):
+        assert get_chat_model(role, settings=s).reasoning is None  # type: ignore[arg-type]  # loosely typed test input
+    off = make_settings(ollama_api_key="k", relevance_reasoning="")
+    assert get_chat_model("relevance", settings=off).reasoning is None
+
+
 def test_missing_key_raises_only_when_a_model_is_requested() -> None:
     s = make_settings()
     with pytest.raises(LLMConfigError, match="OLLAMA_API_KEY"):

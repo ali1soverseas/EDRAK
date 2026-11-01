@@ -109,6 +109,7 @@ every name). Secrets are never logged.
 | `OLLAMA_MODEL` | `gpt-oss:120b` | model for every role |
 | `OLLAMA_API_KEY` | none | model key; required unless `EDRAK_FAKE_LLM` is true |
 | `OLLAMA_MODEL_ANALYSIS` | none | model of the `analyst` role, else `OLLAMA_MODEL` |
+| `OLLAMA_MODEL_RELEVANCE` | none | model of the `relevance` role (the comment filter), else `OLLAMA_MODEL` |
 | `OLLAMA_TEMPERATURE` | `0.2` | sampling temperature |
 | `OLLAMA_TIMEOUT_S` | `120` | one model request |
 | `APIFY_TOKEN` | none | Apify token (social, reviews, search interest) |
@@ -129,6 +130,15 @@ every name). Secrets are never logged.
 | `EDRAK_FAKE_LLM` | `false` | true: the scripted demo model, no key |
 | `BRANCH_MAX_STEPS` | `8` | model calls each collection branch may make |
 | `BRANCH_TIMEOUT_S` | `100` | wall clock each collection branch may take |
+| `RELEVANCE_FILTER_ENABLED` | `true` | false: every collected item goes to analysis unfiltered |
+| `RELEVANCE_ITEM_TYPES` | `social_comment` | source types the filter handles, comma separated (`social_comment,review`) |
+| `RELEVANCE_BATCH_SIZE` | `40` | comments sent to the model in one call |
+| `RELEVANCE_PARENT_CHARS` | `300` | characters of the parent post sent with its comments |
+| `RELEVANCE_COMMENT_CHARS` | `280` | characters of each comment sent to the model |
+| `RELEVANCE_CONCURRENCY` | `2` | filter model calls in flight at once |
+| `RELEVANCE_MIN_RELEVANT` | `5` | fewer relevant comments than this on a platform adds a gap note; 0 turns it off |
+| `RELEVANCE_TIMEOUT_S` | `60` | wall clock for all filter model calls; comments not classified in time are kept |
+| `RELEVANCE_REASONING` | `low` | reasoning effort of the filter model; empty leaves it unset |
 | `YOUTUBE_DAILY_QUOTA` | `10000` | local YouTube unit budget per day |
 | `YOUTUBE_SEARCH_DAILY_CAP` | `100` | local cap on YouTube searches per day |
 | `LANGSMITH_TRACING` | `false` | optional tracing |
