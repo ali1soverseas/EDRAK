@@ -14,7 +14,7 @@ from langchain_core.messages import AIMessage, BaseMessage
 
 from edrak.agents.customer_trends.deps import LlmFactory, WorkerDeps
 from edrak.agents.customer_trends.llm.client import Role
-from edrak.agents.customer_trends.llm.demo_script import BranchRouter, tool_calls
+from edrak.agents.customer_trends.llm.demo_script import BranchRouter, relevance_model, tool_calls
 from edrak.agents.customer_trends.llm.fake import FunctionChatModel, Scripted, ScriptedChatModel
 from edrak.agents.customer_trends.providers.base import (
     ProviderResult,
@@ -78,6 +78,8 @@ class World:
     delay_s: float = 0.0
     items_per_call: int = 1
     calls: dict[str, int] = field(default_factory=dict)
+    # comments served by every social_comments capability instead of the default sample items
+    comment_texts: list[str] = field(default_factory=list)
 
 
 def _posts(
@@ -174,6 +176,19 @@ class WorldProvider:
             await asyncio.sleep(world.delay_s)
         if capability in world.failing and (world.fail_calls is None or call <= world.fail_calls):
             raise ProviderUnavailable(f"{capability} is down")
+        if world.comment_texts and capability.startswith("social_comments:"):
+            platform = Platform(capability.partition(":")[2])
+            comments = [
+                make_evidence(
+                    text,
+                    platform=platform,
+                    source_type=SourceType.SOCIAL_COMMENT,
+                    published_at=BASE_DAY + timedelta(days=i),
+                    provider="fake",
+                )
+                for i, text in enumerate(world.comment_texts)
+            ]
+            return ProviderResult(items=comments, raw_count=len(comments), cost_estimate=0.001)
         return _serve(capability, call)
 
 
@@ -385,6 +400,7 @@ class Models:
     writer: FunctionChatModel
     router: BranchRouter
     writer_script: WriterScript
+    relevance: BaseChatModel = field(default_factory=relevance_model)
 
     @property
     def factory(self) -> LlmFactory:
@@ -393,6 +409,7 @@ class Models:
             "analyst": self.analyst,
             "writer": self.writer,
             "branch": self.router,
+            "relevance": self.relevance,
         }
 
         def build(role: Role) -> BaseChatModel:
@@ -412,6 +429,7 @@ def models(
     demand: Sequence[Scripted] | None = None,
     reviews: Sequence[Scripted] | None = None,
     writer: WriterScript | None = None,
+    relevance: BaseChatModel | None = None,
 ) -> Models:
     script = writer or WriterScript()
     router = BranchRouter(
@@ -427,6 +445,7 @@ def models(
         writer=writer_model(script),
         router=router,
         writer_script=script,
+        **({"relevance": relevance} if relevance is not None else {}),
     )
 
 

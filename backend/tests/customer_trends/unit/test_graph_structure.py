@@ -37,7 +37,7 @@ def test_the_documented_diagram_is_the_compiled_graph(compiled) -> None:  # type
     assert {(edge.source, edge.target) for edge in drawn.edges} == documented_edges()
 
 
-def test_the_graph_has_the_ten_nodes_of_the_spec(compiled) -> None:  # type: ignore[no-untyped-def]  # a test fixture value
+def test_the_graph_has_the_eleven_nodes_of_the_spec(compiled) -> None:  # type: ignore[no-untyped-def]  # a test fixture value
     assert set(NODES) == {
         "intake",
         "plan_queries",
@@ -45,6 +45,7 @@ def test_the_graph_has_the_ten_nodes_of_the_spec(compiled) -> None:  # type: ign
         "demand",
         "reviews",
         "join",
+        "relevance_filter",
         "analyze",
         "gap_check",
         "write_findings",

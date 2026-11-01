@@ -42,6 +42,11 @@ from edrak.agents.customer_trends.prompts import (
     WRITE_HEADLINE,
     render,
 )
+from edrak.agents.customer_trends.relevance.pipeline import (
+    filter_run,
+    filtered_types,
+    min_relevant,
+)
 from edrak.agents.customer_trends.schemas.common import Depth, Platform
 from edrak.agents.customer_trends.schemas.findings import (
     MAX_HEADLINE_WORDS,
@@ -401,6 +406,32 @@ async def join(state: WorkerState, deps: WorkerDeps) -> Update:
     return {"budget": _budget(deps)}
 
 
+# relevance_filter
+
+
+@traced("relevance_filter")
+async def relevance_filter(state: WorkerState, deps: WorkerDeps) -> Update:
+    """Mark the collected comments that are noise, so `analyze` reads only the relevant ones.
+
+    Free rules and a keyword match decide what they can; a model sorts the rest in batches. The
+    verdicts are marks on the stored items, nothing is deleted, and every failure keeps the
+    comments (a filter that cannot work must not lose evidence).
+    """
+    if not deps.settings.relevance_filter_enabled:
+        return {}
+    try:
+        outcome = await filter_run(deps, brief_of(state))
+    except Exception as exc:
+        log.warning("relevance_filter_failed", error=type(exc).__name__)
+        return {
+            "warnings": [
+                f"the relevance filter failed ({type(exc).__name__}); comments were not filtered"
+            ]
+        }
+    events = [deps.bus.emit(outcome.event())] if outcome.judged else []
+    return {"warnings": outcome.warnings, "events": events, "budget": _budget(deps)}
+
+
 # analyze
 
 
@@ -471,9 +502,10 @@ async def gap_check(state: WorkerState, deps: WorkerDeps) -> Update:
     gaps = find_gaps(
         brief,
         deps.use_cases.for_use_case(brief.use_case),
-        coverage_of(deps.store, brief.run_id),
+        coverage_of(deps.store, brief.run_id, filtered_types=filtered_types(deps)),
         review_targets_planned=bool(plan and plan.review_targets),
         branch_errors=state.get("branch_errors", {}),
+        min_relevant_comments=min_relevant(deps),
     )
     known = {gap["id"] for gap in state.get("gaps", [])}
     events = [

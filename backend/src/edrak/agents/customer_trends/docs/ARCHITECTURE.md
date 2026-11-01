@@ -350,12 +350,101 @@ Accepted findings may be adjusted, and the response says so in `adjusted`: one e
 low confidence and the caveat `single_source`; `high` needs at least 10 evidence ids, at least
 two platforms or two source types and no `related_gaps`, else it becomes `medium` with a caveat.
 
+## Relevance filter
+
+Social comments are cheap to collect and mostly noise: greetings, tagged friends, ads, spam. The
+`relevance_filter` node, between `join` and `analyze`, removes that noise before the analysis model
+reads it, so fewer tokens are spent and fewer empty items reach the themes. It handles the source
+types in `RELEVANCE_ITEM_TYPES` (default `social_comment`; `review` can be added), and nothing else.
+The code is in `relevance/`: `normalize.py`, `rules.py` (stage A), `terms.py` (stage B),
+`parents.py` and `classify.py` (stage C), `pipeline.py` (one pass over a run) and `accounting.py`.
+
+It is a cascade, cheapest first, and it fails open: when it is unsure, or anything goes wrong, a
+comment is kept. It does not use embedding similarity, because thresholds are unreliable across
+Egyptian and Gulf dialects and for short comments, and it would need a heavy local model.
+
+**Normalization** (`normalize.py`, for matching only, the stored text is never changed): the
+agent's `search_key` (lowercase, one alef, taa marbuta as haa, alef maqsura as yaa, no diacritics or
+tatweel, collapsed whitespace), then a letter repeated three or more times is written once. So
+`جداااا` is `جدا` and `gitlaaab` is `gitlab`. Digits are left alone. Writing the letter once suits
+names but turns `goood` into `god`, so the text is never used for anything but matching.
+
+**Stage A, free rules** (`rules.py`). A comment is dropped, with the reason, when it is:
+
+| Reason | When |
+|---|---|
+| `empty` | no letter or digit: only emoji, punctuation or whitespace |
+| `link_only` | nothing left once links are removed |
+| `mentions_only` | nothing left once links, @mentions and #tags are removed |
+| `spam` | one character makes up 80 percent of the letters and digits, or a block of up to 3 characters repeats (`hahahaha`); only letters and digits count, so `wow!!!!` stays |
+| `duplicate` | the same normalized text as an earlier comment on the same platform; the first is kept and records `duplicate_count`, the repeat records `duplicate_of` |
+| `too_short` | under two words, unless it holds a match term |
+
+Language never decides a drop: an Arabic comment is judged like an English one. Duplicates are
+counted per platform because the store already drops exact repeats per platform and a short
+comment can honestly be the same on two sites.
+
+**Stage B, keyword fast path** (`terms.py`). Match terms are the company name, its aliases and
+products, the competitors named in the task and the task's focus terms, normalized like the text and
+taken from the `TaskBrief` (`brief_from_task` fills `aliases`, `products` and `focus_terms`; before
+this, the brief held only the entity and the competitors). A Latin term matches whole words, an Arabic
+term matches inside a word because Arabic attaches prefixes to the word they belong to. A comment
+that holds a term is `relevant` with reason `term_match` and skips stage C.
+
+**Stage C, model classification** (`classify.py`, role `relevance`, schema `RelevanceVerdict`,
+prompt `RELEVANCE_FILTER`). What is left is grouped under its parent post and sent in batches of
+`RELEVANCE_BATCH_SIZE` (40). A batch shows each post once, cut to `RELEVANCE_PARENT_CHARS` (300),
+then its comments with short ids `c1`, `c2`, cut to `RELEVANCE_COMMENT_CHARS` (280); only the copy
+sent is cut. A post with more comments than a batch is split and its text sent with each part. The
+prompt gives the task goal, the company, its products and the competitors, and says what relevant
+means: an opinion, experience, question, complaint, need, price reaction, purchase intent or
+comparison about the brand, its products, its category or the named competitors, including short
+reactions that only make sense under the post. The answer is `{"relevant": ["c3", "c7"]}`; ids not
+listed are irrelevant, ids that were never sent are ignored. The call is the agent's
+`structured_call` (JSON schema, one repair attempt, transient retries) with low reasoning effort
+(`RELEVANCE_REASONING`) and the model `OLLAMA_MODEL_RELEVANCE`, else `OLLAMA_MODEL`. Batches run
+`RELEVANCE_CONCURRENCY` (2) at a time.
+
+The parent text comes from the collected posts. A comment names its post differently on each
+platform (`post_url` on Instagram and Facebook, `video_id` on YouTube, `post_id` on Reddit, the
+video URL on TikTok), so `parents.py` reduces both to the same keys. A comment whose post was not
+collected is grouped by its hint without text, and one with no hint (an X reply) shares a group.
+
+**Failing open.** A batch the model answers invalidly twice, one that raises, one that is not
+finished within `RELEVANCE_TIMEOUT_S` (60, and never more than half of the time kept for analysis and
+writing), and a model that cannot be built, all keep their comments with reason `kept_on_error`. A
+warning counts them. A failure of the whole node keeps every comment and adds a warning.
+
+**Marking, not deleting.** Each verdict is written into the item's `metadata`:
+
+| Field | Values |
+|---|---|
+| `relevance` | `relevant` or `irrelevant` |
+| `relevance_reason` | `duplicate`, `empty`, `link_only`, `mentions_only`, `spam`, `too_short`, `term_match`, `llm_relevant`, `llm_irrelevant`, `kept_on_error` |
+| `filter_stage` | `a` (rules), `b` (keywords), `c` (model) |
+| `duplicate_count`, `duplicate_of` | on the first of a set of duplicates, and on each repeat |
+
+`EvidenceStore` hides an item marked irrelevant from `query`, `count_by`, `existing_ids` and so from
+`run_summary`, the coverage rules, `analyze_text`, `compute_metrics`, `evidence_query` and the
+writer's samples, unless the caller passes `include_irrelevant`. A finding cannot cite a filtered
+comment: `submit_findings` finds no such id. An item the filter has not judged counts as relevant, so
+a run without the filter behaves as before. The items stay in `evidence.db` for audit, and a lookup
+by id still returns them. A second collection pass (a replan) judges only the comments it added.
+
+**Accounting.** `ControlSummary.coverage["relevance_filter"]`, read from the marks, holds for the
+run and for each platform: `comments_in` (judged), `dropped` per reason, `sent_to_llm` (what stage C
+looked at, answered or not), `kept`, `kept_by_reason`, and `tokens_before` and `tokens_after`. The
+token figures are characters divided by four, labeled as an estimate in `token_estimate`; they are
+not a measured token count. Each pass also emits one `relevance_filtered` event. A platform with
+fewer than `RELEVANCE_MIN_RELEVANT` relevant comments gets the gap `relevant_comments_<platform>`.
+
 ## Worker graph
 
 The graph of SPEC section 10 is built in `graph.py`, its node functions are in `nodes.py`, the
 state in `state.py`, the prompts in `prompts.py` and the coverage rules in `gaps.py`. Helper
 modules beside them: `deps.py` (what the nodes need, and the event bus), `assembly.py` (the
-writer's input and the result), `usecases.py` (loader of `config/use_cases.yaml`).
+writer's input and the result), `usecases.py` (loader of `config/use_cases.yaml`) and the
+`relevance/` package behind the `relevance_filter` node (see Relevance filter).
 
 **LangGraph.** Installed: `langgraph` 1.2.12, `langgraph-prebuilt` 1.1.0,
 `langgraph-checkpoint-sqlite` 3.1.1, `langchain` 1.4.3. The prebuilt `create_react_agent` of
@@ -376,7 +465,8 @@ flowchart TD
     social --> join
     demand --> join
     reviews --> join
-    join --> analyze
+    join --> relevance_filter
+    relevance_filter --> analyze
     analyze --> gap_check
     gap_check -.->|critical gap, replan_count 0, budget left| plan_queries
     gap_check -.->|otherwise| write_findings
@@ -384,7 +474,8 @@ flowchart TD
     submit --> END
 ```
 
-`social`, `demand` and `reviews` run in parallel and `join` waits for all three. The dotted edges
+`social`, `demand` and `reviews` run in parallel and `join` waits for all three; `relevance_filter`
+then judges the comments they collected. The dotted edges
 are one conditional edge out of `gap_check`. `tests/customer_trends/unit/test_graph_structure.py`
 compares this diagram with the compiled graph.
 
@@ -394,6 +485,7 @@ compares this diagram with the compiled graph.
 | `plan_queries` | model (`planner`, `QueryPlan`) | Plans queries per platform in each requested language with local wording, up to 5 trend keywords (a sixth is trimmed), news queries, review targets, competitor angles. On a second pass it gets the critical gaps and plans only to close them. A planner failure gives a default plan from the brief and a warning. | `plan`, `replan_count`, `warnings`, `events` (`replan`) |
 | `social`, `demand`, `reviews` | tool-using sub-agent (`branch`) | Each is a bounded `create_agent` with only its tool subset and the prompt `BRANCH_*`. It returns a short note and the batch ids it created. A branch with nothing in the plan makes no model call. A branch that raises, or whose tool calls all failed, reports a critical gap, never an exception. | `batches`, `branch_notes`, `branch_errors`, `gaps`, `events` (`gap_found`) |
 | `join` | code | The reducers have merged the branches; records the budget. | `budget` |
+| `relevance_filter` | code + model (`relevance`, `RelevanceVerdict`) | Marks the collected comments that are noise, in three stages (see Relevance filter), so `analyze` and everything after it read only the relevant ones. Does nothing when `RELEVANCE_FILTER_ENABLED` is false. Never raises: any failure keeps the comments and adds a warning. | `warnings`, `events` (`relevance_filtered`), `budget` |
 | `analyze` | code over tools | `analyze_text` over the social and review batches, then `compute_metrics`: volume, platform mix, language mix, engagement, growth per trend series, and share of voice when competitors exist. | `metric_ids`, `analysis_done`, `warnings` |
 | `gap_check` | code (`gaps.py`) | Applies the use case's coverage rules and rebuilds the gap list; announces each new gap. | `gaps` (overwritten), `events` (`gap_found`) |
 | `write_findings` | model (`writer`, `FindingsDraft`) | Reads theme aggregates, metrics, trend summaries and `evidence_query` samples; each draft finding is checked with the rules of `submit_findings`; rejected ones get one repair pass with `REPAIR_FINDINGS`; the rest are dropped with a warning. Ids are renumbered f1, f2, and so on. | `findings`, `warnings`, `events` (`finding_rejected`) |
@@ -410,7 +502,8 @@ aggregates inside the final `result`.
 **Replan.** After `gap_check` the graph returns to `plan_queries` once, and only when a critical
 gap exists, `replan_count` is 0 and the budget (tool calls, cost, time) is not used up. The
 second pass collects only what the new plan asks for and `analyze` runs again over all batches,
-because `analyze_text` replaces the stored themes.
+because `analyze_text` replaces the stored themes. `relevance_filter` runs again too and judges only
+the comments the second pass collected.
 
 **Time.** The last 30 percent of `max_seconds` is kept for analysis and writing
 (`FINISH_RESERVE`). A collection branch gets the smaller of `BRANCH_TIMEOUT_S` and the time left
@@ -428,6 +521,7 @@ seconds a branch and pass two what is left of 210 seconds, and always has 90 sec
 | `trend_series` | critical when the use case requires one, minor when only `demand` is in the focus | No search interest series. |
 | `reviews` | per use case | Competitors are named, review targets were planned and no review was collected. |
 | `language_<code>` | minor | A requested language has fewer than `min_language_items` (10) items. |
+| `relevant_comments_<platform>` | minor | The relevance filter judged comments on the platform and fewer than `RELEVANCE_MIN_RELEVANT` (5) remain. The gap note says the relevant comment volume was low. Off when the filter is off or the minimum is 0. |
 
 **Use cases** (`config/use_cases.yaml`): `competitive_intelligence` (first target, the GitLab
 pilot) stresses competitor sentiment, reviews, news coverage, share of voice, and pain points and
@@ -436,7 +530,8 @@ address it poorly, demand is rising, and requires a trend series; `market_entry`
 and local sentiment in the target geo and languages and requires a trend series. Each entry also
 holds default focus, thresholds, the review rule and query hints for the prompts.
 
-**Result.** `ControlSummary.status` is `insufficient` when the evidence total gap is open,
+**Result.** `ControlSummary.coverage` also holds `relevance_filter`: the filter's counts for the run and
+per platform (see Relevance filter). `ControlSummary.status` is `insufficient` when the evidence total gap is open,
 `partial` when another critical gap is open, else `complete`. `overall_confidence` is `high` when
 at least half the findings are high and no critical gap is open, `medium` when at least half are
 medium or better, else `low`. `provenance` holds the model names, the providers used, the
@@ -447,7 +542,8 @@ from the run's events.
 **Events** (`deps.EventBus`, thread-safe, every event stamped with `seq`, `ts`, `run_id` and
 `task_id`): `node_started`, `node_finished` (status and duration), `tool_called` (tool, branch,
 args, provider, fallback, status, count, latency, cost, error code, batch id), `gap_found`,
-`replan`, `finding_accepted`, `finding_rejected`, `run_finished` and `run_failed`. The processing
+`replan`, `relevance_filtered` (one line per pass: comments in, dropped per reason, sent to the model,
+kept), `finding_accepted`, `finding_rejected`, `run_finished` and `run_failed`. The processing
 tools emit `tool_called` too, with no provider.
 
 **Runner** (`runner.py`). `run_task(brief, *, sink=None, providers=None, llm=None, settings=None)`
@@ -494,7 +590,8 @@ Storage layout (paths resolve as in `settings.py`: `EDRAK_DATA_DIR` against `bac
 ```text
 <EDRAK_DATA_DIR>/                       default backend/data
     evidence.db                         SQLite, WAL: runs, batches, evidence, theme aggregates,
-                                        trend series, metrics, findings, the result registry
+                                        trend series, metrics, findings, the result registry;
+                                        relevance marks are kept in each item's metadata
     checkpoints.db                      LangGraph checkpoints, thread_id = run_id
     cache/<sha256>.json                 provider results, kept EDRAK_CACHE_TTL_S seconds
     youtube_quota.json                  YouTube units and searches used today
@@ -561,7 +658,7 @@ The adapters are the only code that touches `edrak.contracts` (`schemas/task.py`
 
 | Shared | Worker | How |
 |---|---|---|
-| `ResearchTask` | `TaskBrief` | `brief_from_task`: entity = company name, question = goal, competitors = targets (for market entry the targets describe the market), focus from the words of `focus` and `focus_areas`, country read from the text, `since` from `time_window_days`, `run_id` = `<task_id>.a<attempt>`. |
+| `ResearchTask` | `TaskBrief` | `brief_from_task`: entity = company name, aliases and products from the company profile, `focus_terms` = the focus areas, question = goal, competitors = targets (for market entry the targets describe the market), focus from the words of `focus` and `focus_areas`, country read from the text, `since` from `time_window_days`, `run_id` = `<task_id>.a<attempt>`. |
 | `UseCase` | `UseCase` | `market_entry_expansion` is `market_entry`. |
 | `Evidence` | `EvidenceItem` | `to_shared_evidence`: a 280 character fact, an excerpt (500 characters) only for longer text, the url, the platform or host as publisher; platform, language, engagement and provider in `metadata`. Web pages map to `web_page` (`search_result` for snippets), news to `news_article`, reviews to `review_site`, social items and trend points to `other`. `is_synthetic` is true in fixture mode. |
 | `Finding` | `Finding` | `finding_id` = `<task_id>:<id>`, `statement` = claim, `category` from the type (pain point and sentiment: customer sentiment; unmet need and competitor gap: gap; demand signal and trend: market signal; risk: risk), refs all `supports`, confidence low, medium, high as 0.3, 0.6, 0.85, `limitations` = caveats and related gaps. The metrics ride in `WorkerResult.metadata["finding_metrics"]`. |

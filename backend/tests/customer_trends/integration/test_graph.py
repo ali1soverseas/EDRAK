@@ -42,7 +42,16 @@ from tests.customer_trends.graph_helpers import (
 
 USE_CASES = ["competitive_intelligence", "product_launch", "market_entry"]
 ALL_CAPABILITIES = set(load_providers_config().routing)
-NODE_ORDER = ["intake", "plan_queries", "join", "analyze", "gap_check", "write_findings", "submit"]
+NODE_ORDER = [
+    "intake",
+    "plan_queries",
+    "join",
+    "relevance_filter",
+    "analyze",
+    "gap_check",
+    "write_findings",
+    "submit",
+]
 
 
 async def run(

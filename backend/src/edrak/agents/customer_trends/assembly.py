@@ -12,6 +12,7 @@ from typing import Any
 
 from edrak.agents.customer_trends.deps import WorkerDeps
 from edrak.agents.customer_trends.gaps import Gap, critical_gaps, run_status
+from edrak.agents.customer_trends.relevance.pipeline import run_stats
 from edrak.agents.customer_trends.schemas.common import Confidence, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters
 from edrak.agents.customer_trends.schemas.findings import (
@@ -215,6 +216,7 @@ def build_result(
             "by_platform": summary.by_platform,
             "by_source_type": summary.by_source_type,
             "by_language": summary.by_language,
+            "relevance_filter": run_stats(deps, run_id),
         },
         gaps=[gap.description for gap in gaps],
         warnings=list(warnings),

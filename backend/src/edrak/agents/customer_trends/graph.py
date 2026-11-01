@@ -1,6 +1,7 @@
 """Wiring of the worker graph (SPEC section 10): which node runs after which.
 
-START -> intake -> plan_queries -> [social, demand, reviews] -> join -> analyze -> gap_check
+START -> intake -> plan_queries -> [social, demand, reviews] -> join -> relevance_filter -> analyze
+-> gap_check
 gap_check -> plan_queries   (a critical gap, no replan yet, budget left)
 gap_check -> write_findings -> submit -> END
 """
@@ -33,6 +34,7 @@ NODES: dict[str, nodes.NodeFn] = {
     "demand": nodes.demand,
     "reviews": nodes.reviews,
     "join": nodes.join,
+    "relevance_filter": nodes.relevance_filter,
     "analyze": nodes.analyze,
     "gap_check": nodes.gap_check,
     "write_findings": nodes.write_findings,
@@ -85,7 +87,8 @@ def build_graph(
     for branch in COLLECTION_BRANCHES:
         builder.add_edge("plan_queries", branch)
     builder.add_edge(list(COLLECTION_BRANCHES), "join")
-    builder.add_edge("join", "analyze")
+    builder.add_edge("join", "relevance_filter")
+    builder.add_edge("relevance_filter", "analyze")
     builder.add_edge("analyze", "gap_check")
     builder.add_conditional_edges(
         "gap_check",

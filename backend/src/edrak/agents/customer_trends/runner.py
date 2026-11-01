@@ -27,6 +27,7 @@ from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
+from edrak.agents.customer_trends.relevance.pipeline import filtered_types, min_relevant
 from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, to_worker_result
 from edrak.agents.customer_trends.schemas.task import QueryPlan, TaskBrief, brief_from_task
 from edrak.agents.customer_trends.settings import Settings, get_settings
@@ -96,9 +97,10 @@ def _run_gaps(deps: WorkerDeps, brief: TaskBrief, values: dict[str, Any], extra:
     gaps = find_gaps(
         brief,
         deps.use_cases.for_use_case(brief.use_case),
-        coverage_of(deps.store, brief.run_id),
+        coverage_of(deps.store, brief.run_id, filtered_types=filtered_types(deps)),
         review_targets_planned=bool(plan and QueryPlan.model_validate(plan).review_targets),
         branch_errors=values.get("branch_errors", {}),
+        min_relevant_comments=min_relevant(deps),
     )
     return [*gaps, extra]
 

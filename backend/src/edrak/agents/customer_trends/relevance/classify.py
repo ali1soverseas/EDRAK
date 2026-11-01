@@ -183,13 +183,14 @@ async def classify(
         if task in pending:
             timed_out += len(batch.comments)
             outcome.verdicts.update(kept_on_error(batch.comments))
-        elif task.exception() is not None:
-            exc = task.exception()
-            log.warning("relevance_batch_failed", error=type(exc).__name__)
+            continue
+        error = task.exception()
+        if error is None:
+            outcome.verdicts.update(task.result())
+        else:
+            log.warning("relevance_batch_failed", error=type(error).__name__)
             failed += len(batch.comments)
             outcome.verdicts.update(kept_on_error(batch.comments))
-        else:
-            outcome.verdicts.update(task.result())
     if failed:
         outcome.warnings.append(
             f"the relevance filter could not classify {failed} comment(s) (a model error); "
