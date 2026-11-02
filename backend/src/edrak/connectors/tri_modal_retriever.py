@@ -131,6 +131,7 @@ def run_dynamic_sql_pipeline(
         if not columns:
             continue
 
+        generated_sql = ""
         dialect = introspector.engine.dialect.name
         try:
             system_prompt = (

@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "NVIDIA Internal Enterprise Operations API",
-    "description": "Operational microservices API for real-time cluster telemetry, pricing rules, and supply chain constraints.",
-    "version": "1.0.0"
+    "description": "Operational microservices API for real-time cluster telemetry, pricing rules, competitive benchmarks, ARR financials, supply-chain constraints, and export control data. Read-only GET endpoints only. POST/PATCH/DELETE exist in spec for completeness but must never be invoked by AI agents.",
+    "version": "2.0.0"
   },
   "servers": [
     {
@@ -34,7 +34,7 @@
     "/v1/pricing/discount-matrix": {
       "get": {
         "summary": "Get Volume Discount Policy & Deal Desk Matrix",
-        "description": "Returns current discount approval thresholds, volume tiers, and minimum margin floors enforced by the Deal Desk.",
+        "description": "Returns current discount approval thresholds, volume tiers, and minimum margin floors.",
         "operationId": "get_discount_matrix_v1_pricing_discount_matrix_get",
         "responses": {
           "200": {
@@ -53,7 +53,7 @@
     "/v1/supply-chain/lead-times": {
       "get": {
         "summary": "Get Hardware Lead Times & Packaging Allocation",
-        "description": "Returns estimated customer shipment lead times by GPU model and advanced CoWoS packaging allocation.",
+        "description": "Returns estimated customer shipment lead times by GPU model and CoWoS packaging allocation.",
         "operationId": "get_supply_chain_lead_times_v1_supply_chain_lead_times_get",
         "responses": {
           "200": {
@@ -68,10 +68,441 @@
           }
         }
       }
+    },
+    "/v1/products": {
+      "get": {
+        "summary": "List All GPU Products & ASP",
+        "description": "Returns the full NVIDIA GPU product catalogue with ASP and gross margin targets.",
+        "operationId": "list_products_v1_products_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductSummary"
+                  },
+                  "type": "array",
+                  "title": "Response List Products V1 Products Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/products/{product_name}/margin": {
+      "get": {
+        "summary": "Get Gross Margin for a Specific Product",
+        "description": "Looks up the gross margin target and remaining headroom above floor for a specific GPU product.",
+        "operationId": "get_product_margin_v1_products__product_name__margin_get",
+        "parameters": [
+          {
+            "name": "product_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Product name, e.g. B200 GPU",
+              "title": "Product Name"
+            },
+            "description": "Product name, e.g. B200 GPU"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductMarginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/competitive/benchmark-summary": {
+      "get": {
+        "summary": "Get Competitive Benchmark Summary vs AMD & Google",
+        "description": "Returns training and inference benchmark comparisons between NVIDIA GPUs and competitors.",
+        "operationId": "get_competitive_benchmarks_v1_competitive_benchmark_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetitiveBenchmarkSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/finance/arr-summary": {
+      "get": {
+        "summary": "Get Software ARR Breakdown (FY2026)",
+        "description": "Returns the software and subscription ARR breakdown across NVIDIA AI Enterprise, NIM, DGX Cloud, and Omniverse.",
+        "operationId": "get_arr_summary_v1_finance_arr_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ARRSummaryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/export-control/{country}": {
+      "get": {
+        "summary": "Get Export Control Status for a Country or Entity",
+        "description": "Returns the US BIS / OFAC export control status for a specific country or named entity.",
+        "operationId": "get_export_control_v1_export_control__country__get",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Country name or entity, e.g. China",
+              "title": "Country"
+            },
+            "description": "Country name or entity, e.g. China"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportControlResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deals/create": {
+      "post": {
+        "summary": "[WRITE] Create a New Enterprise Deal Record",
+        "description": "WRITE OPERATION \u2013 AI agents are PROHIBITED from calling this endpoint. Reserved for Deal Desk system automation only.",
+        "operationId": "create_deal_v1_deals_create_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDealRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Create Deal V1 Deals Create Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply-chain/emergency-order": {
+      "post": {
+        "summary": "[WRITE] Place Emergency Supply Order",
+        "description": "WRITE OPERATION \u2013 AI agents are PROHIBITED from calling this endpoint.",
+        "operationId": "place_emergency_order_v1_supply_chain_emergency_order_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmergencyOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Place Emergency Order V1 Supply Chain Emergency Order Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/pipeline/{opportunity_id}": {
+      "delete": {
+        "summary": "[WRITE] Delete Sales Pipeline Opportunity",
+        "description": "WRITE OPERATION \u2013 AI agents are PROHIBITED from calling this endpoint.",
+        "operationId": "delete_opportunity_v1_pipeline__opportunity_id__delete",
+        "parameters": [
+          {
+            "name": "opportunity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Opportunity Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Delete Opportunity V1 Pipeline  Opportunity Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/pricing/override": {
+      "patch": {
+        "summary": "[WRITE] Override Pricing Policy",
+        "description": "WRITE OPERATION \u2013 AI agents are PROHIBITED from calling this endpoint.",
+        "operationId": "override_pricing_v1_pricing_override_patch",
+        "parameters": [
+          {
+            "name": "margin_floor",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Margin Floor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Override Pricing V1 Pricing Override Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ARRSubscription": {
+        "properties": {
+          "offering_name": {
+            "type": "string",
+            "title": "Offering Name"
+          },
+          "pricing_model": {
+            "type": "string",
+            "title": "Pricing Model"
+          },
+          "annual_list_price_usd": {
+            "type": "number",
+            "title": "Annual List Price Usd"
+          },
+          "active_licenses": {
+            "type": "integer",
+            "title": "Active Licenses"
+          },
+          "total_arr_usd": {
+            "type": "number",
+            "title": "Total Arr Usd"
+          },
+          "yoy_growth_pct": {
+            "type": "number",
+            "title": "Yoy Growth Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "offering_name",
+          "pricing_model",
+          "annual_list_price_usd",
+          "active_licenses",
+          "total_arr_usd",
+          "yoy_growth_pct"
+        ],
+        "title": "ARRSubscription"
+      },
+      "ARRSummaryResponse": {
+        "properties": {
+          "fiscal_year": {
+            "type": "integer",
+            "title": "Fiscal Year"
+          },
+          "total_software_arr_usd": {
+            "type": "number",
+            "title": "Total Software Arr Usd"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/ARRSubscription"
+            },
+            "type": "array",
+            "title": "Subscriptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fiscal_year",
+          "total_software_arr_usd",
+          "subscriptions"
+        ],
+        "title": "ARRSummaryResponse"
+      },
+      "BenchmarkEntry": {
+        "properties": {
+          "benchmark_name": {
+            "type": "string",
+            "title": "Benchmark Name"
+          },
+          "workload_type": {
+            "type": "string",
+            "title": "Workload Type"
+          },
+          "nvidia_product": {
+            "type": "string",
+            "title": "Nvidia Product"
+          },
+          "nvidia_score": {
+            "type": "number",
+            "title": "Nvidia Score"
+          },
+          "nvidia_score_unit": {
+            "type": "string",
+            "title": "Nvidia Score Unit"
+          },
+          "competitor_product": {
+            "type": "string",
+            "title": "Competitor Product"
+          },
+          "competitor_score": {
+            "type": "number",
+            "title": "Competitor Score"
+          },
+          "nvidia_advantage_pct": {
+            "type": "number",
+            "title": "Nvidia Advantage Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "benchmark_name",
+          "workload_type",
+          "nvidia_product",
+          "nvidia_score",
+          "nvidia_score_unit",
+          "competitor_product",
+          "competitor_score",
+          "nvidia_advantage_pct"
+        ],
+        "title": "BenchmarkEntry"
+      },
       "ClusterTelemetryResponse": {
         "properties": {
           "cluster_status": {
@@ -87,12 +518,12 @@
           "active_fleet_utilization_pct": {
             "type": "number",
             "title": "Active Fleet Utilization Pct",
-            "description": "Current real-time fleet utilization percentage."
+            "description": "Current real-time fleet utilization %."
           },
           "blackwell_ramp_units_deployed": {
             "type": "integer",
             "title": "Blackwell Ramp Units Deployed",
-            "description": "Number of newly deployed Blackwell B200/GB200 units."
+            "description": "Newly deployed Blackwell B200/GB200 units."
           },
           "power_efficiency_pue": {
             "type": "number",
@@ -122,6 +553,60 @@
         ],
         "title": "ClusterTelemetryResponse"
       },
+      "CompetitiveBenchmarkSummary": {
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "title": "As Of"
+          },
+          "average_nvidia_advantage_pct": {
+            "type": "number",
+            "title": "Average Nvidia Advantage Pct"
+          },
+          "benchmarks": {
+            "items": {
+              "$ref": "#/components/schemas/BenchmarkEntry"
+            },
+            "type": "array",
+            "title": "Benchmarks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "average_nvidia_advantage_pct",
+          "benchmarks"
+        ],
+        "title": "CompetitiveBenchmarkSummary"
+      },
+      "CreateDealRequest": {
+        "properties": {
+          "customer_name": {
+            "type": "string",
+            "title": "Customer Name"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "units_ordered": {
+            "type": "integer",
+            "title": "Units Ordered"
+          },
+          "discount_pct": {
+            "type": "number",
+            "title": "Discount Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_name",
+          "product_name",
+          "units_ordered",
+          "discount_pct"
+        ],
+        "title": "CreateDealRequest"
+      },
       "DiscountTierRule": {
         "properties": {
           "min_units": {
@@ -149,6 +634,80 @@
           "approver"
         ],
         "title": "DiscountTierRule"
+      },
+      "EmergencyOrderRequest": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "units_requested": {
+            "type": "integer",
+            "title": "Units Requested"
+          },
+          "justification": {
+            "type": "string",
+            "title": "Justification"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "units_requested",
+          "justification"
+        ],
+        "title": "EmergencyOrderRequest"
+      },
+      "ExportControlResponse": {
+        "properties": {
+          "country_or_entity": {
+            "type": "string",
+            "title": "Country Or Entity"
+          },
+          "control_status": {
+            "type": "string",
+            "title": "Control Status"
+          },
+          "license_type": {
+            "type": "string",
+            "title": "License Type"
+          },
+          "applies_to_products": {
+            "type": "string",
+            "title": "Applies To Products"
+          },
+          "restriction_basis": {
+            "type": "string",
+            "title": "Restriction Basis"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country_or_entity",
+          "control_status",
+          "license_type",
+          "applies_to_products",
+          "restriction_basis",
+          "notes"
+        ],
+        "title": "ExportControlResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
       },
       "PricingDiscountMatrixResponse": {
         "properties": {
@@ -186,6 +745,99 @@
         ],
         "title": "PricingDiscountMatrixResponse"
       },
+      "ProductMarginResponse": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "target_gross_margin_pct": {
+            "type": "number",
+            "title": "Target Gross Margin Pct"
+          },
+          "margin_floor_pct": {
+            "type": "number",
+            "title": "Margin Floor Pct"
+          },
+          "headroom_pct": {
+            "type": "number",
+            "title": "Headroom Pct"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "target_gross_margin_pct",
+          "margin_floor_pct",
+          "headroom_pct",
+          "note"
+        ],
+        "title": "ProductMarginResponse"
+      },
+      "ProductSummary": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "architecture": {
+            "type": "string",
+            "title": "Architecture"
+          },
+          "segment": {
+            "type": "string",
+            "title": "Segment"
+          },
+          "target_asp_usd": {
+            "type": "number",
+            "title": "Target Asp Usd"
+          },
+          "target_gross_margin_pct": {
+            "type": "number",
+            "title": "Target Gross Margin Pct"
+          },
+          "release_quarter": {
+            "type": "string",
+            "title": "Release Quarter"
+          },
+          "tdp_watts": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tdp Watts"
+          },
+          "hbm_capacity_gb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hbm Capacity Gb"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "architecture",
+          "segment",
+          "target_asp_usd",
+          "target_gross_margin_pct",
+          "release_quarter"
+        ],
+        "title": "ProductSummary"
+      },
       "SupplyChainLeadTimesResponse": {
         "properties": {
           "as_of_quarter": {
@@ -219,6 +871,46 @@
           "bottlenecks"
         ],
         "title": "SupplyChainLeadTimesResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
   }
