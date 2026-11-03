@@ -99,6 +99,37 @@ class Candidate:
 
 # ------------------------------------------------------------------ values and keys
 
+# Words that, around a number, only say what it is measured in. Each maps to one form, "" for noise.
+_AMOUNT_WORDS = {
+    "$": "usd", "usd": "usd", "dollar": "usd", "dollars": "usd", "us": "", "€": "eur", "eur": "eur", "euro": "eur", "euros": "eur",
+    "egp": "egp", "e£": "egp", "le": "egp", "pound": "egp", "pounds": "egp", "egyptian": "", "sar": "sar", "riyal": "sar",
+    "riyals": "sar", "aed": "aed", "dirham": "aed", "dirhams": "aed",
+    "bn": "billion", "b": "billion", "billion": "billion", "billions": "billion", "mn": "million", "mm": "million",
+    "m": "million", "million": "million", "millions": "million", "k": "thousand", "thousand": "thousand",
+    "tn": "trillion", "trillion": "trillion", "%": "percent", "percent": "percent",
+}
+_AMOUNT_TOKEN = re.compile(r"\d[\d.,]*|%|[$€]|[²³]|[^\W\d_]+£?", re.UNICODE)
+
+
+def amount_key(text: str) -> Optional[str]:
+    """A canonical form for a value that is only an amount: "EGP20,635,622,860", "20,635,622,860 EGP" and
+    "20,635,622,860 Egyptian pounds" give the same key; "1.2 million" and "1.2 billion" do not. None when
+    the value has any other word ("12,700 employees"), so only plain amounts are compared this way."""
+    parts = []
+    for token in _AMOUNT_TOKEN.findall(text.lower()):
+        if token[0].isdigit():
+            number = _DIGIT_COMMA.sub("", token).rstrip(".,")
+            if not number:
+                return None
+            parts.append(number)
+        elif token in _AMOUNT_WORDS:
+            if _AMOUNT_WORDS[token]:
+                parts.append(_AMOUNT_WORDS[token])
+        else:
+            return None
+    return " ".join(sorted(parts)) if any(p[0].isdigit() for p in parts) else None
+
+
 def normalize_value(value: str, value_type: ValueType) -> str:
     """`value` as it is compared for sameness: case, Arabic spelling, punctuation and plurals folded."""
     if value_type == ValueType.LIST:
@@ -108,6 +139,10 @@ def normalize_value(value: str, value_type: ValueType) -> str:
             items = [normalize_phrase(value)]
         return "|".join(sorted(i for i in items if i))
     text = value.translate(_ARABIC_DIGITS)
+    if value_type in (ValueType.NUMBER, ValueType.TEXT):
+        amount = amount_key(text)
+        if amount:
+            return amount
     if value_type == ValueType.NUMBER:
         text = _DIGIT_COMMA.sub("", text)
     if value_type == ValueType.URL:

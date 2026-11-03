@@ -344,6 +344,33 @@ def test_values_that_differ_only_in_case_punctuation_or_plurals_are_the_same_val
     assert normalize_value("Cairo", ValueType.TEXT) != normalize_value("Giza", ValueType.TEXT)
 
 
+def test_one_amount_written_in_different_ways_is_one_value_and_different_amounts_are_not():
+    same = ["EGP20,635,622,860", "20,635,622,860 EGP", "20,635,622,860 Egyptian pounds", "egp 20635622860", "٢٠,٦٣٥,٦٢٢,٨٦٠ EGP"]
+    assert len({normalize_value(v, ValueType.NUMBER) for v in same}) == 1
+    assert normalize_value("€17.8 bn", ValueType.NUMBER) == normalize_value("€17.8bn", ValueType.TEXT) == normalize_value("17.8 billion euros", ValueType.NUMBER)
+    assert normalize_value("19.6%", ValueType.NUMBER) == normalize_value("19.6 percent", ValueType.NUMBER)
+    different = ["1.2 million", "1.2 billion", "EGP 1.2 million", "$1.2 million", "12 million", "19.6%", "19.6"]
+    assert len({normalize_value(v, ValueType.NUMBER) for v in different}) == len(different)
+    assert normalize_value("12 m²", ValueType.TEXT) != normalize_value("12 million", ValueType.TEXT)  # an area is not an amount
+    assert normalize_value("12,700 employees", ValueType.TEXT) != normalize_value("12,700", ValueType.TEXT)  # other words keep their meaning
+
+
+def test_the_same_amount_found_in_several_spellings_is_stored_once_and_a_different_amount_conflicts():
+    pages = [doc(text="Share capital is EGP20,635,622,860 today.", url="https://acme.example/a"),
+             doc(text="The company's capital: 20,635,622,860 EGP.", url="https://acme.example/b"),
+             doc(text="Authorized capital stands at 30,000,000,000 EGP.", url="https://acme.example/c")]
+    spec = dict(category="financials", key="share_capital", label="Capital", value_type="number")
+    llm = Llm(reply(
+        fact(source="S1", value="EGP20,635,622,860", quote="Share capital is EGP20,635,622,860", **spec),
+        fact(source="S2", value="20,635,622,860 EGP", quote="capital: 20,635,622,860 EGP", **spec),
+        fact(source="S3", value="30,000,000,000 EGP", quote="Authorized capital stands at 30,000,000,000 EGP", **spec),
+    ))
+    result = run(pages, llm)
+    assert sorted(f.value for f in result.facts) == ["30,000,000,000 EGP", "EGP20,635,622,860"]
+    assert result.stats.merged_duplicates == 1 and result.stats.conflicts == 1
+    assert len({f.conflict_group for f in result.facts}) == 1 and result.facts[0].conflict_group
+
+
 def test_facts_with_the_same_key_and_different_values_share_a_conflict_group_and_all_are_kept():
     second = doc(text="Our head office is in Alexandria.", url="https://acme.example/contact")
     llm = Llm(reply(
