@@ -36,6 +36,10 @@ _REDIRECTS = frozenset({301, 302, 303, 307, 308})
 _META_CHARSET = re.compile(rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_\-]+)""", re.IGNORECASE)
 
 
+class UnexpectedContentType(SiteUnreachable):
+    """The response is not one of the content types the caller asked for."""
+
+
 @dataclass
 class Fetched:
     url: str  # where the body came from, after redirects
@@ -152,7 +156,7 @@ class SiteFetcher:
                 if raise_for_status and status >= 400:
                     raise SiteUnreachable(f"The website answered with an error (HTTP {status}).")
                 if status < 400 and kinds and kind not in kinds:
-                    raise SiteUnreachable(f"The address did not return a web page ({kind or 'unknown type'}).")
+                    raise UnexpectedContentType(f"The address did not return a web page ({kind or 'unknown type'}).")
                 body = bytearray()
                 limit = self._max_bytes
                 async for chunk in response.aiter_bytes():
