@@ -17,6 +17,8 @@ from .request import (
     BusinessRequest,
     CompanyProfile,
     CompetitorRef,
+    DatabaseConnectionConfig,
+    RESTAPIConfig,
     SocialAccount,
     SocialPlatform,
     TriggerType,

@@ -1,7 +1,19 @@
 """EDRAK FastAPI application entrypoint."""
 
 import logging
+import sys
 from contextlib import asynccontextmanager
+
+# Windows consoles default to a legacy code page. A model or a source can emit
+# U+2011 (non-breaking hyphen), and printing it would kill the worker.
+for _stream in (sys.stdout, sys.stderr):
+    _reconfigure = getattr(_stream, "reconfigure", None)
+    if _reconfigure is None:
+        continue
+    try:
+        _reconfigure(encoding="utf-8", errors="replace")
+    except (ValueError, OSError):
+        pass
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

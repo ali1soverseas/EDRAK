@@ -29,6 +29,12 @@ structlog
 # Language detection (customer trends evidence language tagging)
 langdetect
 
+# Local OPUS-MT (Helsinki-NLP) for tagging an Arabic decision reason.
+# The model downloads on first use. A failed translation stores no reason tags.
+transformers
+sentencepiece
+torch
+
 # MCP
 mcp<2
 
@@ -55,8 +61,10 @@ beautifulsoup4
 lxml
 trafilatura
 
-# Data handling
+# Data handling & Connectors
 pandas
+sqlalchemy
+sqlglot
 
 # Retry / resilience
 tenacity

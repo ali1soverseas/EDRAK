@@ -40,6 +40,7 @@ from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
 from edrak.core.config import settings
+from edrak.DecisionAnalysis.personalization import HISTORY_POOL, embed_texts, infer_preference, load_history, select_relevant
 from edrak.orchestration.graph import build_graph
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
@@ -550,8 +551,22 @@ class RunManager:
                     stream_input: Any = Command(resume=resume) if resume is not None else None
                 else:
                     # Run the plan that was approved. Without it the graph plans again by itself.
-                    state = {"request": request, "plan": plan}
-                    stream_input = {"request": request, "plan": plan}
+                    preference: dict[str, Any] = {"status": "none"}
+                    if settings.PERSONALIZATION_ENABLED and active.workspace_id:
+                        k = settings.PERSONALIZATION_HISTORY_K
+                        async with get_db() as db:
+                            history = await load_history(
+                                db, active.workspace_id, request.business_context.use_case.value,
+                                limit=max(HISTORY_POOL, k),
+                            )
+                        chosen = select_relevant(
+                            history, request, k=k, threshold=settings.PERSONALIZATION_SIMILARITY_MIN,
+                            aspect_bar=settings.PERSONALIZATION_ASPECT_BAR, embed=embed_texts,
+                        )
+                        if chosen:
+                            preference = infer_preference(chosen, aspect_bar=settings.PERSONALIZATION_ASPECT_BAR)
+                    state = {"request": request, "plan": plan, "decision_preference": preference}
+                    stream_input = {"request": request, "plan": plan, "decision_preference": preference}
                 logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)
 
                 async for chunk in graph.astream(stream_input, config, stream_mode="updates"):

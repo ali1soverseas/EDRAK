@@ -84,6 +84,15 @@ class Settings(BaseSettings):
 
     # Guardrails: the scope check asks a model whether a question is a business question.
     # Off in tests and when no model is configured; the pattern checks always run.
+    # Read saved decision tags into the decision analysis. Tags are stored either way.
+    PERSONALIZATION_ENABLED: bool = False
+    # How many relevant past decisions are scored. The candidate pool is at least 50.
+    PERSONALIZATION_HISTORY_K: int = 20
+    # Minimum cosine similarity for a past decision to count.
+    PERSONALIZATION_SIMILARITY_MIN: float = 0.55
+    # Personalization stays off unless this many decisions pass the threshold, and unless
+    # one aspect has a score of at least this value or is carried by at least this many decisions.
+    PERSONALIZATION_ASPECT_BAR: int = 2
     GUARDRAIL_SCOPE_CHECK: bool = True
     # Hook A: JEV semantic second layer in check_query (2 Nouls, ~1 credit per
     # novel query). Off by default; the deterministic checks always run.
@@ -95,6 +104,9 @@ class Settings(BaseSettings):
     JEV_MAX_CALLS_PER_DAY: int = 40
     # Evaluation after each run: a model judges a sample of findings (faithfulness, relevance).
     EVALUATION_JUDGE: bool = True
+    # The metrics agent runs after verification and fills the figures the planner asked for.
+    # Off leaves the verified worker results as they are. The brief is still built.
+    METRICS_GATHERING_ENABLED: bool = True
 
     # Company profile import: source text goes to the model in one labeled, budgeted block.
     # The model is OLLAMA_MODEL. Reasoning effort is passed to the client as given ("" turns the option off).

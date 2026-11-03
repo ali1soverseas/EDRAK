@@ -25,6 +25,7 @@ from ..contracts.DecisionAnalysis import (
     RiskAssessment,
 )
 from ..core.llm import get_chat_model, schema_instruction
+from .personalization import emphasis_text
 from .state import DecisionAnalysisState
 
 load_dotenv()
@@ -107,7 +108,13 @@ RULES
     company's own capability. Use "unknown" whenever the evidence does not say.
     Strong evidence does not make something high impact or easy.
 
-11. Return only the structured response.
+11. If analysis_emphasis is given, go deeper on that criterion, or on the more
+    specific combination it names, in the rationale, actions, risks and success
+    criteria of every question where it is relevant. It decides what to examine,
+    not which answer to give. It does not change confidence, impact or feasibility.
+    Do not mention past decisions or preferences.
+
+12. Return only the structured response.
 """
 
 
@@ -123,6 +130,8 @@ def build_decision_analysis_user_prompt(
         "signals": context["signals"],
         "cross_signal": context["cross_signal"],
     }
+    if context.get("analysis_emphasis"):
+        evidence["analysis_emphasis"] = context["analysis_emphasis"]
 
     return (
         "Generate exactly one complete recommendation for each question "
@@ -378,6 +387,7 @@ def prepare_context_node(
         "cross_signal": _to_dict(cross_signal),
         "signals": signals,
         "input_metadata": _to_dict(decision_input.metadata),
+        "analysis_emphasis": emphasis_text((decision_input.metadata or {}).get("decision_preference")),
     }
 
     logger.info(
@@ -833,6 +843,9 @@ def make_validate_and_assemble_node():
         )
 
         executive_summary = _executive_summary(validated, business_goal)
+        preference = (decision_input.metadata or {}).get("decision_preference") or {}
+        if not isinstance(preference, dict):
+            preference = {}
 
         metadata = _to_dict(decision_input.metadata) or {}
         if not isinstance(metadata, dict):
@@ -849,6 +862,7 @@ def make_validate_and_assemble_node():
             priorities=priorities,
             recommended_actions=actions,
             options=list(state.get("options") or []),
+            personalization=preference if preference.get("status") in ("applied", "uncertain") else None,
             decision_questions=original_questions,
             additional_information_needed=additional_information_needed,
             limitations=limitations,

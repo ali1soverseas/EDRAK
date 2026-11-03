@@ -23,6 +23,12 @@ class ExportUnavailable(RuntimeError):
     pass
 
 
+def _emphasis(doc: dict[str, Any]) -> str | None:
+    from edrak.DecisionAnalysis.personalization import note_text
+
+    return note_text(doc.get("personalization"))
+
+
 def _seg_text(segments: Any) -> str:
     if isinstance(segments, list):
         return "".join(s.get("text", "") for s in segments if isinstance(s, dict)).strip()
@@ -109,6 +115,9 @@ def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitati
             out.append((sec.get("label") or sec.get("lens"), rows))
     if include_limitations and (doc.get("gaps_panel") or {}).get("gaps"):
         out.append(("Gaps", [f"{g['title']}: {g['explanation']}" for g in doc["gaps_panel"]["gaps"]]))
+    emphasis = _emphasis(doc)
+    if emphasis:
+        out.append(("Analysis emphasis", [emphasis]))
     if doc.get("options"):
         rows = []
         for o in doc["options"]:
@@ -150,6 +159,9 @@ def _sections(doc: dict[str, Any], include_sources: bool, include_limitations: b
             cells = "; ".join(f"{c['competitor']}: {c.get('relative_to_target', '').replace('_', ' ')}" for c in d.get("cells", []))
             rows.append(f"{d.get('dimension')}: {cells}")
         out.append(("Alternatives compared", rows))
+    emphasis = _emphasis(doc)
+    if emphasis:
+        out.append(("Analysis emphasis", [emphasis]))
     if doc.get("options"):
         out.append(("Options (not ranked)", [f"{o['key']}. {o['title']}: {o.get('description', '')}" for o in doc["options"]]))
     if doc.get("opportunities"):

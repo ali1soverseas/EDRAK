@@ -53,6 +53,26 @@ class CompetitorRef(ContractModel):
     )
 
 
+class DatabaseConnectionConfig(ContractModel):
+    """Configuration for connecting to a relational database for dynamic text-to-SQL introspection."""
+
+    db_id: str = Field(description="Unique database identifier.")
+    connection_uri: str = Field(description="Database connection URI (e.g., sqlite:///path/to/db or postgresql://...).")
+    allowed_tables: list[str] | None = Field(default=None, description="Optional whitelist of allowed tables.")
+    description: str | None = Field(default=None, description="Optional description of the database domain.")
+
+
+class RESTAPIConfig(ContractModel):
+    """Configuration for dynamic OpenAPI/Swagger REST API discovery and execution."""
+
+    api_id: str = Field(description="Unique API identifier.")
+    base_url: str = Field(description="Base URL for executing REST operations.")
+    openapi_spec_url: str | None = Field(default=None, description="URL pointing to the OpenAPI 3.x/Swagger JSON or YAML spec.")
+    openapi_spec_inline: dict[str, Any] | None = Field(default=None, description="Pre-loaded OpenAPI JSON spec dict.")
+    auth_headers: dict[str, str] | None = Field(default=None, description="Optional auth headers (e.g. Bearer token, API Key).")
+    description: str | None = Field(default=None, description="Optional description of the API capabilities.")
+
+
 class CompanyProfile(ContractModel):
     """Baseline describing the company under analysis (the user's own company)."""
 
@@ -86,6 +106,16 @@ class CompanyProfile(ContractModel):
         default=None,
         description="Workspace whose uploaded documents the Internal worker may search. "
         "When unset no internal documents are searched (a search never spans workspaces).",
+    )
+
+    db_config: DatabaseConnectionConfig | None = Field(
+        default=None,
+        description="Optional dynamic relational database configuration for text-to-SQL introspection.",
+    )
+
+    api_config: RESTAPIConfig | None = Field(
+        default=None,
+        description="Optional dynamic OpenAPI/REST API configuration for endpoint discovery and execution.",
     )
 
 

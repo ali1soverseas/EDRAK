@@ -349,6 +349,9 @@ class DecisionAnalysisResult(ContractModel):
 
     options: list[DecisionOption] = Field(default_factory=list)
 
+    # Set when saved decision tags changed the depth of this analysis. None leaves the brief unchanged.
+    personalization: dict[str, Any] | None = None
+
     decision_questions: list[NonBlankStr] = Field(
         default_factory=list
     )
