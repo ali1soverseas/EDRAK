@@ -138,3 +138,20 @@ async def set_conflict_group(
     if commit:
         await db.commit()
     return cursor.rowcount
+
+
+async def delete_suggested(db: aiosqlite.Connection, workspace_id: str, fact_ids: Sequence[str], *, commit: bool = True) -> int:
+    """Delete facts that are still suggestions nobody edited. Approved, rejected and edited facts are never deleted.
+
+    Returns how many were deleted.
+    """
+    if not fact_ids:
+        return 0
+    marks = ", ".join("?" * len(fact_ids))
+    cursor = await db.execute(
+        f"DELETE FROM company_facts WHERE workspace_id = ? AND status = 'suggested' AND edited_by_user = 0 AND id IN ({marks})",
+        [workspace_id, *fact_ids],
+    )
+    if commit:
+        await db.commit()
+    return cursor.rowcount
