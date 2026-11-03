@@ -158,6 +158,15 @@ class Settings(BaseSettings):
     COMPANY_RESEARCH_PDF_MAX_ATTEMPTS: int = 24  # downloads tried per run, whatever the outcome
     COMPANY_RESEARCH_PDF_CONTEXT_CHARS: int = 48000  # text kept per file; a longer file is cut to the best pages
 
+    # Company research extraction: facts read from crawled pages and PDF pages by the model, then
+    # checked against the sources. The model, its reasoning level and the repair retry are the
+    # profile import's.
+    COMPANY_RESEARCH_EXTRACT_BATCH_CHARS: int = 24000  # source text per model call; a document is never split
+    COMPANY_RESEARCH_EXTRACT_MAX_BATCHES: int = 30  # model calls per run
+    # How closely a quote must match its source, as a share of matching text (0 to 1). Used for
+    # OCR text only; every other source must contain the quote exactly, after normalization.
+    COMPANY_RESEARCH_EXTRACT_OCR_TOLERANCE: float = 0.9
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
