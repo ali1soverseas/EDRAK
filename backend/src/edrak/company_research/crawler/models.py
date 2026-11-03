@@ -28,6 +28,7 @@ class PdfLink:
     text: str = ""
     found_on: str = ""  # the page (or sitemap) that links to it
     same_site: bool = True
+    via: str = "link"  # "link" (an anchor), "embed" (iframe, embed or object) or "sitemap"
 
 
 @dataclass
@@ -69,6 +70,7 @@ class CrawlStats:
 @dataclass
 class CrawlResult:
     start_url: str
+    home_url: str = ""  # the homepage after redirects; the site the crawl is scoped to
     pages: list[CrawledPage] = field(default_factory=list)
     pdf_links: list[PdfLink] = field(default_factory=list)  # all pages together, without repeats
     stats: CrawlStats = field(default_factory=CrawlStats)

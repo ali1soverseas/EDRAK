@@ -35,6 +35,7 @@ from edrak.company_research.crawler.models import (
     PdfLink,
     StopReason,
 )
+from edrak.company_research.crawler.pdf_links import embedded_pdf_sources
 from edrak.company_research.crawler.rules import (
     in_scope,
     is_login_page,
@@ -196,11 +197,11 @@ class _Crawl:
         heappush(self.frontier, (-item.score, item.depth, item.seq, item))
         self.stats.urls_discovered += 1
 
-    def _note_pdf(self, url: str, text: str, found_on: str) -> Optional[PdfLink]:
+    def _note_pdf(self, url: str, text: str, found_on: str, via: str = "link") -> Optional[PdfLink]:
         if url in self.pdf_seen:
             return None
         self.pdf_seen.add(url)
-        link = PdfLink(url=url, text=text, found_on=found_on, same_site=self.in_scope(url))
+        link = PdfLink(url=url, text=text, found_on=found_on, same_site=self.in_scope(url), via=via)
         self.result.pdf_links.append(link)
         return link
 
@@ -303,12 +304,17 @@ class _Crawl:
         self.stats.expands += rendered.expands
         return rendered
 
-    def _pdf_links(self, links: list[Link], found_on: str) -> list[PdfLink]:
+    def _pdf_links(self, links: list[Link], found_on: str, htmls: list[str]) -> list[PdfLink]:
         found = []
         for link in links:
             if is_pdf_link(link.url, link.text):
                 known = self._note_pdf(link.url, link.text, found_on)
                 found.append(known or PdfLink(link.url, link.text, found_on, self.in_scope(link.url)))
+        for html in htmls:  # frames and objects that show a PDF, in the static and the browser's HTML
+            for url, label in embedded_pdf_sources(html, found_on):
+                if all(url != link.url for link in found):
+                    known = self._note_pdf(url, label, found_on, "embed")
+                    found.append(known or PdfLink(url, label, found_on, self.in_scope(url), "embed"))
         return found
 
     async def _page(self, url: str, html: str, depth: int, section: str) -> CrawledPage:
@@ -317,11 +323,13 @@ class _Crawl:
         links = info.links
         mode = FetchMode.STATIC
         reason = ""
+        htmls = [html]
         if self.limits.dynamic and not self._browser_unavailable and self._dynamic_tried < self.limits.max_dynamic_pages:
             reason = render_reason(text, html, self.limits.dynamic_min_chars)
         if reason:
             rendered = await self._render(url)
             if rendered is not None:
+                htmls.append(rendered.html)
                 dynamic_info, dynamic_text = await self._read(rendered.html, url)
                 merged = _merge_links(links, dynamic_info.links)
                 if len(dynamic_text) > len(text) or len(merged) > len(links):
@@ -337,7 +345,7 @@ class _Crawl:
             text=text,
             fetch_mode=mode,
             links=links,
-            pdf_links=self._pdf_links(links, url),
+            pdf_links=self._pdf_links(links, url, htmls),
             depth=depth,
             section=section,
             render_reason=reason if mode is FetchMode.DYNAMIC else "",
@@ -422,7 +430,7 @@ class _Crawl:
             if await self.site.robots_unreadable(self.start_url):
                 raise SiteUnreachable("The website did not answer when its robots.txt was requested, so its pages were not read.") from None
             raise SiteUnreachable("The website's robots.txt does not allow reading its pages.") from None
-        self.home_url = fetched.url
+        self.home_url = self.result.home_url = fetched.url
         if fetched.truncated:
             self.stats.truncated += 1
         self.seen.add(page_key(self.start_url))
@@ -449,7 +457,7 @@ class _Crawl:
         for url in urls:
             if is_pdf_link(url):
                 if self.in_scope(url):
-                    self._note_pdf(url, "", "sitemap")
+                    self._note_pdf(url, "", "sitemap", "sitemap")
                 continue
             self._enqueue(url, 1, from_sitemap=True)
 
