@@ -581,6 +581,16 @@ def test_crawled_pages_and_pdf_pages_become_documents_with_their_tier_and_page()
     assert (pdf.url, pdf.tier, pdf.pdf_page, pdf.ocr) == ("https://acme.example/r.pdf", SourceTier.OWN_PDF, 5, True)
 
 
+def test_pdf_markup_from_the_reader_is_removed_so_a_quote_without_it_still_verifies():
+    page = "Online acceptance revenue <br><!-- Start of picture text --> +317%<br><!-- End of picture text --> FY2020 FY2021"
+    pdfs = PdfReadResult(documents=[PdfPageDocument("https://acme.example/r.pdf", 5, "", page, "https://acme.example/ir")])
+    [pdf_doc] = documents_from_pdfs(pdfs)
+    assert "<!--" not in pdf_doc.text and "picture text" not in pdf_doc.text and "<br" not in pdf_doc.text
+    quote = "Online acceptance revenue\n+317%\nFY2020 FY2021"
+    result = run([pdf_doc], Llm(reply(fact(category="financials", key="online_acceptance_growth", value="+317%", quote=quote))))
+    assert result.stats.dropped_no_quote == 0 and [f.value for f in result.facts] == ["+317%"]
+
+
 def test_the_limits_come_from_config():
     limits = ExtractionLimits.from_settings()
     assert (limits.batch_chars, limits.max_batches, limits.ocr_tolerance) == (24000, 30, 0.9)
@@ -606,3 +616,4 @@ def test_display_quote_keeps_a_lone_asterisk_and_never_returns_nothing():
 
     assert display_quote("Revenue* grew 5 * 3") == "Revenue* grew 5 * 3"
     assert display_quote("****") == "****"
+

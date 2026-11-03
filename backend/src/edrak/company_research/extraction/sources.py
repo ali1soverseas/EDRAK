@@ -23,6 +23,8 @@ _LABEL_CHARS = 200
 _CLOSING_TAG = re.compile(r"</\s*untrusted_source[^>]*>?", re.IGNORECASE)
 _WORD = re.compile(r"\w+")
 _SENTENCE = re.compile(r"[.!?؟\n]+")
+# What the PDF reader's markdown adds around text it took from a picture or a table cell.
+_PDF_MARKUP = re.compile(r"<!--.*?-->|<br\s*/?>", re.IGNORECASE | re.DOTALL)
 
 # A sentence is covered by the profile when, with the profile's own words taken out, at most this
 # many content words are left ("builds", but not "founded 2009"). A page is covered when it uses the
@@ -74,9 +76,15 @@ def documents_from_crawl(crawl: CrawlResult) -> list[SourceDoc]:
 def documents_from_pdfs(pdfs: PdfReadResult) -> list[SourceDoc]:
     """The PDF pages kept, as own-PDF documents carrying their page number."""
     return [
-        SourceDoc(url=d.source_url, text=d.text, tier=SourceTier.OWN_PDF, pdf_page=d.pdf_page, title=d.title, ocr=d.ocr)
+        SourceDoc(url=d.source_url, text=strip_pdf_markup(d.text), tier=SourceTier.OWN_PDF, pdf_page=d.pdf_page, title=d.title, ocr=d.ocr)
         for d in pdfs.documents
     ]
+
+
+def strip_pdf_markup(text: str) -> str:
+    """PDF page text without HTML comments (the reader marks text taken from pictures with them) and with line
+    tags as line breaks. A model leaves them out of a quote, and they say nothing about the company."""
+    return _PDF_MARKUP.sub(lambda m: "\n" if m.group(0).lower().startswith("<br") else "", text)
 
 
 # ------------------------------------------------------------------ the profile
