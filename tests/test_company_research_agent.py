@@ -203,6 +203,14 @@ def test_a_gap_check_that_fails_does_not_send_the_run_round_again_with_old_targe
     assert {"ceo", "branch", "shareholder"} <= set(by_key(facts))
 
 
+def test_warnings_are_listed_once_and_capped():
+    many = [f"Skipped file {i}." for i in range(150)]
+    tidy = agent_nodes.tidy_warnings(["same", "same", *many])
+    assert tidy[0] == "same" and len(tidy) == agent_nodes.MAX_WARNINGS + 1
+    assert tidy[-1] == "51 more warning(s) were left out."
+    assert agent_nodes.tidy_warnings(["a", "b", "a"]) == ["a", "b"]
+
+
 def test_a_failure_while_saving_fails_the_run(research_db_path, monkeypatch):
     async def broken(*args, **kwargs):
         raise RuntimeError("disk full")

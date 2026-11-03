@@ -14,7 +14,7 @@ import logging
 from typing import Any, Optional
 
 from edrak.company_research.agent.graph import RECURSION_LIMIT, build_research_graph
-from edrak.company_research.agent.nodes import NoWebsite, build_stats, resolve_seed
+from edrak.company_research.agent.nodes import NoWebsite, build_stats, resolve_seed, tidy_warnings
 from edrak.company_research.agent.state import ResearchDeps, ResearchState
 from edrak.company_research.models import ResearchRun, ResearchRunStatus
 from edrak.db.connection import get_db
@@ -78,7 +78,7 @@ class ResearchRunManager:
             await runs_repo.update_research_run(
                 db, state["run_id"], stage=stage, pages_crawled=state.get("pages_crawled", 0),
                 pdfs_read=state.get("pdfs_read", 0), facts_found=state.get("created") or len(state.get("pending", [])),
-                warnings=list(dict.fromkeys(state.get("warnings", []))), stats=build_stats(state),
+                warnings=tidy_warnings(state.get("warnings", [])), stats=build_stats(state),
             )
 
     async def _execute(self, run_id: str, workspace_id: str, seed_url: str) -> None:

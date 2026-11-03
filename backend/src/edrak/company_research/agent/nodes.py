@@ -92,6 +92,17 @@ def _add(total: dict[str, Any], more: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+MAX_WARNINGS = 100
+
+
+def tidy_warnings(warnings: list[str]) -> list[str]:
+    """Each warning once, in order, and at most MAX_WARNINGS of them, with a last line counting the rest."""
+    unique = list(dict.fromkeys(warnings))
+    if len(unique) <= MAX_WARNINGS:
+        return unique
+    return [*unique[:MAX_WARNINGS], f"{len(unique) - MAX_WARNINGS} more warning(s) were left out."]
+
+
 def build_stats(state: ResearchState) -> dict[str, Any]:
     """Counts from every step so far, for the run record."""
     pending = state.get("pending", [])
@@ -426,7 +437,7 @@ class Nodes:
         extraction = state.get("extraction", {})
         if not failed and extraction.get("batches") and extraction.get("failed_batches") == extraction["batches"] and not state.get("created"):
             failed = "The language model could not read any source."
-        warnings = list(dict.fromkeys(state.get("warnings", [])))
+        warnings = tidy_warnings(state.get("warnings", []))
         stats = build_stats(state)
         async with get_db() as db:
             await runs_repo.update_research_run(
