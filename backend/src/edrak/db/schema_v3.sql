@@ -116,3 +116,69 @@ CREATE TABLE IF NOT EXISTS card_challenges (
   created_by text REFERENCES users(id),
   created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
+
+-- Company research: facts found about the company beyond the fixed profile fields, the canonical keys they are
+-- filed under, and the runs that found them. A fact is a suggestion until a person approves it.
+-- Categories are not a CHECK here: the list lives in edrak.company_research.categories and can grow without
+-- rebuilding the table. fact_keys is seeded from edrak.company_research.seed_keys by connection._apply_additions.
+CREATE TABLE IF NOT EXISTS research_runs (
+  id            text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  workspace_id  text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  started_at    text,
+  finished_at   text,
+  status        text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','running','done','failed','cancelled')),
+  input         text NOT NULL DEFAULT '{}' CHECK (json_valid(input) AND json_type(input) = 'object'),
+  pages_crawled integer NOT NULL DEFAULT 0 CHECK (pages_crawled >= 0),
+  pdfs_read     integer NOT NULL DEFAULT 0 CHECK (pdfs_read >= 0),
+  facts_found   integer NOT NULL DEFAULT 0 CHECK (facts_found >= 0),
+  warnings      text NOT NULL DEFAULT '[]' CHECK (json_valid(warnings) AND json_type(warnings) = 'array'),
+  error         text,
+  created_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX IF NOT EXISTS research_runs_ws_idx ON research_runs (workspace_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS company_facts (
+  id                text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  workspace_id      text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  category          text NOT NULL,
+  proposed_category text,                      -- only for category 'other': the name the model proposed, for a person to promote
+  key               text NOT NULL CHECK (key GLOB '[a-z]*' AND key NOT GLOB '*[^a-z0-9_]*'),
+  value             text NOT NULL,             -- for value_type 'list', a JSON array of strings
+  value_type        text NOT NULL DEFAULT 'text' CHECK (value_type IN ('text','number','date','url','list')),
+  source_tier       text NOT NULL CHECK (source_tier IN ('own_site','own_pdf','own_social','third_party')),
+  source_url        text NOT NULL,
+  pdf_page          integer CHECK (pdf_page >= 1),
+  quote             text NOT NULL,             -- the exact text on the source that supports the value
+  observed_at       text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  confidence        text NOT NULL CHECK (confidence IN ('high','medium','low')),
+  status            text NOT NULL DEFAULT 'suggested' CHECK (status IN ('suggested','approved','rejected')),
+  conflict_group    text,                      -- shared by facts that disagree
+  run_id            text REFERENCES research_runs(id) ON DELETE SET NULL,
+  created_at        text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at        text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  edited_by_user    integer NOT NULL DEFAULT 0 CHECK (edited_by_user IN (0,1)),
+  CONSTRAINT company_facts_other_names_category CHECK (category <> 'other' OR proposed_category IS NOT NULL),
+  CONSTRAINT company_facts_list_is_array CHECK (value_type <> 'list' OR (json_valid(value) AND json_type(value) = 'array')),
+  CONSTRAINT company_facts_source_url_shape CHECK ((source_url LIKE 'http://%' OR source_url LIKE 'https://%') AND instr(source_url, ' ') = 0)
+);
+CREATE INDEX IF NOT EXISTS company_facts_ws_category_idx ON company_facts (workspace_id, category, key);
+CREATE INDEX IF NOT EXISTS company_facts_ws_status_idx ON company_facts (workspace_id, status);
+CREATE INDEX IF NOT EXISTS company_facts_run_idx ON company_facts (run_id) WHERE run_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS company_facts_conflict_idx ON company_facts (workspace_id, conflict_group) WHERE conflict_group IS NOT NULL;
+
+CREATE TRIGGER IF NOT EXISTS company_facts_set_updated_at AFTER UPDATE ON company_facts FOR EACH ROW WHEN NEW.updated_at IS OLD.updated_at
+BEGIN UPDATE company_facts SET updated_at = (strftime('%Y-%m-%dT%H:%M:%fZ','now')) WHERE id = NEW.id; END;
+
+-- The canonical keys a fact is filed under. Global, not per workspace. synonyms is {"en": [...], "ar": [...]}.
+CREATE TABLE IF NOT EXISTS fact_keys (
+  id         text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  category   text NOT NULL,
+  key        text NOT NULL CHECK (key GLOB '[a-z]*' AND key NOT GLOB '*[^a-z0-9_]*'),
+  label_en   text NOT NULL,
+  label_ar   text NOT NULL,
+  synonyms   text NOT NULL DEFAULT '{"en":[],"ar":[]}' CHECK (json_valid(synonyms) AND json_type(synonyms) = 'object'),
+  value_type text NOT NULL DEFAULT 'text' CHECK (value_type IN ('text','number','date','url','list')),
+  created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  origin     text NOT NULL DEFAULT 'seed' CHECK (origin IN ('seed','promoted')),
+  UNIQUE (category, key)
+);

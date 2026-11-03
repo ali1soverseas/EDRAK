@@ -74,7 +74,7 @@ def _prepare_file(path: Path) -> None:
 
 
 def _apply_additions(path: Path) -> None:
-    """Tables added after v0.2 (brief v2). Idempotent, so it runs on every start."""
+    """Tables added after v0.2 (brief v2, company research) and the seed rows they need. Idempotent, so it runs on every start."""
     conn = sqlite3.connect(path)
     try:
         conn.execute("PRAGMA foreign_keys = ON")
@@ -98,6 +98,9 @@ def _apply_additions(path: Path) -> None:
         ecols = {r[1] for r in conn.execute("PRAGMA table_info(evidence)")}
         if ecols and "page_text" not in ecols:
             conn.execute("ALTER TABLE evidence ADD COLUMN page_text text")
+        from edrak.company_research.seed_keys import seed_fact_keys
+
+        seed_fact_keys(conn)
         conn.commit()
     finally:
         conn.close()
