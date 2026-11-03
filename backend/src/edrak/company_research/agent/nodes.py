@@ -381,9 +381,11 @@ class Nodes:
                 warnings.append(f"Third-party search was skipped: {exc}")
                 break
             except Exception as exc:
+                # A provider that fails (no credits, a bad key, an outage) fails for the next search too.
                 logger.warning("Third-party search failed: %r", exc)
-                warnings.append(f"A third-party search for {get_category(category).label_en} failed.")  # type: ignore[union-attr]
-                continue
+                reason = " ".join(str(exc).split())[:160] or type(exc).__name__
+                warnings.append(f"Third-party search stopped: the search for {get_category(category).label_en} failed ({reason}).")  # type: ignore[union-attr]
+                break
             searches += 1
             for hit in list(hits)[: self.options.third_party_results]:  # only the top results are read
                 if not in_scope(hit.url, home) and not platform_of(hit.url) and not hit.url.lower().endswith(".pdf"):

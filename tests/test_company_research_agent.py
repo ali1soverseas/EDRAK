@@ -466,18 +466,17 @@ def test_a_missing_search_key_skips_the_third_party_step_with_a_warning(research
     assert "Third-party search was skipped: SERPER_API_KEY is not set." in run.warnings
 
 
-def test_a_search_that_fails_is_a_warning_and_the_next_search_still_runs(research_db_path):
+def test_a_search_that_fails_stops_the_third_party_step_with_the_reason(research_db_path):
     calls = []
 
     async def search(query, num):
         calls.append(query)
-        if len(calls) == 1:
-            raise RuntimeError("quota")
-        return [SearchHit("https://other.example/story")]
+        raise RuntimeError('serper: HTTP 400: {"message":"Not enough credits"}')
 
-    _, run, facts = run_it(news_site(), Model(*ALL, AWARD), options=options(third_party=True, third_party_searches=2), search=search)
-    assert len(calls) == 2 and any("search for Financials failed" in w for w in run.warnings)
-    assert "award" in by_key(facts)
+    _, run, facts = run_it(news_site(), Model(*ALL, AWARD), options=options(third_party=True, third_party_searches=3), search=search)
+    assert len(calls) == 1  # the other searches would fail the same way
+    assert run.status == ResearchRunStatus.DONE and facts and "award" not in by_key(facts)
+    assert 'Third-party search stopped: the search for Financials failed (serper: HTTP 400: {"message":"Not enough credits"}).' in run.warnings
 
 
 def test_a_third_party_page_is_fetched_with_the_same_safeguards(research_db_path):
