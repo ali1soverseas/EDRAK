@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Iterable, Optional
+from typing import Callable, Iterable, Optional
 from urllib.parse import parse_qsl, urlsplit, urlunsplit
 
 from lxml import etree
@@ -25,7 +25,7 @@ PRODUCTS = "products"
 OTHER = "other"
 
 # section -> (weight, keywords). Keywords are matched against the path and the link text.
-_SECTIONS: dict[str, tuple[int, tuple[str, ...]]] = {
+SECTIONS: Sections = {
     "about": (5, ("about", "about us", "company", "who we are", "who-we-are", "our story", "من نحن", "عن الشركة", "عن شركتنا", "نبذة عنا", "نبذة عن")),
     "products": (4, ("products", "product", "services", "service", "solutions", "solution", "platform", "what we do", "منتجاتنا", "المنتجات", "خدماتنا", "الخدمات", "الحلول", "حلولنا")),
     "pricing": (3, ("pricing", "plans", "prices", "الأسعار", "الاسعار", "الباقات")),
@@ -33,14 +33,12 @@ _SECTIONS: dict[str, tuple[int, tuple[str, ...]]] = {
     "clients": (2, ("clients", "customers", "partners", "عملاؤنا", "عملائنا", "شركاؤنا")),
     "contact": (2, ("contact", "contact us", "اتصل بنا", "تواصل معنا")),
 }
-_PATTERNS = {
-    section: (weight, [phrase_pattern(word) for word in words]) for section, (weight, words) in _SECTIONS.items()
-}
+Sections = dict[str, tuple[int, tuple[str, ...]]]
 
 _FILE = re.compile(
     r"\.(pdf|jpe?g|png|gif|svg|webp|ico|zip|rar|gz|docx?|xlsx?|pptx?|mp[34]|avi|mov|css|js|json|xml|txt|woff2?)$", re.I
 )
-_BLOCKED_SEGMENTS = frozenset(
+BLOCKED_SEGMENTS = frozenset(
     {"login", "log-in", "signin", "sign-in", "signup", "sign-up", "register", "cart", "checkout", "basket",
      "account", "my-account", "wp-admin", "wp-login.php", "admin", "tag", "category", "author", "feed",
      "privacy", "privacy-policy", "terms", "terms-of-service", "terms-and-conditions", "cookie", "cookies",
@@ -51,9 +49,9 @@ _DETAIL_PARENTS = frozenset(
     {"careers", "career", "jobs", "job", "vacancies", "وظائف", "blog", "blogs", "news", "article", "articles",
      "post", "posts", "press", "press-releases", "media", "insights", "stories", "مدونة", "الاخبار", "أخبار"}
 )
-_DATED_POST = re.compile(r"/(19|20)\d\d/\d{1,2}(/|$)")
-_LANG_SEGMENT = re.compile(r"^(ar|en)(?:[-_][a-z]{2})?$", re.I)
-_LANG_QUERY = frozenset({"lang", "l", "locale", "hl", "language"})
+DATED_POST = re.compile(r"/(19|20)\d\d/\d{1,2}(/|$)")
+LANG_SEGMENT = re.compile(r"^(ar|en)(?:[-_][a-z]{2})?$", re.I)
+LANG_QUERY = frozenset({"lang", "l", "locale", "hl", "language"})
 # A keyword in a path counts only in a segment made of nothing but section words and filler:
 # "about-us", "who-we-are" and "products-and-services" are section pages, while "company-offsite",
 # "new-product-line" and "01.2-about-basecamp" are an example, an article or a chapter that happens
@@ -104,11 +102,11 @@ def url_language(url: str) -> Optional[str]:
     host_label = (parts.hostname or "").split(".")[0]
     segments = _segments(url)
     for token in ([host_label] + segments[:1]):
-        match = _LANG_SEGMENT.match(token or "")
+        match = LANG_SEGMENT.match(token or "")
         if match:
             return match.group(1).lower()
     for key, value in parse_qsl(parts.query):
-        if key.lower() in _LANG_QUERY and language_hint(value):
+        if key.lower() in LANG_QUERY and language_hint(value):
             return language_hint(value)
     if _arabic_share(path_of(url)) > 0.5:
         return "ar"
@@ -118,33 +116,63 @@ def url_language(url: str) -> Optional[str]:
 def _is_junk(url: str) -> bool:
     path = path_of(url)
     segments = [s.lower() for s in _segments(url)]
-    if _FILE.search(path) or _DATED_POST.search(path):
+    if _FILE.search(path) or DATED_POST.search(path):
         return True
-    if any(s in _BLOCKED_SEGMENTS for s in segments):
+    if any(s in BLOCKED_SEGMENTS for s in segments):
         return True
-    content = [s for i, s in enumerate(segments) if not (i == 0 and _LANG_SEGMENT.match(s))]
+    content = [s for i, s in enumerate(segments) if not (i == 0 and LANG_SEGMENT.match(s))]
     if len(content) >= 2 and content[0] in _DETAIL_PARENTS:
         return True
     query = parse_qsl(urlsplit(url).query)
-    return any(k.lower() not in _LANG_QUERY for k, _ in query)
+    return any(k.lower() not in LANG_QUERY for k, _ in query)
 
 
-def _vocabulary() -> frozenset[str]:
-    words = {search_key(t) for _, (_, keywords) in _SECTIONS.items() for k in keywords for t in re.split(r"[\s\-]+", k) if t}
-    return frozenset(words | {search_key(f) for f in _FILLER})
+class SectionScorer:
+    """Scores a URL by the section words in its path and link text. Built from a table of sections,
+    so the website import and the company research crawl can share the rules with different words."""
+
+    def __init__(self, sections: Sections) -> None:
+        self._patterns = {
+            name: (weight, [phrase_pattern(word) for word in words]) for name, (weight, words) in sections.items()
+        }
+        words = {search_key(t) for _, keywords in sections.values() for k in keywords for t in re.split(r"[\s\-]+", k) if t}
+        self._vocabulary = frozenset(words | {search_key(f) for f in _FILLER})
+
+    def path_key(self, url: str) -> str:
+        """The words of the path's section-like segments, folded for keyword matching."""
+        kept = []
+        for segment in _segments(url):
+            tokens = [search_key(t) for t in re.split(r"[-_.+\s]+", segment) if t]
+            if tokens and all(t in self._vocabulary for t in tokens):
+                kept.append(" ".join(tokens))
+        return " ".join(kept)
+
+    def score(
+        self, url: str, text: str = "", in_nav: bool = False, *, junk: Optional[Callable[[str], bool]] = None
+    ) -> tuple[int, str]:
+        """(score, section) for a page. 0 means no section word. `junk` replaces the default test for pages to leave out."""
+        if (junk or _is_junk)(url):
+            return 0, OTHER
+        path_key = self.path_key(url)
+        text_key = search_key(text) if in_nav else ""
+        best, section = 0, OTHER
+        for name, (weight, patterns) in self._patterns.items():
+            hits = 0
+            if any(p.search(path_key) for p in patterns):
+                hits += 1
+            if text_key and any(p.search(text_key) for p in patterns):
+                hits += 1
+            if hits * weight > best:
+                best, section = hits * weight, name
+        if best == 0:
+            return 0, OTHER
+        segments = _segments(url)
+        depth = len([s for i, s in enumerate(segments) if not (i == 0 and LANG_SEGMENT.match(s))])
+        score = best + (_NAV_BONUS if in_nav else 0) - max(0, depth - 1)
+        return max(score, 0), section
 
 
-_VOCABULARY = _vocabulary()
-
-
-def _path_key(url: str) -> str:
-    """The words of the path's section-like segments, folded for keyword matching."""
-    kept = []
-    for segment in _segments(url):
-        tokens = [search_key(t) for t in re.split(r"[-_.+\s]+", segment) if t]
-        if tokens and all(t in _VOCABULARY for t in tokens):
-            kept.append(" ".join(tokens))
-    return " ".join(kept)
+_SCORER = SectionScorer(SECTIONS)
 
 
 def score_url(url: str, text: str = "", in_nav: bool = False) -> tuple[int, str]:
@@ -153,25 +181,7 @@ def score_url(url: str, text: str = "", in_nav: bool = False) -> tuple[int, str]
     Link text counts only for links in a nav, header or footer, where a site names its sections. A
     card in the page body that says "Company Offsite" is not an About page.
     """
-    if _is_junk(url):
-        return 0, OTHER
-    path_key = _path_key(url)
-    text_key = search_key(text) if in_nav else ""
-    best, section = 0, OTHER
-    for name, (weight, patterns) in _PATTERNS.items():
-        hits = 0
-        if any(p.search(path_key) for p in patterns):
-            hits += 1
-        if text_key and any(p.search(text_key) for p in patterns):
-            hits += 1
-        if hits * weight > best:
-            best, section = hits * weight, name
-    if best == 0:
-        return 0, OTHER
-    segments = _segments(url)
-    depth = len([s for i, s in enumerate(segments) if not (i == 0 and _LANG_SEGMENT.match(s))])
-    score = best + (_NAV_BONUS if in_nav else 0) - max(0, depth - 1)
-    return max(score, 0), section
+    return _SCORER.score(url, text, in_nav)
 
 
 def candidates_from_links(

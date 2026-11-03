@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import re
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urljoin, urlsplit
@@ -26,6 +27,10 @@ ROBOTS_AGENT = "EdrakBot"
 HTML_TYPES = frozenset({"text/html", "application/xhtml+xml"})
 SITEMAP_TYPES = frozenset({"application/xml", "text/xml", "text/plain", "application/xhtml+xml", "text/html"})
 ANY_TYPE: frozenset[str] = frozenset()  # an empty set means no restriction
+
+# Called with each URL just before it is requested, the first one and every redirect target.
+# It raises (UrlBlocked or SiteUnreachable) to stop the fetch.
+BeforeRequest = Callable[[str], Awaitable[None]]
 
 _REDIRECTS = frozenset({301, 302, 303, 307, 308})
 _META_CHARSET = re.compile(rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_\-]+)""", re.IGNORECASE)
@@ -71,11 +76,15 @@ class SiteFetcher:
         *,
         transport: Optional[httpx.AsyncBaseTransport] = None,
         resolver: Optional[Resolver] = None,
+        max_bytes: Optional[int] = None,
+        concurrency: Optional[int] = None,
     ) -> None:
+        """`max_bytes` and `concurrency` default to the website import's settings."""
         self._transport = transport
         self._resolver = resolver
+        self._max_bytes = max_bytes if max_bytes is not None else settings.PROFILE_IMPORT_MAX_BYTES
         self._client: Optional[httpx.AsyncClient] = None
-        self._slots = asyncio.Semaphore(max(1, settings.PROFILE_IMPORT_CONCURRENCY))
+        self._slots = asyncio.Semaphore(max(1, concurrency if concurrency is not None else settings.PROFILE_IMPORT_CONCURRENCY))
         self._robots: dict[str, Optional[RobotFileParser]] = {}
 
     async def __aenter__(self) -> "SiteFetcher":
@@ -101,17 +110,25 @@ class SiteFetcher:
         await ensure_public(url, self._resolver)
 
     async def get(
-        self, url: str, *, kinds: frozenset[str] = HTML_TYPES, raise_for_status: bool = True
+        self,
+        url: str,
+        *,
+        kinds: frozenset[str] = HTML_TYPES,
+        raise_for_status: bool = True,
+        before_request: Optional[BeforeRequest] = None,
     ) -> Fetched:
         """GET `url`, following at most PROFILE_IMPORT_MAX_REDIRECTS redirects.
 
         Raises UrlBlocked when the URL or a redirect target is not public, and SiteUnreachable
         when the site cannot be read. `kinds` are the content types accepted (none given = any).
+        `before_request` runs on the URL and on every redirect target before it is requested.
         """
         assert self._client is not None, "use SiteFetcher as an async context manager"
         current = url
         for _ in range(settings.PROFILE_IMPORT_MAX_REDIRECTS + 1):
             await ensure_public(current, self._resolver)
+            if before_request is not None:
+                await before_request(current)
             async with self._slots:
                 response = await self._once(current, kinds, raise_for_status)
             if isinstance(response, str):  # a redirect target
@@ -137,7 +154,7 @@ class SiteFetcher:
                 if status < 400 and kinds and kind not in kinds:
                     raise SiteUnreachable(f"The address did not return a web page ({kind or 'unknown type'}).")
                 body = bytearray()
-                limit = settings.PROFILE_IMPORT_MAX_BYTES
+                limit = self._max_bytes
                 async for chunk in response.aiter_bytes():
                     body.extend(chunk)
                     if len(body) > limit:
