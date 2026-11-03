@@ -38,7 +38,7 @@ def test_a_new_database_has_the_three_tables_with_their_columns(research_db_path
     }
     assert set(columns(conn, "research_runs")) == {
         "id", "workspace_id", "started_at", "finished_at", "status", "input", "pages_crawled", "pdfs_read",
-        "facts_found", "warnings", "error", "created_at",
+        "facts_found", "warnings", "error", "created_at", "stage", "stats",
     }
     nullable = {n for n, c in columns(conn, "company_facts").items() if not c[3] and not c[5]}
     assert nullable == {"proposed_category", "pdf_page", "conflict_group", "run_id"}

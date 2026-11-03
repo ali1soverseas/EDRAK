@@ -204,6 +204,8 @@ class ResearchRun(BaseModel):
     facts_found: int = 0
     warnings: list[str] = Field(default_factory=list)
     error: Optional[str] = None
+    stage: Optional[str] = Field(default=None, description="The step the run is in, while it runs.")
+    stats: dict[str, Any] = Field(default_factory=dict, description="Counts from each step, filled as the run goes.")
     created_at: str
     started_at: Optional[str] = None
     finished_at: Optional[str] = None

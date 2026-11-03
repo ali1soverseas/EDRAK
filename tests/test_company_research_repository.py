@@ -293,9 +293,9 @@ def test_listing_runs_is_newest_first_and_scoped(research_db_path):
         other_ws = await new_workspace(db, "Other Co")
         first = await runs_repo.create_research_run(db, workspace_id=ws)
         await db.execute("UPDATE research_runs SET created_at = '2020-01-01T00:00:00.000Z' WHERE id = ?", (first.id,))
+        await runs_repo.finish_research_run(db, first.id, status=ResearchRunStatus.DONE)  # one active run per workspace
         second = await runs_repo.create_research_run(db, workspace_id=ws)
         await runs_repo.create_research_run(db, workspace_id=other_ws)
-        await runs_repo.finish_research_run(db, first.id, status=ResearchRunStatus.DONE)
         return (first, second,
                 await runs_repo.list_research_runs(db, ws),
                 await runs_repo.list_research_runs(db, ws, status=ResearchRunStatus.DONE),

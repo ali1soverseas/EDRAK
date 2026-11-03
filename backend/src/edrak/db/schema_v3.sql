@@ -133,9 +133,13 @@ CREATE TABLE IF NOT EXISTS research_runs (
   facts_found   integer NOT NULL DEFAULT 0 CHECK (facts_found >= 0),
   warnings      text NOT NULL DEFAULT '[]' CHECK (json_valid(warnings) AND json_type(warnings) = 'array'),
   error         text,
-  created_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  created_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  stage         text,                          -- the graph node the run is in, for the screen to poll
+  stats         text NOT NULL DEFAULT '{}' CHECK (json_valid(stats) AND json_type(stats) = 'object')
 );
 CREATE INDEX IF NOT EXISTS research_runs_ws_idx ON research_runs (workspace_id, created_at DESC);
+-- One company per workspace, so one active run per workspace. The database enforces it, whatever process asks.
+CREATE UNIQUE INDEX IF NOT EXISTS research_runs_one_active_idx ON research_runs (workspace_id) WHERE status IN ('queued','running');
 
 CREATE TABLE IF NOT EXISTS company_facts (
   id                text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
