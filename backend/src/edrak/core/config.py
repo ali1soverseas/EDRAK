@@ -132,6 +132,24 @@ class Settings(BaseSettings):
     PROFILE_IMPORT_OCR_LANGUAGE: str = "ara+eng"
     PROFILE_IMPORT_OCR_DPI: int = 300
 
+    # Company research crawl: how deeply the company's own website is read. Fetching reuses the
+    # website import's timeout, redirect limit and user agent.
+    COMPANY_RESEARCH_CRAWL_MAX_PAGES: int = 40  # including the homepage
+    COMPANY_RESEARCH_CRAWL_MAX_DEPTH: int = 3  # links followed from the homepage
+    COMPANY_RESEARCH_CRAWL_TIME_BUDGET_S: float = 180.0  # the whole crawl
+    COMPANY_RESEARCH_CRAWL_CONCURRENCY: int = 3
+    COMPANY_RESEARCH_CRAWL_HOST_DELAY_S: float = 1.0  # between requests to the same host
+    COMPANY_RESEARCH_CRAWL_MAX_BYTES: int = 2_000_000  # per response
+    # A headless browser reads pages whose static HTML has less main text than this, or that look
+    # client-rendered or lazy-loaded. It scrolls, clicks "load more" and expands tabs first.
+    COMPANY_RESEARCH_CRAWL_DYNAMIC: bool = True
+    COMPANY_RESEARCH_CRAWL_DYNAMIC_MIN_CHARS: int = 300
+    COMPANY_RESEARCH_CRAWL_MAX_DYNAMIC_PAGES: int = 15
+    COMPANY_RESEARCH_CRAWL_MAX_SCROLLS: int = 8
+    COMPANY_RESEARCH_CRAWL_SCROLL_PAUSE_MS: int = 600
+    COMPANY_RESEARCH_CRAWL_MAX_CLICKS: int = 5  # "load more" style buttons, per page
+    COMPANY_RESEARCH_CRAWL_MAX_EXPANDS: int = 20  # tabs and accordions, per page
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
