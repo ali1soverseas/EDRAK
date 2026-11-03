@@ -46,8 +46,8 @@ def build_research_graph(deps: Optional[ResearchDeps] = None):
     graph.add_node("seed", safe("seed", nodes.seed, deps, fatal=True))
     graph.add_node("crawl", safe("crawl", nodes.crawl, deps))  # a failure on the first round sets the error itself
     graph.add_node("pdfs", safe("pdfs", nodes.pdfs, deps))
-    graph.add_node("extract", safe("extract", nodes.extract, deps))
-    graph.add_node("gap_check", safe("gap_check", nodes.gap_check, deps))
+    graph.add_node("extract", safe("extract", nodes.extract, deps, on_error={"new_docs": []}))
+    graph.add_node("gap_check", safe("gap_check", nodes.gap_check, deps, on_error={"targets": []}))
     graph.add_node("own_social", safe("own_social", nodes.own_social, deps))
     graph.add_node("third_party", safe("third_party", nodes.third_party, deps))
     graph.add_node("merge_and_save", safe("merge_and_save", nodes.merge_and_save, deps, fatal=True))

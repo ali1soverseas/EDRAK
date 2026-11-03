@@ -446,10 +446,12 @@ def _crawl_stats(crawl: CrawlResult) -> dict[str, Any]:
     return stats
 
 
-def safe(name: str, node: Node, deps: ResearchDeps, *, fatal: bool = False) -> Node:
+def safe(name: str, node: Node, deps: ResearchDeps, *, fatal: bool = False, on_error: dict[str, Any] | None = None) -> Node:
     """Wrap a node: report its start and end to the progress hook, and turn an error into a warning.
 
     A `fatal` node also sets the run's error, since the run has nothing to show without it.
+    `on_error` is the state to leave behind when the node fails, so a later step does not act on what
+    an earlier pass left there (for example the pages the gap check chose last time).
     """
 
     @functools.wraps(node)
@@ -462,7 +464,7 @@ def safe(name: str, node: Node, deps: ResearchDeps, *, fatal: bool = False) -> N
         except Exception as exc:
             logger.exception("Research step %s failed", name)
             message = f"The {name.replace('_', ' ')} step stopped with an unexpected error ({type(exc).__name__})."
-            update = {"warnings": [message]}
+            update = {"warnings": [message], **(on_error or {})}
             if fatal:
                 update["error"] = message
         view: dict[str, Any] = {**state, **update, "warnings": [*state.get("warnings", []), *update.get("warnings", [])]}

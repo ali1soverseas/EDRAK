@@ -185,6 +185,24 @@ def test_a_crash_while_reading_the_first_pages_fails_the_run(research_db_path, m
     assert run.status == ResearchRunStatus.FAILED and "crawl step stopped" in run.error and facts == []
 
 
+def test_a_gap_check_that_fails_does_not_send_the_run_round_again_with_old_targets(research_db_path, monkeypatch):
+    real, calls = agent_nodes.empty_categories, []
+
+    def fails_the_second_time(have):
+        calls.append(1)
+        if len(calls) > 1:
+            raise RuntimeError("bad state")
+        return real(have)
+
+    monkeypatch.setattr(agent_nodes, "empty_categories", fails_the_second_time)
+    site = acme_site()
+    _, run, facts = run_it(site, Model(*ALL), **home_only())
+    assert run.status == ResearchRunStatus.DONE and len(calls) == 2
+    assert run.stats["rounds"] == 1 and run.pages_crawled == 4  # one extra round; the failed check chose nothing more
+    assert any("gap check step stopped with an unexpected error" in w for w in run.warnings)
+    assert {"ceo", "branch", "shareholder"} <= set(by_key(facts))
+
+
 def test_a_failure_while_saving_fails_the_run(research_db_path, monkeypatch):
     async def broken(*args, **kwargs):
         raise RuntimeError("disk full")
