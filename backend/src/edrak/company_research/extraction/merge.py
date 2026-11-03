@@ -62,6 +62,8 @@ _KEY_SHAPE = re.compile(r"^[a-z][a-z0-9_]*$")
 _DIGIT_COMMA = re.compile(r"(?<=\d),(?=\d)")
 _ARABIC_DIGITS = {0x0660 + i: ord("0") + i for i in range(10)} | {0x06F0 + i: ord("0") + i for i in range(10)}
 _MAX_KEY_CHARS = 60
+_EMPHASIS = re.compile(r"\*\*|__")
+_TABLE_BAR = re.compile(r"\s*\|\s*")
 
 
 @dataclass
@@ -111,6 +113,13 @@ def normalize_value(value: str, value_type: ValueType) -> str:
     if value_type == ValueType.URL:
         text = re.sub(r"^https?://(www\.)?", "", text.strip().lower()).rstrip("/")
     return normalize_phrase(text)
+
+
+def display_quote(quote: str) -> str:
+    """A verified quote as it is stored for a person to read: no bold markers from the page's markdown, and
+    a table row or a line break in a PDF on one line. Verification ignores both, so the quote is still in its source."""
+    text = _TABLE_BAR.sub(" | ", _EMPHASIS.sub("", quote))
+    return " ".join(text.split()) or quote.strip()
 
 
 def snake_key(text: str) -> str:
@@ -170,7 +179,7 @@ def to_candidates(
         out.append(
             Candidate(
                 category=category, proposed_category=proposed, key=key, label=fact.label.strip(), value=value,
-                value_type=value_type, tier=doc.tier, url=doc.url, pdf_page=doc.pdf_page, quote=fact.quote.strip(),
+                value_type=value_type, tier=doc.tier, url=doc.url, pdf_page=doc.pdf_page, quote=display_quote(fact.quote),
                 confidence=fact.confidence, exact=item.exact, order=start + position,
                 mapped=bool(mapped) and mapped != fact.key.strip(),
             )

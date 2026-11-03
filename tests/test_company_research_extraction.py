@@ -591,3 +591,18 @@ def test_the_schema_accepts_what_the_model_may_send():
     parsed = ExtractedFact.model_validate({"category": "Leadership", "key": "ceo", "value": "x", "source": "S1", "quote": "q"})
     assert parsed.category == "leadership" and parsed.confidence.value == "medium"
     assert ExtractedFact.model_validate({"category": "weird", "key": "k", "value": "x", "source": "S1", "quote": "q"}).proposed_category == "weird"
+
+
+def test_a_stored_quote_has_no_markdown_markers_or_layout_whitespace():
+    page = "Acme Pay builds terminals.\n\n**Amal Nasr**|Chief Executive Officer of\n      Acme Pay\n"
+    quote = "**Amal Nasr**|Chief Executive Officer of\n      Acme Pay"
+    result = run([doc(page)], Llm(reply(fact(quote=quote))))
+    assert [f.quote for f in result.facts] == ["Amal Nasr | Chief Executive Officer of Acme Pay"]
+    assert result.stats.dropped_no_quote == 0  # it was verified as the model wrote it
+
+
+def test_display_quote_keeps_a_lone_asterisk_and_never_returns_nothing():
+    from edrak.company_research.extraction.merge import display_quote
+
+    assert display_quote("Revenue* grew 5 * 3") == "Revenue* grew 5 * 3"
+    assert display_quote("****") == "****"
