@@ -42,6 +42,7 @@ class PageText:
 class ExtractedPdf:
     pages: list[PageText] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    page_count: int = 0  # pages in the file, including any that were not read
 
 
 def first_heading(markdown: str) -> str:
@@ -67,8 +68,12 @@ def page_ranges(numbers: list[int]) -> str:
     return ", ".join(spans)
 
 
-def open_pdf(path: str) -> Any:
-    """Open the PDF at `path`, or raise PdfRejected for a file that is corrupt, locked, empty or too long."""
+def open_pdf(path: str, *, page_limit: Optional[int] = None) -> Any:
+    """Open the PDF at `path`, or raise PdfRejected for a file that is corrupt, locked, empty or too long.
+
+    A file over the upload page limit is refused unless `page_limit` is given, which leaves the
+    choice of how many pages to read to the caller.
+    """
     import pymupdf
 
     try:
@@ -81,7 +86,7 @@ def open_pdf(path: str) -> Any:
     if doc.page_count == 0:
         doc.close()
         raise PdfRejected("corrupt", "This PDF has no pages.")
-    if doc.page_count > settings.PROFILE_IMPORT_PDF_MAX_PAGES:
+    if page_limit is None and doc.page_count > settings.PROFILE_IMPORT_PDF_MAX_PAGES:
         count = doc.page_count
         doc.close()
         raise PdfRejected(
@@ -91,12 +96,14 @@ def open_pdf(path: str) -> Any:
     return doc
 
 
-def _markdown_by_page(doc: Any) -> Optional[dict[int, str]]:
-    """Markdown for every page in one pass, or None when pymupdf4llm cannot handle the document."""
+def _markdown_by_page(doc: Any, count: Optional[int] = None) -> Optional[dict[int, str]]:
+    """Markdown for the first `count` pages (all by default) in one pass, or None when pymupdf4llm
+    cannot handle the document."""
     try:
         import pymupdf4llm
 
-        chunks = pymupdf4llm.to_markdown(doc, page_chunks=True, use_ocr=False)
+        pages = list(range(count)) if count is not None and count < doc.page_count else None
+        chunks = pymupdf4llm.to_markdown(doc, pages=pages, page_chunks=True, use_ocr=False)
         return {i + 1: str(chunk.get("text") or "") for i, chunk in enumerate(chunks)}
     except Exception as exc:
         logger.warning("pymupdf4llm failed, falling back to plain text: %s", exc)
@@ -130,20 +137,30 @@ def _arabic_in_order(markdown: str, page: Any, number: int, warnings: list[str])
     return plain
 
 
-def extract_document(path: str, *, ocr: Optional[ocr_module.OcrStatus] = None) -> ExtractedPdf:
-    """Per-page text of the PDF at `path`. Raises PdfRejected; everything else becomes a warning."""
+def extract_document(
+    path: str, *, ocr: Optional[ocr_module.OcrStatus] = None, page_limit: Optional[int] = None
+) -> ExtractedPdf:
+    """Per-page text of the PDF at `path`. Raises PdfRejected; everything else becomes a warning.
+
+    Without `page_limit` a file over the upload page limit is refused. With it, only the first
+    `page_limit` pages are read and a warning says so.
+    """
     out = ExtractedPdf()
     status = ocr if ocr is not None else ocr_module.ocr_status()
-    doc = open_pdf(path)
+    doc = open_pdf(path, page_limit=page_limit)
     try:
-        markdown = _markdown_by_page(doc)
+        out.page_count = doc.page_count
+        read = doc.page_count if page_limit is None else min(doc.page_count, max(1, page_limit))
+        if read < doc.page_count:
+            out.warnings.append(f"The document has {doc.page_count} pages; only the first {read} were read.")
+        markdown = _markdown_by_page(doc) if read == doc.page_count else _markdown_by_page(doc, read)
         if markdown is None:
             out.warnings.append("Headings and tables could not be read, so plain text was used.")
         no_ocr: list[int] = []
         unreadable: list[int] = []
         arabic_warnings: list[str] = []
 
-        for index in range(doc.page_count):
+        for index in range(read):
             number = index + 1
             page = doc[index]
             plain = _plain(page)

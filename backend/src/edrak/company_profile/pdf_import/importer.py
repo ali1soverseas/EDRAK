@@ -12,7 +12,7 @@ from edrak.company_profile.draft import build_profile_draft
 from edrak.company_profile.extractor import LLMCall
 from edrak.company_profile.models import ProfileDraft
 from edrak.company_profile.pdf_import.errors import PdfRejected
-from edrak.company_profile.pdf_import.extract import extract_document
+from edrak.company_profile.pdf_import.extract import ExtractedPdf, extract_document
 from edrak.company_profile.pdf_import.links import links_from_pages
 from edrak.company_profile.pdf_import.select import page_document, select_pages
 from edrak.core.config import settings
@@ -32,18 +32,26 @@ def check_upload(content: bytes) -> None:
         raise PdfRejected("not_a_pdf", "This file is not a PDF. Its contents do not match a PDF document.")
 
 
-def _collect(content: bytes):
-    """Everything the model call needs, read from a temporary file that is gone when this returns."""
+def extract_bytes(content: bytes, **options) -> ExtractedPdf:
+    """The pages of a PDF given as bytes, read from a temporary file that is gone when this returns.
+
+    `options` go to `extract_document`.
+    """
     fd, path = tempfile.mkstemp(suffix=".pdf")
     try:
         with os.fdopen(fd, "wb") as handle:
             handle.write(content)
-        extracted = extract_document(path)
+        return extract_document(path, **options)
     finally:
         try:
             os.unlink(path)
         except OSError:
             logger.warning("Could not remove the temporary PDF %s", path)
+
+
+def _collect(content: bytes):
+    """Everything the model call needs."""
+    extracted = extract_bytes(content)
     chosen, selection_warnings = select_pages(extracted.pages)
     return (
         [page_document(p) for p in chosen],
