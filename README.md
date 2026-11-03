@@ -131,6 +131,28 @@ run, the four-card Brief (full screen, download as PDF, Word or Markdown), Repor
 comparison, Monitors (scheduled runs) and Alerts, Watchlist, Evidence explorer, Decision log, Data
 sources with an in-app file viewer, Notifications, Ask Edrak, Settings. English and Arabic (RTL).
 
+## Company research
+
+Beyond the fixed profile, the Company Research Agent builds a reviewable set of facts about the company
+(leadership, ownership and funding, financials, customers, partners, locations, team, pricing, technology,
+certifications, regulatory, news, awards, history). It runs as a tracked background run:
+
+- **Reads** the company's own website (static pages, and pages that load late through a headless browser)
+  and the PDFs it publishes (annual reports, company profiles, brochures), in English and Arabic.
+- **Extracts** facts with the language model; every fact carries the exact quote and the address (and PDF page)
+  it came from. Code checks each quote against its source and drops any fact whose quote is not there.
+- **Fills gaps** with up to two extra rounds on the company's own site, then (optionally) a web search.
+- **Saves suggestions.** Facts start as `suggested`; a person approves, rejects or edits each one, singly or in
+  bulk. Approved and edited facts are never overwritten by a later run, and a different new value joins the old
+  one in a conflict group.
+
+Source tiers: `own_site` and `own_pdf` (on), `own_social` (only with a reader; none is included), `third_party`
+(off by default, needs `SERPER_API_KEY`; never replaces the company's own facts). Endpoints are
+`POST/GET /api/company/research/runs`, `POST .../runs/{id}/cancel`, `GET /api/company/facts`,
+`PATCH /api/company/facts/{id}`, `POST /api/company/facts/bulk` and `GET /api/company/fact-categories`.
+Settings are the `COMPANY_RESEARCH_*` variables in `.env.example`. Limits, configuration, optional
+dependencies and known limits are in [`documents/COMPANY_RESEARCH.md`](documents/COMPANY_RESEARCH.md).
+
 ## The brief: typed numbers, options and an action plan
 
 Every number on the brief comes from a stored, typed metric linked to its evidence. The language model picks components and writes headlines; it never writes or computes a figure.
@@ -294,7 +316,7 @@ Requirements: Python 3.11+, Node 20+.
 # backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-playwright install chromium          # for PDF export
+playwright install chromium          # PDF export, and pages that load content with JavaScript (company research, website import)
 cp .env.example .env                 # then fill in the keys below
 
 PYTHONPATH=backend/src uvicorn edrak.main:app --port 8000
@@ -307,7 +329,10 @@ Importing a company profile from a PDF reads scanned pages with OCR when the Tes
 installed together with Arabic and English language data (`brew install tesseract tesseract-lang`, or
 `apt install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng`). It is optional: without it the import
 still works and names the scanned pages it could not read. The server logs at startup whether OCR is
-available.
+available. Company research reads scanned PDF pages the same way.
+
+Company research reads pages that load their content with JavaScript through the same Chromium. Without it
+the crawl keeps each page's static text and the run carries a warning. It is optional.
 
 The database (`data/edrak.db`) is created on first start. A database from the earlier MVP layout is
 migrated automatically; the original is kept as `data/edrak.v1.bak.db`.
@@ -319,10 +344,11 @@ Names only; see `.env.example` for all of them.
 | Variable | Used for |
 |---|---|
 | `OLLAMA_API_KEY` | The language model |
-| `TAVILY_API_KEY`, `SERPER_API_KEY` | Web search (competitor and market workers) |
+| `TAVILY_API_KEY`, `SERPER_API_KEY` | Web search (competitor and market workers; company research third-party tier) |
 | `APIFY_TOKEN` | Trends and social sources (customers & trends worker) |
 | `SOCIALCRAWL_API_KEY`, `YOUTUBE_API_KEY` | Further social sources |
 | `NEWS_API_KEY`, `FRED_API_KEY`, ... | Market data sources |
+| `COMPANY_RESEARCH_*` | Company research limits and the third-party flag (see `documents/COMPANY_RESEARCH.md`) |
 | `EDRAK_DB_PATH` | Optional: another database file |
 | `EDRAK_ENV` | `production` turns on secure cookies |
 
@@ -358,6 +384,8 @@ backend/src/edrak/
   api/             FastAPI routers, run manager, brief builder
   exports/         PDF, Word and Markdown
   metrics/         metric registry, use-case templates, typed numbers
+  company_research/ site crawler, PDF reader, fact extraction and verification, research graph
+  company_profile/ profile import from a website or PDF
 frontend/src/      React app
 mcp_servers/       shared MCP tool servers
 backend/evals/     evaluation cases
