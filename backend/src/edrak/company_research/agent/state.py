@@ -43,6 +43,7 @@ class ResearchOptions:
     gap_targets: int
     third_party: bool
     third_party_searches: int
+    third_party_results: int
     third_party_pages: int
     extract_max_batches: int
 
@@ -57,6 +58,7 @@ class ResearchOptions:
             gap_targets=max(1, settings.COMPANY_RESEARCH_GAP_MAX_TARGETS),
             third_party=settings.COMPANY_RESEARCH_THIRD_PARTY,
             third_party_searches=max(1, settings.COMPANY_RESEARCH_THIRD_PARTY_MAX_SEARCHES),
+            third_party_results=max(1, settings.COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH),
             third_party_pages=max(1, settings.COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES),
             extract_max_batches=max(1, settings.COMPANY_RESEARCH_EXTRACT_MAX_BATCHES),
         )

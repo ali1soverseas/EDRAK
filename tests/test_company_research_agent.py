@@ -427,6 +427,21 @@ def test_with_the_flag_on_empty_categories_are_searched_and_facts_are_marked_thi
     assert ("x.com", "/acmepay") not in site.requests
 
 
+def test_how_many_results_are_read_per_search_comes_from_config(research_db_path, monkeypatch):
+    monkeypatch.setattr(settings, "COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH", 1)
+    assert ResearchOptions.from_settings().third_party_results == 1
+    asked = []
+
+    async def search(query, num):
+        asked.append(num)
+        return [SearchHit("https://other.example/story"), SearchHit("https://other.example/second")]
+
+    site = news_site(**{"other.example/second": page("Second", "Acme Pay also won the Fintech Award in 2022.")})
+    _, run, _ = run_it(site, Model(*ALL), options=options(third_party=True, third_party_searches=1, third_party_results=1), search=search)
+    assert asked == [3] and run.stats["third_party"] == {"searches": 1, "pages": 1}
+    assert ("other.example", "/second") not in site.requests
+
+
 def test_third_party_facts_never_replace_the_companys_own(research_db_path):
     other = "Dana Reda is the Chief Executive Officer of Acme Pay"
     site = acme_site(**{"other.example/story": page("Profile", f"{other}, according to a directory.")})

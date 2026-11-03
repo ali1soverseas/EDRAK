@@ -178,6 +178,7 @@ class Settings(BaseSettings):
     # sources (Serper search, then the top results) are off unless this is on.
     COMPANY_RESEARCH_THIRD_PARTY: bool = False
     COMPANY_RESEARCH_THIRD_PARTY_MAX_SEARCHES: int = 4
+    COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH: int = 3  # top results read for each search
     COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES: int = 6  # pages read in all, across searches
 
     # Sessions

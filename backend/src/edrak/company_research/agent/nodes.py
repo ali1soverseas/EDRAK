@@ -376,7 +376,7 @@ class Nodes:
         for category in categories:
             query = f"{name} {get_category(category).label_en}"  # type: ignore[union-attr]
             try:
-                hits = await search(query, 5)
+                hits = await search(query, self.options.third_party_results + 2)  # a few more, for results we skip
             except SearchUnavailable as exc:
                 warnings.append(f"Third-party search was skipped: {exc}")
                 break
@@ -385,7 +385,7 @@ class Nodes:
                 warnings.append(f"A third-party search for {get_category(category).label_en} failed.")  # type: ignore[union-attr]
                 continue
             searches += 1
-            for hit in list(hits)[:3]:  # only the top results are read
+            for hit in list(hits)[: self.options.third_party_results]:  # only the top results are read
                 if not in_scope(hit.url, home) and not platform_of(hit.url) and not hit.url.lower().endswith(".pdf"):
                     urls.setdefault(hit.url, hit.title)
         docs = await self._read_third_party(list(urls)[: self.options.third_party_pages], warnings)

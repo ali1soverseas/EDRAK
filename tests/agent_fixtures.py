@@ -121,7 +121,7 @@ ALL_RULES = (ceo(), FOUNDED, BRANCH, OWNER, REVENUE)
 def options(**overrides) -> ResearchOptions:
     values = dict(
         time_budget_s=900.0, max_run_s=3600.0, important=("leadership", "ownership_and_funding", "financials", "locations", "history"),
-        gap_rounds=2, gap_targets=4, third_party=False, third_party_searches=4, third_party_pages=6,
+        gap_rounds=2, gap_targets=4, third_party=False, third_party_searches=4, third_party_results=3, third_party_pages=6,
         extract_max_batches=30,
     )
     values.update(overrides)
