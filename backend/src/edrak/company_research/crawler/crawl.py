@@ -144,8 +144,10 @@ class _Crawl:
         browser: Optional[BrowserFactory],
         clock: Callable[[], float],
         sleep: Callable[[float], Awaitable[None]],
+        sitemaps: bool = True,
     ) -> None:
         self.site = site
+        self.sitemaps = sitemaps
         self.start_url = start_url
         self.home_url = start_url  # replaced by the address the homepage ended up at
         self.limits = limits
@@ -444,7 +446,8 @@ class _Crawl:
         async with self._browser_stack:
             home = await self._first_page()
             self._accept(home)
-            await self._seed_from_sitemaps()
+            if self.sitemaps:
+                await self._seed_from_sitemaps()
             await self._loop()
         return self._finish()
 
@@ -534,13 +537,15 @@ async def crawl_company_site(
     limits: Optional[CrawlLimits] = None,
     clock: Callable[[], float] = time.monotonic,
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    sitemaps: bool = True,
 ) -> CrawlResult:
     """Crawl the website at `url` and return its pages, candidate PDF links, stats and warnings.
 
     Limits come from config unless `limits` is given; a `fetcher` passed in keeps its own size cap
     and concurrency. `browser` is a factory for an async context
     manager that yields a page renderer; it defaults to headless Chromium through Playwright, and
-    when that is not installed the static text is kept and the result carries a warning.
+    when that is not installed the static text is kept and the result carries a warning. With
+    `sitemaps=False` the sitemaps are not read, for a crawl of one known page.
 
     Raises UrlBlocked for an address that is invalid or not public, and SiteUnreachable when the
     homepage cannot be read or robots.txt does not allow it. Every other problem is counted in the
@@ -549,4 +554,4 @@ async def crawl_company_site(
     start = normalize_url(url)
     limits = limits or CrawlLimits.from_settings()
     async with (fetcher or SiteFetcher(max_bytes=limits.max_bytes, concurrency=limits.concurrency)) as site:
-        return await _Crawl(site, start, limits, browser, clock, sleep).run()
+        return await _Crawl(site, start, limits, browser, clock, sleep, sitemaps).run()
