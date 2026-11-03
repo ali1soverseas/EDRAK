@@ -85,10 +85,13 @@ class ResearchRunManager:
         try:
             async with get_db() as db:
                 await runs_repo.update_research_run(db, run_id, status=ResearchRunStatus.RUNNING, stage="seed")
-            graph = build_research_graph(self._deps())
+            deps = self._deps()
+            graph = build_research_graph(deps)
             initial: dict[str, Any] = {"workspace_id": workspace_id, "run_id": run_id, "seed_url": seed_url, "warnings": []}
-            await graph.ainvoke(initial, {"recursion_limit": RECURSION_LIMIT})
+            await asyncio.wait_for(graph.ainvoke(initial, {"recursion_limit": RECURSION_LIMIT}), deps.options.max_run_s)
             await self._close_if_open(run_id, "The run ended before it could record its result.")
+        except asyncio.TimeoutError:
+            await self._close_if_open(run_id, "The run took longer than its time limit and was stopped. Nothing was saved.")
         except asyncio.CancelledError:
             await asyncio.shield(self._close_if_open(run_id, None, ResearchRunStatus.CANCELLED))
             raise

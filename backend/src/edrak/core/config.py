@@ -169,6 +169,7 @@ class Settings(BaseSettings):
 
     # Company research run: the graph that crawls, reads PDFs, extracts facts and fills gaps.
     COMPANY_RESEARCH_RUN_TIME_BUDGET_S: float = 900.0  # no new round of pages starts after this
+    COMPANY_RESEARCH_RUN_MAX_S: float = 3600.0  # the run is stopped and failed after this, whatever it is doing
     # Categories a run tries to fill with extra rounds on the company's own site, comma separated.
     COMPANY_RESEARCH_IMPORTANT_CATEGORIES: str = "leadership,ownership_and_funding,financials,locations,history"
     COMPANY_RESEARCH_GAP_MAX_ROUNDS: int = 2  # extra crawl rounds, never more than 2

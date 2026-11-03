@@ -452,6 +452,28 @@ def test_a_third_party_page_is_fetched_with_the_same_safeguards(research_db_path
 # ------------------------------------------------------------------ one run at a time, and cancelling
 
 
+def test_a_run_that_hangs_is_stopped_at_its_time_limit_and_saves_nothing(research_db_path):
+    async def go():
+        site, gate = acme_site(), asyncio.Event()  # the homepage never answers
+        manager = ResearchRunManager(deps(site, Model(*ALL), fetcher=held(site, gate), options=options(max_run_s=0.3)))
+        async with get_db() as db:
+            ws = await company(db)
+        run = await manager.start(ws)
+        await manager.wait(run.id)
+        async with get_db() as db:
+            return manager, run, await runs_repo.get_research_run(db, ws, run.id), await facts_repo.list_facts(db, ws)
+
+    manager, run, stored, facts = asyncio.run(go())
+    assert stored.status == ResearchRunStatus.FAILED and "time limit" in stored.error and facts == []
+    assert not manager.is_active(run.id)
+
+
+def test_the_run_time_limit_comes_from_config(monkeypatch):
+    assert settings.COMPANY_RESEARCH_RUN_MAX_S == 3600.0
+    monkeypatch.setattr(settings, "COMPANY_RESEARCH_RUN_MAX_S", 60.0)
+    assert ResearchOptions.from_settings().max_run_s == 60.0
+
+
 def test_a_company_has_one_active_run_at_a_time(research_db_path):
     async def go():
         site, gate = acme_site(), asyncio.Event()

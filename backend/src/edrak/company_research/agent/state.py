@@ -37,6 +37,7 @@ class ResearchOptions:
     """The run's settings, read once when the run is built."""
 
     time_budget_s: float
+    max_run_s: float
     important: tuple[str, ...]
     gap_rounds: int
     gap_targets: int
@@ -50,6 +51,7 @@ class ResearchOptions:
         names = settings.COMPANY_RESEARCH_IMPORTANT_CATEGORIES.split(",")
         return cls(
             time_budget_s=settings.COMPANY_RESEARCH_RUN_TIME_BUDGET_S,
+            max_run_s=settings.COMPANY_RESEARCH_RUN_MAX_S,
             important=tuple(n.strip() for n in names if n.strip()),
             gap_rounds=min(MAX_EXTRA_ROUNDS, max(0, settings.COMPANY_RESEARCH_GAP_MAX_ROUNDS)),
             gap_targets=max(1, settings.COMPANY_RESEARCH_GAP_MAX_TARGETS),
