@@ -617,3 +617,13 @@ def test_display_quote_keeps_a_lone_asterisk_and_never_returns_nothing():
     assert display_quote("Revenue* grew 5 * 3") == "Revenue* grew 5 * 3"
     assert display_quote("****") == "****"
 
+
+def test_the_prompt_asks_for_company_wide_keys_one_year_and_readable_values():
+    llm = Llm(reply())
+    run([doc()], llm)
+    system = llm.calls[0][0]["content"]
+    assert "A key describes the company as a whole" in system and "never put it under the company-wide key" in system.lower()
+    assert "latest year only" in system
+    assert "Never a bare number" in system and "YYYY-MM-DD" in system
+    assert "transliterate Arabic" in system
+    assert "written in English" in system and "except names" not in system  # names are no longer kept in Arabic
