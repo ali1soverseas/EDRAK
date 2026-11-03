@@ -13,6 +13,7 @@ import asyncio
 import hashlib
 import logging
 import time
+from collections import Counter
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Optional
@@ -96,6 +97,7 @@ class _Reader:
         self.result = PdfReadResult()
         self.stats = self.result.stats
         self.hashes: set[str] = set()
+        self.robots_hosts: Counter[str] = Counter()
 
     async def _before_request(self, url: str) -> None:
         """Runs before every request, so before every redirect hop too."""
@@ -110,7 +112,10 @@ class _Reader:
         if outcome is not Outcome.READ:
             field = outcome.value
             setattr(self.stats, field, getattr(self.stats, field) + 1)
-            self.result.warnings.append(f"Skipped {_label(candidate.url)}: {detail}")
+            if outcome is Outcome.ROBOTS:
+                self.robots_hosts[(urlsplit(candidate.url).hostname or "").lower()] += 1  # named once, in run()
+            else:
+                self.result.warnings.append(f"Skipped {_label(candidate.url)}: {detail}")
 
     async def _download(self, candidate: PdfCandidate) -> Optional[Fetched]:
         try:
@@ -185,6 +190,11 @@ class _Reader:
                 self._not_tried(candidates[index:], f"{self.limits.max_attempts} downloads were already tried.")
                 break
             await self.read(candidate)
+        if self.robots_hosts:
+            hosts = ", ".join(sorted(self.robots_hosts))
+            self.result.warnings.append(
+                f"{sum(self.robots_hosts.values())} PDF(s) were skipped because robots.txt does not allow them ({hosts})."
+            )
         self.stats.elapsed_s = round(self.clock() - begun, 3)
         return self.result
 

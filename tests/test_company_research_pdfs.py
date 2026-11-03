@@ -310,6 +310,8 @@ def test_files_robots_txt_forbids_do_not_use_up_the_download_attempts(files):
     assert sum(1 for o in outcomes(result).values() if o == "robots") == 6
     assert result.stats.attempted == 1 and result.stats.read == 1
     assert not any(p.startswith("/private/f") for p in site.paths)
+    robots_notes = [w for w in result.warnings if "robots.txt" in w]
+    assert robots_notes == ["6 PDF(s) were skipped because robots.txt does not allow them (acme.example)."]  # one note, not six
 
 
 def test_requests_to_one_host_are_spaced_by_the_host_delay(files):
