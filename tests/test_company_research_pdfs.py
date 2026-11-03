@@ -301,6 +301,17 @@ def test_robots_txt_is_respected_for_pdfs(files):
     assert "/private/plan.pdf" not in site.paths
 
 
+def test_files_robots_txt_forbids_do_not_use_up_the_download_attempts(files):
+    """A site links many files on a host that forbids them; the allowed files after them must still be tried."""
+    forbidden = "".join(f'<a href="/private/f{i}.pdf">Annual report {i}</a>' for i in range(6))
+    site = website(forbidden + '<a href="/files/report.pdf">Report</a>', {"/files/report.pdf": files.single("ok"), **{f"/private/f{i}.pdf": files.single(f"f{i}") for i in range(6)}})
+    _, result = crawl_and_read(site, limits=pdf_limits(max_attempts=2))
+    assert outcomes(result)[REPORT] == "read"
+    assert sum(1 for o in outcomes(result).values() if o == "robots") == 6
+    assert result.stats.attempted == 1 and result.stats.read == 1
+    assert not any(p.startswith("/private/f") for p in site.paths)
+
+
 def test_requests_to_one_host_are_spaced_by_the_host_delay(files):
     site = website('<a href="/a.pdf">A</a><a href="/b.pdf">B</a>', {"/a.pdf": files.numbered(1), "/b.pdf": files.numbered(2)})
     crawled, _ = crawl_and_read(site)

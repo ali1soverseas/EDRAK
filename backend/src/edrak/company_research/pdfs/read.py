@@ -116,6 +116,7 @@ class _Reader:
         try:
             return await self.site.get(candidate.url, kinds=PDF_TYPES, before_request=self._before_request)
         except _RobotsDisallowed:
+            self.stats.attempted -= 1  # the file was never requested, so it is not one of the downloads the cap counts
             self._report(candidate, Outcome.ROBOTS, "robots.txt does not allow it.")
         except UnexpectedContentType:
             self._report(candidate, Outcome.NOT_PDF, "the address is not a PDF.")
