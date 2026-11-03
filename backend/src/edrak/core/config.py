@@ -167,6 +167,18 @@ class Settings(BaseSettings):
     # OCR text only; every other source must contain the quote exactly, after normalization.
     COMPANY_RESEARCH_EXTRACT_OCR_TOLERANCE: float = 0.9
 
+    # Company research run: the graph that crawls, reads PDFs, extracts facts and fills gaps.
+    COMPANY_RESEARCH_RUN_TIME_BUDGET_S: float = 900.0  # no new round of pages starts after this
+    # Categories a run tries to fill with extra rounds on the company's own site, comma separated.
+    COMPANY_RESEARCH_IMPORTANT_CATEGORIES: str = "leadership,ownership_and_funding,financials,locations,history"
+    COMPANY_RESEARCH_GAP_MAX_ROUNDS: int = 2  # extra crawl rounds, never more than 2
+    COMPANY_RESEARCH_GAP_MAX_TARGETS: int = 4  # pages read per extra round
+    # Only the company's own social bios are read, and only for categories still empty. Third party
+    # sources (Serper search, then the top results) are off unless this is on.
+    COMPANY_RESEARCH_THIRD_PARTY: bool = False
+    COMPANY_RESEARCH_THIRD_PARTY_MAX_SEARCHES: int = 4
+    COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES: int = 6  # pages read in all, across searches
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
