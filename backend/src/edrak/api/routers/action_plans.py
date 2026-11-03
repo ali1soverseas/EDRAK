@@ -247,7 +247,10 @@ async def approve_plan(plan_id: str, body: ApproveIn, session: SessionOut = Depe
             await db.execute("UPDATE decisions SET status = 'superseded' WHERE brief_id = ? AND status = 'decided'", (row["brief_id"],))
             await db.execute("UPDATE action_plans SET status = 'superseded' WHERE brief_id = ? AND status = 'approved' AND id <> ?",
                              (row["brief_id"], plan_id))
-        result = await briefs_router.create_decision(db, session, row["brief_id"], decision, action_plan_id=plan_id, commit=False)
+        result = await briefs_router.create_decision(
+            db, session, row["brief_id"], decision, action_plan_id=plan_id, commit=False,
+            user_reason=body.rationale,
+        )
         await plans_repo.approve(db, plan_id, session.user.user_id, commit=False)
         await db.commit()
     except BaseException:

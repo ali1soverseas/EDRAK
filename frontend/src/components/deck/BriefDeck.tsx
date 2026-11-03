@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFullscreen } from "../../lib/useFullscreen";
 import { modKey } from "../../lib/platform";
+import { useI18n } from "../../i18n";
 import { useL } from "../../lib/useL";
 import { api } from "../../services/api";
 import { edrak } from "../../services/edrak";
@@ -61,6 +62,7 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
   const [menu, setMenu] = useState(false);
   const [lifecycle, setLifecycle] = useState(initial.lifecycle);
 
+  const { dir } = useI18n();
   const slides = brief.deck?.slides ?? [];
   const reload = useCallback(() => {
     void api.getBrief(brief.brief_id).then((b) => { setBrief(b as unknown as BriefV3); setLifecycle((b as unknown as BriefV3).lifecycle); });
@@ -129,7 +131,7 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
 
   return (
     <DeckContext.Provider value={api_}>
-      <div ref={container} className={`col brief-page deck ${fullscreen ? "brief-fullscreen" : ""}`}>
+      <div ref={container} className={`col brief-page deck ${fullscreen ? "brief-fullscreen" : ""}`} dir={dir}>
         <div className="row jb brief-bar deck-bar">
           <div className="row g10" style={{ minWidth: 0 }}>
             <span className="mono t3">{L("Brief", "موجز")} {briefNumber(brief.brief_no)}</span>
