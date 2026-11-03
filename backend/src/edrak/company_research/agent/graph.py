@@ -44,7 +44,7 @@ def build_research_graph(deps: Optional[ResearchDeps] = None):
     nodes = Nodes(deps)
     graph = StateGraph(ResearchState)
     graph.add_node("seed", safe("seed", nodes.seed, deps, fatal=True))
-    graph.add_node("crawl", safe("crawl", nodes.crawl, deps, fatal=True))
+    graph.add_node("crawl", safe("crawl", nodes.crawl, deps))  # a failure on the first round sets the error itself
     graph.add_node("pdfs", safe("pdfs", nodes.pdfs, deps))
     graph.add_node("extract", safe("extract", nodes.extract, deps))
     graph.add_node("gap_check", safe("gap_check", nodes.gap_check, deps))

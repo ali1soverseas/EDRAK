@@ -159,6 +159,32 @@ def test_a_step_that_breaks_adds_a_warning_and_the_run_goes_on(research_db_path,
     assert "annual_revenue" not in by_key(facts) and "ceo" in by_key(facts)  # the pages were still extracted and saved
 
 
+def test_a_crash_while_reading_extra_pages_keeps_what_the_first_round_found(research_db_path, monkeypatch):
+    real, calls = agent_nodes.crawl_company_site, []
+
+    async def crash_after_the_first(*args, **kwargs):
+        calls.append(1)
+        if len(calls) > 1:
+            raise RuntimeError("the browser died")
+        return await real(*args, **kwargs)
+
+    monkeypatch.setattr(agent_nodes, "crawl_company_site", crash_after_the_first)
+    _, run, facts = run_it(acme_site(), Model(*ALL), **home_only())
+    assert run.status == ResearchRunStatus.DONE and run.error is None and len(calls) == 2
+    assert "founded_year" in by_key(facts) and "ceo" not in by_key(facts)  # the home page was kept; the extra page was not read
+    assert any("crawl step stopped with an unexpected error (RuntimeError)" in w for w in run.warnings)
+    assert "browser died" not in " ".join(run.warnings)
+
+
+def test_a_crash_while_reading_the_first_pages_fails_the_run(research_db_path, monkeypatch):
+    async def crash(*args, **kwargs):
+        raise RuntimeError("the browser died")
+
+    monkeypatch.setattr(agent_nodes, "crawl_company_site", crash)
+    _, run, facts = run_it(acme_site(), Model(*ALL))
+    assert run.status == ResearchRunStatus.FAILED and "crawl step stopped" in run.error and facts == []
+
+
 def test_a_failure_while_saving_fails_the_run(research_db_path, monkeypatch):
     async def broken(*args, **kwargs):
         raise RuntimeError("disk full")

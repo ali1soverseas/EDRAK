@@ -206,7 +206,15 @@ class Nodes:
 
     async def crawl(self, state: ResearchState) -> dict[str, Any]:
         targets = state.get("targets") or []
-        update = await (self._crawl_targets(state, targets) if targets else self._crawl_site(state))
+        try:
+            update = await (self._crawl_targets(state, targets) if targets else self._crawl_site(state))
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            logger.exception("The crawl step failed")
+            message = f"The crawl step stopped with an unexpected error ({type(exc).__name__})."
+            # Nothing was read at all only on the first round, and only then is the run without a website.
+            update = {"new_pages": [], "warnings": [message], **({} if targets else {"error": message})}
         pages = update.pop("new_pages")
         known = {page_key(p.url) for p in state.get("pages", [])}
         pages = [p for p in pages if page_key(p.url) not in known]
