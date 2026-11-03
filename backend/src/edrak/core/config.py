@@ -150,6 +150,14 @@ class Settings(BaseSettings):
     COMPANY_RESEARCH_CRAWL_MAX_CLICKS: int = 5  # "load more" style buttons, per page
     COMPANY_RESEARCH_CRAWL_MAX_EXPANDS: int = 20  # tabs and accordions, per page
 
+    # Company research PDFs: downloaded from the company's own pages, read, and deleted. The host
+    # delay and the fetch timeout are the crawl's.
+    COMPANY_RESEARCH_PDF_MAX_PDFS: int = 8  # read per run
+    COMPANY_RESEARCH_PDF_MAX_MB: int = 20  # per file
+    COMPANY_RESEARCH_PDF_MAX_PAGES: int = 60  # read per file; later pages are left out
+    COMPANY_RESEARCH_PDF_MAX_ATTEMPTS: int = 24  # downloads tried per run, whatever the outcome
+    COMPANY_RESEARCH_PDF_CONTEXT_CHARS: int = 48000  # text kept per file; a longer file is cut to the best pages
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
