@@ -83,6 +83,11 @@ def _apply_additions(path: Path) -> None:
         dcols = {r[1] for r in conn.execute("PRAGMA table_info(decisions)")}
         if dcols and "action_plan_id" not in dcols:
             conn.execute("ALTER TABLE decisions ADD COLUMN action_plan_id text REFERENCES action_plans(id)")
+        if dcols and "preference_tags" not in dcols:
+            conn.execute("ALTER TABLE decisions ADD COLUMN preference_tags text")
+        bcols = {r[1] for r in conn.execute("PRAGMA table_info(briefs)")}
+        if bcols and "arabic_document" in bcols:
+            conn.execute("ALTER TABLE briefs DROP COLUMN arabic_document")
         if "challenge_id" not in cols:
             conn.execute("ALTER TABLE metrics ADD COLUMN challenge_id text")
         tcols = {r[1] for r in conn.execute("PRAGMA table_info(chat_threads)")}

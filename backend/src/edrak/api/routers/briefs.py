@@ -229,28 +229,39 @@ async def record_decision(
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
     """Record the decision and lock a snapshot of the brief and every source behind it."""
-    return await create_decision(db, session, brief_id, body)
+    return await create_decision(db, session, brief_id, body, user_reason=body.rationale)
 
 
 async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_id: str, body: DecisionIn,
-                          action_plan_id: Optional[str] = None, *, commit: bool = True) -> dict[str, Any]:
-    """Record a decision with a locked evidence snapshot. With commit=False the caller owns the transaction and the audit."""
+                          action_plan_id: Optional[str] = None, *, commit: bool = True,
+                          user_reason: Optional[str] = None) -> dict[str, Any]:
+    """Record a decision with a locked evidence snapshot. With commit=False the caller owns the transaction and the audit.
+
+    ``user_reason`` is only text the user typed. It is kept apart from ``body.rationale``, which may
+    be filled with generated plan text when the user leaves the reason blank.
+    """
+    from edrak.DecisionAnalysis.personalization import tag_decision
+    from edrak.db.util import dumps as _dumps
+
     row = await _brief(db, session, brief_id)
     if await _fetch_one(db, "SELECT id FROM decisions WHERE brief_id = ? AND status = 'decided'", (brief_id,)):
         raise HTTPException(status_code=409, detail="already_decided")
     decision_id, snapshot_id = _new_id(), _new_id()
     uid = session.user.user_id
+    document = row["document"] if isinstance(row["document"], dict) else {}
+    from edrak.briefing.translate import translate_ar_to_en
+
+    tags = tag_decision(document.get("options") or [], body.option_label, user_reason, translate=translate_ar_to_en)
     await db.execute(
-        """INSERT INTO decisions (id, workspace_id, brief_id, option_label, title, rationale, owner_id, review_on, recorded_by, action_plan_id)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO decisions (id, workspace_id, brief_id, option_label, title, rationale, owner_id, review_on, recorded_by, action_plan_id, preference_tags)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (decision_id, session.workspace.workspace_id, brief_id, body.option_label, body.title.strip(), body.rationale,
-         uid, body.review_on.isoformat() if body.review_on else None, uid, action_plan_id),
+         uid, body.review_on.isoformat() if body.review_on else None, uid, action_plan_id, _dumps(tags)),
     )
     for i, step in enumerate(s for s in body.next_steps if s.strip()):
         await db.execute("INSERT INTO decision_next_steps (id, decision_id, position, body, owner_id) VALUES (?, ?, ?, ?, ?)",
                          (_new_id(), decision_id, i, step.strip(), uid))
     evidence = await _fetch_all(db, "SELECT uid FROM evidence WHERE request_id = ?", (row["request_id"],))
-    from edrak.db.util import dumps as _dumps
 
     await db.execute(
         "INSERT INTO evidence_snapshots (id, decision_id, brief_id, source_count, worker_count, brief_content) VALUES (?, ?, ?, ?, ?, ?)",

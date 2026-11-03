@@ -75,6 +75,7 @@ export function PlanPanel({ option, orderedOnly, onDecisionChanged }: { option: 
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [note, setNote] = useState("");
+  const [reason, setReason] = useState("");
   const [loaded, setLoaded] = useState(false);
   const poll = useRef<number | undefined>(undefined);
 
@@ -134,7 +135,7 @@ export function PlanPanel({ option, orderedOnly, onDecisionChanged }: { option: 
     try {
       let current = row;
       if (dirty || editingApproved) current = await edrak.saveActionPlan(row.id, doc);
-      await edrak.approveActionPlan(current.id);
+      await edrak.approveActionPlan(current.id, { rationale: reason.trim() || undefined });
       load(await edrak.actionPlan(current.id));
       onDecisionChanged();
     } catch (e) { setErrors(detail(e)); } finally { setBusy(false); }
@@ -303,6 +304,8 @@ export function PlanPanel({ option, orderedOnly, onDecisionChanged }: { option: 
           )}
           {editingApproved && <button type="button" className="btn ghost" onClick={() => load(row)}>{L("Cancel", "إلغاء")}</button>}
           <button type="button" className="btn" disabled={busy || !dirty} onClick={() => void save()}>{editingApproved ? L("Save as a new version", "احفظ كنسخة جديدة") : L("Save changes", "احفظ التعديلات")}</button>
+          <input className="inp grow" style={{ minWidth: 220 }} value={reason} onChange={(e) => setReason(e.target.value)} dir="auto"
+            placeholder={L("Why this option? (optional)", "لماذا هذا الخيار؟ (اختياري)")} />
           <button type="button" className="btn pri" disabled={busy} onClick={() => void approve()}><Icon name="check" size={14} /> {L("Approve and record decision", "اعتمد وسجّل القرار")}</button>
         </footer>
       )}

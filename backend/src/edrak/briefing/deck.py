@@ -158,6 +158,7 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
         "id": "decisions", "title": "Decisions", "framing": template.decision_framing,
         "options": [o["key"] for o in doc.get("options") or []],
         "priorities_known": _priorities_known(doc),
+        "personalization": doc.get("personalization"),
     }
     evidence = {
         "id": "evidence_gaps", "title": "Evidence and gaps",
