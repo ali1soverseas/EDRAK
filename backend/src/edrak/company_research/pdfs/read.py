@@ -55,6 +55,7 @@ class PdfLimits:
     max_attempts: int = 24
     context_chars: int = 48000
     host_delay_s: float = 1.0
+    time_budget_s: float = 240.0  # for the whole stage; a download or read that is still going at the end is given up
 
     @classmethod
     def from_settings(cls) -> "PdfLimits":
@@ -65,6 +66,7 @@ class PdfLimits:
             max_attempts=max(1, settings.COMPANY_RESEARCH_PDF_MAX_ATTEMPTS),
             context_chars=max(1, settings.COMPANY_RESEARCH_PDF_CONTEXT_CHARS),
             host_delay_s=max(0.0, settings.COMPANY_RESEARCH_CRAWL_HOST_DELAY_S),
+            time_budget_s=max(1.0, settings.COMPANY_RESEARCH_PDF_TIME_BUDGET_S),
         )
 
 
@@ -96,6 +98,7 @@ class _Reader:
         self.throttle = HostThrottle(limits.host_delay_s, clock, sleep)
         self.result = PdfReadResult()
         self.stats = self.result.stats
+        self.deadline = clock() + limits.time_budget_s
         self.hashes: set[str] = set()
         self.robots_hosts: Counter[str] = Counter()
 
@@ -117,9 +120,17 @@ class _Reader:
             else:
                 self.result.warnings.append(f"Skipped {_label(candidate.url)}: {detail}")
 
+    def _remaining(self) -> float:
+        return self.deadline - self.clock()
+
     async def _download(self, candidate: PdfCandidate) -> Optional[Fetched]:
         try:
-            return await self.site.get(candidate.url, kinds=PDF_TYPES, before_request=self._before_request)
+            # The fetcher's timeout applies to each network read, so a slow file that keeps trickling in would never end.
+            return await asyncio.wait_for(
+                self.site.get(candidate.url, kinds=PDF_TYPES, before_request=self._before_request), max(0.1, self._remaining())
+            )
+        except asyncio.TimeoutError:
+            self._report(candidate, Outcome.UNREACHABLE, "it was still downloading when the time budget ran out.")
         except _RobotsDisallowed:
             self.stats.attempted -= 1  # the file was never requested, so it is not one of the downloads the cap counts
             self._report(candidate, Outcome.ROBOTS, "robots.txt does not allow it.")
@@ -152,7 +163,12 @@ class _Reader:
             return False
         self.hashes.add(digest)
         try:
-            extracted = await asyncio.to_thread(extract_bytes, fetched.body, ocr=self.ocr, page_limit=self.limits.max_pages)
+            extracted = await asyncio.wait_for(
+                asyncio.to_thread(extract_bytes, fetched.body, ocr=self.ocr, page_limit=self.limits.max_pages), max(0.1, self._remaining())
+            )
+        except asyncio.TimeoutError:  # the reading thread cannot be stopped; it ends on its own and its result is dropped
+            self._report(candidate, Outcome.UNREACHABLE, "reading it was still going when the time budget ran out.")
+            return False
         except PdfRejected as exc:
             if exc.code == "encrypted":
                 self._report(candidate, Outcome.ENCRYPTED, "it is password protected.")
@@ -188,6 +204,9 @@ class _Reader:
                 break
             if self.stats.attempted >= self.limits.max_attempts:
                 self._not_tried(candidates[index:], f"{self.limits.max_attempts} downloads were already tried.")
+                break
+            if self._remaining() <= 0:
+                self._not_tried(candidates[index:], f"the {self.limits.time_budget_s:g} second time budget for PDFs ran out.")
                 break
             await self.read(candidate)
         if self.robots_hosts:

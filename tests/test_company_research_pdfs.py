@@ -314,6 +314,39 @@ def test_files_robots_txt_forbids_do_not_use_up_the_download_attempts(files):
     assert robots_notes == ["6 PDF(s) were skipped because robots.txt does not allow them (acme.example)."]  # one note, not six
 
 
+def test_a_slow_download_is_given_up_when_the_time_budget_runs_out_and_the_rest_are_not_tried(files):
+    """Each network read has its own timeout, so a file that keeps trickling in could take for ever without a budget."""
+    import httpx
+    from edrak.company_profile.url_import.fetch import SiteFetcher
+
+    good = files.single("good")
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/robots.txt":
+            return httpx.Response(200, text="", headers={"content-type": "text/plain"})
+        if request.url.path == "/slow.pdf":
+            await asyncio.sleep(5)
+        return httpx.Response(200, content=good, headers={"content-type": "application/pdf"})
+
+    async def resolve(host, port):
+        return ["93.184.216.34"]
+
+    candidates = [PdfCandidate("https://acme.example/slow.pdf", "", HOME), PdfCandidate("https://acme.example/fast.pdf", "", HOME)]
+    fetcher = SiteFetcher(transport=httpx.MockTransport(handler), resolver=resolve)
+    result = asyncio.run(read_pdfs(candidates, HOME, fetcher=fetcher, limits=pdf_limits(time_budget_s=0.3), ocr=NO_OCR))
+    assert outcomes(result) == {"https://acme.example/slow.pdf": "unreachable", "https://acme.example/fast.pdf": "not_tried"}
+    assert any("still downloading when the time budget ran out" in w for w in result.warnings)
+    assert any("1 more PDF(s) were not tried: the 0.3 second time budget for PDFs ran out." in w for w in result.warnings)
+    assert result.documents == []
+
+
+def test_the_pdf_time_budget_comes_from_config():
+    from edrak.company_research.pdfs import PdfLimits
+    from edrak.core.config import settings
+
+    assert settings.COMPANY_RESEARCH_PDF_TIME_BUDGET_S == 240.0 and PdfLimits.from_settings().time_budget_s == 240.0
+
+
 def test_requests_to_one_host_are_spaced_by_the_host_delay(files):
     site = website('<a href="/a.pdf">A</a><a href="/b.pdf">B</a>', {"/a.pdf": files.numbered(1), "/b.pdf": files.numbered(2)})
     crawled, _ = crawl_and_read(site)

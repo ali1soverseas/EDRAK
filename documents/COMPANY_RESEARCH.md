@@ -141,6 +141,7 @@ All keys are environment variables (see `.env.example`).
 | `COMPANY_RESEARCH_PDF_MAX_PAGES` | 60 | Pages read per file; later pages are left out |
 | `COMPANY_RESEARCH_PDF_MAX_ATTEMPTS` | 24 | Downloads tried per run, whatever the outcome (files `robots.txt` forbids are not downloads) |
 | `COMPANY_RESEARCH_PDF_CONTEXT_CHARS` | 48000 | Text kept per file |
+| `COMPANY_RESEARCH_PDF_TIME_BUDGET_S` | 240 | Time for downloading and reading all PDFs; a file still going at the end is given up |
 | `COMPANY_RESEARCH_EXTRACT_BATCH_CHARS` | 24000 | Source text per model call; a document is never split |
 | `COMPANY_RESEARCH_EXTRACT_MAX_BATCHES` | 30 | Model calls per run, across all rounds |
 | `COMPANY_RESEARCH_EXTRACT_OCR_TOLERANCE` | 0.9 | How closely a quote must match text read by OCR (other text must match exactly) |

@@ -157,6 +157,7 @@ class Settings(BaseSettings):
     COMPANY_RESEARCH_PDF_MAX_PAGES: int = 60  # read per file; later pages are left out
     COMPANY_RESEARCH_PDF_MAX_ATTEMPTS: int = 24  # downloads tried per run, whatever the outcome
     COMPANY_RESEARCH_PDF_CONTEXT_CHARS: int = 48000  # text kept per file; a longer file is cut to the best pages
+    COMPANY_RESEARCH_PDF_TIME_BUDGET_S: float = 240.0  # downloading and reading all files; the last one is given up when it runs out
 
     # Company research extraction: facts read from crawled pages and PDF pages by the model, then
     # checked against the sources. The model, its reasoning level and the repair retry are the
