@@ -109,6 +109,7 @@ Errors have the form `{"detail": {"code": "...", "message": "..."}}`.
 | Method and path | Purpose |
 |---|---|
 | `POST /company/research/runs` | Start a run. Body (optional): `{"seed_url": "..."}`. Returns the run, `202`. `422` `no_website` or `invalid_url`; `409` `run_active` (with `run_id`). |
+| `GET /company/research/runs` | The company's runs, newest first (`limit`, 1 to 50, default 10). A screen opens on the first one. |
 | `GET /company/research/runs/{id}` | Status, `stage`, counts, `stats`, `warnings`, `error`, timestamps. |
 | `POST /company/research/runs/{id}/cancel` | Stop a queued or running run. `409` `wrong_state` if it has ended. |
 | `GET /company/facts` | Facts grouped by category, with English and Arabic labels. Filters (repeatable): `status`, `category`, `source_tier`. Each category lists `facts` and `conflicts` (facts of one key that disagree, together). |

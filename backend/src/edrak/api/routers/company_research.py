@@ -166,6 +166,17 @@ async def start_research_run(
     return _run_out(run)
 
 
+@router.get("/company/research/runs", response_model=list[ResearchRunOut])
+async def list_research_runs(
+    limit: int = Query(default=10, ge=1, le=50),
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> list[ResearchRunOut]:
+    """The company's runs, newest first. A screen opens on the first one to show what is running or what the last run found."""
+    runs = await runs_repo.list_research_runs(db, session.workspace.workspace_id, limit=limit)
+    return [_run_out(run) for run in runs]
+
+
 @router.get("/company/research/runs/{run_id}", response_model=ResearchRunOut)
 async def get_research_run(
     run_id: str,

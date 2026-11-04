@@ -84,7 +84,7 @@ def wait_for(client, run_id, until=("done", "failed", "cancelled"), stage=None, 
 
 
 ENDPOINTS = [
-    ("post", RUNS, {}), ("get", f"{RUNS}/x", None), ("post", f"{RUNS}/x/cancel", None), ("get", FACTS, None),
+    ("post", RUNS, {}), ("get", RUNS, None), ("get", f"{RUNS}/x", None), ("post", f"{RUNS}/x/cancel", None), ("get", FACTS, None),
     ("patch", f"{FACTS}/x", {"status": "approved"}), ("post", f"{FACTS}/bulk", {"ids": ["x"], "action": "approve"}),
     ("get", "/api/company/fact-categories", None),
 ]
@@ -158,6 +158,28 @@ def test_a_second_run_is_refused_while_one_is_active_and_the_first_can_be_cancel
     assert again.status_code == 409 and again.json()["detail"]["code"] == "wrong_state"
     assert client.get(FACTS).json()["total"] == 0
     assert client.post(RUNS).status_code == 202  # a new run can start once the first has ended
+
+
+def test_the_runs_of_a_company_are_listed_newest_first_and_only_its_own(client):
+    ws = sign_in(client)
+    assert client.get(RUNS).json() == []
+    first = asyncio.run(_queued_run(ws))
+    asyncio.run(_finish_run(first))
+    second = asyncio.run(_queued_run(ws))
+    outsider = other_user(client)
+    listed = client.get(RUNS).json()
+    assert [r["id"] for r in listed] == [second, first] and listed[0]["status"] == "queued" and "workspace_id" not in listed[0]
+    assert [r["id"] for r in client.get(f"{RUNS}?limit=1").json()] == [second]
+    assert outsider.get(RUNS).json() == []
+    assert client.get(f"{RUNS}?limit=0").status_code == 422 and client.get(f"{RUNS}?limit=51").status_code == 422
+
+
+async def _finish_run(run_id):
+    from edrak.company_research import ResearchRunStatus
+    from edrak.db.repositories import research_runs as runs_repo
+
+    async with get_db() as db:
+        await runs_repo.finish_research_run(db, run_id, status=ResearchRunStatus.DONE)
 
 
 def test_runs_belong_to_one_company(client):
@@ -354,7 +376,7 @@ def test_a_bad_bulk_request_is_refused(client, body):
 def test_the_endpoints_are_in_the_openapi_document(client):
     paths = client.get("/openapi.json").json()["paths"]
     for path, methods in {
-        "/api/company/research/runs": {"post"}, "/api/company/research/runs/{run_id}": {"get"},
+        "/api/company/research/runs": {"post", "get"}, "/api/company/research/runs/{run_id}": {"get"},
         "/api/company/research/runs/{run_id}/cancel": {"post"}, "/api/company/facts": {"get"},
         "/api/company/facts/{fact_id}": {"patch"}, "/api/company/facts/bulk": {"post"}, "/api/company/fact-categories": {"get"},
     }.items():
