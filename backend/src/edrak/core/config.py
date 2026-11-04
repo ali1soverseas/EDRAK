@@ -96,6 +96,13 @@ class Settings(BaseSettings):
     # Evaluation after each run: a model judges a sample of findings (faithfulness, relevance).
     EVALUATION_JUDGE: bool = True
 
+    # Observability & Monitoring (Langfuse)
+    LANGFUSE_ENABLED: bool = False
+    LANGFUSE_PUBLIC_KEY: Optional[str] = None
+    LANGFUSE_SECRET_KEY: Optional[str] = None
+    LANGFUSE_HOST: str = "http://localhost:3000"
+    LANGFUSE_RELEASE: str = "edrak-2.0.0"
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.

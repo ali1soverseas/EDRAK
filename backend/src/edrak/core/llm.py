@@ -125,18 +125,23 @@ def get_chat_model(
     temperature: Optional[float] = None,
     base_url: Optional[str] = None,
     num_predict: Optional[int] = None,
+    callbacks: Optional[list] = None,
 ) -> ChatOllama:
     """The chat model every component uses.
 
     `agent` selects which credential is used. Passing it is what keeps one
     agent's quota separate from another's.
     """
+    extra_kwargs = {}
+    if callbacks is not None:
+        extra_kwargs["callbacks"] = callbacks
     return ChatOllama(
         model=model or settings.OLLAMA_MODEL,
         base_url=base_url or NATIVE_BASE_URL,
         temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
         num_predict=num_predict or DEFAULT_NUM_PREDICT,
         client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
+        **extra_kwargs,
     )
 
 
@@ -190,6 +195,7 @@ def get_json_object(
     agent: Optional[str] = None,
     model: Optional[str] = None,
     temperature: Optional[float] = None,
+    callbacks: Optional[list] = None,
 ) -> dict:
     """Ask for a JSON object and return it as a dict.
 
@@ -197,7 +203,7 @@ def get_json_object(
     pinning a pydantic schema would be more churn than the guarantee is worth.
     """
     message = get_chat_model(
-        model, agent=agent, temperature=temperature
+        model, agent=agent, temperature=temperature, callbacks=callbacks
     ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}])
     text = str(message.content).strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
