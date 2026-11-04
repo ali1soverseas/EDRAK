@@ -15,6 +15,7 @@ import "./styles/responsive.css";
 import "./styles/density.css";
 import "./styles/product.css";
 import "./styles/deck.css";
+import "./styles/research.css";
 
 const root = document.getElementById("root");
 
