@@ -65,7 +65,14 @@ def log_block(agent: str, title: str, body: str) -> None:
         log_action(agent, line)
 
 
-def call_structured(schema, prompt: str, *, method: str = "function_calling", retries: int = 1):
+def call_structured(
+    schema,
+    prompt: str,
+    *,
+    method: str = "function_calling",
+    retries: int = 1,
+    num_predict: int | None = None,
+):
     """Ask for a validated `schema` instance, or None.
 
     `method` defaults to tool calling, which is what constrains output against
@@ -77,13 +84,19 @@ def call_structured(schema, prompt: str, *, method: str = "function_calling", re
     Retries, which replaces the retry loop the free-text helper used to own.
     A schema call returns None rather than raising, so a caller cannot tell a
     parse failure from an empty answer without this.
+
+    `num_predict` is the reply ceiling. It matters on Groq's free tier, which
+    meters output at 1,000 tokens per minute per account and rejects a request
+    whose expected reply does not fit the remainder of that minute. The cheap
+    calls here answer in a few hundred tokens at most, so a caller states a
+    ceiling and leaves the minute budget for the calls that need it.
     """
     last_error = "the model did not respond"
     for attempt in range(max(retries, 1)):
         try:
-            return get_chat_model(agent="market", temperature=0).with_structured_output(
-                schema, method=method
-            ).invoke(prompt)
+            return get_chat_model(
+                agent="market", temperature=0, num_predict=num_predict
+            ).with_structured_output(schema, method=method).invoke(prompt)
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             log_action("market_intelligence", f"structured call failed: {last_error}")
@@ -649,7 +662,7 @@ def task_executor(state: MarketAgentState) -> dict:
                     rejected_queries=rejected_queries,
                 )
                 tool_args = search_arguments(
-                    call_structured(QueryArgs, arg_prompt, method="json_mode"),
+                    call_structured(QueryArgs, arg_prompt, method="json_mode", num_predict=192),
                     task["description"],
                     goal,
                     attempt,
@@ -707,6 +720,7 @@ def task_executor(state: MarketAgentState) -> dict:
                     Usefulness,
                     usefulness_prompt(task["description"], preview or result_str),
                     method="json_mode",
+                    num_predict=96,
                 )
             model_rejects = verdict is not None and not verdict.useful
             is_useful = bool(new_urls) and (strong_hits or (relevant and not model_rejects))
@@ -814,11 +828,11 @@ def task_executor(state: MarketAgentState) -> dict:
         context_note="Source text:",
         context_block=source_text,
     )
-    reply = call_structured(AnalysisReply, prompt, method="json_mode")
+    reply = call_structured(AnalysisReply, prompt, method="json_mode", num_predict=384)
     if reply is None:
         # A single claim often comes back bare rather than wrapped, which the
         # wrapper schema rejects. One extra call, only on that failure.
-        reply = call_structured(AnalysisClaim, prompt, method="json_mode")
+        reply = call_structured(AnalysisClaim, prompt, method="json_mode", num_predict=192)
     parsed_claims = claims_from_analysis(reply, source_text)
     if not parsed_claims:
         print("  Claim rejected: no supported fact")

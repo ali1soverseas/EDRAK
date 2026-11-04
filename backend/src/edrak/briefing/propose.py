@@ -154,10 +154,12 @@ def _prompt(cards: list[dict[str, Any]], signals: list[dict[str, Any]], framing:
 def propose_copy(cards: list[dict[str, Any]], signals: list[dict[str, Any]], strip: list[dict[str, Any]], *, framing: str, goal: str,
                  names: list[str], unmet: list[str] = (), feedback: str = "") -> Optional[ProposedCopy]:
     from edrak.core.llm import get_structured, schema_instruction
+    from edrak.usage.context import usage_context
 
     try:
-        model = get_structured(ProposedCopy, agent="orchestrator", temperature=0.2)
-        return model.invoke([_prompt(cards, signals, framing, goal, names, strip, unmet, feedback), schema_instruction(ProposedCopy)])
+        with usage_context(stage="briefing", operation="brief_propose"):
+            model = get_structured(ProposedCopy, agent="orchestrator", temperature=0.2)
+            return model.invoke([_prompt(cards, signals, framing, goal, names, strip, unmet, feedback), schema_instruction(ProposedCopy)])
     except Exception as exc:  # noqa: BLE001
         logger.info("Brief copy proposal failed: %s", exc)
         return None

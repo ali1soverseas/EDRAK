@@ -88,16 +88,24 @@ def _key(name: str, scope: str | None = None) -> tuple[str, str]:
       The second element is the env var name, for logging and quota
       attribution only. A caller that logs a key must log the name, never the
       value. When a scope is given the scoped variable is preferred, so each
-      worker can hold its own key for a shared provider, and the bare name
-      remains the fallback.
+      worker can hold its own key for a shared provider, and the backup only
+      matters once the primary is empty, exactly as provider_key orders it.
 
       This mirrors edrak.core.llm.provider_key and is deliberately a separate
       copy rather than an import: this module is a standalone MCP server that
       does not depend on the backend package, so it keeps working on its own.
       The two must agree on the naming rule, so change them together.
+
+      Without the backups here, a scoped key that ran out of quota read as
+      "no key", and every search it should have run came back empty and silent.
       """
-      names = [f"{name}_{scope.upper()}"] if scope else []
+      if scope:
+          scoped = f"{name}_{scope.upper()}"
+          names = [scoped, f"{scoped}_BACKUP"]
+      else:
+          names = []
       names.append(name)
+      names.append(f"{name}_BACKUP")
       for candidate in names:
           value = os.getenv(candidate, "").strip()
           if value:

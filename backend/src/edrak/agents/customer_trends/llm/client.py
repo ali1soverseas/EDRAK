@@ -41,20 +41,32 @@ class StructuredOutputError(RuntimeError):
     """The model did not produce output matching the requested schema."""
 
 
-def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
-    """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
-    from edrak.core.llm import provider_key
+def get_chat_model(role: Role, *, settings: Settings | None = None) -> BaseChatModel:
+    """Build the chat model for a role.
+
+    Default: the native Ollama Cloud endpoint (never the /v1 shim). A trial
+    provider set through LLM_PROVIDER goes through the shared factory instead,
+    so this worker keeps its own credential slot and the same usage tracking.
+    """
+    from edrak.core import llm as core_llm
 
     s = settings or get_settings()
+    if core_llm.active_provider() != "ollama":
+        return core_llm.get_chat_model(agent="customer_trends", temperature=s.ollama_temperature)
     # Resolved through the shared resolver so this worker gets its own quota,
     # with the same own-key-then-backup-then-shared fallback as every other
     # component.
-    key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
+    key, variable = core_llm.provider_key("OLLAMA_API_KEY", "customer_trends")
     if not key:
         raise LLMConfigError(
             f"{variable} is not set: add it to .env at the repository root"
         )
     model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
+    # Same usage callback as every other component, attached to this worker's own
+    # model so its calls are recorded too.
+    from edrak.usage.store import enabled as _usage_enabled
+    from edrak.usage.tracker import usage_callback
+
     return ChatOllama(
         model=model or s.ollama_model,
         base_url=s.ollama_base_url,
@@ -63,6 +75,7 @@ def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllam
             "headers": {"Authorization": f"Bearer {key}"},
             "timeout": s.ollama_timeout_s,
         },
+        callbacks=[usage_callback()] if _usage_enabled() else None,
     )
 
 

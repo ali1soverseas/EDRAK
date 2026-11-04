@@ -16,6 +16,7 @@ counting. Nothing here writes prose.
 
 from __future__ import annotations
 
+import contextvars
 import logging
 import re
 from collections.abc import Callable
@@ -64,6 +65,18 @@ Fetcher = Callable[[str], str]
 # ---------------------------------------------------------------- helpers
 
 
+def _submit_in_context(pool: ThreadPoolExecutor, func: Callable, job: Any):
+    """Hand one job to the pool with the caller's context carried across.
+
+    A pool thread does not inherit contextvars, so a model call made there would
+    lose both the usage context and LangChain's ambient run config, which is what
+    carries the graph node name - the call would be recorded with no stage at
+    all. The copy is made here, in the submitting thread, where the context is
+    still intact.
+    """
+    return pool.submit(contextvars.copy_context().run, func, job)
+
+
 def cell_key(metric_id: str, entity: str) -> str:
     return f"{metric_id}|{entity.strip().casefold()}"
 
@@ -88,7 +101,11 @@ def _text(e: Evidence) -> str:
 def _default_finder(prompt: str) -> Optional[Candidates]:
     from edrak.core.llm import get_structured, schema_instruction
 
-    model = get_structured(Candidates, agent="orchestrator", temperature=0)
+    # Small replies: measured at ~67 output tokens per call, so 512 leaves
+    # room. The ceiling matters on a tier that meters output per minute, where
+    # a request whose expected reply exceeds the whole minute is refused
+    # before it is even counted.
+    model = get_structured(Candidates, agent="metrics", temperature=0, num_predict=512)
     return model.invoke([prompt, schema_instruction(Candidates)])
 
 
@@ -231,7 +248,7 @@ def point(defn: MetricDef, entities: list[str], windows: list[tuple[Evidence, st
     try:
         got = _seams["find"](prompt)
     except Exception as exc:  # noqa: BLE001 - a failed call is a gap, never a guess
-        logger.info("Metric pointing failed for %s: %s", defn.id, exc)
+        logger.warning("Metric pointing failed for %s: %s", defn.id, str(exc)[:300])
         return []
     by_id = {ev.evidence_id: ev for ev, _ in windows}
     canon = {e.casefold(): e for e in entities}
@@ -354,11 +371,12 @@ def harvest(state: MetricsState) -> MetricsState:
         return point(defn, ents, windows_for(defn, ents, all_evidence))
 
     with ThreadPoolExecutor(max_workers=PARALLEL) as pool:
-        for obs_list in pool.map(run, jobs):
-            for o in obs_list:
-                owner = evidence_owner.get(o.evidence_id)
-                if owner:
-                    found.setdefault(owner, []).append(o)
+        per_job = [f.result() for f in [_submit_in_context(pool, run, job) for job in jobs]]
+    for obs_list in per_job:
+        for o in obs_list:
+            owner = evidence_owner.get(o.evidence_id)
+            if owner:
+                found.setdefault(owner, []).append(o)
     n = sum(len(v) for v in found.values())
     log_action(AGENT, f"harvest: {n} figures found in the sources the workers saved")
     return {"results": results, "observations": found}
@@ -494,7 +512,7 @@ def hunt(state: MetricsState) -> MetricsState:
         return cell, evs, obs, own, diag
 
     with ThreadPoolExecutor(max_workers=PARALLEL) as pool:
-        done = list(pool.map(one, [c for c, _ in todo]))
+        done = [f.result() for f in [_submit_in_context(pool, one, cell) for cell, _ in todo]]
     added = 0
     for cell, evs, obs, own, diag in done:
         key = cell_key(cell["requirement"].metric_id, cell["requirement"].entity)

@@ -176,3 +176,25 @@ def test_worker_result_from_state_marks_partial_when_tasks_skipped(sample_resear
     assert result.started_at is not None
     assert result.completed_at is not None
     assert result.error == "Some research tasks were skipped."
+
+def test_call_structured_passes_the_reply_ceiling(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
+
+    seen = {}
+
+    class FakeModel:
+        def with_structured_output(self, schema, method=None):
+            return self
+
+        def invoke(self, prompt):
+            return "ok"
+
+    def fake_get_chat_model(*, agent, temperature, num_predict=None):
+        seen["agent"] = agent
+        seen["num_predict"] = num_predict
+        return FakeModel()
+
+    monkeypatch.setattr(nodes, "get_chat_model", fake_get_chat_model)
+
+    assert nodes.call_structured(dict, "prompt", num_predict=384) == "ok"
+    assert seen == {"agent": "market", "num_predict": 384}

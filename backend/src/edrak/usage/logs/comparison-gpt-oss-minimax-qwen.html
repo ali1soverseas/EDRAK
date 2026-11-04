@@ -1,0 +1,160 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDRAK â€” MiniMax M3.1 Flash vs gpt-oss:120b vs qwen3.8-27b</title>
+<style>:root{--bg:#f6f7f9;--panel:#fff;--line:#e2e5ea;--ink:#16181d;--muted:#5a6472;--accent:#3b6ef6;--bad:#b3261e;--good:#1e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#16181d;--panel:#1d2026;--line:#2c313a;--ink:#e9ecf1;--muted:#98a2b3;--accent:#6d95ff;--bad:#ff6b5e;--good:#5cb860}}
+*{box-sizing:border-box}
+body{margin:0;padding:2rem 1.25rem;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1180px;margin:0 auto}
+h1{font-size:1.35rem;margin:0 0 1rem}
+h2{font-size:.95rem;margin:2rem 0 .6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+h2:first-of-type{margin-top:0}
+h3{font-size:1.05rem;margin:0 0 .5rem}
+a{color:var(--accent)}
+code{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+.muted{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.25rem;margin:0 0 1.25rem}
+.stats{list-style:none;margin:0;padding:0;display:grid;gap:.3rem 2rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.stats li{display:flex;justify-content:space-between;gap:1rem;padding:.2rem 0;border-bottom:1px dashed var(--line)}
+.stats b{font-variant-numeric:tabular-nums;font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:0 0 1.25rem}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:rgba(127,127,127,.10);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+tbody tr+tr td{border-top:1px solid var(--line)}
+td.n{font-variant-numeric:tabular-nums}
+td.bad{color:var(--bad);font-weight:600;font-variant-numeric:tabular-nums}
+td.good{color:var(--good);font-weight:600;font-variant-numeric:tabular-nums}
+ul{margin:.3rem 0 .3rem 1.1rem;padding:0}
+li{margin:.25rem 0}
+footer{margin-top:2rem;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<h1>MiniMax M3.1 Flash vs gpt-oss:120b vs qwen/qwen3.8-27b</h1>
+
+<h2>trial setup</h2>
+<div class="panel">
+<ul class="stats">
+<li><span>candidates</span><b>minimax-m3.1-flash (Ollama Cloud, free promo) آ· qwen/qwen3.8-27b (Groq free tier)</b></li>
+<li><span>incumbent</span><b>gpt-oss:120b (Ollama Cloud)</b></li>
+<li><span>host workload</span><b>GitLab competitive intelligence â€” identical stored form</b></li>
+<li><span>call sites</span><b>same prompts, same strict JSON schemas, same temperature</b></li>
+<li><span>constraints</span><b>Groq free tier: 8k TPM split as 7k input + 1k output, 1,000 requests/day, per account آ· Ollama Cloud: shared plan آ· MiniMax: promo quota</b></li>
+<li><span>pricing basis</span><b>provider-reported tokens only; failures are never priced as zero</b></li>
+<li><span>published rates</span><b>MiniMax $0.15 in / $0.60 out / $0.015 cached آ· gpt-oss $0.15 / $0.60 / $0.014 آ· qwen $0.80 / $4.00</b></li>
+<li><span>promo note</span><b>MiniMax is free during the promo; figures below use published rates so the decision survives the promo</b></li>
+</ul>
+</div>
+
+<h2>run-by-run</h2>
+<table>
+<thead><tr><th>run</th><th>model</th><th>calls</th><th>ok</th><th>%</th><th>in tok</th><th>out tok</th><th>cost</th><th>avg lat</th><th>wall</th><th>outcome</th></tr></thead>
+<tbody>
+<tr><td><a href="run-competitive-intelligence-gpt-oss-120b-469d3607.html">469d3607</a></td><td>gpt-oss:120b</td><td class="n">159</td><td class="good">118</td><td class="n">74%</td><td class="n">429,670</td><td class="n">123,040</td><td class="n">$0.1383</td><td class="n">2.89s</td><td class="n">15m 55s</td><td>completed report</td></tr>
+<tr><td><a href="run-competitive-intelligence-qwen3.8-27b-bf4a44d1.html">bf4a44d1</a></td><td>qwen (baseline, 4 shared accounts â†’ contention)</td><td class="n">175</td><td class="n">34</td><td class="bad">19%</td><td class="n">45,860</td><td class="n">6,097</td><td class="n">$0.0611</td><td class="n">0.81s</td><td class="n">43m 48s</td><td>7 findings, 2 empty workers</td></tr>
+<tr><td><a href="run-competitive-intelligence-qwen3.8-27b-21642c57.html">21642c57</a></td><td>qwen (spread keys, 1 per account)</td><td class="n">178</td><td class="n">55</td><td class="bad">31%</td><td class="n">92,907</td><td class="n">7,997</td><td class="n">$0.1063</td><td class="n">0.75s</td><td class="n">13m 25s</td><td>7 findings, 2 empty workers, 46 gaps</td></tr>
+<tr><td><a href="run-competitive-intelligence-qwen3.8-27b-6c9ec144.html">6c9ec144</a></td><td>qwen (paced client, chunked competitor)</td><td class="n">153</td><td class="n">61</td><td class="bad">40%</td><td class="n">138,181</td><td class="n">13,088</td><td class="n">$0.1629</td><td class="n">0.93s</td><td class="bad">91m 0s</td><td>brief delivered, 8 findings (8 verified), 7 gaps, 347 sources, coverage 29%, evidence <b>partial</b></td></tr>
+<tr><td><a href="run-competitive-intelligence-minimax-m3.1-flash-d6f29438.html">d6f29438</a></td><td><b>minimax-m3.1-flash</b></td><td class="n">160</td><td class="good">157</td><td class="good">98%</td><td class="n">559,375</td><td class="n">509,928</td><td class="n">$0.3899</td><td class="n">30.4s</td><td class="n">70m 46s</td><td>brief delivered, 47 findings (45 verified), 32 gaps, evidence <b>partial</b></td></tr>
+</tbody>
+</table>
+<p class="muted">MiniMax run id <code>d6f29438047a70fa9bb56e63916087ae</code>, same form as <code>21642c57</code> via the rerun endpoint. An earlier MiniMax attempt (<code>d003c807</code>) was aborted after 5 calls because of a repository bug in <code>customer_trends</code> (a missing <code>provider_key</code> reference on the Ollama path), not a model failure; its 5 calls / $0.0319 stay in the ledger.</p>
+
+<h2>per-stage success â€” where each model held or fell apart</h2>
+<table>
+<thead><tr><th>stage</th><th>gpt-oss 469d3607</th><th>qwen run 1</th><th>qwen run 2</th><th>qwen paced 6c9ec144</th><th>MiniMax d6f29438</th></tr></thead>
+<tbody>
+<tr><td>supervisor (plan)</td><td class="good">1/1</td><td class="good">1/1</td><td class="good">1/1</td><td class="good">1/1</td><td class="good">1/1</td></tr>
+<tr><td>competitor_intelligence</td><td class="good">15/15</td><td class="bad">2/4</td><td class="bad">2/13</td><td class="bad">2/4</td><td class="good">12/14</td></tr>
+<tr><td>market_intelligence</td><td class="good">20/20</td><td class="bad">12/38</td><td class="n">17/30</td><td class="bad">16/28</td><td class="good">16/17</td></tr>
+<tr><td>customer_trends</td><td class="good">21/22</td><td class="bad">0/8</td><td class="bad">4/13</td><td class="n">5/6</td><td class="good">7/7</td></tr>
+<tr><td>internal_intelligence</td><td class="good">2/2</td><td class="muted">not dispatched</td><td class="muted">not dispatched</td><td class="muted">not dispatched</td><td class="good">2/2</td></tr>
+<tr><td>verification</td><td class="good">6/6</td><td class="muted">n/a</td><td class="muted">n/a</td><td class="muted">0 LLM calls â€” 8/8 verified</td><td class="good">5/5</td></tr>
+<tr><td>cross_signal</td><td class="good">3/3</td><td class="muted">n/a</td><td class="bad">0/1</td><td class="bad">0/1</td><td class="good">1/1</td></tr>
+<tr><td>metrics</td><td class="n">50/89</td><td class="bad">19/124</td><td class="bad">31/120</td><td class="bad">37/113</td><td class="good">113/113</td></tr>
+<tr><td>synthesis</td><td class="bad">0/1</td><td class="muted">n/a</td><td class="muted">n/a</td><td class="muted">0 LLM calls â€” brief built from verified findings</td><td class="muted">0 LLM calls â€” brief built from verified findings</td></tr>
+</tbody>
+</table>
+
+<h2>throughput and latency</h2>
+<table>
+<thead><tr><th>model (run)</th><th>avg latency</th><th>p95</th><th>output tokens / successful call</th><th>wall clock</th></tr></thead>
+<tbody>
+<tr><td>qwen (21642c57, unpaced)</td><td class="n">0.75s</td><td class="muted">n/a</td><td class="n">145</td><td class="n">13m 25s</td></tr>
+<tr><td>qwen (6c9ec144, paced)</td><td class="n">0.93s</td><td class="n">1.52s</td><td class="n">215</td><td class="bad">91m 0s</td></tr>
+<tr><td>gpt-oss (469d3607)</td><td class="n">2.89s</td><td class="muted">n/a</td><td class="n">1,043</td><td class="n">15m 55s</td></tr>
+<tr><td>MiniMax (d6f29438)</td><td class="n">30.4s</td><td class="n">144.0s</td><td class="bad">3,248</td><td class="bad">70m 46s</td></tr>
+</tbody>
+</table>
+<p class="muted">MiniMax answered correctly but slowly and verbosely: 3.2أ— gpt-oss's output per call and roughly 10أ— its latency. The p95 of 144 s is a single long synthesis-adjacent call; the median is far lower.</p>
+
+<h2>failure mechanics â€” measured, not guessed</h2>
+<div class="panel">
+<ul>
+<li><b>MiniMax: 3 failures in 160 calls (1.9%), all transient <code>ResponseError</code>.</b> No 413, no 429, no structured-output failures, no JSON-schema violations. Every worker completed: competitor 12/14, market 16/17, customer_trends 7/7, internal 2/2, verification 5/5, metrics 113/113. One market call returned empty content in the aborted attempt and fell back to deterministic extraction; it did not recur in the full run.</li>
+<li><b>MiniMax's cost is verbosity, not failure.</b> 509,928 output tokens vs gpt-oss's 123,040 for the same workload â€” 4.1أ—. At $0.60/M out that is $0.306 of the $0.390 total, before input tokens.</li>
+<li><b>Metrics is the cost centre in every model, but only MiniMax ran it clean.</b> 113 calls and $0.2006 â€” 51% of the run â€” because verification accepted 47 findings and the grid fans out per (metric, entity) with up to 3 hunts per cell. gpt-oss lost 39 of 89 metrics calls; qwen lost 108 of 124.</li>
+<li><b>qwen's failures were structural, not incidental.</b> Groq free tier: HTTP 413 <i>"Request too large â€¦ on input tokens"</i> on the competitor prompt class (deterministic across retries), 429 self-throttle inside each account's own 8k TPM bucket, and literal <code>{}</code> at temperature 0 â†’ <code>json_validate_failed</code>. The 413 was not a mystery: <code>MAX_EVIDENCE_CHARS</code> was 60,000 characters per synthesis batch, ~15k tokens, sized for a large-context model. No amount of pacing fixes a per-request ceiling.</li>
+<li><b>The paced run found the real shape of the ceiling.</b> Groq reports 8k tokens per minute per account, but the 429 bodies split it into <b>7,000 input + 1,000 output</b>. A prompt above 7k input is refused, and so is a request whose <i>expected reply</i> exceeds the whole 1,000-token output minute (<i>"Request too large â€¦ Requested 1327"</i>) â€” even after the window rolls. Pacing only manages the remainder; it cannot admit an oversized request. Market's 12 failures were a mix of both classes: a transient overshoot (<i>"Used 799, Requested 202. Try again in 60ms"</i>) and the permanent expected-reply refusal. Metrics settled at 37/113 once its hunts grew past what one minute could admit.</li>
+<li><b>Reply ceilings are implemented, not yet proven.</b> Market now states 384 / 192 / 192 / 96 tokens per call and metrics 512. The provider names <code>max_tokens</code> as the lever, but a probe with a 16,384-token ceiling was admitted on a short prompt, so its estimate follows the prompt's expected reply rather than the ceiling alone. Only a rerun can show whether market recovers from 16/28 and metrics from 37/113.</li>
+<li><b>Known defect in the pacer:</b> it reserves a fixed 600 output tokens per request, but a long reply spends ~1,000 and exhausts the output minute. Measured directly â€” the next call failed with <i>"Used 998, Requested 33"</i>. The reserve should follow each call's ceiling; not fixed.</li>
+<li><b>Mechanics of the paced run's 92 failures:</b> 76 metrics 429s, 12 market 429s, 2 competitor and 1 customer_trends 400s (<code>json_validate_failed</code>), and 1 cross_signal failure recorded against the wrong model label â€” a failed call carries no response metadata, so the tracker falls back to <code>OLLAMA_MODEL</code>; the request itself went to Groq. The 400s are not a fixed temperature-0 defect: a direct probe with the metrics schema failed once with <code>failed_generation: "{```"</code> (qwen opening a code fence inside the JSON) and succeeded on the next identical call.</li>
+<li><b>gpt-oss's 41 failures were retry-able.</b> Mostly metrics (39), plus a failed synthesis call; it still produced a report. Its structured output never broke the schema.</li>
+<li><b>One repository bug surfaced and was fixed mid-trial.</b> <code>customer_trends/llm/client.py</code> called <code>provider_key()</code> after an earlier edit removed its import; the branch only executes on the Ollama path, so the qwen trial never touched it. One-line fix, run restarted. It was the only unplanned code change: the pacing, competitor chunking and reply ceilings were the trial's deliberate scope, and no prompt was altered to accommodate any model.</li>
+</ul>
+</div>
+
+<h2>economics</h2>
+<table>
+<thead><tr><th>model</th><th>calls</th><th>ok</th><th>fail %</th><th>cost (priced)</th><th>$/successful call</th><th>$/completed report</th><th>$/finding</th></tr></thead>
+<tbody>
+<tr><td>gpt-oss:120b (all runs)</td><td class="n">257</td><td class="good">208</td><td class="n">19%</td><td class="n">$0.2258</td><td class="good">$0.00109</td><td class="good">$0.1383</td><td class="muted">n/a â€” findings not persisted</td></tr>
+<tr><td>qwen/qwen3.8-27b (all runs, 9)</td><td class="n">589</td><td class="n">222</td><td class="bad">62%</td><td class="n">$0.4442</td><td class="bad">$0.00200</td><td class="bad">$0.2221 per brief (2)</td><td class="bad">$0.0296 (15 findings)</td></tr>
+<tr><td>qwen/qwen3.8-27b (paced run only)</td><td class="n">153</td><td class="n">61</td><td class="bad">60%</td><td class="n">$0.1629</td><td class="bad">$0.00267</td><td class="bad">$0.1629</td><td class="bad">$0.0204 (8 findings)</td></tr>
+<tr><td><b>minimax-m3.1-flash</b> (this run)</td><td class="n">160</td><td class="good">157</td><td class="good">2%</td><td class="n">$0.3899</td><td class="n">$0.00248</td><td class="n">$0.3899</td><td class="good">$0.0083 (47 findings)</td></tr>
+</tbody>
+</table>
+<p class="muted">Per-finding cost favours MiniMax only because it produced 6.7أ— more findings; per-call and per-report cost favour gpt-oss by 2.3أ— and 2.8أ—. The aborted MiniMax attempt adds $0.0319, making the trial's MiniMax spend $0.4218 for one brief. qwen's all-runs row includes two aborted attempts and two diagnostic probes (16 calls, 24,945 tokens) that produced no pipeline output.</p>
+
+<h2>projection for a clean run</h2>
+<table>
+<thead><tr><th>model</th><th>calls</th><th>ok</th><th>cost</th><th>wall clock</th><th>expected depth</th></tr></thead>
+<tbody>
+<tr><td>gpt-oss:120b</td><td class="n">159â€“180</td><td class="n">~75%</td><td class="n">$0.14â€“0.18</td><td class="n">16â€“25 min</td><td>report, moderate findings</td></tr>
+<tr><td>minimax-m3.1-flash</td><td class="n">160â€“180</td><td class="good">~98%</td><td class="n">$0.39â€“0.45</td><td class="n">65â€“85 min</td><td>47â€“55 findings, more sources</td></tr>
+<tr><td>qwen/qwen3.8-27b on Groq free tier (paced)</td><td class="n">150â€“160</td><td class="bad">~40%</td><td class="n">$0.16â€“0.18</td><td class="bad">85â€“95 min</td><td>brief, 6â€“10 findings, partial evidence</td></tr>
+</tbody>
+</table>
+
+<h2>verdict</h2>
+<div class="panel">
+<ul>
+<li><b>MiniMax M3.1 Flash is the most reliable model ever run through this pipeline: 98% call success, zero structural failures, every worker completed.</b> It is also the only model that produced a full brief with 47 findings and 45 verified, on the same prompts gpt-oss and qwen used.</li>
+<li><b>It is not the cheapest host.</b> $0.3899 per report vs gpt-oss's $0.1383 (2.8أ—) and $0.00248 vs $0.00109 per successful call (2.3أ—), driven almost entirely by output verbosity, not retries. It is also ~10أ— slower per call and ~4.5أ— slower wall-clock.</li>
+<li><b>Evidence quality is real but not perfect:</b> 45 of 47 findings were evidence-backed; the brief carries <code>evidence_status: partial</code>, 32 information gaps, and 354 sources. gpt-oss's report was shorter; qwen's seven findings were duplicated and off-topic.</li>
+<li><b>The promo changes the accounting, not the verdict.</b> At $0 actual billing MiniMax is free today, but the published-rate comparison above is what a post-promo decision must use â€” and at those rates gpt-oss is still the better default.</li>
+<li><b>Pacing made qwen complete, not competitive.</b> With a per-credential token bucket and a 12k-character competitor batch, the run finished: 153 calls, 61 successful (40%), 8 findings verified, 347 sources, a brief in 91 minutes for $0.1629 at published rates. The 413 class disappeared entirely. What remains is depth: 8 findings against MiniMax's 47, two workers effectively empty, coverage 29%, evidence <code>partial</code>.</li>
+<li><b>qwen's binding constraint is per-request, not per-minute.</b> On Groq's free tier a request must fit inside one minute on its own: â‰¤7k input tokens, and an expected reply â‰¤1k output tokens as the provider estimates it. Waiting never admits a request that is too large by itself; the levers are a lower reply ceiling at the call site and smaller prompts. Pacing alone cannot buy depth on this tier â€” and where it does apply, the pacer's fixed 600-token output reserve is still the wrong number.</li>
+<li><b>Recommended split:</b> keep <b>gpt-oss:120b</b> as the default host (fast, cheap, 74% call success with retries); escalate to <b>MiniMax M3.1 Flash</b> when depth matters more than 70 minutes and $0.40 â€” it is the best available quality-per-run. qwen is viable only as a free-tier fallback where 8 findings and 90 minutes are acceptable, and only with the pacing, competitor chunking and reply ceilings in place.</li>
+<li><b>Portable lessons:</b> output verbosity, not input size, is the cost lever at these rates; the metrics stage can consume half a run's budget when verification accepts many findings; and a model can be structurally perfect while still being 3أ— more expensive than the incumbent.</li>
+</ul>
+</div>
+
+<h2>method notes</h2>
+<div class="panel">
+<ul>
+<li>Tokens and cost come from <code>usage/logs/llm_calls.jsonl</code>, written by the shared usage callback on every call; cost uses <code>usage/pricing.yaml</code> at published rates. Unknown models are reported as <i>unknown</i>, never zero.</li>
+<li>All three models ran the same stored form (analysis <code>21642c57</code>, rerun endpoint), the same prompts and the same strict JSON schemas. Only <code>LLM_PROVIDER</code> / <code>OLLAMA_MODEL</code> changed.</li>
+<li>Correction to the earlier comparison: <code>gpt-oss:120b</code> runs on <b>Ollama Cloud</b> (<code>NATIVE_BASE_URL = https://ollama.com</code>), not a local GPU. The qwen-vs-gpt-oss page's "local Ollama" label was wrong; the numbers there are unaffected.</li>
+<li>The MiniMax run's <code>partial</code> status reflects evidence coverage (2 of 47 findings insufficient), not a failed stage.</li>
+<li>The paced qwen run (<code>6c9ec144</code>) is the only qwen run with client-side pacing: a per-credential token bucket in <code>core/llm.py</code> (7,200 tokens/min, 24 requests/min, one bucket per credential variable), competitor evidence batches of 12k characters on Groq instead of 60k, and market reply ceilings. It was launched 2026-10-23 from the same stored form.</li>
+</ul>
+</div>
+</main>
+<footer>Generated by the EDRAK model-trial analysis آ· data source: <code>llm_calls.jsonl</code> + <code>data/edrak.db</code> (runs, findings, verification, briefs) آ· @2026-10-23</footer>
+</body>
+</html>

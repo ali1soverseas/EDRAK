@@ -9,6 +9,8 @@ __pycache__/
 
 # Environment
 .env
+.env.*
+!.env.example
 
 # Frontend
 node_modules/
@@ -47,6 +49,8 @@ artifacts/*.md
 backend/data/
 # Per-worker run products
 backend/src/edrak/agents/*/outputs/
+# LLM usage tracking output (append-only logs, run products)
+backend/src/edrak/usage/logs/
 
 # Keep directory placeholders if used
 !artifacts/runs/.gitkeep

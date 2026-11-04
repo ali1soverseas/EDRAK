@@ -43,8 +43,13 @@ def sample_research_task() -> ResearchTask:
 
 @pytest.fixture(autouse=True)
 def _no_model_calls_from_guardrails_or_evaluation(monkeypatch):
-    """Tests never reach a real model through the guardrail scope check or the evaluation judge."""
+    """Tests never reach a real model through the guardrail scope check or the evaluation judge.
+
+    The JEV semantic guard is a real external call to JEV Station with a daily
+    budget, so tests must not spend it either.
+    """
     from edrak.core.config import settings
 
     monkeypatch.setattr(settings, "GUARDRAIL_SCOPE_CHECK", False)
     monkeypatch.setattr(settings, "EVALUATION_JUDGE", False)
+    monkeypatch.setattr(settings, "JEV_GUARD_ENABLED", False)

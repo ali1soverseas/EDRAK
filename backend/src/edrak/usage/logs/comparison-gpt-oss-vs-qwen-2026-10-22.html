@@ -1,0 +1,110 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDRAK â€” qwen/qwen3.8-27b vs gpt-oss:120b comparison</title>
+<style>:root{--bg:#f6f7f9;--panel:#fff;--line:#e2e5ea;--ink:#16181d;--muted:#5a6472;--accent:#3b6ef6;--bad:#b3261e;--good:#1e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#16181d;--panel:#1d2026;--line:#2c313a;--ink:#e9ecf1;--muted:#98a2b3;--accent:#6d95ff;--bad:#ff6b5e;--good:#5cb860}}
+*{box-sizing:border-box}
+body{margin:0;padding:2rem 1.25rem;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto}
+h1{font-size:1.35rem;margin:0 0 1rem}
+h2{font-size:.95rem;margin:2rem 0 .6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+h2:first-of-type{margin-top:0}
+h3{font-size:1.05rem;margin:0 0 .5rem}
+a{color:var(--accent)}
+code{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+.muted{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.25rem;margin:0 0 1.25rem}
+.stats{list-style:none;margin:0;padding:0;display:grid;gap:.3rem 2rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.stats li{display:flex;justify-content:space-between;gap:1rem;padding:.2rem 0;border-bottom:1px dashed var(--line)}
+.stats b{font-variant-numeric:tabular-nums;font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:0 0 1.25rem}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:rgba(127,127,127,.10);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+tbody tr+tr td{border-top:1px solid var(--line)}
+td.n{font-variant-numeric:tabular-nums}
+td.bad{color:var(--bad);font-weight:600;font-variant-numeric:tabular-nums}
+td.good{color:var(--good);font-weight:600;font-variant-numeric:tabular-nums}
+ul{margin:.3rem 0 .3rem 1.1rem;padding:0}
+li{margin:.25rem 0}
+footer{margin-top:2rem;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<h1>qwen/qwen3.8-27b (Groq free tier) vs gpt-oss:120b (Ollama Cloud)</h1>
+
+<h2>trial setup</h2>
+<div class="panel">
+<ul class="stats">
+<li><span>candidates</span><b>qwen/qwen3.8-27b on Groq</b></li>
+<li><span>incumbent</span><b>gpt-oss:120b on Ollama Cloud</b></li>
+<li><span>host</span><b>GitLab competitive intelligence</b></li>
+<li><span>call sites</span><b>DDD: same prompts, same strict JSON schemas</b></li>
+<li><span>constraints</span><b>6 Groq free accounts (8k TPM, 200k tok/day each), 1 per agent</b></li>
+<li><span>billing rule</span><b>provider-reported tokens only; failures = unknown</b></li>
+</ul>
+</div>
+
+<h2>run-by-run</h2>
+<table>
+<thead><tr><th>run</th><th>model</th><th>calls</th><th>ok</th><th>%</th><th>in tok</th><th>out tok</th><th>cost</th><th>avg lat</th><th>outcome</th></tr></thead>
+<tbody>
+<tr><td><a href="run-competitive-intelligence-gpt-oss-120b-469d3607.html">469d3607</a></td><td>gpt-oss:120b</td><td class="n">159</td><td class="good">118</td><td class="n">74%</td><td class="n">429,670</td><td class="n">123,040</td><td class="n">$0.1383</td><td class="n">2.89s</td><td>completed report</td></tr>
+<tr><td><a href="run-competitive-intelligence-qwen3.8-27b-bf4a44d1.html">bf4a44d1</a></td><td>qwen (baseline, 4 sharedâ†’contention)</td><td class="n">175</td><td class="n">34</td><td class="bad">19%</td><td class="n">45,860</td><td class="n">6,097</td><td class="n">$0.0611</td><td class="n">0.81s</td><td>7 findings, 2 empty workers</td></tr>
+<tr><td><a href="run-competitive-intelligence-qwen3.8-27b-21642c57.html">21642c57</a></td><td>qwen (spread keys, 1/account)</td><td class="n">178</td><td class="n">55</td><td class="bad">31%</td><td class="n">92,907</td><td class="n">7,997</td><td class="n">$0.1063</td><td class="n">0.75s</td><td>7 findings, 2 empty workers, 46 gaps</td></tr>
+</tbody>
+</table>
+
+<h2>per-stage success â€” where qwen fell apart</h2>
+<table>
+<thead><tr><th>stage</th><th>gpt-oss 469d3607</th><th>qwen run 1 (contended)</th><th>qwen run 2 (spread keys)</th></tr></thead>
+<tbody>
+<tr><td>competitor_intelligence</td><td class="good">15/15</td><td class="bad">2/4</td><td class="bad">2/13</td></tr>
+<tr><td>market_intelligence</td><td class="good">20/20</td><td class="bad">12/38</td><td class="n">17/30</td></tr>
+<tr><td>customer_trends</td><td class="good">21/22</td><td class="bad">0/8</td><td class="bad">4/13</td></tr>
+<tr><td>internal_intelligence</td><td class="good">2/2</td><td class="muted">not dispatched</td><td class="muted">not dispatched</td></tr>
+<tr><td>cross_signal</td><td class="good">3/3</td><td class="muted">n/a</td><td class="bad">0/1</td></tr>
+<tr><td>verification</td><td class="good">6/6</td><td class="muted">n/a</td><td class="muted">n/a</td></tr>
+<tr><td>metrics</td><td class="n">50/89</td><td class="bad">19/124</td><td class="bad">31/120</td></tr>
+<tr><td>supervisor (plan)</td><td class="good">1/1</td><td class="good">1/1</td><td class="good">1/1</td></tr>
+</tbody>
+</table>
+
+<h2>failure mechanics â€” measured, not guessed</h2>
+<div class="panel">
+<ul>
+<li><b>competitor_qwen: HTTP 413, deterministic.</b> <code>Request too large â€¦ on input tokens</code> on attempt 1 <i>and</i> 2 â€” the worker's big-context prompt structurally exceeds Groq free tier's 8k-token-per-minute input budget. Retrying repeats the same 413. qwen can <i>never</i> run this prompt class; gpt-oss ran on Ollama Cloud with no such ceiling (15/15 ok).</li>
+<li><b>qwen 429s moved from collision to self-throttle.</b> Run 1: one shared org replicating across 3 simultaneous workers. Run 2: dedicated keys still 110أ— OpenAIRateLimitError â€” each account fries its <i>own</i> 8k TPM bucket (customer_trends' parallel demand/social branches; metrics' retry storm: 120 calls, 89 fails).</li>
+<li><b>market is the only worker built to survive.</b> 13أ— "Request too large" on its own account, retried/backed off, finished 7/7 findings both qwen runs. Missing this loop in competitor/customer_trends is the design lesson.</li>
+<li><b>qwen structured-output failure mode:</b> literal <code>{}</code> at temperature 0 under strict <code>json_schema</code> â†’ <code>json_validate_failed</code> in run 1, 5أ— <code>OpenAIInvalidRequestError</code> ("Failed to generate JSON") + 7أ— APIStatusError in run 2. Recorded as a comparison finding â€” deliberately not patched around.</li>
+<li><b>query-generation pathology persists:</b> junk suffixes like <code>"â€¦what regulatory"</code> on generated searches â†’ topical drift; run 2's verified findings include duplicated ACA-regulation claims reached from an AI-coding-assistants question.</li>
+</ul>
+</div>
+
+<h2>economics per successful call</h2>
+<table>
+<thead><tr><th>model</th><th>calls</th><th>ok</th><th>fail %</th><th>cost (priced)</th><th>$/successful call</th><th>$/completed report</th></tr></thead>
+<tbody>
+<tr><td>gpt-oss:120b</td><td class="n">257</td><td class="good">208</td><td class="n">19%</td><td class="n">$0.2258</td><td class="n">$0.00109</td><td class="good">$0.1383 â€” one</td></tr>
+<tr><td>qwen/qwen3.8-27b</td><td class="n">361</td><td class="n">89</td><td class="bad">73%</td><td class="n">$0.1707</td><td class="bad">$0.00192</td><td class="bad">$0 â€” none</td></tr>
+</tbody>
+</table>
+
+<h2>verdict</h2>
+<div class="panel">
+<ul>
+<li>qwen's headline (cheap per-token, 0.75s latency, $0 to acquire) does not survive contact with the free tier: <b>73% call failure</b>, a structurally ineligible prompt class (413), and no completed report.</li>
+<li>The per-call efficiency winner under our pricing rules is still <b>gpt-oss:120b ($0.00109/successful call vs $0.00192</b>), and it is the only model that ever produced a complete report through this pipeline.</li>
+<li>The key-spread fix did its job (34â†’55 ok, market 12/38â†’17/30) but moved the wall rather than removing it: 8k TPM أ— 6 accounts is structural for this workload. Cloud free tiers cannot host a competitive-intelligence worker that eats 100k-token contexts.</li>
+<li>Portable lessons independent of model: every worker needs market's retry/backoff loop; prompt-class sizing must be checked against the provider's request ceiling before dispatch; temp-0 strict-JSON regressions need 1 retry-then-report, not 1-attempt-dead.</li>
+<li>Recommended host for further trials: keep <b>gpt-oss:120b</b> as default (<code>LLM_PROVIDER=groq</code> is removed after the trial); qwen drops to a failover/cheap-reference model, not the pipeline host.</li>
+</ul>
+</div>
+</main>
+<footer>Generated by the EDRAK qwen trial analysis آ· data source: <code>llm_calls.jsonl</code> (618 recorded calls, provider-rated tokens only) + <code>data/edrak.db</code> run/task tables آ· @2026-10-18</footer>
+</body>
+</html>

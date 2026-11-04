@@ -1,6 +1,7 @@
 """EDRAK FastAPI application entrypoint."""
 
 import logging
+import sys
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -13,6 +14,33 @@ from edrak.db.repositories.runs import fail_orphaned_runs
 from edrak.db.util import fetch_all
 
 logger = logging.getLogger(__name__)
+
+
+def keep_console_from_failing_a_worker() -> None:
+    """Stop an unencodable character in a print() from losing a whole worker.
+
+    A Windows console defaults to a legacy codepage (cp1256 on this machine) that
+    cannot encode characters models and web pages produce freely - U+2011
+    NON-BREAKING HYPHEN, for one. The worker agents print scraped text and model
+    output directly, so such a character raised UnicodeEncodeError, which dispatch
+    caught and turned into a failed WorkerResult: a worker lost to a hyphen, in the
+    competitor and market stages, while internal (which only logs) was untouched.
+
+    Escaping the rare unencodable character costs nothing; losing a worker does.
+    The encoding is left alone so the console still renders Arabic; only the error
+    handler changes. Every CLI runner already does this - the app never did.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            reconfigure(errors="backslashreplace")
+        except (ValueError, OSError):
+            pass
+
+
+keep_console_from_failing_a_worker()
 
 
 @asynccontextmanager

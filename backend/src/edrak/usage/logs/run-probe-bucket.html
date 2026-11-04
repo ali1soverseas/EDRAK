@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDRAK LLM usage — run probe-bucket</title>
+<style>:root{--bg:#f6f7f9;--panel:#fff;--line:#e2e5ea;--ink:#16181d;--muted:#5a6472;--accent:#3b6ef6;--bad:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#16181d;--panel:#1d2026;--line:#2c313a;--ink:#e9ecf1;--muted:#98a2b3;--accent:#6d95ff;--bad:#ff6b5e}}
+*{box-sizing:border-box}
+body{margin:0;padding:2rem 1.25rem;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto}
+h1{font-size:1.35rem;margin:0 0 1rem}
+h2{font-size:.95rem;margin:2rem 0 .6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+h2:first-child{margin-top:0}
+h3{font-size:1.05rem;margin:0 0 .5rem;display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+h4{font-size:.78rem;margin:1.1rem 0 .4rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+a{color:var(--accent)}
+code{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+.muted{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.25rem}
+.stats{list-style:none;margin:0;padding:0;display:grid;gap:.3rem 2rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.stats li{display:flex;justify-content:space-between;gap:1rem;padding:.2rem 0;border-bottom:1px dashed var(--line)}
+.stats b{font-variant-numeric:tabular-nums;font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{background:rgba(127,127,127,.10);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+tbody tr+tr td{border-top:1px solid var(--line)}
+td.n,strong{font-variant-numeric:tabular-nums}
+td.bad{color:var(--bad);font-weight:600;font-variant-numeric:tabular-nums}
+td.share{width:150px}
+.bar{display:block;height:6px;border-radius:3px;background:rgba(127,127,127,.22);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+footer{margin-top:2rem;color:var(--muted);font-size:.85rem}
+nav.agents{display:flex;flex-wrap:wrap;gap:.35rem .9rem;margin:.2rem 0 1.1rem;font-size:.9rem}
+.agent{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.15rem 1.15rem;margin:0 0 1.15rem}
+.agent .panel{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 .5rem;margin-bottom:.9rem}</style>
+</head>
+<body>
+<main>
+<h1>EDRAK LLM usage — run probe-bucket</h1>
+<section class="panel"><ul class="stats"><li><span>use case</span><b>-</b></li><li><span>model</span><b>qwen/qwen3.8-27b</b></li><li><span>provider</span><b>groq</b></li><li><span>workflow</span><b>3m 00s (calls)</b></li><li><span>calls</span><b>4</b></li><li><span>retries</span><b>0</b></li><li><span>failures</span><b>0</b></li><li><span>input tokens</span><b>12,568</b></li><li><span>output tokens</span><b>255</b></li><li><span>total tokens</span><b>12,823</b></li><li><span>estimated cost</span><b>$0.0111</b></li><li><span>avg latency</span><b>679ms</b></li><li><span>P95 latency</span><b>773ms</b></li><li><span>throughput</span><b>93.829 tok/s (end-to-end)</b></li></ul></section>
+<h2>by stage</h2><table><thead><tr><th>stage</th><th>calls</th><th>retry</th><th>fail</th><th>in tok</th><th>out tok</th><th>cost (USD)</th><th>avg lat</th><th>share</th></tr></thead><tbody><tr><td>internal</td><td class="n">4</td><td class="n">0</td><td class="n">0</td><td class="n">12,568</td><td class="n">255</td><td class="n">$0.0111</td><td class="n">679ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td><strong>TOTAL</strong></td><td class="n">4</td><td class="n">0</td><td class="n">0</td><td class="n">12,568</td><td class="n">255</td><td class="n">$0.0111</td><td class="n">679ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr></tbody></table>
+<h2>agents through the run</h2><nav class="agents"><a href="#agent-internal">internal</a></nav><section class="agent" id="agent-internal"><h3>internal</h3><section class="panel"><ul class="stats"><li><span>calls</span><b>4</b></li><li><span>retries</span><b>0</b></li><li><span>failures</span><b>0</b></li><li><span>input tokens</span><b>12,568</b></li><li><span>output tokens</span><b>255</b></li><li><span>total tokens</span><b>12,823</b></li><li><span>estimated cost</span><b>$0.0111</b></li><li><span>avg latency</span><b>679ms</b></li><li><span>first call</span><b>04:55:14</b></li><li><span>last call</span><b>04:58:14</b></li></ul></section><h4>by operation</h4><table><thead><tr><th>operation</th><th>calls</th><th>retry</th><th>fail</th><th>in tok</th><th>out tok</th><th>cost (USD)</th><th>avg lat</th><th>share</th></tr></thead><tbody><tr><td>probe2</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">65</td><td class="n">$0.0028</td><td class="n">773ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe3</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">67</td><td class="n">$0.0028</td><td class="n">634ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe1</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">68</td><td class="n">$0.0028</td><td class="n">692ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe0</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">55</td><td class="n">$0.0027</td><td class="n">619ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr></tbody></table><h4>calls</h4><table><thead><tr><th>time</th><th>operation</th><th>model</th><th>in tok</th><th>out tok</th><th>cost (USD)</th><th>latency</th><th>status</th></tr></thead><tbody><tr><td class="n" title="2026-10-23T04:55:14.286171Z">04:55:14</td><td>probe2</td><td>qwen/qwen3.8-27b</td><td class="n">3,142</td><td class="n">65</td><td class="n">$0.0028</td><td class="n">773ms</td><td class="n">success</td></tr><tr><td class="n" title="2026-10-23T04:56:14.295542Z">04:56:14</td><td>probe3</td><td>qwen/qwen3.8-27b</td><td class="n">3,142</td><td class="n">67</td><td class="n">$0.0028</td><td class="n">634ms</td><td class="n">success</td></tr><tr><td class="n" title="2026-10-23T04:57:14.308872Z">04:57:14</td><td>probe1</td><td>qwen/qwen3.8-27b</td><td class="n">3,142</td><td class="n">68</td><td class="n">$0.0028</td><td class="n">692ms</td><td class="n">success</td></tr><tr><td class="n" title="2026-10-23T04:58:14.320831Z">04:58:14</td><td>probe0</td><td>qwen/qwen3.8-27b</td><td class="n">3,142</td><td class="n">55</td><td class="n">$0.0027</td><td class="n">619ms</td><td class="n">success</td></tr></tbody></table></section>
+<h2>by operation</h2><table><thead><tr><th>name</th><th>calls</th><th>retry</th><th>fail</th><th>in tok</th><th>out tok</th><th>cost (USD)</th><th>avg lat</th><th>share</th></tr></thead><tbody><tr><td>probe1</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">68</td><td class="n">$0.0028</td><td class="n">692ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe3</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">67</td><td class="n">$0.0028</td><td class="n">634ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe2</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">65</td><td class="n">$0.0028</td><td class="n">773ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr><tr><td>probe0</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">3,142</td><td class="n">55</td><td class="n">$0.0027</td><td class="n">619ms</td><td class="share"><span class="bar"><i style="width:100%"></i></span></td></tr></tbody></table>
+<footer>Generated from the EDRAK LLM usage log by <code>scripts/llm_usage_report.py --html</code>. Costs are provider-rated estimates; a model with no known price reads <i>unknown</i>.</footer>
+</main>
+</body>
+</html>

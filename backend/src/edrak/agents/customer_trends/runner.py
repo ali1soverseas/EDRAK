@@ -6,6 +6,7 @@ one that crashed differ only in status, gaps and warnings. Nothing here raises f
 """
 
 import asyncio
+import contextvars
 from collections.abc import AsyncIterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -339,4 +340,6 @@ def run_worker(
     except RuntimeError:
         return asyncio.run(coroutine)
     with ThreadPoolExecutor(max_workers=1) as pool:
-        return pool.submit(asyncio.run, coroutine).result()
+        # Carry this thread's context into the pool: a pool thread starts empty,
+        # which would drop the usage context and LangChain's run config.
+        return pool.submit(contextvars.copy_context().run, asyncio.run, coroutine).result()

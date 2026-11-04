@@ -165,8 +165,15 @@ def draft_plan(request: BusinessRequest, allowed_workers: list[WorkerType]) -> R
     """The planner's plan, kept to the allowed workers. Falls back to one task per worker."""
     try:
         from edrak.orchestration.planner import LlmPlanner
+        from edrak.usage.context import usage_context, use_case_value
 
-        full = LlmPlanner().plan(request)
+        with usage_context(
+            run_id=request.request_id,
+            use_case=use_case_value(request.business_context.use_case),
+            stage="supervisor",
+            operation="plan_draft",
+        ):
+            full = LlmPlanner().plan(request)
         tasks = [t for t in full.tasks if t.worker in allowed_workers]
         if tasks:
             return ResearchPlan(request_id=request.request_id, tasks=tasks, rationale=full.rationale)

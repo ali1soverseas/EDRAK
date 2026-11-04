@@ -41,6 +41,7 @@ from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
 from edrak.core.config import settings
 from edrak.orchestration.graph import build_graph
+from edrak.usage.context import usage_context, use_case_value
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
 from edrak.orchestration.registry import get_default_registry
@@ -554,26 +555,30 @@ class RunManager:
                     stream_input = {"request": request, "plan": plan}
                 logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)
 
-                async for chunk in graph.astream(stream_input, config, stream_mode="updates"):
-                    if "__interrupt__" in chunk:
-                        interrupts = chunk["__interrupt__"]
-                        payload = interrupts[0].value if interrupts else {}
-                        await self._pause_for_review(active, payload if isinstance(payload, dict) else {})
-                        return
-                    for node_name, node_output in chunk.items():
-                        logger.info("LangGraph node [%s] completed", node_name)
-                        if not isinstance(node_output, dict):
-                            continue
-                        for k, v in node_output.items():
-                            if k in ("results", "outcomes"):
-                                from edrak.orchestration.state import merge_by_task_id
-                                state[k] = merge_by_task_id(state.get(k) or [], v)
-                            else:
-                                state[k] = v
-                        await self._on_node(active, node_name, node_output, state, plan, analysis_id)
-                    if active.pause_requested:
-                        await self._mark_paused(active)
-                        return
+                with usage_context(
+                    run_id=analysis_id,
+                    use_case=use_case_value(request.business_context.use_case),
+                ):
+                    async for chunk in graph.astream(stream_input, config, stream_mode="updates"):
+                        if "__interrupt__" in chunk:
+                            interrupts = chunk["__interrupt__"]
+                            payload = interrupts[0].value if interrupts else {}
+                            await self._pause_for_review(active, payload if isinstance(payload, dict) else {})
+                            return
+                        for node_name, node_output in chunk.items():
+                            logger.info("LangGraph node [%s] completed", node_name)
+                            if not isinstance(node_output, dict):
+                                continue
+                            for k, v in node_output.items():
+                                if k in ("results", "outcomes"):
+                                    from edrak.orchestration.state import merge_by_task_id
+                                    state[k] = merge_by_task_id(state.get(k) or [], v)
+                                else:
+                                    state[k] = v
+                            await self._on_node(active, node_name, node_output, state, plan, analysis_id)
+                        if active.pause_requested:
+                            await self._mark_paused(active)
+                            return
 
                 final = await graph.aget_state(config)
                 state = dict(final.values or state)

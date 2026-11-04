@@ -211,3 +211,27 @@ def test_a_run_is_bounded_grounded_and_returns_the_comparison(offline):
     assert matrix["dimensions"][0]["cells"][0]["relative_to_target"] == "comparable"
     assert matrix["dimensions"][0]["cells"][0]["evidence_ids"]
     assert result.metadata["competitors"][0]["official_domains"] == ["kanzpay.example"]
+
+def test_evidence_budget_shrinks_for_groq(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "groq")
+    assert nodes.evidence_budget_chars() == 12_000
+
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
+    assert nodes.evidence_budget_chars() == nodes.MAX_EVIDENCE_CHARS
+
+
+def test_chunk_results_honours_the_requested_budget():
+    results = [
+        {"text": "a" * nodes.SOURCE_CHARS, "competitor": "Acme"}
+        for _ in range(5)
+    ]
+
+    batches = nodes.chunk_results(results, max_chars=8_000)
+
+    # Every result survives the split, in order, and no batch exceeds the budget
+    # the same way chunk_results measures it.
+    assert sum(len(b) for b in batches) == 5
+    assert [r for b in batches for r in b] == results
+    for batch in batches:
+        cost = sum(min(len(r["text"]), nodes.SOURCE_CHARS) + 300 for r in batch)
+        assert cost <= 8_000

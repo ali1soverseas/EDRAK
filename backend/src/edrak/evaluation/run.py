@@ -122,6 +122,7 @@ async def metric_scores(db: Any, request_id: str, document: dict[str, Any]) -> d
 
 def _judge_faithfulness(results: list[WorkerResult]) -> Optional[tuple[float, dict[str, Any]]]:
     from edrak.core.llm import get_structured, schema_instruction
+    from edrak.usage.context import usage_context
 
     model = get_structured(FaithfulnessJudgement, agent="orchestrator", temperature=0)
     samples = []
@@ -147,7 +148,8 @@ def _judge_faithfulness(results: list[WorkerResult]) -> Optional[tuple[float, di
             f"CLAIM: {finding.statement}\n\nSOURCES:\n{sources}"
         )
         try:
-            judgement = model.invoke([prompt, schema_instruction(FaithfulnessJudgement)])
+            with usage_context(stage="evaluation", operation="eval_faithfulness"):
+                judgement = model.invoke([prompt, schema_instruction(FaithfulnessJudgement)])
         except Exception as exc:  # noqa: BLE001
             logger.info("Faithfulness judge failed: %s", exc)
             continue
@@ -163,6 +165,7 @@ def _judge_faithfulness(results: list[WorkerResult]) -> Optional[tuple[float, di
 
 def _judge_relevance(goal: str, summary: str) -> Optional[tuple[float, dict[str, Any]]]:
     from edrak.core.llm import get_structured, schema_instruction
+    from edrak.usage.context import usage_context
 
     if not summary.strip():
         return None
@@ -172,9 +175,10 @@ def _judge_relevance(goal: str, summary: str) -> Optional[tuple[float, dict[str,
         f"QUESTION: {goal}\n\nSUMMARY:\n{summary[:3000]}"
     )
     try:
-        judgement = get_structured(RelevanceJudgement, agent="orchestrator", temperature=0).invoke(
-            [prompt, schema_instruction(RelevanceJudgement)]
-        )
+        with usage_context(stage="evaluation", operation="eval_relevance"):
+            judgement = get_structured(RelevanceJudgement, agent="orchestrator", temperature=0).invoke(
+                [prompt, schema_instruction(RelevanceJudgement)]
+            )
     except Exception as exc:  # noqa: BLE001
         logger.info("Relevance judge failed: %s", exc)
         return None

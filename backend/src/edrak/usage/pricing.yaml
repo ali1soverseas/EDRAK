@@ -1,0 +1,47 @@
+# Model prices, USD per one million tokens.
+#
+# Cost is an estimate from these figures, never a provider invoice. A model with
+# no entry here is reported as "unknown", never as zero: "we did not price it"
+# and "it cost nothing" are different claims.
+#
+# Environment variables override this file, so a deployment can adjust a price
+# without editing source:
+#   LLM_PRICE_<MODEL>_INPUT_PER_MILLION      e.g. LLM_PRICE_GPT_OSS_120B_...
+#   LLM_PRICE_<MODEL>_OUTPUT_PER_MILLION
+#   LLM_PRICE_<MODEL>_CACHED_INPUT_PER_MILLION
+#   LLM_PRICE_<MODEL>_FREE_TIER              true | false
+# and a generic pair applied to any model with no entry of its own:
+#   LLM_PRICE_INPUT_PER_MILLION / LLM_PRICE_OUTPUT_PER_MILLION
+#
+# <MODEL> is the model name upper-cased with every run of non-alphanumerics
+# turned into a single underscore: gpt-oss:120b -> GPT_OSS_120B.
+providers:
+  ollama:
+    models:
+      "gpt-oss:120b":
+        input_per_million: 0.15
+        output_per_million: 0.60
+        cached_input_per_million: 0.014
+        # Published Ollama Cloud rates (ollama.com/pricing, checked 2026-10-17).
+        # This account is on the Free plan, so nothing has actually been billed
+        # at these rates yet: the figure is the estimate at published rates,
+        # never an invoice.
+        free_tier: false
+      "minimax-m3.1-flash":
+        input_per_million: 0.15
+        output_per_million: 0.60
+        cached_input_per_million: 0.015
+        # Published MiniMax rates (minimax.io/blog/minimax-m31f, checked
+        # 2026-10-22; Artificial Analysis and GMI Cloud agree). Free promo on
+        # Ollama Cloud during the trial; the figure is the estimate at
+        # published rates, never an invoice.
+        free_tier: false
+  groq:
+    models:
+      "qwen/qwen3.8-27b":
+        input_per_million: 0.80
+        output_per_million: 4.00
+        cached_input_per_million: null
+        # Published Groq rates (console.groq.com model page, checked
+        # 2026-10-17). Preview model, evaluation only.
+        free_tier: false

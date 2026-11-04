@@ -149,10 +149,12 @@ async def ask(thread_id: str, body: MessageIn, session: SessionOut = Depends(get
 
     def answer() -> str:
         from edrak.core.llm import get_chat_model
+        from edrak.usage.context import usage_context
 
         convo = "\n".join(f"{h['role']}: {h['content'][:600]}" for h in reversed(history))
         prompt = f"{SYSTEM}\n\nCONTEXT:\n{context}\n\nCONVERSATION SO FAR:\n{convo}\n\nQUESTION: {question}"
-        reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(prompt)
+        with usage_context(stage="chat", operation="chat_reply"):
+            reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(prompt)
         return str(getattr(reply, "content", reply)).strip()
 
     try:

@@ -87,10 +87,12 @@ QUESTION:
 def _scope_cached(digest: str, text: str) -> Optional[tuple[str, str]]:
     try:
         from edrak.core.llm import get_structured, schema_instruction
+        from edrak.usage.context import usage_context
 
-        reply = get_structured(ScopeVerdict, agent="orchestrator", temperature=0).invoke(
-            [_SCOPE_PROMPT.format(text=text[:2000]), schema_instruction(ScopeVerdict)]
-        )
+        with usage_context(stage="guardrails", operation="scope_check"):
+            reply = get_structured(ScopeVerdict, agent="orchestrator", temperature=0).invoke(
+                [_SCOPE_PROMPT.format(text=text[:2000]), schema_instruction(ScopeVerdict)]
+            )
         if reply is None:
             return None
         return reply.category, reply.reason

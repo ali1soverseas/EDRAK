@@ -25,11 +25,29 @@ from ..contracts.DecisionAnalysis import (
 from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
 from ..core.action_log import log_action
+from ..usage.context import usage_context, use_case_value
 from ..DecisionAnalysis.service import run_decision_analysis
 from .planner import LlmPlanner, PlanningError
 from .state import RESET, OrchestrationState
 
 logger = logging.getLogger(__name__)
+
+
+def _stage_context(stage: str, request: BusinessRequest | None):
+    """Tag the model calls a stage makes with the run, use case and stage name.
+
+    Set where the call happens rather than only in the requesting coroutine:
+    LangGraph runs nodes in a thread pool, and a contextvar does not follow a
+    call across that boundary.
+    """
+    if request is None:
+        return usage_context(stage=stage)
+    context = getattr(request, "business_context", None)
+    return usage_context(
+        run_id=getattr(request, "request_id", None),
+        use_case=use_case_value(getattr(context, "use_case", None)),
+        stage=stage,
+    )
 
 
 def _metric_context(state: OrchestrationState) -> dict[str, Any]:
@@ -118,9 +136,10 @@ def make_decision_analysis_node():
             print(
                 f"  [decision_analysis] running for run_id={decision_input.research_run_id}"
             )
-            result = await run_decision_analysis(
-                decision_input=decision_input
-            )
+            with _stage_context("synthesis", request):
+                result = await run_decision_analysis(
+                    decision_input=decision_input
+                )
 
             dumped_result = result.model_dump(mode="json")
 
@@ -158,7 +177,8 @@ def plan_node(state: OrchestrationState) -> OrchestrationState:
     if state.get("plan") is not None:
         return state
     request: BusinessRequest = state["request"]
-    plan = LlmPlanner().plan(request)
+    with _stage_context("supervisor", request):
+        plan = LlmPlanner().plan(request)
     return {**state, "plan": plan}
 
 
@@ -174,7 +194,13 @@ def run_task(task: ResearchTask, registry: WorkerRegistry) -> WorkerResult:
         return _failed(task, str(exc))
 
     try:
-        result = WorkerResult.model_validate(worker.run(task))
+        with usage_context(
+            run_id=task.parent_request_id,
+            use_case=use_case_value(task.business_context.use_case),
+            stage=task.worker.value,
+            attempt=task.attempt,
+        ):
+            result = WorkerResult.model_validate(worker.run(task))
     except ValidationError as exc:
         return _failed(task, f"worker returned an invalid WorkerResult: {exc}")
     # A worker is third-party code. Any failure is contained, not propagated.
@@ -242,7 +268,8 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
             )})
         tasks.append(t)
     try:
-        fixed, conflicts = run_metrics_agent(req, tasks, results)
+        with _stage_context("metrics", req):
+            fixed, conflicts = run_metrics_agent(req, tasks, results)
     except Exception as exc:  # noqa: BLE001 - the brief still renders gap cards without figures
         logger.warning("Metrics agent failed: %s", exc)
         return state
@@ -262,7 +289,7 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
 
     buffer = io.StringIO()
     try:
-        with contextlib.redirect_stdout(buffer):
+        with contextlib.redirect_stdout(buffer), _stage_context("verification", state["request"]):
             result = run_verification(
                 VerificationInput(
                     request=state["request"],
@@ -327,7 +354,8 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
             }
         )
         cs_input = build_cross_signal_input(verified_only, state["request"])
-        output = await run_cross_signal(cs_input)
+        with _stage_context("cross_signal", state.get("request")):
+            output = await run_cross_signal(cs_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
         return {**state, "cross_signal": None}

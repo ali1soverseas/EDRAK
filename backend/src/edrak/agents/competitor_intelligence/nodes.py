@@ -391,11 +391,25 @@ def build_evidence(
     return "\n\n----------------------\n\n".join(blocks), id_map
 
 
+def evidence_budget_chars() -> int:
+    """How much evidence one synthesis prompt may carry.
+
+    Groq's free tier caps a request near 8k tokens, and the prompt template,
+    requirements and prior findings share that budget, so a 60k-character
+    batch can never be sent there. Large-context providers keep the existing
+    budget.
+    """
+    from edrak.core.llm import active_provider
+
+    return 12_000 if active_provider() == "groq" else MAX_EVIDENCE_CHARS
+
+
 def chunk_results(
     results: List[Dict[str, Any]],
+    max_chars: int = MAX_EVIDENCE_CHARS,
 ) -> List[List[Dict[str, Any]]]:
     """
-    Split results into batches that fit MAX_EVIDENCE_CHARS.
+    Split results into batches that fit max_chars of evidence.
     """
 
     batches = []
@@ -411,7 +425,7 @@ def chunk_results(
             + 300
         )
 
-        if current and size + cost > MAX_EVIDENCE_CHARS:
+        if current and size + cost > max_chars:
             batches.append(current)
             current = []
             size = 0
@@ -1743,6 +1757,10 @@ def synthesize_node(
         if not comp_results or not comp_reqs:
             continue
 
+        # Groq's request ceiling is shared with the evidence, so it also caps
+        # how much prior history can ride along in one prompt.
+        history = 10 if evidence_budget_chars() < MAX_EVIDENCE_CHARS else 40
+
         already = [
             finding_view(
                 f,
@@ -1750,10 +1768,11 @@ def synthesize_node(
             )
             for f in previous_findings
             if f["competitor"] == competitor
-        ][-40:]
+        ][-history:]
 
         for batch in chunk_results(
-            comp_results
+            comp_results,
+            max_chars=evidence_budget_chars(),
         ):
             evidence, id_map = build_evidence(
                 batch

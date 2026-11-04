@@ -138,6 +138,7 @@ async def run_agent(db: aiosqlite.Connection, ctx: BriefContext, question: str, 
                     card_key: Optional[str] = None) -> AsyncIterator[dict[str, Any]]:
     """Yields {"type": "step", ...} while working and one {"type": "answer", ...} at the end."""
     from edrak.core.llm import get_structured, schema_instruction
+    from edrak.usage.context import usage_context
 
     model = get_structured(Step, agent="orchestrator", temperature=0.2)
     convo = "\n".join(f"{h['role']}: {h['content'][:500]}" for h in (history or [])[-6:])
@@ -152,7 +153,8 @@ async def run_agent(db: aiosqlite.Connection, ctx: BriefContext, question: str, 
         prompt = (f"{pre}\n\nCONVERSATION SO FAR:\n{convo or '(none)'}\n\nQUESTION: {question}\n\nTOOL RESULTS SO FAR:\n"
                   + ("\n\n".join(scratch) or "(none yet)") + ("\n\nYou must answer now." if forced else ""))
         try:
-            step: Optional[Step] = await model.ainvoke([("system", SYSTEM), ("user", prompt), schema_instruction(Step)])
+            with usage_context(stage="chat", operation="chat_step"):
+                step: Optional[Step] = await model.ainvoke([("system", SYSTEM), ("user", prompt), schema_instruction(Step)])
         except Exception as exc:  # noqa: BLE001
             logger.info("Chat step failed: %s", exc)
             step = None

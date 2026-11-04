@@ -29,6 +29,7 @@ from edrak.agents.competitor_intelligence.socials import USER_AGENT, find_offici
 from edrak.agents.competitor_intelligence.sources import compact, domain_of, host_of
 from edrak.core.action_log import log_action
 from edrak.core.llm import get_structured, provider_key, schema_instruction
+from edrak.usage.context import usage_context
 
 logger = logging.getLogger(__name__)
 
@@ -223,9 +224,13 @@ def discover_competitors(
         ) if line
     )
     try:
-        reply = get_structured(Candidates, agent="competitor", temperature=0).invoke(
-            [_prompt(company, profile_lines, results, exclude_list, limit), schema_instruction(Candidates)]
-        )
+        # Reached from the worker (stage already set) and from onboarding and plan
+        # drafting, which run outside the graph; naming the stage here keeps the
+        # call attributed in all three.
+        with usage_context(stage="competitor_intelligence", operation="discovery"):
+            reply = get_structured(Candidates, agent="competitor", temperature=0).invoke(
+                [_prompt(company, profile_lines, results, exclude_list, limit), schema_instruction(Candidates)]
+            )
     except Exception as exc:  # noqa: BLE001 - discovery is optional; the caller shows "none found"
         logger.warning("Competitor discovery failed: %s", exc)
         return []

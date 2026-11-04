@@ -268,12 +268,14 @@ def assemble(draft: PlanDraft, brief: dict[str, Any], option: dict[str, Any]) ->
 
 def draft_plan(brief: dict[str, Any], option: dict[str, Any], note: Optional[str] = None) -> ActionPlan:
     from edrak.core.llm import get_structured, schema_instruction
+    from edrak.usage.context import usage_context
 
     model = get_structured(PlanDraft, agent="orchestrator", temperature=0.3)
     feedback = ""
     draft: Optional[PlanDraft] = None
     for _ in range(2):
-        draft = model.invoke([("system", SYSTEM), ("user", _prompt(brief, option, note, feedback)), schema_instruction(PlanDraft)])
+        with usage_context(stage="action_plan", operation="action_plan_draft"):
+            draft = model.invoke([("system", SYSTEM), ("user", _prompt(brief, option, note, feedback)), schema_instruction(PlanDraft)])
         if draft is None:
             continue
         bad = _digit_problems(draft)
