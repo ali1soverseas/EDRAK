@@ -120,6 +120,26 @@ Errors have the form `{"detail": {"code": "...", "message": "..."}}`.
 Review actions are recorded in the audit log. The OpenAPI document (`/openapi.json`) describes all
 of the above.
 
+## In the app
+
+- **Company setup, step 1.** When the website is read to draft the profile, a checkbox (on by default)
+  also starts company research in the background with that address. The last setup step shows the
+  run's progress and, once it finishes, the facts to approve. The person can finish setup first; the run
+  goes on.
+- **Company research page** (`/company/research`, in the sidebar under Knowledge). If the company has no
+  website yet, the person types one; it is saved to the company profile and the run starts. Otherwise one
+  button starts a run. While a run is going the page shows its steps and counts, with a Stop button. The
+  person can leave the page; the run continues.
+- **Review.** Facts are listed by category, with the category's name in the page language. Tabs show
+  To review, Approved, Rejected and All, each with its count. A row shows the value, where it came from
+  (open it to read the quote and follow the link to the page or PDF page), and buttons to approve, reject
+  or edit. Selecting rows enables approving or rejecting them together; one button approves every
+  clear fact from the company's own site or PDFs that nobody disputes. Facts that disagree are shown
+  together with a "Keep this one" button that approves one and rejects the rest.
+- **Top bar.** While a run is going, the top bar says so and names the step. When it finishes with facts to
+  review it says how many, until the person opens the research page. A failed run is reported once.
+- **Company profile.** A card shows the latest run and the counts to review, approved and rejected.
+
 ## Configuration
 
 All keys are environment variables (see `.env.example`).

@@ -4,6 +4,7 @@ import {
   applyDraft, appliedCount, defaultChoices, hostLabel, importErrorMessage, importRows,
   type ImportableForm, type ImportField, type ImportRow,
 } from "../../lib/profileImport";
+import { activeRunId, researchErrorMessage } from "../../lib/research";
 import { edrak, type ProfileDraft } from "../../services/edrak";
 import { Chip } from "../ui/Chip";
 import { Segmented } from "../ui/Controls";
@@ -46,18 +47,21 @@ interface Props<T extends ImportableForm> {
   /** The form with the chosen fields filled in. The caller keeps it like any other edit. */
   onApply: (next: T) => void;
   industryLabel: (key: string) => string;
+  /** When given, reading a website can also start company research in the background. */
+  research?: { on: boolean; onChange: (on: boolean) => void };
 }
 
 /**
  * Start company setup from a website or a PDF. The draft is read, shown for review, and only the
  * ticked fields are added to the form. Nothing is saved here: the setup steps save as they always do.
  */
-export function ProfileImport<T extends ImportableForm>({ form, onApply, industryLabel }: Props<T>) {
+export function ProfileImport<T extends ImportableForm>({ form, onApply, industryLabel, research }: Props<T>) {
   const L = useL();
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState(form.website);
   const [view, setView] = useState<View>({ kind: "idle" });
   const [over, setOver] = useState(false);
+  const [researchNote, setResearchNote] = useState<{ ok: boolean; text: string } | null>(null);
   const run = useRef(0); // which request the screen is waiting for; a cancelled one is ignored when it lands
   const busy = view.kind === "busy";
 
@@ -83,7 +87,19 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
     const typed = url.trim();
     if (!typed || busy) return;
     const host = hostLabel(typed);
+    if (research?.on) void startResearch(typed);
     void read(L(`Reading ${host}…`, `جارٍ قراءة ${host}…`), host, "globe", () => edrak.importFromUrl(typed));
+  };
+  /** Company research runs on its own; it never holds up the profile draft, and a refusal only shows a note. */
+  const startResearch = async (typed: string) => {
+    setResearchNote(null);
+    try {
+      await edrak.startResearch(typed);
+      setResearchNote({ ok: true, text: L("Research started in the background. You will see what it finds in the last step.", "بدأ البحث في الخلفية. سترى ما يجده في الخطوة الأخيرة.") });
+    } catch (e) {
+      const running = activeRunId(e) !== null;
+      setResearchNote({ ok: running, text: running ? L("Research is already running for your company.", "البحث جارٍ بالفعل لشركتك.") : researchErrorMessage(e, L) });
+    }
   };
   const readPdf = (file: File | undefined) => {
     if (!file || busy) return;
@@ -141,17 +157,29 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
           </div>
 
           {mode === "url" ? (
-            <div className="row g8 import-url">
-              <input
-                className="input" dir="ltr" inputMode="url" autoComplete="url" placeholder="example.com" value={url} disabled={busy}
-                aria-label={L("Company website", "موقع الشركة")}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); readSite(); } }}
-              />
-              <button type="button" className="btn pri" disabled={busy || !url.trim()} onClick={readSite}>
-                {L("Read website", "اقرأ الموقع")} <Icon name="arrow" size={15} flip />
-              </button>
-            </div>
+            <>
+              <div className="row g8 import-url">
+                <input
+                  className="input" dir="ltr" inputMode="url" autoComplete="url" placeholder="example.com" value={url} disabled={busy}
+                  aria-label={L("Company website", "موقع الشركة")}
+                  onChange={(e) => setUrl(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); readSite(); } }}
+                />
+                <button type="button" className="btn pri" disabled={busy || !url.trim()} onClick={readSite}>
+                  {L("Read website", "اقرأ الموقع")} <Icon name="arrow" size={15} flip />
+                </button>
+              </div>
+              {research && (
+                <label className="research-opt s13">
+                  <input type="checkbox" checked={research.on} onChange={(e) => research.onChange(e.target.checked)} />
+                  <span>
+                    <b>{L("Also research this company in the background", "ابحث عن هذه الشركة في الخلفية أيضًا")}</b>
+                    <span className="t2"> — {L("leadership, ownership, financials, locations and more, each with its source. About 5 minutes; you review it at the end.", "القيادة والملكية والبيانات المالية والمواقع وغيرها، كل منها مع مصدره. نحو 5 دقائق وتراجعها في النهاية.")}</span>
+                  </span>
+                </label>
+              )}
+              {researchNote && <span className={`s13 ${researchNote.ok ? "t2" : ""}`} role="status" style={researchNote.ok ? undefined : { color: "var(--bad)" }}>{researchNote.text}</span>}
+            </>
           ) : (
             <label
               className={`dropzone ${over ? "over" : ""}`.trim()}
