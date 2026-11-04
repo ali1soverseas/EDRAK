@@ -14,7 +14,7 @@ from ..contracts import (
 from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
 from ..metrics.planning import requirements_for
-from .prompts import PLANNER_SYSTEM_PROMPT
+from .prompts import PLANNER_SYSTEM_PROMPT, get_planner_prompt
 
 MAX_REPAIR_ATTEMPTS = 1
 
@@ -90,7 +90,7 @@ class LlmPlanner:
         """
         plan = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
             PlannerPlan, method="json_mode"
-        ).invoke(PLANNER_SYSTEM_PROMPT + "\n\n" + prompt)
+        ).invoke(get_planner_prompt() + "\n\n" + prompt)
 
         if plan is None or not plan.assignments:
             raise PlanningError("model returned no usable plan", "")

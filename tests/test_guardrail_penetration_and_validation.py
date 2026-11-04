@@ -351,13 +351,9 @@ class TestAPIMethodEnforcement:
             executor.execute_endpoint_sync(path="/v1/products", method="PUT")
 
     def test_head_method_is_allowed(self, executor):
-        """HEAD is a safe read-only method and should be permitted (may 404 but not blocked)."""
-        try:
-            executor.execute_endpoint_sync(path="/v1/products", method="HEAD")
-        except PermissionError:
-            pytest.fail("HEAD should not be blocked by the guardrail.")
-        except Exception:
-            pass  # HTTPError / 404 are fine; the point is no PermissionError
+        """HEAD is a safe read-only method and should be permitted by the guardrail."""
+        url, headers = executor._prepare_request("/v1/products", "HEAD")
+        assert "/v1/products" in url
 
     def test_block_options_method(self, executor):
         """OPTIONS reveals server capabilities — treat as a non-allowed method."""

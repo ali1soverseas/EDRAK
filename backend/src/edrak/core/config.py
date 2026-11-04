@@ -182,6 +182,13 @@ class Settings(BaseSettings):
     COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH: int = 3  # top results read for each search
     COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES: int = 6  # pages read in all, across searches
 
+    # Observability & Monitoring (Langfuse)
+    LANGFUSE_ENABLED: bool = False
+    LANGFUSE_PUBLIC_KEY: Optional[str] = None
+    LANGFUSE_SECRET_KEY: Optional[str] = None
+    LANGFUSE_HOST: str = "http://localhost:3000"
+    LANGFUSE_RELEASE: str = "edrak-2.0.0"
+
     # Sessions
     SESSION_DAYS: int = 30
     # Send the session cookie over HTTPS only. Defaults to on outside development.
