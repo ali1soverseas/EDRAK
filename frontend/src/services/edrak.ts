@@ -74,6 +74,31 @@ export interface ProfileDraft {
   warnings: string[];
   sources: { id: string; type: "web_page" | "pdf_page" | "page_metadata"; ref: string; title: string }[];
 }
+/* ------------------------------------------------------------ company research */
+
+export type ResearchStatus = "queued" | "running" | "done" | "failed" | "cancelled";
+export type FactStatus = "suggested" | "approved" | "rejected";
+export type FactTier = "own_site" | "own_pdf" | "own_social" | "third_party";
+export type FactValueType = "text" | "number" | "date" | "url" | "list";
+
+/** One run of the research agent. The screen polls it while `status` is queued or running. */
+export interface ResearchRun {
+  id: string; status: ResearchStatus; stage: string | null; input: { seed_url?: string };
+  pages_crawled: number; pdfs_read: number; facts_found: number;
+  stats: Record<string, any>; warnings: string[]; error: string | null; // eslint-disable-line @typescript-eslint/no-explicit-any
+  created_at: string; started_at: string | null; finished_at: string | null;
+}
+export interface ResearchFact {
+  id: string; category: string; proposed_category: string | null; key: string; key_label_en: string | null; key_label_ar: string | null;
+  value: string; value_type: FactValueType; source_tier: FactTier; source_url: string; pdf_page: number | null; quote: string;
+  observed_at: string; confidence: "high" | "medium" | "low"; status: FactStatus; conflict_group: string | null;
+  run_id: string | null; edited_by_user: boolean; created_at: string; updated_at: string;
+}
+/** Facts of one key that disagree, shown together. */
+export interface FactConflict { conflict_group: string; key: string; facts: ResearchFact[] }
+export interface FactCategory { category: string; label_en: string; label_ar: string; facts: ResearchFact[]; conflicts: FactConflict[] }
+export interface FactsGrouped { total: number; categories: FactCategory[] }
+export interface FactsFilter { status?: FactStatus[]; category?: string[]; source_tier?: FactTier[] }
 export type Dict = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export interface StreamEvent { type: "step" | "answer" | "error"; data: Dict }
@@ -92,6 +117,22 @@ export const edrak = {
     fd.append("file", file);
     return req<ProfileDraft>("POST", "/company/profile/import/pdf", fd);
   },
+
+  researchRuns: (limit = 1) => req<ResearchRun[]>("GET", `/company/research/runs?limit=${limit}`),
+  /** Starts a run. Without `seedUrl` the company's saved website is read. 409 `run_active` carries the running run's id. */
+  startResearch: (seedUrl?: string) => req<ResearchRun>("POST", "/company/research/runs", seedUrl ? { seed_url: seedUrl } : {}),
+  cancelResearch: (id: string) => req<ResearchRun>("POST", `/company/research/runs/${id}/cancel`),
+  researchFacts: (filter: FactsFilter = {}) => {
+    const q = new URLSearchParams();
+    (Object.entries(filter) as [string, string[] | undefined][]).forEach(([k, values]) => values?.forEach((v) => q.append(k, v)));
+    return req<FactsGrouped>("GET", `/company/facts${q.size ? `?${q}` : ""}`);
+  },
+  setFactStatus: (id: string, status: "approved" | "rejected") => req<ResearchFact>("PATCH", `/company/facts/${id}`, { status }),
+  /** Changes the value; the server marks the fact as edited and approves it. */
+  editFact: (id: string, value: string, valueType?: FactValueType) =>
+    req<ResearchFact>("PATCH", `/company/facts/${id}`, valueType ? { value, value_type: valueType } : { value }),
+  bulkFacts: (ids: string[], action: "approve" | "reject") =>
+    req<{ action: string; updated: string[]; not_found: string[] }>("POST", "/company/facts/bulk", { ids, action }),
 
   documents: () => req<Doc[]>("GET", "/documents"),
   upload: (files: File[]) => {
