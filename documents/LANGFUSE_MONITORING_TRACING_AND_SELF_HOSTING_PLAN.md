@@ -510,3 +510,66 @@ flowchart TD
 - [ ] `langfuse` Python package installed in `.venv`.
 - [ ] `.env` updated with `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, and `LANGFUSE_HOST`.
 
+---
+
+## 9. Implemented Operational Runbook & Production Reference
+
+### 9.1 Commands Quick Reference
+
+| Action | Command | Purpose |
+| :--- | :--- | :--- |
+| **Start Langfuse Stack** | `docker compose -f docker-compose.langfuse.yml up -d` | Launches all 6 local containers (Web, Worker, Postgres, ClickHouse, MinIO, Redis) |
+| **Stop Langfuse Stack** | `docker compose -f docker-compose.langfuse.yml down` | Gracefully stops all Langfuse local containers |
+| **Seed All 12 Prompts** | `.venv\Scripts\python scripts/seed_langfuse_prompts.py` | Uploads and versions all agent prompts in the Langfuse Prompts catalog |
+| **Run Observability Tests** | `.venv\Scripts\pytest tests/test_observability.py -v` | Executes the 7 automated tests verifying config, callbacks, and prompt fallbacks |
+
+---
+
+### 9.2 Complete Prompt Catalog in Langfuse (12 System & Agent Prompts)
+
+All 12 agent prompts across EDRAK are cataloged and versioned:
+
+| Prompt Name in Langfuse | Owning Agent | Tags | Purpose |
+| :--- | :--- | :--- | :--- |
+| `edrak-planner-prompt` | **Orchestration** | `orchestration`, `planner` | Control-plane task decomposition into bounded worker assignments |
+| `edrak-request-builder-prompt` | **Orchestration** | `orchestration`, `parser` | Translates raw business queries into structured research requests |
+| `edrak-internal-query-planner` | **Internal Intelligence** | `internal_intelligence`, `retrieval` | Formulates targeted queries for handbook, SQLite DB, and REST API |
+| `edrak-internal-synthesis` | **Internal Intelligence** | `internal_intelligence`, `synthesis` | Strict factual evidence synthesis with quote attribution |
+| `edrak-cross-signal-synthesis` | **Cross-Signal** | `cross_signal`, `synthesis` | Reconciles findings and detects cross-domain contradictions & momentum |
+| `edrak-cross-signal-summary` | **Cross-Signal** | `cross_signal`, `summary` | Executive cross-signal synthesis summary |
+| `edrak-decision-analysis` | **Decision Analysis** | `decision_analysis`, `strategy` | Evaluates strategic business opportunities, trade-offs, and decisions |
+| `edrak-metrics-finder` | **Metrics Extraction** | `metrics`, `extraction` | Extracts literal quantitative metrics and KPIs without hallucination |
+| `edrak-verification-review` | **Verification Engine** | `verification`, `hallucination_check` | Verifies research claims and flags invented details against source text |
+| `edrak-customer-trends-planner` | **Customer Trends** | `customer_trends`, `planner` | Formulates search branches across reviews, demand, and social signals |
+| `edrak-customer-trends-writer` | **Customer Trends** | `customer_trends`, `synthesis` | Synthesizes customer sentiment, themes, and customer voice |
+| `edrak-customer-trends-headline` | **Customer Trends** | `customer_trends`, `summary` | Generates executive headlines for customer trend signals |
+
+---
+
+### 9.3 Dashboard Configuration: Model Pricing & Cost Accounting
+
+> [!NOTE]
+> Self-hosted Langfuse has no paywalls or tiers. Custom open-weights models (like `gpt-oss:120b` in Ollama) default to **$0.00** because local inference has no commercial API fee.
+
+To configure real financial cost calculation:
+1. Open the UI: `http://localhost:3000`
+2. Click **Settings** (gear icon in the bottom-left sidebar) -> select the **Models** tab.
+3. Click **"Add Model Definition"**:
+   - **Model Name / Match Pattern**: `gpt-oss:120b` (or `gpt-oss.*` / your Ollama model name)
+   - **Unit**: `TOKENS`
+   - **Input Price (USD)**: e.g. `0.00000015` ($0.15 per 1M prompt tokens)
+   - **Output Price (USD)**: e.g. `0.00000060` ($0.60 per 1M completion tokens)
+4. Click **Save**. Langfuse will automatically calculate token costs for all subsequent generations.
+
+---
+
+### 9.4 How Observations Link to Prompts
+
+A prompt in the **Prompts** tab displays its **Observations** count and links to individual runs when the prompt client object is attached to the invocation metadata:
+```python
+# Automatically handled by edrak.core.observability & edrak.core.llm
+config = {"metadata": {"langfuse_prompt": prompt_obj}}
+```
+* As each analysis run executes, the **Observations** counter increments.
+* Clicking any prompt displays the exact runs that executed against that prompt version.
+* Inside trace generations, a badge links directly back to the versioned prompt: `Prompt: edrak-planner-prompt (v1.0)`.

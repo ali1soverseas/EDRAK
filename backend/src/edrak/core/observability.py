@@ -6,6 +6,7 @@ and prompt versioning with zero-overhead offline fallbacks.
 
 from __future__ import annotations
 
+import contextvars
 import logging
 import os
 from typing import Any, Dict, List, Optional
@@ -16,6 +17,19 @@ logger = logging.getLogger(__name__)
 
 _CLIENT: Optional[Any] = None
 _CLIENT_INITIALIZED: bool = False
+_CURRENT_PROMPT_OBJ: contextvars.ContextVar[Optional[Any]] = contextvars.ContextVar(
+    "_CURRENT_PROMPT_OBJ", default=None
+)
+
+
+def get_current_prompt_obj() -> Optional[Any]:
+    """Return the active Langfuse prompt client object in the current context."""
+    return _CURRENT_PROMPT_OBJ.get()
+
+
+def set_current_prompt_obj(prompt_obj: Optional[Any]) -> None:
+    """Explicitly set the active Langfuse prompt client object in the current context."""
+    _CURRENT_PROMPT_OBJ.set(prompt_obj)
 
 
 def is_observability_enabled() -> bool:
@@ -146,6 +160,9 @@ def get_versioned_prompt(
 ) -> str:
     """Fetch prompt from Langfuse with offline fallback to Python code templates.
 
+    Also caches the fetched Langfuse prompt object in contextvars so subsequent
+    LLM generations automatically link to this prompt in the Langfuse Prompts catalog.
+
     Args:
         prompt_name: Unique prompt identifier in Langfuse prompt catalog.
         fallback_template: Hardcoded prompt template in code if offline or unconfigured.
@@ -164,6 +181,9 @@ def get_versioned_prompt(
                 fallback=fallback_template,
                 fetch_timeout_seconds=2,
             )
+            # Register active prompt object for linkage in Langfuse dashboard
+            _CURRENT_PROMPT_OBJ.set(prompt_obj)
+
             if hasattr(prompt_obj, "compile"):
                 compiled = prompt_obj.compile(**kwargs)
                 return _safe_format(compiled, **kwargs)

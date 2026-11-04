@@ -183,9 +183,17 @@ def get_structured(
     still validate: a prose reply or a wrong top-level shape does slip
     through when the instruction is omitted.
     """
-    return get_chat_model(
+    runnable = get_chat_model(
         model, agent=agent, temperature=temperature
     ).with_structured_output(schema, method=method)
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        if prompt_obj is not None:
+            return runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
+    except Exception:
+        pass
+    return runnable
 
 
 def get_json_object(
@@ -202,9 +210,15 @@ def get_json_object(
     For callers whose reply shape is large, optional or still evolving, where
     pinning a pydantic schema would be more churn than the guarantee is worth.
     """
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        cfg = {"metadata": {"langfuse_prompt": prompt_obj}} if prompt_obj is not None else None
+    except Exception:
+        cfg = None
     message = get_chat_model(
         model, agent=agent, temperature=temperature, callbacks=callbacks
-    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}])
+    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}], config=cfg)
     text = str(message.content).strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
