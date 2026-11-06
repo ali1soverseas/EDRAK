@@ -2,16 +2,27 @@ import json
 
 from edrak.agents.market_intelligence.graph import (
     build_graph,
+    publisher_from_url,
     run,
     task_router,
     worker_result_from_state,
 )
-from edrak.agents.market_intelligence.nodes import output_node, task_planner
+from edrak.agents.market_intelligence.nodes import (
+    adoption_stage_gap,
+    claim_is_supported,
+    conclude,
+    fill_gaps,
+    output_node,
+    stand_in_limitation,
+    task_planner,
+)
+from edrak.agents.market_intelligence.prompts import task_planner_prompt
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
     PlannedTask,
     SearchQuery,
 )
+from edrak.agents.market_intelligence.search_scope import market_label, markets_from_brief
 from edrak.agents.market_intelligence.state import empty_market_state
 from edrak.contracts import SourceType, WorkerResult, WorkerStatus, WorkerType
 
@@ -39,7 +50,7 @@ class _FakeTool:
 def test_graph_keeps_planner_executor_output_loop():
     app = build_graph()
     node_ids = set(app.get_graph().nodes)
-    assert {"task_planner", "task_executor", "output_node"} <= node_ids
+    assert {"task_planner", "task_executor", "conclude", "output_node"} <= node_ids
 
 
 def test_task_router_loops_until_tasks_are_consumed():
@@ -51,7 +62,7 @@ def test_task_router_loops_until_tasks_are_consumed():
 
     done = dict(more_work)
     done["current_task_idx"] = 1
-    assert task_router(done) == "output_node"
+    assert task_router(done) == "conclude"
 
 
 def test_task_planner_falls_back_when_llm_returns_invalid_json(monkeypatch):
@@ -121,7 +132,10 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
                         # No capitalised proper noun: a name in the claim that also
                         # appears in the quote adds 0.15, which would put this at
                         # 0.9 rather than the 0.75 asserted below.
-                        claim="A 2025 survey found AI coding assistant adoption at 62%.",
+                        claim=(
+                            "A 2025 survey found 62% now run at least one AI "
+                            "coding assistant in production."
+                        ),
                         # Copied verbatim from the scrape below. claim_is_supported
                         # needs the quote inside the source and at least 40
                         # characters, and claim_confidence needs a digit in the
@@ -153,7 +167,7 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
     assert result.started_at is not None
     assert result.completed_at is not None
     assert result.completed_at >= result.started_at
-    assert result.error == "none"
+    assert result.error == ""
 
 
 def test_worker_result_from_state_marks_partial_when_tasks_skipped(sample_research_task):
@@ -175,4 +189,298 @@ def test_worker_result_from_state_marks_partial_when_tasks_skipped(sample_resear
     assert result.findings[0].confidence == 0.35
     assert result.started_at is not None
     assert result.completed_at is not None
-    assert result.error == "Some research tasks were skipped."
+    assert result.error == ""
+
+
+def test_claim_gate_rejects_words_and_figures_the_quote_does_not_state():
+    residency = (
+        "Organisations must keep personal data stored in specific geographic "
+        "locations under the residency rule described here."
+    )
+    accelerator = (
+        "The residency rule compels accelerator deployments in data centers "
+        "across the region described here."
+    )
+    assert not claim_is_supported(accelerator, residency, residency)
+
+    market = (
+        "The overall market is poised to grow at 29.77% CAGR through 2031 "
+        "according to the published forecast."
+    )
+    hardware = (
+        "Hardware spending is poised to grow at 30.56% CAGR through 2031 "
+        "according to the published forecast."
+    )
+    assert not claim_is_supported(hardware, market, market)
+
+    both = (
+        "Hardware spending grew 30.56% while the overall market grew 29.77% "
+        "through 2031 in the same forecast."
+    )
+    one_percent = (
+        "Hardware spending grew 30.56% while the overall market grew through "
+        "2031 in the same forecast."
+    )
+    assert not claim_is_supported(one_percent, both, both)
+
+
+def test_broader_market_quote_is_kept_with_a_stand_in_limitation():
+    invoicing = (
+        "The enterprise software market in Germany will reach a large total by 2030 "
+        "according to the published forecast note."
+    )
+    assert claim_is_supported(invoicing, invoicing, invoicing)
+    assert stand_in_limitation(
+        "Estimate invoicing software demand in Germany", invoicing, invoicing
+    ) == "Source measures the broader market named in the quote, not: invoicing."
+
+    storage = (
+        "The energy market in Japan will reach a large total by 2030 "
+        "according to the published forecast note."
+    )
+    assert stand_in_limitation(
+        "Estimate battery storage demand in Japan", storage, storage
+    ) == "Source measures the broader market named in the quote, not: battery, storage."
+
+
+def test_markets_from_brief_keeps_europe_and_names_a_missing_estimate(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
+
+    markets = markets_from_brief(
+        "Compare accelerator demand across Europe and the United States",
+        "Markets: Europe, United States",
+    )
+    by_place = {item.place: item for item in markets}
+    assert set(by_place) == {"europe", "united states"}
+    assert by_place["europe"].gl == ""
+    assert by_place["united states"].gl == "us"
+
+    monkeypatch.setattr(nodes, "call_structured", lambda *_args, **_kwargs: None)
+    state = empty_market_state(
+        "r1",
+        "Compare accelerator demand across Europe and the United States",
+        "Markets: Europe, United States",
+    )
+    state["market_findings"] = [
+        {
+            "task": "Market size (United States)",
+            "claim": "The United States data center market will reach a large total by 2031.",
+            "confidence": 0.5,
+            "evidence": [],
+        }
+    ]
+    update = conclude(state)
+    assert "No supported market estimate for: Europe" in update["market_gaps"]
+    assert any(item["claim"] == "The named markets cannot be compared." for item in update["market_findings"])
+
+
+def test_conclude_drops_a_sentence_that_introduces_a_percent(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
+
+    def fake(schema, *_args, **_kwargs):
+        if schema is nodes.Conclusion:
+            return nodes.Conclusion(
+                comparison="Europe grew 12% while the United States grew 4%.",
+                momentum="The growth figure in the accepted claims is a projection.",
+                implication="This implies a 9% share shift for the company.",
+            )
+        return None
+
+    monkeypatch.setattr(nodes, "call_structured", fake)
+    state = empty_market_state(
+        "r1",
+        "Compare Europe and the United States",
+        "Markets: Europe, United States",
+    )
+    state["market_findings"] = [
+        {
+            "task": "Market size",
+            "claim": "The United States market grew 4% in 2025.",
+            "evidence": [],
+        }
+    ]
+    update = conclude(state)
+    claims = [item["claim"] for item in update["market_findings"]]
+    assert "Europe grew 12% while the United States grew 4%." not in claims
+    assert "This implies a 9% share shift for the company." not in claims
+    assert "The growth figure in the accepted claims is a projection." in claims
+    momentum = next(item for item in update["market_findings"] if item["task"] == "momentum")
+    assert momentum["limitations"] == ["projection"]
+
+
+def test_named_retry_uses_capitalized_names_and_month_recency():
+    state = empty_market_state("r1", "goal", "")
+    state["task_list"] = [
+        {
+            "id": 1,
+            "description": "Find Broadcom and Intel accelerator adoption",
+            "tool_hint": "tool_serper",
+            "status": "skipped",
+            "search": {
+                "gl": "us",
+                "language": "en",
+                "hl": "en",
+                "place": "united states",
+                "recency": "year",
+            },
+            "queries": [],
+        }
+    ]
+    update = fill_gaps(state)
+    task = update["task_list"][0]
+    assert task["status"] == "pending"
+    assert task["queries"]
+    blob = json.dumps(task["queries"])
+    assert "Broadcom" in blob and "Intel" in blob
+    assert task["queries"][0]["recency"] == "month"
+    assert update["gap_fill_done"] is True
+
+
+def test_titled_hit_stores_publisher_and_date_only_when_present(sample_research_task):
+    state = empty_market_state(sample_research_task.parent_request_id, "goal", "")
+    state["market_findings"] = [
+        {
+            "task": "Market size",
+            "claim": "The published forecast names the data center market.",
+            "evidence": [
+                {
+                    "type": "url",
+                    "source": "https://www.mordorintelligence.com/report",
+                    "text": "The data center market forecast was published for this segment.",
+                    "title": "AI Data Center Market",
+                    "snippet": "Published Jan 4, 2025",
+                }
+            ],
+        }
+    ]
+    state["final_report"] = {"task_summary": {"done": 1, "skipped": 0, "total": 1}}
+    result = worker_result_from_state(sample_research_task, state)
+    evidence = result.evidence[0]
+    assert evidence.source_title == "AI Data Center Market"
+    assert evidence.publisher == "Mordor Intelligence"
+    assert evidence.metadata.get("published_at") == "Jan 4, 2025"
+    assert "http" not in (evidence.source_title or "")
+
+    undated = empty_market_state(sample_research_task.parent_request_id, "goal", "")
+    undated["market_findings"] = [
+        {
+            "task": "Market size",
+            "claim": "The published forecast names the data center market.",
+            "evidence": [
+                {
+                    "type": "url",
+                    "source": "https://example.com/note",
+                    "text": "The data center market forecast was published for this segment.",
+                    "title": "Market note",
+                }
+            ],
+        }
+    ]
+    undated["final_report"] = {"task_summary": {"done": 1, "skipped": 0, "total": 1}}
+    bare = worker_result_from_state(sample_research_task, undated).evidence[0]
+    assert bare.publisher == "Example"
+    assert "published_at" not in bare.metadata
+    assert publisher_from_url("https://example.com/note") == "Example"
+
+
+def test_search_query_json_keeps_region_and_recency():
+    from mcp_servers.web.scrapers import _query_spec
+
+    from edrak.agents.market_intelligence.nodes import invoke_search_tool
+
+    class _Capture:
+        def invoke(self, args):
+            self.args = args
+            return "[]"
+
+    tool = _Capture()
+    invoke_search_tool(
+        tool,
+        {"queries": [{"q": "Europe accelerator market", "gl": "", "hl": "en", "recency": "year"}]},
+    )
+    encoded = tool.args["queries"][0]
+    spec = _query_spec(encoded)
+    assert spec["q"] == "Europe accelerator market"
+    assert spec["gl"] == ""
+    assert spec["recency"] == "year"
+
+
+def test_numeric_claim_keeps_the_year_and_forecast_word():
+    quote = (
+        "The software market will reach $10 billion by 2030 according to the "
+        "published forecast."
+    )
+    missing_year = (
+        "The software market will reach $10 billion according to the published "
+        "forecast note."
+    )
+    missing_word = (
+        "The software market will reach $10 billion by 2030 according to the "
+        "published note today."
+    )
+    assert not claim_is_supported(missing_year, quote, quote)
+    assert not claim_is_supported(missing_word, quote, quote)
+
+
+def test_regions_without_a_country_code_are_searched_by_name():
+    markets = markets_from_brief("Demand across the Middle East and Germany", "")
+    by_place = {item.place: item for item in markets}
+    assert by_place["middle east"].gl == ""
+    assert by_place["germany"].gl == "de"
+    gcc = markets_from_brief("Market size in the GCC", "")
+    assert gcc[0].place == "gcc"
+    assert gcc[0].gl == ""
+    assert market_label(gcc[0]) == "GCC"
+
+
+def test_comparison_drops_a_size_mixed_with_a_growth_rate(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
+
+    def fake(schema, *_args, **_kwargs):
+        if schema is nodes.Conclusion:
+            return nodes.Conclusion(
+                comparison="The market is $10 billion and grew 4% in 2024.",
+                momentum="Customer adoption and the market size move together.",
+                implication="Northwind can serve the clinics named in the brief.",
+            )
+        return None
+
+    monkeypatch.setattr(nodes, "call_structured", fake)
+    state = empty_market_state(
+        "r1",
+        "Compare market size",
+        "Company: Northwind\nTarget customers: clinics",
+    )
+    state["market_findings"] = [
+        {
+            "task": "Market size",
+            "claim": "The market size is $10 billion in 2024 according to the published note.",
+            "evidence": [],
+        },
+        {
+            "task": "Growth",
+            "claim": "Demand grew 4% in 2024 according to the same published note.",
+            "evidence": [],
+        },
+    ]
+    update = conclude(state)
+    claims = [item["claim"] for item in update["market_findings"]]
+    assert "The market is $10 billion and grew 4% in 2024." not in claims
+    assert "A link between market size and adoption or technology cannot be made." in claims
+    implication = next(item for item in update["market_findings"] if item["task"] == "implication")
+    assert implication["limitations"] == ["analysis"]
+
+
+def test_adoption_quote_without_a_stage_records_a_gap():
+    quiet = "Teams are using the product across the region in large numbers today."
+    assert adoption_stage_gap("Review customer adoption of the product", quiet) == (
+        "Source does not say whether this is an announcement or actual use."
+    )
+    launched = "The product was launched for customers last year in this region."
+    assert adoption_stage_gap("Review customer adoption of the product", launched) == ""
+
+
+def test_planner_prompt_covers_each_named_place_and_only_asked_topics():
+    text = task_planner_prompt("goal", "context", "tools", "note")
+    assert "each place named in the goal" in text
+    assert "only when the brief already asks" in text

@@ -23,7 +23,7 @@ from .nodes import (
     verification_gate_node,
 )
 from .review import human_review_node, route_after_review
-from .routing import route_from_plan
+from .routing import route_after_verify, route_from_plan
 from .state import OrchestrationState
 from .tracing import trace_event
 
@@ -103,7 +103,7 @@ def build_graph(registry: WorkerRegistry, checkpointer: Any = None):
     )
 
     graph.add_edge("dispatch", "verify")
-    graph.add_edge("verify", "metrics")
+    graph.add_conditional_edges("verify", route_after_verify, ["metrics", "human_review"])
     graph.add_edge("metrics", "human_review")
     graph.add_conditional_edges(
         "human_review",

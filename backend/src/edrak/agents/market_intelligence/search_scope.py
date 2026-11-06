@@ -239,3 +239,94 @@ def query_spec(
     if scope.tavily_country:
         spec["tavily_country"] = scope.tavily_country
     return spec
+
+
+def market_label(scope: SearchScope) -> str:
+    """Display name for a scope. Short region codes stay uppercase."""
+    place = (scope.place or scope.gl or "").strip()
+    if place.lower() == "gcc":
+        return "GCC"
+    return place.title()
+
+
+def scope_from_mapping(raw: dict | None) -> SearchScope | None:
+    """Rebuild the scope stored on a task. Empty mappings are not a scope."""
+    if not isinstance(raw, dict):
+        return None
+    place = str(raw.get("place") or "")
+    gl = str(raw.get("gl") or "")
+    if not place and not gl:
+        return None
+    return SearchScope(
+        gl=gl,
+        language=str(raw.get("language") or "en"),
+        hl=str(raw.get("hl") or "en"),
+        local_name=str(raw.get("local_language") or ""),
+        place=place,
+        recency=str(raw.get("recency") or ""),
+        tavily_country=str(raw.get("tavily_country") or ""),
+    )
+
+
+# Multi-country areas have no single country code. The area name stays in the query.
+_REGIONS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("middle east", ("middle east", "mena")),
+    ("asia pacific", ("asia pacific", "apac")),
+    ("latin america", ("latin america", "latam")),
+    ("europe", ("european union", "europe", "e.u.", "eu")),
+    ("africa", ("africa",)),
+    ("nordics", ("nordics", "nordic countries", "nordic")),
+    ("gcc", ("gulf cooperation council", "gcc")),
+)
+
+
+def _region_scope(place: str, recency: str) -> SearchScope:
+    return SearchScope(gl="", language="en", hl="en", place=place, recency=recency)
+
+
+def _scope_for_place(place: PlaceScope, recency: str) -> SearchScope:
+    return SearchScope(
+        gl=place.gl,
+        language=place.language,
+        hl=place.hl,
+        local_name=place.local_name if place.language != "en" else "",
+        place=place.names[0],
+        recency=recency,
+        tavily_country=place.tavily_country,
+    )
+
+
+def markets_from_brief(goal: str, context: str = "") -> list[SearchScope]:
+    """Every market named in the question or on a Markets line.
+
+    A multi-country area has no country code, and its name stays in the query.
+    A company's home country in the notes is not a market unless the question
+    or the Markets line names it.
+    """
+    recency = recency_from_brief(f"{goal}\n{context}")
+    found: list[SearchScope] = []
+    seen: set[str] = set()
+
+    def add(scope: SearchScope) -> None:
+        key = (scope.place or scope.gl).lower()
+        if not key or key in seen:
+            return
+        seen.add(key)
+        found.append(scope)
+
+    def scan(blob: str) -> None:
+        lowered = blob.lower()
+        for place, aliases in _REGIONS:
+            if any(_mentioned(lowered, alias) for alias in aliases):
+                add(_region_scope(place, recency))
+        for place in PLACES:
+            if any(_mentioned(lowered, name) for name in place.names):
+                add(_scope_for_place(place, recency))
+
+    for line in f"{goal}\n{context}".splitlines():
+        match = re.match(r"\s*markets?\s*:\s*(.+)", line, re.I)
+        if match:
+            scan(match.group(1))
+    if goal.strip():
+        scan(goal)
+    return found

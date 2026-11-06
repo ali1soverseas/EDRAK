@@ -16,6 +16,7 @@ import "./styles/density.css";
 import "./styles/product.css";
 import "./styles/deck.css";
 import "./styles/competitor-kb.css";
+import "./styles/research.css";
 
 const root = document.getElementById("root");
 

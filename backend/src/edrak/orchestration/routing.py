@@ -27,6 +27,13 @@ class ConcurrentWorkerDispatchError(RuntimeError):
         )
 
 
+def route_after_verify(_state: OrchestrationState) -> str:
+    """Metrics gathering is optional. The verified results still become the brief either way."""
+    if settings.METRICS_GATHERING_ENABLED:
+        return "metrics"
+    return "human_review"
+
+
 def route_from_plan(state: OrchestrationState) -> list[Send] | str:
     """Fan out one Send per task so workers run in parallel.
 

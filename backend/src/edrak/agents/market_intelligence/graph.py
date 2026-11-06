@@ -1,9 +1,12 @@
+import re
 from datetime import datetime
+from urllib.parse import urlparse
 
 from langgraph.graph import END, START, StateGraph
 
 from edrak.agents.market_intelligence.nodes import (
     bind_trace_context,
+    conclude,
     fill_gaps,
     log_block,
     output_node,
@@ -34,15 +37,26 @@ _STATUS_CONFIDENCE = {
 }
 
 _STATUS_ERROR = {
-    WorkerStatus.COMPLETED: "none",
-    WorkerStatus.PARTIAL: "Some research tasks were skipped.",
+    WorkerStatus.COMPLETED: "",
+    WorkerStatus.PARTIAL: "",
     WorkerStatus.NO_EVIDENCE: "No usable market evidence was collected.",
     WorkerStatus.FAILED: "Market research failed to produce findings.",
 }
 
+_DATE_RE = re.compile(
+    r"\b(20\d{2}-\d{2}-\d{2})\b"
+    r"|\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+20\d{2})\b",
+    re.I,
+)
+_PUBLISHER_TAIL = re.compile(
+    r"(intelligence|research|security|labs|group|capital)$",
+    re.I,
+)
+_CLOSE_TASKS = {"comparison", "momentum", "implication"}
+
 
 def task_router(state: MarketAgentState) -> str:
-    """Route: more tasks -> executor; open gaps -> one search pass; else output."""
+    """Route: more tasks -> executor; open gaps -> one search pass; else conclude."""
     idx = state.get("current_task_idx", 0)
     task_list = state.get("task_list", [])
     remaining = [task for task in task_list[idx:] if task["status"] in ("pending", "running")]
@@ -54,8 +68,8 @@ def task_router(state: MarketAgentState) -> str:
     if gaps and not state.get("gap_fill_done"):
         print(f"\n  [market_intelligence] TASK ROUTER: {len(gaps)} gap(s) -- searching again")
         return "fill_gaps"
-    print("\n  [market_intelligence] TASK ROUTER: All tasks complete -- proceeding to output_node")
-    return "output_node"
+    print("\n  [market_intelligence] TASK ROUTER: All tasks complete -- proceeding to conclude")
+    return "conclude"
 
 
 def build_graph():
@@ -64,6 +78,7 @@ def build_graph():
       task_planner
         -> task_executor  (loops via task_router until all tasks processed)
         -> fill_gaps once, when gaps remain, then task_executor again
+        -> conclude
         -> output_node
     """
     graph = StateGraph(MarketAgentState)
@@ -71,6 +86,7 @@ def build_graph():
     graph.add_node("task_planner", task_planner)
     graph.add_node("task_executor", task_executor)
     graph.add_node("fill_gaps", fill_gaps)
+    graph.add_node("conclude", conclude)
     graph.add_node("output_node", output_node)
 
     graph.add_edge(START, "task_planner")
@@ -81,10 +97,11 @@ def build_graph():
         {
             "task_executor": "task_executor",
             "fill_gaps": "fill_gaps",
-            "output_node": "output_node",
+            "conclude": "conclude",
         },
     )
     graph.add_edge("fill_gaps", "task_executor")
+    graph.add_edge("conclude", "output_node")
     graph.add_edge("output_node", END)
 
     return graph.compile()
@@ -130,27 +147,58 @@ def format_task_context(task: ResearchTask) -> str:
     return "\n".join(lines)
 
 
-def _evidence_from_private_item(item: dict, quote: str = "") -> Evidence:
+def publisher_from_url(url: str) -> str:
+    """Host label. mordorintelligence.com becomes Mordor Intelligence."""
+    host = urlparse(url or "").netloc.lower()
+    if host.startswith("www."):
+        host = host[4:]
+    label = host.split(".")[0] if host else ""
+    if not label:
+        return ""
+    label = _PUBLISHER_TAIL.sub(r" \1", label)
+    return " ".join(part.capitalize() for part in re.split(r"[\s_-]+", label) if part)
+
+
+def published_at_from(*parts: str) -> str:
+    """A date already written on the hit. A bare year is not a publish date."""
+    blob = " ".join(part for part in parts if part)
+    match = _DATE_RE.search(blob)
+    return match.group(0) if match else ""
+
+
+def _evidence_from_private_item(item: dict) -> Evidence:
     """The fact is this page's own excerpt, never another source's quote."""
     source = item.get("source", "")
     text = (item.get("text") or item.get("excerpt") or "").strip()
     fact = (text or "Source text was not retained.")[:800]
     excerpt = text[:2000] or None
+    title = str(item.get("title") or "").strip()
+    published = str(item.get("published_at") or "").strip() or published_at_from(
+        title,
+        str(item.get("snippet") or ""),
+        text,
+    )
     if item.get("type") == "url":
+        metadata = {"published_at": published} if published else {}
         return Evidence(
             source_type=SourceType.WEB_PAGE,
             source_url=source or None,
-            source_title=source or None,
+            source_title=title or None,
+            publisher=publisher_from_url(source) or None,
             extracted_fact=fact,
             excerpt=excerpt,
             page_text=text or None,
+            metadata=metadata,
         )
+    metadata = {"endpoint": source} if source else {}
+    if published:
+        metadata["published_at"] = published
     return Evidence(
         source_type=SourceType.OTHER,
         extracted_fact=fact,
         excerpt=excerpt,
         page_text=text or None,
-        metadata={"endpoint": source} if source else {},
+        metadata=metadata,
     )
 
 
@@ -179,13 +227,21 @@ def worker_result_from_state(
         # items rather than analysed claims, so a missing value means nothing
         # scored it, and claiming mid-confidence would overstate the finding.
         confidence_value = float(stored) if isinstance(stored, (int, float)) else 0.35
+        limitations = [
+            text.strip()
+            for text in (item.get("limitations") or [])
+            if isinstance(text, str) and text.strip()
+        ]
+        task_name = item.get("task") or ""
+        if task_name and task_name not in _CLOSE_TASKS:
+            limitations.append(f"Derived from research task: {task_name}")
         findings.append(
             Finding(
                 statement=claim,
                 category=FindingCategory.MARKET_SIGNAL,
                 evidence_refs=refs,
                 confidence=confidence_value,
-                limitations=[f"Derived from research task: {item['task']}"] if item.get("task") else [],
+                limitations=limitations,
             )
         )
 

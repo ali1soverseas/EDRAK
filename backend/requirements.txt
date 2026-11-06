@@ -43,10 +43,16 @@ chromadb
 
 # Document / web parsing
 pypdf
+# PDF profile import: per-page markdown, and OCR for scanned pages when the Tesseract
+# program is installed (a system package, not a pip one). PyMuPDF is AGPL-3.0 or
+# commercially licensed.
+pymupdf>=2.0
+pymupdf4llm>=2.0
 python-docx
 openpyxl
 
-# Brief export (PDF)
+# Brief export (PDF), and the browser fallback for JavaScript-only sites in the website
+# profile import. The import imports it lazily and carries on without it.
 playwright
 beautifulsoup4
 lxml

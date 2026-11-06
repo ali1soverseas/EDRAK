@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ShellLayout } from "./components/shell/AppShell";
 import { I18nProvider } from "./i18n";
 import { CompanyProfile } from "./pages/CompanyProfile";
+import { CompanyResearch } from "./pages/CompanyResearch";
 import { Competitors } from "./pages/Competitors";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
@@ -37,6 +38,7 @@ export function App() {
               <Route path="decisions" element={<Decisions />} />
               <Route path="settings" element={<Settings />} />
               <Route path="company" element={<CompanyProfile />} />
+              <Route path="company/research" element={<CompanyResearch />} />
               <Route path="competitors" element={<Competitors />} />
               <Route path="competitors/:id" element={<Competitors />} />
               <Route path="analyses/new" element={<NewAnalysis />} />

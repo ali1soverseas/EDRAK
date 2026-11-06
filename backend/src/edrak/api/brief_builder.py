@@ -404,6 +404,7 @@ def build_brief(
         "synthesis": synthesis,
         "cross_signal": cross_signal,
         "decision_analysis": decision_analysis,
+        "personalization": (decision_analysis or {}).get("personalization"),
     }
     if v3:
         _link_options(options, v3)

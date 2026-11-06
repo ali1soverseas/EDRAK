@@ -16,6 +16,7 @@ from ..contracts.DecisionAnalysis import (
 )
 from ..core.llm import get_chat_model, schema_instruction
 from .options import generate_options
+from .personalization import emphasis_text
 from .prompts import (
     DECISION_ANALYSIS_SYSTEM_PROMPT,
     build_decision_analysis_user_prompt,
@@ -72,6 +73,9 @@ def _prepare_context(
         "cross_signal_status": cross_signal.status,
         "cross_signal_warnings": cross_signal.warnings,
         "input_metadata": decision_input.metadata,
+        "analysis_emphasis": emphasis_text(
+            (decision_input.metadata or {}).get("decision_preference")
+        ),
     }
 
 
@@ -596,6 +600,10 @@ def make_validate_and_assemble_node():
                 "This does not prove that the business has no risks."
             )
 
+        preference = (decision_input.metadata or {}).get("decision_preference") or {}
+        if not isinstance(preference, dict):
+            preference = {}
+
         result = DecisionAnalysisResult(
             research_run_id=decision_input.research_run_id,
             status=status,
@@ -617,6 +625,12 @@ def make_validate_and_assemble_node():
                 or cross_signal.decision_ready_context.evidence_gaps
             ),
             limitations=list(dict.fromkeys(limitations)),
+            personalization=(
+                preference
+                if isinstance(preference, dict)
+                and preference.get("status") in ("applied", "uncertain")
+                else None
+            ),
             warnings=list(dict.fromkeys(warnings)),
             metadata={
                 "source_stage": "cross_signal",

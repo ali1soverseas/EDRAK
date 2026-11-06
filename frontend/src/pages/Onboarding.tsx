@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { ProfileImport } from "../components/company/ProfileImport";
+import { ResearchPanel } from "../components/company/ResearchPanel";
 import { LanguageSwitch } from "../components/shell/AppShell";
 import { ChoiceChips, TagInput } from "../components/ui/Controls";
 import { DotField } from "../components/ui/DotField";
@@ -67,6 +69,7 @@ export function Onboarding() {
   const [compName, setCompName] = useState("");
   const [kbBuildStarted, setKbBuildStarted] = useState(false);
   const [kbBuildComplete, setKbBuildComplete] = useState(false);
+  const [research, setResearch] = useState(true); // research the company in the background when a website is read
   // Opened from the company profile to change one part: start at that step, come back when done.
   const [params] = useSearchParams();
   const back = params.get("return");
@@ -171,6 +174,11 @@ export function Onboarding() {
     }
   };
 
+  const industryLabel = (key: string) => {
+    const i = INDUSTRIES.find((x) => x[0] === key);
+    return i ? L(i[1], i[2]) : key;
+  };
+
   const titles: Record<number, [string, string, string, string]> = {
     1: ["Your company", "شركتك", "Edrak compares everything against this baseline.", "يقارن إدراك كل شيء بهذا الأساس."],
     2: ["What you offer", "ما تقدمه", "Your products or services, and who they are for.", "منتجاتك أو خدماتك ولمن هي."],
@@ -205,6 +213,7 @@ export function Onboarding() {
 
           {step === 1 && (
             <div className="stack gap16">
+              <ProfileImport form={d} onApply={setD} industryLabel={industryLabel} research={{ on: research, onChange: setResearch }} />
               <label className="field"><span>{L("Company name", "اسم الشركة")}</span>
                 <input className="input" autoFocus value={d.name} onChange={(e) => set("name", e.target.value)} dir="auto" /></label>
               <TagInput values={d.aliases} onChange={(v) => set("aliases", v)} label={L("Also known as", "يُعرف أيضًا باسم")} showLabel
@@ -358,6 +367,14 @@ export function Onboarding() {
                 [L("Goals", "الأهداف"), d.goals.join("; ")], [L("Documents", "المستندات"), String(docs.length)]].map(([k, v]) => (
                 <div key={k} className="list-row"><span className="muted" style={{ width: 150 }}>{k}</span><bdi className="grow">{v || "—"}</bdi></div>
               ))}
+              <div className="stack gap8" style={{ marginTop: 16 }}>
+                <span className="eyebrow">{L("Company research", "بحث الشركة")}</span>
+                <p className="s13 t2" style={{ margin: 0 }}>
+                  {L("What Edrak found on your website and in your documents. You can approve it now or later; the research keeps running if you finish setup first.",
+                    "ما وجده إدراك في موقعك ومستنداتك. يمكنك اعتماده الآن أو لاحقًا، ويستمر البحث إن أنهيت الإعداد أولًا.")}
+                </p>
+                <ResearchPanel variant="compact" />
+              </div>
             </div>
           )}
 

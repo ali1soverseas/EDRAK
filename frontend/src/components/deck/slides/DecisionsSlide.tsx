@@ -8,6 +8,76 @@ import { useDeck } from "../context";
 import { PlanPanel } from "../PlanPanel";
 import { SlideHead } from "./SlideHead";
 
+const CRITERION: Record<string, [string, string]> = {
+  speed: ["implementation time", "وقت التنفيذ"],
+  cost: ["total cost", "التكلفة الإجمالية"],
+  control: ["in-house control", "التحكم الداخلي"],
+  quality: ["quality", "الجودة"],
+  risk: ["reliability and risk", "الموثوقية والمخاطر"],
+  scale: ["scale", "الحجم والنطاق"],
+  differentiation: ["differentiation", "التميّز"],
+  reversibility: ["reversibility", "إمكانية التراجع"],
+  compliance: ["compliance", "الامتثال"],
+  revenue: ["revenue", "الإيراد"],
+  customer: ["customers", "العملاء"],
+  partnership: ["partnership", "الشراكة"],
+  talent: ["talent", "الكفاءات"],
+};
+
+const RELATION: Record<string, [string, string]> = {
+  time_to_value: ["time to value", "الوقت حتى العائد"],
+  quality_at_speed: ["quality at speed", "الجودة مع السرعة"],
+  timing_risk: ["timing risk", "مخاطر التوقيت"],
+  in_house_timeline: ["in-house timeline", "الجدول الزمني للتنفيذ الداخلي"],
+  cost_of_failure: ["cost of failure", "تكلفة الفشل"],
+  cost_of_ownership: ["cost of ownership", "تكلفة الامتلاك"],
+  spend_and_outcome: ["where spend changes the outcome", "أين يغيّر الإنفاق النتيجة"],
+  unit_economics: ["unit economics as volume grows", "اقتصاديات الوحدة مع نمو الحجم"],
+  who_carries_failure: ["who carries the failure", "من يتحمل الفشل"],
+  in_house_quality: ["in-house quality", "جودة التنفيذ الداخلي"],
+  reliable_outcome: ["how reliable the customer outcome is", "موثوقية نتيجة العميل"],
+  capacity_risk: ["capacity and concentration risk", "مخاطر الطاقة والتركّز"],
+  switch_for: ["what a customer would switch for", "ما الذي يدفع العميل للتحوّل"],
+  undo_downside: ["how much of the downside can be undone", "ما يمكن التراجع عنه من الخسارة"],
+  reversible_cost: ["the cost of a reversible path versus a commitment", "تكلفة المسار القابل للتراجع مقابل الالتزام"],
+  regulatory_downside: ["regulatory downside", "المخاطر التنظيمية"],
+  compliant_owner: ["who must own the compliant path", "من يملك مسار الامتثال"],
+  margin: ["margin", "الهامش"],
+  revenue_speed: ["how soon the revenue arrives", "متى يصل الإيراد"],
+  revenue_scale: ["how revenue changes as volume grows", "كيف يتغير الإيراد مع نمو الحجم"],
+  price_hold: ["whether a distinct offer can hold its price", "قدرة العرض المتميّز على الحفاظ على سعره"],
+  keep_customers: ["whether the experience keeps customers", "هل التجربة تحافظ على العملاء"],
+  lose_customers: ["the risk of losing customers", "مخاطر خسارة العملاء"],
+  customers_wait: ["whether customers will wait", "هل ينتظر العملاء"],
+  switch_and_stay: ["what would make a customer switch and stay", "ما الذي يجعل العميل يتحوّل ويبقى"],
+  partner_control: ["what ownership is given up to a partner", "ما يُتنازل عنه من الملكية للشريك"],
+  partner_speed: ["whether a partner reaches the market sooner", "هل يصل الشريك إلى السوق أسرع"],
+  partner_cost: ["the cost of the partner path", "تكلفة مسار الشراكة"],
+  partner_compliance: ["whether the partner can carry the regulatory burden", "هل يستطيع الشريك تحمّل العبء التنظيمي"],
+  talent_control: ["whether the people exist to own it", "هل تتوفر الكفاءات لامتلاكه"],
+  talent_speed: ["whether hiring can still hit the date", "هل يمكن للتوظيف أن يلحق بالموعد"],
+  talent_quality: ["whether the team can hold the quality bar", "هل يستطيع الفريق الحفاظ على الجودة"],
+  talent_scale: ["whether the team can support the volume", "هل يستطيع الفريق تحمّل الحجم"],
+};
+
+function EmphasisNote({ personalization }: { personalization: NonNullable<DecisionsSlideData["personalization"]> }) {
+  const L = useL();
+  const phrase = (table: Record<string, [string, string]>, id?: string) => (id && table[id] ? L(table[id][0], table[id][1]) : "");
+  const label = (id?: string) => phrase(CRITERION, id);
+  const focus = personalization.relation ? phrase(RELATION, personalization.relation) : label(personalization.criterion);
+  const titles = (personalization.decisions ?? []).map((d) => d.title).filter(Boolean).join(", ");
+  const text = personalization.status === "applied"
+    ? L(
+        `This analysis looks more closely at ${focus}${titles ? `, based on earlier decisions: ${titles}` : ""}.`,
+        `يتعمق هذا التحليل في ${focus}${titles ? ` بناءً على قرارات سابقة: ${titles}` : ""}.`,
+      )
+    : L(
+        `Earlier decisions weighed ${label(personalization.criteria?.[0])} and ${label(personalization.criteria?.[1])} differently, so each option compares both.`,
+        `وازنت القرارات السابقة بين ${label(personalization.criteria?.[0])} و${label(personalization.criteria?.[1])} بشكل مختلف، لذا يقارن كل خيار بينهما.`,
+      );
+  return <p className="s13 t2 choose-hint"><Icon name="info" size={13} /> {text}</p>;
+}
+
 function OptionCard({ o, chosen, onChoose }: { o: BriefOption; chosen: boolean; onChoose: () => void }) {
   const L = useL();
   const { ask } = useDeck();
@@ -70,6 +140,7 @@ export function DecisionsSlide({ slide }: { slide: DecisionsSlideData }) {
         sub={slide.framing}
         aside={<span className="chip c-line"><Icon name="lock" size={12} /> {brief.lifecycle === "decided" ? L("Decision recorded", "سُجّل القرار") : L("The decision stays with you.", "القرار لك.")}</span>} />
       <div className="slide-body">
+        {slide.personalization && <EmphasisNote personalization={slide.personalization} />}
         {options.length === 0 ? (
           <div className="empty">{L("The analysis did not produce distinct options. The findings and gaps are the basis for a decision.", "لم ينتج التحليل خيارات مميزة. النتائج والفجوات هي أساس القرار.")}</div>
         ) : (

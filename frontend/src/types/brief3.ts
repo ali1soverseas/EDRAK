@@ -103,7 +103,15 @@ export interface MetricsSlideData {
   comparison: ComparisonRow[]; company: string; collapsed: boolean; collapsed_reason: string | null;
 }
 export interface SignalsSlideData { id: "signals"; title: string; items: string[]; lenses: { lens: string; label: string }[]; emphasis: Record<string, number> }
-export interface DecisionsSlideData { id: "decisions"; title: string; framing: string; options: string[]; priorities_known: boolean }
+export interface DecisionPersonalization {
+  status: "applied" | "uncertain";
+  criterion?: string;
+  criteria?: string[];
+  relation?: string;
+  aspects?: string[];
+  decisions: { id: string; title: string; option: string | null }[];
+}
+export interface DecisionsSlideData { id: "decisions"; title: string; framing: string; options: string[]; priorities_known: boolean; personalization?: DecisionPersonalization | null }
 export interface EvidenceSlideData {
   id: "evidence_gaps"; title: string; coverage: BriefV3["coverage"]; by_lens: LensCoverage[];
   source_mix: { total: number; internal: number; external: number; by_reliability: Record<string, number>; by_kind: Record<string, number> };

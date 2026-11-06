@@ -16,6 +16,7 @@ from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation
 from edrak.contracts.result import Conflict, Finding, FindingCategory, WorkerResult, WorkerStatus
 from edrak.contracts.task import ResearchTask, WorkerType
 from edrak.contracts.vocabulary import competitor_names, describe_context
+from edrak.connectors import run_dynamic_sql_pipeline, run_dynamic_api_pipeline
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_json_object
@@ -213,12 +214,37 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
         except Exception as e:
             logger.error("Error retrieving evidence for query '%s': %s", q, e)
 
+    # 2. Dynamic Database Retrieval (Direct DB / SQL)
+    if task and task.company_profile and getattr(task.company_profile, "db_config", None):
+        try:
+            log_action("internal_intelligence", "querying relational database via text-to-SQL")
+            db_evidence = run_dynamic_sql_pipeline(task.company_profile.db_config, queries, task.goal)
+            logger.info("Dynamic SQL retrieval returned %d evidence items", len(db_evidence))
+            candidates.extend(db_evidence)
+        except Exception as e:
+            logger.error("Error during dynamic SQL retrieval: %s", e)
+
+    # 3. Dynamic REST API Retrieval (OpenAPI / Endpoints)
+    if task and task.company_profile and getattr(task.company_profile, "api_config", None):
+        try:
+            log_action("internal_intelligence", "querying operational microservice REST API")
+            api_evidence = run_dynamic_api_pipeline(task.company_profile.api_config, queries, task.goal)
+            logger.info("Dynamic REST API retrieval returned %d evidence items", len(api_evidence))
+            candidates.extend(api_evidence)
+        except Exception as e:
+            logger.error("Error during dynamic REST API retrieval: %s", e)
+
     # Cross-Score & Rerank against (Goal + Focus)
     goal_text = f"{task.goal if task else ''} {task.focus if task else ''}".lower()
     goal_tokens = set(re.findall(r"\w+", goal_text)) - {"a", "an", "the", "and", "or", "to", "in", "of", "for", "vs"}
 
     def _score_candidate(ev: Evidence) -> float:
         base_score = float(ev.metadata.get("relevance_score", 0.5))
+        channel = ev.metadata.get("channel")
+        # Direct DB and REST API evidence are high-precision structured data: give priority boost
+        if channel in ("sql_database", "rest_api"):
+            return round(min(0.98, base_score + 0.10), 3)
+
         ev_text = f"{ev.source_title} {ev.extracted_fact} {ev.excerpt}".lower()
         ev_tokens = set(re.findall(r"\w+", ev_text))
         overlap = len(goal_tokens & ev_tokens) / max(1, len(goal_tokens))
@@ -284,7 +310,12 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
     for ev in evidence_list:
         rank = ev.metadata.get("rank", "-")
         rel_score = ev.metadata.get("relevance_score", 0.70)
-        if ev.metadata.get("origin") == "public_handbook":
+        channel = ev.metadata.get("channel")
+        if channel == "sql_database":
+            doc_type_label = f"Direct Relational Database Table [{ev.metadata.get('table', 'sql')}]"
+        elif channel == "rest_api":
+            doc_type_label = f"Operational REST API Endpoint [{ev.metadata.get('endpoint', 'api')}]"
+        elif ev.metadata.get("origin") == "public_handbook":
             doc_type_label = "Public handbook"
         elif ev.is_synthetic:
             doc_type_label = "Synthetic Internal Strategic Doc"

@@ -166,6 +166,8 @@ def test_choose_edit_approve_records_the_decision_and_undo_supersedes_both(clien
 
     decisions = client.get("/api/decisions").json()
     assert any(d.get("option_label") == "A" for d in decisions) or decisions
+    tags = __import__("json").loads(decisions[0]["preference_tags"])
+    assert tags["version"] == 2 and tags["reason"] == [] and "quality" in tags["option"]
     assert client.delete(f"/api/briefs/{brief_id}/decision").status_code == 200
     plans = client.get(f"/api/briefs/{brief_id}/action-plans").json()
     assert all(p["status"] != "approved" for p in plans)

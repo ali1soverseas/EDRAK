@@ -40,5 +40,13 @@ class AnalysisReply(BaseModel):
     claims: list[AnalysisClaim] = Field(default_factory=list)
 
 
+class Conclusion(BaseModel):
+    """Closing sentences. Each one may only reuse figures from accepted claims."""
+
+    comparison: str = ""
+    momentum: str = ""
+    implication: str = ""
+
+
 def schema_text(model: type[BaseModel]) -> str:
     return json.dumps(model.model_json_schema(), indent=2)

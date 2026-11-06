@@ -13,7 +13,7 @@ import { api } from "../services/api";
 const briefNumber = (n: number) => String(n).padStart(4, "0");
 
 export function Report() {
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -69,7 +69,7 @@ export function Report() {
   return (
     <>
       {chrome}
-      <div ref={container} className={`col ${fullscreen ? "brief-fullscreen" : ""}`} style={{ height: "100%", minHeight: 0 }}>
+      <div ref={container} className={`col ${fullscreen ? "brief-fullscreen" : ""}`} style={{ height: "100%", minHeight: 0 }} dir={dir}>
         <BriefToolbar brief={data as never} container={container} fullscreen={fullscreen} setFullscreen={setFullscreen} />
         <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
           <ReportView brief={data} />

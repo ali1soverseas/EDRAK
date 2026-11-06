@@ -90,6 +90,7 @@ from edrak.db.repositories import notifications as notifications_repo
 from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
+from edrak.DecisionAnalysis.personalization import HISTORY_POOL, embed_texts, infer_preference, load_history, select_relevant
 from edrak.evaluation_artifacts import EvaluationArtifactBundle
 from edrak.guardrails.output import check_brief
 from edrak.orchestration.graph import build_graph
@@ -649,8 +650,31 @@ class RunManager:
             await db.commit()
 
     @staticmethod
-    def _graph_config(request_id: str) -> dict[str, Any]:
-        return {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+    def _graph_config(
+        request_id: str,
+        *,
+        company_name: str = "",
+        user_id: str = "",
+    ) -> dict[str, Any]:
+        cfg: dict[str, Any] = {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+        try:
+            from edrak.core.observability import build_observability_config
+            tags = [company_name, "orchestration"] if company_name else ["orchestration"]
+            obs_cfg = build_observability_config(
+                trace_name=f"edrak-analysis-{request_id}",
+                session_id=request_id,
+                user_id=user_id or "default_user",
+                tags=tags,
+            )
+            if obs_cfg.get("callbacks"):
+                cfg["callbacks"] = obs_cfg["callbacks"]
+            if obs_cfg.get("metadata"):
+                cfg["metadata"] = obs_cfg["metadata"]
+            if obs_cfg.get("tags"):
+                cfg["tags"] = obs_cfg["tags"]
+        except Exception:
+            pass
+        return cfg
 
     async def start_cross_signal_from_planning(self, analysis_id: str) -> dict[str, Any]:
         """Start Cross-Signal from the verified output recorded in this run's planning artifact."""
@@ -751,7 +775,9 @@ class RunManager:
                 analysis_id,
                 lambda agent, message: loop.call_soon_threadsafe(self._apply_activity, active, agent, message),
             )
-            config = self._graph_config(analysis_id)
+            company_name = getattr(getattr(request, "company_profile", None), "name", "") or ""
+            workspace_id = getattr(getattr(request, "company_profile", None), "workspace_id", "") or ""
+            config = self._graph_config(analysis_id, company_name=company_name, user_id=workspace_id)
             async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
                 saver.serde = _checkpoint_serializer()
                 graph = build_graph(get_default_registry(), checkpointer=saver)
@@ -761,8 +787,22 @@ class RunManager:
                     stream_input: Any = Command(resume=resume) if resume is not None else None
                 else:
                     # Run the plan that was approved. Without it the graph plans again by itself.
-                    state = {"request": request, "plan": plan}
-                    stream_input = {"request": request, "plan": plan}
+                    preference: dict[str, Any] = {"status": "none"}
+                    if settings.PERSONALIZATION_ENABLED and active.workspace_id:
+                        k = settings.PERSONALIZATION_HISTORY_K
+                        async with get_db() as db:
+                            history = await load_history(
+                                db, active.workspace_id, request.business_context.use_case.value,
+                                limit=max(HISTORY_POOL, k),
+                            )
+                        chosen = select_relevant(
+                            history, request, k=k, threshold=settings.PERSONALIZATION_SIMILARITY_MIN,
+                            aspect_bar=settings.PERSONALIZATION_ASPECT_BAR, embed=embed_texts,
+                        )
+                        if chosen:
+                            preference = infer_preference(chosen, aspect_bar=settings.PERSONALIZATION_ASPECT_BAR)
+                    state = {"request": request, "plan": plan, "decision_preference": preference}
+                    stream_input = {"request": request, "plan": plan, "decision_preference": preference}
                 logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)
 
                 async for chunk in graph.astream(stream_input, config, stream_mode="updates"):
@@ -840,6 +880,11 @@ class RunManager:
             flusher.cancel()
             await self._flush(active)
             action_log.unsubscribe(analysis_id, sub_token)
+            try:
+                from edrak.core.observability import flush_observability
+                flush_observability()
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------ checkpoint 2 and pausing
 

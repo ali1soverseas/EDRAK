@@ -126,12 +126,16 @@ def get_chat_model(
     base_url: Optional[str] = None,
     num_predict: Optional[int] = None,
     timeout: Optional[float] = None,
+    callbacks: Optional[list] = None,
 ) -> ChatOllama:
     """The chat model every component uses.
 
     `agent` selects which credential is used. Passing it is what keeps one
     agent's quota separate from another's.
     """
+    extra_kwargs = {}
+    if callbacks is not None:
+        extra_kwargs["callbacks"] = callbacks
     return ChatOllama(
         model=model or settings.OLLAMA_MODEL,
         base_url=base_url or NATIVE_BASE_URL,
@@ -139,6 +143,7 @@ def get_chat_model(
         num_predict=num_predict or DEFAULT_NUM_PREDICT,
         sync_client_kwargs={"timeout": timeout} if timeout is not None else {},
         client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
+        **extra_kwargs,
     )
 
 
@@ -181,9 +186,17 @@ def get_structured(
     still validate: a prose reply or a wrong top-level shape does slip
     through when the instruction is omitted.
     """
-    return get_chat_model(
+    runnable = get_chat_model(
         model, agent=agent, temperature=temperature, timeout=timeout
     ).with_structured_output(schema, method=method)
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        if prompt_obj is not None:
+            return runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
+    except Exception:
+        pass
+    return runnable
 
 
 def get_json_object(
@@ -193,15 +206,22 @@ def get_json_object(
     agent: Optional[str] = None,
     model: Optional[str] = None,
     temperature: Optional[float] = None,
+    callbacks: Optional[list] = None,
 ) -> dict:
     """Ask for a JSON object and return it as a dict.
 
     For callers whose reply shape is large, optional or still evolving, where
     pinning a pydantic schema would be more churn than the guarantee is worth.
     """
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        cfg = {"metadata": {"langfuse_prompt": prompt_obj}} if prompt_obj is not None else None
+    except Exception:
+        cfg = None
     message = get_chat_model(
-        model, agent=agent, temperature=temperature
-    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}])
+        model, agent=agent, temperature=temperature, callbacks=callbacks
+    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}], config=cfg)
     text = str(message.content).strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:

@@ -2,9 +2,21 @@
 
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 
 os.environ.setdefault("CONFIDENT_TRACE_VERBOSE", "0")
+
+# Windows consoles default to a legacy code page. A model or a source can emit
+# U+2011 (non-breaking hyphen), and printing it would kill the worker.
+for _stream in (sys.stdout, sys.stderr):
+    _reconfigure = getattr(_stream, "reconfigure", None)
+    if _reconfigure is None:
+        continue
+    try:
+        _reconfigure(encoding="utf-8", errors="replace")
+    except (ValueError, OSError):
+        pass
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +24,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from edrak.api.routes import router as api_router
 from edrak.db.connection import get_db, init_db
 from edrak.db.repositories.auth import purge_expired_sessions
+from edrak.db.repositories.research_runs import fail_orphaned_research_runs
 from edrak.db.repositories.runs import fail_orphaned_runs
 from edrak.db.util import fetch_all
 
@@ -27,6 +40,9 @@ async def lifespan(app: FastAPI):
         orphaned = await fail_orphaned_runs(db)
         if orphaned:
             logger.warning("Marked %d interrupted run(s) as failed: %s", len(orphaned), ", ".join(orphaned))
+        interrupted = await fail_orphaned_research_runs(db)
+        if interrupted:
+            logger.warning("Marked %d interrupted research run(s) as failed: %s", len(interrupted), ", ".join(interrupted))
         await purge_expired_sessions(db)
         # Files that were waiting for or in the middle of indexing are queued again.
         pending = await fetch_all(db, "SELECT id, workspace_id FROM documents WHERE status IN ('uploaded','indexing')")
@@ -53,6 +69,14 @@ async def lifespan(app: FastAPI):
     import asyncio
 
     from edrak.monitoring.scheduler import run_forever
+
+    # Say once whether scanned PDFs can be read. The check never stops the server from starting.
+    try:
+        from edrak.company_profile.pdf_import import log_ocr_status
+
+        log_ocr_status()
+    except Exception:
+        logger.exception("Could not check OCR availability")
 
     scheduler = asyncio.create_task(run_forever())
     yield

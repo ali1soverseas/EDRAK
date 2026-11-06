@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
 import { useAsync } from "../lib/hooks";
+import { allFacts, countByStatus, isActive, runSummary } from "../lib/research";
+import { useLatestRun } from "../lib/useResearch";
 import { useL } from "../lib/useL";
 import { edrak } from "../services/edrak";
 import { INDUSTRIES } from "./Onboarding";
@@ -22,6 +24,39 @@ function Section({ title, step, children, wide = false }: { title: string; step:
 function Tags({ items, tone, empty }: { items: string[]; tone?: string; empty: string }) {
   if (!items.length) return <span className="s13 t3">{empty}</span>;
   return <div className="row g8 wrap">{items.map((x) => <span key={x} className={`tag ${tone ?? ""}`} dir="auto">{x}</span>)}</div>;
+}
+
+/** Where company research stands, with a way in: start it, follow it, or review what it found. */
+function ResearchCard() {
+  const L = useL();
+  const { run } = useLatestRun();
+  const facts = useAsync(() => edrak.researchFacts(), [run?.id, run?.status]);
+  const counts = countByStatus(allFacts(facts.data));
+  const active = isActive(run);
+  const action = active ? L("View progress", "عرض التقدم") : counts.suggested > 0 ? L("Review facts", "راجع الحقائق") : run ? L("Open research", "افتح البحث") : L("Research your company", "ابحث عن شركتك");
+  return (
+    <section className="card pad profile-sec wide" aria-label={L("Company research", "بحث الشركة")}>
+      <div className="row jb">
+        <span className="eyebrow">{L("Company research", "بحث الشركة")}</span>
+        <Link className="btn sm pri" to="/company/research"><Icon name="sparkle" size={13} /> {action}</Link>
+      </div>
+      {!run && counts.all === 0 ? (
+        <span className="s13 t2">{L("Edrak can read your website and documents and list your leadership, ownership, financials, locations and more, each with its source. You approve what is right.",
+          "يمكن لإدراك قراءة موقعك ومستنداتك وعرض القيادة والملكية والبيانات المالية والمواقع وغيرها، كل منها مع مصدره. وأنت تعتمد الصحيح.")}</span>
+      ) : (
+        <div className="stack gap6">
+          {run && <span className="s13 t2">{runSummary(run, L)}</span>}
+          {counts.all > 0 && (
+            <div className="row g8 wrap">
+              <span className={`chip ${counts.suggested > 0 ? "c-await" : "c-line"}`}>{L(`${counts.suggested} to review`, `${counts.suggested} للمراجعة`)}</span>
+              <span className="chip c-ok">{L(`${counts.approved} approved`, `${counts.approved} معتمدة`)}</span>
+              {counts.rejected > 0 && <span className="chip c-line">{L(`${counts.rejected} rejected`, `${counts.rejected} مرفوضة`)}</span>}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
 }
 
 /** The company profile created during onboarding: the baseline every analysis compares against. */
@@ -64,6 +99,8 @@ export function CompanyProfile() {
             <Link className="btn ghost sm" to="/onboarding?step=1&return=/company"><Icon name="pencil" size={13} /> {L("Edit basics", "عدّل الأساسيات")}</Link>
           </div>
         </header>
+
+        <ResearchCard />
 
         <div className="profile-grid">
           <Section title={L("What you offer", "ما تقدمه")} step={2}>

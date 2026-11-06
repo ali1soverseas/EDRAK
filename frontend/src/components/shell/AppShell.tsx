@@ -17,6 +17,7 @@ import { Icon } from "../ui/Icon";
 import { Logo } from "../ui/Logo";
 import { Segmented } from "../ui/Controls";
 import { DotField } from "../ui/DotField";
+import { ResearchNotice } from "./ResearchNotice";
 import { AskEdrak, GlobalSearch, NotificationBell } from "./TopTools";
 import { useL } from "../../lib/useL";
 
@@ -107,6 +108,7 @@ function TopBar({ crumbs, menuOpen, onMenu }: { crumbs: Crumb[]; menuOpen: boole
         })}
       </nav>
       <div className="grow" />
+      <ResearchNotice />
       <GlobalSearch />
       <LanguageSwitch />
       <NotificationBell />
@@ -132,7 +134,8 @@ function Sidebar({ rail, open }: { rail: boolean; open: boolean }) {
     { to: "/alerts", icon: "warning" as const, label: L("Alerts", "التنبيهات"), on: at("/alerts") },
   ];
   const knowledge = [
-    { to: "/company", icon: "building" as const, label: L("Company", "الشركة"), on: at("/company") },
+    { to: "/company", icon: "building" as const, label: L("Company", "الشركة"), on: pathname === "/company" },
+    { to: "/company/research", icon: "sparkle" as const, label: L("Company research", "بحث الشركة"), on: at("/company/research") },
     { to: "/watchlist", icon: "target" as const, label: L("Watchlist", "قائمة المتابعة"), on: at("/watchlist") },
     { to: "/evidence", icon: "layers" as const, label: L("Evidence", "الأدلة"), on: at("/evidence") },
     { to: "/decisions", icon: "checks" as const, label: L("Decision log", "سجل القرارات"), on: at("/decisions") },

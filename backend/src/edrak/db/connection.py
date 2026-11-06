@@ -76,7 +76,7 @@ def _prepare_file(path: Path) -> None:
 
 
 def _apply_additions(path: Path) -> None:
-    """Apply additive schemas and migrations to both new and existing databases."""
+    """Apply later tables and migrations to new and existing databases. Idempotent, so it runs on every start."""
     conn = sqlite3.connect(path)
     try:
         conn.execute("PRAGMA foreign_keys = ON")
@@ -87,6 +87,11 @@ def _apply_additions(path: Path) -> None:
         dcols = {r[1] for r in conn.execute("PRAGMA table_info(decisions)")}
         if dcols and "action_plan_id" not in dcols:
             conn.execute("ALTER TABLE decisions ADD COLUMN action_plan_id text REFERENCES action_plans(id)")
+        if dcols and "preference_tags" not in dcols:
+            conn.execute("ALTER TABLE decisions ADD COLUMN preference_tags text")
+        bcols = {r[1] for r in conn.execute("PRAGMA table_info(briefs)")}
+        if bcols and "arabic_document" in bcols:
+            conn.execute("ALTER TABLE briefs DROP COLUMN arabic_document")
         if "challenge_id" not in cols:
             conn.execute("ALTER TABLE metrics ADD COLUMN challenge_id text")
         tcols = {r[1] for r in conn.execute("PRAGMA table_info(chat_threads)")}
@@ -97,6 +102,14 @@ def _apply_additions(path: Path) -> None:
         ecols = {r[1] for r in conn.execute("PRAGMA table_info(evidence)")}
         if ecols and "page_text" not in ecols:
             conn.execute("ALTER TABLE evidence ADD COLUMN page_text text")
+        rcols = {r[1] for r in conn.execute("PRAGMA table_info(research_runs)")}
+        if rcols and "stage" not in rcols:  # research_runs created before the run progress fields
+            conn.execute("ALTER TABLE research_runs ADD COLUMN stage text")
+        if rcols and "stats" not in rcols:
+            conn.execute("ALTER TABLE research_runs ADD COLUMN stats text NOT NULL DEFAULT '{}' CHECK (json_valid(stats) AND json_type(stats) = 'object')")
+        from edrak.company_research.seed_keys import seed_fact_keys
+
+        seed_fact_keys(conn)
         conn.commit()
     finally:
         conn.close()

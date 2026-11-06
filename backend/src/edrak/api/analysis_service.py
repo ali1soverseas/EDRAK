@@ -125,9 +125,50 @@ def build_request(
     inputs = standard_inputs(form, company)
     profile_fields = profile_contract_fields(company)
     known_profile = set(CompanyProfile.model_fields)
+    db_config = getattr(form, "db_config", None) or company.get("db_config")
+    api_config = getattr(form, "api_config", None) or company.get("api_config")
+
+    # Auto-attach mock database & REST API for NVIDIA or when mock services exist
+    from pathlib import Path
+    import json
+    from edrak.contracts.request import DatabaseConnectionConfig, RESTAPIConfig
+
+    repo_root = Path(__file__).resolve().parents[4]
+    mock_db_file = repo_root / "mock_services" / "nvidia" / "nvidia_enterprise.db"
+    mock_spec_file = repo_root / "mock_services" / "nvidia" / "nvidia_openapi_spec.json"
+
+    company_name = (company.get("name") or "").lower()
+    is_nvidia_or_demo = "nvidia" in company_name or "blackwell" in (form.goal or "").lower() or not company_name
+
+    if not db_config and is_nvidia_or_demo and mock_db_file.exists():
+        db_config = DatabaseConnectionConfig(
+            db_id="nvidia_enterprise_db",
+            connection_uri=f"sqlite:///{mock_db_file.as_posix()}",
+            allowed_tables=["gpu_products", "enterprise_deals", "software_arr"],
+            description="NVIDIA Enterprise relational database (hardware pricing, deals, software ARR).",
+        )
+        logger.info("Auto-attached mock relational database for %s: %s", company.get("name"), db_config.db_id)
+
+    if not api_config and is_nvidia_or_demo and mock_spec_file.exists():
+        spec_inline = None
+        try:
+            with open(mock_spec_file, "r", encoding="utf-8") as f:
+                spec_inline = json.load(f)
+        except Exception as e:
+            logger.warning("Could not load mock OpenAPI spec: %s", e)
+        api_config = RESTAPIConfig(
+            api_id="nvidia_ops_api",
+            base_url="http://127.0.0.1:8088",
+            openapi_spec_inline=spec_inline,
+            description="NVIDIA operational cluster telemetry and deal desk microservices API.",
+        )
+        logger.info("Auto-attached mock REST API for %s: %s", company.get("name"), api_config.api_id)
+
     profile = CompanyProfile(
         **{k: v for k, v in profile_fields.items() if k in known_profile},
         workspace_id=workspace_id,
+        db_config=db_config,
+        api_config=api_config,
     )
     focus_areas = [FOCUS_PHRASE.get(f, f) for f in form.focus if f in FOCUS_PHRASE]
     context: dict[str, Any] = {

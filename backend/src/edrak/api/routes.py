@@ -12,11 +12,13 @@ from edrak.api.routers import (
     cards,
     chat,
     company,
+    company_research,
     competitor_kb,
     documents,
     entities,
     evaluation,
     monitors,
+    profile_import,
     runs,
     workspace,
 )
@@ -25,6 +27,8 @@ router = APIRouter(prefix="/api")
 for module in (
     auth,
     company,
+    profile_import,
+    company_research,
     documents,
     entities,
     analyses,

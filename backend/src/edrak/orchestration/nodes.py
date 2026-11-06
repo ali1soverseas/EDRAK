@@ -112,6 +112,7 @@ def make_decision_analysis_node():
                 metadata={
                     "source_stage": "cross_signal",
                     "orchestrator_stage": "decision_analysis",
+                    "decision_preference": state.get("decision_preference") or {"status": "none"},
                     **_metric_context(state),
                 },
             )
@@ -219,6 +220,11 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
 
     Runs after verification so checkpoint 2 can show conflicts.
     """
+    from ..core.config import settings
+
+    if not settings.METRICS_GATHERING_ENABLED:
+        print("\n[metrics] skipped: METRICS_GATHERING_ENABLED is off")
+        return state
     print("\n[metrics] NODE: metrics agent")
     from ..agents.metrics import run as run_metrics_agent
     from ..metrics.planning import requirements_for

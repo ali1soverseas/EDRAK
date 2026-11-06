@@ -14,7 +14,7 @@ from ..contracts import (
 from ..contracts.vocabulary import describe_context
 from ..core.llm import get_chat_model
 from ..metrics.planning import requirements_for
-from .prompts import PLANNER_SYSTEM_PROMPT
+from .prompts import PLANNER_SYSTEM_PROMPT, get_planner_prompt
 
 MAX_REPAIR_ATTEMPTS = 1
 
@@ -170,9 +170,18 @@ class LlmPlanner:
         real enum, an invented name is rejected rather than silently accepted.
         Every other call site uses function_calling.
         """
-        plan = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
+        system_prompt = get_planner_prompt()
+        runnable = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
             PlannerPlan, method="json_mode"
-        ).invoke(PLANNER_SYSTEM_PROMPT + "\n\n" + prompt)
+        )
+        try:
+            from edrak.core.observability import get_current_prompt_obj
+            prompt_obj = get_current_prompt_obj()
+            if prompt_obj is not None:
+                runnable = runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
+        except Exception:
+            pass
+        plan = runnable.invoke(system_prompt + "\n\n" + prompt)
 
         if plan is None or not plan.assignments:
             raise PlanningError("model returned no usable plan", "")
