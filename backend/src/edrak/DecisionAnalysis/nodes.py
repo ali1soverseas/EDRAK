@@ -4,10 +4,8 @@ import logging
 import re
 from typing import Any
 
-from dotenv import load_dotenv
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
 
 from ..contracts.CrossSignal import CrossSignalOutput
 from ..contracts.DecisionAnalysis import (
@@ -16,6 +14,7 @@ from ..contracts.DecisionAnalysis import (
     DecisionAnalysisStatus,
     DecisionOption,
 )
+from ..core.llm import get_chat_model, schema_instruction
 from .options import generate_options
 from .prompts import (
     DECISION_ANALYSIS_SYSTEM_PROMPT,
@@ -24,8 +23,6 @@ from .prompts import (
 from .schemas import DecisionAnalysisDraft
 from .state import DecisionAnalysisState
 from .tracing import trace_decision_analysis
-
-load_dotenv(".env")
 
 logger = logging.getLogger(__name__)
 
@@ -134,13 +131,13 @@ def make_analyze_node(model: BaseChatModel | None = None):
     analysis_model = (
         model
         if model is not None
-        else ChatOpenAI(
-            model_name="gpt-4o",
+        else get_chat_model(
+            agent="orchestrator",
             temperature=0.0,
         )
     )
     structured_llm = analysis_model.with_structured_output(
-        DecisionAnalysisDraft
+        DecisionAnalysisDraft, method="json_schema"
     )
 
     async def analyze_node(
@@ -187,6 +184,7 @@ MANDATORY DECISION-QUESTION REQUIREMENT:
             HumanMessage(
                 content=build_decision_analysis_user_prompt(context)
             ),
+            schema_instruction(DecisionAnalysisDraft),
         ]
 
         try:

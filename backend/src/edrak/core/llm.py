@@ -125,6 +125,7 @@ def get_chat_model(
     temperature: Optional[float] = None,
     base_url: Optional[str] = None,
     num_predict: Optional[int] = None,
+    timeout: Optional[float] = None,
 ) -> ChatOllama:
     """The chat model every component uses.
 
@@ -136,6 +137,7 @@ def get_chat_model(
         base_url=base_url or NATIVE_BASE_URL,
         temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
         num_predict=num_predict or DEFAULT_NUM_PREDICT,
+        sync_client_kwargs={"timeout": timeout} if timeout is not None else {},
         client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
     )
 
@@ -165,6 +167,7 @@ def get_structured(
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
     method: str = "json_schema",
+    timeout: Optional[float] = None,
 ):
     """A model bound to `schema` for structured output.
 
@@ -179,7 +182,7 @@ def get_structured(
     through when the instruction is omitted.
     """
     return get_chat_model(
-        model, agent=agent, temperature=temperature
+        model, agent=agent, temperature=temperature, timeout=timeout
     ).with_structured_output(schema, method=method)
 
 

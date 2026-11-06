@@ -76,6 +76,7 @@ SYSTEM = """You are EDRAK's Decision Analysis agent. From verified cross-signals
 
 Rules:
 - Options are mutually exclusive ways to act (for example: move now at a premium position, match competitors on price, or wait and close an evidence gap). They are NOT steps of one plan and NOT sub-questions.
+- When named competitors are provided, frame every option as a competitive response: state how the company leads, matches, differentiates, or holds and watches against those named competitors. Use only stances supported by the supplied signals.
 - Each option cites real signal ids from the list. Never invent ids.
 - Opportunities and risks must be specific to THAT option. Do not repeat the same item across options.
 - A risk names what could go wrong, how likely and how severe (low, moderate or high), an early-warning sign and a mitigation.
@@ -173,10 +174,20 @@ def _prompt(context: dict[str, Any]) -> str:
     metrics = "\n".join(f"- {m['metric_id']} | {m['entity']} | {m['status']}" for m in (meta.get("metric_context") or [])[:40])
     gaps = "\n".join(f"- {g}" for g in (meta.get("blocking_gaps") or [])[:15])
     req = context.get("business_request") or {}
+    business_context = req.get("business_context") or {}
+    competitors = list(dict.fromkeys([
+        *business_context.get("targets", []),
+        *[
+            competitor.get("name")
+            for competitor in business_context.get("competitors", [])
+            if competitor.get("name")
+        ],
+    ]))
     framing = _framing(req)
     return (f"BUSINESS GOAL: {context.get('business_goal')}\n"
             + (f"DECISION FRAMING: {framing}\n" if framing else "") +
-            f"COMPANY: {(req.get('company_profile') or {}).get('name')}\n\nSIGNALS:\n{signals or '- none'}\n\n"
+            f"COMPANY: {(req.get('company_profile') or {}).get('name')}\n"
+            f"COMPETITORS: {', '.join(competitors) or '- none provided'}\n\nSIGNALS:\n{signals or '- none'}\n\n"
             f"QUESTION-LEVEL DIRECTIONS (inputs, not options):\n{recs or '- none'}\n\n"
             f"METRICS (ids you may reference):\n{metrics or '- none'}\n\nOPEN GAPS:\n{gaps or '- none'}")
 

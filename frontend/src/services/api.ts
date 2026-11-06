@@ -70,7 +70,7 @@ export interface EdrakApi {
   cancelRun(analysisId: string): Promise<void>;
 
   /* brief */
-  getBrief(briefId: string): Promise<Brief>;
+  getBrief(briefId: string, version?: number): Promise<Brief>;
 }
 
 import { httpApi } from "./httpApi";

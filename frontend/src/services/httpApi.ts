@@ -202,9 +202,10 @@ export class HttpApi implements EdrakApi {
 
   /* ------------------------------------------------------------------- brief */
 
-  async getBrief(briefId: string): Promise<Brief> {
+  async getBrief(briefId: string, version?: number): Promise<Brief> {
+    const query = version === undefined ? "" : `?version=${encodeURIComponent(version)}`;
     return await request<Brief>(
-      `/api/briefs/${encodeURIComponent(briefId)}`,
+      `/api/briefs/${encodeURIComponent(briefId)}${query}`,
       { method: "GET" },
     );
   }

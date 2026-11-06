@@ -5,6 +5,7 @@ import { ChoiceChips, TagInput } from "../components/ui/Controls";
 import { DotField } from "../components/ui/DotField";
 import { Icon } from "../components/ui/Icon";
 import { Logo } from "../components/ui/Logo";
+import { CompetitorKbProgress } from "../components/competitors/CompetitorKbProgress";
 import { useL } from "../lib/useL";
 import { edrak, type Candidate, type Doc, type Link as SocialLink, type Profile } from "../services/edrak";
 import { useAuth } from "../state/auth";
@@ -16,6 +17,20 @@ export const INDUSTRIES = [
 ] as const;
 const PLATFORMS = ["x", "facebook", "instagram", "linkedin", "youtube", "tiktok"] as const;
 const STEPS = 8;
+
+const PRICING_STATUS_LABEL: Record<Candidate["pricing_status"], [string, string]> = {
+  public_price_available: ["Published price found", "عُثر على سعر منشور"],
+  quote_required: ["Quote required", "يلزم طلب عرض سعر"],
+  not_found: ["Price availability not established", "لم يتأكد توفر سعر منشور"],
+};
+const PRICING_FINDING_LABEL: Record<Candidate["pricing"][number]["pricing_status"], [string, string]> = {
+  official_public_price: ["Official published price", "سعر منشور رسمي"],
+  reseller_price: ["Reseller price", "سعر موزع"],
+  reported_price: ["Reported price", "سعر منقول"],
+  estimated_price: ["Estimated price", "سعر تقديري"],
+  quote_required: ["Quote required", "يلزم طلب عرض سعر"],
+  undisclosed: ["Pricing explicitly undisclosed", "الأسعار غير معلنة صراحة"],
+};
 
 type Draft = Pick<Profile, "name" | "aliases" | "industries" | "industry_other" | "description" | "offerings" | "target_customer_groups" | "goals" | "website"> & {
   serves: string[];
@@ -50,6 +65,8 @@ export function Onboarding() {
   const [finding, setFinding] = useState(false);
   const [docs, setDocs] = useState<Doc[]>([]);
   const [compName, setCompName] = useState("");
+  const [kbBuildStarted, setKbBuildStarted] = useState(false);
+  const [kbBuildComplete, setKbBuildComplete] = useState(false);
   // Opened from the company profile to change one part: start at that step, come back when done.
   const [params] = useSearchParams();
   const back = params.get("return");
@@ -63,7 +80,13 @@ export function Onboarding() {
     void edrak.documents().then(setDocs).catch(() => undefined);
   }, []);
 
-  const set = <K extends keyof Draft>(key: K, value: Draft[K]) => setD((cur) => (cur ? { ...cur, [key]: value } : cur));
+  const set = <K extends keyof Draft>(key: K, value: Draft[K]) => {
+    setD((cur) => (cur ? { ...cur, [key]: value } : cur));
+    if (key === "competitors") {
+      setKbBuildStarted(false);
+      setKbBuildComplete(false);
+    }
+  };
 
   const payload = useMemo(() => {
     if (!d) return {};
@@ -91,7 +114,14 @@ export function Onboarding() {
     setSaving(true);
     setError(null);
     try {
-      await edrak.saveOnboarding({ ...payload, step: next });
+      const startCompetitorBuilds =
+        step === 4 && d.competitors.length > 0 && !kbBuildStarted;
+      await edrak.saveOnboarding({ ...payload, step: startCompetitorBuilds ? step : next });
+      if (startCompetitorBuilds) {
+        await edrak.buildCompetitorKb();
+        setKbBuildStarted(true);
+        return;
+      }
       setStep(next);
       window.scrollTo({ top: 0 });
     } catch (e) {
@@ -235,6 +265,34 @@ export function Onboarding() {
                     {c.website && <a className="s12" href={c.website} target="_blank" rel="noreferrer">{c.website}</a>}
                     <span className="s13 muted" dir="auto">{c.reason}</span>
                     {c.links.length > 0 && <span className="s12 muted">{L("Official accounts:", "الحسابات الرسمية:")} {c.links.map((l) => l.platform).join(", ")}</span>}
+                    <div className="stack gap4" aria-label={L("Pricing research", "بحث الأسعار")}>
+                      <b className="s12">{L("Pricing research", "بحث الأسعار")} · {L(...PRICING_STATUS_LABEL[c.pricing_status])}</b>
+                      {c.pricing.map((p, index) => (
+                        <div key={`${p.product_or_service}-${index}`} className="s12 muted">
+                          <bdi>{p.product_or_service}</bdi>
+                          {p.price && <> · <bdi>{p.price}</bdi></>}
+                          {" · "}{L(...PRICING_FINDING_LABEL[p.pricing_status])}
+                          {p.billing_period && <> · <bdi>{p.billing_period}</bdi></>}
+                          {p.unit && <> · <bdi>{p.unit}</bdi></>}
+                          {p.conditions && <> · <span dir="auto">{p.conditions}</span></>}
+                          <span dir="auto"> · <q>{p.evidence_quote}</q></span>
+                          {" · "}<a href={p.source.url} target="_blank" rel="noreferrer">
+                            {p.source.title || p.source.source_host}
+                          </a>
+                          {p.source.provider.length > 0 && <> · {p.source.provider.join(", ")}</>}
+                          {p.source.published_date && <> · {p.source.published_date}</>}
+                        </div>
+                      ))}
+                      {c.pricing_research && !c.pricing_research.research_complete && (
+                        <div className="s12 muted">
+                          {c.pricing_research.unresolved_items.join("; ")}
+                          {" · "}{L(
+                            `Search incomplete after ${c.pricing_research.rounds_attempted} of ${c.pricing_research.max_rounds} rounds`,
+                            `اكتمل البحث جزئيًا بعد ${c.pricing_research.rounds_attempted} من ${c.pricing_research.max_rounds} جولات`,
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <button type="button" className="btn" onClick={() => set("competitors", [...d.competitors, { name: c.name, website: c.website, links: c.links, discovered_by: "agent", discovery_reason: c.reason, discovery_confidence: c.confidence }])}>{L("Keep", "احتفظ")}</button>
                 </div>
@@ -251,6 +309,13 @@ export function Onboarding() {
                     ))}
                   </div>
                 </div>
+              )}
+              {kbBuildStarted && (
+                <CompetitorKbProgress
+                  showProfiles
+                  onDone={() => setKbBuildComplete(true)}
+                  onBackground={() => void save(step + 1)}
+                />
               )}
             </div>
           )}
@@ -303,7 +368,9 @@ export function Onboarding() {
               {back && <button type="button" className="btn pri" disabled={!canNext || saving} onClick={() => void saveAndReturn()}><Icon name="check" size={15} /> {L("Save and return", "احفظ وارجع")}</button>}
               {step >= 5 && step < STEPS && <button type="button" className="btn ghost" onClick={() => void save(step + 1)}>{L("Skip", "تخطَّ")}</button>}
               {step < STEPS ? (
-                <button type="button" className="btn ink" disabled={!canNext || saving} onClick={() => void save(step + 1)}>{L("Continue", "متابعة")} <Icon name="arrow" size={15} flip /></button>
+                !(step === 4 && kbBuildStarted && !kbBuildComplete) && (
+                  <button type="button" className="btn ink" disabled={!canNext || saving} onClick={() => void save(step + 1)}>{L("Continue", "متابعة")} <Icon name="arrow" size={15} flip /></button>
+                )
               ) : (
                 <button type="button" className="btn pri" disabled={saving} onClick={() => void finish()}>{L("Finish setup", "إنهاء الإعداد")}</button>
               )}

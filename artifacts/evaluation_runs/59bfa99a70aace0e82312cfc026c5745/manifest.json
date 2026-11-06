@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "analysis_id": "59bfa99a70aace0e82312cfc026c5745",
+  "status": "running",
+  "started_at_utc": "2026-11-06T01:26:31.956400+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-06T01:27:54.722012+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-06T01:29:21.927217+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_770563cd-02a.json",
+        "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_004.json",
+        "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_005.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-06T01:36:56.221953+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_23a8934c-29c.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-06T01:36:56.593797+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "metrics",
+      "completed_at_utc": "2026-11-06T01:42:12.152973+00:00",
+      "artifacts": [
+        "outputs\\metrics_005.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:770563cd-02aa-4510-b381-dcae674f653c:1": "inputs\\worker_internal_intelligence_attempt_1_770563cd-02a.json",
+    "rag:770563cd-02aa-4510-b381-dcae674f653c:1:1": "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_001.json",
+    "rag:770563cd-02aa-4510-b381-dcae674f653c:1:2": "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_002.json",
+    "rag:770563cd-02aa-4510-b381-dcae674f653c:1:3": "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_003.json",
+    "rag:770563cd-02aa-4510-b381-dcae674f653c:1:4": "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_004.json",
+    "rag:770563cd-02aa-4510-b381-dcae674f653c:1:5": "inputs\\rag_internal_intelligence_attempt_1_770563cd-02a_005.json",
+    "worker:23a8934c-29c3-4bbe-ac81-51930689aa5a:1": "inputs\\worker_competitor_intelligence_attempt_1_23a8934c-29c.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "metrics:5": "outputs\\metrics_005.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-06T01:42:12.274874+00:00"
+}

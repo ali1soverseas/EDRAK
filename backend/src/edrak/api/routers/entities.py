@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 import aiosqlite
 from fastapi import APIRouter, Depends, HTTPException
@@ -36,6 +36,44 @@ class DiscoverIn(BaseModel):
     markets: Optional[list[str]] = None   # defaults to the company's markets
 
 
+class PricingEvidence(BaseModel):
+    url: str
+    title: str = ""
+    provider: list[str] = Field(default_factory=list)
+    published_date: Optional[str] = None
+    source_host: str = ""
+    official_domain_match: bool = False
+
+
+class DiscoveredPricing(BaseModel):
+    product_or_service: str
+    pricing_model: Literal[
+        "per_unit", "per_user", "per_core", "per_device",
+        "subscription", "usage_based", "tiered", "custom_quote", "one_time", "unknown",
+    ] = "unknown"
+    price: Optional[str] = None
+    currency: Optional[str] = None
+    billing_period: Optional[str] = None
+    unit: Optional[str] = None
+    pricing_status: Literal[
+        "official_public_price", "reseller_price", "reported_price",
+        "estimated_price", "quote_required", "undisclosed",
+    ]
+    conditions: Optional[str] = None
+    evidence_quote: str
+    source: PricingEvidence
+
+
+class PricingResearch(BaseModel):
+    research_complete: bool = False
+    research_status: Literal["complete", "incomplete_after_retry_limit", "failed"]
+    rounds_attempted: int = 0
+    max_rounds: int = 0
+    queries_attempted: list[dict[str, Any]] = Field(default_factory=list)
+    unresolved_items: list[str] = Field(default_factory=list)
+    note: Optional[str] = None
+
+
 class Candidate(BaseModel):
     name: str
     website: Optional[str] = None
@@ -43,6 +81,9 @@ class Candidate(BaseModel):
     confidence: float = 0.5
     links: list[dict[str, Any]] = Field(default_factory=list)
     evidence_urls: list[str] = Field(default_factory=list)
+    pricing_status: Literal["public_price_available", "quote_required", "not_found"] = "not_found"
+    pricing: list[DiscoveredPricing] = Field(default_factory=list)
+    pricing_research: Optional[PricingResearch] = None
     already_tracked: bool = False
 
 
@@ -142,6 +183,7 @@ async def discover(
             target_customers=company["target_customers"] or None,
             exclude=company["aliases"],
             limit=max(1, min(body.limit, 8)),
+            include_pricing=True,
         )
     except CompetitorDiscoveryConfigurationError as exc:
         raise HTTPException(

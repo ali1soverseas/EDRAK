@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "analysis_id": "512615ba7e3faeed623a256b8080a2d5",
+  "status": "completed",
+  "started_at_utc": "2026-11-06T03:09:18.305558+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-06T03:09:28.981053+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-06T03:09:45.365433+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_70589794-af2.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_004.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_005.json",
+        "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_006.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-06T03:13:00.087603+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_4b7d9bef-3a4.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-06T03:13:00.348333+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "metrics",
+      "completed_at_utc": "2026-11-06T03:13:54.359641+00:00",
+      "artifacts": [
+        "outputs\\metrics_005.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-06T03:14:46.603690+00:00",
+      "artifacts": [
+        "outputs\\human_review_006.json"
+      ]
+    },
+    {
+      "node": "cross_signal",
+      "completed_at_utc": "2026-11-06T03:15:27.087338+00:00",
+      "artifacts": [
+        "inputs\\cross_signal.json"
+      ]
+    },
+    {
+      "node": "decision_analysis",
+      "completed_at_utc": "2026-11-06T03:15:41.491381+00:00",
+      "artifacts": [
+        "inputs\\decision_analysis.json"
+      ],
+      "resumed_at_utc": "2026-11-06T03:25:19.035662+00:00"
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-11-06T03:15:41.518687+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:70589794-af24-493f-9895-2306d5af5780:1": "inputs\\worker_internal_intelligence_attempt_1_70589794-af2.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:1": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_001.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:2": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_002.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:3": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_003.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:4": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_004.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:5": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_005.json",
+    "rag:70589794-af24-493f-9895-2306d5af5780:1:6": "inputs\\rag_internal_intelligence_attempt_1_70589794-af2_006.json",
+    "worker:4b7d9bef-3a42-4775-bbef-640e6a94b220:1": "inputs\\worker_competitor_intelligence_attempt_1_4b7d9bef-3a4.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "metrics:5": "outputs\\metrics_005.json",
+    "cross_signal": "inputs\\cross_signal.json",
+    "orchestration_result": "inputs\\orchestration_result.json",
+    "decision_analysis": "inputs\\decision_analysis.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-06T03:25:19.035674+00:00",
+  "completed_at_utc": "2026-11-06T03:25:19.035676+00:00"
+}

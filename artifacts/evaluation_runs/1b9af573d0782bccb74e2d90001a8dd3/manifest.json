@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "analysis_id": "1b9af573d0782bccb74e2d90001a8dd3",
+  "status": "cancelled",
+  "started_at_utc": "2026-11-03T00:41:33.816501+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-03T00:41:33.908618+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-03T00:41:34.066683+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_1ab8495e-edc.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-03T00:41:42.991908+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_5b942607-bda.json",
+        "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_004.json",
+        "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_005.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-03T00:42:51.697889+00:00",
+      "artifacts": [
+        "inputs\\worker_market_intelligence_attempt_1_6848522d-bd7.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:1ab8495e-edc8-469a-8ec6-8fa4c22e21eb:1": "inputs\\worker_competitor_intelligence_attempt_1_1ab8495e-edc.json",
+    "worker:5b942607-bda8-4eee-b674-1906047eb7fe:1": "inputs\\worker_internal_intelligence_attempt_1_5b942607-bda.json",
+    "rag:5b942607-bda8-4eee-b674-1906047eb7fe:1:1": "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_001.json",
+    "rag:5b942607-bda8-4eee-b674-1906047eb7fe:1:2": "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_002.json",
+    "rag:5b942607-bda8-4eee-b674-1906047eb7fe:1:3": "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_003.json",
+    "rag:5b942607-bda8-4eee-b674-1906047eb7fe:1:4": "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_004.json",
+    "rag:5b942607-bda8-4eee-b674-1906047eb7fe:1:5": "inputs\\rag_internal_intelligence_attempt_1_5b942607-bda_005.json",
+    "worker:6848522d-bd7f-4957-905a-cfc136f45677:1": "inputs\\worker_market_intelligence_attempt_1_6848522d-bd7.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-03T00:42:56.171004+00:00",
+  "completed_at_utc": "2026-11-03T00:42:56.170972+00:00"
+}

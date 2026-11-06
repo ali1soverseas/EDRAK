@@ -1,0 +1,486 @@
+{
+  "task_id": "001bcb66-e754-438e-aa3f-c01945017479",
+  "worker": "internal_intelligence",
+  "status": "completed",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "e9a7bab8-5558-4f2e-8a27-ec86ae61e4d4",
+      "statement": "NVIDIA describes its system‑level data‑center offerings under the DGX platform.",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "3e2a2ae3-f9f0-4947-ae1f-6d1ee947ba65",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Derived from internal guidance; may not reflect the latest product roadmap.",
+        "Claim type: internal_claim",
+        "Scope: NVIDIA data‑center systems",
+        "Supporting quote: NVIDIA describes system-level offerings under the DGX platform."
+      ]
+    },
+    {
+      "finding_id": "804191c7-e120-463e-9fff-443120764beb",
+      "statement": "Intel’s official Gaudi product materials identify Intel Gaudi AI accelerators as an AI‑computing alternative.",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "036d0fc6-9c2d-4bcb-9f8e-9dcf0f263e7c",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Reflects Intel’s own materials as referenced; may be superseded.",
+        "Claim type: internal_claim",
+        "Scope: Intel Gaudi accelerators",
+        "Supporting quote: Intel's official Gaudi product materials identify Intel Gaudi AI accelerators as an AI-computing alternative."
+      ]
+    },
+    {
+      "finding_id": "bd1f4ae7-71f8-4cf1-a0bb-d30aa3cce33d",
+      "statement": "The internal profile lists Broadcom and Intel Corp as competitors to track for NVIDIA’s AI computing and data‑center platform offerings.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "62fede50-94dc-4589-a664-89e50edf4dc0",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Derived from a pilot‑scope profile; not an independent market analysis.",
+        "Claim type: internal_claim",
+        "Scope: competitor set",
+        "Supporting quote: names Broadcom and Intel Corp as competitors to track."
+      ]
+    },
+    {
+      "finding_id": "6a847445-d679-4899-8af8-b075cce679b6",
+      "statement": "Broadcom’s public reporting and announcements are identified as the appropriate primary sources for its semiconductor, networking, and custom‑accelerator activities.",
+      "category": "other",
+      "evidence_refs": [
+        {
+          "evidence_id": "28b307b7-f787-4c87-bb9e-284d6c8a616b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Guidance on source selection; does not provide capability or pricing data.",
+        "Claim type: internal_claim",
+        "Scope: Broadcom information sources",
+        "Supporting quote: Broadcom's public reporting and announcements are the appropriate primary sources for its semiconductor, networking, and custom-accelerator activities."
+      ]
+    },
+    {
+      "finding_id": "ed29b290-0b95-4dc2-9f86-b8b1010f1239",
+      "statement": "NVIDIA’s current offer is described as AI computing and data‑center platforms targeting cloud service providers and AI developers in the United States and Europe.",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "62fede50-94dc-4589-a664-89e50edf4dc0",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Based on internal profile; may not reflect actual product availability.",
+        "Claim type: internal_claim",
+        "Scope: NVIDIA offering scope",
+        "Supporting quote: It describes the current offer as AI computing and data‑center platforms, names cloud service providers and AI developers as target customers, lists the United States and Europe as current markets."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "99661e04-a739-48c9-8ab2-e172cdecfc10",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "NVIDIA vs Broadcom AI accelerator: Is the Broadcom alternative broadly available to this buyer, or limited to a named customer or cloud service?",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Research questions and retrieval anchors\n\nUse these precise questions to guide internal and external research:\n\n- **NVIDIA vs Broadcom AI accelerator:** Is the Broadcom alternative broadly available to this buyer, or limited to a named customer or cloud service? What source establishes that?\n- **NVIDIA vs Intel Gaudi:** Which Gaudi generation and configuration can the customer actually obtain in the relevant region, and what software porting is needed?\n- **CSP AI infrastructure:** Which platform supports the CSP's target training and inference services at the required capacity, availability, and utilization?\n- **AI developer experience:** What code, framework, model, and deployment changes are required to move between NVIDIA CUDA-based workflows, Intel Gaudi software, or a Broadcom-related service?\n- **Data-center networking:** How do topology, collective operations, congestion, and operator tooling affect measured cluster throughput?\n- **Pricing and TCO:** Which current public prices or customer-approved quotes are available, and which cost components are not disclosed?\n- **Regional availability:** Is the relevant compute service live in the United States or in a specific European country, with confirmed capacity and support?\n- **Evidence quality:** Is a performance or adoption statement backed by a reproducible benchmark, customer disclosure, product specification, or only a vendor announcement?",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.055751Z",
+      "is_synthetic": false,
+      "metadata": {
+        "heading": "Research questions and retrieval anchors",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "is_synthetic": "false",
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "origin": "upload",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "doc_type": "internal_doc",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_6e6f37a962da",
+        "search_query": "Internal assessment of NVIDIA AI data center accelerators compared to Broadcom and Intel in terms of compute performance, power efficiency, and supported AI frameworks for cloud service providers in Europe and the United States",
+        "confidence_score": 0.69,
+        "relevance_score": 0.738,
+        "rank": 1
+      }
+    },
+    {
+      "evidence_id": "3e2a2ae3-f9f0-4947-ae1f-6d1ee947ba65",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Data-center systems: NVIDIA describes system-level offerings under the DGX platform.",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Publicly documented offer areas\n\n- **Accelerated compute:** GPU-based systems and related processors for AI and high-performance computing workloads. A product-family name alone does not establish workload performance or customer suitability.\n- **Data-center systems:** NVIDIA describes system-level offerings under the DGX platform. Compare whole-system design, integration, deployment requirements, service/support, and availability—not just processor specifications.\n- **Networking and interconnect:** NVIDIA publicly offers data-center networking. Networking topology, bandwidth, latency, collective communication behavior, congestion, and operations can materially affect multi-node AI results.\n- **AI software and developer tools:** NVIDIA's software ecosystem includes CUDA and AI software offerings. Record supported frameworks, libraries, APIs, container/runtime requirements, licensing, and migration effort for each evaluated version. A software ecosystem claim should be tied to the specific tool and release.\n- **Cloud access:** NVIDIA's cloud-related offerings and partner availability must be checked for the exact service, instance, region, capacity, and date. A partner announcement is not proof that a particular customer can provision a service now.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.053383Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "is_synthetic": "false",
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "origin": "upload",
+        "doc_type": "internal_doc",
+        "heading": "Publicly documented offer areas",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_d7a20996b373",
+        "search_query": "Internal assessment of NVIDIA AI data center accelerators compared to Broadcom and Intel in terms of compute performance, power efficiency, and supported AI frameworks for cloud service providers in Europe and the United States",
+        "confidence_score": 0.75,
+        "relevance_score": 0.703,
+        "rank": 2
+      }
+    },
+    {
+      "evidence_id": "62fede50-94dc-4589-a664-89e50edf4dc0",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "It describes the current offer as AI computing and data-center platforms, names cloud service providers and AI developers as target customers, lists the United States and Europe as current markets, and names Broadcom and Intel Corp as competitors to track.",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Executive context\n\nThe company profile identifies NVIDIA Corporation as the company being analyzed. It describes the current offer as **AI computing** and **data-center platforms**, names **cloud service providers** and **AI developers** as target customers, lists the **United States** and **Europe** as current markets, and names **Broadcom** and **Intel Corp** as competitors to track. Treat these profile entries as the pilot scope supplied to EDRAK, not as independently verified statements about NVIDIA's actual internal plans.\n\nNVIDIA's public data-center portfolio is broader than a single accelerator. Its official product and corporate materials describe an accelerated-computing stack spanning compute platforms, systems, networking, and software. For competitive work, evaluate the customer's deployed solution and workload—not only the accelerator chip. The relevant unit of comparison may be a complete cluster, cloud instance, rack-scale system, software stack, or developer workflow.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.054688Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "is_synthetic": "false",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "doc_type": "internal_doc",
+        "heading": "Executive context",
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "origin": "upload",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_3c4b25867211",
+        "search_query": "Internal assessment of NVIDIA AI data center accelerators compared to Broadcom and Intel in terms of compute performance, power efficiency, and supported AI frameworks for cloud service providers in Europe and the United States",
+        "confidence_score": 0.7,
+        "relevance_score": 0.693,
+        "rank": 3
+      }
+    },
+    {
+      "evidence_id": "b2a95822-456a-4b5e-8885-682410abf875",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Compare Broadcom-related alternatives on:",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Broadcom\n\nCompare Broadcom-related alternatives on:\n\n- accelerator availability and whether the design is merchant, customer-specific, or accessible only through a named service;\n- supported models, frameworks, precision modes, compiler/runtime maturity, and developer access;\n- interconnect and Ethernet fabric capability, integration, and operational tooling;\n- system/cluster availability, service responsibility, software support, and customer deployment evidence;\n- public, comparable economics and documented supply or capacity conditions.\n\nDo not infer Broadcom's customer list, market share, roadmap, or the performance of a custom accelerator from a press mention or a financial headline.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.261483Z",
+      "is_synthetic": false,
+      "metadata": {
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "heading": "Broadcom",
+        "origin": "upload",
+        "is_synthetic": "false",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "doc_type": "internal_doc",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_1b016a6f9a40",
+        "search_query": "Pricing models, licensing terms, and availability timelines for NVIDIA AI accelerators compared with Broadcom and Intel equivalents in the European and US markets",
+        "confidence_score": 0.72,
+        "relevance_score": 0.674,
+        "rank": 4
+      }
+    },
+    {
+      "evidence_id": "48f33cae-2534-4fe1-afb0-18e525a83bba",
+      "source_type": "internal_document",
+      "source_title": "nvidia_product_launch_planning.md",
+      "source_url": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "What is the closest available Broadcom or Intel alternative for this use case and geography?",
+      "excerpt": "# nvidia_product_launch_planning.md\n## Research questions for launch reviews\n\n- What exact NVIDIA product or service is being considered, and what public evidence confirms its current release state?\n- Which cloud provider, instance, region, and capacity would a CSP customer actually use?\n- Which AI developer workload is proven to run, with what framework, model, version, and operating constraints?\n- What is the full deployment requirement for power, cooling, networking, storage, and support?\n- What evidence shows demand beyond general market enthusiasm?\n- What is the closest available Broadcom or Intel alternative for this use case and geography?\n- Which customer claims, benchmark statements, prices, or release dates require approval or independent verification?\n- What must be learned before a human decision-maker can choose launch, limited pilot, delay, or no-go?",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.263495Z",
+      "is_synthetic": false,
+      "metadata": {
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "heading": "Research questions for launch reviews",
+        "is_synthetic": "false",
+        "filename": "nvidia_product_launch_planning.md",
+        "document_id": "8764851be2af9aed82fac7e51c04a0ae",
+        "origin": "upload",
+        "doc_type": "internal_doc",
+        "title": "nvidia_product_launch_planning.md",
+        "source_uri": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_5b31e95437cb",
+        "search_query": "Pricing models, licensing terms, and availability timelines for NVIDIA AI accelerators compared with Broadcom and Intel equivalents in the European and US markets",
+        "confidence_score": 0.67,
+        "relevance_score": 0.665,
+        "rank": 5
+      }
+    },
+    {
+      "evidence_id": "3250bb55-e705-4d9b-abf2-48770ec630bd",
+      "source_type": "internal_document",
+      "source_title": "nvidia_market_entry_expansion_planning.md",
+      "source_url": "internal://4fef92f8e7df9b284d19c6953f25bced/nvidia_market_entry_expansion_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Data-center platforms: integrated compute, system, networking, and software elements that customers deploy as a service or within their own facilities.",
+      "excerpt": "# nvidia_market_entry_expansion_planning.md\n## Products and services in scope\n\nNVIDIA's public data-center materials describe a portfolio involving accelerated compute, systems, networking, and software. Relevant company-profile categories are:\n\n- **AI computing:** accelerators and associated computing platforms used for AI and other accelerated workloads.\n- **Data-center platforms:** integrated compute, system, networking, and software elements that customers deploy as a service or within their own facilities.\n- **Developer ecosystem:** software, libraries, tools, runtimes, and model workflows that influence developer access and porting effort.\n- **Cloud access:** services and partner offerings through which customers may consume compute. Confirm each service, provider, country, instance, and available capacity separately.\n\nUse the current NVIDIA product catalogue, documentation, and filings to confirm product names, versions, release status, technical characteristics, and region-specific availability before using them in a decision.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.364040Z",
+      "is_synthetic": false,
+      "metadata": {
+        "heading": "Products and services in scope",
+        "source_uri": "internal://4fef92f8e7df9b284d19c6953f25bced/nvidia_market_entry_expansion_planning.md",
+        "document_id": "4fef92f8e7df9b284d19c6953f25bced",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "filename": "nvidia_market_entry_expansion_planning.md",
+        "origin": "upload",
+        "doc_type": "internal_doc",
+        "is_synthetic": "false",
+        "title": "nvidia_market_entry_expansion_planning.md",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_7f5ee8fbc600",
+        "search_query": "Customer adoption metrics and case studies for NVIDIA data center AI accelerators among cloud service providers, including usage trends, revenue cohorts, and churn rates versus Broadcom and Intel customers",
+        "confidence_score": 0.67,
+        "relevance_score": 0.665,
+        "rank": 6
+      }
+    },
+    {
+      "evidence_id": "036d0fc6-9c2d-4bcb-9f8e-9dcf0f263e7c",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Intel's official Gaudi product materials identify Intel Gaudi AI accelerators as an AI-computing alternative.",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Intel\n\nIntel's official Gaudi product materials identify Intel Gaudi AI accelerators as an AI-computing alternative. Verify the currently offered Gaudi generation, platform, system configuration, software stack, support, and availability at the time of a comparison. Do not assume that a product page implies current stock or regional access.\n\nCompare Intel-related alternatives on:\n\n- exact accelerator and server configuration, memory, networking, and supported scale;\n- compatibility with the target model and software, including porting and optimization effort;\n- independently reproducible training and inference results under matched conditions;\n- cloud/on-premises access, support arrangements, and qualification requirements;\n- total cost and deployment effort for the same service level and utilization target.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.539545Z",
+      "is_synthetic": false,
+      "metadata": {
+        "origin": "upload",
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "is_synthetic": "false",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "doc_type": "internal_doc",
+        "heading": "Intel",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_90e6bcdd27e8",
+        "search_query": "Support ticket analysis and survey feedback highlighting strengths and weaknesses of NVIDIA AI accelerators compared to Broadcom and Intel from the perspective of AI developers and cloud operators",
+        "confidence_score": 0.68,
+        "relevance_score": 0.661,
+        "rank": 7
+      }
+    },
+    {
+      "evidence_id": "fcfba7b3-99d7-46a0-ad38-aae260d3522a",
+      "source_type": "internal_document",
+      "source_title": "nvidia_product_launch_planning.md",
+      "source_url": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "It names cloud service providers and AI developers as target customers, and the United States and Europe as current markets.",
+      "excerpt": "# nvidia_product_launch_planning.md\n## Executive context\n\nThe EDRAK Company Setup profile identifies NVIDIA Corporation and the offers **AI computing** and **data-center platforms**. It names **cloud service providers** and **AI developers** as target customers, and **the United States** and **Europe** as current markets. The competitor list includes **Broadcom** and **Intel Corp**.\n\nThis brief helps an internal research worker assess a **potential** new or expanded offering in those categories. It does not claim that NVIDIA is preparing a specific launch. Public NVIDIA materials describe a broad data-center portfolio spanning compute, systems, networking, and software. A launch assessment must identify the exact offer unit—accelerator, server/system, rack-scale platform, networking product, AI software, cloud service, or combined solution—and verify its release status and availability at the time of analysis.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.459883Z",
+      "is_synthetic": false,
+      "metadata": {
+        "is_synthetic": "false",
+        "source_uri": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "title": "nvidia_product_launch_planning.md",
+        "origin": "upload",
+        "doc_type": "internal_doc",
+        "document_id": "8764851be2af9aed82fac7e51c04a0ae",
+        "heading": "Executive context",
+        "filename": "nvidia_product_launch_planning.md",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_3f043b750af9",
+        "search_query": "Internal OKRs, strategic goals, and roadmap milestones related to NVIDIA AI computing market momentum in Europe and the United States, and competitive positioning against Broadcom and Intel",
+        "confidence_score": 0.65,
+        "relevance_score": 0.653,
+        "rank": 8
+      }
+    },
+    {
+      "evidence_id": "28b307b7-f787-4c87-bb9e-284d6c8a616b",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Broadcom's public reporting and announcements are the appropriate primary sources for its semiconductor, networking, and custom-accelerator activities.",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Broadcom\n\nBroadcom's public reporting and announcements are the appropriate primary sources for its semiconductor, networking, and custom-accelerator activities. In an AI infrastructure comparison, investigate whether a particular Broadcom product or customer-specific accelerator is available to the target buyer and suitable for the same workload. Custom silicon arrangements may be tied to a specific customer, cloud, or workload; do not generalize them into a broadly purchasable product without evidence.\n\nCompare Broadcom-related alternatives on:",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.261942Z",
+      "is_synthetic": false,
+      "metadata": {
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "heading": "Broadcom",
+        "origin": "upload",
+        "is_synthetic": "false",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "doc_type": "internal_doc",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_fbc02ed4faa3",
+        "search_query": "Pricing models, licensing terms, and availability timelines for NVIDIA AI accelerators compared with Broadcom and Intel equivalents in the European and US markets",
+        "confidence_score": 0.69,
+        "relevance_score": 0.636,
+        "rank": 9
+      }
+    },
+    {
+      "evidence_id": "afd6fd2a-c701-4726-98ea-a044b8b9f1bc",
+      "source_type": "internal_document",
+      "source_title": "nvidia_market_entry_expansion_planning.md",
+      "source_url": "internal://4fef92f8e7df9b284d19c6953f25bced/nvidia_market_entry_expansion_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Intel Gaudi AI accelerators: <https://www.intel.com/content/www/us/en/products/details/processors/ai-accelerators/gaudi.html>",
+      "excerpt": "# nvidia_market_entry_expansion_planning.md\n## Public source register\n\nAccessed 2026-10-22. Recheck live pages and the exact law/product version before use.\n\n- NVIDIA data-center portfolio: <https://www.nvidia.com/en-us/data-center/products/>\n- NVIDIA investor relations—SEC filings and annual-report materials: <https://investor.nvidia.com/financial-info/sec-filings/default.aspx>\n- European Commission—AI Act regulatory framework: <https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai>\n- International Energy Agency—Energy and AI: <https://www.iea.org/reports/energy-and-ai>\n- Intel Gaudi AI accelerators: <https://www.intel.com/content/www/us/en/products/details/processors/ai-accelerators/gaudi.html>\n- Broadcom investor relations: <https://investors.broadcom.com/>",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.262842Z",
+      "is_synthetic": false,
+      "metadata": {
+        "doc_type": "internal_doc",
+        "filename": "nvidia_market_entry_expansion_planning.md",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "heading": "Public source register",
+        "source_uri": "internal://4fef92f8e7df9b284d19c6953f25bced/nvidia_market_entry_expansion_planning.md",
+        "is_synthetic": "false",
+        "origin": "upload",
+        "document_id": "4fef92f8e7df9b284d19c6953f25bced",
+        "title": "nvidia_market_entry_expansion_planning.md",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_9bdc397bcdcc",
+        "search_query": "Pricing models, licensing terms, and availability timelines for NVIDIA AI accelerators compared with Broadcom and Intel equivalents in the European and US markets",
+        "confidence_score": 0.69,
+        "relevance_score": 0.636,
+        "rank": 10
+      }
+    },
+    {
+      "evidence_id": "a2efe5fb-7fc9-42f8-99cc-3f72f0e9633e",
+      "source_type": "internal_document",
+      "source_title": "nvidia_product_launch_planning.md",
+      "source_url": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "AI developer software: libraries, runtime, container, inference, model, or developer workflow capability; define versions, licensing, and support.",
+      "excerpt": "# nvidia_product_launch_planning.md\n## Product and service concepts in scope\n\nThe company profile does not specify a planned product. The following are **categories for research**, not assertions of an approved NVIDIA roadmap:\n\n1. **AI compute component:** accelerator or processor component, evaluated with its host, memory, software, power, and target workload.\n2. **Data-center system:** server or integrated system, evaluated as a complete bill of materials and supported configuration.\n3. **Cluster or rack-scale platform:** compute, networking, storage, software, power/cooling, deployment, and operations treated as an end-to-end system.\n4. **Networking offer:** fabric, switches, adapters, interconnect, or software operations capability; define topology and compatibility.\n5. **AI developer software:** libraries, runtime, container, inference, model, or developer workflow capability; define versions, licensing, and support.\n6. **Cloud or managed service:** service provider, region, instance/configuration, capacity, support, data handling, and service-level commitments explicitly stated.",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.156603Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_product_launch_planning.md",
+        "doc_type": "internal_doc",
+        "source_uri": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+        "heading": "Product and service concepts in scope",
+        "document_id": "8764851be2af9aed82fac7e51c04a0ae",
+        "filename": "nvidia_product_launch_planning.md",
+        "is_synthetic": "false",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "origin": "upload",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_3b6b90fe47ef",
+        "search_query": "Documentation of the software ecosystem and developer tools available for NVIDIA AI computing platforms versus Broadcom and Intel offerings, including SDKs, libraries, and integration support for AI developers",
+        "confidence_score": 0.68,
+        "relevance_score": 0.62,
+        "rank": 11
+      }
+    },
+    {
+      "evidence_id": "c34685de-b8ee-439f-a1ed-238cdad39a83",
+      "source_type": "internal_document",
+      "source_title": "nvidia_competitive_intelligence_planning.md",
+      "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+      "publisher": "Company document",
+      "extracted_fact": "Cloud service providers (CSPs) operate infrastructure as a service or managed AI services.",
+      "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Target customer groups from the profile\n\n**Cloud service providers (CSPs)** operate infrastructure as a service or managed AI services. Their evaluation commonly includes:\n\n- available accelerator supply, qualified system configurations, deployment lead time, and serviceable capacity;\n- performance and utilization across training, fine-tuning, and inference workloads;\n- rack density, power delivery, cooling, networking, orchestration, failure handling, and fleet operations;\n- customer demand, instance packaging, software images, support commitments, and regional service availability;\n- total cost per useful workload unit, including host, network, storage, facilities, energy, licenses, support, and idle capacity.\n\n**AI developers** include model builders, application teams, and platform engineers. Their evaluation commonly includes:",
+      "page_text": null,
+      "retrieved_at": "2026-11-03T00:37:53.054014Z",
+      "is_synthetic": false,
+      "metadata": {
+        "doc_type": "internal_doc",
+        "is_synthetic": "false",
+        "title": "nvidia_competitive_intelligence_planning.md",
+        "origin": "upload",
+        "heading": "Target customer groups from the profile",
+        "filename": "nvidia_competitive_intelligence_planning.md",
+        "document_id": "a46afd23a0ae0ea09ac9db19d987a9e6",
+        "source_uri": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d",
+        "chunk_id": "ac156a8dd644702db4a5725c7813633d_chunk_750b4bc9add4",
+        "search_query": "Internal assessment of NVIDIA AI data center accelerators compared to Broadcom and Intel in terms of compute performance, power efficiency, and supported AI frameworks for cloud service providers in Europe and the United States",
+        "confidence_score": 0.71,
+        "relevance_score": 0.617,
+        "rank": 12
+      }
+    }
+  ],
+  "gaps": [
+    "No specific performance or capability metrics for NVIDIA, Broadcom, or Intel accelerators.",
+    "No pricing, availability, or supply‑chain details for any of the three vendors.",
+    "No customer adoption numbers or market‑share trends for the compared accelerators."
+  ],
+  "conflicts": [],
+  "confidence": 0.75,
+  "started_at": "2026-11-03T00:37:47.857985Z",
+  "completed_at": "2026-11-03T00:38:01.507527Z",
+  "error": null,
+  "metadata": {
+    "query_count": 6,
+    "evidence_count": 12,
+    "finding_count": 5,
+    "discarded_count": 7,
+    "discarded_evidence": [
+      {
+        "evidence_id": "99661e04-a739-48c9-8ab2-e172cdecfc10",
+        "reason": "Contains only research questions, no factual statements."
+      },
+      {
+        "evidence_id": "48f33cae-2534-4fe1-afb0-18e525a83bba",
+        "reason": "Poses a question about the closest Broadcom/Intel alternative; no factual data."
+      },
+      {
+        "evidence_id": "b2a95822-456a-4b5e-8885-682410abf875",
+        "reason": "Provides comparison criteria, not actual competitor facts."
+      },
+      {
+        "evidence_id": "3250bb55-e705-4d9b-abf2-48770ec630bd",
+        "reason": "Defines product categories without specific factual content."
+      },
+      {
+        "evidence_id": "afd6fd2a-c701-4726-98ea-a044b8b9f1bc",
+        "reason": "Lists URLs and a reminder to verify pages; no concrete metrics."
+      },
+      {
+        "evidence_id": "a2efe5fb-7fc9-42f8-99cc-3f72f0e9633e",
+        "reason": "Outlines research categories; no factual statements."
+      },
+      {
+        "evidence_id": "c34685de-b8ee-439f-a1ed-238cdad39a83",
+        "reason": "Describes CSP target groups; not a direct fact about accelerators."
+      }
+    ],
+    "llm_used": true,
+    "summary": "Internal documents state that NVIDIA’s data‑center offerings are presented under the DGX platform and are framed as AI computing and data‑center platforms for cloud providers and AI developers in the US and Europe. Intel Gaudi accelerators are identified as an AI‑computing alternative, while Broadcom and Intel are listed as competitors to track. Guidance notes that Broadcom’s public reports should be used as primary sources, but no concrete capability, pricing, adoption, or market‑momentum data are provided in the available evidence.",
+    "research_goal": "What do our own documents say about this? Compare NVIDIA's data center AI accelerators with Broadcom and Intel Corp. Cover capabilities, software ecosystem, pricing and availability, customer adoption, and market momentum.",
+    "research_focus": "Read internal documents for capabilities, constraints and prior decisions. Focus on the key signals for this decision."
+  }
+}

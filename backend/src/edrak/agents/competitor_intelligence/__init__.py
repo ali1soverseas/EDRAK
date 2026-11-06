@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import pprint
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 from deepeval.tracing import observe, update_current_span
-
-from backend.src.edrak.agents.competitor_intelligence.state import CompetitorState
 
 from ...contracts.result import WorkerResult, WorkerStatus
 from ...contracts.task import ResearchTask, WorkerType
@@ -17,6 +17,7 @@ from ...contracts.vocabulary import competitor_names, markets_of
 from ...core.action_log import log_action
 from .graph import app
 from .nodes import build_worker_result
+from .state import CompetitorState
 from .sources import domain_of, register_official_domains
 from .tracing import bind_trace_task, reset_trace_task
 
@@ -93,21 +94,18 @@ def _competitors_for(task: ResearchTask) -> tuple[list[str], dict[str, dict[str,
 
 def _task_to_initial_state(task: ResearchTask) -> CompetitorState:
     """The shared ResearchTask as the competitor graph's state."""
-    profile = task.company_profile
     context = task.business_context
-    competitors, info = _competitors_for(task)
+    competitors, competitor_info = _competitors_for(task)
     return CompetitorState(
         task_id=task.task_id,
         attempt=task.attempt,
+        worker=task.worker.value,
         today=date.today().isoformat(),
-        company=profile.name,
-        company_profile={
-            "name": profile.name,
-            "aliases": list(profile.aliases),
-            "products": list(profile.products),
-            "notes": profile.notes,
-            "website": profile.website,
-        },
+        company=task.company_profile.name,
+        goal=task.goal,
+        focus=task.focus,
+        research_goal=task.goal,
+        company_profile=task.company_profile.model_dump(mode="json"),
         business_context={
             "use_case": context.use_case.value,
             "competitors": competitors,
@@ -118,11 +116,8 @@ def _task_to_initial_state(task: ResearchTask) -> CompetitorState:
             "time_window_days": context.time_window_days,
             "constraints": list(context.constraints),
         },
-        research_goal=task.goal,
-        research_focus=task.focus,
         competitors=competitors,
-        competitor_info=info,
-        metric_requirements=[r.model_dump(mode="json") for r in task.requirements],
+        competitor_info=competitor_info,
         research_stage=1,
         search_results=[],
         executed_queries=[],
@@ -153,6 +148,18 @@ def run_research(
     )
     if task.worker != WorkerType.COMPETITOR_INTELLIGENCE:
         raise ValueError(f"Expected COMPETITOR_INTELLIGENCE task, got {task.worker}")
+
+    task_path = (
+        Path("artifacts")
+        / "runs"
+        / str(task.parent_request_id)
+        / "competitor_intelligence_research_task.json"
+    )
+    task_path.parent.mkdir(parents=True, exist_ok=True)
+    task_path.write_text(
+        json.dumps(task.model_dump(mode="json"), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     initial_state = _task_to_initial_state(task)
     if not initial_state["competitors"]:

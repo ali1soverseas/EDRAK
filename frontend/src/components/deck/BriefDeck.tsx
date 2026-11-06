@@ -6,13 +6,13 @@
  * scroll timelines on it (edrak.css). Keep the slides out of the page scroll.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFullscreen } from "../../lib/useFullscreen";
 import { modKey } from "../../lib/platform";
 import { useL } from "../../lib/useL";
 import { api } from "../../services/api";
 import { edrak } from "../../services/edrak";
-import type { BriefV3, DeckSlide } from "../../types/brief3";
+import type { BriefRevision, BriefV3, DeckSlide } from "../../types/brief3";
 import { ChatPanel, type ChatScope } from "../chat/ChatPanel";
 import { CardDrawer } from "../dashboard/CardDrawer";
 import { Icon } from "../ui/Icon";
@@ -47,6 +47,9 @@ function Slide({ slide }: { slide: DeckSlide }) {
 export function BriefDeck({ initial }: { initial: BriefV3 }) {
   const L = useL();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const versionParam = searchParams.get("version");
+  const selectedVersion = versionParam === null ? undefined : Number(versionParam);
   const [brief, setBrief] = useState<BriefV3>(initial);
   const container = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -60,11 +63,20 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
   const [chat, setChat] = useState<ChatScope | null>(null);
   const [menu, setMenu] = useState(false);
   const [lifecycle, setLifecycle] = useState(initial.lifecycle);
+  const [revisions, setRevisions] = useState<BriefRevision[]>([]);
+  const [revisionError, setRevisionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!menu || (brief.latest_revision_version ?? 1) <= 1 || revisions.length) return;
+    void edrak.briefRevisions(brief.brief_id)
+      .then(setRevisions)
+      .catch((error: unknown) => setRevisionError(error instanceof Error ? error.message : String(error)));
+  }, [brief.brief_id, brief.latest_revision_version, menu, revisions.length]);
 
   const slides = brief.deck?.slides ?? [];
   const reload = useCallback(() => {
-    void api.getBrief(brief.brief_id).then((b) => { setBrief(b as unknown as BriefV3); setLifecycle((b as unknown as BriefV3).lifecycle); });
-  }, [brief.brief_id]);
+    void api.getBrief(brief.brief_id, selectedVersion).then((b) => { setBrief(b as unknown as BriefV3); setLifecycle((b as unknown as BriefV3).lifecycle); });
+  }, [brief.brief_id, selectedVersion]);
 
   const goToIndex = useCallback((index: number) => {
     const el = scroller.current;
@@ -138,6 +150,7 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
             <span className={`chip ${lifecycle === "decided" ? "c-dec" : lifecycle === "reviewed" ? "c-rev" : "c-line"}`}>
               {lifecycle === "decided" ? L("Decided", "تم القرار") : lifecycle === "reviewed" ? L("Reviewed", "تمت المراجعة") : L("Not yet reviewed", "لم تُراجع بعد")}
             </span>
+            {(brief.revision?.version ?? 1) > 1 && <span className="chip c-blue">{L(`Revision ${brief.revision?.version}`, `المراجعة ${brief.revision?.version}`)}</span>}
           </div>
           <div className="row g8">
             <span className="row g8 mono t3 deck-counter" aria-live="polite">
@@ -151,8 +164,23 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
               <button type="button" className="btn ghost sm" onClick={() => setMenu((v) => !v)} aria-expanded={menu}><Icon name="menu" size={14} /> {L("More", "المزيد")}</button>
               {menu && (
                 <div className="popover deck-menu" onMouseLeave={() => setMenu(false)}>
+                  {(brief.latest_revision_version ?? 1) > 1 && (
+                    <>
+                      <div className="list-row s12 t3">{L("Version history", "سجل الإصدارات")}</div>
+                      {revisionError && <div className="list-row s13" role="alert" style={{ color: "#c0392b" }}>{revisionError}</div>}
+                      {[...revisions].sort((a, b) => Number(b.version) - Number(a.version)).map((revision) => (
+                        <button key={revision.version} type="button" className="list-row" onClick={() => {
+                          setMenu(false);
+                          navigate(`/briefs/${brief.brief_id}?version=${revision.version}`);
+                        }}>
+                          {revision.version === 1 ? L("Original brief", "الموجز الأصلي") : L(`Revision ${revision.version}`, `المراجعة ${revision.version}`)}
+                          {revision.reason && revision.version > 1 ? ` · ${revision.reason}` : ""}
+                        </button>
+                      ))}
+                    </>
+                  )}
                   {[["pdf", "PDF"], ["docx", "Word"], ["markdown", "Markdown"]].map(([f, label]) => (
-                    <a key={f} className="list-row" href={edrak.exportUrl(brief.brief_id, f)} onClick={() => setMenu(false)}><Icon name="upload" size={14} /> {L("Download as", "تنزيل كـ")} {label}</a>
+                    <a key={f} className="list-row" href={edrak.exportUrl(brief.brief_id, f, selectedVersion)} onClick={() => setMenu(false)}><Icon name="upload" size={14} /> {L("Download as", "تنزيل كـ")} {label}</a>
                   ))}
                   <button type="button" className="list-row" onClick={() => navigate(`/evidence/${brief.brief_id}`)}><Icon name="link" size={14} /> {L("All sources", "كل المصادر")}</button>
                   {lifecycle === "ready" && <button type="button" className="list-row" onClick={() => void edrak.reviewBrief(brief.brief_id, "accepted_as_reviewed").then(() => { setLifecycle("reviewed"); setMenu(false); })}><Icon name="check" size={14} /> {L("Accept as reviewed", "اعتمد كمراجَع")}</button>}

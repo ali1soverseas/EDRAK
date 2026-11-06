@@ -1,0 +1,1030 @@
+{
+  "plan_id": "ed8fd0c9-5206-4d2e-9190-73dd09dd75fc",
+  "request_id": "886b5d591becd53af98960fb0a789111",
+  "tasks": [
+    {
+      "task_id": "f82190c6-6408-4d1a-876b-1a63f00320ae",
+      "parent_request_id": "886b5d591becd53af98960fb0a789111",
+      "worker": "internal_intelligence",
+      "goal": "What are the technical capabilities, performance benchmarks, software ecosystem, pricing, availability, and current customer adoption of NVIDIA's data center AI accelerators?",
+      "focus": "NVIDIA AI computing accelerators for data centers",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "competitive_intelligence",
+        "targets": [
+          "Broadcom",
+          "Intel Corps",
+          "Google",
+          "AMD"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": "https://broadcom.com",
+            "social_accounts": [],
+            "entity_id": "c742181cf890158049c92427a77ba1ef",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corps",
+            "website": "https://intel.com",
+            "social_accounts": [
+              {
+                "platform": "facebook",
+                "url": "https://www.facebook.com/Intel"
+              },
+              {
+                "platform": "instagram",
+                "url": "https://www.instagram.com/intel"
+              },
+              {
+                "platform": "linkedin",
+                "url": "https://www.linkedin.com/company/intel-corporation"
+              },
+              {
+                "platform": "x",
+                "url": "https://x.com/intel"
+              },
+              {
+                "platform": "youtube",
+                "url": "https://www.youtube.com/user/channelintel"
+              }
+            ],
+            "entity_id": "dac7e163aba30f225fa2c227fca17a97",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Google",
+            "website": "https://google.com",
+            "social_accounts": [],
+            "entity_id": "66e6cc6e87ffa9a945fdd30d2d31bec1",
+            "discovered_by": "user"
+          },
+          {
+            "name": "AMD",
+            "website": "https://amd.com",
+            "social_accounts": [],
+            "entity_id": "120a375a3ab036794f4461b40c8c8a7f",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "own_price",
+          "entity": "NVIDIA Corporation",
+          "required": true,
+          "definition": "The company's own price for the offering, from internal documents.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "pricing sheet",
+            "price list"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "win_loss",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Share of competitive deals won.",
+          "preferred_source_types": [
+            "internal"
+          ],
+          "query_hints": [
+            "win loss analysis"
+          ],
+          "check_rule": "min_sample=10"
+        }
+      ]
+    },
+    {
+      "task_id": "5d0f79da-45af-45c5-9ca7-bbcff25251e1",
+      "parent_request_id": "886b5d591becd53af98960fb0a789111",
+      "worker": "competitor_intelligence",
+      "goal": "How do Broadcom, Intel, Google, and AMD compare to NVIDIA in terms of data center AI accelerator capabilities, performance, software ecosystem, pricing, availability, and customer adoption?",
+      "focus": "Broadcom, Intel, Google, AMD AI accelerators for data centers",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "competitive_intelligence",
+        "targets": [
+          "Broadcom",
+          "Intel Corps",
+          "Google",
+          "AMD"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": "https://broadcom.com",
+            "social_accounts": [],
+            "entity_id": "c742181cf890158049c92427a77ba1ef",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corps",
+            "website": "https://intel.com",
+            "social_accounts": [
+              {
+                "platform": "facebook",
+                "url": "https://www.facebook.com/Intel"
+              },
+              {
+                "platform": "instagram",
+                "url": "https://www.instagram.com/intel"
+              },
+              {
+                "platform": "linkedin",
+                "url": "https://www.linkedin.com/company/intel-corporation"
+              },
+              {
+                "platform": "x",
+                "url": "https://x.com/intel"
+              },
+              {
+                "platform": "youtube",
+                "url": "https://www.youtube.com/user/channelintel"
+              }
+            ],
+            "entity_id": "dac7e163aba30f225fa2c227fca17a97",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Google",
+            "website": "https://google.com",
+            "social_accounts": [],
+            "entity_id": "66e6cc6e87ffa9a945fdd30d2d31bec1",
+            "discovered_by": "user"
+          },
+          {
+            "name": "AMD",
+            "website": "https://amd.com",
+            "social_accounts": [],
+            "entity_id": "120a375a3ab036794f4461b40c8c8a7f",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Broadcom",
+          "required": true,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom pricing",
+            "Broadcom plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Intel Corps",
+          "required": true,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corps pricing",
+            "Intel Corps plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Google",
+          "required": true,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Google pricing",
+            "Google plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "price_per_tier",
+          "entity": "AMD",
+          "required": true,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "AMD pricing",
+            "AMD plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "paid_subscribers",
+          "entity": "Broadcom",
+          "required": true,
+          "definition": "Number of paying customers or subscribers.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Broadcom number of customers",
+            "Broadcom paying customers"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "paid_subscribers",
+          "entity": "Intel Corps",
+          "required": true,
+          "definition": "Number of paying customers or subscribers.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Intel Corps number of customers",
+            "Intel Corps paying customers"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "paid_subscribers",
+          "entity": "Google",
+          "required": true,
+          "definition": "Number of paying customers or subscribers.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Google number of customers",
+            "Google paying customers"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "paid_subscribers",
+          "entity": "AMD",
+          "required": true,
+          "definition": "Number of paying customers or subscribers.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "AMD number of customers",
+            "AMD paying customers"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "effective_price_usage",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom usage based pricing",
+            "Broadcom overage"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "effective_price_usage",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corps usage based pricing",
+            "Intel Corps overage"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "effective_price_usage",
+          "entity": "Google",
+          "required": false,
+          "definition": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Google usage based pricing",
+            "Google overage"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "effective_price_usage",
+          "entity": "AMD",
+          "required": false,
+          "definition": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "AMD usage based pricing",
+            "AMD overage"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "revenue_arr",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Annual revenue or annual recurring revenue, if publicly reported.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom annual revenue",
+            "Broadcom ARR filing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "revenue_arr",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Annual revenue or annual recurring revenue, if publicly reported.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corps annual revenue",
+            "Intel Corps ARR filing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "revenue_arr",
+          "entity": "Google",
+          "required": false,
+          "definition": "Annual revenue or annual recurring revenue, if publicly reported.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Google annual revenue",
+            "Google ARR filing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "revenue_arr",
+          "entity": "AMD",
+          "required": false,
+          "definition": "Annual revenue or annual recurring revenue, if publicly reported.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "AMD annual revenue",
+            "AMD ARR filing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "release_cadence",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Releases shipped per month or quarter.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom release notes",
+            "Broadcom changelog"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "release_cadence",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Releases shipped per month or quarter.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corps release notes",
+            "Intel Corps changelog"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "release_cadence",
+          "entity": "Google",
+          "required": false,
+          "definition": "Releases shipped per month or quarter.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Google release notes",
+            "Google changelog"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "release_cadence",
+          "entity": "AMD",
+          "required": false,
+          "definition": "Releases shipped per month or quarter.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "AMD release notes",
+            "AMD changelog"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "certifications",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Security and compliance certifications held.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Broadcom security compliance certifications"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "certifications",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Security and compliance certifications held.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Intel Corps security compliance certifications"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "certifications",
+          "entity": "Google",
+          "required": false,
+          "definition": "Security and compliance certifications held.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Google security compliance certifications"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "certifications",
+          "entity": "AMD",
+          "required": false,
+          "definition": "Security and compliance certifications held.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "AMD security compliance certifications"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "funding_total",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Total external funding raised to date.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Broadcom funding round raised"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "funding_total",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Total external funding raised to date.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Intel Corps funding round raised"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "funding_total",
+          "entity": "Google",
+          "required": false,
+          "definition": "Total external funding raised to date.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Google funding round raised"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "funding_total",
+          "entity": "AMD",
+          "required": false,
+          "definition": "Total external funding raised to date.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "AMD funding round raised"
+          ],
+          "check_rule": null
+        }
+      ]
+    },
+    {
+      "task_id": "807a6508-d4ae-47cc-bcaf-207937a24e05",
+      "parent_request_id": "886b5d591becd53af98960fb0a789111",
+      "worker": "market_intelligence",
+      "goal": "What is the market momentum for AI computing accelerators in Europe and the United States, including growth rates, adoption trends, and regulatory or economic factors?",
+      "focus": "European and United States AI accelerator markets",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "competitive_intelligence",
+        "targets": [
+          "Broadcom",
+          "Intel Corps",
+          "Google",
+          "AMD"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": "https://broadcom.com",
+            "social_accounts": [],
+            "entity_id": "c742181cf890158049c92427a77ba1ef",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corps",
+            "website": "https://intel.com",
+            "social_accounts": [
+              {
+                "platform": "facebook",
+                "url": "https://www.facebook.com/Intel"
+              },
+              {
+                "platform": "instagram",
+                "url": "https://www.instagram.com/intel"
+              },
+              {
+                "platform": "linkedin",
+                "url": "https://www.linkedin.com/company/intel-corporation"
+              },
+              {
+                "platform": "x",
+                "url": "https://x.com/intel"
+              },
+              {
+                "platform": "youtube",
+                "url": "https://www.youtube.com/user/channelintel"
+              }
+            ],
+            "entity_id": "dac7e163aba30f225fa2c227fca17a97",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Google",
+            "website": "https://google.com",
+            "social_accounts": [],
+            "entity_id": "66e6cc6e87ffa9a945fdd30d2d31bec1",
+            "discovered_by": "user"
+          },
+          {
+            "name": "AMD",
+            "website": "https://amd.com",
+            "social_accounts": [],
+            "entity_id": "120a375a3ab036794f4461b40c8c8a7f",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": []
+    },
+    {
+      "task_id": "f3c88138-e379-4185-a211-a713e564aa18",
+      "parent_request_id": "886b5d591becd53af98960fb0a789111",
+      "worker": "customer_trends",
+      "goal": "What are the adoption patterns, sentiment, and feedback of cloud service providers and AI developers toward NVIDIA's and its competitors' data center AI accelerators?",
+      "focus": "Cloud service providers and AI developers in Europe and the United States",
+      "company_profile": {
+        "name": "NVIDIA Corporation",
+        "aliases": [
+          "Nvidia"
+        ],
+        "products": [
+          "AI computing",
+          "Data center platforms"
+        ],
+        "notes": "NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure,\nnetworking technologies, and software used in data centers, Al development, gaming, and\nprofessional visualization.",
+        "website": "https://www.nvidia.com/",
+        "social_accounts": [],
+        "workspace_id": "ac156a8dd644702db4a5725c7813633d"
+      },
+      "business_context": {
+        "use_case": "competitive_intelligence",
+        "targets": [
+          "Broadcom",
+          "Intel Corps",
+          "Google",
+          "AMD"
+        ],
+        "competitors": [
+          {
+            "name": "Broadcom",
+            "website": "https://broadcom.com",
+            "social_accounts": [],
+            "entity_id": "c742181cf890158049c92427a77ba1ef",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Intel Corps",
+            "website": "https://intel.com",
+            "social_accounts": [
+              {
+                "platform": "facebook",
+                "url": "https://www.facebook.com/Intel"
+              },
+              {
+                "platform": "instagram",
+                "url": "https://www.instagram.com/intel"
+              },
+              {
+                "platform": "linkedin",
+                "url": "https://www.linkedin.com/company/intel-corporation"
+              },
+              {
+                "platform": "x",
+                "url": "https://x.com/intel"
+              },
+              {
+                "platform": "youtube",
+                "url": "https://www.youtube.com/user/channelintel"
+              }
+            ],
+            "entity_id": "dac7e163aba30f225fa2c227fca17a97",
+            "discovered_by": "user"
+          },
+          {
+            "name": "Google",
+            "website": "https://google.com",
+            "social_accounts": [],
+            "entity_id": "66e6cc6e87ffa9a945fdd30d2d31bec1",
+            "discovered_by": "user"
+          },
+          {
+            "name": "AMD",
+            "website": "https://amd.com",
+            "social_accounts": [],
+            "entity_id": "120a375a3ab036794f4461b40c8c8a7f",
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Europe",
+          "United States"
+        ],
+        "offering": "AI computing",
+        "target_customers": "Cloud service providers, AI developers",
+        "focus_areas": [],
+        "trigger": "on_demand",
+        "time_window_days": null,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "share_of_voice",
+          "entity": "NVIDIA Corporation",
+          "required": true,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Broadcom",
+          "required": true,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Intel Corps",
+          "required": true,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "share_of_voice",
+          "entity": "Google",
+          "required": true,
+          "definition": "Share of brand mentions among the company and its competitors.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30, min_platforms=2"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "NVIDIA Corporation",
+          "required": true,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Broadcom",
+          "required": true,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Intel Corps",
+          "required": true,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "sentiment_split",
+          "entity": "Google",
+          "required": true,
+          "definition": "Positive, neutral and negative share of customer posts.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "parts_sum_100=True, min_sample=30"
+        },
+        {
+          "metric_id": "rating",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Average review rating on a public review site.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "NVIDIA Corporation reviews rating"
+          ],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "rating",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Average review rating on a public review site.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Broadcom reviews rating"
+          ],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "rating",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Average review rating on a public review site.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Intel Corps reviews rating"
+          ],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "rating",
+          "entity": "Google",
+          "required": false,
+          "definition": "Average review rating on a public review site.",
+          "preferred_source_types": [
+            "third_party"
+          ],
+          "query_hints": [
+            "Google reviews rating"
+          ],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "top_pain_points",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Most frequent complaint themes with their share of mentions.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "top_pain_points",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Most frequent complaint themes with their share of mentions.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "top_pain_points",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Most frequent complaint themes with their share of mentions.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "top_pain_points",
+          "entity": "Google",
+          "required": false,
+          "definition": "Most frequent complaint themes with their share of mentions.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "switching_intent",
+          "entity": "NVIDIA Corporation",
+          "required": false,
+          "definition": "Share of posts expressing intent to switch away from or to a vendor.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "switching_intent",
+          "entity": "Broadcom",
+          "required": false,
+          "definition": "Share of posts expressing intent to switch away from or to a vendor.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "switching_intent",
+          "entity": "Intel Corps",
+          "required": false,
+          "definition": "Share of posts expressing intent to switch away from or to a vendor.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        },
+        {
+          "metric_id": "switching_intent",
+          "entity": "Google",
+          "required": false,
+          "definition": "Share of posts expressing intent to switch away from or to a vendor.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [],
+          "check_rule": "min_sample=30"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-11-04T21:41:28.614000Z",
+  "rationale": "The objective requires internal product details, competitor comparisons, market dynamics, and customer adoption insights, so all four intelligence workers are needed."
+}

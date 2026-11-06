@@ -3,7 +3,11 @@ from pathlib import Path
 
 from edrak.agents import competitor_intelligence
 from edrak.agents.competitor_intelligence import nodes
-from edrak.agents.competitor_intelligence.state import STAGE_STRATEGY
+from edrak.agents.competitor_intelligence.state import (
+    ResearchRequirement,
+    ResearchRequirements,
+    STAGE_STRATEGY,
+)
 from edrak.agents.competitor_intelligence.tracing import (
     bind_trace_task,
     reset_trace_task,
@@ -40,6 +44,45 @@ def test_task_to_initial_state_returns_graph_state():
     assert state["competitors"] == ["AMD", "Intel"]
 
 
+def test_identify_requirements_keeps_valid_model_requirements(monkeypatch):
+    generated = ResearchRequirements(
+        requirements=[
+            ResearchRequirement(
+                competitor="broadcom",
+                requirement="AI accelerator capabilities and availability.",
+            ),
+            ResearchRequirement(
+                competitor="Unknown Inc",
+                requirement="Unrelated competitor requirement.",
+            ),
+        ]
+    )
+    monkeypatch.setattr(nodes, "call_structured", lambda *_args, **_kwargs: generated)
+    monkeypatch.setattr(nodes, "update_current_span", lambda **_kwargs: None)
+    monkeypatch.setattr(nodes, "save_competitor_span", lambda *_args, **_kwargs: None)
+
+    output = nodes.identify_research_requirements_node(
+        {
+            "task_id": "task-1",
+            "worker": "competitor_intelligence",
+            "goal": "Compare AI accelerators.",
+            "focus": "Capabilities and availability.",
+            "company_profile": {"name": "NVIDIA"},
+            "business_context": {"competitors": ["Broadcom"]},
+            "competitors": ["Broadcom"],
+        }
+    )
+
+    assert len(output["research_requirements"]) == 1
+    requirement = output["research_requirements"][0]
+    assert requirement["id"] == requirement["requirement_id"] == "R1"
+    assert requirement["competitor"] == "Broadcom"
+    assert requirement["requirement"] == requirement["research_question"] == (
+        "AI accelerator capabilities and availability."
+    )
+    assert "expected_evidence" not in requirement and "category" not in requirement
+
+
 def test_run_research_observes_task_and_result(monkeypatch, tmp_path):
     task = ResearchTask(
         parent_request_id="request-1",
@@ -73,13 +116,13 @@ def test_run_research_observes_task_and_result(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
 
     class FakeGraph:
-        def invoke(self, *_args, **_kwargs):
+        def invoke(self, initial_state, **_kwargs):
             save_competitor_span(
                 "test.graph_node",
                 input={"task_id": task.task_id},
                 output={"status": "ok"},
             )
-            return {}
+            return initial_state
 
     monkeypatch.setattr(competitor_intelligence, "app", FakeGraph())
     monkeypatch.setattr(
@@ -107,6 +150,39 @@ def test_run_research_observes_task_and_result(monkeypatch, tmp_path):
     assert trace["request_id"] == task.parent_request_id
     assert trace["spans"][0]["name"] == "test.graph_node"
     assert trace["spans"][0]["task_id"] == task.task_id
+
+
+def test_run_research_saves_received_task_separately(monkeypatch, tmp_path):
+    task = ResearchTask(
+        parent_request_id="request-1",
+        worker=WorkerType.COMPETITOR_INTELLIGENCE,
+        goal="Compare AI accelerators.",
+        focus="Products, software and adoption.",
+        company_profile=CompanyProfile(name="NVIDIA"),
+        business_context=BusinessContext(
+            use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+            targets=["Broadcom", "Intel Corp"],
+        ),
+    )
+    monkeypatch.chdir(tmp_path)
+
+    class FakeGraph:
+        def invoke(self, initial_state, **_kwargs):
+            return initial_state
+
+    monkeypatch.setattr(competitor_intelligence, "app", FakeGraph())
+
+    competitor_intelligence.run_research(task, print_result=False)
+
+    task_path = (
+        tmp_path
+        / "artifacts"
+        / "runs"
+        / task.parent_request_id
+        / "competitor_intelligence_research_task.json"
+    )
+    saved_task = json.loads(task_path.read_text(encoding="utf-8"))
+    assert saved_task == task.model_dump(mode="json")
 
 
 def test_competitor_pipeline_nodes_and_search_tools_are_observed():

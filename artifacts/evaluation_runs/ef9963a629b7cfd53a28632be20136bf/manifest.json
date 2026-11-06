@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "analysis_id": "ef9963a629b7cfd53a28632be20136bf",
+  "status": "cancelled",
+  "started_at_utc": "2026-11-03T00:50:43.691520+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-03T00:50:46.320025+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-03T00:50:46.366937+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_0f7fd5f1-cd5.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-03T00:51:01.767384+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_caa79d22-615.json",
+        "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_004.json",
+        "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_005.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:0f7fd5f1-cd55-4f7d-babb-c5976e86a57c:1": "inputs\\worker_competitor_intelligence_attempt_1_0f7fd5f1-cd5.json",
+    "worker:caa79d22-615e-4fda-b08b-694d03ec84ba:1": "inputs\\worker_internal_intelligence_attempt_1_caa79d22-615.json",
+    "rag:caa79d22-615e-4fda-b08b-694d03ec84ba:1:1": "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_001.json",
+    "rag:caa79d22-615e-4fda-b08b-694d03ec84ba:1:2": "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_002.json",
+    "rag:caa79d22-615e-4fda-b08b-694d03ec84ba:1:3": "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_003.json",
+    "rag:caa79d22-615e-4fda-b08b-694d03ec84ba:1:4": "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_004.json",
+    "rag:caa79d22-615e-4fda-b08b-694d03ec84ba:1:5": "inputs\\rag_internal_intelligence_attempt_1_caa79d22-615_005.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-03T00:51:04.553202+00:00",
+  "completed_at_utc": "2026-11-03T00:51:04.553182+00:00"
+}

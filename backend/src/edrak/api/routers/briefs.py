@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from edrak.api.deps import get_current_session, get_db_conn
 from edrak.api.schemas import SessionOut
@@ -19,10 +19,16 @@ router = APIRouter(prefix="/briefs", tags=["briefs"])
 @router.get("/{brief_id}")
 async def get_brief(
     brief_id: str,
+    version: int | None = Query(default=None, ge=1),
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
-    row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+    if version is None:
+        row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+    else:
+        row = await briefs_repo.get_brief_version(
+            db, brief_id, version, session.workspace.workspace_id
+        )
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
     document = dict(row["document"])
@@ -32,7 +38,10 @@ async def get_brief(
     document["lifecycle"] = row["lifecycle"]
     document["evidence_status"] = row["evidence_status"]
     document["document_version"] = row["document_version"]
-    await merge_live(db, row["id"], document)
+    document["revision"] = row["revision"]
+    document["latest_revision_version"] = row["latest_revision_version"]
+    if row["revision"]["version"] >= row["latest_revision_version"]:
+        await merge_live(db, row["id"], document)
     if document.get("cards") is not None and not document.get("deck"):
         from edrak.briefing.deck import build_deck
 
@@ -41,6 +50,18 @@ async def get_brief(
         except Exception:  # noqa: BLE001 - the frontend falls back to the document's own fields
             pass
     return document
+
+
+@router.get("/{brief_id}/revisions")
+async def get_brief_revisions(
+    brief_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> list[dict[str, Any]]:
+    row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="not_found")
+    return await briefs_repo.list_revisions(db, brief_id)
 
 
 async def merge_live(db: aiosqlite.Connection, brief_id: str, document: dict[str, Any]) -> dict[str, Any]:
@@ -118,8 +139,12 @@ MEDIA = {
 }
 
 
-async def _brief(db, session, brief_id):
-    row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+async def _brief(db, session, brief_id, version: int | None = None):
+    row = (
+        await briefs_repo.get_brief_version(db, brief_id, version, session.workspace.workspace_id)
+        if version is not None
+        else await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
+    )
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
     return row
@@ -129,6 +154,7 @@ async def _brief(db, session, brief_id):
 async def export_brief(
     brief_id: str,
     format: str = "pdf",
+    version: int | None = Query(default=None, ge=1),
     sources: Optional[bool] = None,
     limitations: Optional[bool] = None,
     session: SessionOut = Depends(get_current_session),
@@ -139,13 +165,14 @@ async def export_brief(
     fmt = "markdown" if format in ("md", "markdown") else format
     if fmt not in MEDIA:
         raise HTTPException(status_code=422, detail="unknown_format")
-    row = await _brief(db, session, brief_id)
+    row = await _brief(db, session, brief_id, version)
     defaults = await _fetch_one(db, "SELECT * FROM workspace_settings WHERE workspace_id = ?", (session.workspace.workspace_id,)) or {}
     inc_sources = bool(defaults.get("export_include_sources", 1)) if sources is None else sources
     inc_limits = bool(defaults.get("export_include_limitations", 1)) if limitations is None else limitations
     doc = {**row["document"], "brief_no": row["number"], "evidence_status": row["evidence_status"]}
     if doc.get("cards") is not None:
-        await merge_live(db, brief_id, doc)
+        if row["revision"]["version"] >= row["latest_revision_version"]:
+            await merge_live(db, brief_id, doc)
         from edrak.db.repositories import action_plans as plans_repo
 
         plans = [p for p in await plans_repo.for_brief(db, brief_id) if p["status"] in ("approved", "draft")]

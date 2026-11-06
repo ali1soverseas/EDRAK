@@ -1,5 +1,5 @@
 /** Typed calls to the product endpoints beyond the MVP screens. Same cookie session as httpApi. */
-import type { ActionPlanDoc, ActionPlanRow, ChallengeResult } from "../types/brief3";
+import type { ActionPlanDoc, ActionPlanRow, BriefRevision, ChallengeResult } from "../types/brief3";
 
 const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
 
@@ -46,8 +46,226 @@ export interface Profile {
   onboarding_step: number; completed: boolean; completed_at?: string | null; updated_at?: string | null;
 }
 export interface Onboarding { step: number; total_steps: number; completed: boolean; missing: string[]; profile: Profile }
+export type CandidatePricingStatus = "public_price_available" | "quote_required" | "not_found";
+export type CandidatePricingFindingStatus =
+  | "official_public_price" | "reseller_price" | "reported_price"
+  | "estimated_price" | "quote_required" | "undisclosed";
+export interface CandidatePricingSource {
+  url: string;
+  title: string;
+  provider: string[];
+  published_date: string | null;
+  source_host: string;
+  official_domain_match: boolean;
+}
+export interface CandidatePricing {
+  product_or_service: string;
+  pricing_model: "per_unit" | "per_user" | "per_core" | "per_device" | "subscription" | "usage_based" | "tiered" | "custom_quote" | "one_time" | "unknown";
+  price: string | null;
+  currency: string | null;
+  billing_period: string | null;
+  unit: string | null;
+  pricing_status: CandidatePricingFindingStatus;
+  conditions: string | null;
+  evidence_quote: string;
+  source: CandidatePricingSource;
+}
+export interface CandidatePricingResearch {
+  research_complete: boolean;
+  research_status: "complete" | "incomplete_after_retry_limit" | "failed";
+  rounds_attempted: number;
+  max_rounds: number;
+  queries_attempted: { round: number; query?: string; providers_with_results?: string[]; result_count?: number; extraction_error?: string }[];
+  unresolved_items: string[];
+  note?: string | null;
+}
 export interface Candidate {
-  name: string; website: string | null; reason: string; confidence: number; links: Link[]; evidence_urls: string[]; already_tracked: boolean;
+  name: string; website: string | null; reason: string; confidence: number; links: Link[]; evidence_urls: string[];
+  pricing_status: CandidatePricingStatus; pricing: CandidatePricing[];
+  pricing_research?: CandidatePricingResearch | null; already_tracked: boolean;
+}
+export type KbStatus = "missing" | "queued" | "building" | "ready" | "partial" | "failed";
+export interface CompetitorKb {
+  entity_id: string;
+  name: string;
+  website_domain: string | null;
+  status: KbStatus;
+  stage: string | null;
+  progress: number;
+  error_message: string | null;
+  page_count: number;
+  chunk_count: number;
+  built_at: string | null;
+  updated_at: string | null;
+}
+export interface Provenance {
+  quote: string;
+  source_url: string;
+  status: "verified" | "third_party_only";
+  as_of: string | null;
+  relevance?: "in_scope" | "outside_scope" | "company_wide";
+  domain?: string | null;
+}
+export interface SourcedField extends Provenance {
+  value: string;
+}
+export type PolicyTopic = "delivery" | "returns" | "warranty" | "payment" | "support" | "other";
+export interface KbOffering {
+  official_name: string;
+  category: string;
+  doc_url: string;
+  quote: string;
+  as_of: string | null;
+  status?: "verified" | "third_party_only";
+  summary?: string | null;
+  features?: string[];
+  price?: string | null;
+  for_whom?: string | null;
+  relevance?: "in_scope" | "outside_scope";
+  domain?: string | null;
+}
+export interface KbPlan extends Provenance {
+  name: string;
+  price: string | null;
+  period: string | null;
+  includes: string[];
+  conflict?: string | null;
+}
+export interface KbPolicy extends Provenance {
+  topic: PolicyTopic;
+  summary: string;
+  conflict?: string | null;
+}
+export interface KbConflict {
+  about: string;
+  claims: { value: string; source_url?: string | null; official?: boolean }[];
+}
+export type KbTermsCoverageStatus = "official" | "reported" | "partial" | "quote_required" | "not_found";
+export type KbTermsCoverageKey = "pricing" | "delivery" | "returns" | "warranty";
+export interface KbNews extends Provenance {
+  date: string | null;
+  headline: string;
+  summary: string;
+  publisher: string;
+}
+export interface KbAspectItem {
+  id: string;
+  label: string;
+}
+export interface KbAspectFact extends Omit<Provenance, "status"> {
+  status: Provenance["status"] | "mock";
+  mock?: boolean;
+  item: string;
+  statement: string;
+  date: string | null;
+}
+export interface KbAspect {
+  label: string;
+  items: KbAspectItem[];
+  facts: KbAspectFact[];
+  coverage: Record<string, "official" | "reported" | "not_found">;
+  searches: number;
+  pages_read: number;
+}
+export interface KbScope {
+  key: string;
+  target: string;
+  domains: { name: string; keywords: string[] }[];
+}
+export interface KbTermsPage {
+  url: string;
+  title: string;
+  page_type: string;
+}
+export interface KbProfile {
+  name?: string;
+  website: string | null;
+  official_domains?: string[];
+  markets?: string[];
+  description: SourcedField | null;
+  tagline?: SourcedField | null;
+  key_facts?: {
+    founded?: SourcedField | null;
+    headquarters?: SourcedField | null;
+    employees?: SourcedField | null;
+    ceo?: SourcedField | null;
+  };
+  ownership?: SourcedField | null;
+  parent_company: SourcedField | null;
+  offerings: KbOffering[];
+  pricing_model: SourcedField | null;
+  pricing_status?: "public_price_available" | "quote_required" | "not_found";
+  terms_coverage?: Partial<Record<KbTermsCoverageKey, KbTermsCoverageStatus>>;
+  terms_research?: Partial<Record<KbTermsCoverageKey, { searches: number }>>;
+  conflicts?: KbConflict[];
+  plans?: KbPlan[];
+  policies?: KbPolicy[];
+  customer_segments: SourcedField[];
+  markets_served: SourcedField[];
+  channels?: SourcedField[];
+  partners?: SourcedField[];
+  claims?: (Provenance & { claim: string; relevance?: "in_scope" | "outside_scope"; domain?: string | null })[];
+  recent_news?: KbNews[];
+  aspects?: Record<string, KbAspect>;
+  ai_accelerator_intelligence?: Record<string, unknown>;
+  aspects_by_scope?: Record<string, Record<string, KbAspect>>;
+  scope?: KbScope;
+  scopes?: Record<string, KbScope>;
+  terms_pages_read?: KbTermsPage[];
+  evidence_surfaces: Record<string, string[]>;
+  profile_basis?: "official" | "mixed" | "third_party";
+  fetch_issues?: Record<string, string>;
+  known_gaps?: string[];
+  build_notes?: string[];
+  curated_keys?: string[];
+  data_quality_notes?: string[];
+  quarantined_mock_facts?: KbAspectFact[];
+  seed_sources?: string[];
+  not_public?: { aspect: string; item: string; note: string }[];
+  socials: { platform: string; url: string }[];
+  built_at: string | null;
+}
+export type CompetitorProfile = KbProfile;
+export interface KbSource {
+  source_url: string;
+  title: string | null;
+  source_type: string;
+  page_type: string | null;
+  fetched_at: string | null;
+  chunks: number;
+}
+export interface CompetitorKnowledge {
+  kb_key: string;
+  name: string;
+  website_domain: string | null;
+  markets: string[];
+  status: KbStatus;
+  profile: KbProfile;
+  page_count: number;
+  chunk_count: number;
+  error_message: string | null;
+  built_at: string | null;
+  sources: KbSource[];
+}
+export interface KbPassage {
+  id: string;
+  chunk_index: number;
+  content: string;
+  page_type: string | null;
+  source_type: string;
+  market: string | null;
+  language: string | null;
+  fetched_at: string | null;
+}
+export interface KbHit {
+  text: string;
+  score: number | null;
+  source_url: string | null;
+  title: string | null;
+  source_type: string | null;
+  page_type: string | null;
+  market: string | null;
+  fetched_at: string | null;
 }
 export interface Doc {
   document_id: string; filename: string; status: string; kind: string; size: { unit: string; value: number } | null;
@@ -72,6 +290,15 @@ export const edrak = {
   saveOnboarding: (patch: Dict) => req<Onboarding>("PUT", "/onboarding", patch),
   completeOnboarding: () => req<Onboarding>("POST", "/onboarding/complete"),
   discover: (limit = 5) => req<Candidate[]>("POST", "/entities/discover", { limit }),
+  buildCompetitorKb: (entityIds?: string[], force = false) =>
+    req<CompetitorKb[]>("POST", "/competitor-kb/build", { entity_ids: entityIds, force }),
+  competitorKbStatus: () => req<CompetitorKb[]>("GET", "/competitor-kb/status"),
+  competitorKnowledge: (entityId: string) =>
+    req<CompetitorKnowledge>("GET", `/competitor-kb/${encodeURIComponent(entityId)}`),
+  competitorKbPassages: (entityId: string, sourceUrl: string) =>
+    req<KbPassage[]>("GET", `/competitor-kb/${encodeURIComponent(entityId)}/passages?url=${encodeURIComponent(sourceUrl)}`),
+  competitorKbSearch: (entityId: string, query: string, k = 8) =>
+    req<KbHit[]>("GET", `/competitor-kb/${encodeURIComponent(entityId)}/search?q=${encodeURIComponent(query)}&k=${k}`),
 
   documents: () => req<Doc[]>("GET", "/documents"),
   upload: (files: File[]) => {
@@ -114,7 +341,9 @@ export const edrak = {
   notifyInstead: (id: string) => req("POST", `/analyses/${id}/notify-instead`),
 
   quality: (briefId: string) => req<Dict>("GET", `/briefs/${briefId}/quality`),
-  exportUrl: (briefId: string, format: string) => apiUrl(`/briefs/${briefId}/export?format=${format}`),
+  briefRevisions: (briefId: string) => req<BriefRevision[]>("GET", `/briefs/${briefId}/revisions`),
+  exportUrl: (briefId: string, format: string, version?: number) =>
+    apiUrl(`/briefs/${briefId}/export?format=${format}${version === undefined ? "" : `&version=${version}`}`),
   reviewBrief: (briefId: string, action: string, note?: string) => req<Dict>("POST", `/briefs/${briefId}/review`, { action, note }),
   recordDecision: (briefId: string, body: Dict) => req<Dict>("POST", `/briefs/${briefId}/decision`, body),
   undoDecision: (briefId: string) => req("DELETE", `/briefs/${briefId}/decision`),

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 from typing import Any, Literal
@@ -11,9 +12,8 @@ from .base import (
     new_id,
     utcnow,
 )
-from .request import BusinessRequest
 from .CrossSignal import CrossSignalOutput
-
+from .request import BusinessRequest
 
 # ============================================================================
 # ENUMS
@@ -37,6 +37,12 @@ class AssessmentLevel(str, Enum):
     MODERATE = "moderate"
     LOW = "low"
     UNKNOWN = "unknown"
+
+    @classmethod
+    def _missing_(cls, value: object) -> AssessmentLevel | None:
+        if isinstance(value, str) and value.strip().lower() == "medium":
+            return cls.MODERATE
+        return None
 
 
 class DecisionItemType(str, Enum):

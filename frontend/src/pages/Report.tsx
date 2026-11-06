@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { BriefToolbar } from "../components/brief/BriefToolbar";
 import { ReportView } from "../components/ReportView";
 import { BriefDeck } from "../components/deck/BriefDeck";
@@ -16,7 +16,10 @@ export function Report() {
   const { t } = useI18n();
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const brief = useAsync(() => api.getBrief(id), [id]);
+  const [searchParams] = useSearchParams();
+  const versionParam = searchParams.get("version");
+  const version = versionParam === null ? undefined : Number(versionParam);
+  const brief = useAsync(() => api.getBrief(id, version), [id, version]);
   const data = brief.data;
   const container = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
@@ -59,7 +62,8 @@ export function Report() {
   }
 
   if ((data as unknown as { document_version?: number }).document_version! >= 3 && (data as unknown as BriefV3).cards) {
-    return <>{chrome}<BriefDeck key={data.brief_id} initial={data as unknown as BriefV3} /></>;
+    const revision = (data as unknown as BriefV3).revision;
+    return <>{chrome}<BriefDeck key={`${data.brief_id}:${revision?.version ?? 1}`} initial={data as unknown as BriefV3} /></>;
   }
 
   return (

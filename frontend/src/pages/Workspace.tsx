@@ -241,7 +241,7 @@ export function Watchlist() {
             <button type="submit" className="btn"><Icon name="plus" size={14} /></button>
           </form>
           {rows.map((r) => (
-            <button key={r.id} type="button" className="list-row" style={{ background: r.id === id ? "rgba(10,60,240,.06)" : "none", border: 0, cursor: "pointer", textAlign: "start", borderRadius: 8, padding: "10px 8px" }} onClick={() => navigate(`/watchlist/${r.id}`)}>
+            <button key={r.id} type="button" className="list-row" style={{ background: r.id === id ? "rgba(10,60,240,.06)" : "none", border: 0, cursor: "pointer", textAlign: "start", borderRadius: 8, padding: "10px 8px" }} onClick={() => navigate(r.kind === "competitor" ? `/competitors/${r.id}` : `/watchlist/${r.id}`)}>
               <span className="chip c-line">{r.kind}</span><bdi className="grow b6">{r.name}</bdi>{r.discovered_by === "agent" && <span className="tag-agent">AI</span>}
             </button>
           ))}

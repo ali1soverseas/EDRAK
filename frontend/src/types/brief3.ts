@@ -57,9 +57,16 @@ export interface BriefEvidenceItem {
   evidence: { source_title?: string; source_url?: string; publisher?: string; extracted_fact: string; excerpt?: string; retrieved_at?: string };
 }
 
+export interface BriefRevision {
+  version: number; reason: string; created_at: string; summary?: string | null;
+  evidence_status?: string; document_version?: number;
+}
+
 export interface BriefV3 {
   brief_id: string; brief_no: number; analysis_id: string; analysis_title: string; title: string; question: string; use_case: string;
   lifecycle: string; evidence_status: string; document_version: number; created_at: string; partial: boolean;
+  revision?: BriefRevision;
+  latest_revision_version?: number;
   headline: string; summary_text: string;
   kpis: KpiItem[];
   coverage: { score: number | null; met: number; required: number; items: { metric_id: string; entity: string; met: boolean }[] };

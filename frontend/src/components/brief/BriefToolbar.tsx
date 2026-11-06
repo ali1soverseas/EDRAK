@@ -44,6 +44,9 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
   const navigate = useNavigate();
   const [lifecycle, setLifecycle] = useState<string>(brief.lifecycle ?? "ready");
   const [menu, setMenu] = useState(false);
+  const [revisionMenu, setRevisionMenu] = useState(false);
+  const [revisions, setRevisions] = useState<Dict[]>([]);
+  const [revisionError, setRevisionError] = useState<string | null>(null);
   const [extras, setExtras] = useState(false);
   const [deciding, setDeciding] = useState(false);
   const [decision, setDecision] = useState({ option_label: "", title: "", rationale: "", review_on: "", next_steps: "" });
@@ -101,6 +104,33 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
           {lifecycle === "decided" ? L("Decided", "تم القرار") : lifecycle === "reviewed" ? L("Reviewed", "تمت المراجعة") : L("Not yet reviewed", "لم تُراجع بعد")}
         </span>
         <span className={`chip ${brief.evidence_status === "verified" ? "c-ok" : "c-ins"}`}>{brief.evidence_status}</span>
+        {(brief.revision?.version ?? 1) > 1 && <span className="chip c-blue">{L(`Revision ${brief.revision?.version}`, `المراجعة ${brief.revision?.version}`)}</span>}
+        {(brief.latest_revision_version ?? 1) > 1 && (
+          <div style={{ position: "relative" }}>
+            <button type="button" className="btn ghost" onClick={() => {
+              setRevisionError(null);
+              setRevisionMenu((open) => !open);
+              if (!revisions.length) {
+                void edrak.briefRevisions(id).then(setRevisions).catch((e) => setRevisionError((e as Error).message));
+              }
+            }}>{L("Version history", "سجل الإصدارات")}</button>
+            {revisionMenu && (
+              <div className="popover" style={{ width: 280, top: 42, maxHeight: 320, overflow: "auto" }}>
+                {revisionError && <div className="s13" role="alert" style={{ padding: "8px 14px", color: "#c0392b" }}>{revisionError}</div>}
+                {[...revisions].sort((a, b) => Number(b.version) - Number(a.version)).map((revision) => (
+                  <button key={revision.version} type="button" className="list-row" style={{ width: "100%", padding: "10px 14px", textAlign: "left" }}
+                    onClick={() => {
+                      setRevisionMenu(false);
+                      navigate(`/briefs/${id}?version=${revision.version}`);
+                    }}>
+                    {revision.version === 1 ? L("Original brief", "الموجز الأصلي") : L(`Revision ${revision.version}`, `المراجعة ${revision.version}`)}
+                    {revision.reason && revision.version > 1 ? ` · ${revision.reason}` : ""}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div className="grow" />
         <button type="button" className="btn ghost" onClick={() => setExtras((v) => !v)}><Icon name="layers" size={14} /> {L("Compared and trends", "المقارنة والاتجاهات")}</button>
         <button type="button" className="btn ghost" onClick={() => navigate(`/evidence/${id}`)}><Icon name="link" size={14} /> {L("Evidence", "الأدلة")}</button>
@@ -109,7 +139,7 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
           {menu && (
             <div className="popover" style={{ width: 200, top: 42 }}>
               {[["pdf", "PDF"], ["docx", "Word"], ["markdown", "Markdown"]].map(([f, label]) => (
-                <a key={f} className="list-row" style={{ padding: "10px 14px", color: "inherit" }} href={edrak.exportUrl(id, f)} onClick={() => setMenu(false)}>{label}</a>
+                <a key={f} className="list-row" style={{ padding: "10px 14px", color: "inherit" }} href={edrak.exportUrl(id, f, brief.revision?.version ?? 1)} onClick={() => setMenu(false)}>{label}</a>
               ))}
             </div>
           )}

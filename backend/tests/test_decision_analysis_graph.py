@@ -10,6 +10,7 @@ from edrak.contracts.CrossSignal import (
     SignalType,
 )
 from edrak.contracts.DecisionAnalysis import (
+    AssessmentLevel,
     DecisionAnalysisInput,
     DecisionAnalysisStatus,
     DecisionOption,
@@ -30,11 +31,41 @@ class FakeModel:
     def __init__(self, result=None):
         self.result = result
 
-    def with_structured_output(self, _schema):
+    def with_structured_output(self, _schema, **_kwargs):
         return self
 
     async def ainvoke(self, _messages):
         return self.result
+
+
+def test_default_analysis_model_uses_ollama_and_schema_instruction(monkeypatch) -> None:
+    from edrak.DecisionAnalysis.nodes import make_analyze_node
+
+    calls = {}
+
+    class CapturingModel:
+        def with_structured_output(self, schema, *, method):
+            calls["schema"] = schema
+            calls["method"] = method
+            return self
+
+        async def ainvoke(self, messages):
+            calls["messages"] = messages
+            return DecisionAnalysisDraft(executive_summary="Analysis.")
+
+    def fake_model(**kwargs):
+        calls["model_kwargs"] = kwargs
+        return CapturingModel()
+
+    monkeypatch.setattr("edrak.DecisionAnalysis.nodes.get_chat_model", fake_model)
+    monkeypatch.setattr("edrak.DecisionAnalysis.nodes.trace_decision_analysis", lambda *_a, **_kw: None)
+    node = make_analyze_node()
+    asyncio.run(node({"prepared_context": {"research_run_id": "test", "signals": []}}))
+
+    assert calls["model_kwargs"] == {"agent": "orchestrator", "temperature": 0.0}
+    assert calls["schema"] is DecisionAnalysisDraft
+    assert calls["method"] == "json_schema"
+    assert "JSON schema" in calls["messages"][-1]["content"]
 
 
 def test_decision_analysis_graph_uses_current_node_factories() -> None:
@@ -46,6 +77,10 @@ def test_decision_analysis_graph_uses_current_node_factories() -> None:
         "draft_options",
         "validate_and_assemble",
     } <= set(graph.nodes)
+
+
+def test_assessment_level_normalizes_medium_to_moderate() -> None:
+    assert AssessmentLevel("medium") is AssessmentLevel.MODERATE
 
 
 def _decision_input() -> DecisionAnalysisInput:

@@ -1,0 +1,412 @@
+{
+  "task_id": "6848522d-bd7f-4957-905a-cfc136f45677",
+  "worker": "market_intelligence",
+  "status": "completed",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "af354550-f620-433c-9161-c298257d6f96",
+      "statement": "Intel's Gaudi 3 AI accelerator delivers 95% to 170% of the performance of NVIDIA's H100 GPU for Llama2 inferencing, and can achieve up to a four‑fold advantage on certain model versions.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "1e7f1c76-2c8f-4fe3-9864-df505c76420a",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.9,
+      "limitations": [
+        "Derived from research task: Compare technical capabilities and performance benchmarks of NVIDIA, Broadcom, and Intel data‑center AI accelerators"
+      ]
+    },
+    {
+      "finding_id": "db0da026-e32a-41f5-a877-c4973f5d185f",
+      "statement": "Against NVIDIA's newer H200 accelerator, Intel's Gaudi 3 achieves 80% to 110% of H200 performance for Llama models and a 3.8× advantage for Falcon models.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "15073966-742f-4e77-81d1-ad11fe2104a7",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.8,
+      "limitations": [
+        "Derived from research task: Compare technical capabilities and performance benchmarks of NVIDIA, Broadcom, and Intel data‑center AI accelerators"
+      ]
+    },
+    {
+      "finding_id": "4bfd2aaa-3bb8-4701-a56d-a7ccaef631df",
+      "statement": "NVIDIA provides developer tools such as NIM microservices and Blueprints that accelerate AI prototyping and deployment, indicating a robust software ecosystem for its accelerators.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "a76d41a2-f4d6-4a90-a6e7-3177fb383ed7",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Derived from research task: Map the software ecosystem for each accelerator (SDKs, libraries, framework support, developer tools)"
+      ]
+    },
+    {
+      "finding_id": "25d75fda-757e-4fb2-bd7f-da85404818ac",
+      "statement": "NVIDIA's AI platform integrates with popular frameworks and APIs, ensuring compatibility and ease of transition from concept to production for customers using its accelerators.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "6e5730f8-ba9a-48cf-a9d9-fe52e49a2a62",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Derived from research task: Map the software ecosystem for each accelerator (SDKs, libraries, framework support, developer tools)"
+      ]
+    },
+    {
+      "finding_id": "401c4d1c-f9b9-4d91-b684-fac1169c0cec",
+      "statement": "NVIDIA offers a suite of tools, libraries, and models as part of its AI ecosystem to support building and deploying AI applications on its hardware.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "8b7fd419-2f5c-4a7d-bde1-6218b9b9da77",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.55,
+      "limitations": [
+        "Derived from research task: Map the software ecosystem for each accelerator (SDKs, libraries, framework support, developer tools)"
+      ]
+    },
+    {
+      "finding_id": "400b3baa-0cd6-4231-9b6b-49c77e501104",
+      "statement": "Intel’s Gaudi 3 accelerator lists at $15,000 per card, roughly half the $30,000 list price of NVIDIA’s H100, highlighting a significant price differential for comparable BF16 performance.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "7a3260b6-64d2-4ba3-a95b-8ff371c19a61",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Derived from research task: Gather pricing, list‑price ranges, and availability/supply status for the three accelerators"
+      ]
+    },
+    {
+      "finding_id": "ca53b3e5-d322-4ea4-b7bb-98e43771e7ea",
+      "statement": "Gaudi 3 has achieved general availability via IBM Cloud and Dell’s AI platform, but Intel cut 2025 shipment targets to 200‑250 K units and forecasts only $500 M in sales, suggesting constrained supply relative to NVIDIA’s $40 B+ data‑center AI revenue.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "537c6c3c-dcc1-44de-bf8c-6e753eadac79",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.9,
+      "limitations": [
+        "Derived from research task: Gather pricing, list‑price ranges, and availability/supply status for the three accelerators"
+      ]
+    },
+    {
+      "finding_id": "7da867f0-02f5-43d0-91d0-745fc09610dc",
+      "statement": "NVIDIA has a global network of cloud partners that implement its reference design, indicating cloud provider adoption of NVIDIA AI accelerators.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "c48be062-d153-4096-ac28-eca082f2afc1",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.55,
+      "limitations": [
+        "Derived from research task: Identify recent customer adoption signals: cloud providers, enterprises, and AI developers using each vendor’s accelerator"
+      ]
+    },
+    {
+      "finding_id": "8802c6e5-0667-41b3-bca6-4ec343e55cfb",
+      "statement": "The H100 GPU delivers up to 4× faster training for GPT‑3 (175B) models thanks to fourth‑generation Tensor Cores and FP8 precision, showcasing a performance advantage over prior generations.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "dfe9986e-2281-4886-9140-0940bc91568e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.9,
+      "limitations": [
+        "Derived from research task: Identify recent customer adoption signals: cloud providers, enterprises, and AI developers using each vendor’s accelerator"
+      ]
+    },
+    {
+      "finding_id": "f6fda7ac-aacc-47ac-9b49-ac9585944c21",
+      "statement": "NVIDIA controlled 95% of the data‑center AI accelerator market in 2023, indicating dominant market share.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "0ca4dea2-8dd9-43f2-9d32-38cf3b2fa524",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.9,
+      "limitations": [
+        "Derived from research task: Assess overall market momentum: market‑share trends, shipment volumes, and recent deals for each accelerator in the US and Europe"
+      ]
+    },
+    {
+      "finding_id": "cc4af275-52dc-4191-b17c-05f7cbb02d57",
+      "statement": "NVIDIA's H100 cards commanded an ASP of up to $40,000, boosting overall margins.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "8f62f191-3b5d-44bd-908c-4c1e70a36580",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.9,
+      "limitations": [
+        "Derived from research task: Assess overall market momentum: market‑share trends, shipment volumes, and recent deals for each accelerator in the US and Europe"
+      ]
+    },
+    {
+      "finding_id": "e4224903-630c-4b47-9855-b592d7969462",
+      "statement": "EU data residency requires that AI data—including prompts, model outputs, logs, and dashboards—be stored and processed within the EU/EEA, and any access from outside the EU is treated as a data transfer under GDPR, creating a regulatory constraint for AI accelerator deployment in European data centers.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "14ac67ae-5167-4ddf-9764-6f6384fcaa52",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.65,
+      "limitations": [
+        "Derived from research task: Identify any US or EU regulatory, licensing, or data‑residency constraints affecting deployment of AI accelerators in data centers"
+      ]
+    },
+    {
+      "finding_id": "70f1ff1d-1bd7-4b85-a08d-33af27065d74",
+      "statement": "Locating AI workloads in a single EU region does not automatically satisfy EU data‑residency requirements, indicating additional compliance steps beyond geographic placement.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "3f3465f9-b3cf-4154-904b-2f2c5a60ab28",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.4,
+      "limitations": [
+        "Derived from research task: Identify any US or EU regulatory, licensing, or data‑residency constraints affecting deployment of AI accelerators in data centers"
+      ]
+    },
+    {
+      "finding_id": "a24cafb3-b014-447d-8fed-880231a08047",
+      "statement": "U.S. export controls impose licensing caps or bans on certain AI accelerator chips such as the NVIDIA H100/H20, while even compliant models (e.g., A800/H800, H20/G80) are subject to tight licensing conditions and caps, limiting their availability for deployment abroad.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "3c6c3975-d5eb-4e2c-bd0f-93f8a2548e2c",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.75,
+      "limitations": [
+        "Derived from research task: Identify any US or EU regulatory, licensing, or data‑residency constraints affecting deployment of AI accelerators in data centers"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "1e7f1c76-2c8f-4fe3-9864-df505c76420a",
+      "source_type": "web_page",
+      "source_title": "https://spectrum.ieee.org/intel-gaudi-3",
+      "source_url": "https://spectrum.ieee.org/intel-gaudi-3",
+      "publisher": null,
+      "extracted_fact": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "excerpt": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "page_text": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "retrieved_at": "2026-11-03T00:42:50.592923Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "15073966-742f-4e77-81d1-ad11fe2104a7",
+      "source_type": "web_page",
+      "source_title": "https://spectrum.ieee.org/intel-gaudi-3",
+      "source_url": "https://spectrum.ieee.org/intel-gaudi-3",
+      "publisher": null,
+      "extracted_fact": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "excerpt": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "page_text": "175B large language model versus the H100 and even better results for the 7-billion and 8-billion parameter versions of Llama2.\nFor inferencing, the contest was much closer, according to Intel, where the new chip delivered 95 to 170 percent of the performance of H100 for two versions of\nmodel, Gaudi 3 achieved as much as a fourfold advantage. Unsurprisingly, the advantage was smaller against the Nvidia H200—80 to 110 percent for Llama and 3.8x for Falcon.\nIntel claims more dramatic results when measuring\n, where it projects as much as 220 percent H100’s value on Llama and 230 percent on Falcon.\n“Our customers are telling us that what they find limiting is getting enough power to the data center,” says Intel’s Habana Labs chief operating officer Eitan Medina.",
+      "retrieved_at": "2026-11-03T00:42:50.593106Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "a76d41a2-f4d6-4a90-a6e7-3177fb383ed7",
+      "source_type": "web_page",
+      "source_title": "https://www.nvidia.com/en-us/platforms/ai/",
+      "source_url": "https://www.nvidia.com/en-us/platforms/ai/",
+      "publisher": null,
+      "extracted_fact": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular fra",
+      "excerpt": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular frameworks and APIs ensures a smooth transition from concept to production.\nProduction-ready AI solutions from the NVIDIA AI ecosystem combine optimized hardware and software to deliver secure, scalable performance for real-world deployment across industries.",
+      "page_text": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular frameworks and APIs ensures a smooth transition from concept to production.\nProduction-ready AI solutions from the NVIDIA AI ecosystem combine optimized hardware and software to deliver secure, scalable performance for real-world deployment across industries.",
+      "retrieved_at": "2026-11-03T00:42:50.593209Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "6e5730f8-ba9a-48cf-a9d9-fe52e49a2a62",
+      "source_type": "web_page",
+      "source_title": "https://www.nvidia.com/en-us/platforms/ai/",
+      "source_url": "https://www.nvidia.com/en-us/platforms/ai/",
+      "publisher": null,
+      "extracted_fact": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular fra",
+      "excerpt": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular frameworks and APIs ensures a smooth transition from concept to production.\nProduction-ready AI solutions from the NVIDIA AI ecosystem combine optimized hardware and software to deliver secure, scalable performance for real-world deployment across industries.",
+      "page_text": "Customize the reference design that combines enterprise storage with NVIDIA-accelerated computing to deliver near-real-time business insights for AI agents.\nAccelerate AI Success With NVIDIA and a Trusted Partner Ecosystem\nUnlock faster outcomes, streamlined workflows, and scalable AI—backed by unmatched NVIDIA performance and a global partner ecosystem.\nAccelerate development with a vast network of full-stack solutions accelerated by NVIDIA AI. You can now reduce deployment times from weeks to minutes and turn data into insights faster than ever before.\nSimplify AI development with intuitive tools like NVIDIA NIM™ microservices, NVIDIA Blueprints, or solutions from our partners, enabling rapid prototyping and deployment across diverse environments. NVIDIA AI’s integration with popular frameworks and APIs ensures a smooth transition from concept to production.\nProduction-ready AI solutions from the NVIDIA AI ecosystem combine optimized hardware and software to deliver secure, scalable performance for real-world deployment across industries.",
+      "retrieved_at": "2026-11-03T00:42:50.593421Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "8b7fd419-2f5c-4a7d-bde1-6218b9b9da77",
+      "source_type": "web_page",
+      "source_title": "https://www.nvidia.com/en-us/solutions/ai/",
+      "source_url": "https://www.nvidia.com/en-us/solutions/ai/",
+      "publisher": null,
+      "extracted_fact": "Build and deploy AI applications with NVIDIA’s tools, libraries, and models. Explore technical resources to accelerate your workflows and bring your AI use case to life.\nTalk to an NVIDIA product specialist about moving from pilot to production with the assurance of security, API stability, and support that comes with\nGet the latest AI news, technologies, breakthroughs, and more sent straight to your inbox.\n(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of",
+      "excerpt": "Build and deploy AI applications with NVIDIA’s tools, libraries, and models. Explore technical resources to accelerate your workflows and bring your AI use case to life.\nTalk to an NVIDIA product specialist about moving from pilot to production with the assurance of security, API stability, and support that comes with\nGet the latest AI news, technologies, breakthroughs, and more sent straight to your inbox.\n(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.\nAlternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).\n(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.",
+      "page_text": "Build and deploy AI applications with NVIDIA’s tools, libraries, and models. Explore technical resources to accelerate your workflows and bring your AI use case to life.\nTalk to an NVIDIA product specialist about moving from pilot to production with the assurance of security, API stability, and support that comes with\nGet the latest AI news, technologies, breakthroughs, and more sent straight to your inbox.\n(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.\nAlternatively, you can (youtubeLink)watch this video on YouTube(/youtubeLink).\n(googleCookiePolicyLink)YouTube sets performance, advertising, and other optional cookies(/googleCookiePolicyLink) when you watch embedded videos. To watch this video, you need to turn on optional cookies for the site. By clicking “Accept and Play Video,” you will automatically turn on advertising and other optional cookies for the site and accept our (nvidiaTermsOfServiceLink)Terms of Service(/nvidiaTermsOfServiceLink) (which contains important waivers). Please see our (nvidiaPrivacyPolicyLink)Privacy Policy(/nvidiaPrivacyPolicyLink) and (nvidiaCookiePolicyLink)Cookie Policy(/nvidiaCookiePolicyLink) for more information.",
+      "retrieved_at": "2026-11-03T00:42:50.593611Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "7a3260b6-64d2-4ba3-a95b-8ff371c19a61",
+      "source_type": "web_page",
+      "source_title": "https://introl.com/blog/intel-gaudi-3-deployment-guide-h100-alternative",
+      "source_url": "https://introl.com/blog/intel-gaudi-3-deployment-guide-h100-alternative",
+      "publisher": null,
+      "extracted_fact": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to dep",
+      "excerpt": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to deploy Gaudi 3 commercially, with availability in Frankfurt, Washington D.C., and Dallas. Dell unveiled the Dell AI platform with Gaudi 3 accelerators as a validated end-to-end solution. However, Intel revised 2025 shipment targets down 30% (to 200K-250K units from 300K-350K), and projected only $500M in Gaudi 3 sales compared to NVIDIA's $40B+ data center AI revenue. Linux driver support faced delays, with Gaudi 3 driver rejected for Linux 6.19 and retargeted for 6.20. PCIe cards are expected in H2 2025. Organizations should evaluate Gaudi 3's compelling economics against these ecosystem maturity factors.\nArchitecture and Performance Specifications\nGaudi 3 builds on Intel's unique architecture combining matrix multiplication engines (MMEs) with 24 tensor processor cores (TPCs) delivering 1,835 TFLOPS for BF16 operations. The chip features 128GB of HBM2e memory with 3.7TB/s bandwidth, surpassing H100's 3.35TB/s while maintaining lower power consumption. Each Gaudi 3 card consumes 600W TDP compared to H100's 700W, improving performance per watt by 15% in transformer workloads.\nThe architecture diverges from NVIDIA's approach through dedicated engines for collective operations. Twenty-f",
+      "page_text": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to deploy Gaudi 3 commercially, with availability in Frankfurt, Washington D.C., and Dallas. Dell unveiled the Dell AI platform with Gaudi 3 accelerators as a validated end-to-end solution. However, Intel revised 2025 shipment targets down 30% (to 200K-250K units from 300K-350K), and projected only $500M in Gaudi 3 sales compared to NVIDIA's $40B+ data center AI revenue. Linux driver support faced delays, with Gaudi 3 driver rejected for Linux 6.19 and retargeted for 6.20. PCIe cards are expected in H2 2025. Organizations should evaluate Gaudi 3's compelling economics against these ecosystem maturity factors.\nArchitecture and Performance Specifications\nGaudi 3 builds on Intel's unique architecture combining matrix multiplication engines (MMEs) with 24 tensor processor cores (TPCs) delivering 1,835 TFLOPS for BF16 operations. The chip features 128GB of HBM2e memory with 3.7TB/s bandwidth, surpassing H100's 3.35TB/s while maintaining lower power consumption. Each Gaudi 3 card consumes 600W TDP compared to H100's 700W, improving performance per watt by 15% in transformer workloads.\nThe architecture diverges from NVIDIA's approach through dedicated engines for collective operations. Twenty-f",
+      "retrieved_at": "2026-11-03T00:42:50.593690Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "537c6c3c-dcc1-44de-bf8c-6e753eadac79",
+      "source_type": "web_page",
+      "source_title": "https://introl.com/blog/intel-gaudi-3-deployment-guide-h100-alternative",
+      "source_url": "https://introl.com/blog/intel-gaudi-3-deployment-guide-h100-alternative",
+      "publisher": null,
+      "extracted_fact": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to dep",
+      "excerpt": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to deploy Gaudi 3 commercially, with availability in Frankfurt, Washington D.C., and Dallas. Dell unveiled the Dell AI platform with Gaudi 3 accelerators as a validated end-to-end solution. However, Intel revised 2025 shipment targets down 30% (to 200K-250K units from 300K-350K), and projected only $500M in Gaudi 3 sales compared to NVIDIA's $40B+ data center AI revenue. Linux driver support faced delays, with Gaudi 3 driver rejected for Linux 6.19 and retargeted for 6.20. PCIe cards are expected in H2 2025. Organizations should evaluate Gaudi 3's compelling economics against these ecosystem maturity factors.\nArchitecture and Performance Specifications\nGaudi 3 builds on Intel's unique architecture combining matrix multiplication engines (MMEs) with 24 tensor processor cores (TPCs) delivering 1,835 TFLOPS for BF16 operations. The chip features 128GB of HBM2e memory with 3.7TB/s bandwidth, surpassing H100's 3.35TB/s while maintaining lower power consumption. Each Gaudi 3 card consumes 600W TDP compared to H100's 700W, improving performance per watt by 15% in transformer workloads.\nThe architecture diverges from NVIDIA's approach through dedicated engines for collective operations. Twenty-f",
+      "page_text": "Gaudi 3 delivers 1,835 TFLOPS at $15K vs H100's $30K. Complete deployment guide with performance benchmarks, migration strategies, and TCO analysis.\nIntel's Gaudi 3 accelerator delivers 1,835 TFLOPS of BF16 compute at half the cost of NVIDIA's H100, fundamentally changing the economics of AI infrastructure deployment. With list prices starting at $15,000 compared to H100's $30,000, Gaudi 3 enables organizations to double their AI compute capacity within existing budgets. This comprehensive deployment guide examines real-world implementation strategies, performance characteristics, and TCO implications of choosing Intel's alternative to NVIDIA's dominance.\nGaudi 3 has reached general availability through major cloud and enterprise channels. IBM Cloud became the first service provider to deploy Gaudi 3 commercially, with availability in Frankfurt, Washington D.C., and Dallas. Dell unveiled the Dell AI platform with Gaudi 3 accelerators as a validated end-to-end solution. However, Intel revised 2025 shipment targets down 30% (to 200K-250K units from 300K-350K), and projected only $500M in Gaudi 3 sales compared to NVIDIA's $40B+ data center AI revenue. Linux driver support faced delays, with Gaudi 3 driver rejected for Linux 6.19 and retargeted for 6.20. PCIe cards are expected in H2 2025. Organizations should evaluate Gaudi 3's compelling economics against these ecosystem maturity factors.\nArchitecture and Performance Specifications\nGaudi 3 builds on Intel's unique architecture combining matrix multiplication engines (MMEs) with 24 tensor processor cores (TPCs) delivering 1,835 TFLOPS for BF16 operations. The chip features 128GB of HBM2e memory with 3.7TB/s bandwidth, surpassing H100's 3.35TB/s while maintaining lower power consumption. Each Gaudi 3 card consumes 600W TDP compared to H100's 700W, improving performance per watt by 15% in transformer workloads.\nThe architecture diverges from NVIDIA's approach through dedicated engines for collective operations. Twenty-f",
+      "retrieved_at": "2026-11-03T00:42:50.593773Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "c48be062-d153-4096-ac28-eca082f2afc1",
+      "source_type": "web_page",
+      "source_title": "https://www.nvidia.com/en-us/data-center/gpu-cloud-computing/partners/",
+      "source_url": "https://www.nvidia.com/en-us/data-center/gpu-cloud-computing/partners/",
+      "publisher": null,
+      "extracted_fact": "NVIDIA Exemplar Cloud empowers developers with a performance-guaranteed AI environment, engineered to eliminate infrastructure variability and optimize total cost of ownership (TCO)—validated by NVIDIA-backed benchmarking and trusted by industry leaders.\nReference Platform NVIDIA Cloud Partners\nbuilt on the NCP reference design, providing high-performance, scalable, and easy-to-use infrastructure for modern AI workloads.\nExplore a list of all global NVIDIA Cloud Partners.\nAnnouncing NVIDIA Exemplar Clouds for Benchmarking AI Cloud Infrastructure\nDiscover how NVIDIA’s Exemplar Clouds initiative helps benchmark AI cloud infrastructure across top cloud service providers—empowering developers to make smarter, faster deployment decisions.",
+      "excerpt": "NVIDIA Exemplar Cloud empowers developers with a performance-guaranteed AI environment, engineered to eliminate infrastructure variability and optimize total cost of ownership (TCO)—validated by NVIDIA-backed benchmarking and trusted by industry leaders.\nReference Platform NVIDIA Cloud Partners\nbuilt on the NCP reference design, providing high-performance, scalable, and easy-to-use infrastructure for modern AI workloads.\nExplore a list of all global NVIDIA Cloud Partners.\nAnnouncing NVIDIA Exemplar Clouds for Benchmarking AI Cloud Infrastructure\nDiscover how NVIDIA’s Exemplar Clouds initiative helps benchmark AI cloud infrastructure across top cloud service providers—empowering developers to make smarter, faster deployment decisions.",
+      "page_text": "NVIDIA Exemplar Cloud empowers developers with a performance-guaranteed AI environment, engineered to eliminate infrastructure variability and optimize total cost of ownership (TCO)—validated by NVIDIA-backed benchmarking and trusted by industry leaders.\nReference Platform NVIDIA Cloud Partners\nbuilt on the NCP reference design, providing high-performance, scalable, and easy-to-use infrastructure for modern AI workloads.\nExplore a list of all global NVIDIA Cloud Partners.\nAnnouncing NVIDIA Exemplar Clouds for Benchmarking AI Cloud Infrastructure\nDiscover how NVIDIA’s Exemplar Clouds initiative helps benchmark AI cloud infrastructure across top cloud service providers—empowering developers to make smarter, faster deployment decisions.",
+      "retrieved_at": "2026-11-03T00:42:50.593828Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "dfe9986e-2281-4886-9140-0940bc91568e",
+      "source_type": "web_page",
+      "source_title": "https://www.nvidia.com/en-us/data-center/h100/",
+      "source_url": "https://www.nvidia.com/en-us/data-center/h100/",
+      "publisher": null,
+      "extracted_fact": "Projected performance subject to change.  GPT-3 175B training A100 cluster: HDR IB network, H100 cluster: NDR IB network | Mixture of Experts (MoE) Training Transformer Switch-XXL variant with 395B parameters on 1T token dataset,  A100 cluster: HDR IB network, H100 cluster: NDR IB network with NVLink Switch System where indicated.\nH100 features fourth-generation Tensor Cores and a Transformer Engine with FP8 precision that provides up to 4X faster training over the prior generation for GPT-3 (175B) models. The combination of fourth-generation NVLink, which offers 900 gigabytes per second (GB/s) of GPU-to-GPU interconnect; NDR Quantum-2 InfiniBand networking, which accelerates communication by every GPU across nodes; PCIe Gen5; and\nsoftware delivers efficient scalability from small enterpri",
+      "excerpt": "Projected performance subject to change.  GPT-3 175B training A100 cluster: HDR IB network, H100 cluster: NDR IB network | Mixture of Experts (MoE) Training Transformer Switch-XXL variant with 395B parameters on 1T token dataset,  A100 cluster: HDR IB network, H100 cluster: NDR IB network with NVLink Switch System where indicated.\nH100 features fourth-generation Tensor Cores and a Transformer Engine with FP8 precision that provides up to 4X faster training over the prior generation for GPT-3 (175B) models. The combination of fourth-generation NVLink, which offers 900 gigabytes per second (GB/s) of GPU-to-GPU interconnect; NDR Quantum-2 InfiniBand networking, which accelerates communication by every GPU across nodes; PCIe Gen5; and\nsoftware delivers efficient scalability from small enterprise systems to massive, unified GPU clusters.\nDeploying H100 GPUs at data center scale delivers outstanding performance and brings the next generation of exascale high-performance computing (HPC) and trillion-parameter AI within the reach of all researchers.\nExperience NVIDIA AI and NVIDIA H100 on NVIDIA LaunchPad\nAI solves a wide array of business challenges, using an equally wide array of neural networks. A great AI inference accelerator has to not only deliver the highest performance but also the versatility to accelerate these networks.",
+      "page_text": "Projected performance subject to change.  GPT-3 175B training A100 cluster: HDR IB network, H100 cluster: NDR IB network | Mixture of Experts (MoE) Training Transformer Switch-XXL variant with 395B parameters on 1T token dataset,  A100 cluster: HDR IB network, H100 cluster: NDR IB network with NVLink Switch System where indicated.\nH100 features fourth-generation Tensor Cores and a Transformer Engine with FP8 precision that provides up to 4X faster training over the prior generation for GPT-3 (175B) models. The combination of fourth-generation NVLink, which offers 900 gigabytes per second (GB/s) of GPU-to-GPU interconnect; NDR Quantum-2 InfiniBand networking, which accelerates communication by every GPU across nodes; PCIe Gen5; and\nsoftware delivers efficient scalability from small enterprise systems to massive, unified GPU clusters.\nDeploying H100 GPUs at data center scale delivers outstanding performance and brings the next generation of exascale high-performance computing (HPC) and trillion-parameter AI within the reach of all researchers.\nExperience NVIDIA AI and NVIDIA H100 on NVIDIA LaunchPad\nAI solves a wide array of business challenges, using an equally wide array of neural networks. A great AI inference accelerator has to not only deliver the highest performance but also the versatility to accelerate these networks.",
+      "retrieved_at": "2026-11-03T00:42:50.593883Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "0ca4dea2-8dd9-43f2-9d32-38cf3b2fa524",
+      "source_type": "web_page",
+      "source_title": "https://www.techinsights.com/products/ari-2404-801",
+      "source_url": "https://www.techinsights.com/products/ari-2404-801",
+      "publisher": null,
+      "extracted_fact": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation ab",
+      "excerpt": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation about the semiconductor market was abuzz yet again. NVIDIA tripled its revenue and shipped 3.5 million GPU accelerator cards in 2023. NVIDIA controlled 95% of the market, with no major competition in sight in the AI accelerator market. NVIDIA's H100 cards were able to command ASP as high as $40,000, lifting overall margins for NVIDIA. The overall market for data-center AI accelerator in 2023 was $39.3 billion, with NVIDIA accounting for $38.1 billion.",
+      "page_text": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation about the semiconductor market was abuzz yet again. NVIDIA tripled its revenue and shipped 3.5 million GPU accelerator cards in 2023. NVIDIA controlled 95% of the market, with no major competition in sight in the AI accelerator market. NVIDIA's H100 cards were able to command ASP as high as $40,000, lifting overall margins for NVIDIA. The overall market for data-center AI accelerator in 2023 was $39.3 billion, with NVIDIA accounting for $38.1 billion.",
+      "retrieved_at": "2026-11-03T00:42:50.593939Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "8f62f191-3b5d-44bd-908c-4c1e70a36580",
+      "source_type": "web_page",
+      "source_title": "https://www.techinsights.com/products/ari-2404-801",
+      "source_url": "https://www.techinsights.com/products/ari-2404-801",
+      "publisher": null,
+      "extracted_fact": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation ab",
+      "excerpt": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation about the semiconductor market was abuzz yet again. NVIDIA tripled its revenue and shipped 3.5 million GPU accelerator cards in 2023. NVIDIA controlled 95% of the market, with no major competition in sight in the AI accelerator market. NVIDIA's H100 cards were able to command ASP as high as $40,000, lifting overall margins for NVIDIA. The overall market for data-center AI accelerator in 2023 was $39.3 billion, with NVIDIA accounting for $38.1 billion.",
+      "page_text": "Cloud and Datacenter Market Intelligence\nSemiconductor Intelligence, Built for Materials Suppliers. Substitute a material, source around supply risk, or size a new market: TechInsights delivers the semiconductor-level intelligence to make the call with confidence.\nExclusive Webinar - Go inside the iPhone 18 Pro and Pro Max\nJoin the semiconductor materials community for market intelligence, technical insights, industry collaboration, and networking focused on critical materials, supply chain resilience, advanced packaging, sustainability, and emerging technologies.\nData-Center AI Accelerator Market – Q1 2024 Update\nThe data-center AI accelerator market exhibited rapid growth in 2023, driven by the glut for GPUs. With NVIDIA's two trillion dollar valuation in the stock market conversation about the semiconductor market was abuzz yet again. NVIDIA tripled its revenue and shipped 3.5 million GPU accelerator cards in 2023. NVIDIA controlled 95% of the market, with no major competition in sight in the AI accelerator market. NVIDIA's H100 cards were able to command ASP as high as $40,000, lifting overall margins for NVIDIA. The overall market for data-center AI accelerator in 2023 was $39.3 billion, with NVIDIA accounting for $38.1 billion.",
+      "retrieved_at": "2026-11-03T00:42:50.593988Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "14ac67ae-5167-4ddf-9764-6f6384fcaa52",
+      "source_type": "web_page",
+      "source_title": "https://lyceum.technology/magazine/eu-data-residency-ai-infrastructure",
+      "source_url": "https://lyceum.technology/magazine/eu-data-residency-ai-infrastructure",
+      "publisher": null,
+      "extracted_fact": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "excerpt": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "page_text": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "retrieved_at": "2026-11-03T00:42:50.594039Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "3f3465f9-b3cf-4154-904b-2f2c5a60ab28",
+      "source_type": "web_page",
+      "source_title": "https://lyceum.technology/magazine/eu-data-residency-ai-infrastructure",
+      "source_url": "https://lyceum.technology/magazine/eu-data-residency-ai-infrastructure",
+      "publisher": null,
+      "extracted_fact": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "excerpt": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "page_text": "EU Data Residency for AI Infrastructure: 2026 Guide | Lyceum Technology | Lyceum\nEU data residency for AI and analytics: a\nEU data residency means your data is stored and processed inside the EU or the European Economic Area (EEA). For AI and analytics work, that includes prompts, model outputs, logs and dashboards. It also covers who can open the data from outside the EU, because the GDPR treats that access as a transfer.\nWhat EU data residency means for AI and analytics workloads\nWhy an EU region alone does not settle residency\nEU-US Data Privacy Framework status in October 2026",
+      "retrieved_at": "2026-11-03T00:42:50.594090Z",
+      "is_synthetic": false,
+      "metadata": {}
+    },
+    {
+      "evidence_id": "3c6c3975-d5eb-4e2c-bd0f-93f8a2548e2c",
+      "source_type": "web_page",
+      "source_title": "https://www.usimportdata.com/blogs/us-ai-chip-export-restrictions-2025",
+      "source_url": "https://www.usimportdata.com/blogs/us-ai-chip-export-restrictions-2025",
+      "publisher": null,
+      "extracted_fact": "India's growing AI adoption and chip ecosystem (AI acceleration, cloud data centers) account for its approximate $640 million intake.\nList of Leading US AI-Chip Exporters: US Exporters Database\nThe US Exporters Database for AI Chips provides a comprehensive overview of top American companies involved in exporting AI chips. This database serves as a valuable resource for businesses looking to source high-quality AI chips from reputable US exporters. The top 10 AI Chip exporting companies in the US, as per the US suppliers list for 2024-25, include:\n: Restricted chips (e.g., H100/H20) have licensing caps or bans, while compliant models (A800/H800, H20/G80 versions) are exported under tight licensing conditions and caps.\nUS AI Chip Exports in the Last 10 Years: Historical USA Export Data\nThe",
+      "excerpt": "India's growing AI adoption and chip ecosystem (AI acceleration, cloud data centers) account for its approximate $640 million intake.\nList of Leading US AI-Chip Exporters: US Exporters Database\nThe US Exporters Database for AI Chips provides a comprehensive overview of top American companies involved in exporting AI chips. This database serves as a valuable resource for businesses looking to source high-quality AI chips from reputable US exporters. The top 10 AI Chip exporting companies in the US, as per the US suppliers list for 2024-25, include:\n: Restricted chips (e.g., H100/H20) have licensing caps or bans, while compliant models (A800/H800, H20/G80 versions) are exported under tight licensing conditions and caps.\nUS AI Chip Exports in the Last 10 Years: Historical USA Export Data\nThe Restrictive Framework: Tariffs, Bans & Licensing",
+      "page_text": "India's growing AI adoption and chip ecosystem (AI acceleration, cloud data centers) account for its approximate $640 million intake.\nList of Leading US AI-Chip Exporters: US Exporters Database\nThe US Exporters Database for AI Chips provides a comprehensive overview of top American companies involved in exporting AI chips. This database serves as a valuable resource for businesses looking to source high-quality AI chips from reputable US exporters. The top 10 AI Chip exporting companies in the US, as per the US suppliers list for 2024-25, include:\n: Restricted chips (e.g., H100/H20) have licensing caps or bans, while compliant models (A800/H800, H20/G80 versions) are exported under tight licensing conditions and caps.\nUS AI Chip Exports in the Last 10 Years: Historical USA Export Data\nThe Restrictive Framework: Tariffs, Bans & Licensing",
+      "retrieved_at": "2026-11-03T00:42:50.594137Z",
+      "is_synthetic": false,
+      "metadata": {}
+    }
+  ],
+  "gaps": [],
+  "conflicts": [],
+  "confidence": 0.72,
+  "started_at": "2026-11-03T00:41:33.933710Z",
+  "completed_at": "2026-11-03T00:42:50.594217Z",
+  "error": "none",
+  "metadata": {
+    "research_goal": "What is happening in this market? Compare NVIDIA's data center AI accelerators with Broadcom and Intel Corp. Cover capabilities, software ecosystem, pricing and availability, customer adoption, and market momentum.",
+    "research_focus": "Summarise market trends, demand signals and regulation from news and open data. Focus on the key signals for this decision."
+  }
+}

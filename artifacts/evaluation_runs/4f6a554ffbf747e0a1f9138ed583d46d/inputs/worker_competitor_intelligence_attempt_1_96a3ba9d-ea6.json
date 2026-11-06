@@ -1,0 +1,18 @@
+{
+  "task_id": "96a3ba9d-ea6b-4d3c-9923-7422cb14eee7",
+  "worker": "competitor_intelligence",
+  "status": "failed",
+  "attempt": 1,
+  "findings": [],
+  "evidence": [],
+  "gaps": [],
+  "conflicts": [],
+  "confidence": null,
+  "started_at": null,
+  "completed_at": null,
+  "error": "worker returned an invalid WorkerResult: 6 validation errors for ResearchTask\nparent_request_id\n  Field required [type=missing, input_value={'task_id': '96a3ba9d-ea6...nts': []}, 'attempt': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/missing\nworker\n  Field required [type=missing, input_value={'task_id': '96a3ba9d-ea6...nts': []}, 'attempt': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/missing\ngoal\n  Field required [type=missing, input_value={'task_id': '96a3ba9d-ea6...nts': []}, 'attempt': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/missing\nfocus\n  Field required [type=missing, input_value={'task_id': '96a3ba9d-ea6...nts': []}, 'attempt': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/missing\nbusiness_context.competitors.0\n  Input should be a valid dictionary or instance of CompetitorRef [type=model_type, input_value='Broadcom', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/model_type\nbusiness_context.competitors.1\n  Input should be a valid dictionary or instance of CompetitorRef [type=model_type, input_value='Intel Corp', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/model_type",
+  "metadata": {
+    "research_goal": "What are the competitors doing? Compare NVIDIA's data center AI accelerators with Broadcom and Intel Corp. Cover capabilities, software ecosystem, pricing and availability, customer adoption, and market momentum.",
+    "research_focus": "Compare competitors' offerings, pricing and positioning from public sources. Focus on the key signals for this decision."
+  }
+}

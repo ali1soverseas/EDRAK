@@ -1,0 +1,427 @@
+{
+  "task_id": "f3c88138-e379-4185-a211-a713e564aa18",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "f3c88138-e379-4185-a211-a713e564aa18:f1",
+      "statement": "Among AI developers on X, AMD’s MI300X is reported to deliver a 22% performance uplift over NVIDIA’s H100, and MosaicML highlights AMD Mi250 as a cost‑effective alternative, indicating a positive sentiment toward AMD’s data‑center accelerators relative to NVIDIA.",
+      "category": "customer_sentiment",
+      "evidence_refs": [
+        {
+          "evidence_id": "808512b407dfdd08",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "4c204cd59522b7ea",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "90883d258cc366c1",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Evidence comes only from X posts in English; no direct statements from cloud service providers.",
+        "Sample size is limited to 90 items.",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "f3c88138-e379-4185-a211-a713e564aa18:f2",
+      "statement": "AI developers cite cost and performance advantages of AMD’s MI250 and MI300X as reasons to consider switching from NVIDIA GPUs, indicating demand for alternative accelerator options.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "4c204cd59522b7ea",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "808512b407dfdd08",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Statements are from individual X posts, not systematic surveys.",
+        "All evidence is in English and limited to a single platform.",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "f3c88138-e379-4185-a211-a713e564aa18:f3",
+      "statement": "AMD’s ROCm 5.4 and PyTorch 2.0 updates enable LLM training on Instinct data‑center GPUs with zero code changes, addressing developers’ need for easier software integration on AI accelerators.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "3a908dbb3ce8910e",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "c59d807b6c8c2f9e",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Only X announcements are captured; no user‑generated feedback or performance data.",
+        "All evidence is in English.",
+        "gap: language_ar"
+      ]
+    },
+    {
+      "finding_id": "f3c88138-e379-4185-a211-a713e564aa18:f4",
+      "statement": "NVIDIA is not mentioned in any of the 90 collected items, while AMD appears in 23 items (85.2% of all brand mentions), indicating lower visibility of NVIDIA’s data‑center GPUs among the sampled audience.",
+      "category": "gap",
+      "evidence_refs": [
+        {
+          "evidence_id": "4c204cd59522b7ea",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "808512b407dfdd08",
+          "relation": "supports"
+        },
+        {
+          "evidence_id": "90883d258cc366c1",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.3,
+      "limitations": [
+        "Sample is skewed toward platforms where AMD is discussed; lack of NVIDIA mentions may reflect collection bias.",
+        "Only English‑language items dominate the dataset.",
+        "gap: branch_social"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "808512b407dfdd08",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/TensorWaveCloud/status/1808170273956331765",
+      "publisher": "x",
+      "extracted_fact": "TensorWave on X: \"AMD MI300X vs. NVIDIA H100: Early results show AMD AI with a performance uplift of 22%. Read the full article here 🔗 https://t.co/sYH0RTHbIn\" / X. Title: TensorWave on X: \"AMD MI300X vs. NVIDIA H100: Early results show AMD AI with a performance uplift of 22%. R…",
+      "excerpt": "TensorWave on X: \"AMD MI300X vs. NVIDIA H100: Early results show AMD AI with a performance uplift of 22%. Read the full article here 🔗 https://t.co/sYH0RTHbIn\" / X. Title: TensorWave on X: \"AMD MI300X vs. NVIDIA H100: Early results show AMD AI with a performance uplift of 22%. Read the full article here 🔗 https://t.co/sYH0RTHbIn\" / X\n## Post. # TensorWave on X: \"AMD MI300X vs. NVIDIA H100: Early results show AMD AI with a performance uplift of 22%. Read the full article here 🔗 https://t.co/sYH0…",
+      "page_text": null,
+      "retrieved_at": "2026-11-04T21:42:26.526599Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "4c204cd59522b7ea",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/NaveenGRao/status/1674815632523640836",
+      "publisher": "x",
+      "extracted_fact": "Naveen Rao on X: \"When we started @MosaicML we wanted to bring choice and cost reduction in AI to everyone. Today we've demonstrated that our stack fully supports @AMD Mi250! And it does it with good performance making it a viable alternative to Nvidia GPUs for cost/perf. We bel…",
+      "excerpt": "Naveen Rao on X: \"When we started @MosaicML we wanted to bring choice and cost reduction in AI to everyone. Today we've demonstrated that our stack fully supports @AMD Mi250! And it does it with good performance making it a viable alternative to Nvidia GPUs for cost/perf. We believe that, when har… .... Title: Naveen Rao on X: \"When we started @MosaicML we wanted to bring choice and cost reduction in AI to everyone. Today we've demonstrated that our stack fully supports @AMD Mi250! And it does…",
+      "page_text": null,
+      "retrieved_at": "2026-11-04T21:42:26.526599Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "90883d258cc366c1",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/LandingAI/status/1777415075046785353",
+      "publisher": "x",
+      "extracted_fact": "LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, see which GPU fits your AI projects. Explore our blog ➡️ https://t.co/WekCvvNtSY #MachineLearning #GPUBenchm…",
+      "excerpt": "LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, see which GPU fits your AI projects. Explore our blog ➡️ https://t.co/WekCvvNtSY #MachineLearning #GPUBenchmarking\" / X. Title: LandingAI on X: \"Landing AI benchmarks AMD vs. NVIDIA GPUs for computationally intensive LVM training, with surprising results. Whether it's AMD’s MI250 or NVIDIA's A100, see which GPU fits your AI pr…",
+      "page_text": null,
+      "retrieved_at": "2026-11-04T21:42:26.526599Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "3a908dbb3ce8910e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://x.com/AMD/status/1674852367798239235",
+      "publisher": "x",
+      "extracted_fact": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. @AMD…",
+      "excerpt": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. @AMD\n\n  AMD@AMD\n\n  The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD I…",
+      "page_text": null,
+      "retrieved_at": "2026-11-04T21:42:26.526599Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    },
+    {
+      "evidence_id": "c59d807b6c8c2f9e",
+      "source_type": "other",
+      "source_title": null,
+      "source_url": "https://twitter.com/AMD/status/1674852367798239235",
+      "publisher": "x",
+      "extracted_fact": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. Title:…",
+      "excerpt": "AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD Instinct MI250 helps developers train #AI models.\" / X. Title: AMD on X: \"The release of @PyTorch 2.0 and AMD ROCm 5.4 has @MosaicML “excited to announce that LLM training works out of the box on AMD Instinct data center GPUs, with zero code changes…” Read more about how the AMD In…",
+      "page_text": null,
+      "retrieved_at": "2026-11-04T21:42:26.526599Z",
+      "is_synthetic": false,
+      "metadata": {
+        "kind": "social_post",
+        "platform": "x",
+        "language": "en",
+        "snippet_only": true,
+        "provider": "tavily"
+      }
+    }
+  ],
+  "gaps": [
+    "the demand branch reported an error: the branch did not finish in 100 s",
+    "the social branch reported an error: the branch did not finish in 100 s",
+    "0 item(s) in 'ar'; at least 10 are needed"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-11-04T21:41:37.150266Z",
+  "completed_at": "2026-11-04T21:46:32.120266Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "f3c88138-e379-4185-a211-a713e564aa18.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "90 social/web mentions (34 % Facebook, 27 % Instagram, 19 % X) mostly in English (86.7 %) discuss Intel‑McLaren partnership (6 items), AMD vs NVIDIA benchmarks (4), Intel 14th Gen and financial results (3 each); AMD dominates voice (85 %). Gaps: no Arabic content and incomplete demand/social branch data.",
+      "overall_confidence": "low",
+      "findings_count": 4,
+      "evidence_count": 90,
+      "coverage": {
+        "by_platform": {
+          "facebook": 34,
+          "instagram": 27,
+          "x": 19,
+          "unknown": 10
+        },
+        "by_source_type": {
+          "social_post": 48,
+          "social_comment": 32,
+          "web": 10
+        },
+        "by_language": {
+          "en": 78,
+          "unknown": 9,
+          "af": 1,
+          "fr": 1,
+          "nl": 1
+        }
+      },
+      "gaps": [
+        "the demand branch reported an error: the branch did not finish in 100 s",
+        "the social branch reported an error: the branch did not finish in 100 s",
+        "0 item(s) in 'ar'; at least 10 are needed"
+      ],
+      "warnings": [],
+      "budget_used": {
+        "tool_calls": 14.0,
+        "cost_usd": 0.1842,
+        "seconds": 294.97
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\artifacts\\runs\\886b5d591becd53af98960fb0a789111\\customer_trends_tracing.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\edrak2\\backend\\data\\evidence.db",
+      "evidence_count": 90,
+      "batch_ids": [
+        "b_8deb40e0dfb1",
+        "b_7b607dc10305",
+        "b_d77ba19aebbb",
+        "b_6ad03865eeb2",
+        "b_42b4c847c7d4",
+        "b_1a09b7a2709d",
+        "b_a2bf2dc4f9e5",
+        "b_7467ed115dd3"
+      ]
+    },
+    "finding_metrics": {
+      "f3c88138-e379-4185-a211-a713e564aa18:f1": {
+        "performance_uplift_pct": 22
+      },
+      "f3c88138-e379-4185-a211-a713e564aa18:f2": {},
+      "f3c88138-e379-4185-a211-a713e564aa18:f3": {
+        "rocm_version": 5.4,
+        "pytorch_version": 2.0
+      },
+      "f3c88138-e379-4185-a211-a713e564aa18:f4": {
+        "NVIDIA_mentions": 0,
+        "AMD_mentions": 23,
+        "AMD_share_pct": 85.2,
+        "metric_id": "m_d98cf7f28b78"
+      }
+    },
+    "themes": [
+      {
+        "theme_label": "Intel partnership with McLaren",
+        "count": 6,
+        "share": 0.075,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AMD vs NVIDIA benchmark",
+        "count": 4,
+        "share": 0.05,
+        "sentiment_mix": {
+          "neutral": 0.5,
+          "positive": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "Intel Core 14th Gen",
+        "count": 3,
+        "share": 0.0375,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": -1.0
+      },
+      {
+        "theme_label": "Intel financial results",
+        "count": 3,
+        "share": 0.0375,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": -1.0
+      },
+      {
+        "theme_label": "AMD GPU software support",
+        "count": 2,
+        "share": 0.025,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "Intel CEO Pat Gelsinger",
+        "count": 2,
+        "share": 0.025,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "McLaren race support",
+        "count": 2,
+        "share": 0.025,
+        "sentiment_mix": {
+          "positive": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "brand impersonation scam",
+        "count": 2,
+        "share": 0.025,
+        "sentiment_mix": {
+          "negative": 0.5,
+          "neutral": 0.5
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "poor customer service",
+        "count": 2,
+        "share": 0.025,
+        "sentiment_mix": {
+          "negative": 1.0
+        },
+        "recent_growth": null
+      },
+      {
+        "theme_label": "AI chip manufacturing",
+        "count": 1,
+        "share": 0.0125,
+        "sentiment_mix": {
+          "neutral": 1.0
+        },
+        "recent_growth": null
+      }
+    ],
+    "trend_series": [],
+    "official_accounts": [
+      {
+        "owner": "Intel Corps",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/Intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corps",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corps",
+        "platform": "x",
+        "url": "https://x.com/intel",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {
+      "AMD": {
+        "positive": 14,
+        "neutral": 7,
+        "negative": 0,
+        "mixed": 0,
+        "total": 21
+      },
+      "Broadcom": {
+        "positive": 1,
+        "neutral": 0,
+        "negative": 0,
+        "mixed": 0,
+        "total": 1
+      },
+      "Intel Corps": {
+        "positive": 3,
+        "neutral": 9,
+        "negative": 6,
+        "mixed": 0,
+        "total": 18
+      },
+      "NVIDIA Corporation": {
+        "positive": 0,
+        "neutral": 6,
+        "negative": 3,
+        "mixed": 0,
+        "total": 9
+      }
+    },
+    "research_goal": "What are the adoption patterns, sentiment, and feedback of cloud service providers and AI developers toward NVIDIA's and its competitors' data center AI accelerators?",
+    "research_focus": "Cloud service providers and AI developers in Europe and the United States"
+  }
+}

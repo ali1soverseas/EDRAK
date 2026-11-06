@@ -30,6 +30,24 @@ def test_options_must_differ_cite_signals_and_carry_no_digits():
     assert any("would_change_if" in p for p in problems([a, _opt("Wait", "Close the evidence gap first", would_change_if="")], {"s1"}, set()))
 
 
+def test_options_prompt_names_competitors_for_competitive_responses():
+    from edrak.DecisionAnalysis.options import _prompt
+
+    prompt = _prompt({
+        "business_goal": "Choose a competitive response.",
+        "business_request": {
+            "company_profile": {"name": "NVIDIA"},
+            "business_context": {
+                "use_case": "competitive_intelligence",
+                "targets": ["AMD", "Intel"],
+            },
+        },
+        "signals": [],
+    })
+
+    assert "COMPETITORS: AMD, Intel" in prompt
+
+
 def _draft():
     return PlanDraft(
         objective="Hold a premium position against Fawry", why_this_option="It protects margin",

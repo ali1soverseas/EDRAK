@@ -31,6 +31,24 @@ def test_existing_database_is_reopened_in_wal_mode_with_busy_timeout(tmp_path, m
     assert busy_timeout == connection.SQLITE_BUSY_TIMEOUT_MS
 
 
+def test_init_db_applies_competitor_kb_schema(tmp_path, monkeypatch):
+    db_path = tmp_path / "edrak.db"
+    monkeypatch.setattr(settings, "EDRAK_DB_PATH", db_path)
+    connection.reset_ready_cache()
+
+    asyncio.run(connection.init_db())
+
+    with sqlite3.connect(db_path) as db:
+        tables = {
+            row[0]
+            for row in db.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            )
+        }
+
+    assert {"competitor_kb", "competitor_kb_jobs", "competitor_kb_chunks"} <= tables
+
+
 def test_run_manager_serializes_its_database_write_transactions(monkeypatch):
     @asynccontextmanager
     async def fake_get_db():

@@ -84,15 +84,20 @@ export function CompanyProfile() {
             {p.competitors.length === 0 ? <span className="s13 t3">{L("No competitors yet. Edrak can find them for you.", "لا منافسين بعد. يمكن لإدراك إيجادهم لك.")}</span> : (
               <div className="comp-list">
                 {p.competitors.map((c) => (
-                  <div key={c.name} className="comp-row">
+                  <Link
+                    key={c.entity_id ?? c.name}
+                    className="comp-row"
+                    to={c.entity_id ? `/competitors/${c.entity_id}` : "/competitors"}
+                    style={{ color: "inherit", textDecoration: "none" }}
+                  >
                     <span className="comp-sq">{c.name[0]?.toUpperCase()}</span>
                     <div className="stack grow" style={{ minWidth: 0 }}>
                       <div className="row g8"><b dir="auto">{c.name}</b>{c.discovered_by === "agent" && <span className="chip c-blue">{L("Found by Edrak", "وجده إدراك")}</span>}</div>
-                      {c.website_domain && <a className="s12" href={`https://${c.website_domain}`} target="_blank" rel="noreferrer">{c.website_domain}</a>}
+                      {c.website_domain && <span className="s12">{c.website_domain}</span>}
                       {c.discovery_reason && <span className="s12 t2 clamp2" dir="auto">{c.discovery_reason}</span>}
                       {c.links.length > 0 && <span className="s12 t3">{c.links.map((l) => (l.platform === "x" ? "X" : l.platform)).join(" · ")}</span>}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

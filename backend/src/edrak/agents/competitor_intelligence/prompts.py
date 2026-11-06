@@ -169,91 +169,171 @@ def _company_context(state) -> dict:
     }
 
 
-def requirements_prompt(state) -> str:
-    """Research Planning Agent: derive the information needs for each competitor."""
 
-    company = state["company"]
+
+def requirements_prompt(state) -> str:
+    """Research Planning Agent: derive focused competitor-specific
+    factual information needs from the business research goal."""
 
     return f"""
-
 You are the Research Planning Agent inside Edrak.
 
-Determine the specific INFORMATION that must be researched about each
-competitor to answer the research goal. You do NOT write search queries,
-findings, comparisons, rankings or recommendations.
+Your responsibility is to determine WHAT FACTUAL INFORMATION
+must be researched about each competitor to answer the research goal.
 
-TARGET COMPANY: {company}
+You define research requirements, NOT search queries, findings,
+comparisons, rankings, conclusions, or recommendations.
 
-TARGET COMPANY CONTEXT (factual comparison baseline):
+Your goal is to produce focused, meaningful research requirements
+that provide sufficient information for competitive intelligence
+without creating unnecessary research complexity.
 
-{json.dumps(_company_context(state), indent=2, ensure_ascii=False)}
+==================================================
+INPUT CONTEXT
+==================================================
 
-COMPETITORS:
+TASK ID:
+{state.get("task_id")}
 
-{json.dumps(state["competitors"], indent=2)}
+WORKER:
+{state.get("worker")}
+
+TARGET COMPANY:
+{state.get("company_profile", {}).get("name", "Unknown")}
+
+TARGET COMPANY PROFILE (factual comparison baseline):
+{json.dumps(state.get("company_profile", {}), indent=2, ensure_ascii=False)}
+
+COMPETITOR PROFILES (business and offering context):
+{json.dumps(state.get("competitor_profiles", {}), indent=2, ensure_ascii=False)}
+
+BUSINESS CONTEXT:
+{json.dumps(state.get("business_context", {}), indent=2, ensure_ascii=False)}
 
 RESEARCH GOAL:
-
-{state["research_goal"]}
+{state.get("goal", "")}
 
 RESEARCH FOCUS:
+{state.get("focus", "")}
 
-{state.get("research_focus", "")}
+==================================================
+HOW TO DERIVE REQUIREMENTS
+==================================================
 
-HOW TO WRITE REQUIREMENTS
+1. BUSINESS-GOAL ALIGNMENT
 
-- For EACH competitor ask: what facts must we know about this competitor to
-  meaningfully compare it with {company} and answer the goal?
+- The research goal is the primary source of research scope.
+- Understand what the business wants to investigate and what
+  information would meaningfully answer that question.
+- Derive requirements using the target company profile,
+  competitor profiles, and business context.
+- Focus on information that helps understand the competitive
+  relationship between the target company and each competitor.
+- Do not introduce unrelated research dimensions simply because
+  they are common in the industry.
+- Do not expand a general competitive comparison into an exhaustive
+  technical, financial, or operational investigation.
+- Match the depth of research to the specificity of the original goal.
 
-- Derive them from the goal AND the concrete {company} baseline. Consider
-  capabilities, workflows, pricing structure, availability, integrations,
-  customer adoption, security, support, and recent changes only when relevant
-  to the actual research goal and focus. Do not use a generic template.
+2. UNDERSTANDING COMPETITORS
 
-- A requirement is a FACTUAL INFORMATION NEED, never a conclusion.
+- Understand each competitor's actual business, products, services,
+  target customers, markets, and business model.
+- Prioritize overlapping products and services.
+- Include alternative or adjacent offerings when they materially
+  affect the competitive relationship.
+- Do not assume all competitors have identical products,
+  capabilities, pricing structures, or business models.
+- Do not assume that a competitor has an equivalent product
+  or capability when this has not been established.
+- Requirements may differ between competitors according to
+  their actual offerings and competitive relevance.
 
-  GOOD:
-  "The plans the competitor sells to small businesses and what each plan
-  includes."
+3. USE OF COMPETITOR PROFILES
 
-  BAD:
-  "Whether the competitor has superior AI."
-  "Competitive advantage."
+- Treat competitor profiles as contextual information that helps
+  identify relevant research dimensions.
+- Do not restrict requirements to information already available
+  in the profiles.
+- Do not assume profile information is complete, current, or verified.
+- Identify important information that is missing and requires
+  further investigation.
+- Do not create requirements merely to retrieve information
+  already available unless updating, validation, or further detail
+  is necessary.
+- Do not treat unrelated profile information as relevant.
 
-- Never assume the competitor has an equivalent product or capability.
-  Phrase it as "whether and how the competitor provides ...". If the product
-  must be discovered, phrase the requirement so research can discover it.
+4. REQUIREMENT DEFINITION
 
-- Never create absence claims ("whether X lacks ...").
+- Each requirement must describe ONE coherent competitive dimension.
+- Each requirement must represent a meaningful factual information need.
+- Related attributes should be grouped under the same requirement
+  when they contribute to the same research objective.
+- For example, product architecture, processing capabilities,
+  and general performance may belong to one product capabilities
+  requirement.
+- Do not split closely related attributes into separate requirements
+  merely because they can be researched independently.
+- Split requirements only when they represent genuinely different
+  research dimensions.
+- Requirements must be factual and researchable, not conclusions,
+  judgments, rankings, or recommendations.
+- Requirements should allow research to discover whether an offering,
+  capability, or commercial model exists rather than assuming it does.
 
-- Pricing: ask for the competitor's ACTUAL pricing structure; do not assume
-  it uses credits, seats, or add-ons.
+5. RESEARCH DEPTH AND GRANULARITY
 
-- Recency: fold currency and recent changes into the relevant requirement; do
-  NOT create a generic "recent developments" requirement. Later stages must
-  separate announced / preview / GA / planned.
+- Prefer a small number of meaningful requirements over numerous
+  narrowly defined requirements.
+- Do not create a separate requirement for every product feature,
+  technical specification, metric, product generation, or customer
+  segment.
+- Do not require exact numerical metrics, detailed specifications,
+  or regional breakdowns unless the research goal explicitly
+  requires them or they are essential to understanding the
+  competitive relationship.
+- Focus on the main information needed to understand each
+  competitive dimension.
+- Avoid turning broad business questions into detailed technical
+  benchmarking exercises.
+- Optional details and additional depth can be discovered during
+  research when useful, but they should not automatically become
+  mandatory requirements.
+- A requirement should be broad enough to capture its main
+  competitive dimension but specific enough to guide focused research.
 
-- Scope: stay inside the named competitor's real scope: its own products that
-  overlap with {company}'s offering, not everything a large group sells.
+6. PRIORITIZATION
 
-- Every requirement must be answerable from reliable evidence.
+Prioritize requirements according to:
 
-SIZE AND SHAPE
+- Relevance to the original research goal.
+- Importance to understanding the competitive relationship.
+- Potential business value of the information.
+- Whether the information is already sufficiently available
+  in the competitor profile.
+- Whether the information can meaningfully improve the final
+  competitive intelligence analysis.
 
-- Each requirement = ONE narrow information need, at most ~30 words.
+Do not prioritize requirements simply because information
+is easy to find or commonly available.
 
-- Do NOT pack long "including A, B, C, D, E" lists into one requirement.
-  Split a distinct dimension into its own requirement instead.
+==================================================
+SIZE AND OUTPUT RULES
+==================================================
 
-- At most {MAX_REQUIREMENTS_PER_COMPETITOR} requirements per competitor; 3-4 is usually enough.
-  Counts may differ per competitor; do not force symmetry.
+- At most {MAX_REQUIREMENTS_PER_COMPETITOR} requirements per competitor.
+- Three to four meaningful requirements are usually sufficient.
+- Use fewer requirements when the research goal is narrow or simple.
+- Do not generate requirements just to reach the maximum count.
+- Counts may differ between competitors. Do not force symmetry.
+- Requirements must not overlap or duplicate one another.
+- Each requirement must be concise, specific, and independently
+  understandable.
+- Preserve the expected structured output schema.
+- Use competitor names exactly as supplied in the upstream state.
 
-- Requirements must not overlap.
-
-Use the competitor names EXACTLY as listed. Return only the structured output.
-
+Return ONLY the expected structured output.
 """
-
 
 def queries_prompt(
     state,

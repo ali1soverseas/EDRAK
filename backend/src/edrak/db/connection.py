@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 SCHEMA_PATH = Path(__file__).with_name("schema.sql")
 SCHEMA_V3_PATH = Path(__file__).with_name("schema_v3.sql")
+SCHEMA_V4_PATH = Path(__file__).with_name("schema_v4.sql")
+SCHEMA_V5_PATH = Path(__file__).with_name("schema_v5.sql")
 SCHEMA_VERSION = 2
 
 _ready: set[str] = set()
@@ -74,11 +76,13 @@ def _prepare_file(path: Path) -> None:
 
 
 def _apply_additions(path: Path) -> None:
-    """Tables added after v0.2 (brief v2). Idempotent, so it runs on every start."""
+    """Apply additive schemas and migrations to both new and existing databases."""
     conn = sqlite3.connect(path)
     try:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(SCHEMA_V3_PATH.read_text(encoding="utf-8"))
+        conn.executescript(SCHEMA_V4_PATH.read_text(encoding="utf-8"))
+        conn.executescript(SCHEMA_V5_PATH.read_text(encoding="utf-8"))
         cols = {r[1] for r in conn.execute("PRAGMA table_info(metrics)")}
         dcols = {r[1] for r in conn.execute("PRAGMA table_info(decisions)")}
         if dcols and "action_plan_id" not in dcols:

@@ -1,7 +1,10 @@
 """EDRAK FastAPI application entrypoint."""
 
 import logging
+import os
 from contextlib import asynccontextmanager
+
+os.environ.setdefault("CONFIDENT_TRACE_VERBOSE", "0")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,12 +30,25 @@ async def lifespan(app: FastAPI):
         await purge_expired_sessions(db)
         # Files that were waiting for or in the middle of indexing are queued again.
         pending = await fetch_all(db, "SELECT id, workspace_id FROM documents WHERE status IN ('uploaded','indexing')")
+        from edrak.db.repositories import competitor_kb as competitor_kb_repo
+
+        interrupted_competitor_jobs = await competitor_kb_repo.interrupted_jobs(db)
     if pending:
         from edrak.knowledge.pipeline import schedule_indexing
 
         for doc in pending:
             schedule_indexing(doc["workspace_id"], doc["id"])
         logger.info("Re-queued %d document(s) for indexing", len(pending))
+    if interrupted_competitor_jobs:
+        from edrak.knowledge.competitor_kb import queue_builds
+
+        by_workspace: dict[str, list[str]] = {}
+        for job in interrupted_competitor_jobs:
+            by_workspace.setdefault(job["workspace_id"], []).append(job["entity_id"])
+        for workspace_id, entity_ids in by_workspace.items():
+            async with get_db() as db:
+                await queue_builds(db, workspace_id, entity_ids)
+        logger.info("Re-queued %d interrupted competitor build(s)", len(interrupted_competitor_jobs))
     # Monitors run on their schedule while the app is up.
     import asyncio
 

@@ -30,6 +30,9 @@ RESPONSIBILITIES
 
 3. Business impact
    - Connect findings to the business goal and affected decision areas.
+   - For strategic_fit, feasibility, urgency, likelihood, and impact, use
+     exactly one of: "high", "moderate", "low", or "unknown". Use "moderate",
+     not "medium".
    - Explain why an issue may matter to the organization.
    - Do not invent financial values, percentages, ROI, market share, timelines,
      or other quantitative estimates.

@@ -433,6 +433,68 @@ def test_brief_numbers_are_per_workspace(isolated):
     asyncio.run(go())
 
 
+def test_brief_revision_preserves_original_snapshot(isolated):
+    from types import SimpleNamespace
+
+    from edrak.api.routers.briefs import get_brief as read_brief_api
+    from edrak.api.routers.briefs import get_brief_revisions
+    from edrak.db.repositories import briefs as briefs_repo
+
+    ws, request_id, _ = _seed_run(isolated / "edrak.db")
+
+    async def go():
+        async with connection.get_db() as db:
+            original = await briefs_repo.save_brief(
+                db, workspace_id=ws, request_id=request_id, requested_by=None,
+                build=lambda bid, no: {
+                    "brief_id": bid, "brief_no": no, "title": "T", "use_case": "competitive_intelligence",
+                    "summary": {"found": [{"text": "Original"}]}, "options": [], "evidence": [], "lenses": [],
+                },
+            )
+            revised_document = {
+                **original["document"],
+                "summary": {"found": [{"text": "Recovered"}]},
+                "options": [{"key": "A", "title": "Lead"}],
+            }
+            revision = await briefs_repo.save_revision(
+                db, original["id"], revised_document, reason="Recovered Decision Analysis",
+            )
+            latest = await briefs_repo.get_brief(db, original["id"], ws)
+            version_one = await briefs_repo.get_brief_version(db, original["id"], 1, ws)
+            version_two = await briefs_repo.get_brief_version(db, original["id"], 2, ws)
+            history = await briefs_repo.list_revisions(db, original["id"])
+            session = SimpleNamespace(workspace=SimpleNamespace(workspace_id=ws))
+            latest_api = await read_brief_api(
+                original["id"], version=None, session=session, db=db
+            )
+            version_one_api = await read_brief_api(
+                original["id"], version=1, session=session, db=db
+            )
+            history_api = await get_brief_revisions(
+                original["id"], session=session, db=db
+            )
+
+            assert revision["version"] == 2
+            assert latest["document"]["options"] == [{"key": "A", "title": "Lead"}]
+            assert latest["revision"]["version"] == 2
+            assert version_one["document"]["options"] == []
+            assert version_one["document"]["summary"]["found"][0]["text"] == "Original"
+            assert version_two["revision"]["reason"] == "Recovered Decision Analysis"
+            assert [entry["version"] for entry in history] == [1, 2]
+            assert latest_api["options"] == [{"key": "A", "title": "Lead"}]
+            assert latest_api["latest_revision_version"] == 2
+            assert version_one_api["options"] == []
+            assert [entry["version"] for entry in history_api] == [1, 2]
+            with pytest.raises(sqlite3.IntegrityError, match="cannot be changed"):
+                await db.execute(
+                    "UPDATE brief_revisions SET reason = 'changed' WHERE brief_id = ? AND version = 2",
+                    (original["id"],),
+                )
+            await db.rollback()
+
+    asyncio.run(go())
+
+
 # ------------------------------------------------------------------ migration from v1
 
 

@@ -1,0 +1,354 @@
+{
+  "research_run_id": "fa35d97078e80b68baac92c09719e418",
+  "decision": {
+    "status": "verified",
+    "targeted_actions": [],
+    "summary": "23 of 23 findings are evidence-backed; 0 were insufficient and recorded for follow-up."
+  },
+  "findings": [
+    {
+      "finding_id": "f1152f9b-f3bd-4760-a9e3-be306720e39e",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom currently offers AI accelerators called AI XPUs – custom ASICs optimized for inference workloads – and pairs them with its high‑performance Ethernet switch family, notably the Tomahawk 6 switch that supports 100G/200G SerDes and is designed for scale‑out and scale‑up AI clusters.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "31ca1d19-9a0a-4a28-866c-d90eba9f6e52",
+        "2ac9fae2-ff19-4f77-9291-627d2376e5ab",
+        "f0981a1e-2a58-4a59-a456-621d2f5d121b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "46cf752f-6363-45fa-a20c-fc01092a722c",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom’s AI infrastructure is referenced in relation to the three leading hyperscale cloud providers – Amazon Web Services, Microsoft Azure, and Google Cloud – indicating that its networking and XPU solutions are being integrated or deployed within those public‑cloud environments.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "eb7974e5-6ae1-4ae9-8e48-64edb6f1c81a",
+        "5255c568-f0da-445d-a96b-a7d780033028",
+        "55279f8f-e9be-4393-9227-4e7de8753c58"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "0bd42984-5473-47ec-b38e-c661073a75d9",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom provides AI Services SDKs, including a Python SDK and a Spring AI SDK, that let developers pass provider‑specific parameters (e.g., Anthropic, Azure OpenAI, Bedrock) to models. In VMware Cloud Foundation, Broadcom adds an AI‑driven “Intelligent Assist” assistant and Model Context Protocol (MCP) support for integration with tools such as Oracle, Microsoft SQL Server, ServiceNow, GitHub, Slack, and PostgreSQL.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9f05d87f-ba42-4eea-a73b-2e5bc422a7a4",
+        "fbe1cbc9-743a-409b-a466-77dc59be0587"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "3485fc7b-2dc0-4fda-81f3-44c388f49674",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom has announced a multi‑year roadmap to ship custom AI accelerator racks (XPUs) beginning in the second half of 2026 and completing by the end of 2029, including a joint 10‑gigawatt deployment with OpenAI. It also plans to extend its AI‑focused PCIe Gen5/Gen6 retimers and the Tomahawk 6 switch to support million‑XPU clusters.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "088eddcb-d12e-4e2e-a42f-efbc2da94047",
+        "f667a950-3b79-4b79-8985-98e0b00e85fa",
+        "5d29c1d4-2f84-42a9-a9e5-cc335ba204a4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "a162b780-2faf-43b1-b1ba-a8597c899b4a",
+      "worker": "competitor_intelligence",
+      "statement": "AMD markets the Instinct MI300X platform, built on 3rd‑Gen CDNA architecture, with eight MI300X GPUs delivering 42 petaFLOPs FP8 (sparsity) and 1.5 TB of HBM3 memory for large‑scale AI training and inference in data‑center environments.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "64a2b1d7-a3c3-41a4-bbbe-8139d1406c68"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "2d85b939-107d-4676-858a-f88324f5b096",
+      "worker": "competitor_intelligence",
+      "statement": "AMD markets the Instinct MI350X GPU (4th‑Gen CDNA) featuring 288 GB HBM3E memory, 8 TB/s bandwidth and up to 144.2 TFLOPs FP16/FP32 performance, positioned for generative AI, inference and high‑performance computing workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "bd57f740-8e3b-4ba2-a63f-8c1a13192795"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "dfad9101-eef3-4135-9cb5-a9d062418662",
+      "worker": "competitor_intelligence",
+      "statement": "AMD markets the Instinct MI430X GPU, the first data‑center APU combining CPU and GPU cores, with FP64 precision, 432 GB HBM4 memory and 19.6 TB/s bandwidth, deployed in the U.S. (Discovery) and Europe (Alice Recoque) for AI training and scientific computing.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "80de27a8-3acc-4368-8365-cccb27dc2ef3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "7d0ace46-7056-4900-98ef-06a4b772e155",
+      "worker": "competitor_intelligence",
+      "statement": "AMD: Microsoft Azure provides AMD Instinct MI300X‑based ND MI300X v5 virtual machines (e.g., Standard_ND96isr_MI300X_v5) in Canada Central, West US, France Central and UK South regions, enabling customers to run large AI models and Azure OpenAI Service workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "9f41e7c9-bd3c-401b-b1ee-d6f465c728cd",
+        "5cc672ed-916e-4fc7-9cac-5913d8519d65"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "3fce85c9-2c54-4203-a64b-4b29fc395731",
+      "worker": "competitor_intelligence",
+      "statement": "AMD supplies the open‑source ROCm software stack—including drivers, libraries, compilers and tools—that integrates with leading AI frameworks such as PyTorch, TensorFlow, JAX and ONNX, and is bundled with its Instinct accelerators for seamless AI development.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "247b8fa7-dc2d-4d63-8964-6959df2e44eb",
+        "8a895689-4ec5-46a7-8a2b-5027a32e236e",
+        "3803cd2e-1ab1-4eb8-b925-2850c42ff5ef"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "37cb7a04-edb0-4515-bd98-5d869acdc2d2",
+      "worker": "competitor_intelligence",
+      "statement": "AMD announced the upcoming Instinct MI455X GPU built on CDNA 5 architecture, delivering up to 4× higher AI compute throughput, 432 GB HBM4 memory and 2.91× memory bandwidth, targeting frontier‑model training, high‑volume inference and rack‑scale AI systems.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8e59a771-2c38-4c4a-a120-0576e15d70e6",
+        "19bb58eb-4143-4b1a-b7a0-165b8940bc2a"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "9a26e147-6a2f-4379-a5b1-f46dff599a52",
+      "worker": "competitor_intelligence",
+      "statement": "AMD announced the MI350P PCIe GPU (CDNA 4) for enterprise AI inference, offering 144 GB HBM3E, 4 TB/s bandwidth and up to 4 600 TFLOPs MXFP4 performance, designed for standard air‑cooled servers without specialized cooling.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "6e5b918f-a1c0-4329-835f-d680d8208d30"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "53fd7654-a8da-4402-88a6-9114566b0f78",
+      "worker": "competitor_intelligence",
+      "statement": "AMD markets its Instinct MI300X accelerator, built on the CDNA architecture, as a data‑center GPU for AI training and inference. The MI300X provides high‑bandwidth memory and large memory capacity to accommodate large models with fewer GPUs, delivering industry‑leading price/performance on GPT workloads. AMD also lists the Instinct MI200 series as high‑performance AI GPU accelerators for data‑center use.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "92cd1777-ed0d-415c-bfdc-86a148054b82",
+        "720e534e-35ac-4553-b968-20a6e754a51f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "432d8de8-0082-4b7b-ad2f-ff0bf86dbfe3",
+      "worker": "competitor_intelligence",
+      "statement": "AMD: Microsoft Azure offers AMD Instinct MI300X GPUs in its ND MI300X V5 virtual‑machine instances, which are generally available in the Azure catalog (e.g., Canada Central) and enable customers to run AI models such as GPT‑3.5 and GPT‑4. This makes Azure a leading cloud service provider in the United States and Europe that includes AMD AI accelerators in its instance offerings.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "f8503afb-edc7-4a88-93ef-4773f7ef9169"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "a374ab1c-b2c5-40f9-8b5c-82841ba1b0ba",
+      "worker": "competitor_intelligence",
+      "statement": "AMD provides the ROCm open‑source software stack—including drivers, libraries, and framework integrations—to enable AI developers to run workloads on its Instinct GPUs. The ROCm stack powers the Azure ND MI300X V5 VMs and the Blackfuel inference platform, allowing models to run without code changes across AMD hardware.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "a8f4e48e-9d7e-42f7-965f-b938c81f6008",
+        "f707ba96-65eb-45bc-b77d-337235a138fd"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "eee4c96f-7682-4565-8bc6-d0144d0e5e01",
+      "worker": "competitor_intelligence",
+      "statement": "AMD announced the upcoming Instinct MI355X GPU, which will be deployed in the Blackfuel Barcelona inference cloud and will operate with the ROCm software stack. The MI355X represents the next generation of AMD AI accelerators planned for future inference services.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ceae9846-0e7b-4796-a022-e4b3ef5b1445"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "3fff181f-6082-4fd0-9d2a-1e6a4e6479c7",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel currently offers a portfolio of AI‑computing hardware for data‑center workloads, including Intel® Gaudi® AI accelerators for training and inference, Intel® Data Center GPU Flex Series cards (up to 160 GB memory, with partner‑branded options up to 480 GB), Intel® Xeon® Scalable processors that incorporate Deep Learning Boost, and Intel® Arc™ Pro B‑Series GPUs for workstation‑class AI tasks.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "189768db-f5c3-4637-ad35-e358ad702101",
+        "cc83147e-d42d-4981-9743-2ae6e36f41ad"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "56771fd3-9cbc-4f83-a7bd-869ee77a6263",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Major cloud service providers in the United States and Europe integrate Intel AI accelerators: AWS, Microsoft Azure, Google Cloud Platform and Oracle Cloud all run instances powered by Intel® Xeon® Scalable processors with DL Boost, while IBM Cloud offers Intel® Gaudi® 3 AI accelerators as a service. These collaborations demonstrate active deployment of Intel AI hardware across leading CSP portfolios.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "b1e1cfaf-726d-44fa-aec0-c9a0da14cbe9",
+        "c4d15081-4d65-4a29-b8a1-7414cf90739e",
+        "518d2604-1dbf-48ca-8dac-3bc7e8c9bdd8"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "99c548d7-401c-4c52-9c42-cf86c8bcb68d",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel provides a comprehensive AI‑focused software ecosystem called oneAPI. The stack includes the oneAPI DPC++/C++ compiler, domain‑specific libraries such as oneDNN, oneDAL, oneMKL and oneCCL, and tools for profiling and debugging. It offers optimized support for popular frameworks (e.g., PyTorch, TensorFlow) and enables developers to build, optimize, and scale AI workloads across CPUs, GPUs, and other Intel accelerators.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e804f349-c5df-4f94-bcfb-26d2c2667e83",
+        "3417d918-7c07-4073-b20e-20b179634db6",
+        "b113ab69-7a56-4dd9-83a6-2ec154a16cd3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "6795d881-b3af-423d-87b7-39d3751b9317",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel’s roadmap includes several upcoming AI hardware and infrastructure advances: the Xeon 6 processor family with performance cores and doubled AI performance, Gaudi 3 AI accelerators promising up to 20 % higher throughput and 2× price/performance versus competing GPUs, a custom AI fabric chip for AWS built on the 18A process node, and planned Gen 2 MRDIMM memory up to 8 800 MT/s for Xeon 6900P processors in Q1 2027. These announcements signal potential shifts in Intel’s competitive positioning in data‑center AI.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "06b492f4-1292-4267-8541-a0cf2ae6edee",
+        "e9da43e9-4e73-4e82-8c77-66758664e3ec",
+        "e332737a-c601-4a6e-8270-acd13dc17ede"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "857b3a4c-3f8e-4a8a-aff8-921208601616",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA’s current offer is AI computing and data‑center platforms targeting cloud service providers and AI developers in the United States and Europe.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9b53bcb0-1bdc-4eb5-90cc-af71b530e092"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "74746f9c-3ba0-4f38-ad7a-3f7bfacd87bf",
+      "worker": "internal_intelligence",
+      "statement": "NVIDIA’s system‑level data‑center offerings are marketed under the DGX platform.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a6f9892d-e295-41bf-84ab-681f93903e06"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d4a2b96a-e2a9-4d27-9d28-ce616c4c6c92",
+      "worker": "internal_intelligence",
+      "statement": "Broadcom and Intel Corp are identified as competitors to track for NVIDIA’s AI computing and data‑center markets.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9b53bcb0-1bdc-4eb5-90cc-af71b530e092"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ff2de41a-0f28-46d0-ab91-bfa0e4526b70",
+      "worker": "internal_intelligence",
+      "statement": "Broadcom’s public reporting and announcements should be used as the primary sources for its semiconductor, networking, and custom‑accelerator activities.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d3be38a2-9b3e-4098-9f2c-02eb3d818cb7"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    }
+  ],
+  "control_summary": {
+    "missing_information": [
+      "No concrete competitor actions (e.g., product launches, pricing changes) are described.",
+      "No quantitative assessment of how competitor moves affect NVIDIA’s market share or revenue.",
+      "Absence of external verification of Intel’s activities relevant to NVIDIA’s AI computing offering."
+    ],
+    "conflicts": [],
+    "failures": [],
+    "next_research_targets": [
+      "No concrete competitor actions (e.g., product launches, pricing changes) are described.",
+      "No quantitative assessment of how competitor moves affect NVIDIA’s market share or revenue.",
+      "Absence of external verification of Intel’s activities relevant to NVIDIA’s AI computing offering."
+    ]
+  },
+  "metadata": {
+    "workers": [
+      "competitor_intelligence",
+      "internal_intelligence"
+    ],
+    "finding_count": 23,
+    "verified_count": 23,
+    "insufficient_count": 0,
+    "completed_at": "2026-11-06T02:11:27.347726+00:00"
+  },
+  "completed_at": "2026-11-06T02:11:27.347738Z"
+}
