@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from edrak.agents.market_intelligence.prompts import (
     analysis_prompt,
+    conclude_prompt,
     task_planner_prompt,
     tool_arg_prompt,
     tool_catalog_lines,
@@ -17,6 +18,7 @@ from edrak.agents.market_intelligence.prompts import (
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
     AnalysisReply,
+    Conclusion,
     SearchQuery,
     TaskPlan,
     Usefulness,
@@ -25,8 +27,11 @@ from edrak.agents.market_intelligence.search_scope import (
     PLACES,
     SearchScope,
     domains_in_text,
+    market_label,
+    markets_from_brief,
     query_spec,
     scope_from_brief,
+    scope_from_mapping,
 )
 from edrak.agents.market_intelligence.source_tiers import (
     DEFAULT_SOURCE_TIERS,
@@ -443,16 +448,124 @@ def _normalized(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip().lower()
 
 
+_PRICE_RE = re.compile(r"\$\s*(\d+(?:\.\d+)?)")
+_PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%")
+_YEAR_RE = re.compile(r"\b(20\d{2})\b")
+_GENERIC_TERMS = {
+    "demand", "estimate", "estimates", "forecast", "forecasts", "global",
+    "growth", "industry", "market", "markets", "overall", "sector", "size",
+    "total",
+}
+_PER_MARKET = (
+    "size", "growth", "cagr", "tam", "regulat", "residen", "licens",
+    "forecast", "momentum", "demand", "spend",
+)
+_NAMED_RETRY = (
+    "adopt", "competitor", "rival", "technolog", "announc",
+)
+_FORECAST_WORDS = ("forecast", "forecasts", "projection", "projected", "cagr")
+_STAGE_WORDS = ("announced", "preview", "available", "deployed", "launched")
+_STAGE_TASKS = ("adopt", "customer", "announc")
+_LINK_MARKERS = ("adopt", "technolog", "customer", "deployment")
+_CANNOT_LINK = "A link between market size and adoption or technology cannot be made."
+_CANNOT_COMPARE = "The named markets cannot be compared."
+_CLOSE_KINDS = ("comparison", "momentum", "implication")
+_CLOSE_LIMITS = {"momentum": "projection", "implication": "analysis"}
+
+
+def _normalise_numbers(text: str) -> str:
+    lowered = (text or "").lower().replace(",", "")
+    lowered = re.sub(r"(\d)\s+(\d{3})\b", r"\1\2", lowered)
+    lowered = re.sub(
+        r"(\d+(?:\.\d+)?)\s*k\b",
+        lambda match: str(int(float(match.group(1)) * 1000)),
+        lowered,
+    )
+    lowered = re.sub(
+        r"(\d+(?:\.\d+)?)\s*m\b",
+        lambda match: str(int(float(match.group(1)) * 1_000_000)),
+        lowered,
+    )
+    return lowered
+
+
+def _quantity_token(match: str) -> str:
+    return match.rstrip("0").rstrip(".") if "." in match else match
+
+
+def _hard_quantities(text: str) -> set[str]:
+    """Prices, percents, and years. A claim may not introduce one the quote lacks."""
+    lowered = _normalise_numbers(text)
+    found: set[str] = set()
+    for match in _PRICE_RE.findall(lowered):
+        found.add("$" + _quantity_token(match))
+    for match in _PERCENT_RE.findall(lowered):
+        found.add(_quantity_token(match) + "%")
+    for match in _YEAR_RE.findall(lowered):
+        found.add(match)
+    return found
+
+
+def _percent_values(text: str) -> set[str]:
+    lowered = _normalise_numbers(text)
+    return {_quantity_token(match) for match in _PERCENT_RE.findall(lowered)}
+
+
 def claim_is_supported(claim: str, quote: str, source: str) -> bool:
-    """The quote must be copied from the source and the claim must use its words."""
+    """The quote is copied from the source, and the claim says only what it says.
+
+    Every content word in the claim appears in the quote. Every price, percent,
+    and year in the claim appears in the quote. A quote that states two percents
+    is not reduced to one of them.
+    """
     statement = (claim or "").strip()
     if len(statement) < 40 or statement.lower().startswith("data retrieved for"):
         return False
     copied = _normalized(quote)
     if len(copied) < 40 or copied not in _normalized(source):
         return False
-    overlap = set(content_terms(statement)) & set(content_terms(quote))
-    return len(overlap) >= 2
+    terms = content_terms(statement)
+    quote_l = quote.lower()
+    if not terms or not all(term in quote_l for term in terms):
+        return False
+    if not _hard_quantities(statement) <= _hard_quantities(quote):
+        return False
+    quote_percents = _percent_values(quote)
+    if len(quote_percents) >= 2 and not quote_percents <= _percent_values(statement):
+        return False
+    if _PRICE_RE.search(_normalise_numbers(statement)) or _PERCENT_RE.search(_normalise_numbers(statement)):
+        quote_years = set(_YEAR_RE.findall(_normalise_numbers(quote)))
+        claim_years = set(_YEAR_RE.findall(_normalise_numbers(statement)))
+        if not quote_years <= claim_years:
+            return False
+        if any(word in quote_l and word not in statement.lower() for word in _FORECAST_WORDS):
+            return False
+    return True
+
+
+def stand_in_limitation(task: str, claim: str, quote: str) -> str:
+    """Keep a wider-market figure, and name the subject the page does not measure."""
+    quote_l = (quote or "").lower()
+    claim_l = (claim or "").lower()
+    missing = [
+        term for term in content_terms(task)
+        if term not in _GENERIC_TERMS and term not in quote_l
+    ]
+    if not missing or any(term in claim_l for term in missing):
+        return ""
+    listed = ", ".join(missing[:4])
+    return f"Source measures the broader market named in the quote, not: {listed}."
+
+
+def adoption_stage_gap(task: str, quote: str) -> str:
+    """A customer or adoption page that never says how far use has gone."""
+    lowered = (task or "").lower()
+    if not any(marker in lowered for marker in _STAGE_TASKS):
+        return ""
+    quote_l = (quote or "").lower()
+    if any(word in quote_l for word in _STAGE_WORDS):
+        return ""
+    return "Source does not say whether this is an announcement or actual use."
 
 
 def claim_confidence(claim: str, quote: str) -> float:
@@ -490,25 +603,124 @@ def tasks_from_plan_reply(plan: TaskPlan | None) -> list[dict]:
     ]
 
 
-def _query_strings(queries) -> list[str]:
-    found: list[str] = []
-    if not isinstance(queries, list):
-        return found
-    for item in queries:
+def invoke_search_tool(tool_obj, tool_args: dict) -> str:
+    """MCP search tools take List[str]. Send each query object as a JSON string.
+
+    The scraper decodes a string that starts with '{' so gl, hl, and recency
+    reach the search engine. A plain keyword string is left as-is.
+    """
+    encoded: list[str] = []
+    for item in tool_args.get("queries") or []:
         if isinstance(item, dict):
             text = str(item.get("q") or item.get("query") or "").strip()
+            if text:
+                encoded.append(json.dumps({**item, "q": text}, ensure_ascii=False))
         else:
             text = str(item).strip()
-        if text and text not in found:
-            found.append(text)
-    return found
-
-
-def invoke_search_tool(tool_obj, tool_args: dict) -> str:
-    """MCP search tools take List[str]. Flatten planner query objects to keywords."""
-    strings = _query_strings(tool_args.get("queries"))
-    result = tool_obj.invoke({"queries": strings})
+            if text:
+                encoded.append(text)
+    result = tool_obj.invoke({"queries": encoded})
     return result if isinstance(result, str) else json.dumps(result, ensure_ascii=False)
+
+
+def _is_per_market(description: str) -> bool:
+    lowered = (description or "").lower()
+    return any(marker in lowered for marker in _PER_MARKET)
+
+
+def _retarget_queries(queries, description: str, scope: SearchScope) -> list[dict]:
+    retargeted: list[dict] = []
+    seen: set[str] = set()
+    if not isinstance(queries, list):
+        return retargeted
+    for item in queries:
+        text, language, domains = _query_fields(item)
+        if not text:
+            continue
+        spec = query_spec(
+            _strip_place_from_query(text, description, scope),
+            scope,
+            language,
+            domains,
+        )
+        key = spec["q"].lower()
+        if spec["q"] and key not in seen:
+            seen.add(key)
+            retargeted.append(spec)
+    return retargeted
+
+
+def assign_market_scopes(tasks: list[dict], markets: list[SearchScope]) -> list[dict]:
+    """Search each named market. Size, growth, and regulation tasks are duplicated."""
+    if not markets:
+        return tasks
+    if len(markets) == 1:
+        scope = markets[0]
+        stamped: list[dict] = []
+        for task in tasks:
+            copy = dict(task)
+            description = copy["description"]
+            label = market_label(scope)
+            if scope.place and label.lower() not in description.lower():
+                description = f"{description} ({label})"
+                copy["description"] = description
+            copy["search"] = scope.as_dict()
+            copy["queries"] = _retarget_queries(copy.get("queries") or [], description, scope)
+            stamped.append(copy)
+        return stamped
+
+    expanded: list[dict] = []
+    number = 1
+    for task in tasks:
+        if not _is_per_market(task["description"]):
+            copy = dict(task)
+            copy["id"] = number
+            expanded.append(copy)
+            number += 1
+            continue
+        for market in markets:
+            copy = dict(task)
+            label = market_label(market)
+            description = task["description"]
+            if label.lower() not in description.lower():
+                description = f"{description} ({label})"
+            copy["id"] = number
+            copy["description"] = description
+            copy["search"] = market.as_dict()
+            copy["queries"] = _retarget_queries(task.get("queries") or [], description, market)
+            expanded.append(copy)
+            number += 1
+    return expanded
+
+
+def _named_retry_queries(description: str, search: dict | None) -> list[dict]:
+    """One recency=month query built from the names and content words already in the task."""
+    base = scope_from_mapping(search) or SearchScope(recency="month")
+    scope = SearchScope(
+        gl=base.gl,
+        language=base.language,
+        hl=base.hl,
+        local_name=base.local_name,
+        place=base.place,
+        recency="month",
+        tavily_country=base.tavily_country,
+    )
+    names: list[str] = []
+    for name in re.findall(r"\b[A-Z][A-Za-z0-9]{2,}\b", description or ""):
+        if name not in names:
+            names.append(name)
+    words = list(names[:4])
+    lowered = {word.lower() for word in words}
+    for term in content_terms(description):
+        if term not in lowered:
+            words.append(term)
+            lowered.add(term)
+        if len(words) >= 8:
+            break
+    text = " ".join(words).strip()
+    if not text:
+        return []
+    return [query_spec(text, scope, "en")]
 
 
 def task_planner(state: MarketAgentState) -> dict:
@@ -565,6 +777,11 @@ def task_planner(state: MarketAgentState) -> dict:
             },
         ]
 
+    markets = markets_from_brief(goal, context)
+    task_list = assign_market_scopes(task_list, markets)
+    if markets:
+        print(f"  Markets: {', '.join(market_label(item) for item in markets)}")
+
     _section("RESEARCH TO-DO LIST")
     for task in task_list:
         print(f"  [{task['id']}] {task['description']}")
@@ -606,7 +823,7 @@ def task_executor(state: MarketAgentState) -> dict:
 
     goal = state["goal"]
     context = state["business_context"]
-    scope = scope_from_brief(goal, context)
+    scope = scope_from_mapping(task.get("search")) or scope_from_brief(goal, context)
     vendor_domains = domains_in_text(f"{goal}\n{context}")
 
     primary = task["tool_hint"]
@@ -758,6 +975,16 @@ def task_executor(state: MarketAgentState) -> dict:
         return _gap(f"No relevant source for: {task['description']}")
 
     evidence_items: list = []
+    hit_index = {
+        item["url"]: item
+        for item in _scored_hits(
+            raw_result,
+            task["description"],
+            goal,
+            scope,
+            vendor_domains=vendor_domains,
+        )
+    }
     if used_tool in URL_BEARING_TOOLS and urls_found:
         candidates = urls_found[:MAX_URL_CANDIDATES]
         _section(f"URL SCRAPER  --  up to {MAX_URLS_PER_TASK} relevant of {len(candidates)} ranked")
@@ -797,7 +1024,14 @@ def task_executor(state: MarketAgentState) -> dict:
                 continue
             print(f"    -> kept {len(excerpt):,} chars")
             log_block("market_intelligence", f"SCRAPED URL  {url}", f"kept {len(excerpt)} chars")
-            evidence_items.append({"type": "url", "source": url, "text": excerpt})
+            hit = hit_index.get(url) or {}
+            evidence_items.append({
+                "type": "url",
+                "source": url,
+                "text": excerpt,
+                "title": str(hit.get("title") or "").strip(),
+                "snippet": str(hit.get("snippet") or "").strip(),
+            })
     else:
         excerpt = relevant_excerpt(raw_result, task["description"], goal, 2000)
         evidence_items.append({"type": "endpoint", "source": f"[{used_tool}]", "text": excerpt})
@@ -833,6 +1067,13 @@ def task_executor(state: MarketAgentState) -> dict:
             if quote and _normalized(quote) in _normalized(evidence.get("text") or "")
         ] or evidence_items
         confidence = claim_confidence(claim, quote)
+        limitations = []
+        note = stand_in_limitation(task["description"], claim, quote)
+        if note:
+            limitations.append(note)
+        stage = adoption_stage_gap(task["description"], quote)
+        if stage and stage not in gaps:
+            gaps.append(stage)
         print(f"\n  Claim      : {claim[:200]}")
         print(f"  Quote      : {quote[:160]}")
         print(f"  Confidence : {confidence}")
@@ -843,6 +1084,7 @@ def task_executor(state: MarketAgentState) -> dict:
             "quote": quote,
             "confidence": confidence,
             "evidence": cited,
+            "limitations": limitations,
         })
 
     task["status"] = "done"
@@ -863,7 +1105,14 @@ def fill_gaps(state: MarketAgentState) -> dict:
         if task.get("status") != "skipped":
             continue
         task["status"] = "pending"
-        task["queries"] = []
+        lowered = (task.get("description") or "").lower()
+        if any(marker in lowered for marker in _NAMED_RETRY):
+            task["queries"] = _named_retry_queries(
+                task.get("description") or "",
+                task.get("search") if isinstance(task.get("search"), dict) else None,
+            ) or task.get("queries") or []
+        else:
+            task["queries"] = []
         task["retry"] = True
         print(f"  [{task.get('id')}] {task.get('description')}")
         print(f"       Tool hint: {task.get('tool_hint')}")
@@ -881,6 +1130,107 @@ def fill_gaps(state: MarketAgentState) -> dict:
         "current_task_idx": pending_at,
         "market_gaps": [],
         "gap_fill_done": True,
+    }
+
+
+def _accepted_text(findings: list[dict]) -> str:
+    return "\n".join(
+        (item.get("claim") or "").strip()
+        for item in findings
+        if (item.get("claim") or "").strip()
+        and (item.get("task") or "") not in _CLOSE_KINDS
+    )
+
+
+def missing_market_gaps(goal: str, context: str, findings: list[dict]) -> list[str]:
+    """A named market with no figure in the accepted claims gets an explicit gap."""
+    claims = _accepted_text(findings).lower()
+    gaps: list[str] = []
+    for market in markets_from_brief(goal, context):
+        label = market_label(market)
+        if label.lower() in claims or (market.place and market.place.lower() in claims):
+            continue
+        gaps.append(f"No supported market estimate for: {label}")
+    return gaps
+
+
+def _unlike_measures(text: str) -> bool:
+    lowered = _normalise_numbers(text)
+    return bool(_PRICE_RE.search(lowered)) and bool(_PERCENT_RE.search(lowered))
+
+
+def _company_named(context: str) -> bool:
+    return bool(re.search(r"(?im)^\s*company:\s*\S+", context or ""))
+
+
+def _claims_support_link(findings: list[dict]) -> bool:
+    claims = _accepted_text(findings).lower()
+    has_size = "$" in claims or any(word in claims for word in ("size", "revenue", "billion", "million"))
+    has_usage = any(marker in claims for marker in _LINK_MARKERS)
+    return has_size and has_usage
+
+
+def _close_finding(kind: str, sentence: str) -> dict:
+    limitations = []
+    tag = _CLOSE_LIMITS.get(kind)
+    if tag:
+        limitations.append(tag)
+    return {
+        "task": kind,
+        "claim": sentence,
+        "quote": "",
+        "confidence": 0.55,
+        "evidence": [],
+        "limitations": limitations,
+    }
+
+
+def conclude(state: MarketAgentState) -> dict:
+    """Compare regions, label projections, and state implications from accepted claims."""
+    _banner("NODE: CONCLUDE")
+    findings = list(state.get("market_findings") or [])
+    gaps = [gap for gap in (state.get("market_gaps") or []) if gap]
+    for line in missing_market_gaps(state.get("goal") or "", state.get("business_context") or "", findings):
+        if line not in gaps:
+            gaps.append(line)
+
+    accepted = _accepted_text(findings)
+    context = state.get("business_context") or ""
+    reply = call_structured(
+        Conclusion,
+        conclude_prompt(state.get("goal") or "", context, accepted, gaps),
+        method="json_mode",
+    )
+    extras: list[dict] = []
+    if reply is not None:
+        for kind in _CLOSE_KINDS:
+            sentence = (getattr(reply, kind, "") or "").strip()
+            if not sentence:
+                continue
+            if kind == "implication" and not _company_named(context):
+                print("  Dropped implication: brief names no company")
+                continue
+            if not _hard_quantities(sentence) <= _hard_quantities(accepted):
+                print(f"  Dropped {kind}: figure not in an accepted claim")
+                continue
+            if kind == "comparison" and _unlike_measures(accepted) and _unlike_measures(sentence):
+                if "different" not in sentence.lower():
+                    print("  Dropped comparison: size and growth are different measures")
+                    continue
+            if kind == "momentum" and any(marker in sentence.lower() for marker in _LINK_MARKERS):
+                if not _claims_support_link(findings):
+                    sentence = _CANNOT_LINK
+            extras.append(_close_finding(kind, sentence))
+            print(f"  {kind}: {sentence[:160]}")
+
+    missing = any(gap.startswith("No supported market estimate for:") for gap in gaps)
+    if missing and not any(item.get("task") == "comparison" for item in extras):
+        extras.append(_close_finding("comparison", _CANNOT_COMPARE))
+        print(f"  comparison: {_CANNOT_COMPARE}")
+
+    return {
+        "market_findings": findings + extras,
+        "market_gaps": gaps,
     }
 
 
