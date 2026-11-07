@@ -109,7 +109,7 @@ def ingest_chunked_handbook(indexer: InternalIndexer, chunk_dir: Path, workspace
 
 def main():
     parser = argparse.ArgumentParser(description="Ingest internal data and handbook chunks into ChromaDB for ONE workspace.")
-    parser.add_argument("--workspace", required=True, help="Workspace id that will own the ingested chunks (the GitLab demo uses %s)" % settings.DEMO_WORKSPACE_ID)
+    parser.add_argument("--workspace", required=True, help="Workspace id that will own the ingested chunks (e.g. demo workspace %s)" % settings.DEMO_WORKSPACE_ID)
     parser.add_argument("--reset", action="store_true", help="Delete this workspace's chunks first (other workspaces are untouched)")
     parser.add_argument("--reset-all", action="store_true", help="Delete the ENTIRE collection, every workspace included (asks to confirm)")
     args = parser.parse_args()
@@ -153,9 +153,9 @@ def main():
     logger.info("Running verification retrieval checks...")
     retriever = InternalRetriever()
     test_queries = [
-        "GitLab Duo pricing tier and Enterprise seat packaging",
-        "GitLab internal architecture code suggestions latency",
-        "GitLab handbook values and company strategy",
+        "NVIDIA H100 H200 B200 GPU specifications and memory bandwidth",
+        "NVIDIA AI Enterprise pricing and NIM microservices",
+        "Europe and US regional availability and Blackwell lead time",
     ]
     for query in test_queries:
         logger.info("\n--- Query: '%s' ---", query)

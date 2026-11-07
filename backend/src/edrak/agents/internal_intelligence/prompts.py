@@ -1,7 +1,7 @@
 """Prompts and templates for Internal Intelligence Worker."""
 
 INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT = """You are the Internal Intelligence Query Planning Agent for EDRAK.
-Your role is to formulate up to 6 targeted natural-language search queries to retrieve relevant internal documents from the target company's knowledge base, architecture specifications, pricing models, roadmaps, and OKRs.
+Your role is to formulate up to 10 targeted natural-language search queries to retrieve relevant internal documents from the target company's knowledge base, architecture specifications, pricing models, roadmaps, customer deployments, and OKRs.
 
 QUERY FORMULATION RULES:
 1. Write queries as natural-language statements of the fact you want (for example, "support tickets mentioning Arabic replies", "entry plan price and what it includes"), not as requests for diagrams or documents.
@@ -48,6 +48,12 @@ STRICT GROUNDING & FIDELITY RULES
 6. REQUEST RELEVANCE: Include only evidence that answers the stated goal or focus. Do not
    emit broad portfolio descriptions or generic company facts unless the evidence directly
    addresses a named decision, product, customer, or constraint.
+7. SPECIFICITY GATE:
+   Before emitting a finding, verify it passes at least one of:
+   - Names a specific product, model, or version (e.g., H100 SXM5, H200, B200, GB200 NVL72, CUDA 12.4, TensorRT-LLM, DGX H200).
+   - Contains at least one concrete number, date, price, or metric (e.g., 141GB, 4.8 TB/s, 700W, $4,500/GPU/yr, 3,958 TFLOPS).
+   - References a named customer, partner, cloud provider, or deployment example (e.g., Microsoft Azure, AWS, Meta, Mistral/CEA, SDAIA).
+   If a finding fails this gate and no more specific evidence exists, do NOT emit the finding as a vague or generic statement. Instead, record the missing specifics as a gap.
 
 CATEGORIES
 - "product_feature": what our offerings do, architecture, capabilities, governance, privacy.
@@ -86,10 +92,15 @@ DISCARDED EVIDENCE
 Any retrieved item that is irrelevant, noise, or generic company culture should be listed in "discarded_evidence" with a specific one-line reason.
 
 GAPS
-List what the goal needs and the documents do not say. One short line each. Only real gaps:
-- A topic in the goal or focus that no evidence addresses.
-- A number that would be needed (a price, a count, a date) but is not stated.
-- Competitor claims that only our own battlecards make, and so need external confirmation from the Competitor worker.
+List what the goal needs and the documents do not say. One short line each.
+Enumerate per-topic gaps when evidence is thin or absent for a specific sub-domain:
+- If accelerator model names (H100/H200/B200/GB200/DGX) are absent: flag explicitly.
+- If benchmark specs (memory bandwidth, FLOPS, TDP, precision) are absent: flag explicitly.
+- If software components or framework/CUDA version matrices are absent: state them explicitly.
+- If pricing breakdown (direct purchase vs cloud rental vs software subscription) is absent: state each missing type.
+- If regional availability evidence (Europe vs US separately) or supply chain lead times are absent: flag both regions.
+- If customer/cloud-provider deployment examples are absent: flag explicitly.
+- Competitor claims that only our own battlecards make, and so need external confirmation.
 
 SUMMARY
 3 to 5 sentences strictly reflecting the generated findings and metadata. Must accurately cite numbers present in findings without introducing ungrounded figures. Mention synthetic provenance and key gaps.

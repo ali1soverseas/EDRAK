@@ -430,6 +430,15 @@ class Nodes:
         )
         async with get_db() as db:
             created = await apply_extraction(db, state["workspace_id"], result)
+
+        # Auto-enrich RAG vector store with newly discovered facts
+        try:
+            from edrak.rag.profile_bridge import index_company_facts
+            company_name = state.get("company_name") or "Company"
+            index_company_facts(state["workspace_id"], company_name, [p.fact for p in pending])
+        except Exception as e:
+            logger.warning("Failed to auto-index extracted facts to RAG: %s", e)
+
         return {"created": len(created)}
 
     async def finish(self, state: ResearchState) -> dict[str, Any]:

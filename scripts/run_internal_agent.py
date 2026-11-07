@@ -27,7 +27,8 @@ if hasattr(sys.stderr, "reconfigure"):
 from edrak.agents.internal_intelligence.graph import run_internal_intelligence
 from edrak.contracts.request import BusinessContext, UseCase
 from edrak.contracts.task import ResearchTask, WorkerType
-from edrak.core.profiles import get_gitlab_profile
+from edrak.core.config import settings
+from edrak.core.profiles import get_nvidia_profile
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("run_internal_agent")
@@ -38,13 +39,13 @@ def main():
     parser.add_argument(
         "--goal",
         type=str,
-        default="Assess GitLab Duo product architecture, packaging, and internal OKRs vs GitHub Copilot",
+        default="Assess NVIDIA GPU accelerator portfolio, pricing packaging, software stack, and customer adoption vs AMD Instinct",
         help="Business research goal",
     )
     parser.add_argument(
         "--focus",
         type=str,
-        default="GitLab Duo Agent Platform, AI Gateway, zero retention data privacy, GitLab Credits, and self-hosted readiness",
+        default="H100, H200, B200, GB200 NVL72 specifications, CUDA cuDNN TensorRT software ecosystem, cloud rental pricing, and sovereign AI deals",
         help="Specific focus areas",
     )
     parser.add_argument(
@@ -61,11 +62,12 @@ def main():
     )
     args = parser.parse_args()
 
-    company_profile = get_gitlab_profile()
+    company_profile = get_nvidia_profile()
+    company_profile.workspace_id = settings.DEMO_WORKSPACE_ID
     business_context = BusinessContext(
         use_case=UseCase.COMPETITIVE_INTELLIGENCE,
-        targets=["GitHub Copilot", "Microsoft Azure DevOps", "Atlassian Intelligence"],
-        focus_areas=["AI capabilities", "pricing & packaging", "privacy & governance"],
+        targets=["AMD Instinct MI300X", "Intel Gaudi 3", "Google TPUv5"],
+        focus_areas=["hardware specifications", "pricing & packaging", "software ecosystem", "regional availability"],
     )
 
     task = ResearchTask(

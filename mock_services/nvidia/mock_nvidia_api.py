@@ -132,6 +132,49 @@ class ExportControlResponse(BaseModel):
     notes: str
 
 
+class ProductSpecification(BaseModel):
+    product_name: str
+    architecture: str
+    hbm_capacity_gb: int
+    memory_bandwidth_tbps: float
+    nvlink_version: str
+    nvlink_bandwidth_gbps: int
+    cuda_compute_capability: str
+    fp8_tflops: Optional[float] = None
+    bf16_tflops: Optional[float] = None
+    tdp_watts: int
+    cooling_type: str
+
+
+class SoftwareCatalogItem(BaseModel):
+    component_name: str
+    category: str
+    license_type: str
+    purpose_description: str
+    supported_gpus: str
+    cuda_version_min: str
+    pricing_model: str
+
+
+class FrameworkCompatibilityItem(BaseModel):
+    framework_name: str
+    framework_version: str
+    cuda_version_required: str
+    driver_version_min: str
+    supported_gpus: str
+    native_fp8_support: str
+    status: str
+
+
+class RegionalCloudPricingItem(BaseModel):
+    cloud_provider: str
+    region_name: str
+    gpu_product: str
+    instance_type: str
+    hourly_price_usd: float
+    availability_status: str
+
+
 # Write-side request models (exist only to make spec realistic; agent must never use)
 class CreateDealRequest(BaseModel):
     customer_name: str
@@ -327,6 +370,77 @@ def get_export_control(country: str = FPath(..., description="Country name or en
     if not entry:
         raise HTTPException(status_code=404, detail=f"No export control record for '{country}'. Consult Legal / Trade Compliance.")
     return entry
+
+
+@app.get(
+    "/v1/products/{product_name}/specifications",
+    response_model=ProductSpecification,
+    summary="Get Detailed Hardware Specifications for a GPU Product",
+    description="Returns detailed microarchitecture specifications including memory bandwidth, NVLink rate, FP8/BF16 compute TFLOPS, and cooling requirements.",
+)
+def get_product_specifications(product_name: str = FPath(..., description="GPU product name")) -> ProductSpecification:
+    specs = {
+        "h100": ProductSpecification(product_name="H100 SXM5", architecture="Hopper", hbm_capacity_gb=80, memory_bandwidth_tbps=3.35, nvlink_version="NVLink 4.0", nvlink_bandwidth_gbps=900, cuda_compute_capability="9.0", fp8_tflops=3958.0, bf16_tflops=1979.0, tdp_watts=700, cooling_type="Air or Liquid"),
+        "h200": ProductSpecification(product_name="H200 SXM5", architecture="Hopper", hbm_capacity_gb=141, memory_bandwidth_tbps=4.8, nvlink_version="NVLink 4.0", nvlink_bandwidth_gbps=900, cuda_compute_capability="9.0", fp8_tflops=3958.0, bf16_tflops=1979.0, tdp_watts=700, cooling_type="Air or Liquid"),
+        "b200": ProductSpecification(product_name="B200 SXM5", architecture="Blackwell", hbm_capacity_gb=192, memory_bandwidth_tbps=8.0, nvlink_version="NVLink 5.0", nvlink_bandwidth_gbps=1800, cuda_compute_capability="10.0", fp8_tflops=9000.0, bf16_tflops=4500.0, tdp_watts=700, cooling_type="Liquid or Air"),
+        "gb200": ProductSpecification(product_name="GB200 NVL72", architecture="Blackwell", hbm_capacity_gb=13824, memory_bandwidth_tbps=576.0, nvlink_version="NVLink 5.0", nvlink_bandwidth_gbps=1800, cuda_compute_capability="10.0", fp8_tflops=1440000.0, bf16_tflops=720000.0, tdp_watts=120000, cooling_type="Liquid Only (CDU required)"),
+    }
+    for k, v in specs.items():
+        if k in product_name.lower():
+            return v
+    raise HTTPException(status_code=404, detail=f"No detailed specifications found for '{product_name}'.")
+
+
+@app.get(
+    "/v1/software/catalog",
+    response_model=List[SoftwareCatalogItem],
+    summary="List NVIDIA Enterprise & Open-Source Software Catalog",
+    description="Returns all software offerings including CUDA, cuDNN, TensorRT-LLM, Triton, and NVIDIA AI Enterprise with license models.",
+)
+def get_software_catalog() -> List[SoftwareCatalogItem]:
+    return [
+        SoftwareCatalogItem(component_name="CUDA Toolkit", category="Platform SDK", license_type="Proprietary Free", purpose_description="Parallel computing platform and compilers", supported_gpus="A100, H100, H200, B200", cuda_version_min="11.0", pricing_model="Free"),
+        SoftwareCatalogItem(component_name="cuDNN 9.x", category="Primitives Library", license_type="Proprietary Free", purpose_description="Deep learning primitives and fused flash-attention kernels", supported_gpus="A100, H100, H200, B200", cuda_version_min="11.8", pricing_model="Free"),
+        SoftwareCatalogItem(component_name="TensorRT-LLM", category="Inference Optimization", license_type="Apache 2.0 Open", purpose_description="Paged KV-cache, in-flight batching, 2.8x higher throughput", supported_gpus="H100, H200, B200", cuda_version_min="12.2", pricing_model="Free / Open Source"),
+        SoftwareCatalogItem(component_name="Triton Inference Server", category="Model Serving", license_type="BSD-3 Open", purpose_description="Multi-framework concurrent model serving platform", supported_gpus="A100, H100, H200, B200", cuda_version_min="11.8", pricing_model="Free / Open Source"),
+        SoftwareCatalogItem(component_name="NVIDIA AI Enterprise 5.x", category="Commercial Suite", license_type="Commercial Subscription", purpose_description="Production AI suite with 24/7 SLA, security patches, long-term support", supported_gpus="A100, H100, H200, B200", cuda_version_min="12.0", pricing_model="$4,500/GPU/year or $1.00/GPU/hour"),
+        SoftwareCatalogItem(component_name="NVIDIA NIM Microservices", category="Microservices", license_type="Commercial (NVAIE)", purpose_description="Turnkey OCI containerized endpoints for 100+ open foundation models", supported_gpus="H100, H200, B200", cuda_version_min="12.2", pricing_model="Included in NVAIE ($1.00/GPU/hr)"),
+        SoftwareCatalogItem(component_name="NeMo Framework", category="Training & Guardrails", license_type="Commercial (NVAIE)", purpose_description="Distributed 3D parallelism training, alignment, curation, and guardrails", supported_gpus="H100, H200, B200", cuda_version_min="12.2", pricing_model="Included in NVAIE"),
+    ]
+
+
+@app.get(
+    "/v1/software/framework-compatibility",
+    response_model=List[FrameworkCompatibilityItem],
+    summary="Get Deep Learning Framework and Driver Compatibility Matrix",
+    description="Returns the certified compatibility matrix for PyTorch, TensorFlow, JAX, and ONNX Runtime across CUDA versions.",
+)
+def get_framework_compatibility() -> List[FrameworkCompatibilityItem]:
+    return [
+        FrameworkCompatibilityItem(framework_name="PyTorch", framework_version="2.4.x", cuda_version_required="CUDA 12.4", driver_version_min="550.90.07", supported_gpus="A100, H100, H200, B200", native_fp8_support="Yes (native FP8)", status="Generally Available"),
+        FrameworkCompatibilityItem(framework_name="PyTorch", framework_version="2.3.x", cuda_version_required="CUDA 12.1", driver_version_min="535.154.05", supported_gpus="A100, H100, H200", native_fp8_support="Yes (native FP8)", status="Generally Available"),
+        FrameworkCompatibilityItem(framework_name="TensorFlow", framework_version="2.17.x", cuda_version_required="CUDA 12.4", driver_version_min="550.90.07", supported_gpus="A100, H100, H200, B200", native_fp8_support="Yes (XLA GEMM)", status="Generally Available"),
+        FrameworkCompatibilityItem(framework_name="JAX", framework_version="0.4.31", cuda_version_required="CUDA 12.4", driver_version_min="550.90.07", supported_gpus="A100, H100, H200, B200", native_fp8_support="Yes (Pallas)", status="Generally Available"),
+        FrameworkCompatibilityItem(framework_name="ONNX Runtime", framework_version="1.19.x", cuda_version_required="CUDA 12.4", driver_version_min="550.90.07", supported_gpus="A100, H100, H200, B200", native_fp8_support="Yes (TensorRT EP)", status="Generally Available"),
+    ]
+
+
+@app.get(
+    "/v1/cloud/regional-pricing",
+    response_model=List[RegionalCloudPricingItem],
+    summary="Get Cloud Provider Instance Pricing by Region",
+    description="Returns hourly rental prices and availability status across AWS, Azure, Google Cloud, and Oracle Cloud.",
+)
+def get_cloud_regional_pricing() -> List[RegionalCloudPricingItem]:
+    return [
+        RegionalCloudPricingItem(cloud_provider="AWS", region_name="us-east-1", gpu_product="8x H100 SXM5", instance_type="p5.48xlarge", hourly_price_usd=98.32, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="AWS", region_name="us-west-2", gpu_product="8x H200 SXM5", instance_type="p5en.48xlarge", hourly_price_usd=124.50, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="AWS", region_name="eu-central-1", gpu_product="8x H100 SXM5", instance_type="p5.48xlarge", hourly_price_usd=108.15, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="Azure", region_name="East US", gpu_product="8x H100 SXM5", instance_type="ND96isr H100 v5", hourly_price_usd=96.80, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="Azure", region_name="West Europe", gpu_product="8x H200 SXM5", instance_type="ND96isr H200 v5", hourly_price_usd=129.40, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="Google Cloud", region_name="us-central1", gpu_product="8x H100 SXM5", instance_type="a3-highgpu-8g", hourly_price_usd=97.20, availability_status="Generally Available"),
+        RegionalCloudPricingItem(cloud_provider="Oracle OCI", region_name="us-ashburn-1", gpu_product="8x H100 SXM5", instance_type="BM.GPU.H100.8", hourly_price_usd=80.00, availability_status="Generally Available"),
+    ]
 
 
 # ─────────────────────────────────────────────────────────────────────────────

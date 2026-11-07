@@ -1,13 +1,16 @@
 """Seeds a rich mock SQLite relational database for NVIDIA enterprise intelligence testing.
 
-This version adds:
-  * 5 GPU products (original)
-  * 12 enterprise deals across NA / EMEA / APAC / MENA / Sovereign AI
-  * 5 software ARR subscriptions
-  * NEW: supply_chain_constraints table (CoWoS, TSMC allocation, lead times)
-  * NEW: competitor_benchmarks table (H100 vs AMD MI300X vs Google TPUv5)
-  * NEW: sales_pipeline_forecast table (open pipeline, stage, expected close)
-  * NEW: export_control_flags table (controlled destinations, license type)
+Tables included:
+  1. gpu_products (with technical specs: bandwidth, NVLink, compute capability, FLOPS)
+  2. enterprise_deals (14 enterprise deals across NA / EMEA / APAC / MENA / Sovereign AI)
+  3. software_arr (ARR subscriptions, growth, pricing models)
+  4. supply_chain_constraints (CoWoS, TSMC allocation, lead times, bottlenecks)
+  5. competitor_benchmarks (H100/H200/B200 vs AMD MI300X/MI325X vs Google TPU)
+  6. sales_pipeline_forecast (open pipeline, stage, expected close, probability)
+  7. export_control_flags (controlled destinations, BIS regulations, license type)
+  8. software_catalog (CUDA, cuDNN, TensorRT, TensorRT-LLM, Triton, NVAIE, NIM, NeMo)
+  9. framework_compatibility (PyTorch, TensorFlow, JAX, ONNX Runtime versions & CUDA pairings)
+ 10. regional_cloud_availability (AWS, Azure, GCP, OCI instance types, pricing, and regional status)
 """
 
 import os
@@ -37,26 +40,34 @@ def seed_database(db_path: str) -> None:
         target_gross_margin_pct REAL NOT NULL,
         release_quarter TEXT NOT NULL,
         tdp_watts INTEGER,
-        hbm_capacity_gb INTEGER
+        hbm_capacity_gb INTEGER,
+        memory_bandwidth_tbps REAL,
+        nvlink_version TEXT,
+        nvlink_bandwidth_gbps INTEGER,
+        cuda_compute_capability TEXT,
+        fp8_tflops REAL,
+        bf16_tflops REAL
     );
     """)
     cur.executemany("""
     INSERT INTO gpu_products
         (product_name, architecture, segment, target_asp_usd, target_gross_margin_pct,
-         release_quarter, tdp_watts, hbm_capacity_gb)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+         release_quarter, tdp_watts, hbm_capacity_gb, memory_bandwidth_tbps,
+         nvlink_version, nvlink_bandwidth_gbps, cuda_compute_capability, fp8_tflops, bf16_tflops)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     """, [
-        ("GB200 NVL72 rack",       "Blackwell",   "Hyperscaler",          2_900_000.0, 75.0, "Q2 FY2026", 120_000, 13_824),
-        ("B200 GPU",               "Blackwell",   "Enterprise / Cloud",      32_500.0, 73.5, "Q2 FY2026",     700,   192),
-        ("H200 GPU",               "Hopper",      "Enterprise / Cloud",      27_000.0, 71.0, "Q1 FY2025",     700,   141),
-        ("H100 GPU (legacy)",      "Hopper",      "Price-sensitive",         19_500.0, 66.5, "Q3 FY2023",     700,    80),
-        ("Spectrum-X switch bundle","Spectrum-X", "Enterprise Ethernet",    250_000.0, 62.5, "Q4 FY2024",    None,  None),
-        ("GB300 GPU (preview)",    "Blackwell Ultra","Hyperscaler Preview",  45_000.0, 76.0, "Q3 FY2026",     800,   288),
-        ("DGX H200 system",        "Hopper",      "On-Prem Enterprise",     300_000.0, 68.0, "Q2 FY2025",   10_200,  1_128),
+        ("GB200 NVL72 rack",        "Blackwell",       "Hyperscaler",         2_900_000.0, 75.0, "Q2 FY2026", 120_000, 13_824, 576.0, "NVLink 5.0", 1800, "10.0", 1_440_000.0, 720_000.0),
+        ("B200 GPU",                "Blackwell",       "Enterprise / Cloud",     32_500.0, 73.5, "Q2 FY2026",     700,    192,   8.0, "NVLink 5.0", 1800, "10.0",     9_000.0,   4_500.0),
+        ("H200 GPU",                "Hopper",          "Enterprise / Cloud",     27_000.0, 71.0, "Q1 FY2025",     700,    141,   4.8, "NVLink 4.0",  900,  "9.0",     3_958.0,   1_979.0),
+        ("H100 GPU (legacy)",       "Hopper",          "Price-sensitive",        19_500.0, 66.5, "Q3 FY2023",     700,     80,   3.35,"NVLink 4.0",  900,  "9.0",     3_958.0,   1_979.0),
+        ("Spectrum-X switch bundle","Spectrum-X",      "Enterprise Ethernet",   250_000.0, 62.5, "Q4 FY2024",    None,   None,  None, "Spectrum-4", 51200, None,         None,      None),
+        ("GB300 GPU (preview)",     "Blackwell Ultra", "Hyperscaler Preview",    45_000.0, 76.0, "Q3 FY2026",     800,    288,  10.0, "NVLink 5.0", 1800, "10.0",    12_000.0,   6_000.0),
+        ("DGX H200 system",         "Hopper",          "On-Prem Enterprise",    300_000.0, 68.0, "Q2 FY2025",  10_200,  1_128,  38.4, "NVLink 4.0",  900,  "9.0",    31_664.0,  15_832.0),
+        ("A100 GPU (legacy)",       "Ampere",          "Maintenance / Budget",   12_000.0, 58.0, "Q2 FY2020",     400,     80,   2.0, "NVLink 3.0",  600,  "8.0",        None,     312.0),
     ])
 
     # ------------------------------------------------------------------
-    # 2. Enterprise Deals (expanded to 14 rows)
+    # 2. Enterprise Deals
     # ------------------------------------------------------------------
     cur.execute("""
     CREATE TABLE enterprise_deals (
@@ -124,7 +135,7 @@ def seed_database(db_path: str) -> None:
     ])
 
     # ------------------------------------------------------------------
-    # 4. Supply Chain Constraints (NEW)
+    # 4. Supply Chain Constraints
     # ------------------------------------------------------------------
     cur.execute("""
     CREATE TABLE supply_chain_constraints (
@@ -155,7 +166,7 @@ def seed_database(db_path: str) -> None:
     ])
 
     # ------------------------------------------------------------------
-    # 5. Competitor Benchmarks (NEW)
+    # 5. Competitor Benchmarks
     # ------------------------------------------------------------------
     cur.execute("""
     CREATE TABLE competitor_benchmarks (
@@ -189,7 +200,7 @@ def seed_database(db_path: str) -> None:
     ])
 
     # ------------------------------------------------------------------
-    # 6. Sales Pipeline Forecast (NEW)
+    # 6. Sales Pipeline Forecast
     # ------------------------------------------------------------------
     cur.execute("""
     CREATE TABLE sales_pipeline_forecast (
@@ -223,7 +234,7 @@ def seed_database(db_path: str) -> None:
     ])
 
     # ------------------------------------------------------------------
-    # 7. Export Control Flags (NEW)
+    # 7. Export Control Flags
     # ------------------------------------------------------------------
     cur.execute("""
     CREATE TABLE export_control_flags (
@@ -253,11 +264,109 @@ def seed_database(db_path: str) -> None:
         ("India",                 "General Permitted", "EAR99 / NLR",          "H100, H200, B200",          "India non-restricted country","2024-01-01", "India not on restricted country list; standard EAR controls apply"),
     ])
 
+    # ------------------------------------------------------------------
+    # 8. Software Catalog (NEW)
+    # ------------------------------------------------------------------
+    cur.execute("""
+    CREATE TABLE software_catalog (
+        software_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        component_name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        license_type TEXT NOT NULL,
+        purpose_description TEXT NOT NULL,
+        supported_gpus TEXT NOT NULL,
+        cuda_version_min TEXT NOT NULL,
+        pricing_model TEXT NOT NULL
+    );
+    """)
+    cur.executemany("""
+    INSERT INTO software_catalog
+        (component_name, category, license_type, purpose_description,
+         supported_gpus, cuda_version_min, pricing_model)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+    """, [
+        ("CUDA Toolkit",            "Platform SDK",         "Proprietary Free",  "Parallel computing platform and C/C++/Python compiler tools", "A100, H100, H200, B200, GB200", "11.0", "Free"),
+        ("cuDNN",                   "Primitives Library",   "Proprietary Free",  "Deep neural network primitives (convolutions, flash-attention, pooling)", "A100, H100, H200, B200", "11.8", "Free"),
+        ("TensorRT",                "Inference Engine",     "Proprietary Free",  "Deep learning inference optimizer and serialized engine runtime", "A100, H100, H200, B200", "12.0", "Free"),
+        ("TensorRT-LLM",            "LLM Inference Library","Apache 2.0 Open",   "In-flight batching, paged KV-cache, and KV compression for LLMs", "H100, H200, B200", "12.2", "Free / Open Source"),
+        ("NCCL",                    "Interconnect Comms",   "BSD-3 Open",        "Multi-GPU/multi-node collective communication primitives", "A100, H100, H200, B200, GB200", "11.0", "Free / Open Source"),
+        ("Triton Inference Server", "Model Serving Platform","BSD-3 Open",       "Multi-framework (PyTorch, TRT, ONNX) concurrent model serving endpoint", "A100, H100, H200, B200", "11.8", "Free / Open Source"),
+        ("NVIDIA AI Enterprise 5.x","Commercial Suite",     "Enterprise Commercial","Turnkey enterprise platform with SLA, 24/7 support, security patches", "A100, H100, H200, B200", "12.0", "$4,500/GPU/year or $1.00/GPU/hour"),
+        ("NIM Microservices",       "Commercial Containers","Enterprise Commercial","Pre-built containerized inference endpoints for 100+ open foundation models", "H100, H200, B200", "12.2", "Included in NVAIE ($1.00/GPU/hr)"),
+        ("NeMo Framework",          "Training & Guardrails","Enterprise Commercial","Distributed 3D parallelism training, alignment, curation, and guardrails", "H100, H200, B200", "12.2", "Included in NVAIE"),
+        ("DGX Cloud Orchestrator",  "Managed SaaS",         "Enterprise Commercial","Fully managed cloud supercomputing infrastructure and scheduler", "H100, H200, B200", "12.0", "$36,900/node/month"),
+    ])
+
+    # ------------------------------------------------------------------
+    # 9. Framework Compatibility Matrix (NEW)
+    # ------------------------------------------------------------------
+    cur.execute("""
+    CREATE TABLE framework_compatibility (
+        compatibility_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        framework_name TEXT NOT NULL,
+        framework_version TEXT NOT NULL,
+        cuda_version_required TEXT NOT NULL,
+        driver_version_min TEXT NOT NULL,
+        supported_gpus TEXT NOT NULL,
+        native_fp8_support TEXT NOT NULL,
+        native_fp4_support TEXT NOT NULL,
+        status TEXT NOT NULL
+    );
+    """)
+    cur.executemany("""
+    INSERT INTO framework_compatibility
+        (framework_name, framework_version, cuda_version_required, driver_version_min,
+         supported_gpus, native_fp8_support, native_fp4_support, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    """, [
+        ("PyTorch",       "2.4.x",  "CUDA 12.4", "550.90.07", "A100, H100, H200, B200", "Yes (torch.float8_e4m3fn)", "Yes (via TorchAO)", "Generally Available"),
+        ("PyTorch",       "2.3.x",  "CUDA 12.1", "535.154.05", "A100, H100, H200",       "Yes (torch.float8_e4m3fn)", "No",                 "Generally Available"),
+        ("TensorFlow",    "2.17.x", "CUDA 12.4", "550.90.07", "A100, H100, H200, B200", "Yes (XLA GEMM)",           "Experimental",       "Generally Available"),
+        ("TensorFlow",    "2.16.x", "CUDA 12.3", "535.154.05", "A100, H100, H200",       "Yes (XLA GEMM)",           "No",                 "Maintenance"),
+        ("JAX",           "0.4.31", "CUDA 12.4", "550.90.07", "A100, H100, H200, B200", "Yes (Pallas kernels)",     "Experimental",       "Generally Available"),
+        ("ONNX Runtime",  "1.19.x", "CUDA 12.4", "550.90.07", "A100, H100, H200, B200", "Yes (TensorRT 10.3 EP)",   "Yes",                "Generally Available"),
+    ])
+
+    # ------------------------------------------------------------------
+    # 10. Regional Cloud Availability (NEW)
+    # ------------------------------------------------------------------
+    cur.execute("""
+    CREATE TABLE regional_cloud_availability (
+        availability_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cloud_provider TEXT NOT NULL,
+        region_name TEXT NOT NULL,
+        gpu_product TEXT NOT NULL,
+        instance_type TEXT NOT NULL,
+        hourly_price_usd REAL NOT NULL,
+        availability_status TEXT NOT NULL,
+        launch_date TEXT NOT NULL
+    );
+    """)
+    cur.executemany("""
+    INSERT INTO regional_cloud_availability
+        (cloud_provider, region_name, gpu_product, instance_type,
+         hourly_price_usd, availability_status, launch_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+    """, [
+        ("AWS",          "us-east-1 (N. Virginia)", "8x H100 SXM5", "p5.48xlarge",    98.32,  "Generally Available", "2023-08-01"),
+        ("AWS",          "us-west-2 (Oregon)",      "8x H200 SXM5", "p5en.48xlarge",  124.50, "Generally Available", "2024-10-15"),
+        ("AWS",          "eu-central-1 (Frankfurt)","8x H100 SXM5", "p5.48xlarge",   108.15,  "Generally Available", "2024-02-01"),
+        ("Azure",        "East US",                 "8x H100 SXM5", "ND96isr H100 v5", 96.80, "Generally Available", "2023-09-01"),
+        ("Azure",        "West Europe (NL)",        "8x H200 SXM5", "ND96isr H200 v5",129.40, "Generally Available", "2024-11-01"),
+        ("Azure",        "Central US",              "GB200 NVL72",  "NDv6 Blackwell",  950.00, "Preview / Tier-1",    "2025-06-01"),
+        ("Google Cloud", "us-central1 (Iowa)",      "8x H100 SXM5", "a3-highgpu-8g",   97.20,  "Generally Available", "2023-11-01"),
+        ("Google Cloud", "europe-west4 (Eemshaven)","8x H200 SXM5", "a3-megagpu-8g", 126.80,  "Generally Available", "2025-01-15"),
+        ("Oracle OCI",   "us-ashburn-1",            "8x H100 SXM5", "BM.GPU.H100.8",   80.00,  "Generally Available", "2023-07-01"),
+        ("Oracle OCI",   "eu-frankfurt-1",          "8x H200 SXM5", "BM.GPU.H200.8",  105.00,  "Generally Available", "2024-12-01"),
+        ("CoreWeave",    "US-East (New Jersey)",    "8x H100 SXM5", "HGX H100",        63.84,  "Generally Available", "2023-06-01"),
+    ])
+
     conn.commit()
     conn.close()
-    print(f"Successfully seeded NVIDIA SQLite Database at: {db_path}")
-    print("Tables: gpu_products, enterprise_deals, software_arr, "
-          "supply_chain_constraints, competitor_benchmarks, sales_pipeline_forecast, export_control_flags")
+    print(f"Successfully seeded expanded NVIDIA SQLite Database at: {db_path}")
+    print("Tables created (10): gpu_products, enterprise_deals, software_arr, supply_chain_constraints, "
+          "competitor_benchmarks, sales_pipeline_forecast, export_control_flags, software_catalog, "
+          "framework_compatibility, regional_cloud_availability")
 
 
 if __name__ == "__main__":

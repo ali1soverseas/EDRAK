@@ -214,6 +214,117 @@
         }
       }
     },
+    "/v1/products/{product_name}/specifications": {
+      "get": {
+        "summary": "Get Detailed Hardware Specifications for a GPU Product",
+        "description": "Returns detailed microarchitecture specifications including memory bandwidth, NVLink rate, FP8/BF16 compute TFLOPS, and cooling requirements.",
+        "operationId": "get_product_specifications_v1_products__product_name__specifications_get",
+        "parameters": [
+          {
+            "name": "product_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "GPU product name",
+              "title": "Product Name"
+            },
+            "description": "GPU product name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSpecification"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/software/catalog": {
+      "get": {
+        "summary": "List NVIDIA Enterprise & Open-Source Software Catalog",
+        "description": "Returns all software offerings including CUDA, cuDNN, TensorRT-LLM, Triton, and NVIDIA AI Enterprise with license models.",
+        "operationId": "get_software_catalog_v1_software_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SoftwareCatalogItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get Software Catalog V1 Software Catalog Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/software/framework-compatibility": {
+      "get": {
+        "summary": "Get Deep Learning Framework and Driver Compatibility Matrix",
+        "description": "Returns the certified compatibility matrix for PyTorch, TensorFlow, JAX, and ONNX Runtime across CUDA versions.",
+        "operationId": "get_framework_compatibility_v1_software_framework_compatibility_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FrameworkCompatibilityItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get Framework Compatibility V1 Software Framework Compatibility Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cloud/regional-pricing": {
+      "get": {
+        "summary": "Get Cloud Provider Instance Pricing by Region",
+        "description": "Returns hourly rental prices and availability status across AWS, Azure, Google Cloud, and Oracle Cloud.",
+        "operationId": "get_cloud_regional_pricing_v1_cloud_regional_pricing_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RegionalCloudPricingItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get Cloud Regional Pricing V1 Cloud Regional Pricing Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/deals/create": {
       "post": {
         "summary": "[WRITE] Create a New Enterprise Deal Record",
@@ -696,6 +807,49 @@
         ],
         "title": "ExportControlResponse"
       },
+      "FrameworkCompatibilityItem": {
+        "properties": {
+          "framework_name": {
+            "type": "string",
+            "title": "Framework Name"
+          },
+          "framework_version": {
+            "type": "string",
+            "title": "Framework Version"
+          },
+          "cuda_version_required": {
+            "type": "string",
+            "title": "Cuda Version Required"
+          },
+          "driver_version_min": {
+            "type": "string",
+            "title": "Driver Version Min"
+          },
+          "supported_gpus": {
+            "type": "string",
+            "title": "Supported Gpus"
+          },
+          "native_fp8_support": {
+            "type": "string",
+            "title": "Native Fp8 Support"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "framework_name",
+          "framework_version",
+          "cuda_version_required",
+          "driver_version_min",
+          "supported_gpus",
+          "native_fp8_support",
+          "status"
+        ],
+        "title": "FrameworkCompatibilityItem"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -778,6 +932,81 @@
         ],
         "title": "ProductMarginResponse"
       },
+      "ProductSpecification": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "architecture": {
+            "type": "string",
+            "title": "Architecture"
+          },
+          "hbm_capacity_gb": {
+            "type": "integer",
+            "title": "Hbm Capacity Gb"
+          },
+          "memory_bandwidth_tbps": {
+            "type": "number",
+            "title": "Memory Bandwidth Tbps"
+          },
+          "nvlink_version": {
+            "type": "string",
+            "title": "Nvlink Version"
+          },
+          "nvlink_bandwidth_gbps": {
+            "type": "integer",
+            "title": "Nvlink Bandwidth Gbps"
+          },
+          "cuda_compute_capability": {
+            "type": "string",
+            "title": "Cuda Compute Capability"
+          },
+          "fp8_tflops": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fp8 Tflops"
+          },
+          "bf16_tflops": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bf16 Tflops"
+          },
+          "tdp_watts": {
+            "type": "integer",
+            "title": "Tdp Watts"
+          },
+          "cooling_type": {
+            "type": "string",
+            "title": "Cooling Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "architecture",
+          "hbm_capacity_gb",
+          "memory_bandwidth_tbps",
+          "nvlink_version",
+          "nvlink_bandwidth_gbps",
+          "cuda_compute_capability",
+          "tdp_watts",
+          "cooling_type"
+        ],
+        "title": "ProductSpecification"
+      },
       "ProductSummary": {
         "properties": {
           "product_name": {
@@ -837,6 +1066,87 @@
           "release_quarter"
         ],
         "title": "ProductSummary"
+      },
+      "RegionalCloudPricingItem": {
+        "properties": {
+          "cloud_provider": {
+            "type": "string",
+            "title": "Cloud Provider"
+          },
+          "region_name": {
+            "type": "string",
+            "title": "Region Name"
+          },
+          "gpu_product": {
+            "type": "string",
+            "title": "Gpu Product"
+          },
+          "instance_type": {
+            "type": "string",
+            "title": "Instance Type"
+          },
+          "hourly_price_usd": {
+            "type": "number",
+            "title": "Hourly Price Usd"
+          },
+          "availability_status": {
+            "type": "string",
+            "title": "Availability Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cloud_provider",
+          "region_name",
+          "gpu_product",
+          "instance_type",
+          "hourly_price_usd",
+          "availability_status"
+        ],
+        "title": "RegionalCloudPricingItem"
+      },
+      "SoftwareCatalogItem": {
+        "properties": {
+          "component_name": {
+            "type": "string",
+            "title": "Component Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "license_type": {
+            "type": "string",
+            "title": "License Type"
+          },
+          "purpose_description": {
+            "type": "string",
+            "title": "Purpose Description"
+          },
+          "supported_gpus": {
+            "type": "string",
+            "title": "Supported Gpus"
+          },
+          "cuda_version_min": {
+            "type": "string",
+            "title": "Cuda Version Min"
+          },
+          "pricing_model": {
+            "type": "string",
+            "title": "Pricing Model"
+          }
+        },
+        "type": "object",
+        "required": [
+          "component_name",
+          "category",
+          "license_type",
+          "purpose_description",
+          "supported_gpus",
+          "cuda_version_min",
+          "pricing_model"
+        ],
+        "title": "SoftwareCatalogItem"
       },
       "SupplyChainLeadTimesResponse": {
         "properties": {

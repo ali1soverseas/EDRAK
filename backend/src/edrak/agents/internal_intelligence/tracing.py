@@ -14,7 +14,13 @@ from pathlib import Path
 from typing import Any, Callable, TypeVar, cast
 from uuid import uuid4
 
-from deepeval.tracing import observe
+try:
+    from deepeval.tracing import observe
+except ImportError:
+    def observe(*args: Any, **kwargs: Any) -> Callable[[F], F]:
+        def decorator(func: F) -> F:
+            return func
+        return decorator
 
 from edrak.contracts.task import ResearchTask
 from edrak.core.config import settings

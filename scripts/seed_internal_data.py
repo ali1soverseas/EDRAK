@@ -1,4 +1,4 @@
-"""Seed script to index GitLab internal knowledge and handbook documents into ChromaDB."""
+"""Seed script to index NVIDIA internal knowledge into ChromaDB."""
 
 import logging
 from pathlib import Path
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     logger.info("==================================================================")
-    logger.info("Initializing EDRAK Internal Knowledge Seeding...")
+    logger.info("Initializing EDRAK Internal Knowledge Seeding (NVIDIA)...")
     logger.info("==================================================================")
 
     indexer = InternalIndexer()
@@ -29,7 +29,7 @@ def main():
     internal_data_dir = settings.get_absolute_internal_data_path()
     logger.info("Scanning directory: %s", internal_data_dir)
 
-    total_chunks = indexer.index_directory(internal_data_dir, is_synthetic=True)
+    total_chunks = indexer.index_directory(internal_data_dir, is_synthetic=True, workspace_id=settings.DEMO_WORKSPACE_ID)
     logger.info("Successfully indexed %d chunks into ChromaDB collection '%s'.", total_chunks, settings.CHROMA_COLLECTION_NAME)
 
     retriever = InternalRetriever()
@@ -58,17 +58,17 @@ def main():
 
     # Verification probe queries
     probes = [
-        ("GitLab pricing packaging credits strategy", "gitlab_credits"),
-        ("GitLab Duo vs GitHub Copilot competitive assessment", "github_copilot"),
-        ("zero retention data privacy air-gapped self-hosted", "ai_gateway"),
-        ("GitLab Duo Agent Platform general availability", "duo_agent_platform"),
-        ("internal OKRs objectives key results telemetry", "okr"),
+        ("NVIDIA H100 H200 B200 GPU accelerator portfolio specifications", "nvidia_accelerator_portfolio"),
+        ("CUDA cuDNN TensorRT software ecosystem framework compatibility", "nvidia_software_ecosystem"),
+        ("NVIDIA pricing GPU cost per unit cloud rental AI Enterprise", "nvidia_pricing_commercial"),
+        ("Microsoft Azure Amazon AWS Google Cloud NVIDIA GPU deployment adoption", "nvidia_customer_adoption"),
+        ("Europe United States regional availability supply chain lead time", "nvidia_regional_availability"),
     ]
 
     logger.info("\n--- Running Probe Query Verifications ---")
     all_passed = True
     for query, expected_sub in probes:
-        results = retriever.retrieve(query=query, top_k=5)
+        results = retriever.retrieve(query=query, top_k=5, workspace_id=settings.DEMO_WORKSPACE_ID)
         uris = [ev.source_url for ev in results]
         passed = any(expected_sub in u for u in uris)
         if passed:

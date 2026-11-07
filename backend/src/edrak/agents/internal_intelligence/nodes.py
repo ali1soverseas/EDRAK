@@ -126,7 +126,7 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
             f"{describe_context(task.company_profile, task.business_context)}\n"
             f"Research Goal: {task.goal}\n"
             f"Task Focus: {task.focus}\n\n"
-            "Formulate up to 6 precise natural-language queries covering the checklist topics as JSON."
+            "Formulate up to 10 precise natural-language queries covering the checklist topics as JSON."
         )
         resp = get_json_object(
             INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT,
