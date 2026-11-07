@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useI18n, type TKey } from "../../i18n";
 import { modKey } from "../../lib/platform";
 import { useL } from "../../lib/useL";
 import { edrak } from "../../services/edrak";
@@ -8,7 +9,7 @@ import { ThinkingMark } from "../ui/ThinkingMark";
 export interface ChatScope { briefId?: string; cardKey?: string; signalId?: string; title?: string; nonce?: number }
 
 type Label = "brief" | "web_unverified" | "not_covered";
-interface Msg { role: "user" | "assistant"; content: string; label?: Label; notes?: string[]; proposal?: string | null; addedNote?: string; error?: boolean }
+interface Msg { role: "user" | "assistant"; content: string; contentKey?: string | null; label?: Label; notes?: string[]; proposal?: string | null; addedNote?: string; error?: boolean }
 
 /** Answer text with [E12] turned into source chips. */
 function Answer({ text, onEvidence }: { text: string; onEvidence?: (n: number) => void }) {
@@ -43,15 +44,36 @@ export function ChatPanel({ scope, variant, onClose, onEvidence }: {
   scope: ChatScope; variant: "docked" | "floating"; onClose: () => void; onEvidence?: (n: number) => void;
 }) {
   const L = useL();
+  const { lang, t } = useI18n();
   const [thread, setThread] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const list = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const threadRef = useRef(thread);
+  threadRef.current = thread;
   const kind = scope.cardKey ? "card" : scope.signalId ? "signal" : scope.briefId ? "brief" : "workspace";
 
   useEffect(() => { input.current?.focus(); }, []);
+  useEffect(() => {
+    const id = threadRef.current;
+    if (!id) return;
+    let cancel = false;
+    void edrak.messages(id).then((rows) => {
+      if (cancel) return;
+      setMsgs((current) => {
+        const mapped = rows.map((row) => ({
+          role: row.role === "user" ? "user" as const : "assistant" as const,
+          content: String(row.content ?? ""),
+          contentKey: typeof row.content_key === "string" ? row.content_key : null,
+        }));
+        if (current.length !== mapped.length) return mapped;
+        return current.map((msg, index) => ({ ...msg, content: mapped[index].content, contentKey: mapped[index].contentKey }));
+      });
+    }).catch(() => undefined);
+    return () => { cancel = true; };
+  }, [lang]);
   useEffect(() => { list.current?.scrollTo({ top: list.current.scrollHeight, behavior: "smooth" }); }, [msgs, busy]);
   useEffect(() => {
     const el = input.current;
@@ -108,17 +130,17 @@ export function ChatPanel({ scope, variant, onClose, onEvidence }: {
             setBusy(tool === "web_search" ? L("Searching the web", "يبحث في الويب") : tool === "get_metric" || tool === "get_card" ? L("Reading the figures", "يقرأ الأرقام") : L("Searching the brief", "يبحث في الموجز"));
           } else if (e.type === "answer") {
             answered = true;
-            setMsgs((m) => [...m, { role: "assistant", content: String(e.data.answer ?? ""), label: e.data.label as Label, notes: e.data.notes as string[], proposal: e.data.proposal as string | null }]);
+            setMsgs((m) => [...m, { role: "assistant", content: String(e.data.answer ?? ""), contentKey: typeof e.data.content_key === "string" ? e.data.content_key : null, label: e.data.label as Label, notes: e.data.notes as string[], proposal: e.data.proposal as string | null }]);
           } else if (e.type === "error") {
             answered = true;
-            setMsgs((m) => [...m, { role: "assistant", content: String(e.data.message ?? ""), error: true }]);
+            setMsgs((m) => [...m, { role: "assistant", content: String(e.data.message ?? ""), contentKey: typeof e.data.content_key === "string" ? e.data.content_key : null, error: true }]);
           }
         });
         if (!answered) setMsgs((m) => [...m, { role: "assistant", content: L("No answer came back. Try again.", "لم يصل رد. حاول مجددًا."), error: true }]);
       } else {
         setBusy(L("Thinking", "يفكر"));
         const reply = await edrak.ask(id, content);
-        setMsgs((m) => [...m, { role: "assistant", content: String(reply.content ?? "") }]);
+        setMsgs((m) => [...m, { role: "assistant", content: String(reply.content ?? ""), contentKey: typeof reply.content_key === "string" ? reply.content_key : null }]);
       }
     } catch (e) {
       setMsgs((m) => [...m, { role: "assistant", content: (e as Error).message || L("Something went wrong.", "حدث خطأ."), error: true }]);
@@ -179,7 +201,7 @@ export function ChatPanel({ scope, variant, onClose, onEvidence }: {
             <span className="bubble-mark"><ThinkingMark size={14} live={false} color="var(--ink)" /></span>
             <div className="stack gap8 grow" style={{ minWidth: 0 }}>
               {m.label && <SourceLabel label={m.label} />}
-              <Answer text={m.content} onEvidence={onEvidence} />
+              <Answer text={m.contentKey ? t(m.contentKey as TKey) : m.content} onEvidence={onEvidence} />
               {m.notes?.filter(Boolean).map((n) => <span key={n} className="s12 t3">{n}</span>)}
               {m.proposal && <span className="s12 t2"><b>{L("Worth researching next", "يستحق البحث لاحقًا")}:</b> {m.proposal}</span>}
               {m.label === "web_unverified" && scope.cardKey && !m.addedNote && (

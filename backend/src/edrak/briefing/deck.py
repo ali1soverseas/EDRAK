@@ -63,7 +63,8 @@ def _comparison(doc: dict[str, Any], template: Any, company: str) -> list[dict[s
         periods = {(m.get("period") or "").lower() for m in [*ours, *theirs]}
         rows.append({"metric_id": metric_id, "name": defn.name, "ours": [cell(m) for m in ours], "theirs": [cell(m) for m in theirs],
                      "comparable": len(periods) <= 1,
-                     "note": None if len(periods) <= 1 else "Periods differ, so these are listed side by side, not compared."})
+                     "note": None if len(periods) <= 1 else "Periods differ, so these are listed side by side, not compared.",
+                     "note_key": None if len(periods) <= 1 else "brief.periodsDiffer"})
     return rows
 
 
@@ -139,6 +140,8 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
         "kpis": kpi_keys[:4],
         "coverage": doc.get("coverage"),
         "limits": (doc.get("summary") or {}).get("limits"),
+        "limits_key": (doc.get("summary") or {}).get("limits_key"),
+        "limits_params": (doc.get("summary") or {}).get("limits_params") or {},
         "counts": doc.get("counts"),
         "unmet": doc.get("unmet_dimensions") or [],
     }

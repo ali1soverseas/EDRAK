@@ -10,6 +10,7 @@ import { Overlay } from "../components/ui/Overlay";
 import { ProgressBar } from "../components/ui/Progress";
 import { WorkerBadge } from "../components/ui/WorkerBadge";
 import { useI18n, type TKey } from "../i18n";
+import { usePhrase } from "../lib/phrase";
 import { useNow, usePolled } from "../lib/hooks";
 import { useStickToBottom } from "../lib/useStickToBottom";
 import { USE_CASE_META } from "../lib/usecases";
@@ -83,6 +84,7 @@ function TaskChip({ state }: { state: RunTaskView["state"] }) {
 
 function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean; onToggle: () => void }) {
   const { t, tn, formatTimeSeconds, formatNumber } = useI18n();
+  const phrase = usePhrase();
   const logRef = useStickToBottom<HTMLDivElement>(task.log.length);
   const meta = WORKER_META[task.worker];
   const color = task.state === "failed" ? "var(--bad)" : meta.color;
@@ -97,7 +99,7 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
             <TaskChip state={task.state} />
           </div>
           <div className="s13 t2 ellip" dir="auto">
-            {task.activity}
+            {phrase(task.activity, task.activity_key, task.activity_params)}
             {task.state === "running" && <span className="caret" aria-hidden="true" />}
           </div>
         </div>
@@ -128,7 +130,7 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
                 {formatTimeSeconds(entry.at)}
               </span>
               <span dir="auto" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
-                {entry.text}
+                {phrase(entry.text, entry.text_key ?? entry.key, entry.params)}
               </span>
             </div>
           ))}
@@ -146,6 +148,7 @@ function WorkerCard({ task, open, onToggle }: { task: RunTaskView; open: boolean
 
 function VerificationCard({ run }: { run: RunView }) {
   const { t, formatTimeSeconds, formatNumber } = useI18n();
+  const phrase = usePhrase();
   const log = run.verification_log ?? [];
   const logRef = useStickToBottom<HTMLDivElement>(log.length);
   const showLog = run.verification === "running" && log.length > 0;
@@ -154,7 +157,7 @@ function VerificationCard({ run }: { run: RunView }) {
   const reported = run.tasks.length - failed;
 
   let body: string;
-  if (run.verification === "running") body = run.verification_activity || t("run.verify.running");
+  if (run.verification === "running") body = phrase(run.verification_activity || "", run.verification_activity_key, run.verification_activity_params) || t("run.verify.running");
   else if (run.verification === "done") body = t("run.verify.done");
   else if (allIn && failed > 0 && reported > 0) body = t("run.verify.next", { reported, total: run.tasks.length });
   else if (run.state === "failed" || run.state === "cancelled") body = t("run.verify.skipped");
@@ -200,7 +203,7 @@ function VerificationCard({ run }: { run: RunView }) {
                 {formatTimeSeconds(entry.at)}
               </span>
               <span dir="auto" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
-                {entry.text}
+                {phrase(entry.text, entry.key, entry.params)}
               </span>
             </div>
           ))}
@@ -212,6 +215,7 @@ function VerificationCard({ run }: { run: RunView }) {
 
 function EventRow({ event }: { event: RunEvent }) {
   const { t, formatTime } = useI18n();
+  const phrase = usePhrase();
   let source = event.source;
   if (event.source === "supervisor") {
     source = t("run.log.supervisor");
@@ -227,7 +231,7 @@ function EventRow({ event }: { event: RunEvent }) {
   const callout = event.callout;
   const isDecision = event.kind === "failure" || event.kind === "decision";
 
-  const text = callout?.highlight && callout.text.includes(callout.highlight)
+  const text = callout?.highlight && !callout.text_key && callout.text.includes(callout.highlight)
     ? (() => {
         const start = callout.text.indexOf(callout.highlight);
         return (
@@ -238,7 +242,7 @@ function EventRow({ event }: { event: RunEvent }) {
           </>
         );
       })()
-    : callout?.text;
+    : phrase(callout?.text ?? "", callout?.text_key, callout?.text_params);
 
   return (
     <div className="row as g12">
@@ -248,7 +252,7 @@ function EventRow({ event }: { event: RunEvent }) {
       <div className="grow">
         <div className="row g6 s12 t3">{source}</div>
         <div className="s13 lh14" dir="auto" style={{ marginTop: 2 }}>
-          {event.message}
+          {phrase(event.message, event.message_key, event.message_params)}
         </div>
         {callout && (
           <div
@@ -453,11 +457,11 @@ function ReviewPanel({ run, onDone }: { run: RunView; onDone: () => void }) {
 }
 
 export function LiveRun() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const L = useL();
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const run = usePolled(() => api.getRun(id), [id], {
+  const run = usePolled(() => api.getRun(id), [id, lang], {
     intervalMs: POLL_MS,
     stopWhen: (value) => value.state !== "running",
   });

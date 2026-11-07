@@ -1,3 +1,4 @@
+import { usePhrase } from "../../../lib/phrase";
 import { useL } from "../../../lib/useL";
 import type { BriefCard, ComparisonCell, MetricsSlideData } from "../../../types/brief3";
 import { Icon } from "../../ui/Icon";
@@ -32,10 +33,11 @@ function Cell({ cells, empty, showEntity }: { cells: ComparisonCell[]; empty: st
 /** 02 Business metrics: the metrics agent's typed figures. Our numbers against theirs, then every chart card. */
 export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
   const L = useL();
+  const phrase = usePhrase();
   const { brief, openCard, goTo, ask } = useDeck();
-  const cards = slide.cards.map((k) => brief.cards[k]).filter(Boolean) as BriefCard[];
-  const gaps = slide.gap_cards.map((k) => brief.cards[k]).filter(Boolean) as BriefCard[];
-  const kpis = slide.kpis.map((k) => brief.kpis.find((x) => x.card_key === k)).filter(Boolean);
+  const cards = (slide.cards ?? []).map((k) => brief.cards?.[k]).filter(Boolean) as BriefCard[];
+  const gaps = (slide.gap_cards ?? []).map((k) => brief.cards?.[k]).filter(Boolean) as BriefCard[];
+  const kpis = (slide.kpis ?? []).map((k) => (brief.kpis ?? []).find((x) => x.card_key === k)).filter(Boolean);
   const cardFor = (metricId: string) => cards.find((c) => c.metric_id === metricId)?.card_key;
 
   return (
@@ -69,7 +71,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
               </div>
             )}
 
-            {slide.comparison.length > 0 && (() => {
+            {(slide.comparison ?? []).length > 0 && (() => {
               const MARKET_METRIC_IDS = new Set([
                 "market_size",
                 "market_cagr",
@@ -78,8 +80,8 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                 "segment_growth",
                 "regulation_events",
               ]);
-              const marketRows = slide.comparison.filter((r) => MARKET_METRIC_IDS.has(r.metric_id));
-              const competitiveRows = slide.comparison.filter((r) => !MARKET_METRIC_IDS.has(r.metric_id));
+              const marketRows = (slide.comparison ?? []).filter((r) => MARKET_METRIC_IDS.has(r.metric_id));
+              const competitiveRows = (slide.comparison ?? []).filter((r) => !MARKET_METRIC_IDS.has(r.metric_id));
 
               return (
                 <div className="stack gap16">
@@ -109,7 +111,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                               <span className="stack gap4">
                                 <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
                                 <span className="s11 t3">{L("Regional macro figure", "رقم إقليمي كلي")}</span>
-                                {r.note && <span className="s12 warn-text">{r.note}</span>}
+                                {r.note && <span className="s12 warn-text">{phrase(r.note, r.note_key)}</span>}
                               </span>
                               <Cell cells={r.ours} empty="—" />
                               <Cell cells={r.theirs} empty="—" showEntity />
@@ -143,7 +145,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
                               onClick={() => key && openCard(key)} onKeyDown={(e) => key && e.key === "Enter" && openCard(key)}>
                               <span className="stack gap4">
                                 <b className="s14">{L(r.name.en, r.name.ar ?? r.name.en)}</b>
-                                {r.note && <span className="s12 warn-text">{r.note}</span>}
+                                {r.note && <span className="s12 warn-text">{phrase(r.note, r.note_key)}</span>}
                               </span>
                               <Cell cells={r.ours} empty={L("Not found", "غير موجود")} />
                               <Cell cells={r.theirs} empty="—" showEntity />

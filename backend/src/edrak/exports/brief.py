@@ -18,6 +18,78 @@ WORKER_LABELS = {
     "customer_trends": "Customers and trends",
 }
 
+_HEADINGS = {
+    "Headline": "الخلاصة",
+    "Key figures": "الأرقام الرئيسية",
+    "Coverage": "التغطية",
+    "What this means": "ماذا يعني هذا",
+    "Gaps": "الفجوات",
+    "Analysis emphasis": "تركيز التحليل",
+    "Options (not ranked)": "الخيارات (غير مرتبة)",
+    "Sources": "المصادر",
+    "Summary": "الملخص",
+    "Alternatives compared": "مقارنة البدائل",
+    "Opportunities": "الفرص",
+    "Risks": "المخاطر",
+    "Information gaps and limitations": "فجوات المعلومات والقيود",
+    "Next steps": "الخطوات التالية",
+    "Assumptions and open questions": "الافتراضات والأسئلة المفتوحة",
+    "Milestones and decision gates": "المعالم وبوابات القرار",
+    "KPIs": "مؤشرات الأداء",
+    "Risk register": "سجل المخاطر",
+    "Opportunities to capture": "فرص للاقتناص",
+    "Resources": "الموارد",
+}
+
+_LINE_PREFIXES = (
+    ("Objective: ", "الهدف: "),
+    ("Why this option: ", "لماذا هذا الخيار: "),
+    ("Not chosen, option ", "لم يُختر، الخيار "),
+    ("Assumption: ", "افتراض: "),
+    ("Open question: ", "سؤال مفتوح: "),
+    ("   Opportunity: ", "   فرصة: "),
+    ("   Risk: ", "   مخاطرة: "),
+    ("   Would change if: ", "   يتغير إذا: "),
+    ("Why it matters: ", "لماذا يهم: "),
+    (" Deliverable: ", " المخرَج: "),
+    (" Success: ", " النجاح: "),
+    (" Early warning: ", " إنذار مبكر: "),
+    ("Mitigation: ", "التخفيف: "),
+    (" How: ", " كيف: "),
+    (" Note: ", " ملاحظة: "),
+    ("Evidence status: ", "حالة الأدلة: "),
+    ("Go if: ", "المتابعة إذا: "),
+    ("Stop if: ", "التوقف إذا: "),
+)
+
+
+def _heading(lang: str, heading: str) -> str:
+    if lang != "ar":
+        return heading
+    if heading in _HEADINGS:
+        return _HEADINGS[heading]
+    if heading.startswith("Findings: "):
+        return "النتائج: " + heading[len("Findings: "):]
+    if heading.startswith("Action plan:"):
+        return "خطة العمل:" + heading[len("Action plan"):]
+    if heading.startswith("Workstream "):
+        return "مسار العمل " + heading[len("Workstream "):]
+    return heading
+
+
+def _line(lang: str, text: str) -> str:
+    if lang != "ar":
+        return text
+    for english, arabic in _LINE_PREFIXES:
+        text = text.replace(english, arabic)
+    return text
+
+
+def _in_language(sections: list[tuple[str, list[str]]], lang: str) -> list[tuple[str, list[str]]]:
+    if lang != "ar":
+        return sections
+    return [(_heading(lang, heading), [_line(lang, row) for row in rows]) for heading, rows in sections]
+
 
 class ExportUnavailable(RuntimeError):
     pass
@@ -97,15 +169,27 @@ def _plan_sections(plan: dict[str, Any]) -> list[tuple[str, list[str]]]:
     return out
 
 
-def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool) -> list[tuple[str, list[str]]]:
+def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool, lang: str = "en") -> list[tuple[str, list[str]]]:
     cards = doc.get("cards") or {}
     out: list[tuple[str, list[str]]] = [("Headline", [doc.get("headline") or doc.get("summary_text") or ""])]
     kpis = doc.get("kpis") or []
     if kpis:
-        out.append(("Key figures", [f"{(k.get('label') or {}).get('en', k.get('metric_id'))}{' · ' + k['entity'] if k.get('entity') else ''}: {k['value']} ({k['status']})" for k in kpis]))
+        def _kpi_name(k: dict[str, Any]) -> str:
+            label = k.get("label") or {}
+            if lang == "ar" and label.get("ar"):
+                return str(label["ar"])
+            return str(label.get("en") or k.get("metric_id"))
+
+        out.append(("Key figures", [f"{_kpi_name(k)}{' · ' + k['entity'] if k.get('entity') else ''}: {k['value']} ({k['status']})" for k in kpis]))
     cov = doc.get("coverage") or {}
     if cov.get("required"):
-        out.append(("Coverage", [f"{cov['met']} of {cov['required']} required figures are verified ({round((cov.get('score') or 0) * 100)}%)."]))
+        met, required, score = cov["met"], cov["required"], round((cov.get("score") or 0) * 100)
+        sentence = (
+            f"{met} من {required} من الأرقام المطلوبة موثّقة ({score}%)."
+            if lang == "ar" else
+            f"{met} of {required} required figures are verified ({score}%)."
+        )
+        out.append(("Coverage", [sentence]))
     if doc.get("signals_view"):
         out.append(("What this means", [f"{s.get('title')}: {s.get('signal') or ''}{' Why it matters: ' + s['why_it_matters'] if s.get('why_it_matters') else ''}"
                                          f"{' ' + ' '.join('[E%s]' % n for n in s.get('refs') or []) if s.get('refs') else ''}" for s in doc["signals_view"]]))
@@ -134,10 +218,10 @@ def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitati
     return out
 
 
-def _sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool) -> list[tuple[str, list[str]]]:
+def _sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool, lang: str = "en") -> list[tuple[str, list[str]]]:
     """The brief as (heading, paragraphs) sections, shared by every format."""
     if doc.get("cards") is not None:
-        return _typed_sections(doc, include_sources, include_limitations)
+        return _in_language(_typed_sections(doc, include_sources, include_limitations, lang), lang)
     summary = doc.get("summary") or {}
     out: list[tuple[str, list[str]]] = []
     out.append(("Summary", [p for p in (
@@ -179,58 +263,75 @@ def _sections(doc: dict[str, Any], include_sources: bool, include_limitations: b
             rows.append(f"E{e.get('display_no')}: {ev.get('source_title') or ev.get('publisher') or 'Source'}"
                         f"{' - ' + ev['source_url'] if (ev.get('source_url') or '').startswith('http') else ''}")
         out.append(("Sources", rows))
-    return out
+    return _in_language(out, lang)
 
 
-def _title(doc: dict[str, Any]) -> str:
-    return f"Brief {int(doc.get('brief_no') or 0):04d}: {doc.get('title') or doc.get('question') or ''}"
+def _title(doc: dict[str, Any], lang: str = "en") -> str:
+    number = f"{int(doc.get('brief_no') or 0):04d}"
+    name = doc.get("title") or doc.get("question") or ""
+    if lang == "ar":
+        return f"الموجز {number}: {name}"
+    return f"Brief {number}: {name}"
 
 
-def to_markdown(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True) -> bytes:
-    lines = [f"# {_title(doc)}", "", f"Evidence status: {doc.get('evidence_status', '')}", ""]
-    for heading, rows in _sections(doc, include_sources, include_limitations):
+def _status_line(doc: dict[str, Any], lang: str) -> str:
+    status = doc.get("evidence_status", "")
+    if lang == "ar":
+        return f"حالة الأدلة: {status}"
+    return f"Evidence status: {status}"
+
+
+def _footer(lang: str) -> str:
+    if lang == "ar":
+        return "إدراك يعرض ما يساعد على القرار. الناس هم من يقررون."
+    return "Edrak informs decisions. People make them."
+
+
+def to_markdown(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True, lang: str = "en") -> bytes:
+    lines = [f"# {_title(doc, lang)}", "", _status_line(doc, lang), ""]
+    for heading, rows in _sections(doc, include_sources, include_limitations, lang):
         lines += [f"## {heading}", ""] + [f"- {r}" for r in rows] + [""]
-    lines.append("_Edrak informs decisions. People make them._")
+    lines.append(f"_{_footer(lang)}_")
     return "\n".join(lines).encode("utf-8")
 
 
-def to_docx(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True) -> bytes:
+def to_docx(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True, lang: str = "en") -> bytes:
     import docx
 
     d = docx.Document()
-    d.add_heading(_title(doc), level=0)
-    d.add_paragraph(f"Evidence status: {doc.get('evidence_status', '')}")
-    for heading, rows in _sections(doc, include_sources, include_limitations):
+    d.add_heading(_title(doc, lang), level=0)
+    d.add_paragraph(_status_line(doc, lang))
+    for heading, rows in _sections(doc, include_sources, include_limitations, lang):
         d.add_heading(heading, level=1)
         for r in rows:
             d.add_paragraph(r, style="List Bullet")
-    d.add_paragraph("Edrak informs decisions. People make them.")
+    d.add_paragraph(_footer(lang))
     buf = io.BytesIO()
     d.save(buf)
     return buf.getvalue()
 
 
-def to_html(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True) -> str:
-    rtl = doc.get("language") == "ar"
+def to_html(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True, lang: str = "en") -> str:
+    rtl = lang == "ar" or doc.get("language") == "ar"
     parts = [
         f'<!doctype html><html lang="{"ar" if rtl else "en"}" dir="{"rtl" if rtl else "ltr"}"><head><meta charset="utf-8">',
         "<style>body{font-family:'Instrument Sans','IBM Plex Sans Arabic',system-ui,sans-serif;color:#0b0f3b;margin:40px;line-height:1.5}"
         "h1{font-size:26px}h2{font-size:17px;margin-top:26px;border-bottom:1px solid #ddd;padding-bottom:4px}"
         "li{margin:4px 0}.muted{color:#666;font-size:12px}</style></head><body>",
-        f"<h1>{html.escape(_title(doc))}</h1><p class='muted'>Evidence status: {html.escape(str(doc.get('evidence_status', '')))}</p>",
+        f"<h1>{html.escape(_title(doc, lang))}</h1><p class='muted'>{html.escape(_status_line(doc, lang))}</p>",
     ]
-    for heading, rows in _sections(doc, include_sources, include_limitations):
+    for heading, rows in _sections(doc, include_sources, include_limitations, lang):
         parts.append(f"<h2>{html.escape(heading)}</h2><ul>" + "".join(f"<li>{html.escape(r)}</li>" for r in rows) + "</ul>")
-    parts.append("<p class='muted'>Edrak informs decisions. People make them.</p></body></html>")
+    parts.append(f"<p class='muted'>{html.escape(_footer(lang))}</p></body></html>")
     return "".join(parts)
 
 
-async def to_pdf(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True) -> bytes:
+async def to_pdf(doc: dict[str, Any], *, include_sources: bool = True, include_limitations: bool = True, lang: str = "en") -> bytes:
     try:
         from playwright.async_api import async_playwright
     except ImportError as exc:
         raise ExportUnavailable("PDF export needs Playwright: pip install playwright && playwright install chromium") from exc
-    page_html = to_html(doc, include_sources=include_sources, include_limitations=include_limitations)
+    page_html = to_html(doc, include_sources=include_sources, include_limitations=include_limitations, lang=lang)
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         try:

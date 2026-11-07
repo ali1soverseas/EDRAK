@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
-import { useI18n } from "../i18n";
+import { useI18n, type TKey } from "../i18n";
+import { usePhrase } from "../lib/phrase";
 import { useL } from "../lib/useL";
 import { edrak, type Dict } from "../services/edrak";
 
@@ -12,6 +13,12 @@ const UC: Record<string, [string, string]> = {
   product_launch: ["Product launch", "إطلاق منتج"],
 };
 const no = (n: number) => String(n ?? 0).padStart(4, "0");
+
+function importanceLabel(t: (key: TKey) => string, value: string) {
+  const key = `alert.importance.${value}` as TKey;
+  const label = t(key);
+  return label === key ? value : label;
+}
 
 function Header({ eyebrow, title, children }: { eyebrow: string; title: string; children?: React.ReactNode }) {
   return (
@@ -26,14 +33,14 @@ function Header({ eyebrow, title, children }: { eyebrow: string; title: string; 
 
 export function Reports() {
   const L = useL();
-  const { formatWhen } = useI18n();
+  const { formatWhen, lang } = useI18n();
   const navigate = useNavigate();
   const [rows, setRows] = useState<Dict[] | null>(null);
   const [useCase, setUseCase] = useState("");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [compare, setCompare] = useState<string[]>([]);
   const [diff, setDiff] = useState<Dict | null>(null);
-  useEffect(() => { void edrak.reports(useCase ? `?use_case=${useCase}` : "").then(setRows).catch(() => setRows([])); }, [useCase]);
+  useEffect(() => { void edrak.reports(useCase ? `?use_case=${useCase}` : "").then(setRows).catch(() => setRows([])); }, [useCase, lang]);
   const pick = (id: string) => setCompare((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id].slice(-2)));
   useEffect(() => { if (compare.length === 2) void edrak.compare(compare[0], compare[1]).then(setDiff); else setDiff(null); }, [compare]);
 
@@ -174,12 +181,13 @@ export function Monitors() {
 
 export function Alerts() {
   const L = useL();
-  const { formatWhen } = useI18n();
+  const { formatWhen, lang, t } = useI18n();
+  const phrase = usePhrase();
   const navigate = useNavigate();
   const [data, setData] = useState<{ alerts: Dict[]; digests: Dict[] }>({ alerts: [], digests: [] });
   const [importance, setImportance] = useState("");
   const load = () => void edrak.alerts().then(setData).catch(() => undefined);
-  useEffect(load, []);
+  useEffect(load, [lang]);
   const act = async (id: string, action: string) => {
     const r = await edrak.actOnAlert(id, action);
     if (r.analysis_id) navigate(`/analyses/${r.analysis_id}/plan`);
@@ -200,11 +208,11 @@ export function Alerts() {
         {rows.length === 0 && <div className="empty">{L("No alerts. Monitors raise them when a run finds something new.", "لا تنبيهات.")}</div>}
         {rows.map((a) => (
           <div key={a.id} className="panel stack gap8" style={{ opacity: a.status === "read" ? 0.8 : 1 }}>
-            <div className="row g8"><span className={`chip ${a.importance === "high" ? "c-bad" : a.importance === "medium" ? "c-ins" : "c-line"}`}>{a.importance}</span>
+            <div className="row g8"><span className={`chip ${a.importance === "high" ? "c-bad" : a.importance === "medium" ? "c-ins" : "c-line"}`}>{importanceLabel(t, String(a.importance ?? ""))}</span>
               <span className="s12 muted">{a.monitor_name ?? ""} · {formatWhen(a.created_at)}</span>{a.status === "unread" && <span className="tag-agent">{L("New", "جديد")}</span>}</div>
             <bdi className="b6">{a.title}</bdi>
-            {a.what_changed && <span className="s13" dir="auto">{a.what_changed}</span>}
-            {a.why_it_matters && <span className="s13 muted" dir="auto">{a.why_it_matters}</span>}
+            {a.what_changed && <span className="s13" dir="auto">{phrase(String(a.what_changed), a.what_key as string, a.what_params as Record<string, string | number>)}</span>}
+            {a.why_it_matters && <span className="s13 muted" dir="auto">{phrase(String(a.why_it_matters), a.why_key as string, a.why_params as Record<string, string | number>)}</span>}
             <div className="row g8 wrap">
               {a.evidence?.map((e: Dict) => e.source_url ? <a key={e.uid} className="ev" href={e.source_url} target="_blank" rel="noreferrer">E{e.display_no}</a> : null)}
               <div className="grow" />
@@ -276,14 +284,15 @@ export function Watchlist() {
 
 export function EvidenceExplorer() {
   const L = useL();
+  const { lang } = useI18n();
   const { briefId } = useParams();
   const navigate = useNavigate();
   const [briefs, setBriefs] = useState<Dict[]>([]);
   const [rows, setRows] = useState<Dict[] | null>(null);
   const [sel, setSel] = useState<Dict | null>(null);
   const [filter, setFilter] = useState("");
-  useEffect(() => { void edrak.reports().then((b) => { setBriefs(b); if (!briefId && b[0]) navigate(`/evidence/${b[0].id}`, { replace: true }); }); }, [briefId, navigate]);
-  useEffect(() => { if (briefId) void edrak.evidence(briefId).then(setRows).catch(() => setRows([])); }, [briefId]);
+  useEffect(() => { void edrak.reports().then((b) => { setBriefs(b); if (!briefId && b[0]) navigate(`/evidence/${b[0].id}`, { replace: true }); }); }, [briefId, navigate, lang]);
+  useEffect(() => { if (briefId) void edrak.evidence(briefId).then(setRows).catch(() => setRows([])); }, [briefId, lang]);
   const shown = (rows ?? []).filter((r) => !filter || r.worker === filter || r.origin === filter || (filter === "flagged" && r.flags > 0));
   return (
     <>

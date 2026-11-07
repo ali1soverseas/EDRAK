@@ -36,7 +36,7 @@ export function ReportView({ brief }: { brief: Brief }) {
   const [selected, setSelected] = useState<BriefEvidence | null>(null);
 
   const byKey = useMemo(
-    () => new Map(brief.evidence.map((item) => [evidenceKey(item.worker, item.evidence.evidence_id), item])),
+    () => new Map((brief.evidence ?? []).map((item) => [evidenceKey(item.worker, item.evidence.evidence_id), item])),
     [brief.evidence],
   );
 

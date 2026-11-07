@@ -61,6 +61,10 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
   const [chat, setChat] = useState<ChatScope | null>(null);
   const [menu, setMenu] = useState(false);
   const [lifecycle, setLifecycle] = useState(initial.lifecycle);
+  useEffect(() => {
+    setBrief(initial);
+    setLifecycle(initial.lifecycle);
+  }, [initial]);
 
   const { dir } = useI18n();
   const slides = brief.deck?.slides ?? [];

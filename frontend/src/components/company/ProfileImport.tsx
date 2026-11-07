@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState, type DragEvent } from "react";
+import { usePhrase } from "../../lib/phrase";
 import { useL } from "../../lib/useL";
 import {
   applyDraft, appliedCount, defaultChoices, hostLabel, importErrorMessage, importRows,
@@ -257,6 +258,10 @@ interface ReviewProps {
 
 function Review({ draft, origin, icon, rows, chosen, onToggle, onApply, onDiscard }: ReviewProps) {
   const L = useL();
+  const phrase = usePhrase();
+  const warnings = draft.warning_items?.length
+    ? draft.warning_items.map((item) => phrase(item.message, item.key, item.params))
+    : draft.warnings;
   const sourceById = new Map(draft.sources.map((s) => [s.id, s]));
   const sourceTitle = (id: string) => {
     const s = sourceById.get(id);
@@ -331,7 +336,7 @@ function Review({ draft, origin, icon, rows, chosen, onToggle, onApply, onDiscar
         </>
       )}
 
-      {draft.warnings.map((warning) => (
+      {warnings.map((warning) => (
         <div key={warning} className="form-warn" role="note">
           <Icon name="warning" size={16} />
           <span className="grow" dir="auto">{warning}</span>

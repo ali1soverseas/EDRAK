@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { edrak, type Dict } from "../../services/edrak";
 import { useL } from "../../lib/useL";
 import { useI18n } from "../../i18n";
+import { usePhrase } from "../../lib/phrase";
 import { Icon } from "../ui/Icon";
 import { ThinkingMark } from "../ui/ThinkingMark";
 import { ChatPanel } from "../chat/ChatPanel";
@@ -11,6 +12,7 @@ import { modKey } from "../../lib/platform";
 /** Cmd+K search across briefs, analyses, watchlist, documents, decisions and sources. */
 export function GlobalSearch() {
   const L = useL();
+  const { lang } = useI18n();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
@@ -37,7 +39,7 @@ export function GlobalSearch() {
     }
     const id = setTimeout(() => void edrak.search(q).then(setResults).catch(() => setResults({})), 220);
     return () => clearTimeout(id);
-  }, [q]);
+  }, [q, lang]);
 
   const go = (to: string) => {
     setOpen(false);
@@ -99,7 +101,8 @@ export function GlobalSearch() {
 /** The bell: unread notifications, with links to what each is about. */
 export function NotificationBell() {
   const L = useL();
-  const { formatWhen } = useI18n();
+  const { formatWhen, lang } = useI18n();
+  const phrase = usePhrase();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
@@ -111,7 +114,7 @@ export function NotificationBell() {
     load();
     const id = setInterval(load, 30000);
     return () => clearInterval(id);
-  }, [pathname]);
+  }, [pathname, lang]);
 
   const target = (n: Dict) =>
     n.brief_id ? `/briefs/${n.brief_id}` : n.alert_id ? "/alerts" : n.document_id ? "/sources" :
@@ -155,8 +158,8 @@ export function NotificationBell() {
               }}
             >
               <div className="stack gap4" style={{ minWidth: 0 }}>
-                <bdi className="b6 s13">{n.title}</bdi>
-                {n.body && <bdi className="s12 muted ellip">{n.body}</bdi>}
+                <bdi className="b6 s13">{phrase(String(n.title ?? ""), n.title_key as string, n.title_params as Record<string, string | number>)}</bdi>
+                {n.body && <bdi className="s12 muted ellip">{phrase(String(n.body), n.body_key as string, n.body_params as Record<string, string | number>)}</bdi>}
                 <span className="s12 muted">{formatWhen(n.created_at)}</span>
               </div>
             </button>

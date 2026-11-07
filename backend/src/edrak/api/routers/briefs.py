@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from edrak.api.deps import get_current_session, get_db_conn
 from edrak.api.schemas import SessionOut
@@ -19,6 +19,7 @@ router = APIRouter(prefix="/briefs", tags=["briefs"])
 @router.get("/{brief_id}")
 async def get_brief(
     brief_id: str,
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
@@ -40,7 +41,9 @@ async def get_brief(
             document["deck"] = build_deck(document)
         except Exception:  # noqa: BLE001 - the frontend falls back to the document's own fields
             pass
-    return document
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    return await localize_generated(db, document, ui_language(request))
 
 
 async def merge_live(db: aiosqlite.Connection, brief_id: str, document: dict[str, Any]) -> dict[str, Any]:
@@ -128,6 +131,7 @@ async def _brief(db, session, brief_id):
 @router.get("/{brief_id}/export")
 async def export_brief(
     brief_id: str,
+    request: Request,
     format: str = "pdf",
     sources: Optional[bool] = None,
     limitations: Optional[bool] = None,
@@ -143,6 +147,9 @@ async def export_brief(
     defaults = await _fetch_one(db, "SELECT * FROM workspace_settings WHERE workspace_id = ?", (session.workspace.workspace_id,)) or {}
     inc_sources = bool(defaults.get("export_include_sources", 1)) if sources is None else sources
     inc_limits = bool(defaults.get("export_include_limitations", 1)) if limitations is None else limitations
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    lang = ui_language(request)
     doc = {**row["document"], "brief_no": row["number"], "evidence_status": row["evidence_status"]}
     if doc.get("cards") is not None:
         await merge_live(db, brief_id, doc)
@@ -153,13 +160,16 @@ async def export_brief(
         if plans:
             doc["action_plan"] = plans[0]["document"]
             doc["action_plan_status"] = plans[0]["status"]
+    doc = await localize_generated(db, doc, lang)
+    if lang == "ar":
+        doc["language"] = "ar"
     try:
         if fmt == "pdf":
-            body = await exporter.to_pdf(doc, include_sources=inc_sources, include_limitations=inc_limits)
+            body = await exporter.to_pdf(doc, include_sources=inc_sources, include_limitations=inc_limits, lang=lang)
         elif fmt == "docx":
-            body = exporter.to_docx(doc, include_sources=inc_sources, include_limitations=inc_limits)
+            body = exporter.to_docx(doc, include_sources=inc_sources, include_limitations=inc_limits, lang=lang)
         else:
-            body = exporter.to_markdown(doc, include_sources=inc_sources, include_limitations=inc_limits)
+            body = exporter.to_markdown(doc, include_sources=inc_sources, include_limitations=inc_limits, lang=lang)
     except exporter.ExportUnavailable as exc:
         raise HTTPException(status_code=501, detail={"code": "pdf_unavailable", "message": str(exc)})
     await db.execute(
@@ -310,6 +320,7 @@ async def undo_decision(
 @router.get("/{brief_id}/evidence")
 async def brief_evidence(
     brief_id: str,
+    request: Request,
     worker: Optional[str] = None,
     origin: Optional[str] = None,
     session: SessionOut = Depends(get_current_session),
@@ -337,7 +348,9 @@ async def brief_evidence(
                    ON f.task_id = fe.task_id AND f.attempt = fe.attempt AND f.finding_id = fe.finding_id
                    WHERE fe.task_id = ? AND fe.attempt = ? AND fe.evidence_id = ?""",
             (r["task_id"], r["attempt"], r["evidence_id"]))
-    return rows
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    return await localize_generated(db, rows, ui_language(request), keys={"extracted_fact", "statement"})
 
 
 class AnnotationIn(BaseModel):

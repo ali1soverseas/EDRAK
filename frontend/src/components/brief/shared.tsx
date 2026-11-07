@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useI18n, type TKey } from "../../i18n";
+import { usePhrase } from "../../lib/phrase";
 import type { Brief, BriefEvidence, RichSegment, SourceNoteKind } from "../../types/app";
 import { evidenceKey } from "../../types/app";
 import { Chip } from "../ui/Chip";
@@ -31,13 +32,14 @@ export function EvChip({ evKey, no }: { evKey: string; no: number }) {
 }
 
 /** Summary text: plain text, highlighted phrases, and evidence chips that open the drawer. */
-export function RichText({ segments }: { segments: RichSegment[] }) {
+export function RichText({ segments }: { segments: RichSegment[] | null | undefined }) {
   const { byKey } = useEvidence();
+  const phrase = usePhrase();
   const nodes: ReactNode[] = [];
-  segments.forEach((segment, index) => {
+  (segments ?? []).forEach((segment, index) => {
     switch (segment.t) {
       case "text":
-        nodes.push(segment.text);
+        nodes.push(phrase(segment.text, segment.text_key, segment.text_params));
         break;
       case "mark":
         nodes.push(

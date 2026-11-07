@@ -175,13 +175,17 @@ class RunTaskView(BaseModel):
     progress: int  # 0 to 100
     sources: int = 0
     activity: str = ""
-    log: list[dict[str, str]] = Field(default_factory=list)
+    activity_key: Optional[str] = None
+    activity_params: dict[str, Any] = Field(default_factory=dict)
+    log: list[dict[str, Any]] = Field(default_factory=list)
     error: Optional[str] = None
 
 
 class RunEventCallout(BaseModel):
     text: str
     highlight: Optional[str] = None
+    text_key: Optional[str] = None
+    text_params: dict[str, Any] = Field(default_factory=dict)
 
 
 class RunEvent(BaseModel):
@@ -190,6 +194,9 @@ class RunEvent(BaseModel):
     source: str  # "supervisor" | WorkerType
     kind: str  # "info" | "gap" | "replan" | "failure" | "decision"
     message: str
+    message_key: Optional[str] = None
+    message_params: dict[str, Any] = Field(default_factory=dict)
+    generated: bool = False
     callout: Optional[RunEventCallout] = None
 
 
@@ -209,8 +216,10 @@ class RunViewOut(BaseModel):
     # What verification is doing while it runs: the latest step, how far through the findings
     # it is (0 to 100), and every step so far.
     verification_activity: str = ""
+    verification_activity_key: Optional[str] = None
+    verification_activity_params: dict[str, Any] = Field(default_factory=dict)
     verification_progress: int = 0
-    verification_log: list[dict[str, str]] = Field(default_factory=list)
+    verification_log: list[dict[str, Any]] = Field(default_factory=list)
     brief_id: Optional[str] = None
     # Checkpoint 2: what the person reviews while the run waits (None when nothing is pending).
     review: Optional[dict[str, Any]] = None

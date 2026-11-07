@@ -1,6 +1,8 @@
 /** Typed calls to the product endpoints beyond the MVP screens. Same cookie session as httpApi. */
 import type { ActionPlanDoc, ActionPlanRow, ChallengeResult } from "../types/brief3";
 
+import { langHeaders, uiLang } from "../lib/uiLang";
+
 const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
 
 export class HttpError extends Error {
@@ -14,7 +16,7 @@ export async function req<T>(method: string, path: string, body?: unknown): Prom
   const res = await fetch(`${BASE}/api${path}`, {
     method,
     credentials: "include",
-    headers: body && !isForm ? { "Content-Type": "application/json" } : undefined,
+    headers: langHeaders(body && !isForm ? { "Content-Type": "application/json" } : undefined),
     body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
   });
   if (!res.ok) {
@@ -72,6 +74,7 @@ export interface ProfileDraft {
   field_sources: Record<string, string[]>;
   gaps: string[];
   warnings: string[];
+  warning_items?: { message: string; key: string | null; params: Record<string, string | number> }[];
   sources: { id: string; type: "web_page" | "pdf_page" | "page_metadata"; ref: string; title: string }[];
 }
 /* ------------------------------------------------------------ company research */
@@ -175,7 +178,7 @@ export const edrak = {
   notifyInstead: (id: string) => req("POST", `/analyses/${id}/notify-instead`),
 
   quality: (briefId: string) => req<Dict>("GET", `/briefs/${briefId}/quality`),
-  exportUrl: (briefId: string, format: string) => apiUrl(`/briefs/${briefId}/export?format=${format}`),
+  exportUrl: (briefId: string, format: string) => apiUrl(`/briefs/${briefId}/export?format=${format}&lang=${uiLang()}`),
   reviewBrief: (briefId: string, action: string, note?: string) => req<Dict>("POST", `/briefs/${briefId}/review`, { action, note }),
   recordDecision: (briefId: string, body: Dict) => req<Dict>("POST", `/briefs/${briefId}/decision`, body),
   undoDecision: (briefId: string) => req("DELETE", `/briefs/${briefId}/decision`),
@@ -199,7 +202,7 @@ export const edrak = {
   /** Streams an answer about a brief: `step` events while tools run, then one `answer`. */
   streamAsk: async (thread: string, content: string, onEvent: (e: StreamEvent) => void): Promise<void> => {
     const res = await fetch(apiUrl(`/chat/threads/${thread}/stream`), {
-      method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }),
+      method: "POST", credentials: "include", headers: langHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ content }),
     });
     if (!res.ok || !res.body) {
       let detail: unknown = res.statusText;

@@ -13,7 +13,9 @@ const WAYS: Record<number, TKey> = {
 
 export function OptionsCard({ brief }: { brief: Brief }) {
   const { t } = useI18n();
-  const steps = [...brief.next_steps, t("brief.step.choose")];
+  const options = brief.options ?? [];
+  const gaps = brief.gaps ?? [];
+  const steps = [...(brief.next_steps ?? []), t("brief.step.choose")];
 
   return (
     <div className="col bc-fill">
@@ -21,7 +23,7 @@ export function OptionsCard({ brief }: { brief: Brief }) {
         <div className="col g8">
           <div className="eyebrow tb">{t("brief.sec.4.eyebrow")}</div>
           <h2 className="disp" style={{ fontSize: 34, margin: 0, maxWidth: 1000 }}>
-            {WAYS[brief.options.length] ? t(WAYS[brief.options.length]) : t("brief.sec.4.title.n", { n: brief.options.length })}
+            {WAYS[options.length] ? t(WAYS[options.length]) : t("brief.sec.4.title.n", { n: options.length })}
           </h2>
         </div>
         <span style={{ marginTop: 8 }}>
@@ -32,7 +34,7 @@ export function OptionsCard({ brief }: { brief: Brief }) {
       </div>
 
       <div className="row bc-b option-row">
-        {brief.options.map((option) => (
+        {options.map((option) => (
           <article key={option.option_id} className="card col option">
             <div className="row g10">
               <span className="option-key">{option.key}</span>
@@ -63,10 +65,10 @@ export function OptionsCard({ brief }: { brief: Brief }) {
       <div className="row as bc-c options-bottom">
         <div className="col grow options-col">
           <div className="eyebrow">{t("brief.gaps")}</div>
-          {brief.gaps.length === 0 ? (
+          {gaps.length === 0 ? (
             <div className="s13 t2">{t("brief.noGaps")}</div>
           ) : (
-            brief.gaps.map((gap) => (
+            gaps.map((gap) => (
               <div key={`${gap.reported_by}-${gap.text}`} className="hatch gap-row">
                 <span className="gap-icon">
                   <Icon name="warning" size={16} />

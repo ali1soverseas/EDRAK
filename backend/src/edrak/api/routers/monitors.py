@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from edrak.api.deps import get_current_session, get_db_conn
@@ -118,6 +118,7 @@ async def run_now(monitor_id: str, session: SessionOut = Depends(get_current_ses
 
 @router.get("/alerts")
 async def list_alerts(
+    request: Request,
     importance: Optional[str] = None, monitor_id: Optional[str] = None, unread_only: bool = False,
     session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn),
 ):
@@ -135,6 +136,12 @@ async def list_alerts(
     for r in rows:
         r["evidence"] = await fetch_all(db, """SELECT e.uid, e.display_no, e.source_title, e.source_url FROM alert_evidence ae
                                                JOIN evidence e ON e.uid = ae.evidence_uid WHERE ae.alert_id = ?""", (r["id"],))
+    from edrak.i18n.localize import localize_generated, ui_language
+    from edrak.i18n.phrases import classify_alert
+
+    for row in rows:
+        classify_alert(row)
+    rows = await localize_generated(db, rows, ui_language(request), keys={"title", "statement"})
     digests = await fetch_all(db, "SELECT * FROM digests WHERE workspace_id = ? ORDER BY week_start DESC LIMIT 8", (session.workspace.workspace_id,))
     return {"alerts": rows, "digests": digests}
 

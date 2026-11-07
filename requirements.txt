@@ -29,11 +29,9 @@ structlog
 # Language detection (customer trends evidence language tagging)
 langdetect
 
-# Local OPUS-MT (Helsinki-NLP) for tagging an Arabic decision reason.
-# The model downloads on first use. A failed translation stores no reason tags.
-transformers
-sentencepiece
-torch
+# Local Argos Translate for Arabic output and for tagging an Arabic decision reason.
+# The language package downloads on first use. A failed translation stores no reason tags.
+argostranslate
 
 # MCP
 mcp<2

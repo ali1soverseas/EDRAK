@@ -14,6 +14,8 @@ import type {
   Session,
 } from "../types/app";
 
+import { langHeaders } from "../lib/uiLang";
+
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
 
 async function request<T>(
@@ -21,7 +23,7 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
-  const headers = new Headers(options.headers || {});
+  const headers = langHeaders(options.headers);
 
   if (!(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");

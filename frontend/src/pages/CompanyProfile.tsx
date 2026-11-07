@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
+import { useI18n } from "../i18n";
 import { useAsync } from "../lib/hooks";
 import { allFacts, countByStatus, isActive, runSummary } from "../lib/research";
 import { useLatestRun } from "../lib/useResearch";
@@ -29,8 +30,9 @@ function Tags({ items, tone, empty }: { items: string[]; tone?: string; empty: s
 /** Where company research stands, with a way in: start it, follow it, or review what it found. */
 function ResearchCard() {
   const L = useL();
+  const { lang } = useI18n();
   const { run } = useLatestRun();
-  const facts = useAsync(() => edrak.researchFacts(), [run?.id, run?.status]);
+  const facts = useAsync(() => edrak.researchFacts(), [run?.id, run?.status, lang]);
   const counts = countByStatus(allFacts(facts.data));
   const active = isActive(run);
   const action = active ? L("View progress", "عرض التقدم") : counts.suggested > 0 ? L("Review facts", "راجع الحقائق") : run ? L("Open research", "افتح البحث") : L("Research your company", "ابحث عن شركتك");

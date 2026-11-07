@@ -52,7 +52,7 @@ export function EvidenceCard({ brief, onOpen }: { brief: Brief; onOpen: (item: B
       <div className="col bc-b" style={{ flex: 1, minHeight: 0 }}>
         <div className="row jb" style={{ marginBottom: 8 }}>
           <div className="eyebrow">{t("brief.sources")}</div>
-          <span className="s12 t3">{t("brief.sourcesCount", { sources: tn("plural.sources", brief.evidence.length) })}</span>
+          <span className="s12 t3">{t("brief.sourcesCount", { sources: tn("plural.sources", (brief.evidence ?? []).length) })}</span>
         </div>
         <div className="card sources">
           <div className="srow-head">
@@ -63,12 +63,12 @@ export function EvidenceCard({ brief, onOpen }: { brief: Brief; onOpen: (item: B
             <span className="mono t3">{t("brief.col.note")}</span>
           </div>
           <div className="sources-body">
-            {brief.evidence.length === 0 ? (
+            {(brief.evidence ?? []).length === 0 ? (
               <div className="s13 t3" style={{ padding: 18 }}>
                 {t("brief.noSources")}
               </div>
             ) : (
-              brief.evidence.map((item) => <SourceRow key={item.display_no} item={item} onOpen={onOpen} />)
+              (brief.evidence ?? []).map((item) => <SourceRow key={item.display_no} item={item} onOpen={onOpen} />)
             )}
           </div>
         </div>

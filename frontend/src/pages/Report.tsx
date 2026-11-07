@@ -13,10 +13,10 @@ import { api } from "../services/api";
 const briefNumber = (n: number) => String(n).padStart(4, "0");
 
 export function Report() {
-  const { t, dir } = useI18n();
+  const { t, dir, lang } = useI18n();
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const brief = useAsync(() => api.getBrief(id), [id]);
+  const brief = useAsync(() => api.getBrief(id), [id, lang]);
   const data = brief.data;
   const container = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);

@@ -3,11 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { StatusChip } from "../components/ui/Chip";
 import { Icon } from "../components/ui/Icon";
-import { useI18n } from "../i18n";
+import { useI18n, type TKey } from "../i18n";
 import { useL } from "../lib/useL";
 import { edrak, type Dict } from "../services/edrak";
 import { useAuth } from "../state/auth";
 import type { AnalysisStatus } from "../types/app";
+
+function importanceLabel(t: (key: TKey) => string, value: string) {
+  const key = `alert.importance.${value}` as TKey;
+  const label = t(key);
+  return label === key ? value : label;
+}
 
 const USE_CASES = [
   ["competitive_intelligence", "Competitive intelligence", "الاستخبارات التنافسية", "What are competitors doing, and what does it mean for us?", "ماذا يفعل المنافسون، وماذا يعني ذلك لنا؟", "target", "Led by the competitor worker", "يقوده عامل المنافسين"],
@@ -17,7 +23,7 @@ const USE_CASES = [
 
 export function Home() {
   const L = useL();
-  const { formatWhen, formatDate } = useI18n();
+  const { formatWhen, formatDate, lang, t } = useI18n();
   const { session } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState<Dict | null>(null);
@@ -25,7 +31,7 @@ export function Home() {
 
   useEffect(() => {
     void edrak.home().then(setData).catch(() => setData({ needs_you: [], alerts: [], monitors: [], counts: {} }));
-  }, []);
+  }, [lang]);
 
   const start = (useCase?: string) => {
     const params = new URLSearchParams();
@@ -113,7 +119,7 @@ export function Home() {
               {(data?.alerts ?? []).length === 0 && <div className="empty">{L("No alerts yet. Monitors raise them when something changes.", "لا تنبيهات بعد.")}</div>}
               {(data?.alerts ?? []).map((a: Dict) => (
                 <Link key={a.id} to="/alerts" className="list-row" style={{ color: "inherit" }}>
-                  <span className={`chip ${a.importance === "high" ? "c-bad" : "c-line"}`}>{a.importance}</span>
+                  <span className={`chip ${a.importance === "high" ? "c-bad" : "c-line"}`}>{importanceLabel(t, String(a.importance ?? ""))}</span>
                   <bdi className="grow s13">{a.title}</bdi>
                 </Link>
               ))}

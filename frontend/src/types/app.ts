@@ -192,7 +192,9 @@ export interface RunTaskView {
   sources: number;
   /** The current activity line. Text written by the worker. */
   activity: string;
-  log: Array<{ at: string; text: string }>;
+  activity_key?: string | null;
+  activity_params?: Record<string, string | number>;
+  log: Array<{ at: string; text: string; key?: string; text_key?: string; params?: Record<string, string | number> }>;
   error: string | null;
 }
 
@@ -205,8 +207,10 @@ export interface RunEvent {
   source: "supervisor" | WorkerType | "verification" | "cross_signal" | "decision_analysis" | string;
   kind: RunEventKind;
   message: string;
+  message_key?: string | null;
+  message_params?: Record<string, string | number>;
   /** Extra callout under the message (a re-plan, or a Supervisor decision). */
-  callout: { text: string; highlight: string | null } | null;
+  callout: { text: string; highlight: string | null; text_key?: string | null; text_params?: Record<string, string | number> } | null;
 }
 
 export interface RunView {
@@ -224,8 +228,10 @@ export interface RunView {
   verification: "waiting" | "running" | "done";
   /** What verification is doing while it runs. The backend sends these. */
   verification_activity?: string;
+  verification_activity_key?: string | null;
+  verification_activity_params?: Record<string, string | number>;
   verification_progress?: number;
-  verification_log?: Array<{ at: string; text: string }>;
+  verification_log?: Array<{ at: string; text: string; key?: string; params?: Record<string, string | number> }>;
   brief_id: string | null;
   /** Checkpoint 2: what the person reviews while the run waits. */
   review?: RunReview | null;
@@ -270,7 +276,7 @@ export interface RunReview {
 
 /** Inline text with highlights and evidence chips. Built by the brief layout layer. */
 export type RichSegment =
-  | { t: "text"; text: string }
+  | { t: "text"; text: string; text_key?: string; text_params?: Record<string, string | number> }
   | { t: "mark"; text: string }
   | { t: "ev"; worker: WorkerType; evidence_id: string };
 
@@ -280,6 +286,8 @@ export interface BriefSummaryText {
   options: RichSegment[];
   /** A short limits statement shown under the headline on a verified brief. */
   limits: string | null;
+  limits_key?: string | null;
+  limits_params?: Record<string, string | number>;
 }
 
 export interface BriefOption {

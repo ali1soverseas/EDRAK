@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -116,6 +116,14 @@ class ProfileExtraction(BaseModel):
     )
 
 
+class WarningItem(BaseModel):
+    """A fixed import warning. `key` is the dictionary sentence; `message` is the stored English."""
+
+    message: str
+    key: str | None = None
+    params: dict[str, Any] = Field(default_factory=dict)
+
+
 class ProfileDraft(BaseModel):
     """The importer's response. The person reviews it; nothing here is saved."""
 
@@ -124,4 +132,5 @@ class ProfileDraft(BaseModel):
     field_sources: dict[str, list[str]] = Field(default_factory=dict)
     gaps: list[str] = Field(default_factory=list, description="Fields the sources do not cover.")
     warnings: list[str] = Field(default_factory=list)
+    warning_items: list[WarningItem] = Field(default_factory=list)
     sources: list[SourceRef] = Field(default_factory=list)

@@ -106,6 +106,18 @@ def _apply_additions(path: Path) -> None:
         from edrak.company_research.seed_keys import seed_fact_keys
 
         seed_fact_keys(conn)
+        conn.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS text_translations (
+              source_hash text NOT NULL,
+              target_lang text NOT NULL DEFAULT 'ar',
+              source_text text NOT NULL,
+              translated_text text NOT NULL,
+              created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+              PRIMARY KEY (source_hash, target_lang)
+            );
+            """
+        )
         conn.commit()
     finally:
         conn.close()

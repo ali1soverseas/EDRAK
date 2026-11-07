@@ -7,7 +7,7 @@ import logging
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from edrak.api.analysis_service import (
     TOGGLE_TO_SOURCE_TYPES,
@@ -97,10 +97,18 @@ async def list_analyses(
 @router.get("/{analysis_id}", response_model=AnalysisDetailOut)
 async def get_analysis(
     analysis_id: str,
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> AnalysisDetailOut:
-    return await _detail(db, await _require(db, session, analysis_id))
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    detail = await _detail(db, await _require(db, session, analysis_id))
+    if ui_language(request) != "ar" or detail.plan is None:
+        return detail
+    data = detail.model_dump(mode="json")
+    data["plan"] = await localize_generated(db, data["plan"], "ar", keys=frozenset({"rationale", "focus"}))
+    return AnalysisDetailOut.model_validate(data)
 
 
 async def draft(

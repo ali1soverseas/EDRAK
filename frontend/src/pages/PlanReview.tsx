@@ -148,10 +148,10 @@ function RejectDialog({ onSend, onClose, busy }: { onSend: (reason: string) => v
 }
 
 export function PlanReview() {
-  const { t, tn } = useI18n();
+  const { t, tn, lang } = useI18n();
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const analysis = useAsync(() => api.getAnalysis(id), [id]);
+  const analysis = useAsync(() => api.getAnalysis(id), [id, lang]);
   const [busy, setBusy] = useState<"approve" | "reject" | null>(null);
   const [rejecting, setRejecting] = useState(false);
   const [error, setError] = useState(false);

@@ -16,10 +16,10 @@ function FindingRow({ finding }: { finding: BriefFinding }) {
     <div className="finding">
       <div className="serif finding-text" dir="auto">{finding.finding.statement}</div>
       <div className="row g8 wrap" style={{ gap: 6 }}>
-        {finding.refs.length === 0 ? (
+        {(finding.refs ?? []).length === 0 ? (
           <span className="s12 t3">{t("brief.noSource")}</span>
         ) : (
-          finding.refs.map((ref) => <EvChip key={ref.key} evKey={ref.key} no={ref.display_no} />)
+          (finding.refs ?? []).map((ref) => <EvChip key={ref.key} evKey={ref.key} no={ref.display_no} />)
         )}
         <span className="grow" />
         <Pips value={finding.reliability} />
@@ -84,6 +84,7 @@ function LensCard({ lens, analysisId }: { lens: BriefLens; analysisId: string })
     );
   }
 
+  const findings = lens.findings ?? [];
   return (
     <section className="card lens">
       <div className="row g10" style={{ marginBottom: 6 }}>
@@ -94,13 +95,13 @@ function LensCard({ lens, analysisId }: { lens: BriefLens; analysisId: string })
         </div>
       </div>
       <div className="lens-findings">
-        {lens.findings.map((finding) => (
+        {findings.map((finding) => (
           <FindingRow key={finding.finding.finding_id} finding={finding} />
         ))}
-        {lens.findings.length === 0 && <div className="finding s13 t3">{t("brief.lens.noFindings")}</div>}
+        {findings.length === 0 && <div className="finding s13 t3">{t("brief.lens.noFindings")}</div>}
       </div>
       <div className="row jb s12 t3 lens-foot">
-        <span>{tn("plural.findings", lens.findings.length)}</span>
+        <span>{tn("plural.findings", findings.length)}</span>
         <span>{tn("plural.sources", lens.source_count)}</span>
       </div>
     </section>
@@ -109,9 +110,10 @@ function LensCard({ lens, analysisId }: { lens: BriefLens; analysisId: string })
 
 export function FindingsCard({ brief }: { brief: Brief }) {
   const { t } = useI18n();
-  const reported = brief.lenses.filter((lens) => !lens.failed).length;
+  const lenses = brief.lenses ?? [];
+  const reported = lenses.filter((lens) => !lens.failed).length;
   const synthesis = brief.synthesis;
-  const count = brief.lenses.length;
+  const count = lenses.length;
 
   let titleText: string;
   if (reported < count) {
@@ -144,7 +146,7 @@ export function FindingsCard({ brief }: { brief: Brief }) {
         </div>
       </div>
       <div className="row lens-row">
-        {brief.lenses.map((lens) => (
+        {lenses.map((lens) => (
           <LensCard key={lens.worker} lens={lens} analysisId={brief.analysis_id} />
         ))}
       </div>

@@ -82,13 +82,14 @@ export interface BriefV3 {
 
 export interface KeyFinding { text: string; lens: string; finding_id: string; refs: number[]; reliability: number }
 export interface ComparisonCell { entity: string; value: string; label: string | null; period: string | null; uid: string; ref: number | null; status: string }
-export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null }
+export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null; note_key?: string | null }
 export interface LensCoverage { lens: string; label: string; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
 export interface DeckGap { kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null; blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string }
 
 export interface SummarySlideData {
   id: "summary"; title: string; headline: string; question: string; use_case: string; key_findings: KeyFinding[];
   top_signals: string[]; kpis: string[]; coverage: BriefV3["coverage"]; limits: string | null;
+  limits_key?: string | null; limits_params?: Record<string, string | number>;
   counts?: BriefV3["counts"]; unmet: string[];
 }
 export interface MetricsSlideData {

@@ -148,9 +148,9 @@ function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: ()
 }
 
 export function Dashboard() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
-  const analyses = useAsync(() => api.listAnalyses(), []);
+  const analyses = useAsync(() => api.listAnalyses(), [lang]);
   const [filter, setFilter] = useState<Filter>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
 

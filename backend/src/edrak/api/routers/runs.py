@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -29,6 +29,7 @@ async def _require(db: aiosqlite.Connection, session: SessionOut, analysis_id: s
 @router.get("/{analysis_id}/run", response_model=RunViewOut)
 async def get_run_view(
     analysis_id: str,
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> RunViewOut:
@@ -36,7 +37,12 @@ async def get_run_view(
     view = await run_manager.get_run_view(analysis_id, session.workspace.workspace_id)
     if not view:
         raise HTTPException(status_code=404, detail="not_found")
-    return view
+    from edrak.i18n.localize import localize_generated, ui_language
+    from edrak.i18n.phrases import annotate_run
+
+    data = annotate_run(view.model_dump(mode="json"))
+    localized = await localize_generated(db, data, ui_language(request))
+    return RunViewOut.model_validate(localized)
 
 
 @router.get("/{analysis_id}/run/stream")

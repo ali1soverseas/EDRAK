@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useI18n } from "../../i18n";
 import { useL } from "../../lib/useL";
 import { HttpError, edrak } from "../../services/edrak";
 import type { ActionPlanDoc, ActionPlanRow, BriefOption, Level, PlanAction, PlanOpportunity, PlanRisk } from "../../types/brief3";
@@ -67,6 +68,7 @@ function Group({ title, count, children, action }: { title: string; count: numbe
  */
 export function PlanPanel({ option, orderedOnly, onDecisionChanged }: { option: BriefOption; orderedOnly: boolean; onDecisionChanged: () => void }) {
   const L = useL();
+  const { lang } = useI18n();
   const { brief } = useDeck();
   const [row, setRow] = useState<ActionPlanRow | null>(null);
   const [doc, setDoc] = useState<ActionPlanDoc | null>(null);
@@ -119,6 +121,14 @@ export function PlanPanel({ option, orderedOnly, onDecisionChanged }: { option: 
     }).catch(() => setLoaded(true));
     return () => window.clearTimeout(poll.current);
   }, [brief.brief_id, brief.lifecycle, option.key, load, watch, create]);
+
+  const planId = useRef<string | null>(null);
+  planId.current = row?.id ?? null;
+  useEffect(() => {
+    const id = planId.current;
+    if (!id || dirty) return;
+    void edrak.actionPlan(id).then(load).catch(() => undefined);
+  }, [lang, dirty, load]);
 
   const detail = (e: unknown): string[] => {
     const d = e instanceof HttpError ? (e.detail as { errors?: string[]; message?: string } | string) : null;

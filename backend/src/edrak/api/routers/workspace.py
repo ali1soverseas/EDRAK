@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
 from edrak.api.deps import get_current_session, get_db_conn
@@ -20,6 +20,7 @@ router = APIRouter(tags=["workspace"])
 
 @router.get("/home")
 async def home(
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
@@ -57,12 +58,19 @@ async def home(
                   (SELECT count(*) FROM entities WHERE workspace_id = ? AND kind = 'competitor' AND is_tracked = 1) AS competitors""",
         (ws,) * 7,
     )
+    from edrak.i18n.localize import localize_generated, ui_language
+    from edrak.i18n.phrases import classify_alert
+
+    for alert in alerts:
+        classify_alert(alert)
+    alerts = await localize_generated(db, alerts, ui_language(request), keys={"title", "statement"})
     return {"needs_you": needs, "alerts": alerts, "monitors": monitors, "counts": counts,
             "first_time": (counts or {}).get("analyses", 0) == 0}
 
 
 @router.get("/reports")
 async def reports(
+    request: Request,
     use_case: Optional[str] = None,
     status: Optional[str] = None,
     days: Optional[int] = None,
@@ -80,7 +88,9 @@ async def reports(
 
         cutoff = now_iso(timedelta(days=-days))
         rows = [r for r in rows if r["generated_at"] >= cutoff]
-    return rows
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    return await localize_generated(db, rows, ui_language(request), keys={"title", "summary"})
 
 
 @router.get("/reports/compare")
@@ -126,15 +136,20 @@ async def decisions(
 
 @router.get("/notifications")
 async def notifications(
+    request: Request,
     unread_only: bool = False,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
+    from edrak.i18n.localize import localize_generated, ui_language
+    from edrak.i18n.phrases import classify_notification
+
     uid, ws = session.user.user_id, session.workspace.workspace_id
-    return {
-        "items": await notifications_repo.list_notifications(db, uid, ws, unread_only=unread_only),
-        "unread": await notifications_repo.unread_count(db, uid, ws),
-    }
+    items = await notifications_repo.list_notifications(db, uid, ws, unread_only=unread_only)
+    for item in items:
+        item.update(classify_notification(item.get("title") or "", item.get("body")))
+    items = await localize_generated(db, items, ui_language(request), keys={"title", "body", "statement"})
+    return {"items": items, "unread": await notifications_repo.unread_count(db, uid, ws)}
 
 
 @router.post("/notifications/read")
@@ -150,16 +165,30 @@ async def read_notifications(
 @router.get("/search")
 async def search(
     q: str,
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, list[dict[str, Any]]]:
     """Global search (Cmd+K): briefs, analyses, entities, documents, decisions, sources."""
+    from edrak.i18n.localize import localize_generated, search_sources, ui_language
+
     ws = session.workspace.workspace_id
     like = f"%{q.strip()}%"
     if len(q.strip()) < 2:
         return {}
-    return {
-        "briefs": await fetch_all(db, "SELECT id, number, title, use_case FROM briefs WHERE workspace_id = ? AND (title LIKE ? OR summary LIKE ?) ORDER BY generated_at DESC LIMIT 5", (ws, like, like)),
+    lang = ui_language(request)
+    brief_sql = "SELECT id, number, title, use_case FROM briefs WHERE workspace_id = ? AND (title LIKE ? OR summary LIKE ?"
+    brief_params: list[Any] = [ws, like, like]
+    if lang == "ar":
+        sources = await search_sources(db, like)
+        if sources:
+            marks = ",".join("?" for _ in sources)
+            brief_sql += f" OR title IN ({marks}) OR summary IN ({marks})"
+            brief_params.extend(sources)
+            brief_params.extend(sources)
+    brief_sql += ") ORDER BY generated_at DESC LIMIT 5"
+    found = {
+        "briefs": await fetch_all(db, brief_sql, brief_params),
         "analyses": await fetch_all(db, "SELECT request_id, title, status FROM business_requests WHERE workspace_id = ? AND (title LIKE ? OR goal LIKE ?) ORDER BY updated_at DESC LIMIT 5", (ws, like, like)),
         "entities": await fetch_all(db, "SELECT id, kind, name FROM entities WHERE workspace_id = ? AND name LIKE ? LIMIT 5", (ws, like)),
         "documents": await fetch_all(db, "SELECT id, name, status FROM documents WHERE workspace_id = ? AND name LIKE ? LIMIT 5", (ws, like)),
@@ -168,6 +197,8 @@ async def search(
                                           JOIN briefs b ON b.request_id = e.request_id
                                           WHERE b.workspace_id = ? AND (e.source_title LIKE ? OR e.extracted_fact LIKE ?) LIMIT 5""", (ws, like, like)),
     }
+    found["briefs"] = await localize_generated(db, found["briefs"], lang, keys={"title", "summary"})
+    return found
 
 
 class SettingsIn(BaseModel):

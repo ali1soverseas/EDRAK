@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n";
+import { usePhrase } from "../../../lib/phrase";
 import { USE_CASE_META } from "../../../lib/usecases";
 import { useL } from "../../../lib/useL";
 import type { SummarySlideData } from "../../../types/brief3";
@@ -12,10 +13,13 @@ import { SlideHead } from "./SlideHead";
 export function SummarySlide({ slide }: { slide: SummarySlideData }) {
   const L = useL();
   const { t, formatDate } = useI18n();
+  const phrase = usePhrase();
   const { brief, openSignal, openCard, goTo } = useDeck();
   const meta = USE_CASE_META[brief.use_case as keyof typeof USE_CASE_META];
-  const signals = slide.top_signals.map((id) => brief.signals_view.find((s) => s.signal_id === id)).filter(Boolean);
-  const kpis = slide.kpis.map((k) => brief.kpis.find((x) => x.card_key === k)).filter(Boolean);
+  const headline = slide.headline ?? "";
+  const unmet = slide.unmet ?? [];
+  const signals = (slide.top_signals ?? []).map((id) => (brief.signals_view ?? []).find((s) => s.signal_id === id)).filter(Boolean);
+  const kpis = (slide.kpis ?? []).map((k) => (brief.kpis ?? []).find((x) => x.card_key === k)).filter(Boolean);
   const cov = slide.coverage;
   const pct = cov?.score == null ? null : Math.round(cov.score * 100);
   const lensStatus = brief.deck?.slides.find((s) => s.id === "evidence_gaps");
@@ -30,7 +34,7 @@ export function SummarySlide({ slide }: { slide: SummarySlideData }) {
             {meta && <Chip tone="dec" icon="sparkle">{t(meta.short)}</Chip>}
             <span className="mono t3">{formatDate(brief.created_at)}</span>
           </div>
-          <h1 className={`disp deck-headline ${slide.headline.length > 110 ? "long" : slide.headline.length > 70 ? "mid" : ""}`} dir="auto">{slide.headline}</h1>
+          <h1 className={`disp deck-headline ${headline.length > 110 ? "long" : headline.length > 70 ? "mid" : ""}`} dir="auto">{headline}</h1>
           <p className="t2 s14 lh14" dir="auto">{slide.question}</p>
           <div className="row g8 wrap">
             <Chip tone={brief.partial ? "ins" : "ok"} icon={brief.partial ? "warning" : "check"}>{brief.partial ? L("Partial evidence", "أدلة جزئية") : L("Verified", "موثّق")}</Chip>
@@ -56,13 +60,13 @@ export function SummarySlide({ slide }: { slide: SummarySlideData }) {
             <div className="bar"><i style={{ width: `${pct ?? 0}%` }} /></div>
             <span className="s12 t3">{cov ? L(`${cov.met} of ${cov.required} checked and verified`, `${cov.met} من ${cov.required} موثّقة`) : ""}</span>
           </button>
-          {(slide.limits || slide.unmet.length > 0) && (
+          {(slide.limits || unmet.length > 0) && (
             <div className="limits hatch">
               <Icon name="warning" size={18} stroke={1.8} />
               <div className="s13 lh14 grow">
                 <b>{L("Read with these limits.", "اقرأ مع هذه الحدود.")}</b>{" "}
-                {slide.unmet.length > 0 && <bdi>{L(`Nothing was found on ${slide.unmet.join(", ")}, so the brief makes no claim about it. `, `لم يُعثر على شيء عن ${slide.unmet.join("، ")}، لذا لا يدّعي الموجز شيئًا عنه. `)}</bdi>}
-                {slide.limits && <bdi>{slide.limits}</bdi>}
+                {unmet.length > 0 && <bdi>{L(`Nothing was found on ${unmet.join(", ")}, so the brief makes no claim about it. `, `لم يُعثر على شيء عن ${unmet.join("، ")}، لذا لا يدّعي الموجز شيئًا عنه. `)}</bdi>}
+                {slide.limits && <bdi>{phrase(slide.limits, slide.limits_key, slide.limits_params)}</bdi>}
               </div>
             </div>
           )}

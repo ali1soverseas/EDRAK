@@ -1,63 +1,65 @@
-"""Local OPUS-MT translation for an Arabic decision reason.
+"""Local Argos Translate for Arabic output and for tagging an Arabic decision reason.
 
-The model stays on this machine. The stored reason stays Arabic; only the wording
-used to tag it is translated.
+The language package stays on this machine. It downloads on the first translation.
 """
 
 from __future__ import annotations
 
-import re
+import threading
 from typing import Any
 
-AR_EN = "Helsinki-NLP/opus-mt-ar-en"
-_MODELS: dict[str, tuple[Any, Any]] = {}
-_BATCH = 8
+_LOCK = threading.Lock()
+_TRANSLATORS: dict[tuple[str, str], Any] = {}
 
 
-def _model(name: str) -> tuple[Any, Any]:
-    if name not in _MODELS:
-        from transformers import MarianMTModel, MarianTokenizer
+def _translator(from_code: str, to_code: str) -> Any:
+    key = (from_code, to_code)
+    cached = _TRANSLATORS.get(key)
+    if cached is not None:
+        return cached
+    import argostranslate.package
+    import argostranslate.translate
 
-        _MODELS[name] = (MarianTokenizer.from_pretrained(name), MarianMTModel.from_pretrained(name))
-    return _MODELS[name]
+    def _pair() -> Any | None:
+        installed = argostranslate.translate.get_installed_languages()
+        source = next((lang for lang in installed if lang.code == from_code), None)
+        target = next((lang for lang in installed if lang.code == to_code), None)
+        if source is None or target is None:
+            return None
+        return source.get_translation(target)
+
+    translation = _pair()
+    if translation is None:
+        argostranslate.package.update_package_index()
+        available = argostranslate.package.get_available_packages()
+        package = next(
+            (pkg for pkg in available if pkg.from_code == from_code and pkg.to_code == to_code),
+            None,
+        )
+        if package is None:
+            raise RuntimeError(f"No Argos Translate package for {from_code} -> {to_code}")
+        argostranslate.package.install_from_path(package.download())
+        translation = _pair()
+    if translation is None:
+        raise RuntimeError(f"Argos Translate package for {from_code} -> {to_code} did not install")
+    _TRANSLATORS[key] = translation
+    return translation
 
 
-def _pieces(text: str) -> list[str]:
-    parts: list[str] = []
-    buf: list[str] = []
-    size = 0
-    for sentence in re.split(r"(?<=[.!?])\s+", text.strip()) or [text]:
-        if not sentence:
-            continue
-        if buf and size + len(sentence) > 400:
-            parts.append(" ".join(buf))
-            buf, size = [], 0
-        buf.append(sentence)
-        size += len(sentence)
-    if buf:
-        parts.append(" ".join(buf))
-    return parts or [text.strip()]
-
-
-def _generate_batch(tokenizer: Any, model: Any, texts: list[str]) -> list[str]:
-    import torch
-
-    batch = tokenizer(texts, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    with torch.no_grad():
-        output = model.generate(**batch, max_length=512)
-    return [line.strip() for line in tokenizer.batch_decode(output, skip_special_tokens=True)]
-
-
-def _translate(text: str) -> str:
-    tokenizer, model = _model(AR_EN)
-    grouped = [_pieces(text)]
-    flat = grouped[0]
-    done: list[str] = []
-    for start in range(0, len(flat), _BATCH):
-        done.extend(_generate_batch(tokenizer, model, flat[start:start + _BATCH]))
-    return " ".join(done).strip()
+def translate_many(texts: list[str], *, from_code: str = "en", to_code: str = "ar") -> list[str]:
+    """Translate each string. The language package loads on the first call."""
+    if not texts:
+        return []
+    with _LOCK:
+        translator = _translator(from_code, to_code)
+        return [(translator.translate(text) or "").strip() for text in texts]
 
 
 def translate_ar_to_en(text: str) -> str:
     """The English wording used to tag an Arabic reason. The stored reason stays Arabic."""
-    return _translate(text)
+    return translate_many([text], from_code="ar", to_code="en")[0]
+
+
+def translate_en_to_ar(text: str) -> str:
+    """Arabic for one stored English sentence. Callers cache the result."""
+    return translate_many([text], from_code="en", to_code="ar")[0]

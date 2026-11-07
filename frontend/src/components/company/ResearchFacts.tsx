@@ -157,7 +157,8 @@ function CategoryList({ categories, selected, busy, onToggle, onToggleMany, act 
  */
 export function ResearchFacts({ refreshKey, active }: { refreshKey: string; active: boolean }) {
   const L = useL();
-  const facts = useAsync(() => edrak.researchFacts(), [refreshKey]);
+  const { lang } = useI18n();
+  const facts = useAsync(() => edrak.researchFacts(), [refreshKey, lang]);
   const [tab, setTab] = useState<Tab | null>(null);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const [busy, setBusy] = useState(false);

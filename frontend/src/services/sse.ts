@@ -1,6 +1,7 @@
 /**
  * SSE (Server-Sent Events) listener for live run progression.
  */
+import { uiLang } from "../lib/uiLang";
 import type { RunEvent, RunStage, RunState, RunTaskView } from "../types/app";
 
 export interface StreamCallbacks {
@@ -17,7 +18,7 @@ export function subscribeToRun(
   callbacks: StreamCallbacks,
   baseUrl: string = "",
 ): () => void {
-  const url = `${baseUrl}/api/analyses/${encodeURIComponent(analysisId)}/run/stream`;
+  const url = `${baseUrl}/api/analyses/${encodeURIComponent(analysisId)}/run/stream?lang=${uiLang()}`;
   const es = new EventSource(url, { withCredentials: true });
 
   const handlePayload = (type: string, data: any) => {
