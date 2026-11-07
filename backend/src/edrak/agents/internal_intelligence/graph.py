@@ -58,7 +58,34 @@ def run_internal_intelligence(task: ResearchTask) -> WorkerResult:
         "error": None,
     }
 
-    final_state = internal_intelligence_graph.invoke(initial_state)
+    obs_config = None
+    try:
+        from edrak.core.observability import build_observability_config, flush_observability
+        company_name = task.company_profile.name if (task and task.company_profile) else "unknown"
+        obs_config = build_observability_config(
+            trace_name="internal_intelligence_worker",
+            session_id=getattr(task, "parent_request_id", None),
+            tags=["internal_intelligence", company_name.lower().replace(" ", "_"), "feat-optimized"],
+            metadata={
+                "task_id": str(getattr(task, "task_id", "")),
+                "goal": getattr(task, "goal", ""),
+                "focus": getattr(task, "focus", ""),
+                "company_name": company_name,
+                "company_profile": task.company_profile.model_dump(mode="json") if (task and task.company_profile) else {},
+                "branch": "feat/optimized_version",
+            },
+        )
+    except Exception as e:
+        logger.debug("Observability config initialization bypassed: %s", e)
+
+    final_state = internal_intelligence_graph.invoke(initial_state, config=obs_config)
+
+    try:
+        from edrak.core.observability import flush_observability
+        flush_observability()
+    except Exception:
+        pass
+
     result = final_state.get("worker_result")
 
     if not result:

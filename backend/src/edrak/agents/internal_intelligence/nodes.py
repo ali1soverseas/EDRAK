@@ -10,6 +10,8 @@ import uuid
 from edrak.agents.internal_intelligence.prompts import (
     INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT,
     INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
+    get_internal_query_planning_prompt,
+    get_internal_synthesis_prompt,
 )
 from edrak.agents.internal_intelligence.state import InternalAgentState
 from edrak.contracts.evidence import Evidence, EvidenceRef, EvidenceRelation
@@ -128,8 +130,9 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
             f"Task Focus: {task.focus}\n\n"
             "Formulate up to 10 precise natural-language queries covering the checklist topics as JSON."
         )
+        system_prompt = get_internal_query_planning_prompt()
         resp = get_json_object(
-            INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT,
+            system_prompt,
             user_prompt,
             agent="internal",
             temperature=0.1,
@@ -351,8 +354,9 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
             f"{evidence_context_str}\n\n"
             "Analyze the evidence strictly according to the grounding rules, coverage checklist, and JSON schema."
         )
+        system_prompt = get_internal_synthesis_prompt()
         res_data = get_json_object(
-            INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
+            system_prompt,
             user_prompt,
             agent="internal",
             temperature=0.1,

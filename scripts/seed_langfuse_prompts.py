@@ -90,16 +90,16 @@ ALL_EDRAK_PROMPTS = [
     {
         "name": "edrak-internal-query-planner",
         "prompt": INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT,
-        "labels": ["production", "v1.0"],
-        "tags": ["internal_intelligence", "retrieval"],
-        "commit_message": "Internal intelligence query formulation for handbook, DB, and API",
+        "labels": ["production", "v2.0", "optimized"],
+        "tags": ["internal_intelligence", "retrieval", "feat-optimized"],
+        "commit_message": "Optimized: query formulation up to 10 queries covering strict checklist",
     },
     {
         "name": "edrak-internal-synthesis",
         "prompt": INTERNAL_SYNTHESIS_SYSTEM_PROMPT,
-        "labels": ["production", "v1.0"],
-        "tags": ["internal_intelligence", "synthesis"],
-        "commit_message": "Factual evidence synthesis and grounding with strict attribution",
+        "labels": ["production", "v2.0", "optimized"],
+        "tags": ["internal_intelligence", "synthesis", "feat-optimized"],
+        "commit_message": "Optimized: Specificity Gate (Rule 7), concrete metrics/models, explicit per-topic gaps",
     },
     # Cross-Signal Intelligence
     {

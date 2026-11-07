@@ -139,3 +139,22 @@ OUTPUT JSON SCHEMA:
   ]
 }
 """
+
+
+def get_internal_query_planning_prompt(label: str = "production") -> str:
+    """Fetch versioned query planning prompt from Langfuse with offline fallback."""
+    try:
+        from edrak.core.observability import get_versioned_prompt
+        return get_versioned_prompt("edrak-internal-query-planner", INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT, label=label)
+    except Exception:
+        return INTERNAL_QUERY_PLANNING_SYSTEM_PROMPT
+
+
+def get_internal_synthesis_prompt(label: str = "production") -> str:
+    """Fetch versioned synthesis prompt from Langfuse with offline fallback."""
+    try:
+        from edrak.core.observability import get_versioned_prompt
+        return get_versioned_prompt("edrak-internal-synthesis", INTERNAL_SYNTHESIS_SYSTEM_PROMPT, label=label)
+    except Exception:
+        return INTERNAL_SYNTHESIS_SYSTEM_PROMPT
+
