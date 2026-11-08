@@ -58,10 +58,19 @@ class GraphEvidence:
             source_type = SourceType(self.source_type)
         except ValueError:
             source_type = SourceType.OTHER
+        # Format title to explicitly indicate Graph RAG provenance in UI while preserving channel
+        base_title = (self.source_title or "").strip()
+        if base_title.startswith("Graph RAG"):
+            title = base_title
+        elif base_title:
+            title = f"Graph RAG · {base_title}"
+        else:
+            title = "Graph RAG · Knowledge Graph"
+
         kwargs: dict[str, Any] = {
             "evidence_id": self.evidence_id,
             "source_type": source_type,
-            "source_title": self.source_title,
+            "source_title": title,
             "source_url": self.source_url,
             "publisher": self.publisher,
             "extracted_fact": self.extracted_fact,

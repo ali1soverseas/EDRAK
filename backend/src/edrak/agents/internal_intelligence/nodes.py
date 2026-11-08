@@ -21,6 +21,8 @@ from edrak.core.action_log import log_action
 from edrak.core.config import settings
 from edrak.core.llm import get_json_object
 from edrak.rag.retriever import InternalRetriever
+from edrak.graph.retrieval.hybrid_retriever import HybridRetriever
+from edrak.graph.connection import get_graph_settings
 from edrak.rag.text_utils import clean_markdown
 
 logger = logging.getLogger(__name__)
@@ -91,12 +93,14 @@ def plan_queries_node(state: InternalAgentState) -> Dict[str, Any]:
 def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     """Retrieves candidates across internal docs and handbook, then cross-scores and reranks."""
     log_action("internal_intelligence", "retrieving internal evidence")
+    if get_graph_settings().GRAPH_ENABLED:
+        log_action("internal_intelligence", "querying knowledge graph (Graph RAG)")
     queries = state.get("queries", [])
     task: Optional[ResearchTask] = state.get("task")
     if not queries and task:
         queries = [task.goal] if task.goal else []
 
-    retriever = InternalRetriever()
+    retriever = HybridRetriever() if get_graph_settings().GRAPH_ENABLED else InternalRetriever()
     workspace_id = task.company_profile.workspace_id if task else None
     candidates: List[Evidence] = []
     seen_keys: Set[str] = set()
@@ -158,6 +162,12 @@ def retrieve_evidence_node(state: InternalAgentState) -> Dict[str, Any]:
     def _score_candidate(ev: Evidence) -> float:
         base_score = float(ev.metadata.get("relevance_score", 0.5))
         channel = ev.metadata.get("channel")
+        sources = ev.metadata.get("retrieval_sources") or []
+
+        # Knowledge Graph evidence gets a high confidence score boost
+        if "graph" in sources:
+            return round(min(0.98, base_score + 0.15), 3)
+
         # Direct DB and REST API evidence are high-precision structured data: give priority boost
         if channel in ("sql_database", "rest_api"):
             return round(min(0.98, base_score + 0.10), 3)

@@ -119,8 +119,7 @@ class HybridRetriever:
                 workspace_id, query=query, entity_ids=entity_ids,
                 exclude_request_id=exclude_request_id, limit=top_k * 3,
             )
-            if where_filter is None:
-                graph_hits = self.graph.evidence_from_findings(findings, source_types=source_types)[: top_k * 2]
+            graph_hits = self.graph.evidence_from_findings(findings, source_types=source_types)[: top_k * 2]
 
         evidence = self._fuse(vector_hits, graph_hits, top_k)
         if graph_on and self.annotate:
