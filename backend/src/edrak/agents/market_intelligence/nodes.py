@@ -11,20 +11,19 @@ from edrak.agents.market_intelligence.prompts import (
     analysis_prompt,
     conclude_prompt,
     task_planner_prompt,
+    page_usefulness_prompt,
     tool_arg_prompt,
     tool_catalog_lines,
-    usefulness_prompt,
 )
 from edrak.agents.market_intelligence.schemas import (
     AnalysisClaim,
     AnalysisReply,
     Conclusion,
+    PageVerdicts,
     SearchQuery,
     TaskPlan,
-    Usefulness,
 )
 from edrak.agents.market_intelligence.search_scope import (
-    PLACES,
     SearchScope,
     domains_in_text,
     market_label,
@@ -263,32 +262,48 @@ def search_arguments(
     return {"queries": specs[:limit]}
 
 
-def _place_named_in(text: str) -> str:
-    lowered = text.lower()
-    found = ""
-    for place in PLACES:
-        for name in place.names:
-            if len(name) >= 4 and name in lowered and len(name) > len(found):
-                found = name
-    return found
-
-
-def source_is_relevant(task: str, goal: str, text: str) -> tuple[bool, str]:
-    """A source must mention the task subject. A long page is not enough."""
+def _local_reject(text: str) -> str:
+    """A reason to skip the model when the payload is empty or only an error."""
     body = (text or "").strip()
     if len(body) < 80:
-        return False, "too short"
+        return "too short"
     lowered = body.lower()
+    has_link = "http://" in lowered or "https://" in lowered
+    if "not enough credits" in lowered and not has_link:
+        return "not enough credits"
+    if not has_link and re.search(r"\b(status\s+\d{3}|failed to retrieve page)\b", lowered):
+        return "http error"
     if len(body) < 500 and re.search(r"\b(0 hits|no results|empty result)\b", lowered):
-        return False, "empty result"
-    needed = content_terms(task) or content_terms(f"{task} {goal}")
-    hits = [term for term in needed if term in lowered]
-    if len(hits) < 2:
-        return False, "does not mention the task subject"
-    place = _place_named_in(task)
-    if place and place not in lowered:
-        return False, "does not mention the task subject"
-    return True, ", ".join(hits[:6])
+        return "empty result"
+    return ""
+
+
+def judge_pages(task: str, excerpts: list[str]) -> list[tuple[bool, str]]:
+    """One model call decides which scraped pages are about the task.
+
+    A missing reply, or a page the reply skips, is not relevant.
+    """
+    if not excerpts:
+        return []
+    verdict = call_structured(
+        PageVerdicts,
+        page_usefulness_prompt(task, excerpts),
+        method="json_mode",
+    )
+    by_index = {}
+    if verdict is not None:
+        for item in verdict.pages:
+            by_index[item.index] = item
+    results: list[tuple[bool, str]] = []
+    for index in range(1, len(excerpts) + 1):
+        item = by_index.get(index)
+        if item is None:
+            results.append((False, "the model did not respond"))
+        elif not item.useful:
+            results.append((False, item.reason or "the model did not give a reason"))
+        else:
+            results.append((True, item.reason or "useful"))
+    return results
 
 
 def relevant_excerpt(text: str, task: str, goal: str, limit: int = 1200) -> str:
@@ -411,19 +426,6 @@ def search_hit_preview(
         snippet = re.sub(r"\s+", " ", item.get("snippet") or "").strip()[:240]
         lines.append(f"- {title}: {snippet}" if snippet else f"- {title}")
     return "\n".join(lines)
-
-
-def titles_on_topic(raw: str, task: str, goal: str, scope: SearchScope | None = None) -> bool:
-    """True when at least two ranked hits already name the task subject."""
-    terms = content_terms(task)
-    if len(terms) < 2:
-        terms = content_terms(f"{task} {goal}")
-    matched = 0
-    for item in _scored_hits(raw, task, goal, scope)[:8]:
-        blob = f"{item.get('title') or ''} {item.get('snippet') or ''}".lower()
-        if sum(1 for term in terms if term.lower() in blob) >= 2:
-            matched += 1
-    return matched >= 2
 
 
 def claims_from_analysis(
@@ -854,7 +856,7 @@ def task_executor(state: MarketAgentState) -> dict:
                 for spec in task["queries"]:
                     if isinstance(spec, dict) and spec.get("q"):
                         seen_queries.add(str(spec["q"]).lower())
-            else:
+            elif attempt == 0:
                 arg_prompt = tool_arg_prompt(
                     tool_name=tool_name,
                     tool_description=(tool_obj.description or "").split(chr(10))[0].strip(),
@@ -867,6 +869,16 @@ def task_executor(state: MarketAgentState) -> dict:
                 )
                 tool_args = search_arguments(
                     call_structured(QueryArgs, arg_prompt, method="json_mode"),
+                    task["description"],
+                    goal,
+                    attempt,
+                    seen_queries,
+                    context,
+                    scope,
+                )
+            else:
+                tool_args = search_arguments(
+                    None,
                     task["description"],
                     goal,
                     attempt,
@@ -912,29 +924,10 @@ def task_executor(state: MarketAgentState) -> dict:
                 print(f"  URLs extracted: {len(new_urls)}")
 
             preview = search_hit_preview(result_str, task["description"], goal, scope)
-            relevant, why = source_is_relevant(
-                task["description"],
-                goal,
-                preview or result_str,
-            )
-            strong_hits = titles_on_topic(result_str, task["description"], goal, scope)
-            verdict = None
-            if relevant and not strong_hits:
-                verdict = call_structured(
-                    Usefulness,
-                    usefulness_prompt(task["description"], preview or result_str),
-                    method="json_mode",
-                )
-            model_rejects = verdict is not None and not verdict.useful
-            is_useful = bool(new_urls) and (strong_hits or (relevant and not model_rejects))
-            if strong_hits:
-                reason = "ranked titles match the task"
-            elif not relevant:
-                reason = why
-            else:
-                reason = "" if verdict is None else verdict.reason
-
-            if is_useful:
+            reason = _local_reject(preview or result_str)
+            if not new_urls:
+                reason = reason or "no page links"
+            if not reason and new_urls:
                 print("  Evaluated: USEFUL")
                 log_action("market_intelligence", f"{tool_name} useful")
                 raw_result = result_str
@@ -988,9 +981,8 @@ def task_executor(state: MarketAgentState) -> dict:
     if used_tool in URL_BEARING_TOOLS and urls_found:
         candidates = urls_found[:MAX_URL_CANDIDATES]
         _section(f"URL SCRAPER  --  up to {MAX_URLS_PER_TASK} relevant of {len(candidates)} ranked")
+        scraped: list[dict] = []
         for url in candidates:
-            if len(evidence_items) >= MAX_URLS_PER_TASK:
-                break
             print(f"  Scraping: {url[:80]}")
             text = ""
             for scrape_attempt in range(MAX_RETRIES):
@@ -1017,27 +1009,36 @@ def task_executor(state: MarketAgentState) -> dict:
                 log_block("market_intelligence", f"SCRAPED URL  {url}", "skipped: too short or error")
                 continue
             excerpt = relevant_excerpt(text, task["description"], goal, settings.SCRAPE_TEXT_CHARS)
-            page_ok, page_why = source_is_relevant(task["description"], goal, excerpt)
-            if not page_ok:
-                print(f"    -> skipped page ({page_why})")
-                log_block("market_intelligence", f"SCRAPED URL  {url}", f"skipped: {page_why}")
+            local_reason = _local_reject(excerpt)
+            if local_reason:
+                print(f"    -> skipped page ({local_reason})")
+                log_block("market_intelligence", f"SCRAPED URL  {url}", f"skipped: {local_reason}")
                 continue
-            print(f"    -> kept {len(excerpt):,} chars")
-            log_block("market_intelligence", f"SCRAPED URL  {url}", f"kept {len(excerpt)} chars")
             hit = hit_index.get(url) or {}
-            evidence_items.append({
+            scraped.append({
                 "type": "url",
                 "source": url,
                 "text": excerpt,
                 "title": str(hit.get("title") or "").strip(),
                 "snippet": str(hit.get("snippet") or "").strip(),
             })
+        verdicts = judge_pages(task["description"], [item["text"] for item in scraped])
+        for item, (page_ok, page_why) in zip(scraped, verdicts):
+            if len(evidence_items) >= MAX_URLS_PER_TASK:
+                break
+            if not page_ok:
+                print(f"    -> skipped page ({page_why})")
+                log_block("market_intelligence", f"SCRAPED URL  {item['source']}", f"skipped: {page_why}")
+                continue
+            print(f"    -> kept {len(item['text']):,} chars")
+            log_block("market_intelligence", f"SCRAPED URL  {item['source']}", f"kept {len(item['text'])} chars")
+            evidence_items.append(item)
     else:
         excerpt = relevant_excerpt(raw_result, task["description"], goal, 2000)
         evidence_items.append({"type": "endpoint", "source": f"[{used_tool}]", "text": excerpt})
 
     source_text = "\n".join(item.get("text") or "" for item in evidence_items)
-    if not source_is_relevant(task["description"], goal, source_text)[0]:
+    if not source_text.strip():
         return _gap(f"No page stated a relevant fact for: {task['description']}")
 
     _section("LLM ANALYSIS")

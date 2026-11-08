@@ -31,6 +31,16 @@ class Usefulness(BaseModel):
     reason: str = ""
 
 
+class PageVerdict(BaseModel):
+    index: int = 0
+    useful: bool = False
+    reason: str = ""
+
+
+class PageVerdicts(BaseModel):
+    pages: list[PageVerdict] = Field(default_factory=list)
+
+
 class AnalysisClaim(BaseModel):
     claim: str = ""
     quote: str = ""

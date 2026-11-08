@@ -1,7 +1,7 @@
 from edrak.agents.market_intelligence.schemas import (
     AnalysisReply,
     Conclusion,
-    Usefulness,
+    PageVerdicts,
     schema_text,
 )
 
@@ -108,20 +108,25 @@ def tool_arg_prompt(
     return prompt
 
 
-def usefulness_prompt(task_description: str, result_str: str) -> str:
+def page_usefulness_prompt(task_description: str, excerpts: list[str]) -> str:
+    blocks = []
+    for index, excerpt in enumerate(excerpts, start=1):
+        blocks.append(f"PAGE {index}:\n{excerpt[:1500]}")
+    joined = "\n\n".join(blocks)
     return (
         f"Research task: {task_description}\n\n"
-        f"Ranked search hits:\n{result_str[:3000]}\n\n"
-        "Is this result USEFUL for the research task?\n"
-        "USEFUL if at least one hit states a fact that answers this task: "
-        "a named product, price, competitor, customer need, rule, or figure.\n"
-        "Ignore other topics from a broader research program. "
-        "A competitor's pricing page is useful for a competition/pricing task "
-        "even if it does not mention our company.\n"
-        "NOT_USEFUL only when none of the hits answer this task "
-        "(empty, a different industry, or only an unrelated market-size overview).\n\n"
+        f"Scraped pages:\n{joined}\n\n"
+        "Decide whether each page is about the research task's subject and place.\n"
+        "USEFUL when a page is about that subject, even if the place is abbreviated "
+        "(US or U.S. for the United States, EU for Europe) and even if the page "
+        "does not yet state the final price or percent.\n"
+        "A named product, competitor, customer, rule, or figure that answers the task "
+        "is useful. A competitor's pricing page is useful for a competition or pricing "
+        "task even if it does not mention our company.\n"
+        "NOT_USEFUL when the text is an error message, an empty result, or a different industry.\n"
+        "Return one item per page. Copy the PAGE number into index.\n\n"
         "Return ONLY valid JSON matching this schema:\n"
-        f"{schema_text(Usefulness)}\n"
+        f"{schema_text(PageVerdicts)}\n"
     )
 
 

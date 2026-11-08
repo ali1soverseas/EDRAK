@@ -14,6 +14,7 @@ from edrak.agents.market_intelligence.nodes import (
     fill_gaps,
     output_node,
     stand_in_limitation,
+    task_executor,
     task_planner,
 )
 from edrak.agents.market_intelligence.prompts import task_planner_prompt
@@ -98,6 +99,105 @@ def test_output_node_builds_private_report_without_raw_docs():
     assert report["market_findings"][0]["claim"] == "The market is expanding."
 
 
+US_ACCELERATOR_HIT = (
+    "US cloud providers are buying accelerators for new data center clusters. "
+    "AWS and Azure announced fresh capacity for AI training this quarter."
+)
+
+
+class _UsAcceleratorTool:
+    name = "tool_serper"
+    description = "Google Search via the Serper API"
+
+    def invoke(self, _args):
+        assert "united states" not in US_ACCELERATOR_HIT.lower()
+        return json.dumps([
+            {
+                "organic": [
+                    {
+                        "link": "https://example.com/us-accelerators",
+                        "title": "US accelerators",
+                        "snippet": US_ACCELERATOR_HIT,
+                    }
+                ],
+                "query_used": "US accelerators",
+                "method": "serper",
+            }
+        ])
+
+
+def _accelerator_task_state() -> dict:
+    state = empty_market_state(
+        "r1",
+        "What is the market momentum for AI accelerators in the United States?",
+        "Company: NVIDIA Corporation\nMarkets: United States",
+    )
+    state["task_list"] = [
+        {
+            "id": 1,
+            "description": "Identify adoption of AI accelerators in the United States",
+            "tool_hint": "tool_serper",
+            "status": "pending",
+            "queries": [{"q": "US accelerators", "language": "en"}],
+            "search": {
+                "gl": "us",
+                "language": "en",
+                "hl": "en",
+                "place": "united states",
+                "recency": "year",
+            },
+        }
+    ]
+    return state
+
+
+def test_relevance_follows_the_model_when_the_place_is_abbreviated(monkeypatch):
+    from edrak.agents.market_intelligence import nodes
+
+    assert "united states" not in US_ACCELERATOR_HIT.lower()
+    assert "US" in US_ACCELERATOR_HIT and "accelerators" in US_ACCELERATOR_HIT
+    monkeypatch.setattr(nodes, "MAX_RETRIES", 1)
+    monkeypatch.setattr(nodes, "MAX_TOOL_FALLBACK", 1)
+    monkeypatch.setitem(nodes.TOOL_MAP, "tool_serper", _UsAcceleratorTool())
+    monkeypatch.setattr(nodes, "scrape_url_content", lambda _url: US_ACCELERATOR_HIT)
+
+    def useful(schema, prompt, **_kwargs):
+        if schema is nodes.PageVerdicts:
+            assert US_ACCELERATOR_HIT[:40] in prompt
+            return nodes.PageVerdicts(
+                pages=[{"index": 1, "useful": True, "reason": "about US accelerators"}]
+            )
+        if schema is nodes.AnalysisReply:
+            return nodes.AnalysisReply(
+                claims=[
+                    AnalysisClaim(
+                        claim=US_ACCELERATOR_HIT,
+                        quote=US_ACCELERATOR_HIT,
+                    )
+                ]
+            )
+        return None
+
+    monkeypatch.setattr(nodes, "call_structured", useful)
+    kept = task_executor(_accelerator_task_state())
+    assert kept["task_list"][0]["status"] == "done"
+    assert kept["market_findings"][0]["claim"] == US_ACCELERATOR_HIT
+    assert "united states" not in kept["market_findings"][0]["quote"].lower()
+
+    def rejected(schema, prompt, **_kwargs):
+        assert schema is nodes.PageVerdicts
+        assert US_ACCELERATOR_HIT[:40] in prompt
+        return nodes.PageVerdicts(
+            pages=[{"index": 1, "useful": False, "reason": "different industry"}]
+        )
+
+    monkeypatch.setattr(nodes, "call_structured", rejected)
+    dropped = task_executor(_accelerator_task_state())
+    assert dropped["task_list"][0]["status"] == "skipped"
+    assert dropped["market_gaps"]
+    assert "market_findings" not in dropped
+
+
 SCRAPE_TEXT = (
     "Enterprise teams are adopting AI coding assistants across the software "
     "lifecycle. A 2025 survey of 400 DevOps organisations found 62% now run at "
@@ -123,8 +223,8 @@ def test_run_returns_worker_result_with_unchanged_flow(monkeypatch, sample_resea
             return nodes.QueryArgs(
                 queries=[SearchQuery(q="AI coding assistants market", language="en")]
             )
-        if schema is nodes.Usefulness:
-            return nodes.Usefulness(useful=True)
+        if schema is nodes.PageVerdicts:
+            return nodes.PageVerdicts(pages=[{"index": 1, "useful": True}])
         if schema is nodes.AnalysisReply:
             return nodes.AnalysisReply(
                 claims=[
