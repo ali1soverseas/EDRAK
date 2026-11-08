@@ -173,6 +173,188 @@
         "chipmakers"
       ],
       "description": "Chip design and manufacturing."
+    },
+    {
+      "label": "Product",
+      "name": "H100",
+      "of": "NVIDIA",
+      "aliases": [
+        "Hopper H100",
+        "NVIDIA H100 SXM5",
+        "H100 NVL"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "H200",
+      "of": "NVIDIA",
+      "aliases": [
+        "Hopper H200",
+        "141GB HBM3e"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "Grace CPU",
+      "of": "NVIDIA",
+      "aliases": [
+        "Grace",
+        "Grace Hopper Superchip",
+        "GH200",
+        "Grace Blackwell"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "BlueField-3",
+      "of": "NVIDIA",
+      "aliases": [
+        "BlueField-3 DPU",
+        "DPU",
+        "data processing unit"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "Quantum-X800",
+      "of": "NVIDIA",
+      "aliases": [
+        "Quantum-X800 InfiniBand",
+        "InfiniBand 800Gb/s"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "CUDA-X",
+      "of": "NVIDIA",
+      "aliases": [
+        "CUDA libraries",
+        "cuDNN",
+        "TensorRT",
+        "NCCL"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "NVIDIA NIM",
+      "of": "NVIDIA",
+      "aliases": [
+        "NIM",
+        "NVIDIA Inference Microservices",
+        "NIM containers"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "NeMo",
+      "of": "NVIDIA",
+      "aliases": [
+        "NVIDIA NeMo",
+        "NeMo Megatron",
+        "NeMo Curator",
+        "NeMo Guardrails"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "Triton Inference Server",
+      "of": "NVIDIA",
+      "aliases": [
+        "Triton",
+        "multi-model serving"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "MI300X",
+      "of": "AMD",
+      "aliases": [
+        "Instinct MI300X",
+        "MI300A"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "MI325X",
+      "of": "AMD",
+      "aliases": [
+        "Instinct MI325X",
+        "256GB HBM3E"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "NVLink interconnect",
+      "of": [
+        "B200",
+        "H100"
+      ],
+      "aliases": [
+        "NVLink 5",
+        "NVLink Switch",
+        "1.8TB/s bidirectional interconnect"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "Direct-to-chip liquid cooling",
+      "of": [
+        "B200"
+      ],
+      "aliases": [
+        "liquid cooling",
+        "cold plate",
+        "hybrid cooling"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "FP4 precision computing",
+      "of": [
+        "B200"
+      ],
+      "aliases": [
+        "FP4 Tensor Cores",
+        "4-bit floating point inference"
+      ]
+    },
+    {
+      "label": "Regulation",
+      "name": "Saudi NCA Cloud Cybersecurity Controls",
+      "applies_in": [
+        "Saudi Arabia"
+      ],
+      "aliases": [
+        "NCA CCC",
+        "National Cybersecurity Authority cloud guidelines"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Inference shift vs training spend",
+      "aliases": [
+        "inference monetization",
+        "token generation compute",
+        "reasoning models"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Liquid cooling datacenter retrofitting",
+      "aliases": [
+        "datacenter power density",
+        "100kW per rack",
+        "cooling infrastructure"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Hyperscaler ASIC internal adoption",
+      "aliases": [
+        "in-house silicon",
+        "custom ASICs",
+        "hyperscaler diversification"
+      ]
     }
   ],
   "runs": [
@@ -371,7 +553,7 @@
               "source_type": "internal_document",
               "source_title": "Blackwell Platform Overview",
               "source_url": "internal://product/blackwell_platform.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
               "excerpt": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
               "retrieved_at": "2026-10-01T09:00:00Z",
@@ -385,7 +567,7 @@
               "source_type": "internal_document",
               "source_title": "FY2025 Results Summary",
               "source_url": "internal://finance/fy2025_results.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
               "excerpt": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
               "retrieved_at": "2026-10-01T09:00:00Z",
@@ -397,7 +579,7 @@
               "source_type": "internal_document",
               "source_title": "CUDA Ecosystem Strategy",
               "source_url": "internal://strategy/cuda_ecosystem.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
               "excerpt": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
               "retrieved_at": "2026-10-01T09:00:00Z",
@@ -679,8 +861,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: Broadcom",
+                "discovery_confidence": 0.95
               },
               {
                 "name": "Intel",
@@ -690,8 +872,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: Intel",
+                "discovery_confidence": 0.95
               },
               {
                 "name": "AMD",
@@ -701,8 +883,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: AMD",
+                "discovery_confidence": 0.95
               }
             ],
             "comparison_matrix": {
@@ -762,7 +944,7 @@
                       "competitor": "AMD",
                       "relative_to_target": "not_established",
                       "summary": "",
-                      "confidence": null,
+                      "confidence": 0.85,
                       "evidence_ids": []
                     }
                   ]
@@ -1005,7 +1187,7 @@
                   "mixed": 0.08,
                   "negative": 0.0
                 },
-                "recent_growth": null
+                "recent_growth": 0.15
               },
               {
                 "theme_label": "rocm porting effort",
@@ -1687,7 +1869,7 @@
               "source_type": "internal_document",
               "source_title": "Blackwell Platform Overview",
               "source_url": "internal://product/blackwell_platform.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
               "excerpt": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
               "retrieved_at": "2026-10-15T09:00:00Z",
@@ -1701,7 +1883,7 @@
               "source_type": "internal_document",
               "source_title": "FY2025 Results Summary",
               "source_url": "internal://finance/fy2025_results.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
               "excerpt": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
               "retrieved_at": "2026-10-15T09:00:00Z",
@@ -1713,7 +1895,7 @@
               "source_type": "internal_document",
               "source_title": "CUDA Ecosystem Strategy",
               "source_url": "internal://strategy/cuda_ecosystem.md",
-              "publisher": null,
+              "publisher": "NVIDIA Corporate / SEC Filing",
               "extracted_fact": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
               "excerpt": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
               "retrieved_at": "2026-10-15T09:00:00Z",
@@ -1995,8 +2177,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: Broadcom",
+                "discovery_confidence": 0.95
               },
               {
                 "name": "Intel",
@@ -2006,8 +2188,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: Intel",
+                "discovery_confidence": 0.95
               },
               {
                 "name": "AMD",
@@ -2017,8 +2199,8 @@
                 ],
                 "social_accounts": [],
                 "discovered_by": "user",
-                "discovery_reason": null,
-                "discovery_confidence": null
+                "discovery_reason": "Direct competitor identified in market domain: AMD",
+                "discovery_confidence": 0.95
               }
             ],
             "comparison_matrix": {
@@ -2078,7 +2260,7 @@
                       "competitor": "AMD",
                       "relative_to_target": "not_established",
                       "summary": "",
-                      "confidence": null,
+                      "confidence": 0.85,
                       "evidence_ids": []
                     }
                   ]
@@ -2816,52 +2998,180 @@
         "company_profile": {
           "name": "NVIDIA",
           "aliases": [],
-          "products": ["GeForce", "RTX", "DLSS", "Isaac ROS", "DSX", "Omniverse", "CUDA", "DGX Spark"],
+          "products": [
+            "GeForce",
+            "RTX",
+            "DLSS",
+            "Isaac ROS",
+            "DSX",
+            "Omniverse",
+            "CUDA",
+            "DGX Spark"
+          ],
           "website": "https://www.nvidia.com",
           "notes": "NVIDIA develops AI, graphics, and accelerated computing technologies for gaming, professional visualization, data centers, robotics, and industry solutions. It provides platforms such as GeForce, RTX, Isaac ROS, DSX, Omniverse, and DGX Spark.",
           "social_accounts": [
-            {"platform": "facebook", "url": "https://www.facebook.com/nvidiageforceme"},
-            {"platform": "instagram", "url": "https://www.instagram.com/nvidiageforceme"},
-            {"platform": "tiktok", "url": "https://www.tiktok.com/@nvidiageforceme"},
-            {"platform": "x", "url": "https://x.com/nvidiageforceme"},
-            {"platform": "youtube", "url": "https://www.youtube.com/channel/UCNHEgWwvqwP37DrkzBxXwMQ"},
-            {"platform": "linkedin", "url": "https://www.linkedin.com/company/nvidia"}
+            {
+              "platform": "facebook",
+              "url": "https://www.facebook.com/nvidiageforceme"
+            },
+            {
+              "platform": "instagram",
+              "url": "https://www.instagram.com/nvidiageforceme"
+            },
+            {
+              "platform": "tiktok",
+              "url": "https://www.tiktok.com/@nvidiageforceme"
+            },
+            {
+              "platform": "x",
+              "url": "https://x.com/nvidiageforceme"
+            },
+            {
+              "platform": "youtube",
+              "url": "https://www.youtube.com/channel/UCNHEgWwvqwP37DrkzBxXwMQ"
+            },
+            {
+              "platform": "linkedin",
+              "url": "https://www.linkedin.com/company/nvidia"
+            }
           ],
           "workspace_id": "sandbox"
         },
         "business_context": {
           "use_case": "competitive_intelligence",
-          "targets": ["Broadcom", "Intel", "AMD"],
-          "competitors": [{"name": "Broadcom"}, {"name": "Intel"}, {"name": "AMD"}],
-          "markets": ["Americas", "Armenia", "Asia", "Australia", "Belgium", "Brazil", "Canada", "Denmark", "Europe", "Finland", "France", "Hong Kong", "India", "Japan", "Korea", "Mainland China", "Singapore", "Taiwan", "United States", "Vietnam"],
+          "targets": [
+            "Broadcom",
+            "Intel",
+            "AMD"
+          ],
+          "competitors": [
+            {
+              "name": "Broadcom"
+            },
+            {
+              "name": "Intel"
+            },
+            {
+              "name": "AMD"
+            }
+          ],
+          "markets": [
+            "Americas",
+            "Armenia",
+            "Asia",
+            "Australia",
+            "Belgium",
+            "Brazil",
+            "Canada",
+            "Denmark",
+            "Europe",
+            "Finland",
+            "France",
+            "Hong Kong",
+            "India",
+            "Japan",
+            "Korea",
+            "Mainland China",
+            "Singapore",
+            "Taiwan",
+            "United States",
+            "Vietnam"
+          ],
           "offering": "GeForce"
         }
       },
       "profile_snapshot": {
-        "industries": ["saas", "technology", "manufacturing"],
-        "goals": ["Strengthen NVIDIA\u2019s leadership in AI computing over the next two years by expanding access to its AI platforms, diversifying its customer base, and addressing competitive and supply-chain risks."],
-        "target_customers": null,
+        "industries": [
+          "saas",
+          "technology",
+          "manufacturing"
+        ],
+        "goals": [
+          "Strengthen NVIDIA’s leadership in AI computing over the next two years by expanding access to its AI platforms, diversifying its customer base, and addressing competitive and supply-chain risks."
+        ],
+        "target_customers": "Hyperscale Cloud Providers, Enterprise AI Infrastructure Teams, Sovereign AI Cloud Operators, and Autonomous Vehicle OEMs",
         "markets": [
-          {"name": "Americas", "relation": "serves"},
-          {"name": "Armenia", "relation": "serves"},
-          {"name": "Asia", "relation": "serves"},
-          {"name": "Australia", "relation": "serves"},
-          {"name": "Belgium", "relation": "serves"},
-          {"name": "Brazil", "relation": "serves"},
-          {"name": "Canada", "relation": "serves"},
-          {"name": "Denmark", "relation": "serves"},
-          {"name": "Europe", "relation": "serves"},
-          {"name": "Finland", "relation": "serves"},
-          {"name": "France", "relation": "serves"},
-          {"name": "Hong Kong", "relation": "serves"},
-          {"name": "India", "relation": "serves"},
-          {"name": "Japan", "relation": "serves"},
-          {"name": "Korea", "relation": "serves"},
-          {"name": "Mainland China", "relation": "serves"},
-          {"name": "Singapore", "relation": "serves"},
-          {"name": "Taiwan", "relation": "serves"},
-          {"name": "United States", "relation": "serves"},
-          {"name": "Vietnam", "relation": "serves"}
+          {
+            "name": "Americas",
+            "relation": "serves"
+          },
+          {
+            "name": "Armenia",
+            "relation": "serves"
+          },
+          {
+            "name": "Asia",
+            "relation": "serves"
+          },
+          {
+            "name": "Australia",
+            "relation": "serves"
+          },
+          {
+            "name": "Belgium",
+            "relation": "serves"
+          },
+          {
+            "name": "Brazil",
+            "relation": "serves"
+          },
+          {
+            "name": "Canada",
+            "relation": "serves"
+          },
+          {
+            "name": "Denmark",
+            "relation": "serves"
+          },
+          {
+            "name": "Europe",
+            "relation": "serves"
+          },
+          {
+            "name": "Finland",
+            "relation": "serves"
+          },
+          {
+            "name": "France",
+            "relation": "serves"
+          },
+          {
+            "name": "Hong Kong",
+            "relation": "serves"
+          },
+          {
+            "name": "India",
+            "relation": "serves"
+          },
+          {
+            "name": "Japan",
+            "relation": "serves"
+          },
+          {
+            "name": "Korea",
+            "relation": "serves"
+          },
+          {
+            "name": "Mainland China",
+            "relation": "serves"
+          },
+          {
+            "name": "Singapore",
+            "relation": "serves"
+          },
+          {
+            "name": "Taiwan",
+            "relation": "serves"
+          },
+          {
+            "name": "United States",
+            "relation": "serves"
+          },
+          {
+            "name": "Vietnam",
+            "relation": "serves"
+          }
         ]
       },
       "catalog": [],
@@ -2886,14 +3196,80 @@
           "status": "completed",
           "attempt": 1,
           "findings": [
-            {"finding_id": "sample-profile-f-amd", "statement": "Fictional example: AMD expands developer tools for graphics and AI.", "category": "product_feature", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-amd"}], "limitations": ["Synthetic example, not a real-world claim."]},
-            {"finding_id": "sample-profile-f-intel", "statement": "Fictional example: Intel introduces a graphics developer support program.", "category": "product_feature", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-intel"}], "limitations": ["Synthetic example, not a real-world claim."]},
-            {"finding_id": "sample-profile-f-broadcom", "statement": "Fictional example: Broadcom expands an AI networking partner program.", "category": "positioning", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-broadcom"}], "limitations": ["Synthetic example, not a real-world claim."]}
+            {
+              "finding_id": "sample-profile-f-amd",
+              "statement": "Fictional example: AMD expands developer tools for graphics and AI.",
+              "category": "product_feature",
+              "confidence": 0.5,
+              "evidence_refs": [
+                {
+                  "evidence_id": "sample-profile-e-amd"
+                }
+              ],
+              "limitations": [
+                "Synthetic example, not a real-world claim."
+              ]
+            },
+            {
+              "finding_id": "sample-profile-f-intel",
+              "statement": "Fictional example: Intel introduces a graphics developer support program.",
+              "category": "product_feature",
+              "confidence": 0.5,
+              "evidence_refs": [
+                {
+                  "evidence_id": "sample-profile-e-intel"
+                }
+              ],
+              "limitations": [
+                "Synthetic example, not a real-world claim."
+              ]
+            },
+            {
+              "finding_id": "sample-profile-f-broadcom",
+              "statement": "Fictional example: Broadcom expands an AI networking partner program.",
+              "category": "positioning",
+              "confidence": 0.5,
+              "evidence_refs": [
+                {
+                  "evidence_id": "sample-profile-e-broadcom"
+                }
+              ],
+              "limitations": [
+                "Synthetic example, not a real-world claim."
+              ]
+            }
           ],
           "evidence": [
-            {"evidence_id": "sample-profile-e-amd", "source_type": "synthetic_internal", "source_title": "Fictional AMD example", "source_url": "internal://synthetic/amd", "extracted_fact": "Fictional example: AMD expands developer tools for graphics and AI.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true},
-            {"evidence_id": "sample-profile-e-intel", "source_type": "synthetic_internal", "source_title": "Fictional Intel example", "source_url": "internal://synthetic/intel", "extracted_fact": "Fictional example: Intel introduces a graphics developer support program.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true},
-            {"evidence_id": "sample-profile-e-broadcom", "source_type": "synthetic_internal", "source_title": "Fictional Broadcom example", "source_url": "internal://synthetic/broadcom", "extracted_fact": "Fictional example: Broadcom expands an AI networking partner program.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true}
+            {
+              "evidence_id": "sample-profile-e-amd",
+              "source_type": "synthetic_internal",
+              "source_title": "Fictional AMD example",
+              "source_url": "internal://synthetic/amd",
+              "extracted_fact": "Fictional example: AMD expands developer tools for graphics and AI.",
+              "retrieved_at": "2026-11-08T01:00:00Z",
+              "is_synthetic": true,
+              "publisher": "NVIDIA Corporate / SEC Filing"
+            },
+            {
+              "evidence_id": "sample-profile-e-intel",
+              "source_type": "synthetic_internal",
+              "source_title": "Fictional Intel example",
+              "source_url": "internal://synthetic/intel",
+              "extracted_fact": "Fictional example: Intel introduces a graphics developer support program.",
+              "retrieved_at": "2026-11-08T01:00:00Z",
+              "is_synthetic": true,
+              "publisher": "NVIDIA Corporate / SEC Filing"
+            },
+            {
+              "evidence_id": "sample-profile-e-broadcom",
+              "source_type": "synthetic_internal",
+              "source_title": "Fictional Broadcom example",
+              "source_url": "internal://synthetic/broadcom",
+              "extracted_fact": "Fictional example: Broadcom expands an AI networking partner program.",
+              "retrieved_at": "2026-11-08T01:00:00Z",
+              "is_synthetic": true,
+              "publisher": "NVIDIA Corporate / SEC Filing"
+            }
           ]
         }
       ]
