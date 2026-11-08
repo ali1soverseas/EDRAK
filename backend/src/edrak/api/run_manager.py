@@ -598,6 +598,7 @@ class RunManager:
                     if "__interrupt__" in chunk:
                         interrupts = chunk["__interrupt__"]
                         payload = interrupts[0].value if interrupts else {}
+                        await self._record_graph(active, request, state, plan)
                         await self._pause_for_review(active, payload if isinstance(payload, dict) else {})
                         return
                     for node_name, node_output in chunk.items():
@@ -618,6 +619,7 @@ class RunManager:
                 final = await graph.aget_state(config)
                 state = dict(final.values or state)
                 await self._finish(active, request, state.get("plan") or plan, analysis_title, state)
+                await self._record_graph(active, request, state, plan)
                 try:
                     await saver.adelete_thread(analysis_id)
                 except Exception:  # noqa: BLE001 - a stale checkpoint is harmless
@@ -653,6 +655,34 @@ class RunManager:
                 flush_observability()
             except Exception:
                 pass
+
+    async def _record_graph(
+        self, active: ActiveRun, request: BusinessRequest, state: dict[str, Any], plan: ResearchPlan
+    ) -> None:
+        from edrak.graph.connection import get_graph_settings
+        from edrak.graph.ingestion.pipeline import GraphIngestor
+
+        if not get_graph_settings().GRAPH_ENABLED:
+            return
+        if not active.workspace_id:
+            logger.warning("Graph ingestion skipped for %s: no workspace ID", request.request_id)
+            return
+        try:
+            report = await GraphIngestor().aingest_run(
+                request,
+                workspace_id=active.workspace_id,
+                user_id=active.requested_by_id,
+                status=state.get("status"),
+                plan=state.get("plan") or plan,
+                results=list(state.get("results") or []),
+                verification=state.get("verification_result"),
+                cross_signal=state.get("cross_signal"),
+                decision=state.get("decision_analysis"),
+            )
+            if not report.ok:
+                logger.warning("Graph ingestion incomplete for %s: %s", request.request_id, report.summary())
+        except Exception:
+            logger.exception("Graph ingestion failed for %s", request.request_id)
 
     # ------------------------------------------------------------------ checkpoint 2 and pausing
 

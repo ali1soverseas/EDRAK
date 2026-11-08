@@ -213,7 +213,15 @@ class CompetitorState(TypedDict, total=False):
     competitor_info: Dict[str, Dict[str, Any]]   # name -> {website, aliases, discovered_by, reason, links}
     research_goal: str
     research_focus: str
+    prior_knowledge: str
     today: str
+
+    # Hybrid retrieval and coverage (prior.py)
+    workspace_id: str
+    parent_request_id: str
+    prior_findings: Dict[str, List[Dict[str, Any]]]    # competitor -> earlier findings from the graph
+    internal_context: Dict[str, List[Dict[str, Any]]]  # requirement_id -> company-document passages (Chroma)
+    requirement_coverage: List[Dict[str, Any]]         # covered / insufficient / stale / unverified / missing
 
     research_stage: int
     research_strategy: str

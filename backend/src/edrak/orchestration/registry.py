@@ -48,4 +48,6 @@ def get_default_registry() -> WorkerRegistry:
     except Exception as exc:
         logger.warning("Internal intelligence worker unavailable: %s", exc)
 
-    return registry
+    from edrak.graph.agent_context import wrap_registry
+
+    return wrap_registry(registry)

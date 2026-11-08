@@ -1,9 +1,16 @@
-"""LangGraph wiring: nodes, edges and the compiled `app`."""
+"""LangGraph wiring: nodes, edges and the compiled `app`.
+
+    identify_requirements      2. preliminary research requirements
+    hybrid_retrieval           3. Neo4j (earlier findings) + ChromaDB (company documents)
+    assess_coverage            4. covered / insufficient / stale / unverified / missing; reuse what is known
+    generate_queries           5. queries only for what is not covered
+    search -> synthesize -> ground -> check_requirements   6. web research, looped by stage
+    final_report -> comparison
+"""
 
 from langgraph.graph import END, START, StateGraph
 
 from .nodes import (
-    after_queries_router,
     check_research_requirements_node,
     comparison_node,
     final_report_node,
@@ -15,7 +22,19 @@ from .nodes import (
     synthesize_node,
     verify_node,
 )
+from .prior import assess_coverage_node, hybrid_retrieval_node
 from .state import CompetitorState
+
+
+def after_queries_router(state: CompetitorState) -> str:
+    """Search when there are queries. Otherwise record the requirement checks first if none exist yet:
+    when earlier runs covered every requirement, stage 1 has nothing to search, and the reused
+    findings still have to be counted as fulfilled before the report is written."""
+    if state.get("search_queries"):
+        return "search"
+    if not state.get("requirement_checks"):
+        return "check"
+    return "finish"
 
 
 # ============================================================
@@ -25,6 +44,10 @@ from .state import CompetitorState
 graph = StateGraph(CompetitorState)
 
 graph.add_node("identify_requirements", identify_research_requirements_node)
+
+graph.add_node("hybrid_retrieval", hybrid_retrieval_node)
+
+graph.add_node("assess_coverage", assess_coverage_node)
 
 graph.add_node("generate_queries", generate_queries_node)
 
@@ -46,13 +69,17 @@ graph.add_node("comparison", comparison_node)
 
 graph.add_edge(START, "identify_requirements")
 
-graph.add_edge("identify_requirements", "generate_queries")
+graph.add_edge("identify_requirements", "hybrid_retrieval")
 
-# If no valid queries survive, stop instead of wasting a stage
+graph.add_edge("hybrid_retrieval", "assess_coverage")
+
+graph.add_edge("assess_coverage", "generate_queries")
+
+# No queries: either everything is covered (check, then finish) or a later stage found nothing to ask.
 graph.add_conditional_edges(
     "generate_queries",
     after_queries_router,
-    {"search": "search", "finish": "final_report"},
+    {"search": "search", "check": "check_requirements", "finish": "final_report"},
 )
 
 graph.add_edge("search", "synthesize")

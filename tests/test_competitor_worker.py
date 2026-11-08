@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
-import pytest
+from types import SimpleNamespace
 
+import pytest
 from edrak.agents.competitor_intelligence import nodes, sources
-from edrak.agents.competitor_intelligence.socials import normalise_profile, profiles_in_html
+from edrak.agents.competitor_intelligence.socials import (
+    normalise_profile,
+    profiles_in_html,
+)
 from edrak.agents.competitor_intelligence.state import (
+    MAX_QUERIES_TOTAL,
+    MAX_RESEARCH_STAGES,
     ComparisonReport,
     CompetitorAssessment,
     CompetitorProfile,
@@ -14,8 +20,6 @@ from edrak.agents.competitor_intelligence.state import (
     DimensionComparison,
     FindingList,
     LLMFinding,
-    MAX_QUERIES_TOTAL,
-    MAX_RESEARCH_STAGES,
     ResearchRequirement,
     ResearchRequirements,
     SearchQuery,
@@ -107,6 +111,128 @@ def test_the_router_stops_on_stages_budget_and_lack_of_progress():
     assert nodes.research_router({"missing_information": open_req, "research_stage": 1, "executed_queries": budget}) == "finish"
     assert nodes.research_router({"missing_information": open_req, "research_stage": 2, "new_verified_this_stage": 0}) == "finish"
     assert nodes.research_router({"missing_information": open_req, "research_stage": 1, "new_verified_this_stage": 0}) == "research_again"
+
+
+def test_prior_graph_context_is_scoped_to_the_assigned_task(monkeypatch):
+    from edrak.graph import agent_context
+    from edrak.graph.loader import load_runs
+    from edrak.graph.retrieval.graph_retriever import GraphGap
+
+    task = next(t for t in load_runs()[0].plan.tasks if t.worker == WorkerType.COMPETITOR_INTELLIGENCE)
+    calls = []
+
+    class Retriever:
+        def available(self):
+            return True
+
+        def find_findings(self, workspace_id, **kwargs):
+            calls.append((workspace_id, kwargs))
+            return []
+
+        def signals(self, *args, **kwargs):
+            return []
+
+        def open_gaps(self, *args, **kwargs):
+            return [
+                GraphGap("a", "AMD accelerator pricing", None, None, "open", None),
+                GraphGap("b", "Unrelated company pricing", None, None, "open", None),
+            ]
+
+        def metric_history(self, *args, **kwargs):
+            return []
+
+    monkeypatch.setattr(agent_context, "_add_history", lambda *args: None)
+    prior = agent_context.prior_knowledge_for_task(task, retriever=Retriever())
+    assert calls[0][0] == "sandbox"
+    assert calls[0][1]["entity_ids"] == ["amd", "broadcom", "intel"]
+    assert calls[0][1]["exclude_request_id"] == task.parent_request_id
+    assert calls[0][1]["include_synthetic"] is False
+    assert task.goal in calls[0][1]["query"] and task.focus in calls[0][1]["query"]
+    assert [gap.id for gap in prior.gaps] == ["a"]
+
+
+def test_discovered_competitors_scope_prior_context_and_only_guide_planning(monkeypatch):
+    import edrak.agents.competitor_intelligence as competitor
+    from edrak.agents.competitor_intelligence.prompts import (
+        queries_prompt,
+        requirements_prompt,
+    )
+    from edrak.graph import agent_context
+    task = ResearchTask(
+        task_id="competitor-task",
+        parent_request_id="run-1",
+        worker=WorkerType.COMPETITOR_INTELLIGENCE,
+        goal="Compare pricing",
+        focus="Enterprise pricing",
+        company_profile=CompanyProfile(name="Acme", workspace_id="workspace-1"),
+        business_context=BusinessContext(use_case=UseCase.COMPETITIVE_INTELLIGENCE),
+    )
+    scoped = []
+    monkeypatch.setattr(competitor, "_competitors_for", lambda task: (["Kanz Pay"], {}))
+    monkeypatch.setattr("edrak.graph.connection.get_graph_settings", lambda: SimpleNamespace(GRAPH_ENABLED=True))
+    monkeypatch.setattr(agent_context, "current_prior_knowledge", lambda task: None)
+
+    def prior_lookup(task):
+        scoped.append(task)
+        return SimpleNamespace(as_prompt=lambda: "Earlier Kanz Pay pricing may have changed.")
+
+    monkeypatch.setattr(agent_context, "prior_knowledge_for_task", prior_lookup)
+    state = competitor._task_to_initial_state(task)
+    assert scoped[0].business_context.targets == ["Kanz Pay"]
+    assert scoped[0].company_profile.workspace_id == "workspace-1"
+    assert scoped[0].parent_request_id == "run-1"
+    assert state["prior_knowledge"] == "Earlier Kanz Pay pricing may have changed."
+    assert state["verified_findings"] == []
+    assert "Earlier Kanz Pay pricing" in requirements_prompt(state)
+    prompt = queries_prompt(state, 1, "discovery", [], [], [], "")
+    assert "Earlier Kanz Pay pricing" in prompt
+    assert "Collect fresh sources" in prompt
+
+
+def test_competitor_without_named_entities_does_not_read_unscoped_history(monkeypatch):
+    from edrak.graph.agent_context import prior_knowledge_for_task
+
+    class Retriever:
+        def available(self):
+            return True
+
+        def find_findings(self, *args, **kwargs):
+            pytest.fail("unscoped graph search")
+
+    task = ResearchTask(
+        task_id="task",
+        parent_request_id="run",
+        worker=WorkerType.COMPETITOR_INTELLIGENCE,
+        goal="Compare pricing",
+        focus="Pricing",
+        company_profile=CompanyProfile(name="Acme", workspace_id="ws"),
+        business_context=BusinessContext(use_case=UseCase.COMPETITIVE_INTELLIGENCE),
+    )
+    assert prior_knowledge_for_task(task, retriever=Retriever()).is_empty
+
+
+def test_wrapper_reports_context_discovered_during_worker_run(monkeypatch):
+    from edrak.graph import agent_context
+    from edrak.graph.retrieval.graph_retriever import GraphGap
+
+    empty = agent_context.PriorKnowledge(worker="competitor_intelligence")
+    discovered = agent_context.PriorKnowledge(
+        worker="competitor_intelligence",
+        gaps=[GraphGap("gap", "Kanz Pay pricing", None, None, "open", None)],
+    )
+    task = SimpleNamespace(task_id="task", attempt=1, worker="competitor_intelligence")
+    monkeypatch.setattr(agent_context, "prior_knowledge_for_task", lambda *args, **kwargs: empty)
+
+    class Worker:
+        worker_type = WorkerType.COMPETITOR_INTELLIGENCE
+
+        def run(self, task):
+            agent_context.update_current_prior_knowledge(task, discovered)
+            return SimpleNamespace(metadata={})
+
+    result = agent_context.GraphAwareWorker(Worker(), focus_hints=False).run(task)
+    assert result.metadata["graph_prior"]["gaps"] == 1
+    assert agent_context.current_prior_knowledge(task) is None
 
 
 # ------------------------------------------------------------------ the whole graph, offline
@@ -211,3 +337,38 @@ def test_a_run_is_bounded_grounded_and_returns_the_comparison(offline):
     assert matrix["dimensions"][0]["cells"][0]["relative_to_target"] == "comparable"
     assert matrix["dimensions"][0]["cells"][0]["evidence_ids"]
     assert result.metadata["competitors"][0]["official_domains"] == ["kanzpay.example"]
+
+
+def test_prior_context_guides_search_without_becoming_evidence(offline, monkeypatch):
+    from edrak.agents.competitor_intelligence import run_research
+    from edrak.graph import agent_context
+
+    prompts = {}
+
+    def capture_prompt(prompt, model_class, **kwargs):
+        prompts.setdefault(model_class, []).append(prompt)
+        return fake_structured(prompt, model_class, **kwargs)
+
+    monkeypatch.setattr(nodes, "call_structured", capture_prompt)
+    monkeypatch.setattr("edrak.graph.connection.get_graph_settings", lambda: SimpleNamespace(GRAPH_ENABLED=True))
+    monkeypatch.setattr(
+        agent_context, "current_prior_knowledge",
+        lambda task: SimpleNamespace(as_prompt=lambda: "Historical pricing: Kanz Pay charged 42 EGP."),
+    )
+    task = ResearchTask(
+        parent_request_id="run",
+        worker=WorkerType.COMPETITOR_INTELLIGENCE,
+        goal="Compare pricing",
+        focus="Pricing",
+        company_profile=CompanyProfile(name="Nile Ledger", workspace_id="workspace-1"),
+        business_context=BusinessContext(
+            use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+            competitors=[CompetitorRef(name="Kanz Pay", website="https://kanzpay.example")],
+        ),
+    )
+    result = run_research(task, print_result=False)
+    assert "Historical pricing" in prompts[ResearchRequirements][0]
+    assert "Historical pricing" in prompts[SearchQueryList][0]
+    assert offline.calls
+    assert all("42 EGP" not in finding.statement for finding in result.findings)
+    assert all("42 EGP" not in evidence.extracted_fact for evidence in result.evidence)

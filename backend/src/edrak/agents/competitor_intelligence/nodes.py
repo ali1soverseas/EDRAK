@@ -1216,7 +1216,13 @@ def generate_queries_node(
 
     reqs = requirements_by_id(state)
 
-    if stage == 1:
+    if stage == 1 and state.get("requirement_coverage"):
+        # Hybrid retrieval and the coverage check ran: search only what is not covered (prior.py).
+        from .prior import coverage_targets
+
+        targets = coverage_targets(state)
+
+    elif stage == 1:
         targets = [
             {
                 "requirement_id": r["id"],
@@ -1985,6 +1991,17 @@ def check_research_requirements_node(
             if f.get("competitor") == r["competitor"] and f.get("requirement_id") == r["id"]
         ]
         reason = "No source found yet that establishes this."
+        coverage = next((c for c in state.get("requirement_coverage", [])
+                         if c.get("requirement_id") == r["id"]), None)
+        if coverage and coverage.get("status") != "covered":
+            reason = coverage.get("reason") or reason
+            if coverage.get("status") == "insufficient":
+                from .prior import resolves_insufficient_coverage
+
+                if not resolves_insufficient_coverage(state, r, found):
+                    found = []
+            else:
+                found = [f for f in found if f.get("origin") != "edrak_graph"]
         defn = get_registry().get(r.get("metric_id"))
         # A figure that must come from the company itself is not met by a third party's page.
         if found and defn and defn.check.get("official_source_required") and not any(
@@ -3184,6 +3201,8 @@ def build_worker_result(
     positioning findings (so verification checks them like any other claim) and as a structured
     matrix in metadata, which the brief's "Alternatives compared" card draws.
     """
+    from .prior import prior_evidence_fields, prior_evidence_metadata
+
     verified_findings = state.get("verified_findings", [])
     search_results = state.get("search_results", [])
     unresolved = state.get("missing_information", [])
@@ -3224,7 +3243,10 @@ def build_worker_result(
                 "provider": source.get("provider", ""),
                 "published_date": source.get("published_date"),
                 "score": source.get("score"),
+                **prior_evidence_metadata(source),
             },
+            # Use a new id to avoid overwriting the original graph evidence; retain its date.
+            **prior_evidence_fields(source),
         )
         return evidence_for[key]
 

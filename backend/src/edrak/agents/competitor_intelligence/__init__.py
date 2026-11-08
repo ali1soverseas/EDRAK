@@ -13,6 +13,7 @@ from ...contracts.result import WorkerResult, WorkerStatus
 from ...core.action_log import log_action
 from .graph import app
 from .nodes import build_worker_result, save_node_output
+from .prior import annotate_result
 from .sources import domain_of, register_official_domains
 
 logger = logging.getLogger(__name__)
@@ -86,6 +87,30 @@ def _competitors_for(task: ResearchTask) -> tuple[list[str], dict[str, dict[str,
     return names, info
 
 
+def _prior_knowledge(task: ResearchTask, competitors: list[str]) -> str:
+    """The prompt block GraphAwareWorker computed for this task (edrak.graph.agent_context), if any."""
+    try:
+        from ...graph.agent_context import (
+            current_prior_knowledge,
+            prior_knowledge_for_task,
+            update_current_prior_knowledge,
+        )
+        from ...graph.connection import get_graph_settings
+
+        if not get_graph_settings().GRAPH_ENABLED or not competitors:
+            return ""
+        prior = current_prior_knowledge(task)
+        if prior is None or not competitor_names(task.business_context):
+            context = task.business_context.model_copy(update={"targets": competitors})
+            scoped_task = task.model_copy(update={"business_context": context})
+            prior = prior_knowledge_for_task(scoped_task)
+            update_current_prior_knowledge(task, prior)
+        return prior.as_prompt() if prior is not None else ""
+    except Exception:  # noqa: BLE001 - the graph is optional
+        logger.exception("Could not retrieve prior graph context for task %s", task.task_id)
+        return ""
+
+
 def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
     """The shared ResearchTask as the competitor graph's state."""
     profile = task.company_profile
@@ -95,6 +120,10 @@ def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
         "task_id": task.task_id,
         "attempt": task.attempt,
         "today": date.today().isoformat(),
+        # Hybrid retrieval reads earlier runs of this workspace only, and never the run that is asking.
+        "workspace_id": profile.workspace_id,
+        "parent_request_id": task.parent_request_id,
+        "prior_knowledge": _prior_knowledge(task, competitors),
         "company": profile.name,
         "company_profile": {
             "name": profile.name,
@@ -126,6 +155,9 @@ def _task_to_initial_state(task: ResearchTask) -> dict[str, Any]:
         "requirement_checks": [],
         "missing_information": [],
         "dropped_sources": [],
+        "prior_findings": {},
+        "internal_context": {},
+        "requirement_coverage": [],
     }
 
 
@@ -150,7 +182,7 @@ def run_research(
     save_node_output("initial_input", initial_state, 1)
 
     result = app.invoke(initial_state, config={"recursion_limit": recursion_limit})
-    worker_result = build_worker_result(result)
+    worker_result = annotate_result(build_worker_result(result), result)
 
     if print_result:
         print("\n" + "=" * 80)

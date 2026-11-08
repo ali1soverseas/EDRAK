@@ -1,0 +1,2902 @@
+{
+  "workspace_id": "sandbox",
+  "catalog": [
+    {
+      "label": "Product",
+      "name": "B200",
+      "of": "NVIDIA",
+      "aliases": [
+        "NVIDIA B200",
+        "GB200 NVL72"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "AMD Instinct",
+      "of": "AMD",
+      "aliases": [
+        "Instinct",
+        "MI355X",
+        "MI400"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "ROCm",
+      "of": "AMD"
+    },
+    {
+      "label": "Product",
+      "name": "Gaudi 3",
+      "of": "Intel",
+      "aliases": [
+        "Gaudi"
+      ]
+    },
+    {
+      "label": "Product",
+      "name": "Xeon 6",
+      "of": "Intel"
+    },
+    {
+      "label": "Product",
+      "name": "Tomahawk 6",
+      "of": "Broadcom"
+    },
+    {
+      "label": "Product",
+      "name": "Broadcom XPUs",
+      "of": "Broadcom",
+      "aliases": [
+        "custom AI accelerators",
+        "XPUs"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "High-bandwidth memory",
+      "of": [
+        "B200",
+        "AMD Instinct"
+      ],
+      "aliases": [
+        "HBM3E",
+        "HBM4",
+        "memory per accelerator"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "Ethernet switching",
+      "of": [
+        "Tomahawk 6",
+        "Spectrum-X"
+      ],
+      "aliases": [
+        "Ethernet switch"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "CUDA developer tooling",
+      "of": "CUDA",
+      "aliases": [
+        "mature tooling"
+      ]
+    },
+    {
+      "label": "Feature",
+      "name": "CUDA code portability",
+      "of": "ROCm",
+      "aliases": [
+        "port CUDA code"
+      ]
+    },
+    {
+      "label": "PricingPlan",
+      "name": "NVIDIA AI Enterprise",
+      "of": "NVIDIA",
+      "description": "Per-GPU annual software licence."
+    },
+    {
+      "label": "Regulation",
+      "name": "US AI chip export controls",
+      "applies_in": [
+        "Saudi Arabia",
+        "United Arab Emirates"
+      ],
+      "aliases": [
+        "US export controls"
+      ]
+    },
+    {
+      "label": "Regulation",
+      "name": "Saudi Personal Data Protection Law",
+      "applies_in": [
+        "Saudi Arabia"
+      ],
+      "aliases": [
+        "Saudi Arabia's Personal Data Protection Law",
+        "Saudi PDPL"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Supply lead times",
+      "aliases": [
+        "lead times"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Software lock-in",
+      "aliases": [
+        "mature tooling",
+        "software moat"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "CUDA migration",
+      "aliases": [
+        "port CUDA code"
+      ]
+    },
+    {
+      "label": "Theme",
+      "name": "Sovereign AI",
+      "aliases": [
+        "in-country AI data centers"
+      ]
+    },
+    {
+      "label": "Platform",
+      "id": "reddit",
+      "name": "Reddit"
+    },
+    {
+      "label": "Platform",
+      "id": "x",
+      "name": "X"
+    },
+    {
+      "label": "Industry",
+      "name": "Semiconductors",
+      "of": [
+        "NVIDIA",
+        "Broadcom",
+        "Intel",
+        "AMD"
+      ],
+      "aliases": [
+        "semiconductor",
+        "chipmakers"
+      ],
+      "description": "Chip design and manufacturing."
+    }
+  ],
+  "runs": [
+    {
+      "request": {
+        "request_id": "req-nvidia-001",
+        "goal": "How should NVIDIA defend its AI data center position against Broadcom, Intel  and AMD in Saudi Arabia, the United Arab Emirates and Egypt?",
+        "created_at": "2026-10-01T09:00:00Z",
+        "company_profile": {
+          "name": "NVIDIA",
+          "aliases": [
+            "NVIDIA Corporation",
+            "Nvidia"
+          ],
+          "products": [
+            "Blackwell",
+            "CUDA",
+            "NVLink",
+            "Spectrum-X"
+          ],
+          "website": "https://www.nvidia.com",
+          "notes": "AI computing platform company.",
+          "workspace_id": "sandbox",
+          "db_config": {
+            "db_id": "nvidia_sales",
+            "connection_uri": "sqlite:///data/sandbox/nvidia_sales.db",
+            "allowed_tables": [
+              "enterprise_deals"
+            ],
+            "description": "Sandbox sales pipeline (invented rows)."
+          },
+          "api_config": {
+            "api_id": "cluster_telemetry",
+            "base_url": "https://telemetry.sandbox.invalid",
+            "description": "Sandbox GPU cluster telemetry (invented data)."
+          }
+        },
+        "business_context": {
+          "use_case": "competitive_intelligence",
+          "targets": [
+            "Broadcom",
+            "Intel",
+            "AMD"
+          ],
+          "competitors": [
+            {
+              "name": "Broadcom",
+              "website": "https://www.broadcom.com"
+            },
+            {
+              "name": "Intel",
+              "website": "https://www.intel.com"
+            },
+            {
+              "name": "AMD",
+              "website": "https://www.amd.com"
+            }
+          ],
+          "markets": [
+            "Saudi Arabia",
+            "United Arab Emirates",
+            "Egypt"
+          ],
+          "offering": "NVIDIA AI data center platform",
+          "target_customers": "Sovereign AI and cloud providers",
+          "focus_areas": [
+            "AI accelerators",
+            "networking",
+            "software ecosystem"
+          ]
+        }
+      },
+      "plan": {
+        "plan_id": "r1-plan",
+        "created_at": "2026-10-01T09:00:00Z",
+        "rationale": "One task per worker: each covers one domain of the question.",
+        "tasks": [
+          {
+            "task_id": "r1-t-internal_intelligence",
+            "worker": "internal_intelligence",
+            "goal": "What do our own documents say about Blackwell, Data Center revenue and CUDA?",
+            "focus": "Blackwell production, revenue, software ecosystem",
+            "requirements": [
+              {
+                "metric_id": "data_center_revenue",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "task_id": "r1-t-competitor_intelligence",
+            "worker": "competitor_intelligence",
+            "goal": "How do Broadcom, Intel and AMD compare on accelerators, networking and price?",
+            "focus": "Memory capacity, custom silicon, Ethernet networking, pricing",
+            "requirements": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD"
+              },
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "task_id": "r1-t-market_intelligence",
+            "worker": "market_intelligence",
+            "goal": "How large is AI data center demand in Saudi Arabia, the UAE and Egypt, and what rules apply?",
+            "focus": "Sovereign AI projects, export controls, data protection",
+            "requirements": []
+          },
+          {
+            "task_id": "r1-t-customer_trends",
+            "worker": "customer_trends",
+            "goal": "What do engineers say about NVIDIA's platform versus alternatives?",
+            "focus": "Sentiment, supply, software portability",
+            "requirements": [
+              {
+                "metric_id": "sentiment_split",
+                "entity": "NVIDIA"
+              }
+            ]
+          }
+        ]
+      },
+      "results": [
+        {
+          "task_id": "r1-t-internal_intelligence",
+          "worker": "internal_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r1-f-int-1",
+              "statement": "NVIDIA's Blackwell platform is in full production and drives most Data Center revenue.",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-int-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-int-2",
+              "statement": "NVIDIA's Data Center revenue reached $115.2 billion in FY2025, up 142% year over year.",
+              "category": "strength",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-int-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-int-3",
+              "statement": "NVIDIA's CUDA ecosystem and NVIDIA AI Enterprise licensing create a software moat beyond hardware.",
+              "category": "strength",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-int-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.65,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-int-4",
+              "category": "opportunity",
+              "confidence": 0.7,
+              "statement": "NVIDIA has 14 open enterprise deals for GB200 NVL72 racks in Saudi Arabia, and Gulf clusters already run at 91% GPU utilization.",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-int-4",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r1-e-int-5",
+                  "relation": "supports"
+                }
+              ],
+              "limitations": [
+                "Sandbox data source with invented rows."
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r1-e-int-1",
+              "source_type": "internal_document",
+              "source_title": "Blackwell Platform Overview",
+              "source_url": "internal://product/blackwell_platform.md",
+              "publisher": null,
+              "extracted_fact": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
+              "excerpt": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "source_uri": "internal://product/blackwell_platform.md"
+              }
+            },
+            {
+              "evidence_id": "r1-e-int-2",
+              "source_type": "internal_document",
+              "source_title": "FY2025 Results Summary",
+              "source_url": "internal://finance/fy2025_results.md",
+              "publisher": null,
+              "extracted_fact": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
+              "excerpt": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-int-3",
+              "source_type": "internal_document",
+              "source_title": "CUDA Ecosystem Strategy",
+              "source_url": "internal://strategy/cuda_ecosystem.md",
+              "publisher": null,
+              "extracted_fact": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
+              "excerpt": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-int-4",
+              "source_type": "synthetic_internal",
+              "is_synthetic": true,
+              "source_title": "Internal Database [nvidia_sales.enterprise_deals]",
+              "source_url": "sql://nvidia_sales/enterprise_deals",
+              "publisher": "Database System: nvidia_sales",
+              "extracted_fact": "14 open enterprise deals for GB200 NVL72 racks are in Saudi Arabia.",
+              "excerpt": "[{\"region\": \"Saudi Arabia\", \"product\": \"GB200 NVL72\", \"open_deals\": 14}]",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "metadata": {
+                "channel": "sql_database",
+                "db_name": "nvidia_sales",
+                "table": "enterprise_deals",
+                "query": "SELECT region, product, count(*) AS open_deals FROM enterprise_deals WHERE region = 'Saudi Arabia' GROUP BY region, product LIMIT 100",
+                "row_count": 1,
+                "origin": "internal_db"
+              }
+            },
+            {
+              "evidence_id": "r1-e-int-5",
+              "source_type": "synthetic_internal",
+              "is_synthetic": true,
+              "source_title": "Internal REST API [cluster_telemetry: /v1/clusters/utilization]",
+              "source_url": "api://cluster_telemetry/v1/clusters/utilization",
+              "publisher": "Internal Microservice: cluster_telemetry",
+              "extracted_fact": "Gulf customer clusters ran at 91% average GPU utilization last quarter.",
+              "excerpt": "{\"region\": \"gulf\", \"avg_gpu_utilization\": 0.91}",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "metadata": {
+                "channel": "rest_api",
+                "api_id": "cluster_telemetry",
+                "endpoint": "/v1/clusters/utilization",
+                "params": {
+                  "region": "gulf"
+                },
+                "origin": "internal_api"
+              }
+            }
+          ],
+          "gaps": [],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-01T09:00:00Z",
+          "completed_at": "2026-10-01T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "data_center_revenue",
+                "entity": "NVIDIA",
+                "value_text": "$115.2 billion",
+                "value": 115.2,
+                "unit": "USD billion",
+                "evidence_id": "r1-e-int-2",
+                "source_span": "$115.2 billion",
+                "scope": "internal",
+                "period": "FY2025"
+              }
+            ]
+          }
+        },
+        {
+          "task_id": "r1-t-competitor_intelligence",
+          "worker": "competitor_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r1-f-comp-1",
+              "statement": "AMD Instinct MI355X offers more memory per accelerator (288 GB) than NVIDIA B200 (192 GB).",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-comp-1",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r1-e-comp-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.8,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-comp-2",
+              "statement": "Broadcom competes through custom AI accelerators built for individual hyperscalers rather than merchant GPUs.",
+              "category": "positioning",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-comp-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.75,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-comp-3",
+              "statement": "Broadcom's Tomahawk 6 Ethernet switching challenges NVIDIA's networking business in AI clusters.",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-comp-4",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-comp-4",
+              "statement": "Intel prices Gaudi 3 below comparable NVIDIA accelerators.",
+              "category": "pricing_packaging",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-comp-5",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r1-e-comp-6",
+                  "relation": "contradicts"
+                }
+              ],
+              "confidence": 0.5,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-comp-5",
+              "statement": "Intel's Xeon 6 remains a common host CPU in AI servers, including NVIDIA-based systems.",
+              "category": "positioning",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-comp-7",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r1-e-comp-1",
+              "source_type": "web_page",
+              "source_title": "AMD Instinct MI355X specifications",
+              "source_url": "https://www.chipinsights.net/accelerators/amd-instinct-mi355x",
+              "publisher": "Chip Insights",
+              "extracted_fact": "AMD Instinct MI355X carries 288 GB of HBM3E memory per accelerator.",
+              "excerpt": "AMD Instinct MI355X carries 288 GB of HBM3E memory per accelerator.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-2",
+              "source_type": "web_page",
+              "source_title": "NVIDIA B200 specifications",
+              "source_url": "https://www.chipinsights.net/accelerators/nvidia-b200",
+              "publisher": "Chip Insights",
+              "extracted_fact": "NVIDIA B200 carries 192 GB of HBM3E memory per GPU.",
+              "excerpt": "NVIDIA B200 carries 192 GB of HBM3E memory per GPU.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-3",
+              "source_type": "news_article",
+              "source_title": "Broadcom's custom XPU strategy",
+              "source_url": "https://www.semiwatchdaily.com/analysis/broadcom-custom-xpu-strategy",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Broadcom designs custom AI accelerators (XPUs) for individual hyperscale customers.",
+              "excerpt": "Broadcom designs custom AI accelerators (XPUs) for individual hyperscale customers.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-4",
+              "source_type": "news_article",
+              "source_title": "Broadcom ships Tomahawk 6",
+              "source_url": "https://www.semiwatchdaily.com/news/broadcom-tomahawk-6-ships",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Broadcom's Tomahawk 6 Ethernet switch delivers 102.4 Tbps of switching capacity for AI clusters.",
+              "excerpt": "Broadcom's Tomahawk 6 Ethernet switch delivers 102.4 Tbps of switching capacity for AI clusters.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-5",
+              "source_type": "web_page",
+              "source_title": "Intel Gaudi 3 positioning",
+              "source_url": "https://www.chipinsights.net/accelerators/intel-gaudi-3",
+              "publisher": "Chip Insights",
+              "extracted_fact": "Intel positions Gaudi 3 as a lower-cost alternative to comparable NVIDIA accelerators for training and inference.",
+              "excerpt": "Intel positions Gaudi 3 as a lower-cost alternative to comparable NVIDIA accelerators for training and inference.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-6",
+              "source_type": "other",
+              "source_title": "Gaudi 3 real cost?",
+              "source_url": "https://community.mlhardware.net/t/gaudi-3-real-cost/2291",
+              "publisher": "ML Hardware Forum",
+              "extracted_fact": "A forum post says Gaudi 3 ends up costing about the same as an H100 once software porting is included.",
+              "excerpt": "A forum post says Gaudi 3 ends up costing about the same as an H100 once software porting is included.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-comp-7",
+              "source_type": "news_article",
+              "source_title": "Xeon 6 as the AI host CPU",
+              "source_url": "https://www.semiwatchdaily.com/analysis/xeon-6-ai-host-cpu",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Intel Xeon 6 processors are widely used as host CPUs in AI servers, including systems built around NVIDIA GPUs.",
+              "excerpt": "Intel Xeon 6 processors are widely used as host CPUs in AI servers, including systems built around NVIDIA GPUs.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            }
+          ],
+          "gaps": [],
+          "conflicts": [
+            {
+              "finding_id": "r1-f-comp-4",
+              "contradicting_evidence_ids": [
+                "r1-e-comp-6"
+              ],
+              "description": "A forum post says Gaudi 3's total cost matches an H100 once porting is included."
+            }
+          ],
+          "confidence": 0.7,
+          "started_at": "2026-10-01T09:00:00Z",
+          "completed_at": "2026-10-01T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD",
+                "value_text": "288 GB",
+                "value": 288.0,
+                "unit": "GB",
+                "evidence_id": "r1-e-comp-1",
+                "source_span": "288 GB",
+                "scope": "third_party",
+                "label": "MI355X"
+              },
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA",
+                "value_text": "192 GB",
+                "value": 192.0,
+                "unit": "GB",
+                "evidence_id": "r1-e-comp-2",
+                "source_span": "192 GB",
+                "scope": "third_party",
+                "label": "B200"
+              }
+            ],
+            "company": "NVIDIA",
+            "competitors": [
+              {
+                "name": "Broadcom",
+                "website": "https://www.broadcom.com",
+                "official_domains": [
+                  "broadcom.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              },
+              {
+                "name": "Intel",
+                "website": "https://www.intel.com",
+                "official_domains": [
+                  "intel.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              },
+              {
+                "name": "AMD",
+                "website": "https://www.amd.com",
+                "official_domains": [
+                  "amd.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              }
+            ],
+            "comparison_matrix": {
+              "company": "NVIDIA",
+              "executive_summary": "AMD leads on memory per accelerator, Broadcom on custom silicon and Ethernet; NVIDIA keeps the software lead.",
+              "dimensions": [
+                {
+                  "dimension": "AI accelerators",
+                  "target_position": "NVIDIA B200 with 192 GB HBM3E, in full production.",
+                  "takeaway": "Memory capacity is where the accelerator comparison moves.",
+                  "cells": [
+                    {
+                      "competitor": "AMD",
+                      "relative_to_target": "comparable",
+                      "summary": "AMD Instinct MI355X carries 288 GB of memory per accelerator against 192 GB on NVIDIA B200; both are shipping.",
+                      "confidence": 0.85,
+                      "evidence_ids": [
+                        "r1-e-comp-1",
+                        "r1-e-comp-2"
+                      ]
+                    },
+                    {
+                      "competitor": "Intel",
+                      "relative_to_target": "narrower",
+                      "summary": "Gaudi 3 is priced below comparable NVIDIA accelerators but targets a narrower set of workloads.",
+                      "confidence": 0.65,
+                      "evidence_ids": [
+                        "r1-e-comp-5"
+                      ]
+                    },
+                    {
+                      "competitor": "Broadcom",
+                      "relative_to_target": "different_approach",
+                      "summary": "Broadcom builds custom accelerators for individual hyperscalers instead of selling a merchant GPU.",
+                      "confidence": 0.65,
+                      "evidence_ids": [
+                        "r1-e-comp-3"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "dimension": "networking",
+                  "target_position": "Spectrum-X Ethernet and NVLink.",
+                  "takeaway": "Broadcom is the networking competitor; the others are not established.",
+                  "cells": [
+                    {
+                      "competitor": "Broadcom",
+                      "relative_to_target": "comparable",
+                      "summary": "Tomahawk 6 Ethernet switching competes directly with Spectrum-X in AI clusters.",
+                      "confidence": 0.85,
+                      "evidence_ids": [
+                        "r1-e-comp-4"
+                      ]
+                    },
+                    {
+                      "competitor": "AMD",
+                      "relative_to_target": "not_established",
+                      "summary": "",
+                      "confidence": null,
+                      "evidence_ids": []
+                    }
+                  ]
+                }
+              ],
+              "areas_where_target_appears_ahead": [
+                "software ecosystem"
+              ],
+              "areas_where_competitors_appear_ahead": [
+                "memory per accelerator"
+              ],
+              "limitations": [
+                "Compares documented facts only."
+              ]
+            },
+            "competitor_profiles": {
+              "AMD": {
+                "overview": "AMD sells the Instinct accelerator line with the ROCm software stack.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 1
+              },
+              "Broadcom": {
+                "overview": "Broadcom sells custom AI accelerators (XPUs) and Tomahawk Ethernet switches.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 2
+              },
+              "Intel": {
+                "overview": "Profile synthesis failed; see per-requirement summaries.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 0
+              }
+            }
+          }
+        },
+        {
+          "task_id": "r1-t-market_intelligence",
+          "worker": "market_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r1-f-mkt-1",
+              "statement": "Sovereign AI build-outs in Saudi Arabia are creating large demand for AI accelerators.",
+              "category": "market_signal",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-mkt-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-mkt-2",
+              "statement": "US export controls make shipments of advanced AI chips to Saudi Arabia and the United Arab Emirates subject to licensing.",
+              "category": "risk",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-mkt-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.75,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-mkt-3",
+              "statement": "Saudi Arabia's Personal Data Protection Law restricts cross-border data transfers, raising demand for in-country AI data centers.",
+              "category": "risk",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-mkt-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r1-e-mkt-1",
+              "source_type": "news_article",
+              "source_title": "HUMAIN's AI data center plans",
+              "source_url": "https://www.gulftechreview.com/2026/humain-ai-data-centers",
+              "publisher": "Gulf Tech Review",
+              "extracted_fact": "Saudi Arabia's HUMAIN plans AI data centers with up to 500 MW of capacity built on NVIDIA systems.",
+              "excerpt": "Saudi Arabia's HUMAIN plans AI data centers with up to 500 MW of capacity built on NVIDIA systems.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-mkt-2",
+              "source_type": "regulatory",
+              "source_title": "US AI chip export controls and the Gulf",
+              "source_url": "https://www.mena-legaltech.com/trade/us-ai-chip-export-controls-gulf",
+              "publisher": "MENA LegalTech",
+              "extracted_fact": "US export controls require licences for shipments of advanced AI accelerators to many Middle East countries, including Saudi Arabia and the United Arab Emirates.",
+              "excerpt": "US export controls require licences for shipments of advanced AI accelerators to many Middle East countries, including Saudi Arabia and the United Arab Emirates.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r1-e-mkt-3",
+              "source_type": "regulatory",
+              "source_title": "Saudi PDPL: cross-border transfers",
+              "source_url": "https://www.mena-legaltech.com/saudi-arabia/pdpl-cross-border-transfers",
+              "publisher": "MENA LegalTech",
+              "extracted_fact": "Saudi Arabia's Personal Data Protection Law limits cross-border data transfers outside the Kingdom.",
+              "excerpt": "Saudi Arabia's Personal Data Protection Law limits cross-border data transfers outside the Kingdom.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            }
+          ],
+          "gaps": [
+            "No reliable data on AI accelerator demand in Egypt."
+          ],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-01T09:00:00Z",
+          "completed_at": "2026-10-01T09:04:00Z",
+          "metadata": {
+            "metrics": []
+          }
+        },
+        {
+          "task_id": "r1-t-customer_trends",
+          "worker": "customer_trends",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r1-f-cust-1",
+              "statement": "NVIDIA customers value CUDA's mature tooling but are frustrated by long lead times for Blackwell systems.",
+              "category": "customer_sentiment",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-cust-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.6,
+              "limitations": []
+            },
+            {
+              "finding_id": "r1-f-cust-2",
+              "statement": "Developers see AMD's ROCm as improving but still behind CUDA when they port CUDA code.",
+              "category": "customer_sentiment",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r1-e-cust-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.55,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r1-e-cust-1",
+              "source_type": "other",
+              "source_title": "Blackwell lead times - anyone else waiting?",
+              "source_url": "https://www.reddit.com/r/MachineLearning/comments/1n3k9vz/blackwell_lead_times/",
+              "publisher": "reddit",
+              "extracted_fact": "Engineers praise CUDA's mature tooling but complain about long lead times for Blackwell systems.",
+              "excerpt": "Engineers praise CUDA's mature tooling but complain about long lead times for Blackwell systems.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "platform": "reddit",
+                "engagement_total": 410,
+                "stance": "negative"
+              }
+            },
+            {
+              "evidence_id": "r1-e-cust-2",
+              "source_type": "other",
+              "source_title": "Post by @mlops_gulf",
+              "source_url": "https://x.com/mlops_gulf/status/1851177340912",
+              "publisher": "x",
+              "extracted_fact": "Developers on X say ROCm has improved a lot but still needs work to port CUDA code.",
+              "excerpt": "Developers on X say ROCm has improved a lot but still needs work to port CUDA code.",
+              "retrieved_at": "2026-10-01T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "platform": "x",
+                "engagement_total": 130,
+                "stance": "mixed"
+              }
+            }
+          ],
+          "gaps": [],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-01T09:00:00Z",
+          "completed_at": "2026-10-01T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "sentiment_split",
+                "entity": "NVIDIA",
+                "value_text": "38% positive",
+                "value": 38.0,
+                "unit": "%",
+                "evidence_id": "r1-e-cust-1",
+                "source_span": "38% positive",
+                "scope": "third_party",
+                "label": "positive",
+                "sample_size": 140
+              }
+            ],
+            "themes": [
+              {
+                "theme_label": "long lead times",
+                "count": 52,
+                "share": 0.371,
+                "sentiment_mix": {
+                  "negative": 0.71,
+                  "neutral": 0.19,
+                  "mixed": 0.1,
+                  "positive": 0.0
+                },
+                "recent_growth": 0.4
+              },
+              {
+                "theme_label": "mature tooling",
+                "count": 38,
+                "share": 0.271,
+                "sentiment_mix": {
+                  "positive": 0.68,
+                  "neutral": 0.24,
+                  "mixed": 0.08,
+                  "negative": 0.0
+                },
+                "recent_growth": null
+              },
+              {
+                "theme_label": "rocm porting effort",
+                "count": 21,
+                "share": 0.15,
+                "sentiment_mix": {
+                  "negative": 0.48,
+                  "mixed": 0.33,
+                  "neutral": 0.19,
+                  "positive": 0.0
+                },
+                "recent_growth": 0.1
+              }
+            ],
+            "trend_series": [
+              {
+                "keyword": "NVIDIA",
+                "geo": "SA",
+                "timeframe": "today 3-m",
+                "granularity": "fortnight",
+                "source": "google_trends",
+                "points": [
+                  [
+                    "2026-07-06",
+                    61
+                  ],
+                  [
+                    "2026-07-20",
+                    64
+                  ],
+                  [
+                    "2026-08-03",
+                    70
+                  ],
+                  [
+                    "2026-08-17",
+                    72
+                  ],
+                  [
+                    "2026-08-31",
+                    75
+                  ],
+                  [
+                    "2026-09-14",
+                    81
+                  ]
+                ]
+              },
+              {
+                "keyword": "AMD Instinct",
+                "geo": "SA",
+                "timeframe": "today 3-m",
+                "granularity": "fortnight",
+                "source": "google_trends",
+                "points": [
+                  [
+                    "2026-07-06",
+                    22
+                  ],
+                  [
+                    "2026-07-20",
+                    21
+                  ],
+                  [
+                    "2026-08-03",
+                    24
+                  ],
+                  [
+                    "2026-08-17",
+                    26
+                  ],
+                  [
+                    "2026-08-31",
+                    25
+                  ],
+                  [
+                    "2026-09-14",
+                    27
+                  ]
+                ]
+              }
+            ],
+            "stance_counts": {
+              "NVIDIA": {
+                "positive": 53,
+                "neutral": 31,
+                "negative": 44,
+                "mixed": 12,
+                "total": 140
+              },
+              "AMD": {
+                "positive": 17,
+                "neutral": 20,
+                "negative": 15,
+                "mixed": 9,
+                "total": 61
+              }
+            }
+          }
+        }
+      ],
+      "verification": {
+        "research_run_id": "req-nvidia-001",
+        "completed_at": "2026-10-01T09:10:00Z",
+        "decision": {
+          "status": "verified",
+          "summary": "12 of 13 findings verified; Gaudi 3 pricing needs an official source.",
+          "targeted_actions": []
+        },
+        "findings": [
+          {
+            "finding_id": "r1-f-int-1",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's Blackwell platform is in full production and drives most Data Center revenue.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-int-1"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-int-2",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's Data Center revenue reached $115.2 billion in FY2025, up 142% year over year.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-int-2"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-int-3",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's CUDA ecosystem and NVIDIA AI Enterprise licensing create a software moat beyond hardware.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-int-3"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-comp-1",
+            "worker": "competitor_intelligence",
+            "statement": "AMD Instinct MI355X offers more memory per accelerator (288 GB) than NVIDIA B200 (192 GB).",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-comp-1",
+              "r1-e-comp-2"
+            ],
+            "confidence": 0.75,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-comp-2",
+            "worker": "competitor_intelligence",
+            "statement": "Broadcom competes through custom AI accelerators built for individual hyperscalers rather than merchant GPUs.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-comp-3"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-comp-3",
+            "worker": "competitor_intelligence",
+            "statement": "Broadcom's Tomahawk 6 Ethernet switching challenges NVIDIA's networking business in AI clusters.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-comp-4"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-comp-4",
+            "worker": "competitor_intelligence",
+            "statement": "Intel prices Gaudi 3 below comparable NVIDIA accelerators.",
+            "verification_status": "insufficient",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r1-e-comp-5",
+              "r1-e-comp-6"
+            ],
+            "confidence": 0.3,
+            "contradictions": [
+              "Forum post says total cost matches an H100."
+            ],
+            "missing_information": [
+              "Official Gaudi 3 pricing or partner quotes."
+            ]
+          },
+          {
+            "finding_id": "r1-f-comp-5",
+            "worker": "competitor_intelligence",
+            "statement": "Intel's Xeon 6 remains a common host CPU in AI servers, including NVIDIA-based systems.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-comp-7"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-mkt-1",
+            "worker": "market_intelligence",
+            "statement": "Sovereign AI build-outs in Saudi Arabia are creating large demand for AI accelerators.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-mkt-1"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-mkt-2",
+            "worker": "market_intelligence",
+            "statement": "US export controls make shipments of advanced AI chips to Saudi Arabia and the United Arab Emirates subject to licensing.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-mkt-2"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-mkt-3",
+            "worker": "market_intelligence",
+            "statement": "Saudi Arabia's Personal Data Protection Law restricts cross-border data transfers, raising demand for in-country AI data centers.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r1-e-mkt-3"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-cust-1",
+            "worker": "customer_trends",
+            "statement": "NVIDIA customers value CUDA's mature tooling but are frustrated by long lead times for Blackwell systems.",
+            "verification_status": "verified",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r1-e-cust-1"
+            ],
+            "confidence": 0.55,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r1-f-cust-2",
+            "worker": "customer_trends",
+            "statement": "Developers see AMD's ROCm as improving but still behind CUDA when they port CUDA code.",
+            "verification_status": "verified",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r1-e-cust-2"
+            ],
+            "confidence": 0.5,
+            "contradictions": [],
+            "missing_information": []
+          }
+        ],
+        "control_summary": {
+          "missing_information": [
+            "Official Gaudi 3 pricing or partner quotes."
+          ],
+          "next_research_targets": [
+            "Confirm Gaudi 3 pricing from Intel or partner quotes."
+          ]
+        }
+      },
+      "cross_signal": {
+        "status": "completed",
+        "signals": [
+          {
+            "signal_id": "r1-s-1",
+            "signal_type": "convergence",
+            "title": "AMD closes the gap on hardware and software",
+            "signal": "AMD accelerators now carry more memory than B200 while developers report ROCm improving.",
+            "interpretation": "Memory-bound workloads and price-sensitive buyers may switch if porting gets easier.",
+            "supporting_findings": [
+              {
+                "finding_id": "r1-f-comp-1",
+                "relevance": "Shows the memory lead."
+              },
+              {
+                "finding_id": "r1-f-cust-2",
+                "relevance": "Shows the software gap narrowing."
+              }
+            ],
+            "domains_involved": [
+              "competitor_intelligence",
+              "customer_trends"
+            ],
+            "confidence": 0.7,
+            "evidence_quality": "medium",
+            "strategic_relevance": "Threatens NVIDIA's share of inference for large models.",
+            "decision_relevance": "risk_relevant",
+            "urgency": "high",
+            "decision_question": "Should NVIDIA fund CUDA-to-cluster migration support for Gulf sovereign AI buyers?"
+          },
+          {
+            "signal_id": "r1-s-2",
+            "signal_type": "timing",
+            "title": "Sovereign AI demand meets Blackwell production",
+            "signal": "Saudi sovereign AI build-outs are scaling while Blackwell is in full production.",
+            "interpretation": "There is a window to lock in multi-year Gulf deployments on NVIDIA systems.",
+            "supporting_findings": [
+              {
+                "finding_id": "r1-f-int-1",
+                "relevance": "Supply is ready."
+              },
+              {
+                "finding_id": "r1-f-mkt-1",
+                "relevance": "Demand is large."
+              }
+            ],
+            "domains_involved": [
+              "internal_intelligence",
+              "market_intelligence"
+            ],
+            "confidence": 0.7,
+            "evidence_quality": "medium",
+            "strategic_relevance": "Large, sticky deployments that set the software standard in the region.",
+            "decision_relevance": "opportunity_relevant",
+            "urgency": "medium"
+          }
+        ]
+      },
+      "decision": {
+        "analysis_id": "r1-analysis",
+        "research_run_id": "req-nvidia-001",
+        "status": "completed",
+        "business_goal": "How should NVIDIA defend its AI data center position against Broadcom, Intel and AMD in Saudi Arabia, the United Arab Emirates and Egypt?",
+        "executive_summary": "Lock in Saudi sovereign AI deployments now; counter AMD's memory lead with platform and migration support.",
+        "opportunities": [
+          {
+            "opportunity_id": "r1-opp-1",
+            "title": "Anchor Saudi sovereign AI build-outs on Blackwell",
+            "description": "Win the first large Gulf AI factories with full-stack NVIDIA systems.",
+            "business_rationale": "Demand is large and Blackwell is in full production.",
+            "potential_impact": "Multi-year deployments that standardise the region on CUDA.",
+            "strategic_fit": "high",
+            "feasibility": "moderate",
+            "urgency": "moderate",
+            "supporting_signal_ids": [
+              "r1-s-2"
+            ],
+            "confidence": 0.65
+          }
+        ],
+        "risks": [
+          {
+            "risk_id": "r1-risk-1",
+            "title": "AMD wins memory-bound inference workloads",
+            "description": "More memory per accelerator plus better ROCm portability could pull inference to AMD.",
+            "business_rationale": "The memory gap is verified and developers report ROCm improving.",
+            "potential_consequences": [
+              "Lost inference share in sovereign deployments"
+            ],
+            "likelihood": "moderate",
+            "impact": "high",
+            "urgency": "high",
+            "supporting_signal_ids": [
+              "r1-s-1"
+            ],
+            "confidence": 0.65
+          }
+        ],
+        "recommended_actions": [
+          {
+            "action_id": "r1-act-1",
+            "title": "Bundle migration support with Blackwell systems for Gulf sovereign AI",
+            "description": "Pair GB200 NVL72 deployments with CUDA engineering support and NVIDIA AI Enterprise.",
+            "rationale": "Raises switching costs while demand is forming.",
+            "intended_outcome": "Gulf sovereign AI projects standardise on NVIDIA.",
+            "priority": "high",
+            "time_horizon": "short_term",
+            "supporting_signal_ids": [
+              "r1-s-1",
+              "r1-s-2"
+            ],
+            "related_opportunity_ids": [
+              "r1-opp-1"
+            ],
+            "related_risk_ids": [
+              "r1-risk-1"
+            ],
+            "confidence": 0.6,
+            "requires_human_approval": true
+          }
+        ],
+        "options": [
+          {
+            "key": "A",
+            "title": "Defend on platform",
+            "thesis": "Lead with full-stack systems, CUDA and networking.",
+            "supporting_signal_ids": [
+              "r1-s-2"
+            ],
+            "metric_refs": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "key": "B",
+            "title": "Match on memory and price",
+            "thesis": "Prioritise higher-memory parts and price for inference deals.",
+            "supporting_signal_ids": [
+              "r1-s-1"
+            ],
+            "metric_refs": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD"
+              }
+            ]
+          }
+        ],
+        "question_recommendations": [
+          {
+            "question": "Should NVIDIA fund CUDA-to-cluster migration support for Gulf sovereign AI buyers?",
+            "recommendation": {
+              "decision": "Yes, for the first Saudi deployments, tied to multi-year commitments.",
+              "rationale": "The AMD memory lead is verified; ROCm sentiment rests on low-quality evidence.",
+              "actions": [
+                "Assign a migration team to each sovereign AI deal"
+              ],
+              "supporting_signal_ids": [
+                "r1-s-1"
+              ],
+              "confidence": "medium"
+            }
+          }
+        ],
+        "priorities": [
+          {
+            "item_type": "risk",
+            "item_id": "r1-risk-1",
+            "priority": "high",
+            "strategic_fit": "high",
+            "impact": "high",
+            "urgency": "high",
+            "feasibility": "moderate",
+            "rationale": "Inference is the growing share of demand."
+          },
+          {
+            "item_type": "action",
+            "item_id": "r1-act-1",
+            "priority": "high",
+            "strategic_fit": "high",
+            "impact": "high",
+            "urgency": "high",
+            "feasibility": "high",
+            "rationale": "Uses existing teams and software."
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "request_id": "req-nvidia-002",
+        "goal": "How should NVIDIA defend its AI data center position against Broadcom, Intel and AMD in Saudi Arabia, the United Arab Emirates and Egypt?",
+        "created_at": "2026-10-15T09:00:00Z",
+        "company_profile": {
+          "name": "NVIDIA",
+          "aliases": [
+            "NVIDIA Corporation",
+            "Nvidia"
+          ],
+          "products": [
+            "Blackwell",
+            "CUDA",
+            "NVLink",
+            "Spectrum-X"
+          ],
+          "website": "https://www.nvidia.com",
+          "notes": "AI computing platform company.",
+          "workspace_id": "sandbox",
+          "db_config": {
+            "db_id": "nvidia_sales",
+            "connection_uri": "sqlite:///data/sandbox/nvidia_sales.db",
+            "allowed_tables": [
+              "enterprise_deals"
+            ],
+            "description": "Sandbox sales pipeline (invented rows)."
+          },
+          "api_config": {
+            "api_id": "cluster_telemetry",
+            "base_url": "https://telemetry.sandbox.invalid",
+            "description": "Sandbox GPU cluster telemetry (invented data)."
+          }
+        },
+        "business_context": {
+          "use_case": "competitive_intelligence",
+          "targets": [
+            "Broadcom",
+            "Intel",
+            "AMD"
+          ],
+          "competitors": [
+            {
+              "name": "Broadcom",
+              "website": "https://www.broadcom.com"
+            },
+            {
+              "name": "Intel",
+              "website": "https://www.intel.com"
+            },
+            {
+              "name": "AMD",
+              "website": "https://www.amd.com"
+            }
+          ],
+          "markets": [
+            "Saudi Arabia",
+            "United Arab Emirates",
+            "Egypt"
+          ],
+          "offering": "NVIDIA AI data center platform",
+          "target_customers": "Sovereign AI and cloud providers",
+          "focus_areas": [
+            "AI accelerators",
+            "networking",
+            "software ecosystem"
+          ]
+        }
+      },
+      "plan": {
+        "plan_id": "r2-plan",
+        "created_at": "2026-10-15T09:00:00Z",
+        "rationale": "One task per worker: each covers one domain of the question.",
+        "tasks": [
+          {
+            "task_id": "r2-t-internal_intelligence",
+            "worker": "internal_intelligence",
+            "goal": "What do our own documents say about Blackwell, Data Center revenue and CUDA?",
+            "focus": "Blackwell production, revenue, software ecosystem",
+            "requirements": [
+              {
+                "metric_id": "data_center_revenue",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "task_id": "r2-t-competitor_intelligence",
+            "worker": "competitor_intelligence",
+            "goal": "How do Broadcom, Intel and AMD compare on accelerators, networking and price?",
+            "focus": "Memory capacity, custom silicon, Ethernet networking, pricing",
+            "requirements": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD"
+              },
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "task_id": "r2-t-market_intelligence",
+            "worker": "market_intelligence",
+            "goal": "How large is AI data center demand in Saudi Arabia, the UAE and Egypt, and what rules apply?",
+            "focus": "Sovereign AI projects, export controls, data protection",
+            "requirements": []
+          },
+          {
+            "task_id": "r2-t-customer_trends",
+            "worker": "customer_trends",
+            "goal": "What do engineers say about NVIDIA's platform versus alternatives?",
+            "focus": "Sentiment, supply, software portability",
+            "requirements": [
+              {
+                "metric_id": "sentiment_split",
+                "entity": "NVIDIA"
+              }
+            ]
+          }
+        ]
+      },
+      "results": [
+        {
+          "task_id": "r2-t-internal_intelligence",
+          "worker": "internal_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r2-f-int-1",
+              "statement": "NVIDIA's Blackwell platform is in full production and drives most Data Center revenue.",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-int-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-int-2",
+              "statement": "NVIDIA's Data Center revenue reached $115.2 billion in FY2025, up 142% year over year.",
+              "category": "strength",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-int-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-int-3",
+              "statement": "NVIDIA's CUDA ecosystem and NVIDIA AI Enterprise licensing create a software moat beyond hardware.",
+              "category": "strength",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-int-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.65,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-int-4",
+              "category": "opportunity",
+              "confidence": 0.7,
+              "statement": "NVIDIA has 19 open enterprise deals for GB200 NVL72 racks in Saudi Arabia, and Gulf clusters already run at 91% GPU utilization.",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-int-4",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r2-e-int-5",
+                  "relation": "supports"
+                }
+              ],
+              "limitations": [
+                "Sandbox data source with invented rows."
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r2-e-int-1",
+              "source_type": "internal_document",
+              "source_title": "Blackwell Platform Overview",
+              "source_url": "internal://product/blackwell_platform.md",
+              "publisher": null,
+              "extracted_fact": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
+              "excerpt": "The Blackwell platform, including B200 and GB200 NVL72 systems, is in full production and is the main driver of Data Center revenue.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "source_uri": "internal://product/blackwell_platform.md"
+              }
+            },
+            {
+              "evidence_id": "r2-e-int-2",
+              "source_type": "internal_document",
+              "source_title": "FY2025 Results Summary",
+              "source_url": "internal://finance/fy2025_results.md",
+              "publisher": null,
+              "extracted_fact": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
+              "excerpt": "FY2025 Data Center revenue was $115.2 billion, up 142% year over year.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-int-3",
+              "source_type": "internal_document",
+              "source_title": "CUDA Ecosystem Strategy",
+              "source_url": "internal://strategy/cuda_ecosystem.md",
+              "publisher": null,
+              "extracted_fact": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
+              "excerpt": "More than 5 million developers build on CUDA, and NVIDIA AI Enterprise is licensed per GPU per year.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-int-4",
+              "source_type": "synthetic_internal",
+              "is_synthetic": true,
+              "source_title": "Internal Database [nvidia_sales.enterprise_deals]",
+              "source_url": "sql://nvidia_sales/enterprise_deals",
+              "publisher": "Database System: nvidia_sales",
+              "extracted_fact": "19 open enterprise deals for GB200 NVL72 racks are in Saudi Arabia.",
+              "excerpt": "[{\"region\": \"Saudi Arabia\", \"product\": \"GB200 NVL72\", \"open_deals\": 19}]",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "metadata": {
+                "channel": "sql_database",
+                "db_name": "nvidia_sales",
+                "table": "enterprise_deals",
+                "query": "SELECT region, product, count(*) AS open_deals FROM enterprise_deals WHERE region = 'Saudi Arabia' GROUP BY region, product LIMIT 100",
+                "row_count": 1,
+                "origin": "internal_db"
+              }
+            },
+            {
+              "evidence_id": "r2-e-int-5",
+              "source_type": "synthetic_internal",
+              "is_synthetic": true,
+              "source_title": "Internal REST API [cluster_telemetry: /v1/clusters/utilization]",
+              "source_url": "api://cluster_telemetry/v1/clusters/utilization",
+              "publisher": "Internal Microservice: cluster_telemetry",
+              "extracted_fact": "Gulf customer clusters ran at 91% average GPU utilization last quarter.",
+              "excerpt": "{\"region\": \"gulf\", \"avg_gpu_utilization\": 0.91}",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "metadata": {
+                "channel": "rest_api",
+                "api_id": "cluster_telemetry",
+                "endpoint": "/v1/clusters/utilization",
+                "params": {
+                  "region": "gulf"
+                },
+                "origin": "internal_api"
+              }
+            }
+          ],
+          "gaps": [],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-15T09:00:00Z",
+          "completed_at": "2026-10-15T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "data_center_revenue",
+                "entity": "NVIDIA",
+                "value_text": "$115.2 billion",
+                "value": 115.2,
+                "unit": "USD billion",
+                "evidence_id": "r2-e-int-2",
+                "source_span": "$115.2 billion",
+                "scope": "internal",
+                "period": "FY2025"
+              }
+            ]
+          }
+        },
+        {
+          "task_id": "r2-t-competitor_intelligence",
+          "worker": "competitor_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r2-f-comp-1",
+              "statement": "AMD Instinct MI400 offers more memory per accelerator (432 GB) than NVIDIA B200 (192 GB).",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-comp-1",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r2-e-comp-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.8,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-comp-2",
+              "statement": "Broadcom competes through custom AI accelerators built for individual hyperscalers rather than merchant GPUs.",
+              "category": "positioning",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-comp-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.75,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-comp-3",
+              "statement": "Broadcom's Tomahawk 6 Ethernet switching challenges NVIDIA's networking business in AI clusters.",
+              "category": "product_feature",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-comp-4",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-comp-4",
+              "statement": "Intel prices Gaudi 3 below comparable NVIDIA accelerators.",
+              "category": "pricing_packaging",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-comp-5",
+                  "relation": "supports"
+                },
+                {
+                  "evidence_id": "r2-e-comp-6",
+                  "relation": "contradicts"
+                }
+              ],
+              "confidence": 0.5,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-comp-5",
+              "statement": "Intel's Xeon 6 remains a common host CPU in AI servers, including NVIDIA-based systems.",
+              "category": "positioning",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-comp-7",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r2-e-comp-1",
+              "source_type": "web_page",
+              "source_title": "AMD Instinct MI400 specifications",
+              "source_url": "https://www.chipinsights.net/accelerators/amd-instinct-mi400",
+              "publisher": "Chip Insights",
+              "extracted_fact": "AMD Instinct MI400 carries 432 GB of HBM4 memory per accelerator.",
+              "excerpt": "AMD Instinct MI400 carries 432 GB of HBM4 memory per accelerator.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-2",
+              "source_type": "web_page",
+              "source_title": "NVIDIA B200 specifications",
+              "source_url": "https://www.chipinsights.net/accelerators/nvidia-b200",
+              "publisher": "Chip Insights",
+              "extracted_fact": "NVIDIA B200 carries 192 GB of HBM3E memory per GPU.",
+              "excerpt": "NVIDIA B200 carries 192 GB of HBM3E memory per GPU.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-3",
+              "source_type": "news_article",
+              "source_title": "Broadcom's custom XPU strategy",
+              "source_url": "https://www.semiwatchdaily.com/analysis/broadcom-custom-xpu-strategy",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Broadcom designs custom AI accelerators (XPUs) for individual hyperscale customers.",
+              "excerpt": "Broadcom designs custom AI accelerators (XPUs) for individual hyperscale customers.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-4",
+              "source_type": "news_article",
+              "source_title": "Broadcom ships Tomahawk 6",
+              "source_url": "https://www.semiwatchdaily.com/news/broadcom-tomahawk-6-ships",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Broadcom's Tomahawk 6 Ethernet switch delivers 102.4 Tbps of switching capacity for AI clusters.",
+              "excerpt": "Broadcom's Tomahawk 6 Ethernet switch delivers 102.4 Tbps of switching capacity for AI clusters.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-5",
+              "source_type": "web_page",
+              "source_title": "Intel Gaudi 3 positioning",
+              "source_url": "https://www.chipinsights.net/accelerators/intel-gaudi-3",
+              "publisher": "Chip Insights",
+              "extracted_fact": "Intel positions Gaudi 3 as a lower-cost alternative to comparable NVIDIA accelerators for training and inference.",
+              "excerpt": "Intel positions Gaudi 3 as a lower-cost alternative to comparable NVIDIA accelerators for training and inference.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-6",
+              "source_type": "other",
+              "source_title": "Gaudi 3 real cost?",
+              "source_url": "https://community.mlhardware.net/t/gaudi-3-real-cost/2291",
+              "publisher": "ML Hardware Forum",
+              "extracted_fact": "A forum post says Gaudi 3 ends up costing about the same as an H100 once software porting is included.",
+              "excerpt": "A forum post says Gaudi 3 ends up costing about the same as an H100 once software porting is included.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-comp-7",
+              "source_type": "news_article",
+              "source_title": "Xeon 6 as the AI host CPU",
+              "source_url": "https://www.semiwatchdaily.com/analysis/xeon-6-ai-host-cpu",
+              "publisher": "SemiWatch Daily",
+              "extracted_fact": "Intel Xeon 6 processors are widely used as host CPUs in AI servers, including systems built around NVIDIA GPUs.",
+              "excerpt": "Intel Xeon 6 processors are widely used as host CPUs in AI servers, including systems built around NVIDIA GPUs.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            }
+          ],
+          "gaps": [],
+          "conflicts": [
+            {
+              "finding_id": "r2-f-comp-4",
+              "contradicting_evidence_ids": [
+                "r2-e-comp-6"
+              ],
+              "description": "A forum post says Gaudi 3's total cost matches an H100 once porting is included."
+            }
+          ],
+          "confidence": 0.7,
+          "started_at": "2026-10-15T09:00:00Z",
+          "completed_at": "2026-10-15T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD",
+                "value_text": "432 GB",
+                "value": 432.0,
+                "unit": "GB",
+                "evidence_id": "r2-e-comp-1",
+                "source_span": "432 GB",
+                "scope": "third_party",
+                "label": "MI400"
+              },
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA",
+                "value_text": "192 GB",
+                "value": 192.0,
+                "unit": "GB",
+                "evidence_id": "r2-e-comp-2",
+                "source_span": "192 GB",
+                "scope": "third_party",
+                "label": "B200"
+              }
+            ],
+            "company": "NVIDIA",
+            "competitors": [
+              {
+                "name": "Broadcom",
+                "website": "https://www.broadcom.com",
+                "official_domains": [
+                  "broadcom.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              },
+              {
+                "name": "Intel",
+                "website": "https://www.intel.com",
+                "official_domains": [
+                  "intel.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              },
+              {
+                "name": "AMD",
+                "website": "https://www.amd.com",
+                "official_domains": [
+                  "amd.com"
+                ],
+                "social_accounts": [],
+                "discovered_by": "user",
+                "discovery_reason": null,
+                "discovery_confidence": null
+              }
+            ],
+            "comparison_matrix": {
+              "company": "NVIDIA",
+              "executive_summary": "AMD leads on memory per accelerator, Broadcom on custom silicon and Ethernet; NVIDIA keeps the software lead.",
+              "dimensions": [
+                {
+                  "dimension": "AI accelerators",
+                  "target_position": "NVIDIA B200 with 192 GB HBM3E, in full production.",
+                  "takeaway": "Memory capacity is where the accelerator comparison moves.",
+                  "cells": [
+                    {
+                      "competitor": "AMD",
+                      "relative_to_target": "broader",
+                      "summary": "AMD Instinct MI400 carries 432 GB of memory per accelerator against 192 GB on NVIDIA B200.",
+                      "confidence": 0.85,
+                      "evidence_ids": [
+                        "r2-e-comp-1",
+                        "r2-e-comp-2"
+                      ]
+                    },
+                    {
+                      "competitor": "Intel",
+                      "relative_to_target": "narrower",
+                      "summary": "Gaudi 3 is priced below comparable NVIDIA accelerators but targets a narrower set of workloads.",
+                      "confidence": 0.65,
+                      "evidence_ids": [
+                        "r2-e-comp-5"
+                      ]
+                    },
+                    {
+                      "competitor": "Broadcom",
+                      "relative_to_target": "different_approach",
+                      "summary": "Broadcom builds custom accelerators for individual hyperscalers instead of selling a merchant GPU.",
+                      "confidence": 0.65,
+                      "evidence_ids": [
+                        "r2-e-comp-3"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "dimension": "networking",
+                  "target_position": "Spectrum-X Ethernet and NVLink.",
+                  "takeaway": "Broadcom is the networking competitor; the others are not established.",
+                  "cells": [
+                    {
+                      "competitor": "Broadcom",
+                      "relative_to_target": "comparable",
+                      "summary": "Tomahawk 6 Ethernet switching competes directly with Spectrum-X in AI clusters.",
+                      "confidence": 0.85,
+                      "evidence_ids": [
+                        "r2-e-comp-4"
+                      ]
+                    },
+                    {
+                      "competitor": "AMD",
+                      "relative_to_target": "not_established",
+                      "summary": "",
+                      "confidence": null,
+                      "evidence_ids": []
+                    }
+                  ]
+                }
+              ],
+              "areas_where_target_appears_ahead": [
+                "software ecosystem"
+              ],
+              "areas_where_competitors_appear_ahead": [
+                "memory per accelerator"
+              ],
+              "limitations": [
+                "Compares documented facts only."
+              ]
+            },
+            "competitor_profiles": {
+              "AMD": {
+                "overview": "AMD sells the Instinct accelerator line with the ROCm software stack.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 1
+              },
+              "Broadcom": {
+                "overview": "Broadcom sells custom AI accelerators (XPUs) and Tomahawk Ethernet switches.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 2
+              },
+              "Intel": {
+                "overview": "Profile synthesis failed; see per-requirement summaries.",
+                "requirements": [],
+                "caveats": [],
+                "verified_findings_count": 0
+              }
+            }
+          }
+        },
+        {
+          "task_id": "r2-t-market_intelligence",
+          "worker": "market_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r2-f-mkt-1",
+              "statement": "Sovereign AI build-outs in Saudi Arabia are creating large demand for AI accelerators.",
+              "category": "market_signal",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-mkt-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-mkt-2",
+              "statement": "US export controls make shipments of advanced AI chips to Saudi Arabia and the United Arab Emirates subject to licensing.",
+              "category": "risk",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-mkt-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.75,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-mkt-3",
+              "statement": "Saudi Arabia's Personal Data Protection Law restricts cross-border data transfers, raising demand for in-country AI data centers.",
+              "category": "risk",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-mkt-3",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.7,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r2-e-mkt-1",
+              "source_type": "news_article",
+              "source_title": "HUMAIN's AI data center plans",
+              "source_url": "https://www.gulftechreview.com/2026/humain-ai-data-centers",
+              "publisher": "Gulf Tech Review",
+              "extracted_fact": "Saudi Arabia's HUMAIN plans AI data centers with up to 500 MW of capacity built on NVIDIA systems.",
+              "excerpt": "Saudi Arabia's HUMAIN plans AI data centers with up to 500 MW of capacity built on NVIDIA systems.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-mkt-2",
+              "source_type": "regulatory",
+              "source_title": "US AI chip export controls and the Gulf",
+              "source_url": "https://www.mena-legaltech.com/trade/us-ai-chip-export-controls-gulf",
+              "publisher": "MENA LegalTech",
+              "extracted_fact": "US export controls require licences for shipments of advanced AI accelerators to many Middle East countries, including Saudi Arabia and the United Arab Emirates.",
+              "excerpt": "US export controls require licences for shipments of advanced AI accelerators to many Middle East countries, including Saudi Arabia and the United Arab Emirates.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            },
+            {
+              "evidence_id": "r2-e-mkt-3",
+              "source_type": "regulatory",
+              "source_title": "Saudi PDPL: cross-border transfers",
+              "source_url": "https://www.mena-legaltech.com/saudi-arabia/pdpl-cross-border-transfers",
+              "publisher": "MENA LegalTech",
+              "extracted_fact": "Saudi Arabia's Personal Data Protection Law limits cross-border data transfers outside the Kingdom.",
+              "excerpt": "Saudi Arabia's Personal Data Protection Law limits cross-border data transfers outside the Kingdom.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {}
+            }
+          ],
+          "gaps": [
+            "No reliable data on AI accelerator demand in Egypt."
+          ],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-15T09:00:00Z",
+          "completed_at": "2026-10-15T09:04:00Z",
+          "metadata": {
+            "metrics": []
+          }
+        },
+        {
+          "task_id": "r2-t-customer_trends",
+          "worker": "customer_trends",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {
+              "finding_id": "r2-f-cust-1",
+              "statement": "NVIDIA customers value CUDA's mature tooling but are frustrated by long lead times for Blackwell systems.",
+              "category": "customer_sentiment",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-cust-1",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.6,
+              "limitations": []
+            },
+            {
+              "finding_id": "r2-f-cust-2",
+              "statement": "Developers see AMD's ROCm as improving but still behind CUDA when they port CUDA code.",
+              "category": "customer_sentiment",
+              "evidence_refs": [
+                {
+                  "evidence_id": "r2-e-cust-2",
+                  "relation": "supports"
+                }
+              ],
+              "confidence": 0.55,
+              "limitations": []
+            }
+          ],
+          "evidence": [
+            {
+              "evidence_id": "r2-e-cust-1",
+              "source_type": "other",
+              "source_title": "Blackwell lead times - anyone else waiting?",
+              "source_url": "https://www.reddit.com/r/MachineLearning/comments/1n3k9vz/blackwell_lead_times/",
+              "publisher": "reddit",
+              "extracted_fact": "Engineers praise CUDA's mature tooling but complain about long lead times for Blackwell systems.",
+              "excerpt": "Engineers praise CUDA's mature tooling but complain about long lead times for Blackwell systems.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "platform": "reddit",
+                "engagement_total": 410,
+                "stance": "negative"
+              }
+            },
+            {
+              "evidence_id": "r2-e-cust-2",
+              "source_type": "other",
+              "source_title": "Post by @mlops_gulf",
+              "source_url": "https://x.com/mlops_gulf/status/1851177340912",
+              "publisher": "x",
+              "extracted_fact": "Developers on X say ROCm has improved a lot but still needs work to port CUDA code.",
+              "excerpt": "Developers on X say ROCm has improved a lot but still needs work to port CUDA code.",
+              "retrieved_at": "2026-10-15T09:00:00Z",
+              "is_synthetic": false,
+              "metadata": {
+                "platform": "x",
+                "engagement_total": 130,
+                "stance": "mixed"
+              }
+            }
+          ],
+          "gaps": [],
+          "conflicts": [],
+          "confidence": 0.7,
+          "started_at": "2026-10-15T09:00:00Z",
+          "completed_at": "2026-10-15T09:04:00Z",
+          "metadata": {
+            "metrics": [
+              {
+                "metric_id": "sentiment_split",
+                "entity": "NVIDIA",
+                "value_text": "38% positive",
+                "value": 38.0,
+                "unit": "%",
+                "evidence_id": "r2-e-cust-1",
+                "source_span": "38% positive",
+                "scope": "third_party",
+                "label": "positive",
+                "sample_size": 140
+              }
+            ],
+            "themes": [
+              {
+                "theme_label": "long lead times",
+                "count": 39,
+                "share": 0.279,
+                "sentiment_mix": {
+                  "negative": 0.66,
+                  "neutral": 0.24,
+                  "mixed": 0.1,
+                  "positive": 0.0
+                },
+                "recent_growth": -0.25
+              },
+              {
+                "theme_label": "mature tooling",
+                "count": 41,
+                "share": 0.293,
+                "sentiment_mix": {
+                  "positive": 0.7,
+                  "neutral": 0.22,
+                  "mixed": 0.08,
+                  "negative": 0.0
+                },
+                "recent_growth": 0.05
+              },
+              {
+                "theme_label": "rocm porting effort",
+                "count": 27,
+                "share": 0.193,
+                "sentiment_mix": {
+                  "negative": 0.41,
+                  "mixed": 0.37,
+                  "neutral": 0.22,
+                  "positive": 0.0
+                },
+                "recent_growth": 0.3
+              }
+            ],
+            "trend_series": [
+              {
+                "keyword": "NVIDIA",
+                "geo": "SA",
+                "timeframe": "today 3-m",
+                "granularity": "fortnight",
+                "source": "google_trends",
+                "points": [
+                  [
+                    "2026-07-20",
+                    81
+                  ],
+                  [
+                    "2026-08-03",
+                    79
+                  ],
+                  [
+                    "2026-08-17",
+                    77
+                  ],
+                  [
+                    "2026-08-31",
+                    80
+                  ],
+                  [
+                    "2026-09-14",
+                    76
+                  ],
+                  [
+                    "2026-09-28",
+                    74
+                  ]
+                ]
+              },
+              {
+                "keyword": "AMD Instinct",
+                "geo": "SA",
+                "timeframe": "today 3-m",
+                "granularity": "fortnight",
+                "source": "google_trends",
+                "points": [
+                  [
+                    "2026-07-20",
+                    27
+                  ],
+                  [
+                    "2026-08-03",
+                    29
+                  ],
+                  [
+                    "2026-08-17",
+                    33
+                  ],
+                  [
+                    "2026-08-31",
+                    36
+                  ],
+                  [
+                    "2026-09-14",
+                    38
+                  ],
+                  [
+                    "2026-09-28",
+                    41
+                  ]
+                ]
+              }
+            ],
+            "stance_counts": {
+              "NVIDIA": {
+                "positive": 53,
+                "neutral": 33,
+                "negative": 41,
+                "mixed": 13,
+                "total": 140
+              },
+              "AMD": {
+                "positive": 24,
+                "neutral": 22,
+                "negative": 13,
+                "mixed": 11,
+                "total": 70
+              }
+            }
+          }
+        }
+      ],
+      "verification": {
+        "research_run_id": "req-nvidia-002",
+        "completed_at": "2026-10-15T09:10:00Z",
+        "decision": {
+          "status": "verified",
+          "summary": "12 of 13 findings verified; Gaudi 3 pricing needs an official source.",
+          "targeted_actions": []
+        },
+        "findings": [
+          {
+            "finding_id": "r2-f-int-1",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's Blackwell platform is in full production and drives most Data Center revenue.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-int-1"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-int-2",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's Data Center revenue reached $115.2 billion in FY2025, up 142% year over year.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-int-2"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-int-3",
+            "worker": "internal_intelligence",
+            "statement": "NVIDIA's CUDA ecosystem and NVIDIA AI Enterprise licensing create a software moat beyond hardware.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-int-3"
+            ],
+            "confidence": 0.65,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-comp-1",
+            "worker": "competitor_intelligence",
+            "statement": "AMD Instinct MI400 offers more memory per accelerator (432 GB) than NVIDIA B200 (192 GB).",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-comp-1",
+              "r2-e-comp-2"
+            ],
+            "confidence": 0.75,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-comp-2",
+            "worker": "competitor_intelligence",
+            "statement": "Broadcom competes through custom AI accelerators built for individual hyperscalers rather than merchant GPUs.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-comp-3"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-comp-3",
+            "worker": "competitor_intelligence",
+            "statement": "Broadcom's Tomahawk 6 Ethernet switching challenges NVIDIA's networking business in AI clusters.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-comp-4"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-comp-4",
+            "worker": "competitor_intelligence",
+            "statement": "Intel prices Gaudi 3 below comparable NVIDIA accelerators.",
+            "verification_status": "insufficient",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r2-e-comp-5",
+              "r2-e-comp-6"
+            ],
+            "confidence": 0.3,
+            "contradictions": [
+              "Forum post says total cost matches an H100."
+            ],
+            "missing_information": [
+              "Official Gaudi 3 pricing or partner quotes."
+            ]
+          },
+          {
+            "finding_id": "r2-f-comp-5",
+            "worker": "competitor_intelligence",
+            "statement": "Intel's Xeon 6 remains a common host CPU in AI servers, including NVIDIA-based systems.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-comp-7"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-mkt-1",
+            "worker": "market_intelligence",
+            "statement": "Sovereign AI build-outs in Saudi Arabia are creating large demand for AI accelerators.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-mkt-1"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-mkt-2",
+            "worker": "market_intelligence",
+            "statement": "US export controls make shipments of advanced AI chips to Saudi Arabia and the United Arab Emirates subject to licensing.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-mkt-2"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-mkt-3",
+            "worker": "market_intelligence",
+            "statement": "Saudi Arabia's Personal Data Protection Law restricts cross-border data transfers, raising demand for in-country AI data centers.",
+            "verification_status": "verified",
+            "evidence_quality": "medium",
+            "evidence_ids": [
+              "r2-e-mkt-3"
+            ],
+            "confidence": 0.7,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-cust-1",
+            "worker": "customer_trends",
+            "statement": "NVIDIA customers value CUDA's mature tooling but are frustrated by long lead times for Blackwell systems.",
+            "verification_status": "verified",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r2-e-cust-1"
+            ],
+            "confidence": 0.55,
+            "contradictions": [],
+            "missing_information": []
+          },
+          {
+            "finding_id": "r2-f-cust-2",
+            "worker": "customer_trends",
+            "statement": "Developers see AMD's ROCm as improving but still behind CUDA when they port CUDA code.",
+            "verification_status": "verified",
+            "evidence_quality": "low",
+            "evidence_ids": [
+              "r2-e-cust-2"
+            ],
+            "confidence": 0.5,
+            "contradictions": [],
+            "missing_information": []
+          }
+        ],
+        "control_summary": {
+          "missing_information": [
+            "Official Gaudi 3 pricing or partner quotes."
+          ],
+          "next_research_targets": [
+            "Confirm Gaudi 3 pricing from Intel or partner quotes."
+          ]
+        }
+      },
+      "cross_signal": {
+        "status": "completed",
+        "signals": [
+          {
+            "signal_id": "r2-s-1",
+            "signal_type": "convergence",
+            "title": "AMD closes the gap on hardware and software",
+            "signal": "AMD accelerators now carry more memory than B200 while developers report ROCm improving.",
+            "interpretation": "Memory-bound workloads and price-sensitive buyers may switch if porting gets easier.",
+            "supporting_findings": [
+              {
+                "finding_id": "r2-f-comp-1",
+                "relevance": "Shows the memory lead."
+              },
+              {
+                "finding_id": "r2-f-cust-2",
+                "relevance": "Shows the software gap narrowing."
+              }
+            ],
+            "domains_involved": [
+              "competitor_intelligence",
+              "customer_trends"
+            ],
+            "confidence": 0.7,
+            "evidence_quality": "medium",
+            "strategic_relevance": "Threatens NVIDIA's share of inference for large models.",
+            "decision_relevance": "risk_relevant",
+            "urgency": "high",
+            "decision_question": "Should NVIDIA fund CUDA-to-cluster migration support for Gulf sovereign AI buyers?"
+          },
+          {
+            "signal_id": "r2-s-2",
+            "signal_type": "timing",
+            "title": "Sovereign AI demand meets Blackwell production",
+            "signal": "Saudi sovereign AI build-outs are scaling while Blackwell is in full production.",
+            "interpretation": "There is a window to lock in multi-year Gulf deployments on NVIDIA systems.",
+            "supporting_findings": [
+              {
+                "finding_id": "r2-f-int-1",
+                "relevance": "Supply is ready."
+              },
+              {
+                "finding_id": "r2-f-mkt-1",
+                "relevance": "Demand is large."
+              }
+            ],
+            "domains_involved": [
+              "internal_intelligence",
+              "market_intelligence"
+            ],
+            "confidence": 0.7,
+            "evidence_quality": "medium",
+            "strategic_relevance": "Large, sticky deployments that set the software standard in the region.",
+            "decision_relevance": "opportunity_relevant",
+            "urgency": "medium"
+          }
+        ]
+      },
+      "decision": {
+        "analysis_id": "r2-analysis",
+        "research_run_id": "req-nvidia-002",
+        "status": "completed",
+        "business_goal": "How should NVIDIA defend its AI data center position against Broadcom, Intel and AMD in Saudi Arabia, the United Arab Emirates and Egypt?",
+        "executive_summary": "Lock in Saudi sovereign AI deployments now; counter AMD's memory lead with platform and migration support.",
+        "opportunities": [
+          {
+            "opportunity_id": "r2-opp-1",
+            "title": "Anchor Saudi sovereign AI build-outs on Blackwell",
+            "description": "Win the first large Gulf AI factories with full-stack NVIDIA systems.",
+            "business_rationale": "Demand is large and Blackwell is in full production.",
+            "potential_impact": "Multi-year deployments that standardise the region on CUDA.",
+            "strategic_fit": "high",
+            "feasibility": "moderate",
+            "urgency": "moderate",
+            "supporting_signal_ids": [
+              "r2-s-2"
+            ],
+            "confidence": 0.65
+          }
+        ],
+        "risks": [
+          {
+            "risk_id": "r2-risk-1",
+            "title": "AMD wins memory-bound inference workloads",
+            "description": "More memory per accelerator plus better ROCm portability could pull inference to AMD.",
+            "business_rationale": "The memory gap is verified and developers report ROCm improving.",
+            "potential_consequences": [
+              "Lost inference share in sovereign deployments"
+            ],
+            "likelihood": "moderate",
+            "impact": "high",
+            "urgency": "high",
+            "supporting_signal_ids": [
+              "r2-s-1"
+            ],
+            "confidence": 0.65
+          }
+        ],
+        "recommended_actions": [
+          {
+            "action_id": "r2-act-1",
+            "title": "Bundle migration support with Blackwell systems for Gulf sovereign AI",
+            "description": "Pair GB200 NVL72 deployments with CUDA engineering support and NVIDIA AI Enterprise.",
+            "rationale": "Raises switching costs while demand is forming.",
+            "intended_outcome": "Gulf sovereign AI projects standardise on NVIDIA.",
+            "priority": "high",
+            "time_horizon": "short_term",
+            "supporting_signal_ids": [
+              "r2-s-1",
+              "r2-s-2"
+            ],
+            "related_opportunity_ids": [
+              "r2-opp-1"
+            ],
+            "related_risk_ids": [
+              "r2-risk-1"
+            ],
+            "confidence": 0.6,
+            "requires_human_approval": true
+          }
+        ],
+        "options": [
+          {
+            "key": "A",
+            "title": "Defend on platform",
+            "thesis": "Lead with full-stack systems, CUDA and networking.",
+            "supporting_signal_ids": [
+              "r2-s-2"
+            ],
+            "metric_refs": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "NVIDIA"
+              }
+            ]
+          },
+          {
+            "key": "B",
+            "title": "Match on memory and price",
+            "thesis": "Prioritise higher-memory parts and price for inference deals.",
+            "supporting_signal_ids": [
+              "r2-s-1"
+            ],
+            "metric_refs": [
+              {
+                "metric_id": "hbm_capacity_gb",
+                "entity": "AMD"
+              }
+            ]
+          }
+        ],
+        "question_recommendations": [
+          {
+            "question": "Should NVIDIA fund CUDA-to-cluster migration support for Gulf sovereign AI buyers?",
+            "recommendation": {
+              "decision": "Yes, for the first Saudi deployments, tied to multi-year commitments.",
+              "rationale": "The AMD memory lead is verified; ROCm sentiment rests on low-quality evidence.",
+              "actions": [
+                "Assign a migration team to each sovereign AI deal"
+              ],
+              "supporting_signal_ids": [
+                "r2-s-1"
+              ],
+              "confidence": "medium"
+            }
+          }
+        ],
+        "priorities": [
+          {
+            "item_type": "risk",
+            "item_id": "r2-risk-1",
+            "priority": "high",
+            "strategic_fit": "high",
+            "impact": "high",
+            "urgency": "high",
+            "feasibility": "moderate",
+            "rationale": "Inference is the growing share of demand."
+          },
+          {
+            "item_type": "action",
+            "item_id": "r2-act-1",
+            "priority": "high",
+            "strategic_fit": "high",
+            "impact": "high",
+            "urgency": "high",
+            "feasibility": "high",
+            "rationale": "Uses existing teams and software."
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "request_id": "sample-profile-nvidia-2026-01",
+        "created_at": "2026-11-08T01:00:00Z",
+        "goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+        "company_profile": {
+          "name": "NVIDIA",
+          "aliases": [],
+          "products": ["GeForce", "RTX", "DLSS", "Isaac ROS", "DSX", "Omniverse", "CUDA", "DGX Spark"],
+          "website": "https://www.nvidia.com",
+          "notes": "NVIDIA develops AI, graphics, and accelerated computing technologies for gaming, professional visualization, data centers, robotics, and industry solutions. It provides platforms such as GeForce, RTX, Isaac ROS, DSX, Omniverse, and DGX Spark.",
+          "social_accounts": [
+            {"platform": "facebook", "url": "https://www.facebook.com/nvidiageforceme"},
+            {"platform": "instagram", "url": "https://www.instagram.com/nvidiageforceme"},
+            {"platform": "tiktok", "url": "https://www.tiktok.com/@nvidiageforceme"},
+            {"platform": "x", "url": "https://x.com/nvidiageforceme"},
+            {"platform": "youtube", "url": "https://www.youtube.com/channel/UCNHEgWwvqwP37DrkzBxXwMQ"},
+            {"platform": "linkedin", "url": "https://www.linkedin.com/company/nvidia"}
+          ],
+          "workspace_id": "sandbox"
+        },
+        "business_context": {
+          "use_case": "competitive_intelligence",
+          "targets": ["Broadcom", "Intel", "AMD"],
+          "competitors": [{"name": "Broadcom"}, {"name": "Intel"}, {"name": "AMD"}],
+          "markets": ["Americas", "Armenia", "Asia", "Australia", "Belgium", "Brazil", "Canada", "Denmark", "Europe", "Finland", "France", "Hong Kong", "India", "Japan", "Korea", "Mainland China", "Singapore", "Taiwan", "United States", "Vietnam"],
+          "offering": "GeForce"
+        }
+      },
+      "profile_snapshot": {
+        "industries": ["saas", "technology", "manufacturing"],
+        "goals": ["Strengthen NVIDIA\u2019s leadership in AI computing over the next two years by expanding access to its AI platforms, diversifying its customer base, and addressing competitive and supply-chain risks."],
+        "target_customers": null,
+        "markets": [
+          {"name": "Americas", "relation": "serves"},
+          {"name": "Armenia", "relation": "serves"},
+          {"name": "Asia", "relation": "serves"},
+          {"name": "Australia", "relation": "serves"},
+          {"name": "Belgium", "relation": "serves"},
+          {"name": "Brazil", "relation": "serves"},
+          {"name": "Canada", "relation": "serves"},
+          {"name": "Denmark", "relation": "serves"},
+          {"name": "Europe", "relation": "serves"},
+          {"name": "Finland", "relation": "serves"},
+          {"name": "France", "relation": "serves"},
+          {"name": "Hong Kong", "relation": "serves"},
+          {"name": "India", "relation": "serves"},
+          {"name": "Japan", "relation": "serves"},
+          {"name": "Korea", "relation": "serves"},
+          {"name": "Mainland China", "relation": "serves"},
+          {"name": "Singapore", "relation": "serves"},
+          {"name": "Taiwan", "relation": "serves"},
+          {"name": "United States", "relation": "serves"},
+          {"name": "Vietnam", "relation": "serves"}
+        ]
+      },
+      "catalog": [],
+      "plan": {
+        "plan_id": "sample-profile-nvidia-plan",
+        "created_at": "2026-11-08T01:00:00Z",
+        "rationale": "Fictional example aligned with the saved profile; not research evidence.",
+        "tasks": [
+          {
+            "task_id": "sample-profile-nvidia-competitors",
+            "worker": "competitor_intelligence",
+            "goal": "Compare fictional competitor developments relevant to GeForce and AI computing.",
+            "focus": "Graphics platforms, AI software and supply-chain risk",
+            "requirements": []
+          }
+        ]
+      },
+      "results": [
+        {
+          "task_id": "sample-profile-nvidia-competitors",
+          "worker": "competitor_intelligence",
+          "status": "completed",
+          "attempt": 1,
+          "findings": [
+            {"finding_id": "sample-profile-f-amd", "statement": "Fictional example: AMD expands developer tools for graphics and AI.", "category": "product_feature", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-amd"}], "limitations": ["Synthetic example, not a real-world claim."]},
+            {"finding_id": "sample-profile-f-intel", "statement": "Fictional example: Intel introduces a graphics developer support program.", "category": "product_feature", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-intel"}], "limitations": ["Synthetic example, not a real-world claim."]},
+            {"finding_id": "sample-profile-f-broadcom", "statement": "Fictional example: Broadcom expands an AI networking partner program.", "category": "positioning", "confidence": 0.5, "evidence_refs": [{"evidence_id": "sample-profile-e-broadcom"}], "limitations": ["Synthetic example, not a real-world claim."]}
+          ],
+          "evidence": [
+            {"evidence_id": "sample-profile-e-amd", "source_type": "synthetic_internal", "source_title": "Fictional AMD example", "source_url": "internal://synthetic/amd", "extracted_fact": "Fictional example: AMD expands developer tools for graphics and AI.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true},
+            {"evidence_id": "sample-profile-e-intel", "source_type": "synthetic_internal", "source_title": "Fictional Intel example", "source_url": "internal://synthetic/intel", "extracted_fact": "Fictional example: Intel introduces a graphics developer support program.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true},
+            {"evidence_id": "sample-profile-e-broadcom", "source_type": "synthetic_internal", "source_title": "Fictional Broadcom example", "source_url": "internal://synthetic/broadcom", "extracted_fact": "Fictional example: Broadcom expands an AI networking partner program.", "retrieved_at": "2026-11-08T01:00:00Z", "is_synthetic": true}
+          ]
+        }
+      ]
+    }
+  ]
+}
