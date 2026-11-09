@@ -152,6 +152,7 @@ def _prompt_values(brief: TaskBrief, deps: WorkerDeps) -> dict[str, Any]:
         "languages": brief.languages,
         "competitors": brief.competitors,
         "focus": brief.focus,
+        "focus_terms": ", ".join(brief.focus_terms) or "none named",
         "since": brief.since,
         "until": brief.until,
         "depth": brief.depth,

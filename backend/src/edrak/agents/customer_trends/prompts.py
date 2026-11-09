@@ -99,6 +99,7 @@ _TASK_BLOCK = """Task
 - Languages to cover: {languages}
 - Competitors: {competitors}
 - Focus: {focus}
+- Terms the evidence should cover (segments, regions): {focus_terms}
 - Period: {since} to {until}
 - Depth: {depth}
 
@@ -133,6 +134,8 @@ PLAN_QUERIES = (
     + """
 
 Return a query plan (JSON):
+- Make sure the queries, taken together, reach every term the evidence should cover, so that
+  each segment and region can be answered from evidence and not only reported as missing.
 - social_queries: for each platform worth searching (x, reddit, tiktok, instagram, facebook,
   youtube), 1 to 4 short queries of 2 to 4 words, the way people search: a product name plus one
   word ("GitLab Duo review"). Long sentences match nothing on a keyword search. Write each idea

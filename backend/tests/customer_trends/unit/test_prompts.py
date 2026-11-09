@@ -17,8 +17,8 @@ from edrak.agents.customer_trends.prompts import (
 )
 
 KNOWN_PLACEHOLDERS = {
-    "entity", "question", "market", "geo", "languages", "competitors", "focus", "since",
-    "until", "depth", "emphasis", "query_hints", "max_steps", "target_items", "replan",
+    "entity", "question", "market", "geo", "languages", "competitors", "focus", "focus_terms",
+    "since", "until", "depth", "emphasis", "query_hints", "max_steps", "target_items", "replan",
 }  # fmt: skip
 ALL = {
     "PLAN_QUERIES": PLAN_QUERIES,
