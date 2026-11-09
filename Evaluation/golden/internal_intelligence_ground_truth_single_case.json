@@ -1,0 +1,278 @@
+{
+  "agent": "internal_intelligence",
+  "description": "Goal-derived evaluation rubric for NVIDIA data-center AI accelerator capabilities, software ecosystem, pricing, availability, and customer adoption in Europe and the United States. This rubric evaluates completeness and evidence handling; it does not assume unsupported product facts are true. The dataset contains exactly one test case with multiple independent expected findings, intended to evaluate one worker run against its complete task goal.",
+  "dataset_version": "1.1.0-single-case-multi-finding",
+  "snapshot_date": "2026-10-29",
+  "worker_definition": {
+    "worker": "internal_intelligence",
+    "goal": "What are NVIDIA's data center AI accelerator capabilities, software ecosystem, pricing, availability, and current customer adoption in Europe and the United States?",
+    "company": "NVIDIA Corporation",
+    "aliases": [
+      "NVIDIA",
+      "Nvidia"
+    ],
+    "products": [
+      "H100",
+      "H200",
+      "B200",
+      "A100",
+      "data-center AI accelerators",
+      "DGX",
+      "HGX"
+    ],
+    "software_ecosystem": [
+      "CUDA",
+      "cuDNN",
+      "TensorRT",
+      "NVIDIA AI Enterprise",
+      "NCCL",
+      "TensorRT-LLM"
+    ],
+    "markets": [
+      "Europe",
+      "United States"
+    ],
+    "target_customers": [
+      "Cloud service providers",
+      "AI developers",
+      "Enterprise customers"
+    ],
+    "task_focus": "Accelerator capabilities, software ecosystem, pricing, availability, and current adoption in Europe and the United States.",
+    "use_case": "internal_intelligence"
+  },
+  "scope_conflict": {
+    "excluded_entities": [],
+    "require_exclusion_label": false,
+    "policy": "Stay focused on NVIDIA data-center AI accelerators, supporting software, pricing, availability, and customer adoption in Europe and the United States. Separate verified facts from internal planning material, assumptions, and missing evidence.",
+    "configured_competitors": [
+      "NVIDIA"
+    ],
+    "comparison_targets": []
+  },
+  "evaluation_config": {
+    "covered_threshold": 0.7,
+    "partial_threshold": 0.4,
+    "second_pass_top_k": 5,
+    "partial_credit": 0.5
+  },
+  "research_requirements": [
+    {
+      "id": "REQ-CAPABILITIES",
+      "requirement": "Describe relevant accelerator products and capabilities using specific, attributable specifications or benchmarks."
+    },
+    {
+      "id": "REQ-SOFTWARE",
+      "requirement": "Explain the software ecosystem and compatibility/support where evidence is available."
+    },
+    {
+      "id": "REQ-PRICING",
+      "requirement": "Report attributable pricing or clearly disclose that reliable pricing was not established."
+    },
+    {
+      "id": "REQ-AVAILABILITY",
+      "requirement": "Report current regional availability and supply constraints or clearly disclose evidence gaps."
+    },
+    {
+      "id": "REQ-ADOPTION",
+      "requirement": "Provide current customer adoption/deployment evidence, distinguishing announcements from production use."
+    },
+    {
+      "id": "REQ-REGIONS",
+      "requirement": "Cover Europe and the United States explicitly without inferring regional availability or adoption from global claims."
+    },
+    {
+      "id": "REQ-EVIDENCE",
+      "requirement": "Use traceable external sources for external claims and identify internal documents as internal evidence."
+    }
+  ],
+  "test_cases": [
+    {
+      "test_case": {
+        "id": "INT-NVIDIA-001",
+        "title": "NVIDIA data-center AI intelligence: complete research coverage",
+        "description": "One evaluation case for one internal_intelligence run. All findings below are independent scoring criteria within the same task goal; they are not separate runs or scenarios."
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "INT-CAP-01",
+            "requirement_id": "REQ-CAPABILITIES",
+            "finding": "Relevant NVIDIA accelerator portfolio",
+            "primary_claim": "The report identifies relevant NVIDIA data-center AI accelerator families and distinguishes generations or product configurations where evidence supports it.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Names relevant data-center accelerators such as H100, H200, B200 or A100 when supported by sources.",
+              "Distinguishes accelerator chips from systems/platforms such as HGX or DGX.",
+              "Provides source links or identifies missing evidence rather than presenting an unsupported product list as verified."
+            ],
+            "priority": "mandatory",
+            "category": "product_portfolio"
+          },
+          {
+            "id": "INT-CAP-02",
+            "requirement_id": "REQ-CAPABILITIES",
+            "finding": "Specific technical capabilities and performance",
+            "primary_claim": "The report describes accelerator capabilities using concrete specifications or benchmarks and gives workload and measurement context.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Includes concrete specifications or benchmark results when available.",
+              "Identifies workload, precision, system configuration, or benchmark context when relevant.",
+              "Avoids unsupported performance comparisons and distinguishes vendor claims from independent measurements.",
+              "Explicitly marks missing specifications or benchmarks as gaps when not established."
+            ],
+            "priority": "mandatory",
+            "category": "technical_capabilities"
+          },
+          {
+            "id": "INT-CAP-03",
+            "requirement_id": "REQ-CAPABILITIES",
+            "finding": "Data-center system and scale-up/scale-out context",
+            "primary_claim": "The report explains how accelerator products fit into data-center systems and multi-GPU or cluster deployments where evidence is available.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Covers system/platform context beyond naming a GPU alone.",
+              "Addresses memory, interconnect/networking, scaling, or system integration when supported.",
+              "Does not treat general planning questions as confirmed technical findings."
+            ],
+            "priority": "mandatory",
+            "category": "platform_architecture"
+          },
+          {
+            "id": "INT-EVID-04",
+            "requirement_id": "REQ-EVIDENCE",
+            "finding": "Traceable and appropriately qualified product evidence",
+            "primary_claim": "Product and capability claims are traceable to relevant evidence, with internal planning documents distinguished from public technical documentation.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Includes source titles and URLs for externally verifiable claims where available.",
+              "Clearly labels internal documents as internal rather than independent external confirmation.",
+              "Avoids claiming that a referenced URL was accessed or verified unless the trace supports that statement.",
+              "States evidence limitations transparently."
+            ],
+            "priority": "mandatory",
+            "category": "evidence_quality"
+          },
+          {
+            "id": "INT-SW-05",
+            "requirement_id": "REQ-SOFTWARE",
+            "finding": "NVIDIA AI software ecosystem",
+            "primary_claim": "The report explains the role of relevant NVIDIA software components such as CUDA, cuDNN, TensorRT, NCCL, TensorRT-LLM, or NVIDIA AI Enterprise where supported.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Identifies relevant software components and their purpose rather than only listing names.",
+              "Connects software to developer workflows, inference/training, libraries, or deployment where evidence supports it.",
+              "Distinguishes open-source/free components from paid enterprise offerings where verified.",
+              "Calls out missing details rather than inventing coverage."
+            ],
+            "priority": "mandatory",
+            "category": "software_ecosystem"
+          },
+          {
+            "id": "INT-SW-06",
+            "requirement_id": "REQ-SOFTWARE",
+            "finding": "Framework support and version compatibility",
+            "primary_claim": "The report covers supported AI frameworks and relevant software/driver/CUDA compatibility with versions or documentation links where available.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Addresses framework support such as PyTorch or TensorFlow when evidenced.",
+              "Provides compatibility/version details or explicitly identifies them as unverified or missing.",
+              "Uses official documentation or attributable sources for compatibility claims.",
+              "Does not infer version compatibility from a generic statement that CUDA is used."
+            ],
+            "priority": "mandatory",
+            "category": "compatibility"
+          },
+          {
+            "id": "INT-PRICE-07",
+            "requirement_id": "REQ-PRICING",
+            "finding": "Pricing and commercial model",
+            "primary_claim": "The report provides attributable price ranges or commercial models for relevant accelerators/systems/software, or clearly states that reliable pricing could not be established.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Distinguishes direct purchase, cloud rental, systems pricing, and software subscription/licensing where relevant.",
+              "Includes currency, date, configuration, and source for quoted prices when available.",
+              "Does not present reseller asking prices or estimates as official list prices without qualification.",
+              "If pricing is absent from the evidence, explicitly reports the gap rather than fabricating a number."
+            ],
+            "priority": "mandatory",
+            "category": "pricing"
+          },
+          {
+            "id": "INT-COM-08",
+            "requirement_id": "REQ-PRICING",
+            "finding": "Total-cost and commercial caveats",
+            "primary_claim": "The report identifies major cost variables beyond the accelerator unit price where evidence is available, and avoids unsupported total-cost conclusions.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Considers system configuration, networking, power/cooling, cloud instance pricing, or software licensing when relevant and supported.",
+              "Labels estimates and assumptions clearly.",
+              "States when total-cost comparison cannot be made from available evidence."
+            ],
+            "priority": "mandatory",
+            "category": "commercial_context"
+          },
+          {
+            "id": "INT-AVL-09",
+            "requirement_id": "REQ-AVAILABILITY",
+            "finding": "Current product availability and supply constraints",
+            "primary_claim": "The report describes current availability or supply constraints for relevant NVIDIA products, or explicitly states that verified inventory/lead-time evidence is unavailable.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Uses dated evidence for availability, lead times, launches, or supply constraints.",
+              "Distinguishes announced launch, orderability, cloud availability, and physical inventory.",
+              "Does not claim real-time stock levels without a source that supports them.",
+              "Clearly marks missing availability evidence."
+            ],
+            "priority": "mandatory",
+            "category": "availability"
+          },
+          {
+            "id": "INT-REG-10",
+            "requirement_id": "REQ-REGIONS",
+            "finding": "Europe versus United States coverage",
+            "primary_claim": "The report assesses Europe and the United States separately and avoids extrapolating regional availability or adoption from global statements.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Explicitly covers both Europe and the United States.",
+              "Provides region-specific availability, pricing, or deployment evidence when available.",
+              "Explains regional evidence gaps and avoids treating global announcements as proof of regional deployment.",
+              "Does not imply that the trace's stated target regions alone prove region-specific activity."
+            ],
+            "priority": "mandatory",
+            "category": "regional_coverage"
+          },
+          {
+            "id": "INT-ADOPT-11",
+            "requirement_id": "REQ-ADOPTION",
+            "finding": "Current customer adoption and deployments",
+            "primary_claim": "The report provides attributable current customer adoption or deployment examples and distinguishes planned, announced, preview, generally available, and production use.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Names customers or cloud providers and cites dated sources where evidence exists.",
+              "Separates plans/announcements from generally available services and confirmed production deployments.",
+              "Does not infer customer adoption from a product feature, planning document, or generic market statement.",
+              "Explicitly records adoption-metric gaps when quantitative evidence is absent."
+            ],
+            "priority": "mandatory",
+            "category": "customer_adoption"
+          },
+          {
+            "id": "INT-GAP-12",
+            "requirement_id": "REQ-EVIDENCE",
+            "finding": "Evidence completeness and limitations",
+            "primary_claim": "The report accurately summarizes what the retrieved evidence establishes, calls out missing pricing/availability/adoption details, and does not promote internal planning prompts to verified facts.",
+            "acceptable_alternatives": [],
+            "acceptance_criteria": [
+              "Separates evidence-backed findings from missing information and limitations.",
+              "Recognizes that internal planning documents are not equivalent to external market/customer verification.",
+              "Does not treat query strings or research questions as evidence of a fact.",
+              "Reports the trace's gaps honestly and avoids unsupported certainty."
+            ],
+            "priority": "mandatory",
+            "category": "completeness"
+          }
+        ]
+      }
+    }
+  ]
+}

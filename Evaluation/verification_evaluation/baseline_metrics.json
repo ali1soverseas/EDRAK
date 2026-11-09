@@ -1,0 +1,20 @@
+{
+  "dataset_size": 19,
+  "expected_verified": 11,
+  "expected_insufficient": 8,
+  "original_agent_verified": 18,
+  "original_agent_insufficient": 1,
+  "confusion_matrix_positive_class_verified": {
+    "TP": 11,
+    "FP": 7,
+    "FN": 0,
+    "TN": 1
+  },
+  "accuracy": 0.631578947368421,
+  "precision_verified": 0.6111111111111112,
+  "recall_verified": 1.0,
+  "f1_verified": 0.7586206896551725,
+  "false_verification_rate_among_agent_verified": 0.3888888888888889,
+  "false_positive_rate_among_expected_insufficient": 0.875,
+  "note": "These are deterministic baseline metrics computed by comparing the original trace output with the manually reviewed labels in this dataset. DeepEval LLM-judge scores are produced by the accompanying runner when executed with a configured model/API key."
+}

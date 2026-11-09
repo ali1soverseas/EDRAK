@@ -1,0 +1,591 @@
+{
+  "schema_version": 1,
+  "dataset_version": "customer-trends-v1.0",
+  "worker": "customer_trends",
+  "description": "Single-case golden benchmark grounded in the supplied customer_trends trace.",
+  "evaluation_guidance": {
+    "partial_credit": 0.5,
+    "important_distinctions": [
+      "Planned social queries are not collected social evidence.",
+      "Snippet-only news is not full-text evidence or customer reviews.",
+      "Zero engagement metrics do not prove zero real-world engagement.",
+      "25 of 34 items without a vendor mention makes share-of-voice unreliable.",
+      "One Gcore example does not establish broad regional adoption.",
+      "Sentiment percentages describe this sample, not the customer population."
+    ]
+  },
+  "test_cases": [
+    {
+      "test_case": {
+        "id": "CT-SINGLE-RUN-001",
+        "title": "Customer sentiment, adoption signals, and evidence quality across Europe and the US"
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "CT01",
+            "requirement_id": "SCOPE",
+            "priority": "mandatory",
+            "finding": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+            "primary_claim": "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States.",
+            "acceptance_criteria": [
+              "The analysis covers cloud service providers and AI developers, NVIDIA, Broadcom, Intel, Europe, and the United States."
+            ],
+            "signal_groups": [
+              [
+                "cloud service providers",
+                "cloud providers",
+                "csp"
+              ],
+              [
+                "ai developers",
+                "developers"
+              ],
+              [
+                "nvidia"
+              ],
+              [
+                "broadcom"
+              ],
+              [
+                "intel"
+              ],
+              [
+                "europe"
+              ],
+              [
+                "united states",
+                "us"
+              ]
+            ]
+          },
+          {
+            "id": "CT02",
+            "requirement_id": "SAMPLE_SENTIMENT",
+            "priority": "mandatory",
+            "finding": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+            "primary_claim": "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment.",
+            "acceptance_criteria": [
+              "The 34-item sample contains 24 positive (70.6%), 7 neutral (20.6%), 2 negative (5.9%), and 1 mixed (2.9%) items; this is not population-wide sentiment."
+            ],
+            "signal_groups": [
+              [
+                "34 items",
+                "34 analyzed",
+                "sample of 34"
+              ],
+              [
+                "24 positive",
+                "positive 24",
+                "70.6"
+              ],
+              [
+                "7 neutral",
+                "neutral 7",
+                "20.6"
+              ],
+              [
+                "2 negative",
+                "negative 2",
+                "5.9"
+              ],
+              [
+                "1 mixed",
+                "mixed 1",
+                "2.9"
+              ],
+              [
+                "sample",
+                "collected items",
+                "small sample"
+              ]
+            ]
+          },
+          {
+            "id": "CT03",
+            "requirement_id": "BROADCOM_SENTIMENT",
+            "priority": "mandatory",
+            "finding": "Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets.",
+            "primary_claim": "Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets.",
+            "acceptance_criteria": [
+              "Broadcom's Google and Meta AI-chip collaborations are a low-confidence positive signal based only on news snippets."
+            ],
+            "signal_groups": [
+              [
+                "broadcom"
+              ],
+              [
+                "google"
+              ],
+              [
+                "meta"
+              ],
+              [
+                "positive",
+                "favorable"
+              ],
+              [
+                "snippet",
+                "news snippets",
+                "single source",
+                "low confidence"
+              ]
+            ]
+          },
+          {
+            "id": "CT04",
+            "requirement_id": "NVIDIA_ADOPTION",
+            "priority": "mandatory",
+            "finding": "European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets.",
+            "primary_claim": "European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets.",
+            "acceptance_criteria": [
+              "European cloud provider Gcore launched generative-AI clusters using NVIDIA A100 and H100 GPUs; this is one provider example supported by snippets."
+            ],
+            "signal_groups": [
+              [
+                "gcore"
+              ],
+              [
+                "european cloud provider",
+                "cloud provider in europe",
+                "europe"
+              ],
+              [
+                "generative ai clusters",
+                "generative-ai clusters",
+                "ai clusters"
+              ],
+              [
+                "a100"
+              ],
+              [
+                "h100"
+              ],
+              [
+                "single provider",
+                "one provider",
+                "news snippets",
+                "snippet"
+              ]
+            ]
+          },
+          {
+            "id": "CT05",
+            "requirement_id": "SEARCH_INTEREST_GAP",
+            "priority": "mandatory",
+            "finding": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+            "primary_claim": "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred.",
+            "acceptance_criteria": [
+              "No search-interest series was collected because Socialcrawl exceeded quota and Google Trends was not configured; demand over time cannot be inferred."
+            ],
+            "signal_groups": [
+              [
+                "no search interest",
+                "no search-interest",
+                "search interest series was not",
+                "no series"
+              ],
+              [
+                "socialcrawl",
+                "providerquotaexceeded",
+                "quota"
+              ],
+              [
+                "google trends",
+                "not configured",
+                "provider not configured"
+              ],
+              [
+                "unknown",
+                "cannot infer",
+                "not available",
+                "not collected"
+              ]
+            ]
+          },
+          {
+            "id": "CT06",
+            "requirement_id": "SOCIAL_COLLECTION_GAP",
+            "priority": "mandatory",
+            "finding": "The social branch did not finish within 100 seconds; planned platform queries are not collected social posts.",
+            "primary_claim": "The social branch did not finish within 100 seconds; planned platform queries are not collected social posts.",
+            "acceptance_criteria": [
+              "The social branch did not finish within 100 seconds; planned platform queries are not collected social posts."
+            ],
+            "signal_groups": [
+              [
+                "social"
+              ],
+              [
+                "100 s",
+                "100 seconds",
+                "timeout",
+                "timed out",
+                "stopped early",
+                "did not finish"
+              ],
+              [
+                "not collected",
+                "no social data",
+                "social data missing",
+                "incomplete"
+              ],
+              [
+                "planned queries",
+                "planned",
+                "query plan"
+              ]
+            ]
+          },
+          {
+            "id": "CT07",
+            "requirement_id": "NEWS_EVIDENCE_QUALITY",
+            "priority": "mandatory",
+            "finding": "The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts.",
+            "primary_claim": "The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts.",
+            "acceptance_criteria": [
+              "The run collected 29 news and 5 web items, but news was snippet-only without full article text or engagement counts."
+            ],
+            "signal_groups": [
+              [
+                "29 news",
+                "news 29"
+              ],
+              [
+                "5 web",
+                "web 5"
+              ],
+              [
+                "snippet",
+                "snippet-only",
+                "search snippets"
+              ],
+              [
+                "full text",
+                "full article",
+                "article text"
+              ],
+              [
+                "engagement counts",
+                "engagement data",
+                "engagement metrics"
+              ]
+            ]
+          },
+          {
+            "id": "CT08",
+            "requirement_id": "LANGUAGE_BIAS",
+            "priority": "mandatory",
+            "finding": "There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions.",
+            "primary_claim": "There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions.",
+            "acceptance_criteria": [
+              "There were 33 English and 1 Arabic items, insufficient for robust Arabic-language conclusions."
+            ],
+            "signal_groups": [
+              [
+                "33 en",
+                "33 english",
+                "english 33"
+              ],
+              [
+                "1 ar",
+                "1 arabic",
+                "arabic 1"
+              ],
+              [
+                "arabic depth",
+                "arabic coverage",
+                "limited arabic",
+                "insufficient arabic"
+              ]
+            ]
+          },
+          {
+            "id": "CT09",
+            "requirement_id": "TEMPORAL_SIGNAL",
+            "priority": "mandatory",
+            "finding": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+            "primary_claim": "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum.",
+            "acceptance_criteria": [
+              "Only 33 of 34 items were dated; the peak was 2024-06-03 with 3 items, insufficient to establish sustained momentum."
+            ],
+            "signal_groups": [
+              [
+                "33 dated",
+                "dated 33",
+                "33 of 34"
+              ],
+              [
+                "2024-06-03",
+                "2024 06 03",
+                "june 3 2024"
+              ],
+              [
+                "peak count 3",
+                "3 items",
+                "peak bucket"
+              ],
+              [
+                "not establish",
+                "insufficient",
+                "small sample",
+                "not a sustained trend",
+                "cannot infer"
+              ]
+            ]
+          },
+          {
+            "id": "CT10",
+            "requirement_id": "SHARE_OF_VOICE",
+            "priority": "mandatory",
+            "finding": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+            "primary_claim": "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity.",
+            "acceptance_criteria": [
+              "Broadcom had 9 mentions, NVIDIA and Intel zero recorded mentions, and 25 items had no vendor mention; this is not market share or reliable popularity."
+            ],
+            "signal_groups": [
+              [
+                "broadcom",
+                "9"
+              ],
+              [
+                "25 items",
+                "without a mention",
+                "no vendor mention"
+              ],
+              [
+                "share of voice",
+                "share-of-voice"
+              ],
+              [
+                "not market share",
+                "not representative",
+                "not reliable",
+                "cannot infer"
+              ],
+              [
+                "zero mentions",
+                "zero recorded",
+                "not evidence of zero adoption"
+              ]
+            ]
+          },
+          {
+            "id": "CT11",
+            "requirement_id": "ENGAGEMENT_METRICS",
+            "priority": "mandatory",
+            "finding": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+            "primary_claim": "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement.",
+            "acceptance_criteria": [
+              "Engagement mean, median, and p90 were zero, but counts were unavailable; this does not establish zero real-world engagement."
+            ],
+            "signal_groups": [
+              [
+                "engagement"
+              ],
+              [
+                "mean",
+                "median",
+                "p90",
+                "zero"
+              ],
+              [
+                "unavailable",
+                "not populated",
+                "missing data",
+                "no engagement counts"
+              ],
+              [
+                "not evidence",
+                "should not be interpreted",
+                "cannot conclude"
+              ]
+            ]
+          },
+          {
+            "id": "CT12",
+            "requirement_id": "VENDOR_COMPARABILITY",
+            "priority": "mandatory",
+            "finding": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+            "primary_claim": "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe.",
+            "acceptance_criteria": [
+              "Evidence is insufficient for balanced vendor-specific sentiment, needs, pricing, or adoption comparisons across NVIDIA, Broadcom, and Intel or between the US and Europe."
+            ],
+            "signal_groups": [
+              [
+                "insufficient",
+                "limited",
+                "not enough evidence",
+                "not established"
+              ],
+              [
+                "vendor comparison",
+                "vendor-by-vendor",
+                "balanced comparison",
+                "nvidia",
+                "broadcom",
+                "intel"
+              ],
+              [
+                "pricing",
+                "price"
+              ],
+              [
+                "united states",
+                "us",
+                "europe"
+              ],
+              [
+                "cannot infer",
+                "not established",
+                "no robust",
+                "not enough regional"
+              ]
+            ]
+          },
+          {
+            "id": "CT13",
+            "requirement_id": "OVERALL_CONFIDENCE_AND_GAPS",
+            "priority": "mandatory",
+            "finding": "The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth.",
+            "primary_claim": "The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth.",
+            "acceptance_criteria": [
+              "The result is partial with confidence 0.3 and material gaps in social collection, platform coverage, search interest, and Arabic sample depth."
+            ],
+            "signal_groups": [
+              [
+                "partial"
+              ],
+              [
+                "0.3",
+                "low confidence",
+                "low-confidence"
+              ],
+              [
+                "social",
+                "timeout"
+              ],
+              [
+                "platform",
+                "20 items",
+                "2 are needed"
+              ],
+              [
+                "search interest",
+                "no series"
+              ],
+              [
+                "arabic",
+                "10 are needed",
+                "at least 10"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "evaluation_config": {
+    "judge": {
+      "provider": "ollama",
+      "model": null,
+      "base_url": null
+    },
+    "embeddings": {
+      "provider": "sentence-transformers",
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "batch_size": 32
+    },
+    "thresholds": {
+      "covered": 0.7,
+      "partial": 0.4
+    },
+    "retrieval": {
+      "enabled": true,
+      "top_k": 5,
+      "max_passages": 500,
+      "max_passage_chars": 1400,
+      "max_report_chars": 30000,
+      "max_evidence_chars": 18000,
+      "max_candidates_chars": 14000
+    },
+    "claims": {
+      "max_claims": 40
+    },
+    "trace": {
+      "evidence_span_names": [
+        "customer_trends.news_coverage",
+        "customer_trends.web_search",
+        "customer_trends.social",
+        "customer_trends.search_interest"
+      ],
+      "evidence_payload_keys": [
+        "results",
+        "items",
+        "findings",
+        "sources",
+        "evidence",
+        "retrieved_evidence"
+      ],
+      "recursive_evidence_discovery": true
+    },
+    "scope": {
+      "enabled": false,
+      "require_in_scope_presence": false,
+      "excluded_entities": []
+    },
+    "scoring": {
+      "partial_credit": 0.5,
+      "mandatory_only": true
+    },
+    "tools": {
+      "expected_branches": [
+        {
+          "span_name": "customer_trends.plan_queries",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.news_coverage",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.web_search",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.search_interest",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.social",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.reviews",
+          "required": false
+        },
+        {
+          "span_name": "customer_trends.analyze_text",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.compute_metrics",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.write_findings",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.submit_findings",
+          "required": true
+        },
+        {
+          "span_name": "customer_trends.submit",
+          "required": true
+        }
+      ],
+      "contracts": []
+    }
+  }
+}
