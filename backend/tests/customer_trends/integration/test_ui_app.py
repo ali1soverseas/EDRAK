@@ -94,7 +94,9 @@ def test_a_run_completes_and_every_result_tab_renders(app: AppTest) -> None:
     assert "Run run-ci-gitlab-001: finished" in [s.value for s in app.subheader]
     assert app.session_state["ct_result"].control_summary.status == "complete"
     assert [m.label for m in app.metric][:2] == ["Findings", "Evidence items"]
-    assert app.metric[0].value == "4"
+    result = app.session_state["ct_result"]
+    assert app.metric[0].value == str(len(result.findings))
+    assert len([f for f in result.findings if not f.id.startswith("p_")]) == 4
     assert any('dir="rtl"' in markdown.value for markdown in app.markdown), (
         "Arabic renders right to left"
     )

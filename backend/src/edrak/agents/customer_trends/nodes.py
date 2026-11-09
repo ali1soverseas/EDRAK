@@ -31,6 +31,12 @@ from edrak.agents.customer_trends.gaps import (
 )
 from edrak.agents.customer_trends.llm.client import structured_call
 from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.profile import (
+    MAX_PROFILE_FINDINGS,
+    SENTIMENT_OVERVIEW,
+    profile_findings,
+    store_sentiment_overview,
+)
 from edrak.agents.customer_trends.prompts import (
     BRANCH_DEMAND,
     BRANCH_REVIEWS,
@@ -49,6 +55,7 @@ from edrak.agents.customer_trends.relevance.pipeline import (
 )
 from edrak.agents.customer_trends.schemas.common import Depth, Platform
 from edrak.agents.customer_trends.schemas.findings import (
+    MAX_FINDINGS,
     MAX_HEADLINE_WORDS,
     Finding,
     FindingsDraft,
@@ -447,6 +454,7 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
         # name no batch; the run's own batches are still there to analyze.
         text_batches = deps.store.run_summary(brief.run_id).batch_ids
     warnings: list[str] = []
+    sentiment_metric: str | None = None
     if text_batches:
         answer = await call_tool(
             tools["analyze_text"],
@@ -456,6 +464,9 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
             warnings.append(f"theme analysis failed: {'; '.join(answer.get('gaps', []))}")
         else:
             warnings.extend(answer.get("warnings", []))
+            sentiment_id = store_sentiment_overview(deps.store, brief.run_id, answer, text_batches)
+            if sentiment_id:
+                sentiment_metric = sentiment_id
     else:
         warnings.append("theme analysis skipped: no social or review batch was collected")
 
@@ -477,6 +488,8 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
             },
         }
     metric_ids = dict(state.get("metric_ids", {}))
+    if sentiment_metric:
+        metric_ids[SENTIMENT_OVERVIEW] = sentiment_metric
     for name, arguments in requests.items():
         answer = await call_tool(tools["compute_metrics"], arguments)
         if answer.get("metric_id"):
@@ -564,6 +577,39 @@ async def _repair(
     return (await structured_call(deps.model("writer"), FindingsDraft, messages)).findings
 
 
+def _profile(
+    deps: WorkerDeps,
+    brief: TaskBrief,
+    metric_ids: Mapping[str, str],
+    gaps: list[Gap],
+    written: list[Finding],
+    phrases: list[str],
+    warnings: list[str],
+) -> list[Finding]:
+    """The evidence profile findings, built by code; one that fails a check is left out."""
+    try:
+        candidates = profile_findings(
+            deps.store,
+            brief,
+            metric_ids,
+            gaps,
+            written,
+            min_language_items=deps.use_cases.for_use_case(brief.use_case).min_language_items,
+        )
+    except Exception as exc:
+        log.warning("profile_failed", error=type(exc).__name__)
+        warnings.append(f"the evidence profile failed ({type(exc).__name__})")
+        return []
+    kept: list[Finding] = []
+    for finding in candidates:
+        reasons = check_finding(finding, deps.store, brief.run_id, phrases)
+        if reasons:
+            warnings.append(f"profile finding {finding.id} was dropped: {'; '.join(reasons)}")
+        else:
+            kept.append(finding)
+    return kept
+
+
 @traced("write_findings")
 async def write_findings(state: WorkerState, deps: WorkerDeps) -> Update:
     """The writer model drafts findings from aggregates and samples; code checks every one."""
@@ -625,14 +671,17 @@ async def write_findings(state: WorkerState, deps: WorkerDeps) -> Update:
                     {"type": "finding_rejected", "finding_id": finding_id, "reasons": reasons}
                 )
             )
+    del accepted[MAX_FINDINGS - MAX_PROFILE_FINDINGS :]  # room for the profile findings
+    profile = _profile(
+        deps, brief, state.get("metric_ids", {}), gaps_of(state), accepted, phrases, warnings
+    )
     findings = [
-        f.model_copy(
-            update={
-                "id": f"f{number}",
-                "use_case_relevance": f.use_case_relevance or [brief.use_case],
-            }
-        )
-        for number, f in enumerate(accepted, start=1)
+        f.model_copy(update={"id": f"f{number}"}) for number, f in enumerate(accepted, start=1)
+    ]
+    # the profile findings keep their own ids (p_scope, p_gaps, ...): they are not the model's
+    findings = [
+        f.model_copy(update={"use_case_relevance": f.use_case_relevance or [brief.use_case]})
+        for f in [*findings, *profile]
     ]
     return {
         "findings": [f.model_dump(mode="json") for f in findings],

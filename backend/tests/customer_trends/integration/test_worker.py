@@ -53,7 +53,9 @@ def test_a_task_in_gives_a_valid_compact_worker_result(tmp_path: Path) -> None:
         1,
     )
     assert result.status is WorkerStatus.COMPLETED and result.error is None
-    assert len(result.findings) == 3 and result.evidence and result.confidence is not None
+    written = [f for f in result.findings if ":p_" not in f.finding_id]
+    assert len(written) == 3 and len(result.findings) > 3
+    assert result.evidence and result.confidence is not None
     cited = {ref.evidence_id for f in result.findings for ref in f.evidence_refs}
     assert cited == {e.evidence_id for e in result.evidence}
     assert all(len(e.extracted_fact) <= 280 for e in result.evidence)

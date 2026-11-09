@@ -114,7 +114,9 @@ async def test_the_happy_path_of_each_use_case_writes_a_readable_grounded_result
 
     summary = result.control_summary
     assert summary.status == "complete" and result.gaps == []
-    assert summary.findings_count == len(result.findings) == 3
+    assert summary.findings_count == len(result.findings)
+    assert len([f for f in result.findings if not f.id.startswith("p_")]) == 3
+    assert {"p_scope", "p_composition", "p_gaps"} <= {f.id for f in result.findings}
     assert summary.evidence_count == result.evidence_ref.count > 60
     assert summary.headline and len(summary.headline.split()) <= 60
     assert result.worker == "customer_trends" and result.task_id == brief.task_id
@@ -315,17 +317,15 @@ async def test_a_finding_that_fails_the_checks_is_repaired_once_or_dropped(tmp_p
             load_brief().run_id
         )
         assert_grounded(result, store)
-    assert [f.id for f in result.findings] == ["f1", "f2"]
+    assert [f.id for f in result.findings if not f.id.startswith("p_")] == ["f1", "f2"]
     assert any(
         "finding verdict was dropped: the claim contains verdict language" in w
         for w in result.control_summary.warnings
     )
     kinds = [(e["type"], e.get("finding_id")) for e in events if e["type"].startswith("finding_")]
     assert ("finding_rejected", "verdict") in kinds
-    assert [k for k in kinds if k[0] == "finding_accepted"] == [
-        ("finding_accepted", "f1"),
-        ("finding_accepted", "f2"),
-    ]
+    accepted = [k for k in kinds if k[0] == "finding_accepted" and not k[1].startswith("p_")]
+    assert accepted == [("finding_accepted", "f1"), ("finding_accepted", "f2")]
 
 
 async def test_a_writer_that_fails_leaves_a_result_without_findings(tmp_path: Path) -> None:

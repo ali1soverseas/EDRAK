@@ -359,6 +359,7 @@ async def test_analysis_runs_the_themes_and_the_metrics_through_the_tools(
         "language_mix",
         "engagement_stats",
         "share_of_voice",
+        "sentiment_overview",
     }
     assert update["warnings"] == []
     assert store.get_aggregates(RUN_ID)

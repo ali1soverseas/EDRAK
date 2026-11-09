@@ -43,13 +43,14 @@ def test_a_demo_run_streams_one_line_per_event_and_writes_the_result(
     assert "node_started     intake" in lines[0] and lines[0][:2].isdigit()
     assert any("tool_called" in line and "social_search" in line for line in lines)
     assert any("gap_found" in line for line in lines) is False
-    assert sum("finding_accepted" in line for line in lines) == 4
+    accepted = sum("finding_accepted" in line for line in lines)
     finished = next(line for line in lines if "run_finished" in line)
-    assert "status=complete" in finished and "findings=4" in finished
+    assert "status=complete" in finished and f"findings={accepted}" in finished
     assert f"run {RUN_ID}: complete, confidence medium" in captured.out
     assert f"result: {out_path}" in captured.out
     result = CustomerTrendsResult.model_validate_json(out_path.read_text(encoding="utf-8"))
-    assert result.run_id == RUN_ID and len(result.findings) == 4
+    assert result.run_id == RUN_ID and len(result.findings) == accepted
+    assert len([f for f in result.findings if not f.id.startswith("p_")]) == 4
     assert "provider_call" not in captured.out and "structured_call" not in captured.err, (
         "the structured log stays out of the way unless --verbose is given"
     )
@@ -75,7 +76,7 @@ def test_runs_lists_the_past_run_and_show_prints_its_summary_or_its_json(
     listing = capsys.readouterr().out
     assert (
         listing.startswith(RUN_ID)
-        and "findings=4" in listing
+        and "findings=" in listing
         and listing.rstrip().endswith("result")
     )
 

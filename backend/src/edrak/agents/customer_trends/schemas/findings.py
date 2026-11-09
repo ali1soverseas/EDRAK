@@ -29,6 +29,7 @@ from edrak.contracts import FindingCategory, ResearchTask, WorkerResult, WorkerS
 SINGLE_SOURCE_CAVEAT = "single_source"
 MAX_HEADLINE_WORDS = 60
 MAX_FINDINGS = 20
+PROFILE_PREFIX = "p_"  # ids of the findings code writes about the evidence (profile.py)
 
 _WESTERN = "0123456789"
 _ARABIC_INDIC = "".join(chr(code) for code in range(0x0660, 0x066A))

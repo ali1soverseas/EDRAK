@@ -16,6 +16,7 @@ from edrak.agents.customer_trends.relevance.pipeline import run_stats
 from edrak.agents.customer_trends.schemas.common import Confidence, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters
 from edrak.agents.customer_trends.schemas.findings import (
+    PROFILE_PREFIX,
     ControlSummary,
     CustomerTrendsResult,
     EvidenceRef,
@@ -117,8 +118,9 @@ def writer_context(
 
 def overall_confidence(findings: Iterable[Finding], gaps: Iterable[Gap]) -> Confidence:
     """High when at least half the findings are high and no critical gap remains, medium when at
-    least half are medium or better, else low (and low without findings)."""
-    levels = [finding.confidence for finding in findings]
+    least half are medium or better, else low (and low without findings). The profile findings
+    describe the evidence and make no claim of their own, so they do not count."""
+    levels = [f.confidence for f in findings if not f.id.startswith(PROFILE_PREFIX)]
     if not levels:
         return Confidence.LOW
     high = sum(level is Confidence.HIGH for level in levels) / len(levels)
