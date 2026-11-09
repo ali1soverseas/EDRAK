@@ -58,10 +58,15 @@ async def test_the_trace_is_what_the_evaluator_reads(tmp_path: Path) -> None:
     assert [f["claim"] for f in report["findings"]] == [f.claim for f in result.findings]
     assert report["summary"] == result.control_summary.headline
     assert report["status"] == result.control_summary.status
-    assert len(evidence) == result.control_summary.evidence_count
-    # the evidence the findings cite comes first, because the judge reads a bounded amount
+    stored = [e for e in evidence if e["source"].split(" | ")[0] != "computed_metric"]
+    computed = [e for e in evidence if e["source"].split(" | ")[0] == "computed_metric"]
+    assert len(stored) == result.control_summary.evidence_count
+    # the computed metrics the findings cite are evidence too, and the judge reads them first
+    assert computed and evidence[: len(computed)] == computed
+    assert "themes" in {e["id"] for e in computed}
+    # then the stored evidence the findings cite, because the judge reads a bounded amount
     cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
-    assert [e["id"] for e in evidence[: len(cited)]] == cited
+    assert [e["id"] for e in stored[: len(cited)]] == cited
 
 
 async def test_a_trace_that_cannot_be_built_does_not_fail_the_run(

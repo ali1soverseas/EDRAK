@@ -18,12 +18,14 @@ from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters, EvidenceItem
 from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
+from edrak.agents.customer_trends.tools.submit_findings import cited_metric_ids
 
 log = get_logger(__name__)
 
 TRACE_FILE = "eval_trace.json"
 SCHEMA_VERSION = 1
 SPAN_PREFIX = "customer_trends"
+COMPUTED_METRIC = "computed_metric"
 ITEM_TEXT_CHARS = 1500  # the evaluator cuts each item again; this only bounds the file
 
 
@@ -46,6 +48,41 @@ def _ordered_items(store: EvidenceStore, run_id: str, cited: list[str]) -> list[
     total = store.run_summary(run_id).evidence_count  # `query` returns at most `limit` items
     rest = store.query(run_id, EvidenceFilters(), limit=max(total, 1)).items
     return [*first, *(item for item in rest if item.id not in seen)]
+
+
+def _computed(result: CustomerTrendsResult, store: EvidenceStore) -> list[dict[str, Any]]:
+    """The metrics the findings cite and the theme aggregates, as evidence items.
+
+    A finding's numbers (sentiment mix, share of voice, engagement) come from these computed
+    records, not from one stored item, so the judge needs them to check the claim.
+    """
+    items: list[dict[str, Any]] = []
+    metric_ids = dict.fromkeys(m for f in result.findings for m in cited_metric_ids(f.metrics))
+    for metric_id in metric_ids:
+        record = store.get_metric(result.run_id, metric_id)
+        if record is not None:
+            text = f"Computed metric {record.metric} {json.dumps(record.params)}: "
+            text += json.dumps(record.values, ensure_ascii=False, default=str)
+            items.append(
+                {"id": metric_id, "platform": COMPUTED_METRIC, "text": text[: ITEM_TEXT_CHARS * 2]}
+            )
+    if result.theme_aggregates:
+        themes = [
+            {
+                "theme": a.theme_label,
+                "count": a.count,
+                "share": a.share,
+                "sentiment_mix": a.sentiment_mix,
+                "by_platform": a.by_platform,
+                "by_language": a.by_language,
+            }
+            for a in result.theme_aggregates
+        ]
+        text = "Theme aggregates: " + json.dumps(themes, ensure_ascii=False, default=str)
+        items.append(
+            {"id": "themes", "platform": COMPUTED_METRIC, "text": text[: ITEM_TEXT_CHARS * 2]}
+        )
+    return items
 
 
 def build_trace(result: CustomerTrendsResult, store: EvidenceStore) -> dict[str, Any]:
@@ -71,7 +108,7 @@ def build_trace(result: CustomerTrendsResult, store: EvidenceStore) -> dict[str,
             },
             {
                 "name": f"{SPAN_PREFIX}.evidence_query",
-                "output": {"items": [_item(item) for item in items]},
+                "output": {"items": [*_computed(result, store), *(_item(item) for item in items)]},
             },
             {
                 "name": f"{SPAN_PREFIX}.submit",

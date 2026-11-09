@@ -652,7 +652,10 @@ def _make_ollama_judge(config: dict[str, Any]):
     if not model_name:
         raise ValueError("Set judge.model in the config or define OLLAMA_MODEL for Ollama judging.")
     base_url = judge_cfg.get("base_url") or os.getenv("OLLAMA_BASE_URL") or "http://localhost:11434"
-    return OllamaModel(model=model_name, base_url=base_url)
+    # Ollama Cloud needs the key; a local server ignores the header
+    api_key = judge_cfg.get("api_key") or os.getenv("OLLAMA_API_KEY")
+    client_kwargs = {"headers": {"Authorization": f"Bearer {api_key}"}} if api_key else {}
+    return OllamaModel(model=model_name, base_url=base_url, **client_kwargs)
 
 
 def _make_geval(name: str, criteria: str, config: dict[str, Any], params: list[Any]):
