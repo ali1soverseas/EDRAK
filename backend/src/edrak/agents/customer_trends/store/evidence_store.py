@@ -10,7 +10,7 @@ import random
 import sqlite3
 import threading
 import uuid
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
@@ -36,6 +36,15 @@ COUNT_FIELDS = frozenset(
     {"platform", "source_type", "language", "provider", "batch_id", "snippet_only"}
 )
 UNKNOWN = "unknown"
+
+# The relevance filter writes its verdict into an item's metadata and never deletes the item. Reads
+# that feed the analysis hide an irrelevant item unless they ask for it (`include_irrelevant`), so a
+# filtered comment cannot reach a theme, a metric, a sample or a finding by accident. An item the
+# filter has not judged counts as relevant.
+RELEVANCE_PATH = "$.relevance"
+_NOT_IRRELEVANT = (
+    f"COALESCE(json_extract(metadata_json, '{RELEVANCE_PATH}'), 'relevant') <> 'irrelevant'"
+)
 
 _DB_FILE = "evidence.db"
 _DT_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -397,18 +406,25 @@ class EvidenceStore:
         by_id = {row["id"]: self._row_to_item(row) for row in rows}
         return [by_id[i] for i in dict.fromkeys(ids) if i in by_id]
 
-    def existing_ids(self, run_id: str, ids: Sequence[str]) -> set[str]:
+    def existing_ids(
+        self, run_id: str, ids: Sequence[str], *, include_irrelevant: bool = False
+    ) -> set[str]:
+        """The ids of `ids` that are stored for the run. A filtered-out comment does not count, so
+        a finding cannot cite one."""
+        sql = "SELECT id FROM evidence WHERE run_id = ? AND id IN (SELECT value FROM json_each(?))"
+        if not include_irrelevant:
+            sql += f" AND {_NOT_IRRELEVANT}"
         with self._lock:
-            rows = self._conn.execute(
-                "SELECT id FROM evidence"
-                " WHERE run_id = ? AND id IN (SELECT value FROM json_each(?))",
-                (run_id, json.dumps(list(ids))),
-            ).fetchall()
+            rows = self._conn.execute(sql, (run_id, json.dumps(list(ids)))).fetchall()
         return {row["id"] for row in rows}
 
-    def _where(self, run_id: str, filters: EvidenceFilters) -> tuple[str, list[Any]]:
+    def _where(
+        self, run_id: str, filters: EvidenceFilters, *, include_irrelevant: bool = False
+    ) -> tuple[str, list[Any]]:
         clauses = ["run_id = ?"]
         params: list[Any] = [run_id]
+        if not include_irrelevant:
+            clauses.append(_NOT_IRRELEVANT)
         for column in ("platform", "source_type", "language"):
             value = getattr(filters, column)
             if value is not None:
@@ -452,29 +468,33 @@ class EvidenceStore:
         limit: int = 10,
         sample: Sample = "top",
         seed: int | None = None,
+        include_irrelevant: bool = False,
     ) -> QueryResult:
         """Matching items (at most `limit`) and the total number of matches.
 
         `top` orders by interaction count, `recent` by publication date (undated last),
-        `random` draws a sample, reproducible with `seed`.
+        `random` draws a sample, reproducible with `seed`. Items the relevance filter marked
+        irrelevant are left out unless `include_irrelevant` is set.
         """
         if limit < 1:
             raise ValueError("limit must be at least 1")
         with self._lock:
-            where, params = self._where(run_id, filters or EvidenceFilters())
+            where, params = self._where(
+                run_id, filters or EvidenceFilters(), include_irrelevant=include_irrelevant
+            )
             total = self._conn.execute(
-                f"SELECT COUNT(*) AS n FROM evidence WHERE {where}",  # fixed clauses, bound values
+                f"SELECT COUNT(*) AS n FROM evidence WHERE {where}",  # noqa: S608  # fixed clauses, bound values
                 params,
             ).fetchone()["n"]
             if sample == "random":
                 ids = [
                     row["id"]
                     for row in self._conn.execute(
-                        f"SELECT id FROM evidence WHERE {where} ORDER BY id",  # fixed clauses, bound values
+                        f"SELECT id FROM evidence WHERE {where} ORDER BY id",  # noqa: S608  # fixed clauses, bound values
                         params,
                     )
                 ]
-                rng = random.Random(seed)  # sampling for variety, not security
+                rng = random.Random(seed)  # noqa: S311  # sampling for variety, not security
                 chosen = rng.sample(ids, min(limit, len(ids)))
                 return QueryResult(self.get_items(run_id, chosen), total)
             order = (
@@ -483,7 +503,7 @@ class EvidenceStore:
                 else "published_at DESC, collected_at DESC, id"
             )
             rows = self._conn.execute(
-                f"SELECT * FROM evidence WHERE {where} ORDER BY {order} LIMIT ?",  # fixed clauses
+                f"SELECT * FROM evidence WHERE {where} ORDER BY {order} LIMIT ?",  # noqa: S608  # fixed clauses
                 [*params, limit],
             ).fetchall()
         return QueryResult([self._row_to_item(row) for row in rows], total)
@@ -495,12 +515,16 @@ class EvidenceStore:
         batch_ids: Sequence[str] | None = None,
         *,
         exclude_source_type: str | None = None,
+        include_irrelevant: bool = False,
     ) -> dict[str, int]:
-        """Item counts grouped by one column. Missing values are counted as `unknown`."""
+        """Item counts grouped by one column. Missing values are counted as `unknown`. Items the
+        relevance filter marked irrelevant are not counted unless `include_irrelevant` is set."""
         if field not in COUNT_FIELDS:
             raise ValueError(f"cannot count by {field!r}; choose one of {sorted(COUNT_FIELDS)}")
-        sql = f"SELECT {field} AS key, COUNT(*) AS n FROM evidence WHERE run_id = ?"  # field is whitelisted
+        sql = f"SELECT {field} AS key, COUNT(*) AS n FROM evidence WHERE run_id = ?"  # noqa: S608  # field is whitelisted
         params: list[Any] = [run_id]
+        if not include_irrelevant:
+            sql += f" AND {_NOT_IRRELEVANT}"
         if batch_ids is not None:
             sql += " AND batch_id IN (SELECT value FROM json_each(?))"
             params.append(json.dumps(list(batch_ids)))
@@ -510,6 +534,53 @@ class EvidenceStore:
         with self._lock:
             rows = self._conn.execute(sql + f" GROUP BY {field} ORDER BY n DESC, key", params)
             return {str(UNKNOWN if row["key"] is None else row["key"]): row["n"] for row in rows}
+
+    # relevance filter
+
+    def judged_items(
+        self, run_id: str, source_types: Sequence[str]
+    ) -> tuple[list[EvidenceItem], set[str]]:
+        """Every item of the given source types in the order it was stored, and the ids among them
+        the relevance filter has already judged (a replan collects more after the first pass)."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT * FROM evidence WHERE run_id = ?"
+                " AND source_type IN (SELECT value FROM json_each(?)) ORDER BY rowid",
+                (run_id, json.dumps([getattr(t, "value", t) for t in source_types])),
+            ).fetchall()
+        items = [self._row_to_item(row) for row in rows]
+        return items, {item.id for item in items if item.relevance is not None}
+
+    def mark_relevance(self, run_id: str, marks: Mapping[str, Mapping[str, Any]]) -> int:
+        """Merge each mapping into the metadata of the item with that id. Nothing is deleted and
+        the text is never touched. Returns how many items were marked."""
+        marked = 0
+        with self._tx() as conn:
+            self._require_run(conn, run_id)
+            for item_id, patch in marks.items():
+                cursor = conn.execute(
+                    "UPDATE evidence SET metadata_json = json_patch(metadata_json, ?)"
+                    " WHERE run_id = ? AND id = ?",
+                    (_json(dict(patch)), run_id, item_id),
+                )
+                marked += cursor.rowcount
+        return marked
+
+    def relevance_rows(self, run_id: str, source_types: Sequence[str]) -> list[dict[str, Any]]:
+        """Judged items counted by platform, verdict, reason and stage, with their text length."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT COALESCE(platform, 'unknown') AS platform,"
+                " json_extract(metadata_json, '$.relevance') AS relevance,"
+                " json_extract(metadata_json, '$.relevance_reason') AS reason,"
+                " json_extract(metadata_json, '$.filter_stage') AS stage,"
+                " COUNT(*) AS n, SUM(LENGTH(text)) AS chars FROM evidence"
+                " WHERE run_id = ? AND source_type IN (SELECT value FROM json_each(?))"
+                " AND json_extract(metadata_json, '$.relevance') IS NOT NULL"
+                " GROUP BY 1, 2, 3, 4 ORDER BY 1, 2, 3, 4",
+                (run_id, json.dumps([getattr(t, "value", t) for t in source_types])),
+            ).fetchall()
+        return [dict(row) for row in rows]
 
     # analysis products
 

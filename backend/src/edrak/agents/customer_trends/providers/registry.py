@@ -28,15 +28,10 @@ from edrak.agents.customer_trends.providers.base import (
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
-from edrak.agents.customer_trends.providers.config import (
-    ProvidersConfig,
-    load_providers_config,
-)
+from edrak.agents.customer_trends.providers.config import ProvidersConfig, load_providers_config
 from edrak.agents.customer_trends.providers.direct_http import DirectHttpProvider
 from edrak.agents.customer_trends.providers.gdelt import GdeltProvider
-from edrak.agents.customer_trends.providers.google_trends_api import (
-    GoogleTrendsApiProvider,
-)
+from edrak.agents.customer_trends.providers.google_trends_api import GoogleTrendsApiProvider
 from edrak.agents.customer_trends.providers.http import make_client
 from edrak.agents.customer_trends.providers.serper import SerperProvider
 from edrak.agents.customer_trends.providers.socialcrawl import SocialCrawlProvider
@@ -117,6 +112,9 @@ class ProviderRegistry:
         http_client = registry._client = client or make_client(CLIENT_TIMEOUT_S)
         skipped: list[tuple[str, str]] = []
         serper_key, serper_variable = provider_key("SERPER_API_KEY", "customer_trends")
+        own_serper = getattr(settings, "serper_api_key", None)
+        if not serper_key and own_serper is not None:
+            serper_key = own_serper.get_secret_value().strip()  # a key given to this worker
         if serper_key:
             registry.register(
                 SerperProvider(

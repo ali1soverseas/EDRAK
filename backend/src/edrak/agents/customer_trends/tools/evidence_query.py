@@ -11,11 +11,7 @@ from edrak.agents.customer_trends.schemas.common import (
     ToolResponse,
 )
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters, EvidenceItem
-from edrak.agents.customer_trends.tools.base import (
-    ToolContext,
-    ToolSpec,
-    finish_processing,
-)
+from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, finish_processing
 from edrak.agents.customer_trends.tools.selection import group_key
 from edrak.agents.customer_trends.utils.labels import normalize_label
 from edrak.agents.customer_trends.utils.text import truncate

@@ -6,12 +6,7 @@ from typing import Literal
 import yaml
 from pydantic import Field
 
-from edrak.agents.customer_trends.schemas.common import (
-    Focus,
-    NonEmpty,
-    StrictModel,
-    UseCase,
-)
+from edrak.agents.customer_trends.schemas.common import Focus, NonEmpty, StrictModel, UseCase
 
 DEFAULT_USE_CASES_PATH = Path(__file__).resolve().parent / "config" / "use_cases.yaml"
 

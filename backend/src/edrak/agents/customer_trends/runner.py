@@ -28,15 +28,9 @@ from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetTracker
 from edrak.agents.customer_trends.providers.cache import DiskCache
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry
-from edrak.agents.customer_trends.schemas.findings import (
-    CustomerTrendsResult,
-    to_worker_result,
-)
-from edrak.agents.customer_trends.schemas.task import (
-    QueryPlan,
-    TaskBrief,
-    brief_from_task,
-)
+from edrak.agents.customer_trends.relevance.pipeline import filtered_types, min_relevant
+from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult, to_worker_result
+from edrak.agents.customer_trends.schemas.task import QueryPlan, TaskBrief, brief_from_task
 from edrak.agents.customer_trends.settings import Settings, get_settings
 from edrak.agents.customer_trends.state import initial_state
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
@@ -45,6 +39,7 @@ from edrak.agents.customer_trends.tracing import (
     bind_trace_context,
     reset_trace_context,
     save_customer_span,
+    write_trace,
 )
 from edrak.agents.customer_trends.usecases import load_use_cases
 from edrak.contracts import ResearchTask, WorkerResult, WorkerStatus, WorkerType
@@ -76,10 +71,10 @@ def make_deps(
     *,
     store: EvidenceStore,
     settings: Settings,
-    parent_request_id: str,
     sink: ResultSink | None,
     providers: ProviderRegistry | None,
     llm: LlmSource,
+    parent_request_id: str | None = None,
 ) -> WorkerDeps:
     """The dependencies of one run. Given providers bring their own budget and breaker."""
     if providers is None:
@@ -101,7 +96,7 @@ def make_deps(
         or LocalSink(
             store,
             settings.artifacts_dir,
-            parent_request_id=parent_request_id,
+            parent_request_id=parent_request_id or brief.parent_request_id or brief.run_id,
         ),
         llm=_llm_factory(llm, settings, brief),
         bus=EventBus(brief.run_id, brief.task_id),
@@ -115,9 +110,10 @@ def _run_gaps(deps: WorkerDeps, brief: TaskBrief, values: dict[str, Any], extra:
     gaps = find_gaps(
         brief,
         deps.use_cases.for_use_case(brief.use_case),
-        coverage_of(deps.store, brief.run_id),
+        coverage_of(deps.store, brief.run_id, filtered_types=filtered_types(deps)),
         review_targets_planned=bool(plan and QueryPlan.model_validate(plan).review_targets),
         branch_errors=values.get("branch_errors", {}),
+        min_relevant_comments=min_relevant(deps),
     )
     return [*gaps, extra]
 
@@ -197,6 +193,14 @@ async def _execute(brief: TaskBrief, deps: WorkerDeps) -> CustomerTrendsResult:
     return result
 
 
+async def _run(brief: TaskBrief, deps: WorkerDeps) -> CustomerTrendsResult:
+    """`_execute`, then the evaluation trace when the settings ask for it."""
+    result = await _execute(brief, deps)
+    if deps.settings.eval_trace_enabled:
+        write_trace(result, deps.store, deps.settings.artifacts_dir)
+    return result
+
+
 def _finished(deps: WorkerDeps, result: CustomerTrendsResult) -> None:
     deps.bus.emit(
         {
@@ -264,7 +268,7 @@ async def run_task(
     """Run a brief to completion. `providers` and `llm` let tests and the UI inject fixtures and
     the scripted model; `llm` is one model for every role or a function from role to model."""
     async with _session(brief, sink, providers, llm, settings or get_settings()) as deps:
-        return await _execute(brief, deps)
+        return await _run(brief, deps)
 
 
 async def stream_task(
@@ -287,7 +291,7 @@ async def stream_task(
         async with _session(
             brief, sink, providers, llm, settings or get_settings(), listener
         ) as deps:
-            return await _execute(brief, deps)
+            return await _run(brief, deps)
 
     task = asyncio.create_task(go())
     task.add_done_callback(lambda _: queue.put_nowait(None))
@@ -330,7 +334,7 @@ async def arun_worker(
             settings,
             request_id=task.parent_request_id,
         ) as deps:
-            result = await _execute(brief, deps)
+            result = await _run(brief, deps)
             cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
             worker_result = to_worker_result(
                 result,

@@ -4,22 +4,13 @@ import time
 
 from pydantic import Field, field_validator
 
-from edrak.agents.customer_trends.schemas.common import (
-    NonEmpty,
-    RunId,
-    StrictModel,
-    ToolResponse,
-)
+from edrak.agents.customer_trends.schemas.common import NonEmpty, RunId, StrictModel, ToolResponse
 from edrak.agents.customer_trends.tools.base import (
     ToolContext,
     ToolSpec,
     execute_collection,
 )
-from edrak.agents.customer_trends.tools.urls import (
-    host_of,
-    non_public_reason,
-    social_platform_of,
-)
+from edrak.agents.customer_trends.tools.urls import host_of, non_public_reason, social_platform_of
 
 DESCRIPTION = """Download one public web page and read its main text.
 

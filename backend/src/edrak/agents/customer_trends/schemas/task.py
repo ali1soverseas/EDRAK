@@ -41,6 +41,9 @@ class TaskBrief(ScopeBase):
     use_case: UseCase
     entity: NonEmpty
     question: NonEmpty
+    aliases: list[NonEmpty] = Field(default_factory=list)
+    products: list[NonEmpty] = Field(default_factory=list)
+    focus_terms: list[NonEmpty] = Field(default_factory=list)
     market: str | None = None
     competitors: list[NonEmpty] = Field(default_factory=list)
     accounts: list[Account] = Field(default_factory=list)
@@ -166,6 +169,9 @@ def brief_from_task(task: ResearchTask, *, today: date | None = None) -> TaskBri
         use_case=use_case,
         entity=task.company_profile.name,
         question=task.goal,
+        aliases=list(task.company_profile.aliases),
+        products=list(task.company_profile.products),
+        focus_terms=list(context.focus_areas),
         market=", ".join(markets) or None,
         geo=_COUNTRIES[country.group(1).lower()] if country else None,
         competitors=competitors,

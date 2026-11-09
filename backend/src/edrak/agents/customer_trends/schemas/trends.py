@@ -5,11 +5,7 @@ from typing import Literal, Self
 
 from pydantic import Field, model_validator
 
-from edrak.agents.customer_trends.schemas.common import (
-    CountryCode,
-    NonEmpty,
-    StrictModel,
-)
+from edrak.agents.customer_trends.schemas.common import CountryCode, NonEmpty, StrictModel
 
 NORMALIZED_MAX = 100.0
 

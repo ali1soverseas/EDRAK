@@ -17,27 +17,19 @@ from edrak.agents.customer_trends.schemas.common import (
     UseCase,
     UtcDatetime,
 )
-from edrak.agents.customer_trends.schemas.evidence import (
-    EvidenceItem,
-    to_shared_evidence,
-)
+from edrak.agents.customer_trends.schemas.evidence import EvidenceItem, to_shared_evidence
 from edrak.agents.customer_trends.schemas.task import TaskBrief
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
 from edrak.contracts import (
     EvidenceRef as SharedEvidenceRef,
 )
 from edrak.contracts import Finding as SharedFinding
-from edrak.contracts import (
-    FindingCategory,
-    ResearchTask,
-    WorkerResult,
-    WorkerStatus,
-    WorkerType,
-)
+from edrak.contracts import FindingCategory, ResearchTask, WorkerResult, WorkerStatus, WorkerType
 
 SINGLE_SOURCE_CAVEAT = "single_source"
 MAX_HEADLINE_WORDS = 60
 MAX_FINDINGS = 20
+PROFILE_PREFIX = "p_"  # ids of the findings code writes about the evidence (profile.py)
 
 _WESTERN = "0123456789"
 _ARABIC_INDIC = "".join(chr(code) for code in range(0x0660, 0x066A))

@@ -8,7 +8,10 @@ previews and aggregates.
 
 import asyncio
 import json
+import re
+import time
 from collections.abc import Awaitable, Callable, Mapping
+from functools import wraps
 from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
@@ -18,6 +21,7 @@ from langchain.agents.middleware import ModelCallLimitMiddleware
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
 from langgraph.types import Overwrite
+from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.assembly import build_result, writer_context
 from edrak.agents.customer_trends.deps import WorkerDeps
@@ -29,6 +33,12 @@ from edrak.agents.customer_trends.gaps import (
 )
 from edrak.agents.customer_trends.llm.client import structured_call
 from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.profile import (
+    MAX_PROFILE_FINDINGS,
+    SENTIMENT_OVERVIEW,
+    profile_findings,
+    store_sentiment_overview,
+)
 from edrak.agents.customer_trends.prompts import (
     BRANCH_DEMAND,
     BRANCH_REVIEWS,
@@ -40,8 +50,14 @@ from edrak.agents.customer_trends.prompts import (
     WRITE_HEADLINE,
     render,
 )
+from edrak.agents.customer_trends.relevance.pipeline import (
+    filter_run,
+    filtered_types,
+    min_relevant,
+)
 from edrak.agents.customer_trends.schemas.common import Depth, Platform
 from edrak.agents.customer_trends.schemas.findings import (
+    MAX_FINDINGS,
     MAX_HEADLINE_WORDS,
     Finding,
     FindingsDraft,
@@ -76,6 +92,48 @@ TOP_THEME_SAMPLES = 6
 OVERALL_SAMPLES = 8
 THEME_SAMPLE_ITEMS = 3
 MAX_SHARE_OF_VOICE_NAMES = 10
+
+
+def traced(name: str) -> Callable[[NodeFn], NodeFn]:
+    """Wrap a node so it reports `node_started` and `node_finished` and keeps both in the state."""
+
+    def decorate(node: NodeFn) -> NodeFn:
+        @wraps(node)
+        async def run(state: WorkerState, deps: WorkerDeps) -> Update:
+            if getattr(deps, "bus", None) is None:  # a node called on its own, without a run
+                return await node(state, deps)
+            started = time.perf_counter()
+            events = [deps.bus.emit({"type": "node_started", "node": name})]
+            try:
+                with bound_contextvars(node=name):
+                    update = await node(state, deps)
+            except BaseException as exc:
+                deps.bus.emit(
+                    {
+                        "type": "node_finished",
+                        "node": name,
+                        "status": "error",
+                        "error": type(exc).__name__,
+                        "duration_ms": round((time.perf_counter() - started) * 1000),
+                    }
+                )
+                raise
+            events.append(
+                deps.bus.emit(
+                    {
+                        "type": "node_finished",
+                        "node": name,
+                        "status": "ok",
+                        "duration_ms": round((time.perf_counter() - started) * 1000),
+                    }
+                )
+            )
+            update["events"] = [*events, *update.get("events", [])]
+            return update
+
+        return run
+
+    return decorate
 
 
 def _budget(deps: WorkerDeps) -> dict[str, Any]:
@@ -148,6 +206,7 @@ def _prompt_values(brief: TaskBrief, deps: WorkerDeps) -> dict[str, Any]:
         "offering": brief.offering,
         "accounts": "; ".join(f"{a.owner} on {a.platform.value}" for a in brief.accounts) or "none",
         "focus": brief.focus,
+        "focus_terms": ", ".join(brief.focus_terms) or "none named",
         "since": brief.since,
         "until": brief.until,
         "depth": brief.depth,
@@ -160,6 +219,7 @@ def _prompt_values(brief: TaskBrief, deps: WorkerDeps) -> dict[str, Any]:
 # intake
 
 
+@traced("intake")
 async def intake(state: WorkerState, deps: WorkerDeps) -> Update:
     """Validate the brief, fill its focus from the use case and open the run in the store."""
     brief = brief_of(state)
@@ -205,6 +265,7 @@ def queries_run(plan: QueryPlan | None) -> str:
     return "\n".join(lines) or "none"
 
 
+@traced("plan_queries")
 @observe(
     type="agent",
     name="customer_trends.plan_queries",
@@ -380,6 +441,9 @@ def plan_slice(branch: str, plan: QueryPlan) -> dict[str, Any]:
     return data if work else {}
 
 
+_PROVIDER_FAILURE = re.compile(r"(\w+) (?:failed|skipped) \((\w+)\)")
+
+
 class BranchCapture:
     """Passes a branch's tool events on to the run and remembers what they say."""
 
@@ -395,6 +459,16 @@ class BranchCapture:
     def batch_ids(self) -> list[str]:
         return list(dict.fromkeys(e["batch_id"] for e in self.events if e.get("batch_id")))
 
+    def problems(self) -> str:
+        """The providers that failed and why (quota exceeded, not configured), from the messages
+        of the failed tool calls; empty when none said."""
+        found: dict[str, None] = {}
+        for event in self.events:
+            for provider, cause in _PROVIDER_FAILURE.findall(str(event.get("message") or "")):
+                words = re.sub(r"(?<!^)(?=[A-Z])", " ", cause.removeprefix("Provider")).lower()
+                found[f"{provider} {words}"] = None
+        return ", ".join(found)
+
     def failure(self) -> str:
         """Why the branch collected nothing, or an empty string when something came back."""
         if not self.events:
@@ -402,7 +476,8 @@ class BranchCapture:
         if any(e.get("status") in ("ok", "partial") for e in self.events):
             return ""
         codes = sorted({str(e.get("error_code")) for e in self.events})
-        return f"all {len(self.events)} tool call(s) failed ({', '.join(codes)})"
+        reason = f"all {len(self.events)} tool call(s) failed ({', '.join(codes)})"
+        return f"{reason}; providers: {self.problems()}" if self.problems() else reason
 
 
 def _final_note(messages: list[BaseMessage]) -> str:
@@ -477,6 +552,8 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
             if time_left >= MIN_BRANCH_S
             else "no time was left for collection before the time kept for the findings"
         )
+        if capture.problems():
+            reason += f"; providers: {capture.problems()}"
     except Exception as exc:
         log.warning("branch_failed", branch=name, error=type(exc).__name__)
         reason = f"{type(exc).__name__}: {exc}"[:NOTE_CHARS]
@@ -500,6 +577,7 @@ ACCOUNT_REPLIES = 20
 ACCOUNT_PARALLEL = 3
 
 
+@traced("accounts")
 async def accounts(state: WorkerState, deps: WorkerDeps) -> Update:
     """Read the official accounts of the company and its competitors, and the replies under each
     account's most engaged post. Deterministic: every account in the brief is read."""
@@ -568,6 +646,7 @@ async def accounts(state: WorkerState, deps: WorkerDeps) -> Update:
 
 
 
+@traced("social")
 @observe(
     type="agent",
     name="customer_trends.social",
@@ -609,6 +688,7 @@ async def social(state: WorkerState, deps: WorkerDeps) -> Update:
     return result
 
 
+@traced("demand")
 @observe(
     type="agent",
     name="customer_trends.demand",
@@ -650,6 +730,7 @@ async def demand(state: WorkerState, deps: WorkerDeps) -> Update:
     return result
 
 
+@traced("reviews")
 @observe(
     type="agent",
     name="customer_trends.reviews",
@@ -690,14 +771,42 @@ async def reviews(state: WorkerState, deps: WorkerDeps) -> Update:
     return result
 
 
+@traced("join")
 async def join(state: WorkerState, deps: WorkerDeps) -> Update:
     """The reducers have merged the branches' batch ids and notes; record where the run stands."""
     return {"budget": _budget(deps)}
 
 
+# relevance_filter
+
+
+@traced("relevance_filter")
+async def relevance_filter(state: WorkerState, deps: WorkerDeps) -> Update:
+    """Mark the collected comments that are noise, so `analyze` reads only the relevant ones.
+
+    Free rules and a keyword match decide what they can; a model sorts the rest in batches. The
+    verdicts are marks on the stored items, nothing is deleted, and every failure keeps the
+    comments (a filter that cannot work must not lose evidence).
+    """
+    if not deps.settings.relevance_filter_enabled:
+        return {}
+    try:
+        outcome = await filter_run(deps, brief_of(state))
+    except Exception as exc:
+        log.warning("relevance_filter_failed", error=type(exc).__name__)
+        return {
+            "warnings": [
+                f"the relevance filter failed ({type(exc).__name__}); comments were not filtered"
+            ]
+        }
+    events = [deps.bus.emit(outcome.event())] if outcome.judged else []
+    return {"warnings": outcome.warnings, "events": events, "budget": _budget(deps)}
+
+
 # analyze
 
 
+@traced("analyze")
 @observe(
     type="agent",
     name="customer_trends.analyze",
@@ -730,6 +839,7 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
     span_metadata = {"worker": "customer_trends", "stage": "analysis"}
     update_current_span(input=span_input, metadata=span_metadata)
     warnings: list[str] = []
+    sentiment_metric: str | None = None
     if text_batches:
         answer = await call_tool(
             tools["analyze_text"],
@@ -739,6 +849,9 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
             warnings.append(f"theme analysis failed: {'; '.join(answer.get('gaps', []))}")
         else:
             warnings.extend(answer.get("warnings", []))
+            sentiment_id = store_sentiment_overview(deps.store, brief.run_id, answer, text_batches)
+            if sentiment_id:
+                sentiment_metric = sentiment_id
     else:
         warnings.append("theme analysis skipped: no social or review batch was collected")
 
@@ -776,6 +889,8 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
             "metrics skipped: no collected evidence or search-interest series are available"
         )
     metric_ids = dict(state.get("metric_ids", {}))
+    if sentiment_metric:
+        metric_ids[SENTIMENT_OVERVIEW] = sentiment_metric
     for name, arguments in requests.items():
         answer = await call_tool(tools["compute_metrics"], arguments)
         if answer.get("metric_id"):
@@ -812,6 +927,7 @@ async def analyze(state: WorkerState, deps: WorkerDeps) -> Update:
 # gap_check
 
 
+@traced("gap_check")
 async def gap_check(state: WorkerState, deps: WorkerDeps) -> Update:
     """Apply the coverage rules; report each new gap. The gap list is rebuilt on every check."""
     brief = brief_of(state)
@@ -819,9 +935,10 @@ async def gap_check(state: WorkerState, deps: WorkerDeps) -> Update:
     gaps = find_gaps(
         brief,
         deps.use_cases.for_use_case(brief.use_case),
-        coverage_of(deps.store, brief.run_id),
+        coverage_of(deps.store, brief.run_id, filtered_types=filtered_types(deps)),
         review_targets_planned=bool(plan and plan.review_targets),
         branch_errors=state.get("branch_errors", {}),
+        min_relevant_comments=min_relevant(deps),
     )
     known = {gap["id"] for gap in state.get("gaps", [])}
     events = [
@@ -880,7 +997,40 @@ async def _repair(
     return (await structured_call(deps.model("writer"), FindingsDraft, messages)).findings
 
 
+def _profile(
+    deps: WorkerDeps,
+    brief: TaskBrief,
+    metric_ids: Mapping[str, str],
+    gaps: list[Gap],
+    written: list[Finding],
+    phrases: list[str],
+    warnings: list[str],
+) -> list[Finding]:
+    """The evidence profile findings, built by code; one that fails a check is left out."""
+    try:
+        candidates = profile_findings(
+            deps.store,
+            brief,
+            metric_ids,
+            gaps,
+            written,
+            min_language_items=deps.use_cases.for_use_case(brief.use_case).min_language_items,
+        )
+    except Exception as exc:
+        log.warning("profile_failed", error=type(exc).__name__)
+        warnings.append(f"the evidence profile failed ({type(exc).__name__})")
+        return []
+    kept: list[Finding] = []
+    for finding in candidates:
+        reasons = check_finding(finding, deps.store, brief.run_id, phrases)
+        if reasons:
+            warnings.append(f"profile finding {finding.id} was dropped: {'; '.join(reasons)}")
+        else:
+            kept.append(finding)
+    return kept
 
+
+@traced("write_findings")
 @observe(
     type="agent",
     name="customer_trends.write_findings",
@@ -1072,17 +1222,19 @@ async def write_findings(
                 )
             )
 
-    # Step 4: Assign final IDs and ensure use-case relevance is populated.
+    # Step 4: Add the evidence profile, assign final ids and fill in the use-case relevance. The
+    # profile findings are built by code and keep their own ids (p_scope, p_gaps, ...).
+    del accepted[MAX_FINDINGS - MAX_PROFILE_FINDINGS :]  # room for the profile findings
+    profile = _profile(
+        deps, brief, state.get("metric_ids", {}), gaps_of(state), accepted, phrases, warnings
+    )
     findings = [
-        finding.model_copy(
-            update={
-                "id": f"f{number}",
-                "use_case_relevance": (
-                    finding.use_case_relevance or [brief.use_case]
-                ),
-            }
-        )
-        for number, finding in enumerate(accepted, start=1)
+        f.model_copy(update={"id": f"f{number}"}) for number, f in enumerate(accepted, start=1)
+    ]
+    # the profile findings keep their own ids (p_scope, p_gaps, ...): they are not the model's
+    findings = [
+        f.model_copy(update={"use_case_relevance": f.use_case_relevance or [brief.use_case]})
+        for f in [*findings, *profile]
     ]
 
     repaired_and_accepted_count = (
@@ -1150,6 +1302,7 @@ async def _headline(deps: WorkerDeps, brief: TaskBrief, context: dict[str, Any])
     return headline
 
 
+@traced("submit")
 @observe(
     type="agent",
     name="customer_trends.submit",

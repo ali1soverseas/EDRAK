@@ -8,11 +8,7 @@ from typing import Any, Literal
 
 from pydantic import Field, field_validator
 
-from edrak.agents.customer_trends.providers.base import (
-    CallParams,
-    ProviderResult,
-    new_evidence,
-)
+from edrak.agents.customer_trends.providers.base import CallParams, ProviderResult, new_evidence
 from edrak.agents.customer_trends.schemas.common import (
     NonEmpty,
     RequestBase,

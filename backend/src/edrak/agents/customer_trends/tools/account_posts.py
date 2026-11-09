@@ -24,7 +24,9 @@ from edrak.agents.customer_trends.tools.base import (
 DESCRIPTION = """Read the recent posts of one official account on x, instagram or facebook.
 Use it for the company's own accounts and the competitors' official accounts, to see what each
 says and how its audience reacts. Pass the profile URL. Do NOT use it to search a topic (use
-social_search)."""
+social_search).
+
+Example: {"platform": "x", "account_url": "https://x.com/acmepay", "owner": "Acme Pay"}"""
 
 ACCOUNT_PLATFORMS = (Platform.X, Platform.INSTAGRAM, Platform.FACEBOOK)
 DEFAULT_POSTS = 15

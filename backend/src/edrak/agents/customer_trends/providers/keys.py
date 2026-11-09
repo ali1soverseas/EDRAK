@@ -7,10 +7,7 @@ from typing import TypeVar
 T = TypeVar("T")
 
 from edrak.agents.customer_trends.logging import get_logger
-from edrak.agents.customer_trends.providers.base import (
-    ProviderNotConfigured,
-    ProviderQuotaExceeded,
-)
+from edrak.agents.customer_trends.providers.base import ProviderNotConfigured, ProviderQuotaExceeded
 
 log = get_logger(__name__)
 

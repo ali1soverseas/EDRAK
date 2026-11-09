@@ -1,0 +1,181 @@
+{
+  "success": true,
+  "platform": "reddit",
+  "endpoint": "/v1/reddit/search",
+  "data": {
+    "items": [
+      {
+        "post": {
+          "id": "reddit-1",
+          "url": "https://www.reddit.com/item/1",
+          "content": {
+            "text": "GitLab Duo gave better review comments than Copilot on our monorepo, but setup was confusing.",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_1",
+            "display_name": "Author 1",
+            "avatar_url": "https://example.test/734fd5",
+            "verified": null
+          },
+          "engagement": {
+            "views": 1000,
+            "likes": 20,
+            "comments": 2,
+            "shares": 1,
+            "saves": 1
+          },
+          "flags": {
+            "nsfw": false,
+            "spoiler": false,
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-01T10:00:00.000Z",
+          "ext": {
+            "subreddit": "gitlab",
+            "title": "GitLab Duo gave better review comments than Copilot on our monorepo, but setup was confusing.",
+            "selftext": "Details of the post body.",
+            "upvote_ratio": 1,
+            "flair": null,
+            "content_language": "en",
+            "published_at_epoch": 1783524962
+          }
+        },
+        "computed": {
+          "language": "en",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "reddit-2",
+          "url": "https://www.reddit.com/item/2",
+          "content": {
+            "text": "الدعم الفني بطيء جدا والأسعار مرتفعة لكن الميزات ممتازة",
+            "media_urls": "https://example.test/f3a70e",
+            "thumbnail_url": "https://example.test/20ed35",
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_2",
+            "display_name": "Author 2",
+            "avatar_url": "https://example.test/79cf01",
+            "verified": null
+          },
+          "engagement": {
+            "views": 2000,
+            "likes": 40,
+            "comments": 4,
+            "shares": 2,
+            "saves": 2
+          },
+          "flags": {
+            "nsfw": false,
+            "spoiler": false,
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-02T10:00:00.000Z",
+          "ext": {
+            "subreddit": "GithubCopilot",
+            "title": "الدعم الفني بطيء جدا والأسعار مرتفعة لكن الميزات ممتازة",
+            "selftext": "",
+            "upvote_ratio": 0.9659090909090909,
+            "flair": "News 📰",
+            "content_language": "en",
+            "published_at_epoch": 1790967278
+          }
+        },
+        "computed": {
+          "language": "ar",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "reddit-3",
+          "url": "https://www.reddit.com/item/3",
+          "content": {
+            "text": "short",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_3",
+            "display_name": "user_790075",
+            "avatar_url": "https://example.test/2d3def",
+            "verified": null
+          },
+          "flags": {
+            "nsfw": false,
+            "spoiler": false,
+            "pinned": null,
+            "deleted": false
+          },
+          "ext": {
+            "subreddit": "GithubCopilot",
+            "title": "short",
+            "selftext": "",
+            "upvote_ratio": 1,
+            "flair": "Help/Doubt ❓",
+            "content_language": "en",
+            "published_at_epoch": 1791120488
+          }
+        },
+        "computed": {
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      }
+    ],
+    "total": 3,
+    "dropped": 0
+  },
+  "credits_used": 1,
+  "request_id": "req-fixture",
+  "cached": false,
+  "pagination": {
+    "next_cursor": null,
+    "has_more": false,
+    "page_size": 3
+  },
+  "credits_remaining": 99,
+  "meta": {
+    "hint": {
+      "code": "search_multi",
+      "method": "GET",
+      "path": "/v1/search/multi?query=gitlab%20duo%20copilot&platforms=twitter,tiktok,reddit",
+      "message": "You searched \"gitlab duo copilot\" on 3 platforms one call at a time; /v1/search/multi returns each platform's own search rows in one call at the same price per platform, and a platform with no rows is not charged."
+    }
+  }
+}

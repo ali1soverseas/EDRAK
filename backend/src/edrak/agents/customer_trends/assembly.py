@@ -13,19 +13,18 @@ from typing import Any
 from edrak.agents.customer_trends.deps import WorkerDeps
 from edrak.agents.customer_trends.gaps import Gap, critical_gaps, run_status
 from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.relevance.pipeline import run_stats
 from edrak.agents.customer_trends.schemas.common import Confidence, SourceType
 from edrak.agents.customer_trends.schemas.evidence import EvidenceFilters
 from edrak.agents.customer_trends.schemas.findings import (
+    PROFILE_PREFIX,
     ControlSummary,
     CustomerTrendsResult,
     EvidenceRef,
     Finding,
 )
 from edrak.agents.customer_trends.schemas.task import TaskBrief
-from edrak.agents.customer_trends.tools.registry import (
-    COLLECTION_TOOL_NAMES,
-    UNBUDGETED_ERRORS,
-)
+from edrak.agents.customer_trends.tools.registry import COLLECTION_TOOL_NAMES, UNBUDGETED_ERRORS
 from edrak.agents.customer_trends.tools.search_interest import summarize_series
 from edrak.agents.customer_trends.utils.text import truncate
 
@@ -122,8 +121,9 @@ def writer_context(
 
 def overall_confidence(findings: Iterable[Finding], gaps: Iterable[Gap]) -> Confidence:
     """High when at least half the findings are high and no critical gap remains, medium when at
-    least half are medium or better, else low (and low without findings)."""
-    levels = [finding.confidence for finding in findings]
+    least half are medium or better, else low (and low without findings). The profile findings
+    describe the evidence and make no claim of their own, so they do not count."""
+    levels = [f.confidence for f in findings if not f.id.startswith(PROFILE_PREFIX)]
     if not levels:
         return Confidence.LOW
     high = sum(level is Confidence.HIGH for level in levels) / len(levels)
@@ -234,6 +234,7 @@ def build_result(
             "by_platform": summary.by_platform,
             "by_source_type": summary.by_source_type,
             "by_language": summary.by_language,
+            "relevance_filter": run_stats(deps, run_id),
         },
         gaps=[gap.description for gap in gaps],
         warnings=list(warnings),

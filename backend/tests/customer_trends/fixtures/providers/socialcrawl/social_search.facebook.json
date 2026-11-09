@@ -1,0 +1,188 @@
+{
+  "success": true,
+  "platform": "facebook",
+  "endpoint": "/v1/facebook/search/posts",
+  "data": {
+    "items": [
+      {
+        "post": {
+          "id": "facebook-1",
+          "url": "https://www.facebook.com/item/1",
+          "content": {
+            "text": "GitLab Duo gave better review comments than Copilot on our monorepo, but setup was confusing.",
+            "media_urls": "https://example.test/53390e",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_1",
+            "display_name": "Author 1",
+            "avatar_url": null,
+            "verified": null
+          },
+          "engagement": {
+            "views": 1000,
+            "likes": 20,
+            "comments": 2,
+            "shares": 1,
+            "saves": 1
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-01T10:00:00.000Z",
+          "ext": {
+            "author_id": "100063802020221",
+            "published_at_epoch": 1729145181,
+            "reaction_counts": [
+              {
+                "type": "like",
+                "count": 69
+              },
+              {
+                "type": "love",
+                "count": 6
+              },
+              {
+                "type": "haha",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "computed": {
+          "language": "en",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "facebook-2",
+          "url": "https://www.facebook.com/item/2",
+          "content": {
+            "text": "الدعم الفني بطيء جدا والأسعار مرتفعة لكن الميزات ممتازة",
+            "media_urls": null,
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_2",
+            "display_name": "Author 2",
+            "avatar_url": null,
+            "verified": null
+          },
+          "engagement": {
+            "views": 2000,
+            "likes": 40,
+            "comments": 4,
+            "shares": 2,
+            "saves": 2
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": null,
+            "deleted": false
+          },
+          "published_at": "2026-09-02T10:00:00.000Z",
+          "ext": {
+            "author_id": "61576203285776",
+            "published_at_epoch": 1753175901,
+            "reaction_counts": [
+              {
+                "type": "like",
+                "count": 4
+              },
+              {
+                "type": "love",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "computed": {
+          "language": "ar",
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      },
+      {
+        "post": {
+          "id": "facebook-3",
+          "url": "https://www.facebook.com/item/3",
+          "content": {
+            "text": "short",
+            "media_urls": "https://example.test/7179d4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          "author": {
+            "username": "author_3",
+            "display_name": "user_0b394c",
+            "avatar_url": null,
+            "verified": null
+          },
+          "flags": {
+            "nsfw": null,
+            "spoiler": null,
+            "pinned": null,
+            "deleted": false
+          },
+          "ext": {
+            "author_id": "100065307617853",
+            "published_at_epoch": 1761290116,
+            "reaction_counts": [
+              {
+                "type": "like",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "computed": {
+          "relevance": {
+            "p": 0.9,
+            "sense": "target"
+          },
+          "labels": {
+            "sentiment": {
+              "level": 3,
+              "score_0_1": 0.7
+            }
+          }
+        }
+      }
+    ],
+    "total": 3,
+    "dropped": 0
+  },
+  "credits_used": 1,
+  "request_id": "req-fixture",
+  "cached": false,
+  "pagination": {
+    "next_cursor": null,
+    "has_more": false,
+    "page_size": 3
+  },
+  "credits_remaining": 99
+}

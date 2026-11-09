@@ -7,25 +7,21 @@ from typing import Any, Literal, TypeVar
 
 import httpx
 import ollama
-from edrak.agents.customer_trends.logging import get_logger
-from edrak.agents.customer_trends.settings import Settings, get_settings
-from edrak.core.llm import schema_instruction
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langchain_ollama import ChatOllama
 from pydantic import BaseModel, ValidationError
-from tenacity import (
-    AsyncRetrying,
-    retry_if_exception,
-    stop_after_attempt,
-    wait_random_exponential,
-)
+from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt, wait_random_exponential
+
+from edrak.agents.customer_trends.logging import get_logger
+from edrak.agents.customer_trends.settings import Settings, get_settings
+from edrak.core.llm import schema_instruction
 
 T = TypeVar("T")
 S = TypeVar("S", bound=BaseModel)
 
-Role = Literal["planner", "analyst", "writer", "branch"]
+Role = Literal["planner", "analyst", "writer", "branch", "relevance"]
 
 _RETRY_ATTEMPTS = 3
 _TRANSIENT_STATUS = frozenset({429, 500, 502, 503, 504})
@@ -50,19 +46,24 @@ def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllam
     # with the same own-key-then-backup-then-shared fallback as every other
     # component.
     key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
+    if not key and s.ollama_api_key is not None:
+        key = s.ollama_api_key.get_secret_value().strip()  # a key given to this worker directly
     if not key:
-        raise LLMConfigError(
-            f"{variable} is not set: add it to .env at the repository root"
-        )
-    model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
+        raise LLMConfigError(f"{variable} is not set: add it to .env at the repository root")
+    override = {"analyst": s.ollama_model_analysis, "relevance": s.ollama_model_relevance}.get(role)
+    # The relevance filter only sorts comments into two piles, so it asks for little reasoning.
+    effort: dict[str, Any] = {}
+    if role == "relevance" and s.relevance_reasoning:
+        effort["reasoning"] = s.relevance_reasoning
     return ChatOllama(
-        model=model or s.ollama_model,
+        model=override or s.ollama_model,
         base_url=s.ollama_base_url,
         temperature=s.ollama_temperature,
         client_kwargs={
             "headers": {"Authorization": f"Bearer {key}"},
             "timeout": s.ollama_timeout_s,
         },
+        **effort,
     )
 
 

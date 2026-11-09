@@ -27,11 +27,7 @@ from edrak.agents.customer_trends.providers.base import (
 from edrak.agents.customer_trends.providers.config import ProviderConfig
 from edrak.agents.customer_trends.providers.http import RateLimiter, request_json
 from edrak.agents.customer_trends.providers.keys import KeyRing, with_failover
-from edrak.agents.customer_trends.schemas.common import (
-    Platform,
-    SourceType,
-    StrictModel,
-)
+from edrak.agents.customer_trends.schemas.common import Platform, SourceType, StrictModel
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
 

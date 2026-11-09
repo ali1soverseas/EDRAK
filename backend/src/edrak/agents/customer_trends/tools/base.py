@@ -16,10 +16,7 @@ from pydantic import BaseModel, ValidationError
 from structlog.contextvars import bound_contextvars
 
 from edrak.agents.customer_trends.logging import get_logger
-from edrak.agents.customer_trends.providers.base import (
-    ProviderExhausted,
-    ProviderResult,
-)
+from edrak.agents.customer_trends.providers.base import ProviderExhausted, ProviderResult
 from edrak.agents.customer_trends.providers.breaker import CircuitBreaker
 from edrak.agents.customer_trends.providers.budget import BudgetExceeded, BudgetTracker
 from edrak.agents.customer_trends.providers.registry import ProviderRegistry

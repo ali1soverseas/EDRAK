@@ -17,11 +17,7 @@ from edrak.agents.customer_trends.schemas.common import (
 )
 from edrak.agents.customer_trends.schemas.evidence import EvidenceItem
 from edrak.agents.customer_trends.schemas.trends import TrendSeries
-from edrak.agents.customer_trends.utils.text import (
-    content_hash,
-    detect_language,
-    evidence_id,
-)
+from edrak.agents.customer_trends.utils.text import content_hash, detect_language, evidence_id
 
 PENDING_BATCH = "pending"
 

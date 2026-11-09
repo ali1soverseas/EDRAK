@@ -24,17 +24,9 @@ from edrak.agents.customer_trends.schemas.common import (
     ToolResponse,
     ToolStatus,
 )
-from edrak.agents.customer_trends.schemas.findings import (
-    MAX_FINDINGS,
-    Finding,
-    find_numbers,
-)
+from edrak.agents.customer_trends.schemas.findings import MAX_FINDINGS, Finding, find_numbers
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
-from edrak.agents.customer_trends.tools.base import (
-    ToolContext,
-    ToolSpec,
-    finish_processing,
-)
+from edrak.agents.customer_trends.tools.base import ToolContext, ToolSpec, finish_processing
 from edrak.agents.customer_trends.utils.text import phrase_pattern, search_key
 
 VERDICT_PHRASES_PATH = Path(__file__).resolve().parent.parent / "config" / "verdict_phrases.yaml"
