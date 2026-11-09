@@ -246,6 +246,37 @@ def test_a_branch_capture_remembers_batches_and_tells_why_nothing_came_back(
     assert len(deps.bus.events) == 5, "every event is passed on to the run"
 
 
+def test_a_failed_branch_names_the_providers_and_their_causes(
+    tmp_path: Path, store: EvidenceStore
+) -> None:
+    capture = BranchCapture(worker_deps(brief_for(), tmp_path, store))
+    message = (
+        "social_search:facebook: no provider could serve it: socialcrawl failed "
+        "(ProviderQuotaExceeded), serper skipped (ProviderNotConfigured)"
+    )
+    capture(
+        {
+            "type": "tool_called",
+            "status": "error",
+            "error_code": "provider_exhausted",
+            "message": message,
+        }
+    )
+    capture(
+        {
+            "type": "tool_called",
+            "status": "error",
+            "error_code": "provider_exhausted",
+            "message": message,
+        }
+    )
+    assert capture.problems() == "socialcrawl quota exceeded, serper not configured"
+    assert capture.failure() == (
+        "all 2 tool call(s) failed (provider_exhausted); "
+        "providers: socialcrawl quota exceeded, serper not configured"
+    )
+
+
 async def test_a_branch_with_nothing_planned_makes_no_model_call(
     tmp_path: Path, store: EvidenceStore
 ) -> None:

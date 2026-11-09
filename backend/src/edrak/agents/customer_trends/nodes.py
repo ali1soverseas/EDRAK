@@ -8,6 +8,7 @@ previews and aggregates.
 
 import asyncio
 import json
+import re
 import time
 from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import replace
@@ -276,6 +277,9 @@ def plan_slice(branch: str, plan: QueryPlan) -> dict[str, Any]:
     return data if work else {}
 
 
+_PROVIDER_FAILURE = re.compile(r"(\w+) (?:failed|skipped) \((\w+)\)")
+
+
 class BranchCapture:
     """Passes a branch's tool events on to the run and remembers what they say."""
 
@@ -291,6 +295,16 @@ class BranchCapture:
     def batch_ids(self) -> list[str]:
         return list(dict.fromkeys(e["batch_id"] for e in self.events if e.get("batch_id")))
 
+    def problems(self) -> str:
+        """The providers that failed and why (quota exceeded, not configured), from the messages
+        of the failed tool calls; empty when none said."""
+        found: dict[str, None] = {}
+        for event in self.events:
+            for provider, cause in _PROVIDER_FAILURE.findall(str(event.get("message") or "")):
+                words = re.sub(r"(?<!^)(?=[A-Z])", " ", cause.removeprefix("Provider")).lower()
+                found[f"{provider} {words}"] = None
+        return ", ".join(found)
+
     def failure(self) -> str:
         """Why the branch collected nothing, or an empty string when something came back."""
         if not self.events:
@@ -298,7 +312,8 @@ class BranchCapture:
         if any(e.get("status") in ("ok", "partial") for e in self.events):
             return ""
         codes = sorted({str(e.get("error_code")) for e in self.events})
-        return f"all {len(self.events)} tool call(s) failed ({', '.join(codes)})"
+        reason = f"all {len(self.events)} tool call(s) failed ({', '.join(codes)})"
+        return f"{reason}; providers: {self.problems()}" if self.problems() else reason
 
 
 def _final_note(messages: list[BaseMessage]) -> str:
@@ -371,6 +386,8 @@ async def run_branch(name: str, state: WorkerState, deps: WorkerDeps) -> Update:
             if time_left >= MIN_BRANCH_S
             else "no time was left for collection before the time kept for the findings"
         )
+        if capture.problems():
+            reason += f"; providers: {capture.problems()}"
     except Exception as exc:
         log.warning("branch_failed", branch=name, error=type(exc).__name__)
         reason = f"{type(exc).__name__}: {exc}"[:NOTE_CHARS]

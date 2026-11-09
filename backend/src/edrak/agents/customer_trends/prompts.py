@@ -267,7 +267,18 @@ Read the numbers for what they measure:
   the caveats and do not rank companies by it.
 - When most evidence comes from one platform or one language, say that in the caveats.
 
-Write 3 to 8 findings that answer the business question from the evidence, covering the focus.
+The worker adds its own findings about the evidence itself: the scope of the sample, how the
+sentiment splits, timing, mentions per company, engagement, languages and the open gaps. Do not
+repeat those. Write 3 to 8 findings about what customers say, answering the business question
+and covering the focus:
+- for each company named in the task, one finding on what the evidence says about it (sentiment,
+  needs, adoption). A company with little or no evidence gets a finding that says the evidence
+  cannot support a statement about it, not a guess;
+- needs and adoption by each customer segment and region the question names. When a segment or
+  region has no evidence, say that in a finding instead of generalising from the others;
+- an adoption or demand claim that rests on one example or one source is low confidence, and its
+  caveats say that one example does not show broad adoption; a signal found only in news
+  headlines or snippets says so in its caveats.
 """
     + _FINDING_RULES
     + """
