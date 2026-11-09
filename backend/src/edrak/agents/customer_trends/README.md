@@ -96,6 +96,12 @@ A run produces three things:
   `metadata["artifact"]`. Raw text and intermediate artifacts do not travel through the
   orchestrator; verification and synthesis follow the pointer when they need more.
 
+Besides the findings the model writes (`f1`, `f2`, ...), a result holds the **evidence profile**,
+findings built by code with ids starting `p_` (`p_scope`, `p_sentiment`, `p_gaps`, ...): the
+sample's scope, composition, sentiment split, timing, mentions per company, engagement, languages
+and the open gaps with the overall confidence. Each cites a stored metric and describes the sample,
+not the market. They do not count toward the overall confidence.
+
 The status of a result is `complete`, `partial` (a critical gap remains) or `insufficient` (too
 little evidence); a run with no evidence at all is a valid result, not an error.
 
@@ -170,6 +176,12 @@ Provider order, actor ids, endpoint paths and prices are in `config/providers.ya
 thresholds and prompt emphasis per use case in `config/use_cases.yaml`; the phrases a claim may not
 contain in `config/verdict_phrases.yaml`. A run's limits come from the brief:
 `budget.max_tool_calls`, `max_cost_usd` and `max_seconds`.
+
+## Golden evaluation
+
+`scripts/customer_trends/eval_golden.py` runs the worker on the golden question and scores it with
+the evaluation suite in `Evaluation/`. The method, the changes it led to, the results and their
+limits are in [docs/EVALUATION.md](docs/EVALUATION.md).
 
 ## Tests
 
