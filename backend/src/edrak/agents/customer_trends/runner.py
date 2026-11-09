@@ -34,6 +34,7 @@ from edrak.agents.customer_trends.settings import Settings, get_settings
 from edrak.agents.customer_trends.state import initial_state
 from edrak.agents.customer_trends.store.evidence_store import EvidenceStore
 from edrak.agents.customer_trends.store.sink import LocalSink, ResultSink
+from edrak.agents.customer_trends.tracing import write_trace
 from edrak.agents.customer_trends.usecases import load_use_cases
 from edrak.contracts import ResearchTask, WorkerResult, WorkerStatus, WorkerType
 
@@ -180,6 +181,14 @@ async def _execute(brief: TaskBrief, deps: WorkerDeps) -> CustomerTrendsResult:
     return result
 
 
+async def _run(brief: TaskBrief, deps: WorkerDeps) -> CustomerTrendsResult:
+    """`_execute`, then the evaluation trace when the settings ask for it."""
+    result = await _execute(brief, deps)
+    if deps.settings.eval_trace_enabled:
+        write_trace(result, deps.store, deps.settings.artifacts_dir)
+    return result
+
+
 def _finished(deps: WorkerDeps, result: CustomerTrendsResult) -> None:
     deps.bus.emit(
         {
@@ -225,7 +234,7 @@ async def run_task(
     """Run a brief to completion. `providers` and `llm` let tests and the UI inject fixtures and
     the scripted model; `llm` is one model for every role or a function from role to model."""
     async with _session(brief, sink, providers, llm, settings or get_settings()) as deps:
-        return await _execute(brief, deps)
+        return await _run(brief, deps)
 
 
 async def stream_task(
@@ -248,7 +257,7 @@ async def stream_task(
         async with _session(
             brief, sink, providers, llm, settings or get_settings(), listener
         ) as deps:
-            return await _execute(brief, deps)
+            return await _run(brief, deps)
 
     task = asyncio.create_task(go())
     task.add_done_callback(lambda _: queue.put_nowait(None))
@@ -279,7 +288,7 @@ async def arun_worker(
     try:
         brief = brief_from_task(task)
         async with _session(brief, sink, providers, llm, settings) as deps:
-            result = await _execute(brief, deps)
+            result = await _run(brief, deps)
             cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
             return to_worker_result(
                 result,

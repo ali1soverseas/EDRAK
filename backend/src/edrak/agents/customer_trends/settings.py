@@ -87,6 +87,9 @@ class Settings(BaseSettings):
     youtube_daily_quota: int = 10000
     youtube_search_daily_cap: int = 100
 
+    # Evaluation: also write `eval_trace.json` (the trace the evaluation suite reads) per run
+    eval_trace_enabled: bool = False
+
     # Optional tracing
     langsmith_tracing: bool = False
     langsmith_api_key: SecretStr | None = None

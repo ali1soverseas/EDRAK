@@ -160,6 +160,7 @@ every name). Secrets are never logged.
 | `RELEVANCE_MIN_RELEVANT` | `5` | fewer relevant comments than this on a platform adds a gap note; 0 turns it off |
 | `RELEVANCE_TIMEOUT_S` | `60` | wall clock for all filter model calls; comments not classified in time are kept |
 | `RELEVANCE_REASONING` | `low` | reasoning effort of the filter model; empty leaves it unset |
+| `EVAL_TRACE_ENABLED` | `false` | true: each run also writes `eval_trace.json`, the trace the evaluation suite (`Evaluation/generic/evaluator.py`) reads |
 | `YOUTUBE_DAILY_QUOTA` | `10000` | local YouTube unit budget per day |
 | `YOUTUBE_SEARCH_DAILY_CAP` | `100` | local cap on YouTube searches per day |
 | `LANGSMITH_TRACING` | `false` | optional tracing |
