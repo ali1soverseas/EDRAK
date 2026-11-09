@@ -64,6 +64,14 @@ async def test_the_trace_is_what_the_evaluator_reads(tmp_path: Path) -> None:
     # the computed metrics the findings cite are evidence too, and the judge reads them first
     assert computed and evidence[: len(computed)] == computed
     assert "themes" in {e["id"] for e in computed}
+    # a finding lists the metrics it cites among its evidence, in the trace only
+    from edrak.agents.customer_trends.tools.submit_findings import cited_metric_ids
+
+    for traced, written in zip(report["findings"], result.findings, strict=True):
+        metrics = cited_metric_ids(written.metrics)
+        assert set(metrics) <= set(traced["evidence_ids"]) and not set(metrics) & set(
+            written.evidence_ids
+        )
     # then the stored evidence the findings cite, because the judge reads a bounded amount
     cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
     assert [e["id"] for e in stored[: len(cited)]] == cited

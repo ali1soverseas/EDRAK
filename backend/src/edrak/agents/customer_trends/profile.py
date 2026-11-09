@@ -111,6 +111,15 @@ class Profile:
     def metric(self, name: str) -> MetricResult | None:
         return self.metrics.get(name)
 
+    def record(self, name: str, values: dict[str, Any]) -> MetricResult:
+        """Store counts this module computed itself as a metric, so the finding that quotes them
+        cites a stored record like every other number does."""
+        record = MetricResult(
+            metric_id=metric_id_for(self.run_id, name, {}, []), metric=name, values=values
+        )
+        self.store.save_metric(self.run_id, record)
+        return record
+
 
 def _finding(
     fid: str,
@@ -192,7 +201,7 @@ def _scope(p: Profile) -> Finding | None:
         FindingType.RISK,
         claim,
         p,
-        numbers={"items": total, **{f"mentions_{i}": n for i, n in enumerate(hits.values())}},
+        cites=[p.record("scope_coverage", {"items": total, "mentions": hits})],
         caveats=[
             "mentions are found by matching text, so an item can concern a segment or region "
             "without naming it",
@@ -213,7 +222,10 @@ def _composition(p: Profile) -> Finding | None:
     ]
     snippets = sum(item.snippet_only for item in p.items)
     claim = f"The run collected {_n(total)} items: {_join(kinds)}."
-    numbers: dict[str, float] = {"items": total, "snippet_only": snippets}
+    record = p.record(
+        "evidence_composition",
+        {"items": total, "by_source_type": p.by_source_type, "snippet_only": snippets},
+    )
     caveats = ["counts describe what was collected, not what exists"]
     if snippets:
         claim += (
@@ -221,7 +233,7 @@ def _composition(p: Profile) -> Finding | None:
         )
         caveats.append("snippet-only items support a headline-level reading only")
     return _finding(
-        f"{PROFILE_PREFIX}composition", FindingType.RISK, claim, p, numbers=numbers, caveats=caveats
+        f"{PROFILE_PREFIX}composition", FindingType.RISK, claim, p, cites=[record], caveats=caveats
     )
 
 
@@ -381,12 +393,21 @@ def _gaps(p: Profile, gaps: Sequence[Gap], others: Sequence[Finding]) -> Finding
         )
     else:
         claim += " and no open coverage gap."
+    record = p.record(
+        "run_status",
+        {
+            "status": status,
+            "overall_confidence": confidence,
+            "open_gaps": len(gaps),
+            "gaps": [g.description for g in gaps],
+        },
+    )
     return _finding(
         f"{PROFILE_PREFIX}gaps",
         FindingType.RISK,
         claim,
         p,
-        numbers={"open_gaps": len(gaps)},
+        cites=[record],
         caveats=["gaps are rule-based checks of coverage, not a judgement of the evidence"],
         gaps=[g.id for g in gaps],
     )

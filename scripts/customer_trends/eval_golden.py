@@ -5,7 +5,8 @@ Run from the repository root:
     .venv/bin/python scripts/customer_trends/eval_golden.py --label baseline --runs 3
 
 Each run is a live run of backend/evals/customer_trends/briefs/ai_accelerators.json under a new
-run id, with the evaluation trace switched on. The trace is scored by Evaluation/generic/evaluator.py
+run id, with the evaluation trace switched on. The trace is scored by
+Evaluation/generic/evaluator.py
 against Evaluation/golden/customer_trends_ground_truth_single_case.json (an Ollama judge, see
 OLLAMA_MODEL, OLLAMA_BASE_URL and OLLAMA_API_KEY in .env). Reports go to
 reports/customer_trends/<label>/run<N>/; the mean over the runs is printed and saved as
@@ -23,6 +24,8 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+
+from edrak.agents.customer_trends.tracing import add_metric_support
 
 ROOT = Path(__file__).resolve().parents[2]
 BRIEF = ROOT / "backend/evals/customer_trends/briefs/ai_accelerators.json"
@@ -47,9 +50,7 @@ def read_env(path: Path) -> dict[str, str]:
     return values
 
 
-def run_worker(
-    label: str, number: int, out_dir: Path, env: dict[str, str]
-) -> Path | None:
+def run_worker(label: str, number: int, out_dir: Path, env: dict[str, str]) -> Path | None:
     """One live run under a fresh run id. Returns the path of its evaluation trace."""
     brief = json.loads(BRIEF.read_text(encoding="utf-8"))
     run_id = f"run-{label}-{int(time.time())}-{number}"
@@ -64,7 +65,7 @@ def run_worker(
         "--out",
         str(out_dir / "result.json"),
     ]
-    done = subprocess.run(
+    done = subprocess.run(  # noqa: S603  # fixed command, no user input
         command, env={**env, "EVAL_TRACE_ENABLED": "true"}, cwd=ROOT, check=False
     )
     trace = ROOT / "artifacts/runs" / run_id / "customer_trends/eval_trace.json"
@@ -78,6 +79,10 @@ def run_worker(
 def score(
     trace: Path, out_dir: Path, env: dict[str, str], second_pass: bool
 ) -> dict[str, Any] | None:
+    trace.write_text(
+        json.dumps(add_metric_support(json.loads(trace.read_text(encoding="utf-8"))), indent=2),
+        encoding="utf-8",
+    )
     command = [
         sys.executable,
         str(EVALUATOR),
@@ -90,7 +95,7 @@ def score(
     ]
     if not second_pass:
         command.append("--no-second-pass")
-    subprocess.run(command, env=env, cwd=ROOT, check=False)
+    subprocess.run(command, env=env, cwd=ROOT, check=False)  # noqa: S603  # fixed command
     report = out_dir / "customer_trends_evaluation.json"
     return json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
 
@@ -102,16 +107,12 @@ def summarize(report: dict[str, Any]) -> dict[str, Any]:
         "strict_coverage": report.get("strict_coverage_score"),
         "quality": {name: (quality.get(name) or {}).get("score") for name in QUALITY},
         "findings": {
-            f["finding_id"]: f.get("final_status")
-            for f in report.get("finding_results", [])
+            f["finding_id"]: f.get("final_status") for f in report.get("finding_results", [])
         },
         "scores": {
-            f["finding_id"]: f.get("final_score")
-            for f in report.get("finding_results", [])
+            f["finding_id"]: f.get("final_score") for f in report.get("finding_results", [])
         },
-        "findings_written": (report.get("deterministic_checks") or {}).get(
-            "finding_count"
-        ),
+        "findings_written": (report.get("deterministic_checks") or {}).get("finding_count"),
     }
 
 
@@ -128,17 +129,13 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
         "strict_coverage": mean([r["strict_coverage"] for r in runs]),
         "coverage_each": [r["coverage"] for r in runs],
         "quality": {q: mean([r["quality"][q] for r in runs]) for q in QUALITY},
-        "mean_score_by_finding": {
-            fid: mean([r["scores"].get(fid) for r in runs]) for fid in ids
-        },
+        "mean_score_by_finding": {fid: mean([r["scores"].get(fid) for r in runs]) for fid in ids},
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
-        "--label", required=True, help="name of this series, for example baseline"
-    )
+    parser.add_argument("--label", required=True, help="name of this series, for example baseline")
     parser.add_argument("--runs", type=int, default=1)
     parser.add_argument(
         "--second-pass",

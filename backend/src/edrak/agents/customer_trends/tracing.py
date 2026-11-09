@@ -85,43 +85,70 @@ def _computed(result: CustomerTrendsResult, store: EvidenceStore) -> list[dict[s
     return items
 
 
+def add_metric_support(trace: dict[str, Any]) -> dict[str, Any]:
+    """In the trace's copy of each finding, list the metrics it cites among its evidence ids.
+
+    A finding reaches its numbers through a computed metric, not through one stored item. The
+    evaluator judges a claim against the evidence ids the finding lists, so without this a
+    correct figure reads as unsupported. The result itself is not changed. Safe to repeat.
+    """
+
+    def patch(findings: Any) -> None:
+        for finding in findings or []:
+            ids = finding.setdefault("evidence_ids", [])
+            for metric_id in cited_metric_ids(finding.get("metrics") or {}):
+                if metric_id not in ids:
+                    ids.append(metric_id)
+
+    for result in (trace.get("results") or {}).values():
+        patch(result.get("findings"))
+    for span in trace.get("spans") or []:
+        if span.get("name") == f"{SPAN_PREFIX}.run_worker":
+            patch((span.get("output") or {}).get("findings"))
+    return trace
+
+
 def build_trace(result: CustomerTrendsResult, store: EvidenceStore) -> dict[str, Any]:
     """The trace document of one run."""
     cited = list(dict.fromkeys(i for f in result.findings for i in f.evidence_ids))
     items = _ordered_items(store, result.run_id, cited)
     summary = result.control_summary
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "worker": "customer_trends",
-        "run_id": result.run_id,
-        "task_goal": result.brief.question,
-        "results": {result.run_id: result.model_dump(mode="json")},
-        "spans": [
-            {
-                "name": f"{SPAN_PREFIX}.run_worker",
-                "output": {
-                    "status": summary.status,
-                    "confidence": summary.overall_confidence,
-                    "findings": [f.model_dump(mode="json") for f in result.findings],
-                    "gaps": result.gaps,
+    return add_metric_support(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "worker": "customer_trends",
+            "run_id": result.run_id,
+            "task_goal": result.brief.question,
+            "results": {result.run_id: result.model_dump(mode="json")},
+            "spans": [
+                {
+                    "name": f"{SPAN_PREFIX}.run_worker",
+                    "output": {
+                        "status": summary.status,
+                        "confidence": summary.overall_confidence,
+                        "findings": [f.model_dump(mode="json") for f in result.findings],
+                        "gaps": result.gaps,
+                    },
                 },
-            },
-            {
-                "name": f"{SPAN_PREFIX}.evidence_query",
-                "output": {"items": [*_computed(result, store), *(_item(item) for item in items)]},
-            },
-            {
-                "name": f"{SPAN_PREFIX}.submit",
-                "output": {
-                    "headline": summary.headline,
-                    "accepted_count": summary.findings_count,
-                    "rejected_count": sum(
-                        "was rejected" in w or "was dropped" in w for w in summary.warnings
-                    ),
+                {
+                    "name": f"{SPAN_PREFIX}.evidence_query",
+                    "output": {
+                        "items": [*_computed(result, store), *(_item(item) for item in items)]
+                    },
                 },
-            },
-        ],
-    }
+                {
+                    "name": f"{SPAN_PREFIX}.submit",
+                    "output": {
+                        "headline": summary.headline,
+                        "accepted_count": summary.findings_count,
+                        "rejected_count": sum(
+                            "was rejected" in w or "was dropped" in w for w in summary.warnings
+                        ),
+                    },
+                },
+            ],
+        }
+    )
 
 
 def trace_path(artifacts_dir: Path, run_id: str) -> Path:

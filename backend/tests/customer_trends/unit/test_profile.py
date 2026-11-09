@@ -55,7 +55,9 @@ def test_the_scope_names_the_terms_that_no_item_mentions(loaded_store: EvidenceS
     findings = build(loaded_store)
     scope = findings["p_scope"]
     assert "No collected item mentions" in scope.claim and "Nowhere" in scope.claim
-    assert scope.metrics["items"] == 40
+    record = loaded_store.get_metric(RUN_ID, str(scope.metrics["scope_coverage_metric_id"]))
+    assert record is not None and record.values["items"] == 40
+    assert record.values["mentions"]["Nowhere"] == 0
 
 
 def test_the_sentiment_split_is_stated_as_a_sample_and_not_a_population(
