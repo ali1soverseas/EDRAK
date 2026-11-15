@@ -1,4 +1,4 @@
-"""Ollama Cloud chat model factory and the structured-output and retry helpers."""
+"""NVIDIA NIM chat model factory and the structured-output and retry helpers."""
 
 import asyncio
 import json
@@ -6,14 +6,12 @@ from collections.abc import Awaitable, Callable, Sequence
 from typing import Any, Literal, TypeVar
 
 import httpx
-import ollama
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.settings import Settings, get_settings
-from edrak.core.llm import schema_instruction
+from edrak.core.llm import EdrakChat, schema_instruction
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
-from langchain_ollama import ChatOllama
 from pydantic import BaseModel, ValidationError
 from tenacity import (
     AsyncRetrying,
@@ -41,37 +39,32 @@ class StructuredOutputError(RuntimeError):
     """The model did not produce output matching the requested schema."""
 
 
-def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
-    """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
-    from edrak.core.llm import provider_key
+def get_chat_model(role: Role, *, settings: Settings | None = None) -> EdrakChat:
+    """Build the NVIDIA NIM chat model for a role."""
+    from edrak.core.llm import get_chat_model as build_model
 
     s = settings or get_settings()
-    # Resolved through the shared resolver so this worker gets its own quota,
-    # with the same own-key-then-backup-then-shared fallback as every other
-    # component.
-    key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
-    if not key:
-        raise LLMConfigError(
-            f"{variable} is not set: add it to .env at the repository root"
+    model = s.nvidia_model_analysis if role == "analyst" and s.nvidia_model_analysis else s.nvidia_model
+    try:
+        return build_model(
+            model,
+            agent="customer_trends",
+            temperature=s.nvidia_temperature,
+            base_url=s.nvidia_base_url,
+            timeout=s.nvidia_timeout_s,
         )
-    model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
-    return ChatOllama(
-        model=model or s.ollama_model,
-        base_url=s.ollama_base_url,
-        temperature=s.ollama_temperature,
-        client_kwargs={
-            "headers": {"Authorization": f"Bearer {key}"},
-            "timeout": s.ollama_timeout_s,
-        },
-    )
+    except RuntimeError as exc:
+        raise LLMConfigError(str(exc)) from exc
 
 
 def is_transient(exc: BaseException) -> bool:
     """Timeouts, connection failures, 429 and 5xx are worth retrying; the rest are not."""
-    if isinstance(exc, httpx.HTTPStatusError):
-        return exc.response.status_code in _TRANSIENT_STATUS
-    if isinstance(exc, ollama.ResponseError):
-        return exc.status_code in _TRANSIENT_STATUS
+    status = getattr(exc, "status_code", None)
+    response = getattr(exc, "response", None)
+    if status is None and response is not None:
+        status = getattr(response, "status_code", None)
+    if status in _TRANSIENT_STATUS:
+        return True
     return isinstance(exc, httpx.TransportError | ConnectionError | TimeoutError)
 
 
@@ -123,8 +116,7 @@ async def structured_call(
     # arm scored zero on every nested schema every run, and the only schema it
     # ever returned was the only flat one. Do not switch this on intuition, and
     # do not copy the market worker's json_mode choice: it disagrees here.
-    # Re-measure with llm/ab_structured_output.py after changing model,
-    # schemas, or langchain-ollama.
+    # Re-measure with llm/ab_structured_output.py after changing model or schemas.
     runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
     base = [*messages, _schema_instruction(schema)]
     conversation = list(base)

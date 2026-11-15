@@ -35,7 +35,7 @@ class CrossSignalSettings:
       deduplication, and output assembly
     """
 
-    model: str = core_settings.OLLAMA_MODEL
+    model: str = core_settings.NVIDIA_MODEL
 
     temperature: float = 0.2
 

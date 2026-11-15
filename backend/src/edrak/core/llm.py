@@ -4,11 +4,12 @@ One model, one client. Every component builds its chat model here, so there is
 a single place where the provider, endpoint, credential and output method are
 decided.
 
-Two things about Ollama are worth knowing before changing anything here.
-
-Auth does not go through an argument. ChatOllama has no api_key field;
-passing one is silently discarded as a pydantic extra and the request goes out
-unauthenticated, which surfaces as a 401 rather than a configuration error.
+The provider is NVIDIA NIM. The endpoint is OpenAI-compatible
+(https://integrate.api.nvidia.com/v1). The default model is
+nvidia/nemotron-3.5-super-vl-120b-a12b: a 120B mixture-of-experts model
+(12B active) with a free build.nvidia.com endpoint, a 262K context, and
+structured output. That covers the long source blocks and nested JSON this
+project sends, without a per-token charge on the free tier.
 
 Structured output goes through json_schema plus the schema restated in the
 prompt, and both halves are load-bearing. Measured on gpt-oss:120b against the
@@ -33,10 +34,10 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 from edrak.core.config import settings
 
@@ -50,13 +51,10 @@ _REPO_ENV = Path(__file__).resolve().parents[4] / ".env"
 if _REPO_ENV.is_file():
     load_dotenv(_REPO_ENV, override=False)
 
-# The native Ollama API lives at the bare host. The /v1 path is an
-# OpenAI-compatible shim that Ollama documents as experimental, and ChatOllama
-# does not speak it.
-NATIVE_BASE_URL = "https://ollama.com"
-
 # Every component that can call a model. Each maps to its own credential so one
-# agent exhausting its quota cannot starve the others.
+# agent exhausting its quota cannot starve the others. On the free NIM tier one
+# key is shared across the account; scoped keys still work when each agent has
+# its own NVIDIA account.
 AGENTS = (
     "orchestrator",
     "competitor",
@@ -65,6 +63,8 @@ AGENTS = (
     "cross_signal",
     "customer_trends",
 )
+
+_REASONING_BUDGET = {"low": 1024, "medium": 4096, "high": 8192}
 
 
 def provider_key(name: str, agent: str | None = None, *, backup: bool = True) -> tuple[str, str]:
@@ -91,7 +91,7 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
 
     # Scoped variables only exist in the environment. The shared fallback also
     # checks settings, because a credential renamed with an alias (LLM_API_KEY
-    # for OLLAMA_API_KEY) is resolved there and never reaches os.environ.
+    # for NVIDIA_API_KEY) is resolved there and never reaches os.environ.
     value = os.getenv(name, "").strip()
     if value:
         return value, name
@@ -100,11 +100,12 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
     return str(configured or "").strip(), name
 
 
-def ollama_key(agent: str | None = None) -> str:
-    key, variable = provider_key("OLLAMA_API_KEY", agent)
+def nvidia_key(agent: str | None = None) -> str:
+    key, variable = provider_key("NVIDIA_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set it in the environment or .env."
+            f"{variable} is not configured. Set it in the environment or .env. "
+            "Create a key at https://build.nvidia.com/settings/api-keys"
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
@@ -114,8 +115,38 @@ def ollama_key(agent: str | None = None) -> str:
 # reached 2048 on eight items and was cut off mid-string, which surfaces as a
 # JSON parse error rather than as a truncation. This leaves room for a reply
 # several times that size. It is a ceiling, not a target; temperature and the
-# schema decide the actual length.
-DEFAULT_NUM_PREDICT = 16384
+# schema decide the actual length. NIM caps a single completion at 32768; 16384
+# matches the model's published default and stays inside that cap.
+DEFAULT_MAX_TOKENS = 16384
+
+
+class EdrakChat(ChatOpenAI):
+    """ChatOpenAI that also accepts the Ollama-era `format` and `reasoning` invoke kwargs.
+
+    Profile import passes the JSON schema as `format` and a reasoning effort as
+    `reasoning`. NIM takes those as response_format and chat_template_kwargs.
+    Thinking stays off unless a call asks for it, so a long JSON reply is not
+    spent on a reasoning trace.
+    """
+
+    def invoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+        fmt = kwargs.pop("format", None)
+        reasoning = kwargs.pop("reasoning", None)
+        extra_body = dict(kwargs.pop("extra_body", None) or {})
+        if reasoning:
+            extra_body["chat_template_kwargs"] = {"enable_thinking": True}
+            extra_body["reasoning_budget"] = _REASONING_BUDGET.get(str(reasoning).lower(), 1024)
+        bind_kwargs: dict[str, Any] = {}
+        if fmt is not None:
+            bind_kwargs["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "response", "schema": fmt},
+            }
+        if extra_body:
+            bind_kwargs["extra_body"] = extra_body
+        if not bind_kwargs:
+            return super().invoke(input, config=config, **kwargs)
+        return self.bind(**bind_kwargs).invoke(input, config=config, **kwargs)
 
 
 def get_chat_model(
@@ -124,24 +155,24 @@ def get_chat_model(
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
     base_url: Optional[str] = None,
-    num_predict: Optional[int] = None,
+    max_tokens: Optional[int] = None,
+    timeout: Optional[float] = None,
     callbacks: Optional[list] = None,
-) -> ChatOllama:
+) -> EdrakChat:
     """The chat model every component uses.
 
     `agent` selects which credential is used. Passing it is what keeps one
     agent's quota separate from another's.
     """
-    extra_kwargs = {}
-    if callbacks is not None:
-        extra_kwargs["callbacks"] = callbacks
-    return ChatOllama(
-        model=model or settings.OLLAMA_MODEL,
-        base_url=base_url or NATIVE_BASE_URL,
-        temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
-        num_predict=num_predict or DEFAULT_NUM_PREDICT,
-        client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
-        **extra_kwargs,
+    return EdrakChat(
+        model=model or settings.NVIDIA_MODEL,
+        base_url=base_url or settings.NVIDIA_BASE_URL,
+        api_key=nvidia_key(agent),
+        temperature=settings.NVIDIA_TEMPERATURE if temperature is None else temperature,
+        max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
+        timeout=timeout or settings.NVIDIA_TIMEOUT_S,
+        max_retries=2,
+        callbacks=callbacks,
     )
 
 
@@ -219,7 +250,8 @@ def get_json_object(
     message = get_chat_model(
         model, agent=agent, temperature=temperature, callbacks=callbacks
     ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}], config=cfg)
-    text = str(message.content).strip()
+    text = message.content if isinstance(message.content, str) else json.dumps(message.content, ensure_ascii=False)
+    text = text.strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         raise ValueError(f"model reply contained no JSON object: {text[:200]!r}")

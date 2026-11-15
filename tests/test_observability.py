@@ -86,8 +86,10 @@ def test_orchestration_versioned_prompts():
     assert "You turn a user's business query into a structured EDRAK research request" in builder_prompt
 
 
-def test_get_chat_model_accepts_callbacks():
+def test_get_chat_model_accepts_callbacks(monkeypatch):
     """Verify get_chat_model accepts callbacks parameter without error."""
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
+
     class DummyHandler(BaseCallbackHandler):
         pass
 

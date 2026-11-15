@@ -420,12 +420,8 @@ def make_analyze_node():
                 "Run prepare_context_node first."
             )
 
-        # Built through edrak.core.llm so this stage uses the same Ollama Cloud
-        # model and per-agent credential scope as every other component. It
-        # previously constructed ChatOpenAI directly from OPENAI_API_KEY, which
-        # contradicts the migration and only imported at all because a stale
-        # langchain-openai sat in the venv: it is not in requirements.txt, so the
-        # stage would have failed on a clean install.
+        # Built through edrak.core.llm so this stage uses the same NVIDIA NIM
+        # model and per-agent credential scope as every other component.
         #
         # json_schema plus schema_instruction, measured against function_calling
         # and json_mode on the schemas this project actually sends.
