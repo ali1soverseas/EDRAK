@@ -78,11 +78,30 @@ async def _sleep(seconds: float) -> None:
 
 async def invoke_with_retry(call: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
     """Await `call` with up to three attempts on transient errors only."""
+
+    def _on_retry(retry_state: Any) -> None:
+        exc = retry_state.outcome.exception() if retry_state.outcome else None
+        if exc is None:
+            return
+        try:
+            from edrak.core.observability import record_event
+
+            record_event(
+                "retry",
+                agent="customer_trends",
+                level="DEFAULT",
+                message=f"attempt {retry_state.attempt_number} failed: {type(exc).__name__}: {exc}",
+                metadata={"attempt": retry_state.attempt_number},
+            )
+        except Exception:  # noqa: BLE001
+            pass
+
     async for attempt in AsyncRetrying(
         retry=retry_if_exception(is_transient),
         stop=stop_after_attempt(_RETRY_ATTEMPTS),
         wait=wait_random_exponential(multiplier=0.5, max=8),
         sleep=_sleep,
+        before_sleep=_on_retry,
         reraise=True,
     ):
         with attempt:
@@ -141,6 +160,19 @@ async def structured_call(
                 attempt=attempt,
                 error_type=type(exc).__name__,
             )
+            if attempt < attempts:
+                try:
+                    from edrak.core.observability import record_event
+
+                    record_event(
+                        "retry",
+                        agent="customer_trends",
+                        level="DEFAULT",
+                        message=f"structured output attempt {attempt} was invalid: {exc}",
+                        metadata={"attempt": attempt, "schema": schema.__name__},
+                    )
+                except Exception:  # noqa: BLE001
+                    pass
             conversation = [
                 *base,
                 AIMessage(content=_raw_text(raw)),

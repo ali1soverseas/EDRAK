@@ -94,3 +94,34 @@ app.include_router(api_router)
 @app.get("/api/health", tags=["health"])
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+def run(
+    *,
+    host: str = "127.0.0.1",
+    port: int = 8000,
+    reload: bool = True,
+) -> None:
+    """Start the API with reload settings that cannot hang the site.
+
+    Reload watches only ``backend/src``, so installs into ``.venv`` and writes
+    under ``artifacts`` do not restart the process. A five-second graceful
+    shutdown timeout stops a mid-run reload from waiting forever on the open
+    SSE connection that streams a live analysis.
+    """
+    import uvicorn
+    from pathlib import Path
+
+    src_dir = Path(__file__).resolve().parents[1]
+    uvicorn.run(
+        "edrak.main:app",
+        host=host,
+        port=port,
+        reload=reload,
+        reload_dirs=[str(src_dir)] if reload else None,
+        timeout_graceful_shutdown=5,
+    )
+
+
+if __name__ == "__main__":
+    run()

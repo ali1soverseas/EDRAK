@@ -29,12 +29,15 @@ in the prompt. Do not drop either, and do not copy a method from another
 worker without measuring it on that worker's own schemas.
 """
 
+import asyncio
+import contextvars
 import json
 import logging
 import os
 import re
+import time
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -115,10 +118,50 @@ def openrouter_key(agent: str | None = None) -> str:
 # 16384 stays inside a single completion without inviting a runaway reply.
 DEFAULT_MAX_TOKENS = 16384
 
+# One try plus two retries. These happen here, not inside the HTTP client, so
+# each failed attempt can be written to the trace before the next try.
+_CALL_ATTEMPTS = 3
+_TRANSIENT_STATUS = frozenset({429, 500, 502, 503, 504})
+
 _OPENROUTER_HEADERS = {
     "HTTP-Referer": "http://127.0.0.1:5173",
     "X-Title": "EDRAK",
 }
+
+# bind().invoke re-enters EdrakChat.invoke. The outer call owns the retry.
+_IN_CALL: contextvars.ContextVar[bool] = contextvars.ContextVar("edrak_llm_in_call", default=False)
+
+
+def _transient(exc: BaseException) -> bool:
+    """Rate limits, server errors, and dropped connections are worth another try."""
+    status = getattr(exc, "status_code", None)
+    response = getattr(exc, "response", None)
+    if status is None and response is not None:
+        status = getattr(response, "status_code", None)
+    if status in _TRANSIENT_STATUS:
+        return True
+    return isinstance(exc, (TimeoutError, ConnectionError)) or type(exc).__name__ in {
+        "Timeout",
+        "APITimeoutError",
+        "APIConnectionError",
+        "ConnectError",
+        "ReadTimeout",
+        "ConnectTimeout",
+        "RemoteProtocolError",
+    }
+
+
+def _record_retry(agent: str, attempt: int, exc: BaseException) -> None:
+    from edrak.core.observability import record_event
+
+    # A retry is progress, not a failure. WARNING is reserved for provider exhaustion.
+    record_event(
+        "retry",
+        agent=agent or "llm",
+        level="DEFAULT",
+        message=f"attempt {attempt} failed: {type(exc).__name__}: {exc}",
+        metadata={"attempt": attempt},
+    )
 
 
 class EdrakChat(ChatOpenAI):
@@ -128,9 +171,40 @@ class EdrakChat(ChatOpenAI):
     `reasoning`. OpenRouter takes those as response_format and reasoning.effort.
     Thinking stays off unless a call asks for it, so a long JSON reply is not
     spent on a reasoning trace.
+
+    ``edrak_agent`` is stamped onto every call so the trace shows which worker
+    made it. The HTTP client does not retry on its own; this class does, and
+    records each failed attempt.
     """
 
-    def invoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+    edrak_agent: str = ""
+
+    def _config_for_agent(self, config: Optional[dict]) -> dict:
+        cfg = dict(config or {})
+        from edrak.core.observability import agent_label, current_agent
+
+        # Prefer the open agent_scope label so a stage that borrows another
+        # credential (verification → orchestrator key) is still tagged as itself.
+        agent = current_agent() or agent_label(self.edrak_agent)
+        if not agent:
+            return cfg
+        metadata = dict(cfg.get("metadata") or {})
+        metadata["agent"] = agent
+        lf_tags = [str(tag) for tag in (metadata.get("langfuse_tags") or [])]
+        if agent not in lf_tags:
+            lf_tags.append(agent)
+        metadata["langfuse_tags"] = lf_tags
+        cfg["metadata"] = metadata
+        tags = [str(tag) for tag in (cfg.get("tags") or [])]
+        if agent not in tags:
+            tags.append(agent)
+        cfg["tags"] = tags
+        # Always name the generation after the agent. Leaving LangChain's default
+        # (ChatOpenAI) is what made the tree unreadable.
+        cfg["run_name"] = agent
+        return cfg
+
+    def _prepare_call(self, config: Optional[dict], kwargs: dict) -> tuple[dict, dict]:
         fmt = kwargs.pop("format", None)
         reasoning = kwargs.pop("reasoning", None)
         extra_body = dict(kwargs.pop("extra_body", None) or {})
@@ -147,9 +221,61 @@ class EdrakChat(ChatOpenAI):
             }
         if extra_body:
             bind_kwargs["extra_body"] = extra_body
+        return self._config_for_agent(config), bind_kwargs
+
+    def _once(self, input: Any, config: dict, kwargs: dict, bind_kwargs: dict) -> Any:
         if not bind_kwargs:
             return super().invoke(input, config=config, **kwargs)
         return self.bind(**bind_kwargs).invoke(input, config=config, **kwargs)
+
+    async def _aonce(self, input: Any, config: dict, kwargs: dict, bind_kwargs: dict) -> Any:
+        if not bind_kwargs:
+            return await super().ainvoke(input, config=config, **kwargs)
+        return await self.bind(**bind_kwargs).ainvoke(input, config=config, **kwargs)
+
+    def _retry(self, call: Callable[[], Any]) -> Any:
+        agent = self.edrak_agent or "llm"
+        for attempt in range(1, _CALL_ATTEMPTS + 1):
+            try:
+                return call()
+            except Exception as exc:
+                if attempt >= _CALL_ATTEMPTS or not _transient(exc):
+                    raise
+                _record_retry(agent, attempt, exc)
+                time.sleep(min(0.5 * attempt, 4))
+        raise AssertionError("unreachable")
+
+    async def _aretry(self, call: Callable[[], Any]) -> Any:
+        agent = self.edrak_agent or "llm"
+        for attempt in range(1, _CALL_ATTEMPTS + 1):
+            try:
+                return await call()
+            except Exception as exc:
+                if attempt >= _CALL_ATTEMPTS or not _transient(exc):
+                    raise
+                _record_retry(agent, attempt, exc)
+                await asyncio.sleep(min(0.5 * attempt, 4))
+        raise AssertionError("unreachable")
+
+    def invoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+        config, bind_kwargs = self._prepare_call(config, kwargs)
+        if _IN_CALL.get():
+            return self._once(input, config, kwargs, bind_kwargs)
+        token = _IN_CALL.set(True)
+        try:
+            return self._retry(lambda: self._once(input, config, kwargs, bind_kwargs))
+        finally:
+            _IN_CALL.reset(token)
+
+    async def ainvoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+        config, bind_kwargs = self._prepare_call(config, kwargs)
+        if _IN_CALL.get():
+            return await self._aonce(input, config, kwargs, bind_kwargs)
+        token = _IN_CALL.set(True)
+        try:
+            return await self._aretry(lambda: self._aonce(input, config, kwargs, bind_kwargs))
+        finally:
+            _IN_CALL.reset(token)
 
 
 def get_chat_model(
@@ -174,7 +300,8 @@ def get_chat_model(
         temperature=settings.OPENROUTER_TEMPERATURE if temperature is None else temperature,
         max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
         timeout=timeout or settings.OPENROUTER_TIMEOUT_S,
-        max_retries=2,
+        max_retries=0,
+        edrak_agent=agent or "",
         default_headers=_OPENROUTER_HEADERS,
         callbacks=callbacks,
     )

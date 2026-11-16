@@ -114,6 +114,18 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
         )
     except Exception as exc:
         print(f"[verification] WARNING: LLM review failed: {exc}")
+        log_action("verification", f"LLM review failed: {exc}")
+        try:
+            from edrak.core.observability import record_event
+
+            record_event(
+                "failure",
+                agent="verification",
+                level="ERROR",
+                message=f"LLM review failed: {type(exc).__name__}: {exc}",
+            )
+        except Exception:  # noqa: BLE001
+            pass
         return None
 
     if reply is None:

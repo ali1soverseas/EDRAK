@@ -37,6 +37,31 @@ from edrak.agents.customer_trends.utils.text import truncate
 
 log = get_logger(__name__)
 
+
+def _record_tool_issue(kind: str, message: str) -> None:
+    """A swallowed tool failure still has to appear on the active trace.
+
+    WARNING is only for provider exhaustion. ERROR is for a real failure.
+    Budget exhaustion is neither: it is an intentional stop.
+    """
+    if kind == "budget_exceeded":
+        return
+    try:
+        from edrak.core.observability import record_event
+
+        if kind == "provider_exhausted":
+            name, level = "provider_exhausted", "WARNING"
+        else:
+            name, level = "failure", "ERROR"
+        record_event(
+            name,
+            agent="customer_trends",
+            level=level,
+            message=message,
+        )
+    except Exception:  # noqa: BLE001
+        pass
+
 # What a call asks for when the model gives no `max_results`; the depth cap still applies.
 DEFAULT_RESULTS = {"web": 10, "social": 30, "reviews": 30, "news": 25}
 PREVIEW_ITEMS = 5
@@ -372,11 +397,14 @@ async def execute_collection(
         )
     except BudgetExceeded as exc:
         response = error_response("budget_exceeded", f"budget exceeded: {exc}")
+        _record_tool_issue("budget_exceeded", f"budget exceeded: {exc}")
     except ProviderExhausted as exc:
         response = error_response("provider_exhausted", _failure_summary(exc))
+        _record_tool_issue("provider_exhausted", f"provider_exhausted: {_failure_summary(exc)}")
     except Exception as exc:
         log.error("tool_failed", tool=tool, error=type(exc).__name__)
         response = error_response("tool_error", f"{tool} failed unexpectedly: {type(exc).__name__}")
+        _record_tool_issue("failure", f"{tool} failed: {type(exc).__name__}: {exc}")
     _emit(ctx, tool, args, response, started)
     return response
 
