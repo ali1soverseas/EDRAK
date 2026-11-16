@@ -4,6 +4,9 @@ Workers call ``log_action(agent, message)`` at each step. The line always goes t
 ``artifacts/logs/<agent>.log``. If a run is being watched (the API's run manager
 subscribes for the length of a run), the same line is also handed to its listener, which
 is how the live run screen shows what each worker is doing as it happens.
+
+Langfuse warnings and errors are recorded only by explicit ``record_event`` calls.
+A routine ``log_action`` line stays in the text log and on the run screen.
 """
 
 from __future__ import annotations

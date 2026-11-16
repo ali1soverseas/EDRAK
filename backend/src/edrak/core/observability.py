@@ -9,7 +9,8 @@ from __future__ import annotations
 import contextvars
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from contextlib import contextmanager
+from typing import Any, Dict, Iterator, List, Optional
 
 from edrak.core.config import settings
 
@@ -20,6 +21,31 @@ _CLIENT_INITIALIZED: bool = False
 _CURRENT_PROMPT_OBJ: contextvars.ContextVar[Optional[Any]] = contextvars.ContextVar(
     "_CURRENT_PROMPT_OBJ", default=None
 )
+# The worker that owns the current work. Model calls and events read this so the
+# Langfuse tree shows one clear agent name even when the graph node is "dispatch".
+_CURRENT_AGENT: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "_CURRENT_AGENT", default=""
+)
+
+# Credential scopes stay short (OPENROUTER_API_KEY_MARKET). Trace labels use the
+# same names as the workers on the run screen.
+_AGENT_LABELS = {
+    "market": "market_intelligence",
+    "competitor": "competitor_intelligence",
+    "internal": "internal_intelligence",
+}
+
+
+def agent_label(agent: str | None) -> str:
+    """The name shown on the Langfuse tree for this worker or stage."""
+    if not agent:
+        return ""
+    return _AGENT_LABELS.get(agent, agent)
+
+
+def current_agent() -> str:
+    """The agent that owns this thread of work, or an empty string."""
+    return _CURRENT_AGENT.get()
 
 
 def get_current_prompt_obj() -> Optional[Any]:
@@ -201,3 +227,85 @@ def flush_observability() -> None:
             client.flush()
         except Exception as exc:
             logger.debug("Failed to flush Langfuse events: %s", exc)
+
+
+@contextmanager
+def agent_scope(agent: str) -> Iterator[Any]:
+    """Open a Langfuse agent span named after the worker, and mark this context as its owner.
+
+    Every worker is dispatched through the same graph node ``dispatch``. Without
+    this scope the tree only says ``dispatch``. Inside the scope, model calls and
+    events inherit the agent name.
+
+    The agent name is also pushed onto the active trace as a Langfuse tag via
+    ``propagate_attributes``, so the run can be filtered by worker in the UI.
+    Langfuse only applies ``langfuse_tags`` from the root chain start; tagging
+    here is what makes later agent work filterable.
+    """
+    label = agent_label(agent)
+    token = _CURRENT_AGENT.set(label)
+    client = get_langfuse_client()
+    try:
+        if not label or client is None:
+            yield None
+            return
+        from langfuse import propagate_attributes
+
+        with client.start_as_current_observation(
+            name=label,
+            as_type="agent",
+            metadata={"agent": label},
+        ) as span:
+            with propagate_attributes(
+                tags=[label],
+                metadata={"agent": label},
+            ):
+                yield span
+    except Exception as exc:
+        logger.debug("Could not open agent scope for %s: %s", label, exc)
+        yield None
+    finally:
+        _CURRENT_AGENT.reset(token)
+
+
+def record_event(
+    name: str,
+    *,
+    agent: str = "",
+    level: str = "DEFAULT",
+    message: str = "",
+    metadata: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Add an event to the active agent span. Never raises.
+
+    Levels are intentional:
+      WARNING — only provider exhaustion
+      ERROR   — a real failure (service down, unexpected exception)
+      DEFAULT — retries and other notes that are not failures
+    """
+    client = get_langfuse_client()
+    if client is None:
+        return
+    try:
+        from opentelemetry import trace as otel_trace
+
+        current = otel_trace.get_current_span()
+        if current is None or not current.is_recording():
+            return
+    except Exception:
+        return
+    label = agent_label(agent) or current_agent()
+    meta: Dict[str, Any] = {"agent": label} if label else {}
+    if metadata:
+        meta.update(metadata)
+    title = f"[{label}] {name}" if label else name
+    try:
+        client.create_event(
+            name=title,
+            output=message,
+            metadata=meta or None,
+            level=level if level in {"DEBUG", "DEFAULT", "WARNING", "ERROR"} else "DEFAULT",
+            status_message=(message or "")[:500] or None,
+        )
+    except Exception as exc:
+        logger.debug("Could not record Langfuse event %s: %s", title, exc)

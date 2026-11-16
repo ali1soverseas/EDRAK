@@ -39,18 +39,31 @@ class Settings(BaseSettings):
         validate_by_alias=True,
     )
 
-    # LLM (Ollama Cloud)
-    ollama_base_url: str = "https://ollama.com"
-    ollama_model: str = "gpt-oss:120b"
-    # Accepts either OLLAMA_API_KEY (this worker's original name) or the
-    # project's shared LLM_API_KEY, so one key in .env serves every worker.
-    ollama_api_key: SecretStr | None = Field(
-        default=None,
-        validation_alias=AliasChoices("OLLAMA_API_KEY", "LLM_API_KEY"),
+    # LLM (OpenRouter). The same names as the shared client, so one .env serves every worker.
+    openrouter_base_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        validation_alias=AliasChoices("OPENROUTER_BASE_URL", "LLM_BASE_URL", "NVIDIA_BASE_URL"),
     )
-    ollama_model_analysis: str | None = None
-    ollama_temperature: float = 0.2
-    ollama_timeout_s: float = 120.0
+    openrouter_model: str = Field(
+        default="openai/gpt-oss-120b",
+        validation_alias=AliasChoices("OPENROUTER_MODEL", "LLM_MODEL", "NVIDIA_MODEL"),
+    )
+    openrouter_api_key: SecretStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OPENROUTER_API_KEY", "LLM_API_KEY", "NVIDIA_API_KEY"),
+    )
+    openrouter_model_analysis: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OPENROUTER_MODEL_ANALYSIS", "NVIDIA_MODEL_ANALYSIS"),
+    )
+    openrouter_temperature: float = Field(
+        default=0.2,
+        validation_alias=AliasChoices("OPENROUTER_TEMPERATURE", "LLM_TEMPERATURE", "NVIDIA_TEMPERATURE"),
+    )
+    openrouter_timeout_s: float = Field(
+        default=180.0,
+        validation_alias=AliasChoices("OPENROUTER_TIMEOUT_S", "NVIDIA_TIMEOUT_S"),
+    )
 
     # Data providers
     apify_token: SecretStr | None = None

@@ -235,7 +235,7 @@ def main() -> int:
         print(f"report updated: {REPORT_MD}")
         return 0
     if not resolve_api_key():
-        print("OLLAMA_API_KEY is not set.", file=sys.stderr)
+        print("OPENROUTER_API_KEY is not set.", file=sys.stderr)
         return 2
     code = asyncio.run(run(payload, pending))
     print(f"report updated: {REPORT_MD}")

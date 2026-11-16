@@ -306,7 +306,7 @@ def main(argv: list[str] | None = None) -> int:
     force_utf8_output()
     args = build_parser().parse_args(argv)
     if not resolve_api_key():
-        print("OLLAMA_API_KEY is not set.", file=sys.stderr)
+        print("OPENROUTER_API_KEY is not set.", file=sys.stderr)
         return 2
     if not args.query.strip():
         print("--query must not be empty", file=sys.stderr)
