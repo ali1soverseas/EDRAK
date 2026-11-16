@@ -69,6 +69,28 @@ def log_block(agent: str, title: str, body: str) -> None:
         log_action(agent, line)
 
 
+def _trace_event(
+    name: str,
+    *,
+    level: str = "DEFAULT",
+    message: str = "",
+    metadata: dict | None = None,
+) -> None:
+    """Mirror the other workers: local log_action stays, Langfuse gets record_event."""
+    try:
+        from edrak.core.observability import record_event
+
+        record_event(
+            name,
+            agent="market_intelligence",
+            level=level,
+            message=message,
+            metadata=metadata,
+        )
+    except Exception:  # noqa: BLE001 - tracing must never break the worker
+        pass
+
+
 def call_structured(schema, prompt: str, *, method: str = "function_calling", retries: int = 1):
     """Ask for a validated `schema` instance, or None.
 
@@ -83,7 +105,8 @@ def call_structured(schema, prompt: str, *, method: str = "function_calling", re
     parse failure from an empty answer without this.
     """
     last_error = "the model did not respond"
-    for attempt in range(max(retries, 1)):
+    attempts = max(retries, 1)
+    for attempt in range(attempts):
         try:
             return get_chat_model(agent="market", temperature=0).with_structured_output(
                 schema, method=method
@@ -91,8 +114,20 @@ def call_structured(schema, prompt: str, *, method: str = "function_calling", re
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             log_action("market_intelligence", f"structured call failed: {last_error}")
-            if attempt < retries - 1:
+            if attempt < attempts - 1:
+                _trace_event(
+                    "retry",
+                    level="DEFAULT",
+                    message=f"structured call attempt {attempt + 1} failed: {last_error}",
+                    metadata={"attempt": attempt + 1, "schema": getattr(schema, "__name__", str(schema))},
+                )
                 time.sleep(2**attempt)
+    _trace_event(
+        "failure",
+        level="ERROR",
+        message=last_error,
+        metadata={"schema": getattr(schema, "__name__", str(schema))},
+    )
     return None
 
 
@@ -901,9 +936,21 @@ def task_executor(state: MarketAgentState) -> dict:
                 except (_requests.ConnectionError, _requests.Timeout, ConnectionError) as exc:
                     wait = 2 ** conn_attempt
                     print(f"    [CONN ERROR] {exc}. Retry in {wait}s... ({conn_attempt + 1}/{MAX_RETRIES})")
+                    _trace_event(
+                        "retry",
+                        level="DEFAULT",
+                        message=f"{tool_name} attempt {conn_attempt + 1} failed: {type(exc).__name__}: {exc}",
+                        metadata={"attempt": conn_attempt + 1, "tool": tool_name},
+                    )
                     time.sleep(wait)
                 except Exception as exc:
                     print(f"    [TOOL ERROR] {exc}")
+                    _trace_event(
+                        "failure",
+                        level="ERROR",
+                        message=f"{tool_name}: {type(exc).__name__}: {exc}",
+                        metadata={"tool": tool_name},
+                    )
                     result_str = ""
                     break
 
@@ -965,6 +1012,12 @@ def task_executor(state: MarketAgentState) -> dict:
 
     if not fetch_success:
         print(f"  All tools exhausted for task [{task['id']}] -- skipping")
+        _trace_event(
+            "provider_exhausted",
+            level="WARNING",
+            message=f"all search tools exhausted for task {task['id']}: {task['description']}",
+            metadata={"task_id": task.get("id"), "tools": tools_to_try},
+        )
         return _gap(f"No relevant source for: {task['description']}")
 
     evidence_items: list = []
