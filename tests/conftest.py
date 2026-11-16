@@ -48,3 +48,15 @@ def _no_model_calls_from_guardrails_or_evaluation(monkeypatch):
 
     monkeypatch.setattr(settings, "GUARDRAIL_SCOPE_CHECK", False)
     monkeypatch.setattr(settings, "EVALUATION_JUDGE", False)
+
+
+@pytest.fixture
+def research_db_path(tmp_path, monkeypatch):
+    """A fresh database file for the company research tests. It is created on first use."""
+    from edrak.core.config import settings
+    from edrak.db import connection
+
+    monkeypatch.setattr(settings, "EDRAK_DB_PATH", tmp_path / "edrak.db")
+    connection.reset_ready_cache()
+    yield tmp_path / "edrak.db"
+    connection.reset_ready_cache()

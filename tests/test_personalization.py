@@ -4,7 +4,9 @@ import json
 
 from edrak.DecisionAnalysis.nodes import build_decision_analysis_user_prompt
 from edrak.DecisionAnalysis.options import _prompt, problems, DraftOption, DraftOpportunity, DraftRisk
-from edrak.DecisionAnalysis.personalization import emphasis_text, infer_preference, note_text, tag_decision
+from edrak.DecisionAnalysis.personalization import CRITERIA, emphasis_text, infer_preference, note_text, tag_decision
+
+NEW_ASPECTS = ("scale", "differentiation", "reversibility", "compliance", "revenue", "customer", "partnership", "talent")
 
 
 def _option(key, title, thesis="", trade_offs=(), opportunities=()):
@@ -167,6 +169,17 @@ def test_select_relevant_keeps_the_closest_and_stops_when_too_few_pass():
     assert [row["id"] for row in kept] == ["4", "2"]
     assert select_relevant(rows[:1], request, k=2, threshold=0.7, aspect_bar=2, embed=embed) == []
     assert infer_preference(select_relevant(rows[:1], request, k=2, threshold=0.7, aspect_bar=2, embed=embed))["status"] == "none"
+
+
+def test_each_new_aspect_is_examined_on_its_own():
+    for criterion in NEW_ASPECTS:
+        rows = [
+            _row(criterion, title=f"{criterion} first"),
+            _row(criterion, title=f"{criterion} second"),
+        ]
+        preference = infer_preference(rows)
+        assert preference["status"] == "applied" and preference["criterion"] == criterion
+        assert emphasis_text(preference) == f"Examine {CRITERIA[criterion]['focus']} in more depth."
 
 
 def test_an_option_that_mentions_the_preference_is_rejected():

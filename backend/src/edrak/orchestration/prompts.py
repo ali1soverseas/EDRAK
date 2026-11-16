@@ -51,3 +51,19 @@ Rules:
 5. Always use [] for a list with nothing in it. Never use null.
 6. No explanations, no markdown fences, no keys beyond the five above.
 """
+
+
+def get_planner_prompt() -> str:
+    try:
+        from edrak.core.observability import get_versioned_prompt
+        return get_versioned_prompt("edrak-planner-prompt", PLANNER_SYSTEM_PROMPT)
+    except Exception:
+        return PLANNER_SYSTEM_PROMPT
+
+
+def get_request_builder_prompt() -> str:
+    try:
+        from edrak.core.observability import get_versioned_prompt
+        return get_versioned_prompt("edrak-request-builder-prompt", REQUEST_BUILDER_SYSTEM_PROMPT)
+    except Exception:
+        return REQUEST_BUILDER_SYSTEM_PROMPT

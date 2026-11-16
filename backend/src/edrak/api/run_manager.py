@@ -491,8 +491,31 @@ class RunManager:
             await db.commit()
 
     @staticmethod
-    def _graph_config(request_id: str) -> dict[str, Any]:
-        return {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+    def _graph_config(
+        request_id: str,
+        *,
+        company_name: str = "",
+        user_id: str = "",
+    ) -> dict[str, Any]:
+        cfg: dict[str, Any] = {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
+        try:
+            from edrak.core.observability import build_observability_config
+            tags = [company_name, "orchestration"] if company_name else ["orchestration"]
+            obs_cfg = build_observability_config(
+                trace_name=f"edrak-analysis-{request_id}",
+                session_id=request_id,
+                user_id=user_id or "default_user",
+                tags=tags,
+            )
+            if obs_cfg.get("callbacks"):
+                cfg["callbacks"] = obs_cfg["callbacks"]
+            if obs_cfg.get("metadata"):
+                cfg["metadata"] = obs_cfg["metadata"]
+            if obs_cfg.get("tags"):
+                cfg["tags"] = obs_cfg["tags"]
+        except Exception:
+            pass
+        return cfg
 
     async def _execute_run(
         self,
@@ -542,7 +565,9 @@ class RunManager:
                 analysis_id,
                 lambda agent, message: loop.call_soon_threadsafe(self._apply_activity, active, agent, message),
             )
-            config = self._graph_config(analysis_id)
+            company_name = getattr(getattr(request, "company_profile", None), "name", "") or ""
+            workspace_id = getattr(getattr(request, "company_profile", None), "workspace_id", "") or ""
+            config = self._graph_config(analysis_id, company_name=company_name, user_id=workspace_id)
             async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
                 graph = build_graph(get_default_registry(), checkpointer=saver)
                 if resuming:
@@ -623,6 +648,11 @@ class RunManager:
             flusher.cancel()
             await self._flush(active)
             action_log.unsubscribe(analysis_id, sub_token)
+            try:
+                from edrak.core.observability import flush_observability
+                flush_observability()
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------ checkpoint 2 and pausing
 

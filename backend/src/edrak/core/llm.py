@@ -4,11 +4,12 @@ One model, one client. Every component builds its chat model here, so there is
 a single place where the provider, endpoint, credential and output method are
 decided.
 
-Two things about Ollama are worth knowing before changing anything here.
-
-Auth does not go through an argument. ChatOllama has no api_key field;
-passing one is silently discarded as a pydantic extra and the request goes out
-unauthenticated, which surfaces as a 401 rather than a configuration error.
+The provider is OpenRouter. The endpoint is OpenAI-compatible
+(https://openrouter.ai/api/v1). The default model is openai/gpt-oss-120b:
+a 117B mixture-of-experts model (5.1B active) with a 131K context, native
+structured output, and a reasoning effort control. That is the same model
+the structured-output path in this file was measured on, and 131K covers
+the research and profile blocks this project sends.
 
 Structured output goes through json_schema plus the schema restated in the
 prompt, and both halves are load-bearing. Measured on gpt-oss:120b against the
@@ -28,15 +29,18 @@ in the prompt. Do not drop either, and do not copy a method from another
 worker without measuring it on that worker's own schemas.
 """
 
+import asyncio
+import contextvars
 import json
 import logging
 import os
 import re
+import time
 from pathlib import Path
-from typing import Optional
+from typing import Any, Callable, Optional
 
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 from edrak.core.config import settings
 
@@ -50,13 +54,9 @@ _REPO_ENV = Path(__file__).resolve().parents[4] / ".env"
 if _REPO_ENV.is_file():
     load_dotenv(_REPO_ENV, override=False)
 
-# The native Ollama API lives at the bare host. The /v1 path is an
-# OpenAI-compatible shim that Ollama documents as experimental, and ChatOllama
-# does not speak it.
-NATIVE_BASE_URL = "https://ollama.com"
-
 # Every component that can call a model. Each maps to its own credential so one
-# agent exhausting its quota cannot starve the others.
+# agent exhausting its quota cannot starve the others. One OpenRouter key is
+# shared across the account; scoped keys still work when each agent has its own.
 AGENTS = (
     "orchestrator",
     "competitor",
@@ -65,7 +65,6 @@ AGENTS = (
     "cross_signal",
     "customer_trends",
 )
-
 
 def provider_key(name: str, agent: str | None = None, *, backup: bool = True) -> tuple[str, str]:
     """Resolve a credential and report which variable supplied it.
@@ -91,7 +90,7 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
 
     # Scoped variables only exist in the environment. The shared fallback also
     # checks settings, because a credential renamed with an alias (LLM_API_KEY
-    # for OLLAMA_API_KEY) is resolved there and never reaches os.environ.
+    # for OPENROUTER_API_KEY) is resolved there and never reaches os.environ.
     value = os.getenv(name, "").strip()
     if value:
         return value, name
@@ -100,11 +99,12 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
     return str(configured or "").strip(), name
 
 
-def ollama_key(agent: str | None = None) -> str:
-    key, variable = provider_key("OLLAMA_API_KEY", agent)
+def openrouter_key(agent: str | None = None) -> str:
+    key, variable = provider_key("OPENROUTER_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set it in the environment or .env."
+            f"{variable} is not configured. Set it in the environment or .env. "
+            "Create a key at https://openrouter.ai/keys"
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
@@ -114,8 +114,168 @@ def ollama_key(agent: str | None = None) -> str:
 # reached 2048 on eight items and was cut off mid-string, which surfaces as a
 # JSON parse error rather than as a truncation. This leaves room for a reply
 # several times that size. It is a ceiling, not a target; temperature and the
-# schema decide the actual length.
-DEFAULT_NUM_PREDICT = 16384
+# schema decide the actual length. gpt-oss-120b accepts far more than this;
+# 16384 stays inside a single completion without inviting a runaway reply.
+DEFAULT_MAX_TOKENS = 16384
+
+# One try plus two retries. These happen here, not inside the HTTP client, so
+# each failed attempt can be written to the trace before the next try.
+_CALL_ATTEMPTS = 3
+_TRANSIENT_STATUS = frozenset({429, 500, 502, 503, 504})
+
+_OPENROUTER_HEADERS = {
+    "HTTP-Referer": "http://127.0.0.1:5173",
+    "X-Title": "EDRAK",
+}
+
+# bind().invoke re-enters EdrakChat.invoke. The outer call owns the retry.
+_IN_CALL: contextvars.ContextVar[bool] = contextvars.ContextVar("edrak_llm_in_call", default=False)
+
+
+def _transient(exc: BaseException) -> bool:
+    """Rate limits, server errors, and dropped connections are worth another try."""
+    status = getattr(exc, "status_code", None)
+    response = getattr(exc, "response", None)
+    if status is None and response is not None:
+        status = getattr(response, "status_code", None)
+    if status in _TRANSIENT_STATUS:
+        return True
+    return isinstance(exc, (TimeoutError, ConnectionError)) or type(exc).__name__ in {
+        "Timeout",
+        "APITimeoutError",
+        "APIConnectionError",
+        "ConnectError",
+        "ReadTimeout",
+        "ConnectTimeout",
+        "RemoteProtocolError",
+    }
+
+
+def _record_retry(agent: str, attempt: int, exc: BaseException) -> None:
+    from edrak.core.observability import record_event
+
+    # A retry is progress, not a failure. WARNING is reserved for provider exhaustion.
+    record_event(
+        "retry",
+        agent=agent or "llm",
+        level="DEFAULT",
+        message=f"attempt {attempt} failed: {type(exc).__name__}: {exc}",
+        metadata={"attempt": attempt},
+    )
+
+
+class EdrakChat(ChatOpenAI):
+    """ChatOpenAI that also accepts the Ollama-era `format` and `reasoning` invoke kwargs.
+
+    Profile import passes the JSON schema as `format` and a reasoning effort as
+    `reasoning`. OpenRouter takes those as response_format and reasoning.effort.
+    Thinking stays off unless a call asks for it, so a long JSON reply is not
+    spent on a reasoning trace.
+
+    ``edrak_agent`` is stamped onto every call so the trace shows which worker
+    made it. The HTTP client does not retry on its own; this class does, and
+    records each failed attempt.
+    """
+
+    edrak_agent: str = ""
+
+    def _config_for_agent(self, config: Optional[dict]) -> dict:
+        cfg = dict(config or {})
+        from edrak.core.observability import agent_label, current_agent
+
+        # Prefer the open agent_scope label so a stage that borrows another
+        # credential (verification → orchestrator key) is still tagged as itself.
+        agent = current_agent() or agent_label(self.edrak_agent)
+        if not agent:
+            return cfg
+        metadata = dict(cfg.get("metadata") or {})
+        metadata["agent"] = agent
+        lf_tags = [str(tag) for tag in (metadata.get("langfuse_tags") or [])]
+        if agent not in lf_tags:
+            lf_tags.append(agent)
+        metadata["langfuse_tags"] = lf_tags
+        cfg["metadata"] = metadata
+        tags = [str(tag) for tag in (cfg.get("tags") or [])]
+        if agent not in tags:
+            tags.append(agent)
+        cfg["tags"] = tags
+        # Always name the generation after the agent. Leaving LangChain's default
+        # (ChatOpenAI) is what made the tree unreadable.
+        cfg["run_name"] = agent
+        return cfg
+
+    def _prepare_call(self, config: Optional[dict], kwargs: dict) -> tuple[dict, dict]:
+        fmt = kwargs.pop("format", None)
+        reasoning = kwargs.pop("reasoning", None)
+        extra_body = dict(kwargs.pop("extra_body", None) or {})
+        if reasoning:
+            effort = str(reasoning).lower()
+            if effort not in {"minimal", "low", "medium", "high"}:
+                effort = "low"
+            extra_body["reasoning"] = {"effort": effort}
+        bind_kwargs: dict[str, Any] = {}
+        if fmt is not None:
+            bind_kwargs["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "response", "schema": fmt},
+            }
+        if extra_body:
+            bind_kwargs["extra_body"] = extra_body
+        return self._config_for_agent(config), bind_kwargs
+
+    def _once(self, input: Any, config: dict, kwargs: dict, bind_kwargs: dict) -> Any:
+        if not bind_kwargs:
+            return super().invoke(input, config=config, **kwargs)
+        return self.bind(**bind_kwargs).invoke(input, config=config, **kwargs)
+
+    async def _aonce(self, input: Any, config: dict, kwargs: dict, bind_kwargs: dict) -> Any:
+        if not bind_kwargs:
+            return await super().ainvoke(input, config=config, **kwargs)
+        return await self.bind(**bind_kwargs).ainvoke(input, config=config, **kwargs)
+
+    def _retry(self, call: Callable[[], Any]) -> Any:
+        agent = self.edrak_agent or "llm"
+        for attempt in range(1, _CALL_ATTEMPTS + 1):
+            try:
+                return call()
+            except Exception as exc:
+                if attempt >= _CALL_ATTEMPTS or not _transient(exc):
+                    raise
+                _record_retry(agent, attempt, exc)
+                time.sleep(min(0.5 * attempt, 4))
+        raise AssertionError("unreachable")
+
+    async def _aretry(self, call: Callable[[], Any]) -> Any:
+        agent = self.edrak_agent or "llm"
+        for attempt in range(1, _CALL_ATTEMPTS + 1):
+            try:
+                return await call()
+            except Exception as exc:
+                if attempt >= _CALL_ATTEMPTS or not _transient(exc):
+                    raise
+                _record_retry(agent, attempt, exc)
+                await asyncio.sleep(min(0.5 * attempt, 4))
+        raise AssertionError("unreachable")
+
+    def invoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+        config, bind_kwargs = self._prepare_call(config, kwargs)
+        if _IN_CALL.get():
+            return self._once(input, config, kwargs, bind_kwargs)
+        token = _IN_CALL.set(True)
+        try:
+            return self._retry(lambda: self._once(input, config, kwargs, bind_kwargs))
+        finally:
+            _IN_CALL.reset(token)
+
+    async def ainvoke(self, input: Any, config: Optional[dict] = None, **kwargs: Any) -> Any:
+        config, bind_kwargs = self._prepare_call(config, kwargs)
+        if _IN_CALL.get():
+            return await self._aonce(input, config, kwargs, bind_kwargs)
+        token = _IN_CALL.set(True)
+        try:
+            return await self._aretry(lambda: self._aonce(input, config, kwargs, bind_kwargs))
+        finally:
+            _IN_CALL.reset(token)
 
 
 def get_chat_model(
@@ -124,19 +284,26 @@ def get_chat_model(
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
     base_url: Optional[str] = None,
-    num_predict: Optional[int] = None,
-) -> ChatOllama:
+    max_tokens: Optional[int] = None,
+    timeout: Optional[float] = None,
+    callbacks: Optional[list] = None,
+) -> EdrakChat:
     """The chat model every component uses.
 
     `agent` selects which credential is used. Passing it is what keeps one
     agent's quota separate from another's.
     """
-    return ChatOllama(
-        model=model or settings.OLLAMA_MODEL,
-        base_url=base_url or NATIVE_BASE_URL,
-        temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
-        num_predict=num_predict or DEFAULT_NUM_PREDICT,
-        client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
+    return EdrakChat(
+        model=model or settings.OPENROUTER_MODEL,
+        base_url=base_url or settings.OPENROUTER_BASE_URL,
+        api_key=openrouter_key(agent),
+        temperature=settings.OPENROUTER_TEMPERATURE if temperature is None else temperature,
+        max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
+        timeout=timeout or settings.OPENROUTER_TIMEOUT_S,
+        max_retries=0,
+        edrak_agent=agent or "",
+        default_headers=_OPENROUTER_HEADERS,
+        callbacks=callbacks,
     )
 
 
@@ -178,9 +345,17 @@ def get_structured(
     still validate: a prose reply or a wrong top-level shape does slip
     through when the instruction is omitted.
     """
-    return get_chat_model(
+    runnable = get_chat_model(
         model, agent=agent, temperature=temperature
     ).with_structured_output(schema, method=method)
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        if prompt_obj is not None:
+            return runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
+    except Exception:
+        pass
+    return runnable
 
 
 def get_json_object(
@@ -190,16 +365,24 @@ def get_json_object(
     agent: Optional[str] = None,
     model: Optional[str] = None,
     temperature: Optional[float] = None,
+    callbacks: Optional[list] = None,
 ) -> dict:
     """Ask for a JSON object and return it as a dict.
 
     For callers whose reply shape is large, optional or still evolving, where
     pinning a pydantic schema would be more churn than the guarantee is worth.
     """
+    try:
+        from edrak.core.observability import get_current_prompt_obj
+        prompt_obj = get_current_prompt_obj()
+        cfg = {"metadata": {"langfuse_prompt": prompt_obj}} if prompt_obj is not None else None
+    except Exception:
+        cfg = None
     message = get_chat_model(
-        model, agent=agent, temperature=temperature
-    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}])
-    text = str(message.content).strip()
+        model, agent=agent, temperature=temperature, callbacks=callbacks
+    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}], config=cfg)
+    text = message.content if isinstance(message.content, str) else json.dumps(message.content, ensure_ascii=False)
+    text = text.strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         raise ValueError(f"model reply contained no JSON object: {text[:200]!r}")

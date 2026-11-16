@@ -82,3 +82,32 @@
 .profile .tag { height: auto; min-height: 28px; padding-block: 4px; white-space: normal; max-width: 100%; overflow-wrap: anywhere; }
 .goal-list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.45; }
 @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } .profile-hero { flex-direction: column; } }
+
+/* Onboarding, company step: start from a website or a PDF. Same idiom as the markets panels. */
+.import { display: flex; flex-direction: column; gap: 14px; padding: 16px 18px; border-radius: 14px; border: 1px dashed var(--blue-line); border-inline-start: 4px solid var(--blue); background: linear-gradient(var(--blue-soft), var(--card) 55%); }
+.import-mark { width: 30px; height: 30px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--card); border: 1px solid var(--blue-line); color: var(--blue); }
+.import-url .input { flex: 1; min-width: 0; }
+.import .dropzone { cursor: pointer; background: var(--card); }
+.import .dropzone:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.import .dropzone[aria-disabled="true"] { opacity: .6; cursor: progress; }
+.import-busy { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--hair); }
+.import-review { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--hair); }
+.import-rows { list-style: none; margin: 0; padding: 0; }
+.import-row { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 11px 0; border-bottom: 1px solid var(--hair); }
+.import-row:first-child { padding-top: 2px; }
+.import-row:last-child { border-bottom: 0; padding-bottom: 2px; }
+.import-row.is-same { opacity: .75; }
+.import-row .stack { min-width: 0; overflow-wrap: anywhere; }
+.import-row .tag { height: auto; min-height: 28px; padding-block: 4px; white-space: normal; max-width: 100%; overflow-wrap: anywhere; }
+.import-row .tag.known { background: transparent; border-style: dashed; color: var(--ink3); }
+.import-src { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; max-width: 112px; }
+button.chk { padding: 0; margin-top: 1px; cursor: pointer; }
+button.chk:disabled { cursor: default; background: var(--sunk); border-color: var(--hair); }
+.form-warn { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e2be86; border-radius: 10px; background: var(--warn-bg); color: #7a4400; font-size: 13px; line-height: 1.4; }
+.import-sources summary { cursor: pointer; }
+.import-sources ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 560px) {
+  .import-url { flex-direction: column; align-items: stretch; }
+  .import-row { grid-template-columns: 18px minmax(0, 1fr); }
+  .import-src { grid-column: 2; justify-content: flex-start; max-width: none; }
+}

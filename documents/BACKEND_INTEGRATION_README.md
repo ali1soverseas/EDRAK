@@ -53,6 +53,14 @@ Using async SQLite via `aiosqlite` with zero external heavy dependencies:
 | | `/api/company/documents` | `POST` | Upload and auto-index files (PDF, MD, JSON, etc.) |
 | | `/api/company/documents` | `GET` | List company documents |
 | | `/api/company/documents/{id}` | `DELETE` | Delete file from DB, disk, and vector store |
+| **Company research** | `/api/company/research/runs` | `POST` | Start a research run in the background (optional `seed_url`); one active run per company |
+| | `/api/company/research/runs` | `GET` | The company's runs, newest first |
+| | `/api/company/research/runs/{id}` | `GET` | Run status, stage, counts, warnings |
+| | `/api/company/research/runs/{id}/cancel` | `POST` | Stop a queued or running run |
+| | `/api/company/facts` | `GET` | Facts grouped by category with en/ar labels; filters `status`, `category`, `source_tier`; conflicts together |
+| | `/api/company/facts/{id}` | `PATCH` | Approve or reject a fact, or edit its value (an edit approves it) |
+| | `/api/company/facts/bulk` | `POST` | Approve or reject many facts at once |
+| | `/api/company/fact-categories` | `GET` | The category list with English and Arabic labels |
 | **Analyses** | `/api/analyses` | `GET` | List analyses summary |
 | | `/api/analyses/{id}` | `GET` | Get analysis detail, request, and plan |
 | | `/api/analyses/draft` | `POST` | Draft research plan with LLM planner |

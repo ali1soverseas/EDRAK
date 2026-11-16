@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from edrak.api.routes import router as api_router
 from edrak.db.connection import get_db, init_db
 from edrak.db.repositories.auth import purge_expired_sessions
+from edrak.db.repositories.research_runs import fail_orphaned_research_runs
 from edrak.db.repositories.runs import fail_orphaned_runs
 from edrak.db.util import fetch_all
 
@@ -36,6 +37,9 @@ async def lifespan(app: FastAPI):
         orphaned = await fail_orphaned_runs(db)
         if orphaned:
             logger.warning("Marked %d interrupted run(s) as failed: %s", len(orphaned), ", ".join(orphaned))
+        interrupted = await fail_orphaned_research_runs(db)
+        if interrupted:
+            logger.warning("Marked %d interrupted research run(s) as failed: %s", len(interrupted), ", ".join(interrupted))
         await purge_expired_sessions(db)
         # Files that were waiting for or in the middle of indexing are queued again.
         pending = await fetch_all(db, "SELECT id, workspace_id FROM documents WHERE status IN ('uploaded','indexing')")
@@ -49,6 +53,14 @@ async def lifespan(app: FastAPI):
     import asyncio
 
     from edrak.monitoring.scheduler import run_forever
+
+    # Say once whether scanned PDFs can be read. The check never stops the server from starting.
+    try:
+        from edrak.company_profile.pdf_import import log_ocr_status
+
+        log_ocr_status()
+    except Exception:
+        logger.exception("Could not check OCR availability")
 
     scheduler = asyncio.create_task(run_forever())
     yield
@@ -82,3 +94,34 @@ app.include_router(api_router)
 @app.get("/api/health", tags=["health"])
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+def run(
+    *,
+    host: str = "127.0.0.1",
+    port: int = 8000,
+    reload: bool = True,
+) -> None:
+    """Start the API with reload settings that cannot hang the site.
+
+    Reload watches only ``backend/src``, so installs into ``.venv`` and writes
+    under ``artifacts`` do not restart the process. A five-second graceful
+    shutdown timeout stops a mid-run reload from waiting forever on the open
+    SSE connection that streams a live analysis.
+    """
+    import uvicorn
+    from pathlib import Path
+
+    src_dir = Path(__file__).resolve().parents[1]
+    uvicorn.run(
+        "edrak.main:app",
+        host=host,
+        port=port,
+        reload=reload,
+        reload_dirs=[str(src_dir)] if reload else None,
+        timeout_graceful_shutdown=5,
+    )
+
+
+if __name__ == "__main__":
+    run()

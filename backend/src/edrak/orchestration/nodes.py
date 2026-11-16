@@ -72,7 +72,7 @@ def make_decision_analysis_node():
             )
 
             logger.warning(message)
-
+            # Missing upstream output is a skip, not a provider exhaustion or a crash.
             return {
                 "decision_analysis": None,
                 "error": message,
@@ -119,26 +119,40 @@ def make_decision_analysis_node():
             print(
                 f"  [decision_analysis] running for run_id={decision_input.research_run_id}"
             )
-            result = await run_decision_analysis(
-                decision_input=decision_input
-            )
+            from ..core.observability import agent_scope, record_event
 
-            dumped_result = result.model_dump(mode="json")
+            with agent_scope("decision_analysis"):
+                result = await run_decision_analysis(
+                    decision_input=decision_input
+                )
 
-            logger.info(
-                "Decision Analysis finished for run %s with status %s",
-                result.research_run_id,
-                result.status.value,
-            )
+                dumped_result = result.model_dump(mode="json")
 
-            return {
-                "decision_analysis": dumped_result,
-            }
+                logger.info(
+                    "Decision Analysis finished for run %s with status %s",
+                    result.research_run_id,
+                    result.status.value,
+                )
+
+                return {
+                    "decision_analysis": dumped_result,
+                }
 
         except Exception as exc:
             logger.exception(
                 "Decision Analysis failed."
             )
+            try:
+                from ..core.observability import record_event
+
+                record_event(
+                    "failure",
+                    agent="decision_analysis",
+                    level="ERROR",
+                    message=f"{type(exc).__name__}: {exc}",
+                )
+            except Exception:  # noqa: BLE001
+                pass
 
             return {
                 "decision_analysis": None,
@@ -198,9 +212,20 @@ def make_dispatch_worker(
 
     def dispatch_worker(payload: dict) -> dict:
         task = payload["task"]
-        print(f"\n[{task.worker.value}] NODE: dispatch")
-        result = run_task(task, registry)
-        return {"results": [result], "outcomes": [result.to_outcome()]}
+        agent = task.worker.value
+        print(f"\n[{agent}] NODE: dispatch")
+        from ..core.observability import agent_scope, record_event
+
+        with agent_scope(agent):
+            result = run_task(task, registry)
+            if result.status is WorkerStatus.FAILED:
+                record_event(
+                    "failure",
+                    agent=agent,
+                    level="ERROR",
+                    message=result.error or "worker failed",
+                )
+            return {"results": [result], "outcomes": [result.to_outcome()]}
 
     return dispatch_worker
 
@@ -227,87 +252,104 @@ def metrics_node(state: OrchestrationState) -> OrchestrationState:
         return state
     print("\n[metrics] NODE: metrics agent")
     from ..agents.metrics import run as run_metrics_agent
+    from ..core.observability import agent_scope, record_event
     from ..metrics.planning import requirements_for
 
-    results = list(state.get("results") or [])
-    plan = state.get("plan")
-    raw_tasks = list(plan.tasks) if plan else []
-    req = state["request"]
-    ctx = req.business_context
-    comps = [c.name for c in ctx.competitors] or list(ctx.targets)
-    tasks = []
-    for t in raw_tasks:
-        if not t.requirements:
-            t = t.model_copy(update={"requirements": requirements_for(
-                t.worker.value if hasattr(t.worker, "value") else str(t.worker),
-                ctx.use_case.value if hasattr(ctx.use_case, "value") else str(ctx.use_case),
-                req.company_profile.name,
-                comps,
-                list(ctx.markets),
-                ctx.offering or "",
-            )})
-        tasks.append(t)
-    try:
-        fixed, conflicts = run_metrics_agent(req, tasks, results)
-    except Exception as exc:  # noqa: BLE001 - the brief still renders gap cards without figures
-        logger.warning("Metrics agent failed: %s", exc)
-        return state
-    update: dict[str, Any] = {"results": fixed}
-    vr = state.get("verification_result")
-    if vr is not None and conflicts:
-        cs = vr.control_summary
-        merged = list(dict.fromkeys([*cs.conflicts, *conflicts]))
-        update["verification_result"] = vr.model_copy(update={"control_summary": cs.model_copy(update={"conflicts": merged})})
-    return update
+    with agent_scope("metrics"):
+        results = list(state.get("results") or [])
+        plan = state.get("plan")
+        raw_tasks = list(plan.tasks) if plan else []
+        req = state["request"]
+        ctx = req.business_context
+        comps = [c.name for c in ctx.competitors] or list(ctx.targets)
+        tasks = []
+        for t in raw_tasks:
+            if not t.requirements:
+                t = t.model_copy(update={"requirements": requirements_for(
+                    t.worker.value if hasattr(t.worker, "value") else str(t.worker),
+                    ctx.use_case.value if hasattr(ctx.use_case, "value") else str(ctx.use_case),
+                    req.company_profile.name,
+                    comps,
+                    list(ctx.markets),
+                    ctx.offering or "",
+                )})
+            tasks.append(t)
+        try:
+            fixed, conflicts = run_metrics_agent(req, tasks, results)
+        except Exception as exc:  # noqa: BLE001 - the brief still renders gap cards without figures
+            logger.warning("Metrics agent failed: %s", exc)
+            record_event(
+                "failure",
+                agent="metrics",
+                level="ERROR",
+                message=f"{type(exc).__name__}: {exc}",
+            )
+            return state
+        update: dict[str, Any] = {"results": fixed}
+        vr = state.get("verification_result")
+        if vr is not None and conflicts:
+            cs = vr.control_summary
+            merged = list(dict.fromkeys([*cs.conflicts, *conflicts]))
+            update["verification_result"] = vr.model_copy(update={"control_summary": cs.model_copy(update={"conflicts": merged})})
+        return update
 
 
 def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
     print("\n[verification] NODE: verify")
     from ..contracts.verification import VerificationInput
+    from ..core.observability import agent_scope, record_event
     from ..verification.graph import run as run_verification
 
-    buffer = io.StringIO()
-    try:
-        with contextlib.redirect_stdout(buffer):
-            result = run_verification(
-                VerificationInput(
-                    request=state["request"],
-                    agent_outputs=state.get("results") or [],
+    with agent_scope("verification"):
+        buffer = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buffer):
+                result = run_verification(
+                    VerificationInput(
+                        request=state["request"],
+                        agent_outputs=state.get("results") or [],
+                    )
                 )
+        except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+            # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
+            # here can. The person at the review checkpoint decides whether to re-plan.
+            record_event(
+                "failure",
+                agent="verification",
+                level="ERROR",
+                message=f"{type(exc).__name__}: {exc}",
             )
-    except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
-        # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
-        # here can. The person at the review checkpoint decides whether to re-plan.
+            return {
+                **state,
+                "verification": VerificationDecision(
+                    status=VerificationStatus.CANNOT_COMPLETE,
+                    summary=f"verification stage raised {type(exc).__name__}: {exc}",
+                ),
+            }
+        finally:
+            captured = buffer.getvalue()
+
+        if captured.strip():
+            log_action("verification", captured)
+
+        print(
+            f"  [verification] {result.decision.status.value} "
+            f"({len(result.findings)} findings assessed) "
+            f"-> artifacts/logs/verification.log"
+        )
+
         return {
             **state,
-            "verification": VerificationDecision(
-                status=VerificationStatus.CANNOT_COMPLETE,
-                summary=f"verification stage raised {type(exc).__name__}: {exc}",
-            ),
+            "verification": result.decision,
+            "verification_result": result,
         }
-    finally:
-        captured = buffer.getvalue()
-
-    if captured.strip():
-        log_action("verification", captured)
-
-    print(
-        f"  [verification] {result.decision.status.value} "
-        f"({len(result.findings)} findings assessed) "
-        f"-> artifacts/logs/verification.log"
-    )
-
-    return {
-        **state,
-        "verification": result.decision,
-        "verification_result": result,
-    }
 
 
 async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
     print("\n[cross_signal] NODE: cross_signal")
     from ..contracts.CrossSignal import build_cross_signal_input
     from ..contracts.verification import FindingCheckStatus, VerificationResult
+    from ..core.observability import agent_scope, record_event
     from ..CrossSignal.graph import run_cross_signal
 
     raw = state.get("verification_result")
@@ -315,39 +357,46 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
         print("  [cross_signal] skipped: no verification result")
         return {**state, "cross_signal": None}
 
-    try:
-        payload = (
-            raw
-            if isinstance(raw, VerificationResult)
-            else VerificationResult.model_validate(raw)
-        )
-        # The contract builder rejects a payload that still contains
-        # insufficient findings. Keep the verified run, drop the rest.
-        verified_only = payload.model_copy(
-            update={
-                "findings": [
-                    item
-                    for item in payload.findings
-                    if item.verification_status is FindingCheckStatus.VERIFIED
-                ]
-            }
-        )
-        cs_input = build_cross_signal_input(verified_only, state["request"])
-        output = await run_cross_signal(cs_input)
-    except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
-        print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
-        return {**state, "cross_signal": None}
+    with agent_scope("cross_signal"):
+        try:
+            payload = (
+                raw
+                if isinstance(raw, VerificationResult)
+                else VerificationResult.model_validate(raw)
+            )
+            # The contract builder rejects a payload that still contains
+            # insufficient findings. Keep the verified run, drop the rest.
+            verified_only = payload.model_copy(
+                update={
+                    "findings": [
+                        item
+                        for item in payload.findings
+                        if item.verification_status is FindingCheckStatus.VERIFIED
+                    ]
+                }
+            )
+            cs_input = build_cross_signal_input(verified_only, state["request"])
+            output = await run_cross_signal(cs_input)
+        except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
+            print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
+            record_event(
+                "failure",
+                agent="cross_signal",
+                level="ERROR",
+                message=f"{type(exc).__name__}: {exc}",
+            )
+            return {**state, "cross_signal": None}
 
-    dumped = output.model_dump(mode="json")
-    print("\n" + "=" * 72)
-    print("[cross_signal] OUTPUT")
-    print("=" * 72)
-    print(json.dumps(dumped, indent=2, default=str))
-    print(
-        f"  [cross_signal] {dumped.get('status', 'unknown')} "
-        f"({len(dumped.get('signals') or [])} signals)"
-    )
-    return {**state, "cross_signal": dumped}
+        dumped = output.model_dump(mode="json")
+        print("\n" + "=" * 72)
+        print("[cross_signal] OUTPUT")
+        print("=" * 72)
+        print(json.dumps(dumped, indent=2, default=str))
+        print(
+            f"  [cross_signal] {dumped.get('status', 'unknown')} "
+            f"({len(dumped.get('signals') or [])} signals)"
+        )
+        return {**state, "cross_signal": dumped}
 
 
 def exhausted_node(state: OrchestrationState) -> OrchestrationState:

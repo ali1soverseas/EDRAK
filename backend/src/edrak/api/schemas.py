@@ -8,7 +8,9 @@ from pydantic import BaseModel, Field
 
 from edrak.contracts import (
     BusinessRequest,
+    DatabaseConnectionConfig,
     ResearchPlan,
+    RESTAPIConfig,
     UseCase,
     WorkerType,
 )
@@ -97,6 +99,8 @@ class CompanyFields(BaseModel):
     strategic_goals: str = ""
     website: str = ""
     socials: list[CompanyLink] = Field(default_factory=list)
+    db_config: Optional[DatabaseConnectionConfig] = None
+    api_config: Optional[RESTAPIConfig] = None
 
 
 class CompanySetupOut(CompanyFields):
@@ -120,6 +124,8 @@ class AnalysisForm(BaseModel):
     time_window_days: Optional[int] = None
     sources: dict[str, bool] = Field(default_factory=dict)
     repeat_weekly: bool = False
+    db_config: Optional[DatabaseConnectionConfig] = None
+    api_config: Optional[RESTAPIConfig] = None
 
 
 class DraftPlanRequest(BaseModel):

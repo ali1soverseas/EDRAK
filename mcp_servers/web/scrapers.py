@@ -106,7 +106,21 @@ def _key(name: str, scope: str | None = None) -> tuple[str, str]:
 
 
 def _query_spec(item) -> dict:
-    """Accept a keyword string or a planner query object."""
+    """Accept a keyword string, a JSON query object, or a planner query dict.
+
+    Search tool signatures stay List[str]. A string that starts with '{' is a
+    query object (q, gl, hl, recency, language) encoded by the market worker.
+    """
+    if isinstance(item, str):
+        text = item.strip()
+        if text.startswith("{") and text.endswith("}"):
+            try:
+                loaded = json.loads(text)
+            except json.JSONDecodeError:
+                loaded = None
+            if isinstance(loaded, dict):
+                return _query_spec(loaded)
+        return {"q": text}
     if isinstance(item, dict):
         text = str(item.get("q") or item.get("query") or "").strip()
         return {**item, "q": text}
