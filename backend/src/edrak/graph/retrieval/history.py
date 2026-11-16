@@ -80,7 +80,7 @@ class TrendPoint:
 
 
 Q_ASSESSMENTS = """
-MATCH (a:Assessment {workspace_id: $ws})-[:OF]->(c:Company)
+MATCH (a:Assessment {workspace_id: $ws})-[:EVALUATES]->(c:Company)
 WHERE ($entity_ids IS NULL OR c.id IN $entity_ids)
   AND ($exclude IS NULL OR a.request_id <> $exclude)
 RETURN c.id AS company_id, coalesce(a.competitor, c.name) AS competitor, a.dimension AS dimension,
@@ -93,9 +93,9 @@ LIMIT $limit
 Q_THEMES = """
 MATCH (o:ThemeObservation {workspace_id: $ws})
 WHERE ($exclude IS NULL OR o.request_id <> $exclude)
-OPTIONAL MATCH (o)-[:OF_THEME]->(t:Theme)
+OPTIONAL MATCH (o)-[:ABOUT_THEME]->(t:Theme)
 WITH o, head(collect(t.name)) AS theme
-WHERE ($theme_ids IS NULL OR EXISTS { MATCH (o)-[:OF_THEME]->(x:Theme) WHERE x.id IN $theme_ids })
+WHERE ($theme_ids IS NULL OR EXISTS { MATCH (o)-[:ABOUT_THEME]->(x:Theme) WHERE x.id IN $theme_ids })
 RETURN o.label AS label, theme, o.count AS count, o.share AS share,
        o.sentiment_negative AS sentiment_negative, o.observed_at AS observed_at, o.request_id AS request_id
 ORDER BY o.observed_at DESC, o.count DESC
@@ -103,9 +103,9 @@ LIMIT $limit
 """
 
 Q_TRENDS = """
-MATCH (ts:TrendSeries {workspace_id: $ws})-[:FOR_TERM]->(k:SearchTerm)
+MATCH (ts:TrendSeries {workspace_id: $ws})
 WHERE ($exclude IS NULL OR ts.request_id <> $exclude)
-  AND ($entity_ids IS NULL OR EXISTS { MATCH (k)-[:REFERS_TO]->(x) WHERE x.id IN $entity_ids })
+  AND ($entity_ids IS NULL OR ts.term_id IN $entity_ids OR EXISTS { MATCH (ts)-[:APPLIES_TO]->(x) WHERE x.id IN $entity_ids })
 RETURN ts.keyword AS keyword, ts.geo AS geo, ts.timeframe AS timeframe, ts.first_value AS first_value,
        ts.latest_value AS latest_value, ts.peak_value AS peak_value, ts.points AS points,
        ts.observed_at AS observed_at, ts.request_id AS request_id

@@ -21,18 +21,12 @@ CREATE CONSTRAINT user_id          IF NOT EXISTS FOR (n:User)               REQU
 CREATE CONSTRAINT monitor_id       IF NOT EXISTS FOR (n:Monitor)            REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT document_id      IF NOT EXISTS FOR (n:Document)           REQUIRE n.id IS UNIQUE;
 
-// Request and plan (contracts/request.py, task.py, metrics.py)
+// Business Request (top-level run anchor)
 CREATE CONSTRAINT request_id       IF NOT EXISTS FOR (n:BusinessRequest)    REQUIRE n.request_id IS UNIQUE;
-CREATE CONSTRAINT plan_id          IF NOT EXISTS FOR (n:ResearchPlan)       REQUIRE n.plan_id IS UNIQUE;
-CREATE CONSTRAINT task_id          IF NOT EXISTS FOR (n:ResearchTask)       REQUIRE n.task_id IS UNIQUE;
-CREATE CONSTRAINT worker_type      IF NOT EXISTS FOR (n:Worker)             REQUIRE n.type IS UNIQUE;
-CREATE CONSTRAINT requirement_key  IF NOT EXISTS FOR (n:MetricRequirement)  REQUIRE n.key IS UNIQUE;   // task_id|metric_id|entity
 
 // Research output (contracts/result.py, evidence.py)
-CREATE CONSTRAINT result_key       IF NOT EXISTS FOR (n:WorkerResult)       REQUIRE n.key IS UNIQUE;   // task_id|attempt
 CREATE CONSTRAINT finding_id       IF NOT EXISTS FOR (n:Finding)            REQUIRE n.finding_id IS UNIQUE;
 CREATE CONSTRAINT evidence_id      IF NOT EXISTS FOR (n:Evidence)           REQUIRE n.evidence_id IS UNIQUE;
-CREATE CONSTRAINT source_host      IF NOT EXISTS FOR (n:Source)             REQUIRE n.host IS UNIQUE;
 CREATE CONSTRAINT conflict_key     IF NOT EXISTS FOR (n:Conflict)           REQUIRE n.key IS UNIQUE;   // result_key|finding_id|n
 CREATE CONSTRAINT gap_id           IF NOT EXISTS FOR (n:InformationGap)     REQUIRE n.id IS UNIQUE;
 
@@ -42,14 +36,12 @@ CREATE CONSTRAINT product_id       IF NOT EXISTS FOR (n:Product)            REQU
 CREATE CONSTRAINT market_id        IF NOT EXISTS FOR (n:Market)             REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT topic_id         IF NOT EXISTS FOR (n:Topic)              REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT segment_id       IF NOT EXISTS FOR (n:CustomerSegment)    REQUIRE n.id IS UNIQUE;
-CREATE CONSTRAINT account_url      IF NOT EXISTS FOR (n:SocialAccount)      REQUIRE n.url IS UNIQUE;
 CREATE CONSTRAINT theme_id         IF NOT EXISTS FOR (n:Theme)              REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT feature_id       IF NOT EXISTS FOR (n:Feature)            REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT pricing_plan_id  IF NOT EXISTS FOR (n:PricingPlan)        REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT regulation_id    IF NOT EXISTS FOR (n:Regulation)         REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT platform_id      IF NOT EXISTS FOR (n:Platform)           REQUIRE n.id IS UNIQUE;
-CREATE CONSTRAINT industry_id      IF NOT EXISTS FOR (n:Industry)           REQUIRE n.id IS UNIQUE;    // company_profiles.industry, entities.sector
-CREATE CONSTRAINT search_term_id   IF NOT EXISTS FOR (n:SearchTerm)         REQUIRE n.id IS UNIQUE;    // slug of the keyword
+CREATE CONSTRAINT industry_id      IF NOT EXISTS FOR (n:Industry)           REQUIRE n.id IS UNIQUE;
 
 // Company systems the internal worker reads (CompanyProfile.db_config / api_config, tri_modal_retriever.py)
 CREATE CONSTRAINT data_source_id   IF NOT EXISTS FOR (n:DataSource)         REQUIRE n.id IS UNIQUE;    // stable_id(workspace|channel|db_id or api_id)

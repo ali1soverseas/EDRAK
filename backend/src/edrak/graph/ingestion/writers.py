@@ -69,15 +69,14 @@ MERGE (p:Company {{id: $pilot.id}})
 SET p.name = coalesce(p.name, $pilot.name),
     p.website = coalesce($pilot.website, p.website),
     p.notes = coalesce($pilot.notes, p.notes),
+    p.domains = $pilot.domains,
+    p.social_accounts = [a IN $pilot.accounts | a.url],
     p.aliases = {_dedupe("p.aliases", "$pilot.aliases")}
 MERGE (r)-[:ABOUT_COMPANY]->(p)
-FOREACH (h IN $pilot.domains |
-  MERGE (s:Source {{host: h}})
-  MERGE (p)-[:OWNS_DOMAIN]->(s))
 FOREACH (_ IN CASE WHEN $ws IS NULL THEN [] ELSE [1] END |
   MERGE (w:Workspace {{id: $ws}})
   MERGE (r)-[:IN_WORKSPACE]->(w)
-  MERGE (w)-[:OWNS_PROFILE]->(p)
+  MERGE (w)-[:ANALYZES_COMPANY]->(p)
   FOREACH (d IN $data_sources |
     MERGE (ds:DataSource {{id: d.id}})
     SET ds += d.props
@@ -85,9 +84,6 @@ FOREACH (_ IN CASE WHEN $ws IS NULL THEN [] ELSE [1] END |
 FOREACH (_ IN CASE WHEN $user IS NULL THEN [] ELSE [1] END |
   MERGE (u:User {{id: $user}})
   MERGE (u)-[:CREATED]->(r))
-FOREACH (a IN $pilot.accounts |
-  MERGE (s:SocialAccount {{url: a.url}}) SET s.platform = a.platform
-  MERGE (p)-[:HAS_ACCOUNT]->(s))
 FOREACH (pr IN $products |
   MERGE (x:Product {{id: pr.id}}) ON CREATE SET x.name = pr.name
   MERGE (p)-[:OFFERS]->(x))
@@ -95,14 +91,10 @@ FOREACH (c IN $competitors |
   MERGE (x:Company {{id: c.id}})
   SET x.name = coalesce(x.name, c.name),
       x.website = coalesce(c.website, x.website),
+      x.domains = c.domains,
+      x.social_accounts = [a IN c.accounts | a.url],
       x.aliases = {_dedupe("x.aliases", "c.aliases")}
-  MERGE (r)-[rel:COMPARES_AGAINST]->(x) SET rel.discovered_by = c.discovered_by
-  FOREACH (h IN c.domains |
-    MERGE (s:Source {{host: h}})
-    MERGE (x)-[:OWNS_DOMAIN]->(s))
-  FOREACH (a IN c.accounts |
-    MERGE (s:SocialAccount {{url: a.url}}) SET s.platform = a.platform
-    MERGE (x)-[:HAS_ACCOUNT]->(s)))
+  MERGE (r)-[rel:COMPARES_AGAINST]->(x) SET rel.discovered_by = c.discovered_by)
 FOREACH (m IN $markets |
   MERGE (x:Market {{id: m.id}}) ON CREATE SET x.name = m.name
   MERGE (r)-[:IN_MARKET]->(x))
@@ -255,91 +247,15 @@ def ingest_request(
     return index
 
 
-Q_PLAN = """
-MATCH (r:BusinessRequest {request_id: $rid})
-MERGE (pl:ResearchPlan {plan_id: $plan_id})
-SET pl += $plan_props
-MERGE (r)-[:HAS_PLAN]->(pl)
-FOREACH (t IN $tasks |
-  MERGE (rt:ResearchTask {task_id: t.task_id})
-  SET rt += t.props
-  MERGE (pl)-[h:HAS_TASK]->(rt) SET h.position = t.position
-  MERGE (wk:Worker {type: t.worker})
-  MERGE (rt)-[:ASSIGNED_TO]->(wk)
-  FOREACH (q IN t.requirements |
-    MERGE (mr:MetricRequirement {key: q.key})
-    SET mr += q.props
-    MERGE (rt)-[:REQUIRES]->(mr)
-    MERGE (m:Metric {metric_id: q.metric_id})
-    MERGE (mr)-[:FOR_METRIC]->(m)
-    FOREACH (_ IN CASE WHEN q.company_id IS NULL THEN [] ELSE [1] END |
-      MERGE (c:Company {id: q.company_id}) ON CREATE SET c.name = q.entity
-      MERGE (mr)-[:FOR_ENTITY]->(c))
-    FOREACH (_ IN CASE WHEN q.market_id IS NULL THEN [] ELSE [1] END |
-      MERGE (mk:Market {id: q.market_id}) ON CREATE SET mk.name = q.entity
-      MERGE (mr)-[:FOR_ENTITY]->(mk))
-    FOREACH (_ IN CASE WHEN q.product_id IS NULL THEN [] ELSE [1] END |
-      MERGE (pd:Product {id: q.product_id}) ON CREATE SET pd.name = q.entity
-      MERGE (mr)-[:FOR_ENTITY]->(pd))))
-"""
-
-
 def ingest_plan(conn: GraphConnection, plan: Any, *, request_id: str, index: EntityIndex) -> set[str]:
-    """ResearchPlan -> plan, tasks, workers, metric requirements. Returns the requirement keys."""
-    tasks, keys = [], set()
-    for position, task in enumerate(get(plan, "tasks") or []):
+    """ResearchPlan, tasks, workers and metric requirements remain in SQLite/artifacts to keep Neo4j focused on domain intelligence."""
+    keys = set()
+    for task in get(plan, "tasks") or []:
         task_id = get(task, "task_id")
-        requirements = []
         for req in get(task, "requirements") or []:
             metric_id, entity = get(req, "metric_id"), get(req, "entity")
-            ref = index.resolve(entity)
-            key = requirement_key(task_id, metric_id, entity)
-            keys.add(key)
-            requirements.append(
-                {
-                    "key": key,
-                    "metric_id": metric_id,
-                    "entity": entity,
-                    "company_id": ref.id if ref and ref.label == COMPANY else None,
-                    "market_id": ref.id if ref and ref.label == MARKET else None,
-                    "product_id": ref.id if ref and ref.label == PRODUCT else None,
-                    "props": primitive_props(
-                        {
-                            "metric_id": metric_id,
-                            "entity": entity,
-                            "required": get(req, "required"),
-                            "definition": get(req, "definition"),
-                            "check_rule": get(req, "check_rule"),
-                            "preferred_source_types": list(get(req, "preferred_source_types") or []),
-                            "query_hints": list(get(req, "query_hints") or []),
-                        }
-                    ),
-                }
-            )
-        tasks.append(
-            {
-                "task_id": task_id,
-                "worker": enum_value(get(task, "worker")),
-                "position": position,
-                "props": primitive_props(
-                    {
-                        "goal": get(task, "goal"),
-                        "focus": get(task, "focus"),
-                        "attempt": get(task, "attempt"),
-                        "worker": get(task, "worker"),
-                        "request_id": request_id,
-                    }
-                ),
-                "requirements": requirements,
-            }
-        )
-    conn.write(
-        Q_PLAN,
-        rid=request_id,
-        plan_id=get(plan, "plan_id"),
-        plan_props=primitive_props({"rationale": get(plan, "rationale"), "created_at": get(plan, "created_at")}),
-        tasks=tasks,
-    )
+            if task_id and metric_id and entity:
+                keys.add(requirement_key(task_id, metric_id, entity))
     return keys
 
 
@@ -441,26 +357,16 @@ def read_catalog(conn: GraphConnection, workspace_id: str | None) -> list[dict[s
 # ============================================================================= worker results
 
 Q_RESULT = """
-MERGE (rt:ResearchTask {task_id: $task_id})
-MERGE (wr:WorkerResult {key: $key})
-SET wr += $props
-MERGE (rt)-[:RETURNED]->(wr)
-MERGE (wk:Worker {type: $worker})
-MERGE (wr)-[:PRODUCED_BY]->(wk)
+RETURN 1
 """
 
 Q_EVIDENCE = """
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MERGE (e:Evidence {evidence_id: row.evidence_id})
 SET e += row.props,
     e.workspace_ids = CASE
       WHEN $ws IS NULL OR $ws IN coalesce(e.workspace_ids, []) THEN coalesce(e.workspace_ids, [])
       ELSE coalesce(e.workspace_ids, []) + $ws END
-MERGE (wr)-[:COLLECTED]->(e)
-FOREACH (_ IN CASE WHEN row.host IS NULL THEN [] ELSE [1] END |
-  MERGE (s:Source {host: row.host})
-  MERGE (e)-[:PUBLISHED_BY]->(s))
 FOREACH (_ IN CASE WHEN row.document_id IS NULL THEN [] ELSE [1] END |
   MERGE (d:Document {id: row.document_id})
   ON CREATE SET d.title = row.props.source_title
@@ -492,11 +398,11 @@ FOREACH (tid IN row.themes |
 """
 
 Q_FINDINGS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MERGE (f:Finding {finding_id: row.finding_id})
 SET f += row.props
-MERGE (wr)-[:PRODUCED]->(f)
+MERGE (r)-[:DISCOVERED]->(f)
 FOREACH (ref IN row.refs |
   MERGE (e:Evidence {evidence_id: ref.evidence_id})
   FOREACH (_ IN CASE WHEN ref.relation = 'supports' THEN [1] ELSE [] END |
@@ -531,32 +437,29 @@ FOREACH (eid IN row.evidence_ids |
 """
 
 Q_GAPS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MERGE (g:InformationGap {id: row.id})
 ON CREATE SET g.status = 'open', g.created_at = $now
 SET g.subject = row.subject, g.worker = $worker, g.request_id = $rid, g.workspace_id = $ws
-MERGE (wr)-[:REPORTED_GAP]->(g)
+MERGE (r)-[:IDENTIFIED_GAP]->(g)
 """
 
 Q_OBSERVATIONS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MERGE (o:MetricObservation {key: row.key})
 SET o += row.props
-MERGE (wr)-[:OBSERVED]->(o)
+MERGE (r)-[:OBSERVED]->(o)
 FOREACH (_ IN CASE WHEN row.metric_id IS NULL THEN [] ELSE [1] END |
   MERGE (m:Metric {metric_id: row.metric_id})
-  MERGE (o)-[:MEASURES]->(m))
+  MERGE (o)-[:MEASURES_METRIC]->(m))
 FOREACH (_ IN CASE WHEN row.company_id IS NULL THEN [] ELSE [1] END |
   MERGE (c:Company {id: row.company_id}) ON CREATE SET c.name = row.entity
-  MERGE (o)-[:OF]->(c))
+  MERGE (o)-[:APPLIES_TO]->(c))
 FOREACH (_ IN CASE WHEN row.market_id IS NULL THEN [] ELSE [1] END |
   MERGE (m:Market {id: row.market_id}) ON CREATE SET m.name = row.entity
-  MERGE (o)-[:OF]->(m))
-FOREACH (_ IN CASE WHEN row.req_key IS NULL THEN [] ELSE [1] END |
-  MERGE (mr:MetricRequirement {key: row.req_key})
-  MERGE (mr)-[:FULFILLED_BY]->(o))
+  MERGE (o)-[:APPLIES_TO]->(m))
 MERGE (e:Evidence {evidence_id: row.evidence_id})
 MERGE (o)-[x:EXTRACTED_FROM]->(e)
 SET x.source_span = row.source_span
@@ -751,7 +654,7 @@ def ingest_worker_result(
             matched.append(index.pilot)  # internal findings are about our own company by definition
         for ref in matched:
             about[ref.label].append({"finding_id": fid, "entity_id": ref.id})
-    conn.write_batches(Q_FINDINGS, finding_rows, key=key)
+    conn.write_batches(Q_FINDINGS, finding_rows, rid=request_id)
     for label, rows in about.items():
         if rows:
             conn.write_batches(about_query(label), rows)
@@ -776,7 +679,7 @@ def ingest_worker_result(
         if isinstance(gap, str) and gap.strip()
     ]
     if gap_rows:
-        conn.write_batches(Q_GAPS, gap_rows, key=key, now=now, worker=worker, rid=request_id, ws=workspace_id)
+        conn.write_batches(Q_GAPS, gap_rows, now=now, worker=worker, rid=request_id, ws=workspace_id)
 
     # --- typed metric observations (WorkerResult.metadata["metrics"], see metrics/requirements.py)
     obs_rows: list[dict[str, Any]] = []
@@ -833,9 +736,9 @@ def ingest_worker_result(
             }
         )
     if obs_rows:
-        conn.write_batches(Q_OBSERVATIONS, obs_rows, key=key)
-        _write_links(conn, obs_of, "MetricObservation", "key", "OF")
-        _write_links(conn, obs_items, "MetricObservation", "key", "OF_ITEM")
+        conn.write_batches(Q_OBSERVATIONS, obs_rows, rid=request_id)
+        _write_links(conn, obs_of, "MetricObservation", "key", "APPLIES_TO")
+        _write_links(conn, obs_items, "MetricObservation", "key", "APPLIES_TO")
 
     counts = {
         "evidence": len(evidence_rows),
@@ -863,20 +766,17 @@ def ingest_worker_result(
 Q_COMPETITOR_META = """
 UNWIND $rows AS row
 MATCH (:BusinessRequest {request_id: $rid})-[rel:COMPARES_AGAINST]->(c:Company {id: row.id})
-SET rel += row.props
-FOREACH (h IN row.domains |
-  MERGE (s:Source {host: h})
-  MERGE (c)-[:OWNS_DOMAIN]->(s))
+SET rel += row.props, c.domains = row.domains
 """
 
 Q_ASSESSMENTS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MATCH (c:Company {id: row.company_id})
 MERGE (a:Assessment {key: row.key})
 SET a += row.props
-MERGE (wr)-[:ASSESSED]->(a)
-MERGE (a)-[:OF]->(c)
+MERGE (r)-[:ASSESSED]->(a)
+MERGE (a)-[:EVALUATES]->(c)
 MERGE (t:Topic {id: row.dimension_id}) ON CREATE SET t.name = row.dimension
 MERGE (a)-[:ON_DIMENSION]->(t)
 WITH a, row
@@ -889,24 +789,22 @@ MERGE (a)-[:CITES]->(e)
 """
 
 Q_THEME_OBSERVATIONS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
 MERGE (o:ThemeObservation {key: row.key})
 SET o += row.props
-MERGE (wr)-[:OBSERVED_THEME]->(o)
+MERGE (r)-[:OBSERVED_THEME]->(o)
 FOREACH (tid IN row.themes |
   MERGE (t:Theme {id: tid})
-  MERGE (o)-[:OF_THEME]->(t))
+  MERGE (o)-[:ABOUT_THEME]->(t))
 """
 
 Q_TRENDS = """
+MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
-MATCH (wr:WorkerResult {key: $key})
-MERGE (k:SearchTerm {id: row.term_id}) ON CREATE SET k.name = row.term
 MERGE (ts:TrendSeries {key: row.key})
-SET ts += row.props
-MERGE (wr)-[:OBSERVED_TREND]->(ts)
-MERGE (ts)-[:FOR_TERM]->(k)
+SET ts += row.props, ts.term = row.term
+MERGE (r)-[:OBSERVED_TREND]->(ts)
 """
 
 
@@ -990,7 +888,7 @@ def ingest_competitor_metadata(
                 }
             )
     if assessments:
-        conn.write_batches(Q_ASSESSMENTS, assessments, key=key, pilot=pilot.id if pilot else None)
+        conn.write_batches(Q_ASSESSMENTS, assessments, rid=request_id, pilot=pilot.id if pilot else None)
     return {"competitor_details": len(competitor_rows), "assessments": len(assessments)}
 
 
@@ -998,9 +896,9 @@ def ingest_customer_metadata(
     meta: dict[str, Any], *, conn: GraphConnection, key: str, request_id: str, workspace_id: str | None,
     index: EntityIndex, seen_at: str,
 ) -> dict[str, int]:
-    """themes -> ThemeObservation (OF_THEME a catalog Theme when the label matches one);
-    trend_series -> SearchTerm + TrendSeries (SearchTerm REFERS_TO a known entity);
-    stance_counts -> (WorkerResult)-[:MEASURED_STANCE {positive, neutral, negative, mixed, total}]->(entity).
+    """themes -> ThemeObservation (ABOUT_THEME a catalog Theme when the label matches one);
+    trend_series -> TrendSeries (APPLIES_TO a known entity);
+    stance_counts -> (BusinessRequest)-[:MEASURED_STANCE {positive, neutral, negative, mixed, total}]->(entity).
 
     Theme labels are written by the analyst model, so they never become Theme nodes themselves.
     """
@@ -1029,7 +927,7 @@ def ingest_customer_metadata(
             }
         )
     if theme_rows:
-        conn.write_batches(Q_THEME_OBSERVATIONS, theme_rows, key=key)
+        conn.write_batches(Q_THEME_OBSERVATIONS, theme_rows, rid=request_id)
 
     trend_rows, refers = [], {}
     for series in meta.get("trend_series") or []:
@@ -1045,9 +943,10 @@ def ingest_customer_metadata(
         if not values:
             continue
         geo, timeframe = get(series, "geo"), get(series, "timeframe")
+        ts_key = stable_id(key, term_id, geo, timeframe)
         trend_rows.append(
             {
-                "key": stable_id(key, term_id, geo, timeframe),
+                "key": ts_key,
                 "term_id": term_id,
                 "term": term,
                 "props": primitive_props(
@@ -1070,10 +969,11 @@ def ingest_customer_metadata(
         )
         ref = index.resolve(term)
         if ref is not None:
-            refers.setdefault(ref.label, []).append({"source": term_id, "entity_id": ref.id})
+            refers.setdefault(ref.label, []).append({"source": ts_key, "entity_id": ref.id})
     if trend_rows:
-        conn.write_batches(Q_TRENDS, trend_rows, key=key)
-        _write_links(conn, refers, "SearchTerm", "id", "REFERS_TO")
+        conn.write_batches(Q_TRENDS, trend_rows, rid=request_id)
+        if refers:
+            _write_links(conn, refers, "TrendSeries", "key", "APPLIES_TO")
 
     stances: dict[str, list[dict[str, Any]]] = {}
     counts = meta.get("stance_counts") if isinstance(meta.get("stance_counts"), dict) else {}
@@ -1086,9 +986,9 @@ def ingest_customer_metadata(
             continue
         props = {s: int(tally.get(s) or 0) for s in _STANCES}
         stances.setdefault(ref.label, []).append(
-            {"source": key, "entity_id": ref.id, "props": {**props, "total": total, "request_id": request_id}}
+            {"source": request_id, "entity_id": ref.id, "props": {**props, "total": total, "request_id": request_id, "workspace_id": workspace_id}}
         )
-    stance_count = _write_links(conn, stances, "WorkerResult", "key", "MEASURED_STANCE", edge_props=True)
+    stance_count = _write_links(conn, stances, "BusinessRequest", "request_id", "MEASURED_STANCE", edge_props=True)
 
     return {"theme_observations": len(theme_rows), "trend_series": len(trend_rows), "stance_tallies": stance_count}
 
@@ -1181,10 +1081,7 @@ MATCH (r:BusinessRequest {request_id: $rid})
 UNWIND $rows AS row
 MERGE (s:CrossSignal {signal_id: row.signal_id})
 SET s += row.props, s.request_id = $rid, s.workspace_id = $ws
-MERGE (r)-[:HAS_SIGNAL]->(s)
-FOREACH (w IN row.workers |
-  MERGE (wk:Worker {type: w})
-  MERGE (s)-[:SPANS]->(wk))
+MERGE (r)-[:SYNTHESIZES_SIGNAL]->(s)
 WITH s, row
 UNWIND row.support AS sup
 MATCH (f:Finding {finding_id: sup.finding_id})
@@ -1237,7 +1134,7 @@ Q_ANALYSIS = """
 MATCH (r:BusinessRequest {request_id: $rid})
 MERGE (a:DecisionAnalysis {analysis_id: $aid})
 SET a += $props
-MERGE (r)-[:HAS_ANALYSIS]->(a)
+MERGE (r)-[:INFORMS_DECISION]->(a)
 """
 
 _KINDS = {  # list field -> (label, key property, relationship from DecisionAnalysis)

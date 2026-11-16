@@ -37,7 +37,12 @@ ENTITY_LABELS = (
 # Labels that come from a curated catalog rather than from the BusinessRequest, and how a catalog
 # entry is attached to its owner: (owner)-[:REL]->(entity).
 CATALOG_LABELS = (PRODUCT, FEATURE, PRICING_PLAN, REGULATION, THEME, PLATFORM, INDUSTRY)
-OWNER_RELATIONSHIPS = {PRODUCT: "OFFERS", FEATURE: "HAS_FEATURE", PRICING_PLAN: "HAS_PLAN", INDUSTRY: "IN_INDUSTRY"}
+OWNER_RELATIONSHIPS = {
+    PRODUCT: "OFFERS",
+    FEATURE: "INTEGRATES",
+    PRICING_PLAN: "MONETIZES_VIA",
+    INDUSTRY: "IN_INDUSTRY",
+}
 
 # Labels a MetricObservation, MetricRequirement or stance tally may point at. Market entities only:
 # a figure is always "of" something the request or the catalog named.

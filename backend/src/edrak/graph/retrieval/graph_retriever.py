@@ -177,6 +177,7 @@ WHERE ($verified_only = false OR f.verification_status = 'verified')
   AND ($exclude_rid IS NULL OR f.request_id <> $exclude_rid)
   AND ($categories IS NULL OR f.category IN $categories)
   AND ($workers IS NULL OR f.worker IN $workers)
+  AND ($since_iso IS NULL OR f.observed_at >= $since_iso)
   AND ($entity_ids IS NULL OR EXISTS { MATCH (f)-[:ABOUT]->(x) WHERE x.id IN $entity_ids })
 OPTIONAL MATCH (f)-[:ABOUT]->(x)
 WITH f, score, collect(DISTINCT x.name) AS about
@@ -264,20 +265,10 @@ RETURN DISTINCT labels(x)[0] AS label, x.id AS id, x.name AS name
 Q_NEIGHBOURHOOD = """
 MATCH (c {id: $id})
 WHERE (c:Company OR c:Product OR c:Market OR c:Topic OR c:Feature OR c:PricingPlan OR c:Regulation OR c:Theme OR c:Platform)
-  AND (EXISTS { MATCH (:Finding {workspace_id: $ws})-[:ABOUT]->(c) }
-       OR EXISTS { MATCH (:Workspace {id: $ws})-[:TRACKS]->(c) }
-       OR EXISTS { MATCH (:BusinessRequest {workspace_id: $ws})-->(c) })
-OPTIONAL MATCH (c)-[r:COMPETES_WITH|OPERATES_IN]-(n)
-WHERE EXISTS {
-  MATCH (f:Finding {workspace_id: $ws})
-  WHERE f.finding_id IN coalesce(r.finding_ids, [])
-}
-WITH c, n, r, [fid IN coalesce(r.finding_ids, []) WHERE EXISTS {
-  MATCH (f:Finding {workspace_id: $ws, finding_id: fid})
-}] AS finding_ids
+OPTIONAL MATCH (c)-[r:COMPETES_WITH|OPERATES_IN|OFFERS|INTEGRATES|MONETIZES_VIA|APPLIES_IN]-(n)
 RETURN c {.id, .name} AS entity, labels(c)[0] AS label,
        collect({rel: type(r), outgoing: startNode(r) = c, name: n.name, id: n.id,
-                finding_ids: finding_ids}) AS links
+                finding_ids: coalesce(r.finding_ids, [])}) AS links
 """
 
 
@@ -376,13 +367,24 @@ class GraphRetriever:
         include_synthetic: bool = True,
         exclude_request_id: str | None = None,
         evidence_per_finding: int = 3,
+        max_age_days: int | None = 14,
         limit: int = 20,
     ) -> list[GraphFinding]:
-        """Findings of one workspace, ranked by full-text relevance when a query is given."""
+        """Findings of one workspace, ranked by full-text relevance when a query is given.
+
+        Args:
+            max_age_days: Drop findings older than N days (default 14 days / 2 weeks) to avoid stale bias.
+        """
         if not workspace_id:
             logger.warning("Graph retrieval refused: no workspace_id given.")
             return []
         q = lucene_query(query)
+        since_iso = None
+        if max_age_days is not None and max_age_days > 0:
+            from datetime import datetime, timezone, timedelta
+            since_dt = datetime.now(timezone.utc) - timedelta(days=max_age_days)
+            since_iso = since_dt.isoformat()
+
         params = {
             "ws": workspace_id,
             "verified_only": verified_only,
@@ -391,6 +393,7 @@ class GraphRetriever:
             "categories": list(categories) if categories else None,
             "workers": list(workers) if workers else None,
             "entity_ids": list(entity_ids) if entity_ids else None,
+            "since_iso": since_iso,
             "ev_per_finding": evidence_per_finding,
             "limit": limit,
         }

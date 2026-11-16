@@ -43,7 +43,7 @@ def ingest_profile_snapshot(
         SET p.workspace_id = $ws, p.request_id = $request_id, p.industries = $industries,
             p.industry_other = $industry_other, p.goals = $goals,
             p.target_customers = $target_customers
-        MERGE (w)-[:HAS_PROFILE_SNAPSHOT]->(p)
+        MERGE (w)-[:CAPTURES_SNAPSHOT]->(p)
         MERGE (r)-[:USES_PROFILE_SNAPSHOT]->(p)
         MERGE (p)-[:PROFILE_OF]->(c)
         WITH p

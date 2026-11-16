@@ -179,14 +179,14 @@ ORDER BY source, asset
 """
 
 Q_DEMO_STANCES = """
-MATCH (wr:WorkerResult {workspace_id: $ws})-[s:MEASURED_STANCE]->(x)
+MATCH (r:BusinessRequest {workspace_id: $ws})-[s:MEASURED_STANCE]->(x)
 RETURN x.name AS entity, s.request_id AS request_id, s.positive AS positive, s.negative AS negative, s.total AS total
 ORDER BY entity, request_id
 """
 
 Q_DEMO_DOMAINS = """
-MATCH (r:BusinessRequest {request_id: $rid})-[:ABOUT_COMPANY|COMPARES_AGAINST]->(c:Company)-[:OWNS_DOMAIN]->(s:Source)
-RETURN c.name AS company, collect(s.host) AS hosts ORDER BY company
+MATCH (r:BusinessRequest {request_id: $rid})-[:ABOUT_COMPANY|COMPARES_AGAINST]->(c:Company)
+RETURN c.name AS company, coalesce(c.domains, []) AS hosts ORDER BY company
 """
 
 
