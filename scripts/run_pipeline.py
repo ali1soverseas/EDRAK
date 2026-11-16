@@ -43,7 +43,7 @@ from pydantic import BaseModel, Field, field_validator
 
 # The orchestration chain imports core.config, which constructs Settings at import
 # time. Those imports are deliberately deferred into the functions that need them
-# so a missing NVIDIA_API_KEY produces a readable message instead of a traceback.
+# so a missing OPENROUTER_API_KEY produces a readable message instead of a traceback.
 
 EXIT_COMPLETED = 0
 EXIT_PARTIAL = 1
@@ -113,7 +113,7 @@ def resolve_api_key() -> str | None:
     try:
         from edrak.core.config import settings
 
-        raw = settings.NVIDIA_API_KEY
+        raw = settings.OPENROUTER_API_KEY
         # Settings may declare the key as SecretStr or as a plain str; accept both.
         key = raw.get_secret_value() if hasattr(raw, "get_secret_value") else raw
     except Exception as exc:  # noqa: BLE001 - configuration errors vary by type
@@ -402,8 +402,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if not resolve_api_key():
         print(
-            "NVIDIA_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
-            "Create a key at https://build.nvidia.com/settings/api-keys",
+            "OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
+            "Create a key at https://openrouter.ai/keys",
             file=sys.stderr,
         )
         return EXIT_FAILED

@@ -1,4 +1,4 @@
-"""NVIDIA NIM chat model factory and the structured-output and retry helpers."""
+"""OpenRouter chat model factory and the structured-output and retry helpers."""
 
 import asyncio
 import json
@@ -40,18 +40,22 @@ class StructuredOutputError(RuntimeError):
 
 
 def get_chat_model(role: Role, *, settings: Settings | None = None) -> EdrakChat:
-    """Build the NVIDIA NIM chat model for a role."""
+    """Build the OpenRouter chat model for a role."""
     from edrak.core.llm import get_chat_model as build_model
 
     s = settings or get_settings()
-    model = s.nvidia_model_analysis if role == "analyst" and s.nvidia_model_analysis else s.nvidia_model
+    model = (
+        s.openrouter_model_analysis
+        if role == "analyst" and s.openrouter_model_analysis
+        else s.openrouter_model
+    )
     try:
         return build_model(
             model,
             agent="customer_trends",
-            temperature=s.nvidia_temperature,
-            base_url=s.nvidia_base_url,
-            timeout=s.nvidia_timeout_s,
+            temperature=s.openrouter_temperature,
+            base_url=s.openrouter_base_url,
+            timeout=s.openrouter_timeout_s,
         )
     except RuntimeError as exc:
         raise LLMConfigError(str(exc)) from exc

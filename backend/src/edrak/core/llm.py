@@ -4,12 +4,12 @@ One model, one client. Every component builds its chat model here, so there is
 a single place where the provider, endpoint, credential and output method are
 decided.
 
-The provider is NVIDIA NIM. The endpoint is OpenAI-compatible
-(https://integrate.api.nvidia.com/v1). The default model is
-nvidia/nemotron-3.5-super-vl-120b-a12b: a 120B mixture-of-experts model
-(12B active) with a free build.nvidia.com endpoint, a 262K context, and
-structured output. That covers the long source blocks and nested JSON this
-project sends, without a per-token charge on the free tier.
+The provider is OpenRouter. The endpoint is OpenAI-compatible
+(https://openrouter.ai/api/v1). The default model is openai/gpt-oss-120b:
+a 117B mixture-of-experts model (5.1B active) with a 131K context, native
+structured output, and a reasoning effort control. That is the same model
+the structured-output path in this file was measured on, and 131K covers
+the research and profile blocks this project sends.
 
 Structured output goes through json_schema plus the schema restated in the
 prompt, and both halves are load-bearing. Measured on gpt-oss:120b against the
@@ -52,9 +52,8 @@ if _REPO_ENV.is_file():
     load_dotenv(_REPO_ENV, override=False)
 
 # Every component that can call a model. Each maps to its own credential so one
-# agent exhausting its quota cannot starve the others. On the free NIM tier one
-# key is shared across the account; scoped keys still work when each agent has
-# its own NVIDIA account.
+# agent exhausting its quota cannot starve the others. One OpenRouter key is
+# shared across the account; scoped keys still work when each agent has its own.
 AGENTS = (
     "orchestrator",
     "competitor",
@@ -63,9 +62,6 @@ AGENTS = (
     "cross_signal",
     "customer_trends",
 )
-
-_REASONING_BUDGET = {"low": 1024, "medium": 4096, "high": 8192}
-
 
 def provider_key(name: str, agent: str | None = None, *, backup: bool = True) -> tuple[str, str]:
     """Resolve a credential and report which variable supplied it.
@@ -91,7 +87,7 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
 
     # Scoped variables only exist in the environment. The shared fallback also
     # checks settings, because a credential renamed with an alias (LLM_API_KEY
-    # for NVIDIA_API_KEY) is resolved there and never reaches os.environ.
+    # for OPENROUTER_API_KEY) is resolved there and never reaches os.environ.
     value = os.getenv(name, "").strip()
     if value:
         return value, name
@@ -100,12 +96,12 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
     return str(configured or "").strip(), name
 
 
-def nvidia_key(agent: str | None = None) -> str:
-    key, variable = provider_key("NVIDIA_API_KEY", agent)
+def openrouter_key(agent: str | None = None) -> str:
+    key, variable = provider_key("OPENROUTER_API_KEY", agent)
     if not key:
         raise RuntimeError(
             f"{variable} is not configured. Set it in the environment or .env. "
-            "Create a key at https://build.nvidia.com/settings/api-keys"
+            "Create a key at https://openrouter.ai/keys"
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
@@ -115,16 +111,21 @@ def nvidia_key(agent: str | None = None) -> str:
 # reached 2048 on eight items and was cut off mid-string, which surfaces as a
 # JSON parse error rather than as a truncation. This leaves room for a reply
 # several times that size. It is a ceiling, not a target; temperature and the
-# schema decide the actual length. NIM caps a single completion at 32768; 16384
-# matches the model's published default and stays inside that cap.
+# schema decide the actual length. gpt-oss-120b accepts far more than this;
+# 16384 stays inside a single completion without inviting a runaway reply.
 DEFAULT_MAX_TOKENS = 16384
+
+_OPENROUTER_HEADERS = {
+    "HTTP-Referer": "http://127.0.0.1:5173",
+    "X-Title": "EDRAK",
+}
 
 
 class EdrakChat(ChatOpenAI):
     """ChatOpenAI that also accepts the Ollama-era `format` and `reasoning` invoke kwargs.
 
     Profile import passes the JSON schema as `format` and a reasoning effort as
-    `reasoning`. NIM takes those as response_format and chat_template_kwargs.
+    `reasoning`. OpenRouter takes those as response_format and reasoning.effort.
     Thinking stays off unless a call asks for it, so a long JSON reply is not
     spent on a reasoning trace.
     """
@@ -134,8 +135,10 @@ class EdrakChat(ChatOpenAI):
         reasoning = kwargs.pop("reasoning", None)
         extra_body = dict(kwargs.pop("extra_body", None) or {})
         if reasoning:
-            extra_body["chat_template_kwargs"] = {"enable_thinking": True}
-            extra_body["reasoning_budget"] = _REASONING_BUDGET.get(str(reasoning).lower(), 1024)
+            effort = str(reasoning).lower()
+            if effort not in {"minimal", "low", "medium", "high"}:
+                effort = "low"
+            extra_body["reasoning"] = {"effort": effort}
         bind_kwargs: dict[str, Any] = {}
         if fmt is not None:
             bind_kwargs["response_format"] = {
@@ -165,13 +168,14 @@ def get_chat_model(
     agent's quota separate from another's.
     """
     return EdrakChat(
-        model=model or settings.NVIDIA_MODEL,
-        base_url=base_url or settings.NVIDIA_BASE_URL,
-        api_key=nvidia_key(agent),
-        temperature=settings.NVIDIA_TEMPERATURE if temperature is None else temperature,
+        model=model or settings.OPENROUTER_MODEL,
+        base_url=base_url or settings.OPENROUTER_BASE_URL,
+        api_key=openrouter_key(agent),
+        temperature=settings.OPENROUTER_TEMPERATURE if temperature is None else temperature,
         max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
-        timeout=timeout or settings.NVIDIA_TIMEOUT_S,
+        timeout=timeout or settings.OPENROUTER_TIMEOUT_S,
         max_retries=2,
+        default_headers=_OPENROUTER_HEADERS,
         callbacks=callbacks,
     )
 

@@ -420,7 +420,7 @@ def make_analyze_node():
                 "Run prepare_context_node first."
             )
 
-        # Built through edrak.core.llm so this stage uses the same NVIDIA NIM
+        # Built through edrak.core.llm so this stage uses the same OpenRouter
         # model and per-agent credential scope as every other component.
         #
         # json_schema plus schema_instruction, measured against function_calling

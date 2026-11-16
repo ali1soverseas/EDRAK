@@ -88,7 +88,7 @@ def test_orchestration_versioned_prompts():
 
 def test_get_chat_model_accepts_callbacks(monkeypatch):
     """Verify get_chat_model accepts callbacks parameter without error."""
-    monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-test")
 
     class DummyHandler(BaseCallbackHandler):
         pass

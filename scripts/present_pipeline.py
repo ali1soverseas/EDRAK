@@ -936,8 +936,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if not runner.resolve_api_key():
         print(
-            "NVIDIA_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
-            "Create a key at https://build.nvidia.com/settings/api-keys",
+            "OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
+            "Create a key at https://openrouter.ai/keys",
             file=sys.stderr,
         )
         return runner.EXIT_FAILED

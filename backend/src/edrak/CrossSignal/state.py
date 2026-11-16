@@ -35,7 +35,7 @@ class CrossSignalSettings:
       deduplication, and output assembly
     """
 
-    model: str = core_settings.NVIDIA_MODEL
+    model: str = core_settings.OPENROUTER_MODEL
 
     temperature: float = 0.2
 

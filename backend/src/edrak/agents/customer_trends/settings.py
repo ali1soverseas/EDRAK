@@ -39,30 +39,30 @@ class Settings(BaseSettings):
         validate_by_alias=True,
     )
 
-    # LLM (NVIDIA NIM). The same names as the shared client, so one .env serves every worker.
-    nvidia_base_url: str = Field(
-        default="https://integrate.api.nvidia.com/v1",
-        validation_alias=AliasChoices("NVIDIA_BASE_URL", "LLM_BASE_URL"),
+    # LLM (OpenRouter). The same names as the shared client, so one .env serves every worker.
+    openrouter_base_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        validation_alias=AliasChoices("OPENROUTER_BASE_URL", "LLM_BASE_URL", "NVIDIA_BASE_URL"),
     )
-    nvidia_model: str = Field(
-        default="nvidia/nemotron-3.5-super-vl-120b-a12b",
-        validation_alias=AliasChoices("NVIDIA_MODEL", "LLM_MODEL"),
+    openrouter_model: str = Field(
+        default="openai/gpt-oss-120b",
+        validation_alias=AliasChoices("OPENROUTER_MODEL", "LLM_MODEL", "NVIDIA_MODEL"),
     )
-    nvidia_api_key: SecretStr | None = Field(
+    openrouter_api_key: SecretStr | None = Field(
         default=None,
-        validation_alias=AliasChoices("NVIDIA_API_KEY", "LLM_API_KEY"),
+        validation_alias=AliasChoices("OPENROUTER_API_KEY", "LLM_API_KEY", "NVIDIA_API_KEY"),
     )
-    nvidia_model_analysis: str | None = Field(
+    openrouter_model_analysis: str | None = Field(
         default=None,
-        validation_alias=AliasChoices("NVIDIA_MODEL_ANALYSIS"),
+        validation_alias=AliasChoices("OPENROUTER_MODEL_ANALYSIS", "NVIDIA_MODEL_ANALYSIS"),
     )
-    nvidia_temperature: float = Field(
+    openrouter_temperature: float = Field(
         default=0.2,
-        validation_alias=AliasChoices("NVIDIA_TEMPERATURE", "LLM_TEMPERATURE"),
+        validation_alias=AliasChoices("OPENROUTER_TEMPERATURE", "LLM_TEMPERATURE", "NVIDIA_TEMPERATURE"),
     )
-    nvidia_timeout_s: float = Field(
+    openrouter_timeout_s: float = Field(
         default=180.0,
-        validation_alias=AliasChoices("NVIDIA_TIMEOUT_S"),
+        validation_alias=AliasChoices("OPENROUTER_TIMEOUT_S", "NVIDIA_TIMEOUT_S"),
     )
 
     # Data providers
