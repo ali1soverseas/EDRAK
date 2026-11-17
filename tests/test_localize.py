@@ -38,7 +38,7 @@ def test_arabic_translates_prose_once_and_skips_the_rest(research_db_path):
 
     def translate(texts: list[str]) -> list[str]:
         calls.append(list(texts))
-        return [f"AR:{text}" for text in texts]
+        return [f"ع:{text}" for text in texts]
 
     alert = {
         "title": "Competitor cut prices",
@@ -95,21 +95,21 @@ def test_arabic_translates_prose_once_and_skips_the_rest(research_db_path):
     assert "abcdef0123456789abcdef" not in seen
     assert "A competitor intelligence finding added since the last run." not in seen
 
-    assert first["title"] == "AR:Market is opening"
+    assert first["title"] == "ع:Market is opening"
     assert first["messages"][0]["content"] == "What should we do next?"
-    assert first["messages"][1]["content"] == "AR:The market is opening."
+    assert first["messages"][1]["content"] == "ع:The market is opening."
     assert first["decision"]["rationale"] == "I chose this myself."
-    assert first["claim"]["statement"] == "AR:A verified claim about pricing."
-    assert first["alert"]["title"] == "AR:Competitor cut prices"
+    assert first["claim"]["statement"] == "ع:A verified claim about pricing."
+    assert first["alert"]["title"] == "ع:Competitor cut prices"
     assert first["alert"]["why_key"] == "alert.sinceLastRun"
     assert first["alert"]["what_key"] == "alert.before"
     assert first["alert"]["why_it_matters"].startswith("A competitor")
     assert first["run"]["events"][0]["message_key"] == "run.briefReady"
     assert first["run"]["events"][0]["message"] == "The brief is ready."
     assert first["run"]["events"][1]["message_key"] == "run.noEvidenceNone"
-    assert first["run"]["events"][2]["message_params"]["reason"] == "AR:Prices were not published."
+    assert first["run"]["events"][2]["message_params"]["reason"] == "ع:Prices were not published."
     assert first["run"]["events"][3]["generated"] is True
-    assert first["run"]["events"][3]["message"] == "AR:Workers should look at pricing again."
+    assert first["run"]["events"][3]["message"] == "ع:Workers should look at pricing again."
     assert second == first
     assert len(calls) == 1
 
@@ -125,13 +125,13 @@ def test_a_changed_sentence_is_a_new_cache_row(research_db_path):
 
     def translate(texts: list[str]) -> list[str]:
         calls.extend(texts)
-        return [f"AR:{text}" for text in texts]
+        return [f"ع:{text}" for text in texts]
 
     _run(research_db_path, lambda db: localize_generated(db, {"title": "Market is opening"}, "ar", translate=translate))
     out = _run(research_db_path, lambda db: localize_generated(db, {"title": "Market is opening now"}, "ar", translate=translate))
 
     assert calls == ["Market is opening", "Market is opening now"]
-    assert out["title"] == "AR:Market is opening now"
+    assert out["title"] == "ع:Market is opening now"
 
     async def rows(db):
         cursor = await db.execute("SELECT count(*) FROM text_translations")
@@ -164,14 +164,55 @@ def test_fixed_warning_and_search_use_the_dictionary_and_the_cache(research_db_p
     assert warning["params"] == {"n": "2"}
 
     def translate(texts: list[str]) -> list[str]:
-        return [f"AR:{text}" for text in texts]
+        return [f"ع:{text}" for text in texts]
 
     _run(research_db_path, lambda db: localize_generated(db, {"title": "Market is opening"}, "ar", translate=translate))
 
     async def found(db):
-        return await search_sources(db, "%AR:Market%")
+        return await search_sources(db, "%ع:Market%")
 
     assert _run(research_db_path, found) == ["Market is opening"]
+
+
+def test_brief_fields_and_heavy_trees(research_db_path):
+    calls: list[str] = []
+
+    def translate(texts: list[str]) -> list[str]:
+        calls.extend(texts)
+        return [f"ع:{text}" for text in texts]
+
+    payload = {
+        "analysis_title": "Entry into Riyadh",
+        "title": "Market is opening",
+        "why_it_matters": "Pricing pressure is rising.",
+        "trade_offs": ["Less coverage", "More cost"],
+        "what_we_would_do": ["Pilot in one city"],
+        "cost_of_waiting": "Share erodes.",
+        "definition": "List price for the mid tier.",
+        "subtitle": "Our figures next to each competitor.",
+        "framing": "Frame each option as a response.",
+        "collapsed_reason": "No figure could be found and checked for this question.",
+        "collapsed_reason_key": "brief.metricsEmpty",
+        "orchestration": {"results": [{"findings": [{"statement": "Buried worker prose."}]}]},
+        "request": {"company_profile": {"name": "NVIDIA", "competitors": ["Fawry"]}},
+        "signal": "NVIDIA and Fawry both cut mid-tier prices.",
+    }
+
+    out = _run(research_db_path, lambda db: localize_generated(db, payload, "ar", translate=translate))
+
+    assert out["analysis_title"] == "ع:Entry into Riyadh"
+    assert out["why_it_matters"] == "ع:Pricing pressure is rising."
+    assert out["trade_offs"] == ["ع:Less coverage", "ع:More cost"]
+    assert out["what_we_would_do"] == ["ع:Pilot in one city"]
+    assert out["cost_of_waiting"] == "ع:Share erodes."
+    assert out["definition"] == "ع:List price for the mid tier."
+    assert out["subtitle"].startswith("ع:")
+    assert out["framing"].startswith("ع:")
+    assert out["collapsed_reason"] == "No figure could be found and checked for this question."
+    assert "Buried worker prose." not in calls
+    assert "NVIDIA" in out["signal"]
+    assert "Fawry" in out["signal"]
+    assert out["signal"].startswith("ع:")
 
 
 def test_export_heading_follows_the_page_language():

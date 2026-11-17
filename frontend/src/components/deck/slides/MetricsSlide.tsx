@@ -49,7 +49,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
           <div className="collapsed-note hatch">
             <Icon name="info" size={18} />
             <div className="stack gap4 grow">
-              <b className="s14">{slide.collapsed_reason}</b>
+              <b className="s14">{phrase(slide.collapsed_reason || "", slide.collapsed_reason_key)}</b>
               <span className="s13 t2">{L("Every required figure is listed with the reason it is missing, and you can re-run or provide the data.", "كل رقم مطلوب مذكور مع سبب غيابه، ويمكنك إعادة التشغيل أو تزويد البيانات.")}</span>
             </div>
             <button type="button" className="btn sm" onClick={() => goTo("evidence_gaps")}>{L("See the gaps", "اعرض الفجوات")} <Icon name="chevron" size={12} flip /></button>

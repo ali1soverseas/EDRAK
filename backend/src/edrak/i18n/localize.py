@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import re
+import time
 from typing import Any, Awaitable, Callable
 
 import aiosqlite
@@ -28,9 +29,14 @@ PROSE_KEYS = frozenset({
     "executive_summary", "would_change_if", "how_to_capture", "early_warning",
     "mitigation", "deliverable", "success_measure", "value_text", "message",
     "reason", "gap", "proposal", "content", "next_steps", "resources",
+    # Brief / deck fields that the UI shows as generated prose.
+    "what_we_would_do", "trade_offs", "cost_of_waiting", "why_it_matters",
+    "definition", "collapsed_reason", "subtitle", "framing", "analysis_title",
+    "limitations", "decision_question", "evidence_gaps", "support",
+    "patterns", "themes", "impacts",
 })
 # Workstream names are generated labels. Other names (people, companies) are not.
-ACTION_KEYS = PROSE_KEYS | {"name"}
+ACTION_KEYS = PROSE_KEYS | {"name", "validation", "go_criteria", "kill_criteria", "owner_role"}
 FACT_KEYS = PROSE_KEYS | {"value"}
 
 # Quoted source text and anything the person typed.
@@ -39,8 +45,18 @@ SKIP_KEYS = frozenset({
     "source_url", "email", "note",
 })
 
+# Full run dumps embedded in the brief. The UI never shows these trees; walking
+# them re-translates every worker finding and blocks Arabic brief loads.
+SKIP_BRANCHES = frozenset({
+    "request", "orchestration", "verification", "cross_signal", "decision_analysis",
+})
+
 # Parameters of a fixed sentence that are themselves generated.
 PROSE_PARAMS = frozenset({"gap", "reason", "summary", "statement", "title"})
+
+# Soft budget so a cold Arabic open returns instead of hanging the page.
+TRANSLATE_BUDGET_S = 8.0
+TRANSLATE_CHUNK = 24
 
 _ARABIC = re.compile(r"[\u0600-\u06FF]")
 _LATIN = re.compile(r"[A-Za-z]")
@@ -50,8 +66,14 @@ _URL = re.compile(r"https?://\S+")
 _EMAIL = re.compile(r"[\w.+-]+@[\w.-]+")
 _ID = re.compile(r"[0-9a-fA-F-]{16,}")
 _DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+_SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z\"'(])|(?<=\n)\s*")
+_PROTECT = re.compile(
+    r"\b(?:[A-Z]{2,}[A-Za-z0-9+./-]{0,24}|[A-Z][a-z]+(?:[A-Z][a-z0-9]+)+|"
+    r"[A-Z][a-zA-Z0-9&+./-]{1,}(?:\s+[A-Z][a-zA-Z0-9&+./-]{1,}){1,4})\b"
+)
 
 _PROFILE = frozenset({"offerings", "target_customers", "aliases"})
+_NAME_KEYS = frozenset({"entity", "company", "competitor", "publisher"})
 
 
 def ui_language(request: Request) -> str:
@@ -84,11 +106,89 @@ def _default_translator(texts: list[str]) -> list[str]:
     return translate_many(texts)
 
 
+def _split_sentences(text: str) -> list[str]:
+    """Break a paragraph into units Argos handles better; short strings stay whole."""
+    value = text.strip()
+    if len(value) < 90 or value.count(". ") + value.count("! ") + value.count("? ") < 1:
+        return [value]
+    parts = [p.strip() for p in _SENTENCE.split(value) if p and p.strip()]
+    return parts if len(parts) > 1 else [value]
+
+
+def _protect_names(text: str, names: list[str]) -> tuple[str, dict[str, str]]:
+    """Swap known and likely proper nouns for placeholders Argos will leave alone."""
+    mapping: dict[str, str] = {}
+    out = text
+    ordered = sorted({n.strip() for n in names if n and len(n.strip()) >= 2}, key=len, reverse=True)
+    for i, name in enumerate(ordered):
+        if name not in out:
+            continue
+        token = f"⟦N{i}⟧"
+        mapping[token] = name
+        out = out.replace(name, token)
+    pieces: list[str] = []
+    cursor = 0
+    for i, match in enumerate(_PROTECT.finditer(out)):
+        span = match.group(0)
+        if span.startswith("⟦"):
+            continue
+        # Sentence starters that are ordinary English words stay unprotected when alone.
+        if " " not in span and span.istitle() and match.start() == 0 and len(span) < 12:
+            continue
+        token = f"⟦P{i}⟧"
+        mapping[token] = span
+        pieces.append(out[cursor:match.start()])
+        pieces.append(token)
+        cursor = match.end()
+    pieces.append(out[cursor:])
+    return "".join(pieces), mapping
+
+
+def _restore_names(text: str, mapping: dict[str, str]) -> str:
+    out = text
+    for token, name in sorted(mapping.items(), key=lambda item: len(item[0]), reverse=True):
+        out = out.replace(token, name)
+        # Argos sometimes strips the brackets or inserts spaces around the marker.
+        bare = token.strip("⟦⟧")
+        out = out.replace(bare, name)
+        out = out.replace(f"⟦ {bare} ⟧", name).replace(f"⟦{bare} ⟧", name).replace(f"⟦ {bare}⟧", name)
+    return out
+
+
+def _usable_arabic(source: str, arabic: str) -> bool:
+    """Reject blank, unchanged, or Latin-only results so we do not cache junk."""
+    value = (arabic or "").strip()
+    if not value or value == source.strip():
+        return False
+    return bool(_ARABIC.findall(value))
+
+
+def _translate_units(units: list[str], translate: Translator, names: list[str]) -> dict[str, str]:
+    """Translate sentence units with name protection. Returns unit -> arabic."""
+    if not units:
+        return {}
+    prepared: list[str] = []
+    maps: list[dict[str, str]] = []
+    for unit in units:
+        protected, mapping = _protect_names(unit, names)
+        prepared.append(protected)
+        maps.append(mapping)
+    raw = translate(prepared)
+    out: dict[str, str] = {}
+    for unit, arabic, mapping in zip(units, raw, maps):
+        restored = _restore_names(str(arabic or ""), mapping).strip()
+        if _usable_arabic(unit, restored):
+            out[unit] = restored
+    return out
+
+
 async def translate_cached(
     db: aiosqlite.Connection,
     texts: list[str],
     *,
     translate: Translator | None = None,
+    names: list[str] | None = None,
+    budget_s: float = TRANSLATE_BUDGET_S,
 ) -> dict[str, str]:
     """Arabic for each string. A string already in the cache is not translated again."""
     unique = list(dict.fromkeys(text for text in texts if text and not skip_string(text)))
@@ -111,22 +211,64 @@ async def translate_cached(
             if hashes.get(row["source_text"]) == row["source_hash"] and arabic:
                 found[row["source_text"]] = arabic
     missing = [text for text in unique if text not in found]
-    if missing:
+    if not missing:
+        return found
+
+    # Translate at sentence granularity so long paragraphs cache and read better.
+    unit_for: dict[str, list[str]] = {text: _split_sentences(text) for text in missing}
+    units = list(dict.fromkeys(u for parts in unit_for.values() for u in parts))
+    unit_hashes = {u: _hash(u) for u in units}
+    unit_found: dict[str, str] = {}
+    need = list(unit_hashes.values())
+    for start in range(0, len(need), 80):
+        chunk = need[start:start + 80]
+        marks = ",".join("?" for _ in chunk)
+        rows = await fetch_all(
+            db,
+            f"SELECT source_hash, source_text, translated_text FROM text_translations "
+            f"WHERE target_lang = 'ar' AND source_hash IN ({marks})",
+            chunk,
+        )
+        for row in rows:
+            arabic = str(row["translated_text"] or "").strip()
+            if unit_hashes.get(row["source_text"]) == row["source_hash"] and arabic:
+                unit_found[row["source_text"]] = arabic
+
+    to_run = [u for u in units if u not in unit_found]
+    translator = translate or _default_translator
+    known_names = list(names or [])
+    deadline = time.monotonic() + max(0.5, budget_s)
+    for start in range(0, len(to_run), TRANSLATE_CHUNK):
+        if time.monotonic() >= deadline:
+            break
+        batch = to_run[start:start + TRANSLATE_CHUNK]
         try:
-            translated = await asyncio.to_thread(translate or _default_translator, missing)
+            mapped = await asyncio.to_thread(_translate_units, batch, translator, known_names)
         except Exception:
-            # A model failure leaves the stored English in place and does not cache it.
-            return found
-        for source, arabic in zip(missing, translated):
-            if not str(arabic or "").strip():
-                continue
-            found[source] = arabic
+            break
+        for source, arabic in mapped.items():
+            unit_found[source] = arabic
             await db.execute(
                 "INSERT INTO text_translations (source_hash, target_lang, source_text, translated_text) "
                 "VALUES (?, 'ar', ?, ?) "
                 "ON CONFLICT(source_hash, target_lang) DO UPDATE SET translated_text = excluded.translated_text",
                 (_hash(source), source, arabic),
             )
+        await db.commit()
+
+    for text, parts in unit_for.items():
+        if all(part in unit_found for part in parts):
+            joined = " ".join(unit_found[part] for part in parts).strip()
+            if _usable_arabic(text, joined):
+                found[text] = joined
+                if len(parts) > 1:
+                    await db.execute(
+                        "INSERT INTO text_translations (source_hash, target_lang, source_text, translated_text) "
+                        "VALUES (?, 'ar', ?, ?) "
+                        "ON CONFLICT(source_hash, target_lang) DO UPDATE SET translated_text = excluded.translated_text",
+                        (_hash(text), text, joined),
+                    )
+    if any(len(parts) > 1 for parts in unit_for.values()):
         await db.commit()
     return found
 
@@ -148,6 +290,8 @@ def _shell(obj: dict[str, Any], key: str) -> bool:
         or (key == "body" and obj.get("body_key"))
         or (key == "limits" and obj.get("limits_key"))
         or (key == "content" and obj.get("content_key"))
+        or (key == "collapsed_reason" and obj.get("collapsed_reason_key"))
+        or (key == "explanation" and obj.get("explanation_key"))
         or (key == "message" and not obj.get("generated") and "message_key" in obj)
     )
 
@@ -174,6 +318,32 @@ def _translate_key(obj: dict[str, Any], key: str, keys: frozenset[str]) -> bool:
     return True
 
 
+def _collect_names(value: Any, found: list[str]) -> None:
+    if isinstance(value, list):
+        for item in value:
+            _collect_names(item, found)
+        return
+    if not isinstance(value, dict) or _bilingual(value):
+        return
+    for name, item in value.items():
+        if name in _NAME_KEYS and isinstance(item, str) and item.strip():
+            found.append(item.strip())
+        elif name == "company_profile" and isinstance(item, dict):
+            profile_name = item.get("name")
+            if isinstance(profile_name, str) and profile_name.strip():
+                found.append(profile_name.strip())
+            for alias in item.get("aliases") or []:
+                if isinstance(alias, str) and alias.strip():
+                    found.append(alias.strip())
+            for competitor in item.get("competitors") or []:
+                if isinstance(competitor, str) and competitor.strip():
+                    found.append(competitor.strip())
+                elif isinstance(competitor, dict) and isinstance(competitor.get("name"), str):
+                    found.append(competitor["name"].strip())
+        else:
+            _collect_names(item, found)
+
+
 def _collect(value: Any, keys: frozenset[str], found: list[str]) -> None:
     if isinstance(value, str):
         return
@@ -191,6 +361,8 @@ def _collect(value: Any, keys: frozenset[str], found: list[str]) -> None:
             _collect(item, keys, found)
         return
     for name, item in value.items():
+        if name in SKIP_BRANCHES:
+            continue
         if isinstance(item, str) and _translate_key(value, name, keys):
             found.append(item)
         elif isinstance(item, list) and name in keys and name != "notes" and all(isinstance(x, str) for x in item):
@@ -214,6 +386,9 @@ def _apply(value: Any, keys: frozenset[str], mapped: dict[str, str]) -> Any:
         return out
     out: dict[str, Any] = {}
     for name, item in value.items():
+        if name in SKIP_BRANCHES:
+            out[name] = item
+            continue
         if isinstance(item, str) and _translate_key(value, name, keys):
             out[name] = mapped.get(item, item)
         elif isinstance(item, list) and name in keys and name != "notes" and all(isinstance(x, str) for x in item):
@@ -240,7 +415,9 @@ async def localize_generated(
     chosen = frozenset(keys) if keys is not None else PROSE_KEYS
     texts: list[str] = []
     _collect(payload, chosen, texts)
-    mapped = await translate_cached(db, texts, translate=translate)
+    names: list[str] = []
+    _collect_names(payload, names)
+    mapped = await translate_cached(db, texts, translate=translate, names=names)
     return _apply(payload, chosen, mapped)
 
 

@@ -102,8 +102,21 @@ def _gaps(doc: dict[str, Any]) -> list[dict[str, Any]]:
                     "blocking": g.get("blocking", False), "card_key": g.get("card_key"), "metric_id": g.get("metric_id"),
                     "entity": g.get("entity"), "action": "provide_data" if g.get("reason") == "not_publicly_disclosed" else "rerun"})
     for g in doc.get("gaps") or []:
-        out.append({"kind": "research", "title": g["text"], "reason": None, "explanation": f"Reported by {g.get('reported_by', '').replace('_', ' ')}.",
-                    "blocking": False, "card_key": None, "action": "rerun", "lens": g.get("reported_by")})
+        reported = str(g.get("reported_by") or "")
+        if reported == "verification":
+            explanation = "Reported by Verification as missing information."
+            explanation_key = "brief.reportedBy.verification"
+            explanation_params: dict[str, str] = {}
+        else:
+            worker = reported.replace("_", " ") or "worker"
+            explanation = f"Reported by the {worker} worker."
+            explanation_key = "brief.reportedBy.worker"
+            explanation_params = {"worker": worker, "worker_id": reported}
+        out.append({
+            "kind": "research", "title": g["text"], "reason": None, "explanation": explanation,
+            "explanation_key": explanation_key, "explanation_params": explanation_params,
+            "blocking": False, "card_key": None, "action": "rerun", "lens": reported or None,
+        })
     return out
 
 
@@ -132,7 +145,7 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
     metrics_empty = not metric_cards and not comparison
 
     summary = {
-        "id": "summary", "title": "Summary",
+        "id": "summary", "title": "Summary", "title_key": "brief.sec.1.title",
         "headline": doc.get("headline") or doc.get("summary_text") or doc.get("question"),
         "question": doc.get("question"), "use_case": template.use_case,
         "key_findings": _key_findings(doc, template),
@@ -149,22 +162,26 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
         "id": "business_metrics", "title": template.metrics_theme.get("title") or "Business metrics",
         "subtitle": template.metrics_theme.get("subtitle") or "", "kpis": kpi_keys, "cards": [c["card_key"] for c in metric_cards],
         "gap_cards": gap_cards, "comparison": comparison, "company": company,
-        "collapsed": metrics_empty, "collapsed_reason": "No figure could be found and checked for this question." if metrics_empty else None,
+        "collapsed": metrics_empty,
+        "collapsed_reason": "No figure could be found and checked for this question." if metrics_empty else None,
+        "collapsed_reason_key": "brief.metricsEmpty" if metrics_empty else None,
     }
     lenses = sorted({d for s in signals for d in s.get("domains") or []}, key=lambda d: lens_rank.get(d, 9))
     signals_slide = {
-        "id": "signals", "title": "Signals", "items": [s["signal_id"] for s in signals],
+        "id": "signals", "title": "Signals", "title_key": "deck.signals",
+        "items": [s["signal_id"] for s in signals],
         "lenses": [{"lens": l, "label": _lens_label(l)} for l in lenses],
         "emphasis": template.signal_emphasis or template.lens_weights,
     }
     decisions = {
-        "id": "decisions", "title": "Decisions", "framing": template.decision_framing,
+        "id": "decisions", "title": "Decisions", "title_key": "deck.decisions",
+        "framing": template.decision_framing,
         "options": [o["key"] for o in doc.get("options") or []],
         "priorities_known": _priorities_known(doc),
         "personalization": doc.get("personalization"),
     }
     evidence = {
-        "id": "evidence_gaps", "title": "Evidence and gaps",
+        "id": "evidence_gaps", "title": "Evidence and gaps", "title_key": "deck.evidenceGaps",
         "coverage": doc.get("coverage"), "by_lens": _coverage_by_lens(doc, template), "source_mix": _source_mix(doc),
         "conflicts": [s["signal_id"] for s in signals if s.get("type") == "conflict"],
         "gaps": _gaps(doc), "collapsed": sorted(collapsed) + (["business_metrics"] if metrics_empty else []),

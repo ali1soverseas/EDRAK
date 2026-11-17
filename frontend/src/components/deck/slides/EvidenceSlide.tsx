@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePhrase } from "../../../lib/phrase";
 import { useL } from "../../../lib/useL";
 import { edrak } from "../../../services/edrak";
 import type { EvidenceSlideData, SignalView } from "../../../types/brief3";
@@ -17,6 +18,7 @@ const REASON: Record<string, [string, string]> = {
 /** 05 Evidence and gaps: how complete the picture is, where it comes from, where sources disagree, what is missing. */
 export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
   const L = useL();
+  const phrase = usePhrase();
   const navigate = useNavigate();
   const { brief, openCard, openSignal, ask } = useDeck();
   const [followUp, setFollowUp] = useState<string | null>(null);
@@ -110,7 +112,7 @@ export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
                 <span className="gap-icon"><Icon name="info" size={16} /></span>
                 <div className="grow" style={{ minWidth: 0 }}>
                   <div className="b6 s14 lh12" dir="auto">{g.title}</div>
-                  <div className="s13 t2" style={{ marginTop: 2 }}>{g.explanation}</div>
+                  <div className="s13 t2" style={{ marginTop: 2 }}>{phrase(g.explanation || "", g.explanation_key, g.explanation_params)}</div>
                 </div>
               </div>
             ))}

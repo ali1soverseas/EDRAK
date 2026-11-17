@@ -84,7 +84,11 @@ export interface KeyFinding { text: string; lens: string; finding_id: string; re
 export interface ComparisonCell { entity: string; value: string; label: string | null; period: string | null; uid: string; ref: number | null; status: string }
 export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null; note_key?: string | null }
 export interface LensCoverage { lens: string; label: string; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
-export interface DeckGap { kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null; blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string }
+export interface DeckGap {
+  kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null;
+  explanation_key?: string | null; explanation_params?: Record<string, string | number>;
+  blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string;
+}
 
 export interface SummarySlideData {
   id: "summary"; title: string; headline: string; question: string; use_case: string; key_findings: KeyFinding[];
@@ -95,6 +99,7 @@ export interface SummarySlideData {
 export interface MetricsSlideData {
   id: "business_metrics"; title: string; subtitle: string; kpis: string[]; cards: string[]; gap_cards: string[];
   comparison: ComparisonRow[]; company: string; collapsed: boolean; collapsed_reason: string | null;
+  collapsed_reason_key?: string | null;
 }
 export interface SignalsSlideData { id: "signals"; title: string; items: string[]; lenses: { lens: string; label: string }[]; emphasis: Record<string, number> }
 export interface DecisionPersonalization {

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import sqlite3
 import threading
 from contextlib import asynccontextmanager
@@ -118,6 +119,20 @@ def _apply_additions(path: Path) -> None:
             );
             """
         )
+        # Drop Latin-only or echoed rows left by earlier Argos failures so Arabic reloads retry them.
+        try:
+            rows = conn.execute(
+                "SELECT source_hash, target_lang, source_text, translated_text FROM text_translations"
+            ).fetchall()
+            for source_hash, target_lang, source_text, translated_text in rows:
+                arabic = str(translated_text or "").strip()
+                if not arabic or arabic == str(source_text or "").strip() or not re.search(r"[\u0600-\u06FF]", arabic):
+                    conn.execute(
+                        "DELETE FROM text_translations WHERE source_hash = ? AND target_lang = ?",
+                        (source_hash, target_lang),
+                    )
+        except Exception:
+            pass
         conn.commit()
     finally:
         conn.close()
