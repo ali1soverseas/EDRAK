@@ -235,6 +235,26 @@ async def evaluate_run(request_id: str) -> dict[str, float]:
                 (request_id, metric, float(value), dumps(detail)),
             )
         await db.commit()
+
+    # Mirror evaluation scores to Langfuse trace when observability is enabled
+    try:
+        from edrak.core.observability import get_langfuse_client, is_observability_enabled
+
+        if is_observability_enabled():
+            client = get_langfuse_client()
+            if client is not None:
+                for metric, (value, detail) in metrics.items():
+                    client.create_score(
+                        name=metric,
+                        value=float(value),
+                        trace_id=request_id,
+                        comment=detail.get("reason") if isinstance(detail, dict) else None,
+                        metadata=detail if isinstance(detail, dict) else {},
+                    )
+                client.flush()
+    except Exception as exc:
+        logger.debug("Failed to mirror scores to Langfuse for %s: %s", request_id, exc)
+
     return {k: v for k, (v, _) in metrics.items()}
 
 

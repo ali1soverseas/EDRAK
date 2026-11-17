@@ -77,12 +77,15 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
 
 
 def nvidia_key(agent: str | None = None) -> str:
-    key, variable = provider_key("NVIDIA_API_KEY", agent)
+    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
+    prefix = "OLLAMA_API_KEY" if provider == "ollama" else "NVIDIA_API_KEY"
+    key, variable = provider_key(prefix, agent)
+    if not key:
+        key, variable = provider_key("LLM_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set NVIDIA_API_KEY (or legacy LLM_API_KEY) "
-            "in the environment or .env. Create a key at "
-            "https://build.nvidia.com/settings/api-keys"
+            f"{variable} is not configured. Set {prefix} (or legacy LLM_API_KEY) "
+            "in the environment or .env."
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
@@ -108,37 +111,53 @@ def get_chat_model(
 ) -> EdrakChat:
     """The chat model every component uses.
 
-    `agent` selects which credential is used.
+    `agent` selects which credential and tracing tags are used.
     """
-    provider = os.getenv("LLM_PROVIDER", settings.LLM_PROVIDER).strip().lower()
-    if provider != "nvidia":
+    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
+    if provider not in ("nvidia", "ollama", "openai"):
         raise RuntimeError(
-            f"Unsupported LLM_PROVIDER {provider!r}; this build uses NVIDIA."
+            f"Unsupported LLM_PROVIDER {provider!r}; supported providers: nvidia, ollama, openai."
         )
 
     extra_kwargs = {}
     if callbacks is not None:
-        extra_kwargs["callbacks"] = callbacks
+        extra_kwargs["callbacks"] = list(callbacks)
+    else:
+        # Automatically attach Langfuse tracing for worker and orchestrator calls
+        try:
+            from edrak.core.observability import get_langfuse_callback_handler, is_observability_enabled
+
+            if is_observability_enabled():
+                tags = [f"agent:{agent}"] if agent else ["agent:default"]
+                handler = get_langfuse_callback_handler(tags=tags, trace_name=f"agent-{agent}" if agent else None)
+                if handler is not None:
+                    extra_kwargs["callbacks"] = [handler]
+        except Exception as exc:
+            logger.debug("Failed to auto-attach Langfuse callback to chat model: %s", exc)
+
+    prefix = "OLLAMA" if provider == "ollama" else "NVIDIA"
     configured_temperature = _float_setting(
-        "NVIDIA_TEMPERATURE",
-        _float_setting("LLM_TEMPERATURE", settings.NVIDIA_TEMPERATURE),
+        f"{prefix}_TEMPERATURE",
+        _float_setting("LLM_TEMPERATURE", getattr(settings, f"{prefix}_TEMPERATURE", 0.2)),
     )
     configured_timeout = _float_setting(
-        "NVIDIA_TIMEOUT_S", settings.NVIDIA_TIMEOUT_S
+        f"{prefix}_TIMEOUT_S", getattr(settings, f"{prefix}_TIMEOUT_S", 60.0)
     )
     configured_model = (
-        os.getenv("NVIDIA_MODEL")
+        os.getenv(f"{prefix}_MODEL")
         or os.getenv("LLM_MODEL")
-        or settings.NVIDIA_MODEL
-        or settings.LLM_MODEL
+        or getattr(settings, f"{prefix}_MODEL", None)
+        or getattr(settings, "LLM_MODEL", "gpt-oss:120b")
     )
     configured_base_url = (
         base_url
-        or os.getenv("NVIDIA_BASE_URL")
+        or os.getenv(f"{prefix}_BASE_URL")
         or os.getenv("LLM_BASE_URL")
-        or settings.NVIDIA_BASE_URL
-        or settings.LLM_BASE_URL
+        or getattr(settings, f"{prefix}_BASE_URL", None)
+        or getattr(settings, "LLM_BASE_URL", "https://ollama.com/v1")
     )
+    if configured_base_url and not configured_base_url.rstrip("/").endswith("/v1") and "api.openai.com" not in configured_base_url:
+        configured_base_url = configured_base_url.rstrip("/") + "/v1"
     return EdrakChat(
         model=model or configured_model,
         base_url=configured_base_url,
