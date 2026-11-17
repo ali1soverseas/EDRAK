@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 from urllib.parse import urlparse
 
 from edrak.core.action_log import log_action
-from edrak.core.llm import get_chat_model, schema_instruction
+from edrak.core.llm import DEFAULT_MAX_TOKENS, get_chat_model, schema_instruction
 from dotenv import load_dotenv
 from tavily import TavilyClient
 
@@ -158,7 +158,7 @@ def tavily():
 
 
 def llm():
-    """The shared Ollama model, used for planning, queries and synthesis."""
+    """The shared NVIDIA model, used for planning, queries and synthesis."""
     global _llm
     if _llm is None:
         _llm = get_chat_model(agent="competitor", temperature=0)
@@ -224,17 +224,14 @@ def call_structured(
     """
     Structured output via json_schema with the schema restated in the prompt.
 
-    Was method="function_calling", which returned no structured output at all
-    for every nested-list schema here, so requirement identification failed and
-    the worker raised. Measured on ResearchRequirements: function_calling 0/5,
-    json_schema with the instruction 4/5.
-
     Returns None if the model never produced a valid structured result.
     """
 
     model = llm_strong() if strong else llm()
 
-    structured = model.with_structured_output(model_class, method="json_schema")
+    structured = model.with_structured_output(
+        model_class, method="json_schema", max_tokens=DEFAULT_MAX_TOKENS
+    )
     messages = [prompt, schema_instruction(model_class)]
 
     for attempt in range(retries + 1):

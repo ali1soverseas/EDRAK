@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import operator
 from dataclasses import dataclass
 from typing import Annotated, Any, TypedDict
-import operator
 
 from pydantic import Field
 
 from ..contracts.base import ContractModel
-from ..core.config import settings as core_settings
 from ..contracts.CrossSignal import (
     CrossSignal,
     CrossSignalInput,
@@ -15,7 +14,6 @@ from ..contracts.CrossSignal import (
     CrossSignalSummary,
     DecisionReadyContext,
 )
-
 
 # ============================================================================
 # SETTINGS
@@ -35,7 +33,7 @@ class CrossSignalSettings:
       deduplication, and output assembly
     """
 
-    model: str = core_settings.OLLAMA_MODEL
+    model: str | None = None
 
     temperature: float = 0.2
 

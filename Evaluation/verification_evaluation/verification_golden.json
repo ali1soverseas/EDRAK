@@ -1,0 +1,888 @@
+{
+  "dataset_name": "verification_golden",
+  "version": "1.0",
+  "evaluation_type": "final_verification_status_validation",
+  "company": "NVIDIA Corporation",
+  "snapshot_date": "2026-10-29",
+  "trace_id": "561d26a15b89fcd93d718fd18517bf02",
+  "description": "Human-reviewed golden labels for the 19 findings in the supplied Edrak Verification trace. Each expected status judges whether the attached evidence supports the complete finding as worded. The dataset preserves the original agent status separately from the golden reference.",
+  "label_definitions": {
+    "verified": "The supplied evidence sufficiently supports the complete finding as worded and within its stated time/scope.",
+    "insufficient": "The evidence is missing, irrelevant, outdated/ambiguous, only partially supportive, or does not justify the full claim."
+  },
+  "test_cases": [
+    {
+      "test_case_id": "VER-NVIDIA-001",
+      "finding_id": "89476b81-8db6-4b96-a3ff-7eb031120809",
+      "worker": "internal_intelligence",
+      "input": {
+        "finding_statement": "NVIDIA's data‑center offering is described as AI computing and data‑center platforms and targets the United States and Europe.",
+        "finding_category": "product_feature",
+        "worker_confidence": 0.75,
+        "evidence": [
+          {
+            "evidence_id": "5f821f79-6fcf-4739-b103-83fe101c4865",
+            "relation": "supports",
+            "source_type": "internal_document",
+            "source_title": "nvidia_competitive_intelligence_planning.md",
+            "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+            "publisher": "Company document",
+            "extracted_fact": "It describes the current offer as AI computing and data-center platforms, names cloud service providers and AI developers as target customers, lists the United States and Europe as current markets, and names Broadcom and Intel Corp as competitors to track.",
+            "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Executive context\n\nThe company profile identifies NVIDIA Corporation as the company being analyzed. It describes the current offer as **AI computing** and **data-center platforms**, names **cloud service providers** and **AI developers** as target customers, lists the **United States** and **Europe** as current markets, and names **Broadcom** and **Intel Corp** as competitors to track. Treat these profile entries as the pilot scope supplied to EDRAK, not as independently verified statements about NVIDIA's actual internal plans.\n\nNVIDIA's public data-center portfolio is broader than a single accelerator. Its official product and corporate materials describe an accelerated-computing stack spanning compute platforms, systems, networking, and software. For competitive work, evaluate the customer's deployed solution and workload—not only the accelerator chip. The relevant unit of comparison may be a complete cluster, cloud instance, rack-scale system, software stack, or developer workflow.",
+            "retrieved_at": "2026-10-29T02:42:33.348995Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "5f821f79-6fcf-4739-b103-83fe101c4865"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "5f821f79-6fcf-4739-b103-83fe101c4865"
+        ],
+        "review_reason": "The internal company-context document explicitly describes the pilot scope as AI computing/data-center platforms, identifies cloud providers and AI developers as target customers, and lists the US and Europe as markets. The claim says 'is described as', so it is verified as a statement about the supplied EDRAK context, not as independent proof of NVIDIA's actual commercial targeting.",
+        "review_confidence": "medium",
+        "review_note": "Scope-limited: this is internal pilot context, not independent external confirmation."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-002",
+      "finding_id": "201e6e2a-36f1-450e-9485-29d4ca3fcc6b",
+      "worker": "internal_intelligence",
+      "input": {
+        "finding_statement": "NVIDIA's public data‑center product portfolio is listed at https://www.nvidia.com/en-us/data-center/products/.",
+        "finding_category": "other",
+        "worker_confidence": 0.75,
+        "evidence": [
+          {
+            "evidence_id": "cd7d62d3-b4db-4f7e-8033-cb6610e94841",
+            "relation": "supports",
+            "source_type": "internal_document",
+            "source_title": "nvidia_product_launch_planning.md",
+            "source_url": "internal://8764851be2af9aed82fac7e51c04a0ae/nvidia_product_launch_planning.md",
+            "publisher": "Company document",
+            "extracted_fact": "NVIDIA data-center product portfolio: <https://www.nvidia.com/en-us/data-center/products/>",
+            "excerpt": "# nvidia_product_launch_planning.md\n## Public source register\n\nAccessed 2026-10-22. Public pages and product catalogs are dynamic; verify exact release status and version during each review.\n\n- NVIDIA data-center product portfolio: <https://www.nvidia.com/en-us/data-center/products/>\n- NVIDIA DGX platform: <https://www.nvidia.com/en-us/data-center/dgx-platform/>\n- NVIDIA data-center networking: <https://www.nvidia.com/en-us/networking/>\n- NVIDIA investor relations—SEC filings: <https://investor.nvidia.com/financial-info/sec-filings/default.aspx>\n- Intel Gaudi AI accelerators: <https://www.intel.com/content/www/us/en/products/details/processors/ai-accelerators/gaudi.html>\n- Broadcom investor relations: <https://investors.broadcom.com/>\n- European Commission—AI Act regulatory framework: <https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai>\n- International Energy Agency—Energy and AI: <https://www.iea.org/reports/energy-and-ai>",
+            "retrieved_at": "2026-10-29T02:42:33.453180Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "cd7d62d3-b4db-4f7e-8033-cb6610e94841"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "cd7d62d3-b4db-4f7e-8033-cb6610e94841"
+        ],
+        "review_reason": "The internal source register explicitly lists the NVIDIA data-center product portfolio at the exact URL in the finding. This verifies the locator/reference claim, but it does not verify the live page contents, product availability, or product specifications.",
+        "review_confidence": "medium",
+        "review_note": "Only the existence of the listed source reference is supported; do not use this as evidence for detailed portfolio claims."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-003",
+      "finding_id": "a0ee6e56-dc25-4e9b-9561-08bf8565e001",
+      "worker": "internal_intelligence",
+      "input": {
+        "finding_statement": "Accelerated compute in NVIDIA's data‑center stack consists of GPU‑based systems and related processors for AI and high‑performance computing workloads.",
+        "finding_category": "product_feature",
+        "worker_confidence": 0.75,
+        "evidence": [
+          {
+            "evidence_id": "fddc3685-5247-4236-bbd5-5e1283d02297",
+            "relation": "supports",
+            "source_type": "internal_document",
+            "source_title": "nvidia_competitive_intelligence_planning.md",
+            "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+            "publisher": "Company document",
+            "extracted_fact": "Accelerated compute: GPU-based systems and related processors for AI and high-performance computing workloads.",
+            "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Publicly documented offer areas\n\n- **Accelerated compute:** GPU-based systems and related processors for AI and high-performance computing workloads. A product-family name alone does not establish workload performance or customer suitability.\n- **Data-center systems:** NVIDIA describes system-level offerings under the DGX platform. Compare whole-system design, integration, deployment requirements, service/support, and availability—not just processor specifications.\n- **Networking and interconnect:** NVIDIA publicly offers data-center networking. Networking topology, bandwidth, latency, collective communication behavior, congestion, and operations can materially affect multi-node AI results.\n- **AI software and developer tools:** NVIDIA's software ecosystem includes CUDA and AI software offerings. Record supported frameworks, libraries, APIs, container/runtime requirements, licensing, and migration effort for each evaluated version. A software ecosystem claim should be tied to the specific tool and release.\n- **Cloud access:** NVIDIA's cloud-related offerings and partner availability must be checked for the exact service, instance, region, capacity, and date. A partner announcement is not proof that a particular customer can provision a service now.",
+            "retrieved_at": "2026-10-29T02:42:33.348337Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "fddc3685-5247-4236-bbd5-5e1283d02297"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "fddc3685-5247-4236-bbd5-5e1283d02297"
+        ],
+        "review_reason": "The attached internal context document states that accelerated compute consists of GPU-based systems and related processors for AI and high-performance computing workloads. The wording closely matches the evidence.",
+        "review_confidence": "high",
+        "review_note": "Verified as the documented description in the supplied context."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-004",
+      "finding_id": "daf17c8c-70c2-4920-96c0-03df5ad1179d",
+      "worker": "internal_intelligence",
+      "input": {
+        "finding_statement": "NVIDIA's AI software ecosystem includes CUDA and AI software offerings.",
+        "finding_category": "product_feature",
+        "worker_confidence": 0.75,
+        "evidence": [
+          {
+            "evidence_id": "fddc3685-5247-4236-bbd5-5e1283d02297",
+            "relation": "supports",
+            "source_type": "internal_document",
+            "source_title": "nvidia_competitive_intelligence_planning.md",
+            "source_url": "internal://a46afd23a0ae0ea09ac9db19d987a9e6/nvidia_competitive_intelligence_planning.md",
+            "publisher": "Company document",
+            "extracted_fact": "Accelerated compute: GPU-based systems and related processors for AI and high-performance computing workloads.",
+            "excerpt": "# nvidia_competitive_intelligence_planning.md\n## Publicly documented offer areas\n\n- **Accelerated compute:** GPU-based systems and related processors for AI and high-performance computing workloads. A product-family name alone does not establish workload performance or customer suitability.\n- **Data-center systems:** NVIDIA describes system-level offerings under the DGX platform. Compare whole-system design, integration, deployment requirements, service/support, and availability—not just processor specifications.\n- **Networking and interconnect:** NVIDIA publicly offers data-center networking. Networking topology, bandwidth, latency, collective communication behavior, congestion, and operations can materially affect multi-node AI results.\n- **AI software and developer tools:** NVIDIA's software ecosystem includes CUDA and AI software offerings. Record supported frameworks, libraries, APIs, container/runtime requirements, licensing, and migration effort for each evaluated version. A software ecosystem claim should be tied to the specific tool and release.\n- **Cloud access:** NVIDIA's cloud-related offerings and partner availability must be checked for the exact service, instance, region, capacity, and date. A partner announcement is not proof that a particular customer can provision a service now.",
+            "retrieved_at": "2026-10-29T02:42:33.348337Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "fddc3685-5247-4236-bbd5-5e1283d02297"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "fddc3685-5247-4236-bbd5-5e1283d02297"
+        ],
+        "review_reason": "The same internal context document explicitly says NVIDIA's software ecosystem includes CUDA and AI software offerings. The evidence directly supports this broad statement.",
+        "review_confidence": "high",
+        "review_note": "The evidence supports the broad claim, not specific framework/version compatibility."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-005",
+      "finding_id": "72c9e985-cb7e-4dba-b495-c67955189ca9",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Broadcom offers per‑seat AI licensing at two published list‑price tiers: $30 per user per month for a basic plan and $60 per user per month for an advanced plan. The pricing is quoted on a per‑seat, per‑month basis and applies regardless of actual usage.",
+        "finding_category": "pricing_packaging",
+        "worker_confidence": 0.72,
+        "evidence": [
+          {
+            "evidence_id": "15d54d9f-b3d2-43b1-bd04-de314aa9fc19",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "Per-Seat AI Is Priced Against a Falling Floor",
+            "source_url": "https://ibl.ai/blog/inference-cost-floor-jalapeno-published-benchmarks",
+            "publisher": "ibl.ai",
+            "extracted_fact": "| Cost model | 1,000 users | 5,000 users | Behaviour as usage grows | | Per-seat licence @ $30/user/mo | $360,000/yr | $1,800,000/yr | Scales with headcount, used or not | | Per-seat licence @ $60/user/mo | $720,000/yr | $3,600,000/yr | Scales with headcount, used or not | | Self-hosted on owned hardware | GPU + power | GPU + power | Scales with actual work; absorbs every cost decline | [...] Deployed on your infrastructure or our cloud",
+            "excerpt": "Hardware competition. Jalapeño, Microsoft's Maia, Meta's MTIA, Amazon's Inferentia and Trainium, Google's TPUs. Every hyperscaler building inference silicon pushes the floor down for everyone, including for the open-weight models an enterprise runs itself.\n\n| Cost model | 1,000 users | 5,000 users | Behaviour as usage grows |\n ---  --- |\n| Per-seat licence @ $30/user/mo | $360,000/yr | $1,800,000/yr | Scales with headcount, used or not |\n| Per-seat licence @ $60/user/mo | $720,000/yr | $3,600,000/yr | Scales with headcount, used or not |\n| Self-hosted on owned hardware | GPU + power | GPU + power | Scales with actual work; absorbs every cost decline | [...] Deployed on your infrastructure or our cloud\n 1–2 production agents wired to a slice of your data\n One integration (LMS / SIS / SSO / data source)\n Weekly working sessions with our engineers\n Pilot fee credits toward a full engagement\n\nScope a pilot\n\nMost common\n\n### Integration & Deployment\n\n$25K – $80K\n\none-time · not a subscription\n\nFull deployment integrated with your data and systems. Engineering hours scale with scope.\n\nBest for: Organizations rolling ibl.ai out across a department, campus, or business unit.\n\n Platform deployed in your VPC, on-prem, or air-gapped\n Integrated with your data + identity (SSO / SAML)\n Multiple custom agents built to your workflows\n Engineering hours proportional to scope\n You own the data · run any LLM you choose\n\nPlan a deployment\n\nFull ownership [...] ## The Short Answer\n\nOpenAI publis",
+            "retrieved_at": "2026-10-29T02:44:16.340012Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "15d54d9f-b3d2-43b1-bd04-de314aa9fc19"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The cited iBL.ai article's $30 and $60 per-user figures appear in a generic cost-model comparison for Jalapeño/per-seat inference licensing. The evidence does not attribute these tiers to Broadcom. The company attribution is unsupported.",
+        "review_confidence": "high",
+        "review_note": "Clear false acceptance: wrong company attribution."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-006",
+      "finding_id": "85029089-0b3a-42a5-9fdb-acfd9cd20780",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Broadcom reported AI semiconductor revenue of $16.7 billion in its fiscal Q3 2026 results, representing 56 % of total revenue, and the company’s FY 2026 AI revenue guidance targets approximately $58 billion for the full year.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.79,
+        "evidence": [
+          {
+            "evidence_id": "88d5785a-8f4b-4fbb-94b2-352f7c0ce36b",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "Broadcom (AVGO): AI Revenue Surges While Shares Trade Near $342",
+            "source_url": "https://tickeron.com/blogs/broadcom-avgo-ai-revenue-surges-while-shares-trade-near-342-22396",
+            "publisher": "tickeron.com",
+            "extracted_fact": "Broadcom reported record fiscal Q3 2026 results, with consolidated revenue of $29.6 billion (up 86% year over year), operating income of $20.1 billion (up 92%), and non-GAAP earnings per share of $3.32 (up 96%). Broadcom reported record fiscal Q3 2026 results, with consolidated revenue of $29.6 billion (up 86% year over year), operating income of $20.1 billion (up 92%), and non-GAAP earnings per share of $3.32 (up 96%).",
+            "excerpt": "## Recent Results Fueling the AVGO Story\n\nBroadcom reported record fiscal Q3 2026 results, with consolidated revenue of $29.6 billion (up 86% year over year), operating income of $20.1 billion (up 92%), and non-GAAP earnings per share of $3.32 (up 96%). AI semiconductor revenue reached $16.7 billion, up 221% year over year and 54% sequentially, now representing 56% of total revenue. Management raised fiscal 2026 AI revenue guidance to about $58 billion and laid out a path to roughly $115 billion in fiscal 2027 and $230 billion in fiscal 2028, with earnings per share projected to exceed $30 by fiscal 2028.\n![Scott Bell's Avatar](https://filestore-public.tickeron.com/files/public/avatars/images/350186-ava-cb83ae6f7563411d861acd3e064884ad.jpg)\n![Tickeron](/svg-next/bell-orange-outlined.svg)\n![Tickeron](/svg-next/info-white.svg)\n\n# Broadcom (AVGO): AI Revenue Surges While Shares Trade Near $342\n\n## Key Takeaways\n\n## Where AVGO Stands in the Market Right Now\n\nBroadcom Inc. ([AVGO](https://tickeron.com/ticker/AVGO/)) is trading near $342, below its 50-day and 200-day moving averages and well under its 52-week high of roughly $495. The shares have pulled back modestly over the trailing month even as the company posts some of the fastest growth in the semiconductor industry. Broadcom's market capitalization stands near $1.57 trillion, and the stock trades at a forward price-to-earnings multiple near 19 times versus a trailing multiple above 40, reflecting both the strength of recent ",
+            "retrieved_at": "2026-10-29T02:44:16.340414Z",
+            "published_date": null
+          },
+          {
+            "evidence_id": "89cb565e-0cb8-46f6-8130-ad98a8a90522",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "Broadcom Valuation Tests Limits as AI Revenue Targets Stretch Expectations | Investing.com",
+            "source_url": "https://www.investing.com/analysis/broadcom-valuation-tests-limits-as-ai-revenue-targets-stretch-expectations-200679647",
+            "publisher": "www.investing.com",
+            "extracted_fact": "Broadcom (NASDAQ:AVGO) reported Q1 FY26 revenue of $19.31 billion — up 29.5% year-on-year and +7.2% sequentially. Q2 revenue guidance of roughly $22 billion implies 46.6% year-on-year growth. For perspective on how aggressive that target actually is — full-year fiscal 2025 segment revenue was just $37 billion. Broadcom (NASDAQ:AVGO) reported Q1 FY26 revenue of $19.31 billion — up 29.5% year-on-year and +7.2% sequentially.",
+            "excerpt": "Let’s get the numbers straight because they’re worth dwelling on. Broadcom (NASDAQ:AVGO) reported Q1 FY26 revenue of $19.31 billion — up 29.5% year-on-year and +7.2% sequentially. AI revenue alone hit $8.4 billion, an absolute monster of a number, growing 106% year-on-year in a single quarter. Custom accelerators specifically grew 140% year-on-year. Non-GAAP gross margin compressed by 94 basis points as expected — the AI hardware mix is dilutive to the higher-margin software business — but that compression was already baked into the cake.\nOpen in App\n\n#### Popular Searches\n\n##### Please try another search\n\n[Popular News\n\nMore](https://www.investing.com/news/most-popular-news)\n\n* [Gold set for steepest weekly drop in over four months as prices fall below $4,000](https://www.investing.com/news/commodities-news/gold-hits-3mth-low-as-oil-rally-fuels-rate-concerns-set-for-weekly-drop-4967928)\n* [Wall Street ends lower as oil surge and AI spending fears weigh on stocks](https://www.investing.com/news/stock-market-news/us-stock-futures-steady-after-nasdaq-posts-worst-day-since-june-4967865)\n* [Buy pullback in this chip stock, Mizuho says](https://www.investing.com/news/stock-market-news/buy-pullback-in-this-chip-stock-mizuho-says-4969402)\n* [AI-powered cyber threats light a fire under cybersecurity stocks](https://www.investing.com/news/stock-market-news/aipowered-cyber-threats-light-a-fire-under-cybersecurity-stocks-4970021)\n\n[Get 50% Off](/pro/pricing \"InvestingPro\")\n\n* [English (",
+            "retrieved_at": "2026-10-29T02:44:16.340799Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "88d5785a-8f4b-4fbb-94b2-352f7c0ce36b",
+          "89cb565e-0cb8-46f6-8130-ad98a8a90522"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "88d5785a-8f4b-4fbb-94b2-352f7c0ce36b"
+        ],
+        "review_reason": "The Tickeron evidence excerpt explicitly reports $16.7 billion AI semiconductor revenue, 56% of total revenue, and approximately $58 billion FY2026 AI revenue guidance. The second attached Investing.com source concerns Q1 FY2026 and does not corroborate these Q3 figures, so only the Tickeron item supports the claim.",
+        "review_confidence": "medium",
+        "review_note": "Supported by one secondary source in this packet; ideally corroborate against Broadcom's official Q3 filing or earnings release."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-007",
+      "finding_id": "cfeb0e93-3e5f-4d57-a1ed-e512ae4d6df3",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Broadcom’s 2026 news releases show a steady cadence of product announcements, with multiple releases each quarter. In Q1 2026 (January–March) the company announced at least eight distinct products or initiatives, including new Wi‑Fi 8 platforms, 3.5D compute SoCs, 6G front‑end SoCs, and AI‑related optical and networking solutions. In Q3 2026 (July–September) there were five announced items, such as the Singapore FC‑BGA substrate facility, quarterly financial results, and several AI‑ready security and networking offerings. This pattern indicates Broadcom delivers roughly three to four public product releases per quarter.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.92,
+        "evidence": [
+          {
+            "evidence_id": "565be96c-50ed-412b-b0bd-881d9ca36e56",
+            "relation": "supports",
+            "source_type": "release_notes",
+            "source_title": "Broadcom Newsroom | News Releases",
+            "source_url": "https://www.broadcom.com/company/news/releases",
+            "publisher": "www.broadcom.com",
+            "extracted_fact": "Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend Announces First Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend to Announce Third Quarter Fiscal Year 2026 Financial Results on Wednesday, September 2, 2026 [Product Releases](https://www.broadcom.com/company/news/releases?tab=products)[Financial Releases](https://www.broadcom.com/company/news/releases?tab=financial)",
+            "excerpt": "Oct 8, 2026 \n\n### September 2026\n\nAST Completes Singapore's First High-End FC-BGA Substrate Facility to Meet Growing AI Chip Demand\n\nSep 29, 2026 \n\nBroadcom Inc. Announces Third Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend\n\nSep 2, 2026 \n\n### August 2026\n\nBroadcom Strengthens Spring Security and Adds Coverage of Java, Python, and Node.js Ecosystems with TrueSource\n\nAug 31, 2026 \n\nBroadcom Unveils AI-Ready Data Foundations in VMware Tanzu Platform to Power Secure Enterprise AI Cloud\n\nAug 31, 2026 \n\nBroadcom Delivers End-to-End Security, Identity, and Observability for Agentic AI\n\nAug 31, 2026 \n\nBroadcom Unveils AgentMinder, An Enterprise Solution for AI Agent Governance and Runtime Control\n\nAug 31, 2026 [...] Mar 12, 2026 \n\nOptical Scale-up Consortium Established to Create an Open Specification for AI Infrastructure Led by Founding Members AMD, Broadcom, Meta, Microsoft, NVIDIA and OpenAI\n\nMar 12, 2026 \n\nBroadcom Delivers Industry’s First 400G/lane Optical DSP for Next-Generation AI Networks\n\nMar 11, 2026 \n\nBroadcom Inc. Announces First Quarter Fiscal Year 2026 Financial Results and Quarterly Dividend\n\nMar 4, 2026 \n\nBroadcom Announces VMware Telco Cloud Platform 9 to Drive Greater Hardware Efficiency for Sovereign-Ready Telco Infrastructure\n\nMar 2, 2026 \n\n### February 2026\n\nBroadcom Ships 3.5D Face-to-Face Compute SoC Powering AI Revolution\n\nFeb 26, 2026 \n\nBroadcom Introduces Industry’s First 6G Digital Front-End SoC for Massive MIMO\n\nFeb 19, 2026 [...] Mar",
+            "retrieved_at": "2026-10-29T02:44:16.341289Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "high",
+        "evidence_ids": [
+          "565be96c-50ed-412b-b0bd-881d9ca36e56"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.94
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The Broadcom newsroom excerpt lists a number of announcements, but it mixes product announcements, financial results, facilities, consortium initiatives, and software/security offerings. The captured excerpt is incomplete and does not establish the stated counts or the general rate of three to four public product releases per quarter.",
+        "review_confidence": "high",
+        "review_note": "The source can support examples of announcements, not the complete quantitative cadence claim."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-008",
+      "finding_id": "1abb898d-c669-4426-8773-3b2bf813263f",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Intel Corp: Analysts estimate that the Gaudi 3 AI accelerator will generate about $500 million in revenue for Intel by the end of the year.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.72,
+        "evidence": [
+          {
+            "evidence_id": "15aa1153-b0c6-4f4b-ad38-dc65eaf3ed20",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": "Intel launches Habana Labs Gaudi 3 AI accelerator - Globes",
+            "source_url": "https://en.globes.co.il/en/article-intel-launches-habana-labs-gaudi-3-ai-accelerator-1001490202",
+            "publisher": "en.globes.co.il",
+            "extracted_fact": "Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year. Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year. Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year. Intel announced that the Gaudi 3 will be integrated into Dell, Super Micro and Lenovo's servers. Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year.",
+            "excerpt": "How much will the new chip cost?\n\nAccording to \"Forbes\", a Gaudi 3-based server is expected to cost about $65,000, a third of the cost of a rival Nvidia product. Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year. The company hopes to break through the glass ceiling and record a significant increase in revenue from AI products this year, including the Lunar Lake processors that provide AI capabilities for PCs. Gaudi has an advantage that Nvidia does not have, which is the ability to work with the popular Ethernet communication standards. Intel is trying to leverage this advantage through alliances with Samsung, Google and HPE. Nvidia, for its part, is trying to move the market to the Infiniband standard of its Israeli company Mellanox. [...] How much will the new chip cost?\n\nAccording to \"Forbes\", a Gaudi 3-based server is expected to cost about $65,000, a third of the cost of a rival Nvidia product. Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year. The company hopes to break through the glass ceiling and record a significant increase in revenue from AI products this year, including the Lunar Lake processors that provide AI capabilities for PCs. Gaudi has an advantage that Nvidia does not have, which is the ability to work with the popular Ethernet communication standards. Intel is trying to leverage this advantage through alliances with Samsung, Google and HPE. Nvidia, for its part, i",
+            "retrieved_at": "2026-10-29T02:44:16.341672Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "15aa1153-b0c6-4f4b-ad38-dc65eaf3ed20"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The Globes evidence supports that analysts made an approximately $500 million Gaudi 3 revenue forecast, but the captured evidence has no publication date or forecast year. The phrase 'by the end of the year' is therefore ambiguous in a 2026 snapshot and cannot safely be interpreted as a current forecast.",
+        "review_confidence": "medium",
+        "review_note": "Could be retained as a historical forecast only if the source publication date and forecast year are established."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-009",
+      "finding_id": "c42929f7-3969-4d53-bdb7-e559b6d51dfc",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Intel Corp: Intel reported AI‑related data‑center revenue of $6.3 billion in Q2 2026, a 59 % year‑over‑year increase.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.77,
+        "evidence": [
+          {
+            "evidence_id": "546373df-5c19-4d4f-a8f2-dca90c718ce7",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": "Intel growth reaches highest point in 15 years on surging AI demand",
+            "source_url": "https://www.manufacturingdive.com/news/intel-growth-reaches-highest-point-15-years-surging-ai-demand-q2-2026/826228",
+            "publisher": "www.manufacturingdive.com",
+            "extracted_fact": "saw revenue reach $16.1 billion in the second quarter, up 25% from a year ago, marking its strongest growth in more than 15 years, CEO Lip-Bu Tan said on an earnings call Thursday. The growth came largely from Intel’s products for data center and artificial intelligence customers, which surged to $6.3 billion in revenue — up 59% from last year.",
+            "excerpt": "Intel Corp. saw revenue reach $16.1 billion in the second quarter, up 25% from a year ago, marking its strongest growth in more than 15 years, CEO Lip-Bu Tan said on an earnings call Thursday.\n   The growth came largely from Intel’s products for data center and artificial intelligence customers, which surged to $6.3 billion in revenue — up 59% from last year. At the same time, revenue improved by double-digits across its foundry division and client computing and physical AI group of products.\nOpens in a new window Opens an external website Opens an external website in a new window\n\nThis website utilizes technologies such as cookies to enable essential site functionality, as well as for analytics, personalization, and targeted advertising. To learn more, view the following link: [Privacy Policy](https://www.techtarget.com/privacy-policy/)\n\nStorage Preferences\n\n[Skip to main content](https://www.manufacturingdive.com/news/intel-growth-reaches-highest-point-15-years-surging-ai-demand-q2-2026/826228#skip-link-target)\n\n![Image 1: Manufacturing Dive Logo](https://d12v9rtnomnebu.cloudfront.net/logo/publications/manufacturing_black.svg)\n\n CONTINUE TO SITE ➞ \n\n# Don’t miss tomorrow’s Manufacturing industry news\n\nLet Manufacturing Dive’s free newsletter keep you informed, straight from your inbox.\n\n- [x]  By signing up to receive our newsletter, you agree to our [Terms of Use](https://www.informatechtarget.com/terms-of-use/) and [Privacy Policy](https://www.informatechtarget.com/privac",
+            "retrieved_at": "2026-10-29T02:44:16.342023Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "546373df-5c19-4d4f-a8f2-dca90c718ce7"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "546373df-5c19-4d4f-a8f2-dca90c718ce7"
+        ],
+        "review_reason": "The Manufacturing Dive evidence excerpt directly states Intel's data-center and AI products generated $6.3 billion in Q2 2026 revenue, up 59% year over year.",
+        "review_confidence": "high",
+        "review_note": "The wording 'AI-related data-center revenue' is a compact paraphrase of the source's 'data center and artificial intelligence customers' category."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-010",
+      "finding_id": "9d63f996-b964-4208-8699-5394753b2c03",
+      "worker": "competitor_intelligence",
+      "input": {
+        "finding_statement": "Broadcom secured a $63 billion financing structure with Bank of America, Blackstone, Citi and Morgan Stanley to provide AI compute capacity to Anthropic, indicating at least one enterprise paying customer for its AI accelerator offerings.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.87,
+        "evidence": [
+          {
+            "evidence_id": "8e15daa8-ffc0-4f85-976d-0e091920b4fe",
+            "relation": "supports",
+            "source_type": "release_notes",
+            "source_title": "Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom | Broadcom Inc.",
+            "source_url": "https://investors.broadcom.com/news-releases/news-release-details/bank-america-blackstone-citi-and-morgan-stanley-announce",
+            "publisher": "investors.broadcom.com",
+            "extracted_fact": "Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom",
+            "excerpt": "## Shareholder Tools\n\n Print\n Email Alerts\n RSS Feeds\n\nView printer-friendly version\n\nBack\n\nBank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom\n\nPDF Version\n\nNEW YORK and CHARLOTTE, N.C. and PALO ALTO, Calif., Oct. 26, 2026 /PRNewswire/ -- Bank of America (NYSE: BAC), Blackstone (NYSE: BX), Citi (NYSE: C) and Morgan Stanley (NYSE: MS) (the \"Lead Financial Partners\") today announced a $63 billion transaction to enable the deployment of AI compute capacity, leveraging Broadcom Inc.'s (NASDAQ: AVGO) technology, for Anthropic. This transaction is part of the strategic compute capacity agreement previously announced by Broadcom, with expected deliveries starting in calendar 2027. [...] About Broadcom  \nBroadcom Inc. (NASDAQ: AVGO) is a technology leader that designs, develops, and supplies semiconductors and infrastructure software for global organizations' complex, mission-critical needs. Broadcom combines long-term R&D investment with superb execution to deliver the best technology, at scale. Broadcom is a Delaware corporation headquartered in Palo Alto, CA. For more information, go to www.broadcom.com. [...] SOURCE Broadcom Inc.\n\n## Shareholder Tools\n\n Print\n Email Alerts\n RSS Feeds\n[Skip to main navigation](#main-menu)\n\n## Breadcrumb\n\n1. [Investor Center](/)\n2. Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Ena",
+            "retrieved_at": "2026-10-29T02:44:16.342366Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "high",
+        "evidence_ids": [
+          "8e15daa8-ffc0-4f85-976d-0e091920b4fe"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.94
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The Broadcom announcement describes a $63 billion financing transaction intended to enable AI compute capacity for Anthropic using Broadcom technology, with expected deliveries beginning in 2027. It does not establish that Anthropic is already a paying customer purchasing Broadcom AI accelerator offerings directly. The finding adds an unsupported customer/payment/product inference.",
+        "review_confidence": "high",
+        "review_note": "Do not equate financing/compute-capacity arrangements with a confirmed direct paying customer for accelerator products."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-011",
+      "finding_id": "3ffd8dba-3277-48ca-88a7-e3489fa6bf3b",
+      "worker": "market_intelligence",
+      "input": {
+        "finding_statement": "The United States AI data center market is projected to reach a total addressable market of $42.39 billion by 2031.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.9,
+        "evidence": [
+          {
+            "evidence_id": "63b5caf2-92be-4c8e-b3fe-0e4486824be4",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "source_url": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "publisher": null,
+            "extracted_fact": "The United States Artificial Intelligence Data Center Market size is projected to expand from USD 8.76 billion in 2025 and USD 11.52 billion in 2026 to USD 42.39 billion by 2031, registering a CAGR of 29.77% between 2026 to 2031.\nExplosive generative-AI workloads are boosting rack power densities above 100 kilowatts, reshaping electrical distribution and liquid-cooling design. Hyperscale cloud providers continue to dominate capacity additions through multi-billion-dollar self-build programs, while the colocation segment enjoys the fastest growth as enterprises look for turnkey AI-ready space. Hardware outlays, especially for GPU clusters and high-bandwidth networks, are expanding faster than software spending as operators race to deploy next-generation accelerators. Strict uptime requireme",
+            "excerpt": "The United States Artificial Intelligence Data Center Market size is projected to expand from USD 8.76 billion in 2025 and USD 11.52 billion in 2026 to USD 42.39 billion by 2031, registering a CAGR of 29.77% between 2026 to 2031.\nExplosive generative-AI workloads are boosting rack power densities above 100 kilowatts, reshaping electrical distribution and liquid-cooling design. Hyperscale cloud providers continue to dominate capacity additions through multi-billion-dollar self-build programs, while the colocation segment enjoys the fastest growth as enterprises look for turnkey AI-ready space. Hardware outlays, especially for GPU clusters and high-bandwidth networks, are expanding faster than software spending as operators race to deploy next-generation accelerators. Strict uptime requirements keep Tier IV facilities in the lead, and tax incentives plus renewable-energy availability are shifting new builds toward secondary metros with larger power headroom.\nBy data center type, cloud service providers held 55.82% of United States artificial intelligence data center market share in 2025, whereas the colocation segment is projected to post a 31.22% CAGR to 2031.\nBy tier standard, Tier IV facilities captured 61.63% revenue share in 2025 in the United States artificial intelligence data center market; Tier III is forecast to expand at 32.09% CAGR during 2026-2031.\nBy component, software commanded 45.83% of United States artificial intelligence data center market size in 2025; hardware spending is poised to grow at 30.56% CAGR through 2031.\nBy end-user industry, IT and ITES accounted for 33.82% share of the United States artificial intelligence data center market size in 2025, while Internet and digital media is projected to record a 30.88% CAGR up to 2031.",
+            "retrieved_at": "2026-10-29T02:46:09.029350Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "63b5caf2-92be-4c8e-b3fe-0e4486824be4"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "63b5caf2-92be-4c8e-b3fe-0e4486824be4"
+        ],
+        "review_reason": "The Mordor Intelligence evidence explicitly projects the United States artificial-intelligence data-center market to reach $42.39 billion by 2031. The finding accurately states that broader market measure.",
+        "review_confidence": "high",
+        "review_note": "This is the broader AI data-center market, not a standalone AI-accelerator market-size estimate."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-012",
+      "finding_id": "12156014-d381-406b-bc03-815b07cb250a",
+      "worker": "market_intelligence",
+      "input": {
+        "finding_statement": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.8,
+        "evidence": [
+          {
+            "evidence_id": "4de85668-2ea7-4868-bd43-201b0f31f21e",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "source_url": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "publisher": null,
+            "extracted_fact": "The United States Artificial Intelligence Data Center Market size is projected to expand from USD 8.76 billion in 2025 and USD 11.52 billion in 2026 to USD 42.39 billion by 2031, registering a CAGR of 29.77% between 2026 to 2031.\nExplosive generative-AI workloads are boosting rack power densities above 100 kilowatts, reshaping electrical distribution and liquid-cooling design. Hyperscale cloud providers continue to dominate capacity additions through multi-billion-dollar self-build programs, while the colocation segment enjoys the fastest growth as enterprises look for turnkey AI-ready space. Hardware outlays, especially for GPU clusters and high-bandwidth networks, are expanding faster than software spending as operators race to deploy next-generation accelerators. Strict uptime requireme",
+            "excerpt": "The United States Artificial Intelligence Data Center Market size is projected to expand from USD 8.76 billion in 2025 and USD 11.52 billion in 2026 to USD 42.39 billion by 2031, registering a CAGR of 29.77% between 2026 to 2031.\nExplosive generative-AI workloads are boosting rack power densities above 100 kilowatts, reshaping electrical distribution and liquid-cooling design. Hyperscale cloud providers continue to dominate capacity additions through multi-billion-dollar self-build programs, while the colocation segment enjoys the fastest growth as enterprises look for turnkey AI-ready space. Hardware outlays, especially for GPU clusters and high-bandwidth networks, are expanding faster than software spending as operators race to deploy next-generation accelerators. Strict uptime requirements keep Tier IV facilities in the lead, and tax incentives plus renewable-energy availability are shifting new builds toward secondary metros with larger power headroom.\nBy data center type, cloud service providers held 55.82% of United States artificial intelligence data center market share in 2025, whereas the colocation segment is projected to post a 31.22% CAGR to 2031.\nBy tier standard, Tier IV facilities captured 61.63% revenue share in 2025 in the United States artificial intelligence data center market; Tier III is forecast to expand at 32.09% CAGR during 2026-2031.\nBy component, software commanded 45.83% of United States artificial intelligence data center market size in 2025; hardware spending is poised to grow at 30.56% CAGR through 2031.\nBy end-user industry, IT and ITES accounted for 33.82% share of the United States artificial intelligence data center market size in 2025, while Internet and digital media is projected to record a 30.88% CAGR up to 2031.",
+            "retrieved_at": "2026-10-29T02:46:09.029442Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "4de85668-2ea7-4868-bd43-201b0f31f21e"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "4de85668-2ea7-4868-bd43-201b0f31f21e"
+        ],
+        "review_reason": "The attached market excerpt explicitly states that hardware spending is projected to grow at a 30.56% CAGR through 2031. The extracted fact omitted that sentence, but the full excerpt contains it.",
+        "review_confidence": "high",
+        "review_note": "The figure is for hardware spending in the broader US AI data-center market."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-013",
+      "finding_id": "a81ca8ad-7008-4b8f-8a7a-4c45b37ccbdc",
+      "worker": "market_intelligence",
+      "input": {
+        "finding_statement": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.65,
+        "evidence": [
+          {
+            "evidence_id": "e7d396d0-0c80-4daa-8d71-2580449eb66d",
+            "relation": "supports",
+            "source_type": "web_page",
+            "source_title": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "source_url": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "publisher": null,
+            "extracted_fact": "In conclusion, GDPR is a comprehensive regulation that aims to protect the privacy and data rights of individuals within the EU. It sets clear guidelines for organizations on how to handle personal data and introduces strict penalties for non-compliance. By giving individuals more control over their data and increasing transparency, GDPR is an important step towards ensuring data protection in the digital age.\nData residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations. This requirement is aimed at protecting the privacy and security of individuals’ personal data.\nData residency refers to the physical or geographic location where data is stored or pro",
+            "excerpt": "In conclusion, GDPR is a comprehensive regulation that aims to protect the privacy and data rights of individuals within the EU. It sets clear guidelines for organizations on how to handle personal data and introduces strict penalties for non-compliance. By giving individuals more control over their data and increasing transparency, GDPR is an important step towards ensuring data protection in the digital age.\nData residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations. This requirement is aimed at protecting the privacy and security of individuals’ personal data.\nData residency refers to the physical or geographic location where data is stored or processed. In the context of GDPR, data residency becomes crucial because it determines the jurisdiction and applicable data protection laws governing the handling of personal data.\nWhen it comes to data residency, organizations must consider various factors, such as the location of their data centers, cloud service providers, and third-party processors. These factors play a significant role in determining the compliance of data residency requirements under GDPR.\nFurthermore, data residency also encompasses the concept of data sovereignty, which refers to a country’s authority over the data stored within its borders. This means that organizations must comply with both the data residency requirements and the data sovereignty laws of the respective countries where they operate or store data.\nData Residency refers to the physical or geographical location of an organization’s data. Under various data privacy laws like the GDPR, organizations may be required to store certain data within the country where it is collected. This ensures that the data is subject to the country’s own privacy laws and regulations.",
+            "retrieved_at": "2026-10-29T02:46:09.029519Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "e7d396d0-0c80-4daa-8d71-2580449eb66d"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The cited Kiteworks page discusses data residency, but the finding overstates the legal position by claiming GDPR mandates personal data to be stored and processed in specific geographic locations and thereby compels accelerator deployments in EU data centers. The evidence does not establish that broad mandatory localization rule or the deployment conclusion.",
+        "review_confidence": "high",
+        "review_note": "The claim conflates GDPR's rules for international transfers and safeguards with a general EU data-localization mandate."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-014",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f1",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "Broadcom is described positively for its collaborations with Google and Meta on AI chip technologies.",
+        "finding_category": "customer_sentiment",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "7d1756b79065c243",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.theregister.com/software/2023/09/22/for-your-info-broadcom-helped-google-make-those-tpu-chips/1209329",
+            "publisher": "www.theregister.com",
+            "extracted_fact": "For your info, Broadcom helped Google make those TPU chips. And Meta's tapping up Big B too – it's big bucks for this silicon giant. Tobias Mann Tobias Mann · 1. Published Fri 22 Sept 2023 // 14:33 UTC. Make us...",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:42.043376Z",
+            "published_date": null
+          },
+          {
+            "evidence_id": "5c60a04191af38b9",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.broadcom.com/company/news/articles/ai-infrastructure/broadcoms-112g-serdes-connects-generative-ai",
+            "publisher": "www.broadcom.com",
+            "extracted_fact": "Broadcom’s 112G SerDes connects generative AI. Broadcom's strong technical collaborations with OAI contributors helps ensure that 112Gbps technologies can be easily integrated into the next generation of...",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:42.043376Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "7d1756b79065c243",
+          "5c60a04191af38b9"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [
+          "7d1756b79065c243"
+        ],
+        "review_reason": "The Register excerpt supports Broadcom's involvement in Google's TPU work and describes Meta as approaching/engaging Broadcom, but it does not firmly establish a completed Meta collaboration. The second source concerns Broadcom 112G SerDes and OAI contributors, not Google or Meta. The combined claim about collaborations with both companies is not fully supported.",
+        "review_confidence": "medium",
+        "review_note": "Partial support for Google; insufficient support for the full Google-and-Meta claim."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-015",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f2",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "European cloud provider Gcore launched generative AI clusters using NVIDIA A100 and H100 GPUs, showing adoption of NVIDIA accelerators by cloud services in Europe.",
+        "finding_category": "market_signal",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "968480159756961b",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.datacenterdynamics.com/en/news/gcore-launches-generative-ai-cluster-with-nvidia-gpus/",
+            "publisher": "www.datacenterdynamics.com",
+            "extracted_fact": "Gcore launches generative AI cluster with Nvidia GPUs. European cloud provider Gcore has launched a generative artificial intelligence (AI) cluster using Nvidia A100 and H100 Tensor Core GPUs.",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:38.884672Z",
+            "published_date": null
+          },
+          {
+            "evidence_id": "77d467c2c0ed47b3",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.businesswire.com/news/home/20231019402637/en/Gcore-Launches-Generative-AI-Cluster-Powered-by-NVIDIA-GPUs",
+            "publisher": "www.businesswire.com",
+            "extracted_fact": "Gcore Launches Generative AI Cluster Powered by NVIDIA GPUs. Gcore launches its Generative AI Cluster powered by NVIDIA A100 and H100 Tensor Core GPUs - for GenAI capabilities to accelerate AI/ML model training.",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:38.884672Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "968480159756961b",
+          "77d467c2c0ed47b3"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "968480159756961b",
+          "77d467c2c0ed47b3"
+        ],
+        "review_reason": "Data Center Dynamics explicitly identifies Gcore as a European cloud provider and reports that it launched a generative-AI cluster using NVIDIA A100 and H100 Tensor Core GPUs. Business Wire provides a second source for the cluster and GPU models.",
+        "review_confidence": "high",
+        "review_note": "The evidence supports a specific European cloud deployment; it does not quantify wider European market adoption."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-016",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f3",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "NVIDIA H100 GPUs are portrayed positively for delivering high compute performance and efficiency in cloud AI workloads.",
+        "finding_category": "customer_sentiment",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "0df4906bf11c854c",
+            "relation": "supports",
+            "source_type": "search_result",
+            "source_title": null,
+            "source_url": "https://www.t-cloud-public.com/en/blog/product-news/nvidia-h100-gpu-for-ai-hpc",
+            "publisher": "www.t-cloud-public.com",
+            "extracted_fact": "NVIDIA H100 GPUs for AI and HPC | T Cloud Public. Ready for the future of AI and HPC: In December 2024, T Cloud Public will deliver even more computing power and efficiency with NVIDIA H100 GPUs.",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:47.455135Z",
+            "published_date": null
+          },
+          {
+            "evidence_id": "437a0040acb6bd8d",
+            "relation": "supports",
+            "source_type": "search_result",
+            "source_title": null,
+            "source_url": "https://greennode.ai/blog/nvidia-h100-gpu-accelerating-ai-across-the-cloud",
+            "publisher": "greennode.ai",
+            "extracted_fact": "NVIDIA® H100 GPU: Accelerating AI Across the Cloud. NVIDIA H100 is designed to meet the growing compute demands of cloud AI. helps reduce data bottlenecks and efficiently scale workloads from a single server to ...",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:47.455135Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "0df4906bf11c854c",
+          "437a0040acb6bd8d"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "0df4906bf11c854c",
+          "437a0040acb6bd8d"
+        ],
+        "review_reason": "The T Cloud Public excerpt describes H100 GPUs as bringing additional computing power and efficiency, while GreenNode describes them as designed for cloud-AI compute demands and reduced data bottlenecks. This supports the carefully worded claim that H100 is portrayed positively; it does not establish a quantitative benchmark.",
+        "review_confidence": "medium",
+        "review_note": "Verified as positive portrayal, not as an independently benchmarked performance comparison."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-017",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f4",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "AMD and Intel are launching new AI chips with pricing strategies aimed at challenging NVIDIA's market position.",
+        "finding_category": "gap",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "9b1cffa037b0d3ee",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.euronews.com/2024/06/07/when-the-chips-are-down-how-can-europe-compete-with-ai-semiconductor-giant-nvidia",
+            "publisher": "www.euronews.com",
+            "extracted_fact": "Can Europe chip away at booming AI semiconductor rivals?. Euronews Next takes a look at the microchip market, how Nvidia got to where it is and what the EU can do to carve out its own niches in this booming...",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:44.655348Z",
+            "published_date": null
+          },
+          {
+            "evidence_id": "83b76ef972216158",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://www.computerworld.com/article/2138136/amd-and-intel-take-on-nvidia-with-new-ai-chips-and-pricing-strategies.html",
+            "publisher": "www.computerworld.com",
+            "extracted_fact": "AMD and Intel take on Nvidia with new AI chips and pricing strategies. Intel's Lunar Lake AI chip and AMD's Instinct MI325X accelerator are set to offer stiff competition to Nvidia's dominance in AI chips market.",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:44.655348Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "9b1cffa037b0d3ee",
+          "83b76ef972216158"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "The Computerworld headline references new AI chips and pricing strategies, and its extracted fact supports competitive positioning for Intel Lunar Lake and AMD Instinct MI325X. However, the supplied extracted facts do not establish the specific pricing strategies, and the evidence is from 2024 while the finding uses present-tense 'are launching' in a 2026 snapshot. The complete current claim is therefore not adequately supported.",
+        "review_confidence": "medium",
+        "review_note": "Could be reframed as a historical 2024 competitive announcement if pricing details and date are preserved."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-018",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f5",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "Arabic language coverage is limited to a single item, restricting insight into sentiments from Arabic‑speaking markets.",
+        "finding_category": "risk",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "c7a0cf9cef44cea8",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://mecouncil.org/ar/publication/%D8%B1%D9%82%D8%A7%D8%A6%D9%82-%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A-%D8%A8%D9%8A%D9%86-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D9%81%D8%B3%D8%A9-%D9%88/",
+            "publisher": "mecouncil.org",
+            "extracted_fact": "رقائق الذكاء الاصطناعي بين المنافسة والرقابة الأمريكية على تصديرها إلى الدول الخليجية. النقاط الرئيسية. مخاوف الأمن القومي إزاء الذكاء الاصطناعي الحدودي (Frontier AI) والمخاطر الناجمة عنه: أدّت اعتبارات سلسلة التوريد في الولايات المتحدة وشرق...",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:49.711408Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "insufficient",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "c7a0cf9cef44cea8"
+        ],
+        "contradictions": [],
+        "missing_information": [
+          "Worker confidence below 45%.",
+          "Saved source does not contain the claim."
+        ],
+        "confidence": 0.37
+      },
+      "golden_reference": {
+        "verification_status": "insufficient",
+        "supporting_evidence_ids": [],
+        "review_reason": "One Arabic-language article about AI chips and US export controls does not establish that the research corpus contains only one Arabic item, nor does it support a conclusion about sentiment coverage in Arabic-speaking markets. The item-count claim needs corpus-level metadata, not a single article as source evidence.",
+        "review_confidence": "high",
+        "review_note": "The agent correctly marked this finding insufficient."
+      }
+    },
+    {
+      "test_case_id": "VER-NVIDIA-019",
+      "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f6",
+      "worker": "customer_trends",
+      "input": {
+        "finding_statement": "Broadcom introduced a new XDSiP platform to address rising demand for higher‑density AI accelerator integration.",
+        "finding_category": "gap",
+        "worker_confidence": 0.3,
+        "evidence": [
+          {
+            "evidence_id": "8ce4dab748a9614d",
+            "relation": "supports",
+            "source_type": "news_article",
+            "source_title": null,
+            "source_url": "https://interestingengineering.com/innovation/worlds-first-3-5d-f2f-tech",
+            "publisher": "interestingengineering.com",
+            "extracted_fact": "Broadcom launches world’s first 3.5D F2F tech to meet soaring GenAI chip demand. Broadcom has unveiled its 3.5D XDSiP platform, revolutionizing AI accelerator technology with advanced silicon integration for XPUs.",
+            "excerpt": null,
+            "retrieved_at": "2026-10-29T02:42:42.043376Z",
+            "published_date": null
+          }
+        ]
+      },
+      "actual_verification": {
+        "verification_status": "verified",
+        "evidence_quality": "medium",
+        "evidence_ids": [
+          "8ce4dab748a9614d"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "confidence": 0.78
+      },
+      "golden_reference": {
+        "verification_status": "verified",
+        "supporting_evidence_ids": [
+          "8ce4dab748a9614d"
+        ],
+        "review_reason": "The Interesting Engineering evidence explicitly states that Broadcom unveiled its 3.5D XDSiP platform to meet rising GenAI chip demand, directly supporting the claim.",
+        "review_confidence": "high",
+        "review_note": "Verified as a product/platform announcement."
+      }
+    }
+  ]
+}

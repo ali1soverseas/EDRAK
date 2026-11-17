@@ -175,8 +175,9 @@ All keys are environment variables (see `.env.example`).
 | `COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH` | 3 | Top results read per search |
 | `COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES` | 6 | Third-party pages read per run |
 
-The language model, its reasoning level and the one repair retry on an invalid reply are those of the
-company profile import (`OLLAMA_API_KEY`, `PROFILE_IMPORT_REASONING`).
+Company research extraction and company profile URL/PDF imports use the shared
+NVIDIA model (`NVIDIA_API_KEY`, `NVIDIA_MODEL`). Invalid extracted replies are
+retried once before being reported.
 
 ## Optional dependencies
 

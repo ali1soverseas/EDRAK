@@ -5,12 +5,10 @@ Arm A is what ships, and it is measured by calling the shipping code itself:
 with `function_calling` and drops the schema-as-text instruction, on the theory
 that a prompt describing the expected JSON suppresses the tool call.
 
-Both arms use one model, built the way the worker builds it, so the method is
-the only variable. `repair=False` means these are first-attempt numbers and a
-retry cannot mask a failure. The conclusion is recorded in
-docs/customer-trends-agent/README.md; re-run this if the model, the schemas or
-langchain-ollama change, because a method inherited from another worker is not
-evidence about this one.
+Both arms use one NVIDIA model, built the way the worker builds it, so the
+method is the only variable. `repair=False` means these are first-attempt
+numbers and a retry cannot mask a failure. Re-run this if the model, schemas,
+or NVIDIA model integration change.
 
     PYTHONPATH=backend/src python -m edrak.agents.customer_trends.llm.ab_structured_output
 

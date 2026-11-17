@@ -1,0 +1,1768 @@
+{
+  "worker": "market_intelligence",
+  "task_goal": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+  "deterministic_checks": {
+    "finding_count": 3,
+    "evidence_item_count": 2,
+    "gap_count": 3,
+    "evidence_reference_rate": 1.0,
+    "reference_resolution_rate": 1.0,
+    "quote_verification_rate": 1.0,
+    "findings_with_unsupported_numbers": 0,
+    "status_claim_conflicts": 0,
+    "mean_numeric_confidence": 0.7833,
+    "per_finding": [
+      {
+        "finding_id": "M1",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": true,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "M2",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": true,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      },
+      {
+        "finding_id": "M3",
+        "has_evidence_reference": true,
+        "references_resolve": true,
+        "reference_note": null,
+        "quote_found": true,
+        "unsupported_numbers": [],
+        "status_claim_conflict": null
+      }
+    ],
+    "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+  },
+  "ground_truth_snapshot_date": "2026-10-29",
+  "ground_truth_dataset_version": "1.0.0-goal-derived",
+  "finding_count": 12,
+  "mandatory_finding_count": 12,
+  "coverage_score": 0.375,
+  "strict_coverage_score": 0.0833,
+  "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+  "evaluation_config": {
+    "thresholds": {
+      "covered": 0.7,
+      "partial": 0.4
+    },
+    "embeddings": {
+      "provider": "sentence_transformers",
+      "model": "all-MiniLM-L6-v2",
+      "device": null,
+      "batch_size": 64
+    },
+    "scoring": {
+      "mandatory_only": true,
+      "partial_credit": 0.5
+    },
+    "worker_quality": {
+      "enabled": true,
+      "metrics": {},
+      "thresholds": {
+        "pass": 0.7,
+        "partial": 0.4
+      },
+      "max_report_chars": 30000,
+      "max_evidence_chars": 18000
+    }
+  },
+  "second_pass_summary": {
+    "enabled": true,
+    "top_k": 5,
+    "retrieval_method": "embeddings_cosine",
+    "passage_count": 16,
+    "initial_missing_count": 4,
+    "initial_partial_count": 7,
+    "findings_reviewed": 11,
+    "findings_skipped_partial": 0,
+    "findings_upgraded": 0,
+    "embedding_error": null,
+    "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+    "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+  },
+  "additional_claim_summary": {
+    "extracted_claim_count": 4,
+    "additional_candidates": 0,
+    "additional_candidates_supported_by_trace": 0,
+    "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+  },
+  "scope_compliance": {
+    "enabled": true,
+    "required_entities": [
+      "NVIDIA"
+    ],
+    "comparison_targets": [],
+    "entity_presence": {
+      "NVIDIA": true
+    },
+    "all_required_entities_present": true,
+    "all_in_scope_competitors_present": true,
+    "competitor_presence": {
+      "NVIDIA": true
+    },
+    "excluded_entities": [],
+    "excluded_entity_mentions": {},
+    "scope_violations": [],
+    "scope_policy_pass": true,
+    "policy": "Keep analysis focused on AI computing accelerators in data centers in Europe and the United States, with implications for NVIDIA. Broadcom and Intel are relevant competitors. Do not treat unresearched tasks as completed findings."
+  },
+  "finding_results": [
+    {
+      "finding_id": "MKT-TAM-01",
+      "requirement_id": "MKT-TAM-01",
+      "test_case_id": "MKT-01",
+      "title": "Define and quantify the AI data-center accelerator market",
+      "priority": "mandatory",
+      "score": 0.45,
+      "status": "partial",
+      "reason": "missing: Defines the market being measured and distinguishes accelerator hardware from broader data-center market revenue. — The actual output only provides a claim about overall U.S. AI data‑center market size (M1) and a vague statement that hardware spending, which includes GPUs and AI accelerators, will grow (M2). It does not contain a clear definition of the accelerator‑hardware market nor an explicit distinction between accelerator revenue and the broader data‑center market revenue, which the expected output requires. Because the criterion is essentially missing, the response receives a low score.; covered: Provides market size and reference year or forecast period. — The Actual Output includes a clear market size figure ($42.39 billion) and pairs it with a forecast year (by 2031), satisfying the requirement to provide both a size and a reference year. The Expected Output’s acceptance criteria demand these elements, and the response meets them, resulting in a top score.; partial: Identifies source and methodology or scope where available. — The Actual Output lists source URLs for each finding, satisfying the source identification requirement, but it does not provide any explicit description of the methodology or scope used to generate the report, which the Expected Output expects. This partial fulfillment leads to an intermediate score rather than a high one.; missing: Does not relabel a broader AI data-center estimate as accelerator TAM without justification. — The Actual Output includes finding M1 that presents the overall U.S. AI data‑center market ($42.39 billion) as the accelerator TAM without any justification, directly violating the criterion that the report must not relabel a broader AI data‑center estimate as accelerator TAM. No distinguishing explanation or methodology is provided, so the response does not meet the expected output requirement.",
+      "criteria_results": [
+        {
+          "criterion": "Defines the market being measured and distinguishes accelerator hardware from broader data-center market revenue.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output only provides a claim about overall U.S. AI data‑center market size (M1) and a vague statement that hardware spending, which includes GPUs and AI accelerators, will grow (M2). It does not contain a clear definition of the accelerator‑hardware market nor an explicit distinction between accelerator revenue and the broader data‑center market revenue, which the expected output requires. Because the criterion is essentially missing, the response receives a low score."
+        },
+        {
+          "criterion": "Provides market size and reference year or forecast period.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output includes a clear market size figure ($42.39 billion) and pairs it with a forecast year (by 2031), satisfying the requirement to provide both a size and a reference year. The Expected Output’s acceptance criteria demand these elements, and the response meets them, resulting in a top score."
+        },
+        {
+          "criterion": "Identifies source and methodology or scope where available.",
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output lists source URLs for each finding, satisfying the source identification requirement, but it does not provide any explicit description of the methodology or scope used to generate the report, which the Expected Output expects. This partial fulfillment leads to an intermediate score rather than a high one."
+        },
+        {
+          "criterion": "Does not relabel a broader AI data-center estimate as accelerator TAM without justification.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output includes finding M1 that presents the overall U.S. AI data‑center market ($42.39 billion) as the accelerator TAM without any justification, directly violating the criterion that the report must not relabel a broader AI data‑center estimate as accelerator TAM. No distinguishing explanation or methodology is provided, so the response does not meet the expected output requirement."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.45,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-TAM-01",
+        "requirement_id": "MKT-TAM-01",
+        "test_case_id": "MKT-01",
+        "title": "Define and quantify the AI data-center accelerator market",
+        "priority": "mandatory",
+        "score": 0.1,
+        "status": "missing",
+        "reason": "The Actual Output only lists task statements (e.g., \"Quantify the total addressable market (TAM) and CAGR...\") and gap notices, but provides no definition, market size figure, reference year, source, or methodology, nor does it distinguish accelerator hardware from the broader AI data‑center market. Consequently, none of the acceptance criteria are substantively met, resulting in a missing coverage assessment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[0].task",
+            "text": "Quantify the total addressable market (TAM) and CAGR for AI computing accelerators in data centers across the United States and Europe",
+            "similarity": 0.730752
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.719409
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+            "similarity": 0.671797
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.628803
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.62496
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.45,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-US-02",
+      "requirement_id": "MKT-US-02",
+      "test_case_id": "MKT-01",
+      "title": "United States market size and growth",
+      "priority": "mandatory",
+      "score": 0.4,
+      "status": "partial",
+      "reason": "covered: Provides US-specific value and year or forecast period. — The Actual Output includes a US‑specific monetary value ($42.39 billion) with a forecast year (2031) and also provides a CAGR figure and source links, satisfying the core acceptance criteria. However, it does not explicitly label the AI data‑center market figure as a proxy for accelerator‑specific market size, which the Expected Output expects for clarity.; partial: Reports CAGR and period if available. — The Actual Output includes a CAGR statement (30.56% CAGR) and mentions a period (“through 2031”), satisfying step 1, and the Expected Output does require a CAGR and period, so the criterion applies (step 2). The retrieval context also contains CAGR data, but the Actual Output does not simply copy it, meeting step 3. However, the period is vague (no start year) and the claim refers to overall hardware spending rather than a precise accelerator market CAGR, so the statement is only partially aligned, warranting an intermediate score.; missing: Names and links the source. — The Actual Output does include URLs in the \"sources\" fields, satisfying the link requirement, but it lacks descriptive source names and does not follow the Expected Output format (e.g., no ID MKT-US-02 or named source citation). Therefore only a partial fulfillment of the source citation criteria is observed.; missing: Separates accelerator-market estimates from overall AI data-center-market estimates. — The actual output only provides overall AI data‑center market figures (e.g., $42.39 billion) and a hardware‑spending growth rate that lumps accelerators with other hardware, without explicitly separating accelerator‑specific estimates from the broader AI data‑center market as required by the expected acceptance criteria.",
+      "criteria_results": [
+        {
+          "criterion": "Provides US-specific value and year or forecast period.",
+          "score": 0.8,
+          "status": "covered",
+          "reason": "The Actual Output includes a US‑specific monetary value ($42.39 billion) with a forecast year (2031) and also provides a CAGR figure and source links, satisfying the core acceptance criteria. However, it does not explicitly label the AI data‑center market figure as a proxy for accelerator‑specific market size, which the Expected Output expects for clarity."
+        },
+        {
+          "criterion": "Reports CAGR and period if available.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output includes a CAGR statement (30.56% CAGR) and mentions a period (“through 2031”), satisfying step 1, and the Expected Output does require a CAGR and period, so the criterion applies (step 2). The retrieval context also contains CAGR data, but the Actual Output does not simply copy it, meeting step 3. However, the period is vague (no start year) and the claim refers to overall hardware spending rather than a precise accelerator market CAGR, so the statement is only partially aligned, warranting an intermediate score."
+        },
+        {
+          "criterion": "Names and links the source.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does include URLs in the \"sources\" fields, satisfying the link requirement, but it lacks descriptive source names and does not follow the Expected Output format (e.g., no ID MKT-US-02 or named source citation). Therefore only a partial fulfillment of the source citation criteria is observed."
+        },
+        {
+          "criterion": "Separates accelerator-market estimates from overall AI data-center-market estimates.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output only provides overall AI data‑center market figures (e.g., $42.39 billion) and a hardware‑spending growth rate that lumps accelerators with other hardware, without explicitly separating accelerator‑specific estimates from the broader AI data‑center market as required by the expected acceptance criteria."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.4,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-US-02",
+        "requirement_id": "MKT-US-02",
+        "test_case_id": "MKT-01",
+        "title": "United States market size and growth",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not provide any US-specific market value, year, or forecast period, nor does it report a CAGR, name the source, or separate accelerator estimates from overall AI data‑center estimates. Only a URL is listed without accompanying data, so none of the acceptance criteria are substantively addressed, resulting in a missing coverage classification.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.597536
+          },
+          {
+            "source_path": "$.findings[0].evidence_ids[0]",
+            "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "similarity": 0.540266
+          },
+          {
+            "source_path": "$.findings[0].task",
+            "text": "Quantify the total addressable market (TAM) and CAGR for AI computing accelerators in data centers across the United States and Europe",
+            "similarity": 0.533224
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.528207
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+            "similarity": 0.503308
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.4,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-EU-03",
+      "requirement_id": "MKT-EU-03",
+      "test_case_id": "MKT-01",
+      "title": "European market size and growth",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "partial",
+      "reason": "missing: Provides Europe-specific value and year or explicitly reports that a reliable estimate was not found. — The Actual Output contains no Europe-specific claim with a numeric value and year, nor does it state that a reliable Europe estimate was not found. All numeric data pertain to the United States, and the only Europe mention (GDPR) lacks a market figure, so the evaluation criteria are not met.; missing: Reports CAGR and period if available. — The Actual Output includes an explicit CAGR of 30.56% and the period \"through 2031,\" satisfying step 1. However, the Expected Output does not contain any CAGR value or time period to match, so step 2 reveals a mismatch. Because the required alignment between Actual and Expected outputs is missing, the response receives a low score.; partial: Names and links the source. — The Actual Output lists URLs for each finding in the \"sources\" fields, satisfying the link requirement, but it does not provide readable source names alongside those links. Since the expected output demands both name and hyperlink, the response only partially meets the criteria, resulting in an intermediate score.; missing: Does not substitute US results or global data for European figures without labelling the limitation. — The Actual Output contains only US market figures (M1 and M2) and no European market size or growth data. It does not label the use of US data as a limitation, which violates step 2. Consequently, it fails to meet the Expected Output’s requirement for European figures or a clear limitation label, resulting in a very low alignment score.",
+      "criteria_results": [
+        {
+          "criterion": "Provides Europe-specific value and year or explicitly reports that a reliable estimate was not found.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output contains no Europe-specific claim with a numeric value and year, nor does it state that a reliable Europe estimate was not found. All numeric data pertain to the United States, and the only Europe mention (GDPR) lacks a market figure, so the evaluation criteria are not met."
+        },
+        {
+          "criterion": "Reports CAGR and period if available.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output includes an explicit CAGR of 30.56% and the period \"through 2031,\" satisfying step 1. However, the Expected Output does not contain any CAGR value or time period to match, so step 2 reveals a mismatch. Because the required alignment between Actual and Expected outputs is missing, the response receives a low score."
+        },
+        {
+          "criterion": "Names and links the source.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output lists URLs for each finding in the \"sources\" fields, satisfying the link requirement, but it does not provide readable source names alongside those links. Since the expected output demands both name and hyperlink, the response only partially meets the criteria, resulting in an intermediate score."
+        },
+        {
+          "criterion": "Does not substitute US results or global data for European figures without labelling the limitation.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output contains only US market figures (M1 and M2) and no European market size or growth data. It does not label the use of US data as a limitation, which violates step 2. Consequently, it fails to meet the Expected Output’s requirement for European figures or a clear limitation label, resulting in a very low alignment score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.2,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-EU-03",
+        "requirement_id": "MKT-EU-03",
+        "test_case_id": "MKT-01",
+        "title": "European market size and growth",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output does not address any of the acceptance criteria: it provides no Europe-specific market size, year, CAGR, or growth period, and it fails to name a European source. Instead, it cites a US market report (Passage 5) without labeling the limitation, violating the fourth criterion. Consequently, coverage is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[2].evidence_ids[0]",
+            "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "similarity": 0.371654
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.313452
+          },
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+            "similarity": 0.282953
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.267193
+          },
+          {
+            "source_path": "$.findings[0].evidence_ids[0]",
+            "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "similarity": 0.262658
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.2,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-COMP-04",
+      "requirement_id": "MKT-COMP-04",
+      "test_case_id": "MKT-01",
+      "title": "Comparable US versus Europe analysis",
+      "priority": "mandatory",
+      "score": 0.07500000000000001,
+      "status": "missing",
+      "reason": "missing: Compares both regions explicitly. — The Actual Output does not contain any explicit statement that directly compares the United States and Europe; it only provides separate US market facts and a GDPR note without a comparative analysis. The Expected Output requires an explicit US‑versus‑Europe comparison, which is not reflected in the Actual Output. The Retrieval Context also lacks such a comparison, meeting step 3, but the absence of the required comparison in the Actual Output leads to a low score.; missing: Identifies differences in definitions, base years, forecast windows, or currency where relevant. — The response does not contain any explicit statements that identify differences in definitions, base years, forecast windows, or currency between the US and European markets. It only provides US‑specific market size and CAGR figures and a GDPR note, without any comparative analysis or mention of regional differences, which fails the core evaluation criteria.; missing: Avoids presenting non-comparable estimates as like-for-like. — The Actual Output only provides US‑focused quantitative estimates (a $42.39 billion market size and a 30.56% CAGR) and does not include any comparable European figures, so it fails to meet the required US‑versus‑Europe analysis. The two estimates also use different units and metrics, violating the side‑by‑side comparability check. Consequently, the report does not satisfy the Expected Output’s criteria for explicit regional comparison, identification of definition or period differences, or stating missing regional data.; missing: States when regional data is missing or insufficient. — The actual output does not contain any explicit statement that regional data for Europe is missing or insufficient, which is required by the acceptance criteria. The gaps listed refer to other missing facts (adoption announcements, competitor activity, technology signals) but do not address the comparative US‑Europe data requirement, so the output fails to meet the key evaluation step.",
+      "criteria_results": [
+        {
+          "criterion": "Compares both regions explicitly.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not contain any explicit statement that directly compares the United States and Europe; it only provides separate US market facts and a GDPR note without a comparative analysis. The Expected Output requires an explicit US‑versus‑Europe comparison, which is not reflected in the Actual Output. The Retrieval Context also lacks such a comparison, meeting step 3, but the absence of the required comparison in the Actual Output leads to a low score."
+        },
+        {
+          "criterion": "Identifies differences in definitions, base years, forecast windows, or currency where relevant.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The response does not contain any explicit statements that identify differences in definitions, base years, forecast windows, or currency between the US and European markets. It only provides US‑specific market size and CAGR figures and a GDPR note, without any comparative analysis or mention of regional differences, which fails the core evaluation criteria."
+        },
+        {
+          "criterion": "Avoids presenting non-comparable estimates as like-for-like.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output only provides US‑focused quantitative estimates (a $42.39 billion market size and a 30.56% CAGR) and does not include any comparable European figures, so it fails to meet the required US‑versus‑Europe analysis. The two estimates also use different units and metrics, violating the side‑by‑side comparability check. Consequently, the report does not satisfy the Expected Output’s criteria for explicit regional comparison, identification of definition or period differences, or stating missing regional data."
+        },
+        {
+          "criterion": "States when regional data is missing or insufficient.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output does not contain any explicit statement that regional data for Europe is missing or insufficient, which is required by the acceptance criteria. The gaps listed refer to other missing facts (adoption announcements, competitor activity, technology signals) but do not address the comparative US‑Europe data requirement, so the output fails to meet the key evaluation step."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.07500000000000001,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "MKT-COMP-04",
+        "requirement_id": "MKT-COMP-04",
+        "test_case_id": "MKT-01",
+        "title": "Comparable US versus Europe analysis",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The actual output only addresses the fourth acceptance criterion by noting missing data for US and Europe (Passage 4). It provides no explicit comparison of the regions, no identification of definition or unit differences, and no avoidance of non‑comparable estimates, leaving three criteria unaddressed. Consequently, the overall classification is Missing, resulting in low alignment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[2].evidence_ids[0]",
+            "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "similarity": 0.380253
+          },
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+            "similarity": 0.297124
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.278089
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.267606
+          },
+          {
+            "source_path": "$.findings[2].quote",
+            "text": "Data residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations.",
+            "similarity": 0.247152
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.07500000000000001,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "MKT-ADOPT-05",
+      "requirement_id": "MKT-ADOPT-05",
+      "test_case_id": "MKT-02",
+      "title": "Cloud provider and customer adoption",
+      "priority": "mandatory",
+      "score": 0.6,
+      "status": "partial",
+      "reason": "covered: Covers AWS, Microsoft Azure, and Google Cloud, or explains evidence gaps. — The Actual Output explicitly states that no page provided relevant facts for AWS, Azure, and Google Cloud, satisfying step 1. This clear evidence‑gap explanation aligns with the Expected Output’s allowance for either covering all three providers or explaining missing evidence, meeting step 2. The Retrieval Context is correctly treated as supporting material per step 3. Because the response fully satisfies the criterion by providing a clear gap explanation, it earns a high score.; missing: Distinguishes announced plans, preview, general availability, and actual customer deployment. — The Actual Output does not contain any statements that separate announced plans, preview releases, general availability announcements, or actual customer deployments, which are required by the Expected Output. All three findings focus on market size, hardware spending, and GDPR compliance, without any of the four required distinctions. The Retrieval Context is correctly ignored, but its lack of distinctions does not compensate for the missing content in the Actual Output.; partial: Includes dates, source links, and regional availability where supported. — The Actual Output provides source links for each finding and includes some dates (e.g., projected to 2031), satisfying two of the three required elements. However, it lacks regional availability details for Europe and does not present the required cloud‑provider adoption findings, so only a partial match is achieved.; covered: Does not infer regional deployment from a global announcement alone. — The Actual Output does not contain any claim that derives a regional deployment solely from a global announcement; its only regional claim (GDPR‑related EU deployment) is based on a regulatory source, not a global announcement. The Expected Output explicitly forbids such inference, and the Retrieval Context is correctly treated as source material, not as part of the report content. Therefore the response fully complies with the evaluation steps.",
+      "criteria_results": [
+        {
+          "criterion": "Covers AWS, Microsoft Azure, and Google Cloud, or explains evidence gaps.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output explicitly states that no page provided relevant facts for AWS, Azure, and Google Cloud, satisfying step 1. This clear evidence‑gap explanation aligns with the Expected Output’s allowance for either covering all three providers or explaining missing evidence, meeting step 2. The Retrieval Context is correctly treated as supporting material per step 3. Because the response fully satisfies the criterion by providing a clear gap explanation, it earns a high score."
+        },
+        {
+          "criterion": "Distinguishes announced plans, preview, general availability, and actual customer deployment.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not contain any statements that separate announced plans, preview releases, general availability announcements, or actual customer deployments, which are required by the Expected Output. All three findings focus on market size, hardware spending, and GDPR compliance, without any of the four required distinctions. The Retrieval Context is correctly ignored, but its lack of distinctions does not compensate for the missing content in the Actual Output."
+        },
+        {
+          "criterion": "Includes dates, source links, and regional availability where supported.",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides source links for each finding and includes some dates (e.g., projected to 2031), satisfying two of the three required elements. However, it lacks regional availability details for Europe and does not present the required cloud‑provider adoption findings, so only a partial match is achieved."
+        },
+        {
+          "criterion": "Does not infer regional deployment from a global announcement alone.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output does not contain any claim that derives a regional deployment solely from a global announcement; its only regional claim (GDPR‑related EU deployment) is based on a regulatory source, not a global announcement. The Expected Output explicitly forbids such inference, and the Retrieval Context is correctly treated as source material, not as part of the report content. Therefore the response fully complies with the evaluation steps."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.6,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-ADOPT-05",
+        "requirement_id": "MKT-ADOPT-05",
+        "test_case_id": "MKT-02",
+        "title": "Cloud provider and customer adoption",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output contains only gap notices and a generic business context; it provides no substantive information about AWS, Azure, or Google Cloud adoption, does not distinguish plan types, includes no dates or source links, and makes no regional deployment statements, thus none of the acceptance criteria are met.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.731679
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.560762
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.484974
+          },
+          {
+            "source_path": "$.business_context",
+            "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+            "similarity": 0.479566
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+            "similarity": 0.477408
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.6,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-COMP-06",
+      "requirement_id": "MKT-COMP-06",
+      "test_case_id": "MKT-02",
+      "title": "Competitor activity affecting accelerator demand",
+      "priority": "mandatory",
+      "score": 0.675,
+      "status": "partial",
+      "reason": "covered: Addresses both Broadcom and Intel or explicitly documents evidence gaps. — The Actual Output explicitly references both Broadcom and Intel in a clear, substantive gap statement, satisfying step 1 and step 2. It documents that no evidence was found for competitor activity involving those companies, which aligns with the Expected Output’s requirement to either address both firms or explicitly note evidence gaps, meeting step 3. No reliance on the Retrieval Context is needed. The response therefore closely matches the evaluation criteria.; partial: Covers relevant product launches, custom ASICs/accelerators, pricing, market share, or deployments when supported. — The report does not contain any source‑backed statements about Broadcom or Intel product launches, pricing, market share, or deployments, but it does explicitly note a gap for competitor activity, satisfying the criterion that gaps be documented. It avoids using search queries as evidence and includes dates for other findings, yet it lacks the required competitor details, so the alignment is partial rather than complete.; missing: Uses source-backed statements and dates. — The Actual Output includes source‑backed claims with dates (e.g., M1 and M2 cite a Mordor Intelligence report and M3 cites a GDPR article), satisfying step 1, but it does not provide any finding about Broadcom or Intel competitor activity, which is the mandatory requirement in the Expected Output. Instead it lists a gap indicating no supported fact for competitor analysis. Because the core criterion is unmet, the alignment is low.; covered: Does not treat a search query or planned task as evidence of activity. — The Actual Output only presents concrete findings with source URLs and does not use any search query or planned task description as evidence of activity. The Expected Output similarly contains no such statements. Therefore the criterion is fully satisfied, warranting a high score.",
+      "criteria_results": [
+        {
+          "criterion": "Addresses both Broadcom and Intel or explicitly documents evidence gaps.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The Actual Output explicitly references both Broadcom and Intel in a clear, substantive gap statement, satisfying step 1 and step 2. It documents that no evidence was found for competitor activity involving those companies, which aligns with the Expected Output’s requirement to either address both firms or explicitly note evidence gaps, meeting step 3. No reliance on the Retrieval Context is needed. The response therefore closely matches the evaluation criteria."
+        },
+        {
+          "criterion": "Covers relevant product launches, custom ASICs/accelerators, pricing, market share, or deployments when supported.",
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The report does not contain any source‑backed statements about Broadcom or Intel product launches, pricing, market share, or deployments, but it does explicitly note a gap for competitor activity, satisfying the criterion that gaps be documented. It avoids using search queries as evidence and includes dates for other findings, yet it lacks the required competitor details, so the alignment is partial rather than complete."
+        },
+        {
+          "criterion": "Uses source-backed statements and dates.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output includes source‑backed claims with dates (e.g., M1 and M2 cite a Mordor Intelligence report and M3 cites a GDPR article), satisfying step 1, but it does not provide any finding about Broadcom or Intel competitor activity, which is the mandatory requirement in the Expected Output. Instead it lists a gap indicating no supported fact for competitor analysis. Because the core criterion is unmet, the alignment is low."
+        },
+        {
+          "criterion": "Does not treat a search query or planned task as evidence of activity.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The Actual Output only presents concrete findings with source URLs and does not use any search query or planned task description as evidence of activity. The Expected Output similarly contains no such statements. Therefore the criterion is fully satisfied, warranting a high score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.675,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-COMP-06",
+        "requirement_id": "MKT-COMP-06",
+        "test_case_id": "MKT-02",
+        "title": "Competitor activity affecting accelerator demand",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output contains only gap notices and a generic business context; it provides no source‑backed statements with dates about Broadcom or Intel activity, product launches, pricing, or market share, thus none of the four acceptance criteria are satisfied. Consequently the overall coverage is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.558151
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+            "similarity": 0.472593
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.426299
+          },
+          {
+            "source_path": "$.business_context",
+            "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+            "similarity": 0.399942
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.376606
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.675,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-TECH-07",
+      "requirement_id": "MKT-TECH-07",
+      "test_case_id": "MKT-02",
+      "title": "Technology signals that may shift demand",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "missing: Identifies concrete technology signals with evidence and dates. — The actual output does not contain any statements that identify concrete technology signals; the only claims are market size, CAGR, and a regulatory note, none of which satisfy the required signal criteria. While M1 and M2 include a future date (2031), they are not technology signals, and M3 lacks a date altogether. Consequently, the report fails to meet the acceptance criteria for identifying technology signals with evidence and dates.; missing: Explains plausible demand or competitive implications. — The actual output provides some demand information (e.g., market size and hardware‑spending CAGR) but does not deliver the required technology‑signal finding described in the expected output. It lacks any concrete discussion of GPU architectures, custom ASICs, or interconnects and therefore fails to meet the primary claim and acceptance criteria. The gaps section even notes the missing technology‑signal analysis, indicating a partial and insufficient explanation of demand implications.; missing: Separates observed facts from interpretation or forecast. — The Actual Output lists claims (e.g., projected market size, CAGR, GDPR impact) without explicitly distinguishing observed facts from forecasts or interpretive language, contrary to the Expected Output's requirement for clear separation. No labeling or separate sections are used, so the response only partially meets the criterion.; missing: Does not claim market-share shifts without supporting evidence. — The actual output does not contain any market‑share shift statements, so it avoids the specific evidence requirement for such claims. However, the expected output mandates a finding on technology signals that could shift demand, which is entirely absent from the actual findings. Consequently, the response fails to meet the core requirement and only partially aligns with the evidence rule, resulting in a low score.",
+      "criteria_results": [
+        {
+          "criterion": "Identifies concrete technology signals with evidence and dates.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output does not contain any statements that identify concrete technology signals; the only claims are market size, CAGR, and a regulatory note, none of which satisfy the required signal criteria. While M1 and M2 include a future date (2031), they are not technology signals, and M3 lacks a date altogether. Consequently, the report fails to meet the acceptance criteria for identifying technology signals with evidence and dates."
+        },
+        {
+          "criterion": "Explains plausible demand or competitive implications.",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The actual output provides some demand information (e.g., market size and hardware‑spending CAGR) but does not deliver the required technology‑signal finding described in the expected output. It lacks any concrete discussion of GPU architectures, custom ASICs, or interconnects and therefore fails to meet the primary claim and acceptance criteria. The gaps section even notes the missing technology‑signal analysis, indicating a partial and insufficient explanation of demand implications."
+        },
+        {
+          "criterion": "Separates observed facts from interpretation or forecast.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output lists claims (e.g., projected market size, CAGR, GDPR impact) without explicitly distinguishing observed facts from forecasts or interpretive language, contrary to the Expected Output's requirement for clear separation. No labeling or separate sections are used, so the response only partially meets the criterion."
+        },
+        {
+          "criterion": "Does not claim market-share shifts without supporting evidence.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output does not contain any market‑share shift statements, so it avoids the specific evidence requirement for such claims. However, the expected output mandates a finding on technology signals that could shift demand, which is entirely absent from the actual findings. Consequently, the response fails to meet the core requirement and only partially aligns with the evidence rule, resulting in a low score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.2,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "MKT-TECH-07",
+        "requirement_id": "MKT-TECH-07",
+        "test_case_id": "MKT-02",
+        "title": "Technology signals that may shift demand",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The actual output contains only generic hardware spending forecasts and gap notices; it provides no concrete technology signals, dates, or evidence required by the first acceptance criterion, and it does not explain demand or competitive implications. While it avoids unsupported market‑share claims (satisfying the last criterion), the other three criteria are not met, resulting in minimal overall alignment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[2]",
+            "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+            "similarity": 0.551592
+          },
+          {
+            "source_path": "$.findings[1].quote",
+            "text": "hardware spending is poised to grow at 30.56% CAGR through 2031",
+            "similarity": 0.454452
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.454173
+          },
+          {
+            "source_path": "$.findings[1].claim",
+            "text": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+            "similarity": 0.441109
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.418699
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.2,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "MKT-MOM-08",
+      "requirement_id": "MKT-MOM-08",
+      "test_case_id": "MKT-02",
+      "title": "Synthesize market momentum",
+      "priority": "mandatory",
+      "score": 0.25,
+      "status": "partial",
+      "reason": "missing: Connects market size/growth with adoption, supply/infrastructure, or technology indicators. — The actual output lists market size and growth figures (M1, M2) but does not explicitly connect those numbers to adoption rates, supply/infrastructure capacity, or technology metrics as required. No statement synthesizes market momentum by linking size/growth with adoption or tech indicators, and the needed connection is only present in the retrieval context, which the evaluation rules exclude. Consequently, the response fails to meet the primary acceptance criterion, resulting in a low score.; missing: Distinguishes observed momentum from projections. — The actual output lists projected market size and CAGR claims (M1, M2) but does not label any observed momentum or explicitly separate observed data from forecasts. The expected output requires a clear distinction between observed momentum and projections, which is absent, so the response fails the core criteria and receives a very low score.; covered: Identifies uncertainties or conflicting signals. — The actual output explicitly notes uncertainties through confidence scores (e.g., 0.65 for the GDPR claim) and a detailed \"gaps\" section listing missing evidence, directly satisfying the expected requirement to identify uncertainties. These mentions originate from the output itself, not the retrieval context. However, the response does not provide a synthesized view of market momentum or address any conflicting signals, which limits its completeness relative to the expected criteria.; missing: Provides an evidence-linked conclusion for both regions. — The actual output provides isolated claims (M1, M2 for the United States and M3 for Europe) but lacks any concluding statements that synthesize market momentum for each region and link that synthesis to the presented evidence. Consequently, it does not meet the expected evidence‑linked conclusions for both regions, resulting in a low score.",
+      "criteria_results": [
+        {
+          "criterion": "Connects market size/growth with adoption, supply/infrastructure, or technology indicators.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output lists market size and growth figures (M1, M2) but does not explicitly connect those numbers to adoption rates, supply/infrastructure capacity, or technology metrics as required. No statement synthesizes market momentum by linking size/growth with adoption or tech indicators, and the needed connection is only present in the retrieval context, which the evaluation rules exclude. Consequently, the response fails to meet the primary acceptance criterion, resulting in a low score."
+        },
+        {
+          "criterion": "Distinguishes observed momentum from projections.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output lists projected market size and CAGR claims (M1, M2) but does not label any observed momentum or explicitly separate observed data from forecasts. The expected output requires a clear distinction between observed momentum and projections, which is absent, so the response fails the core criteria and receives a very low score."
+        },
+        {
+          "criterion": "Identifies uncertainties or conflicting signals.",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The actual output explicitly notes uncertainties through confidence scores (e.g., 0.65 for the GDPR claim) and a detailed \"gaps\" section listing missing evidence, directly satisfying the expected requirement to identify uncertainties. These mentions originate from the output itself, not the retrieval context. However, the response does not provide a synthesized view of market momentum or address any conflicting signals, which limits its completeness relative to the expected criteria."
+        },
+        {
+          "criterion": "Provides an evidence-linked conclusion for both regions.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output provides isolated claims (M1, M2 for the United States and M3 for Europe) but lacks any concluding statements that synthesize market momentum for each region and link that synthesis to the presented evidence. Consequently, it does not meet the expected evidence‑linked conclusions for both regions, resulting in a low score."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.25,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-MOM-08",
+        "requirement_id": "MKT-MOM-08",
+        "test_case_id": "MKT-02",
+        "title": "Synthesize market momentum",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output contains only gap notices and a single URL, offering no synthesis or analysis. It fails to connect market size/growth with adoption or technology indicators, does not distinguish observed momentum from projections, does not identify uncertainties or conflicting signals, and provides no evidence‑linked conclusion for either region. All acceptance criteria are missing, resulting in a score of zero.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.50792
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.44628
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+            "similarity": 0.439977
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+            "similarity": 0.428065
+          },
+          {
+            "source_path": "$.findings[0].evidence_ids[0]",
+            "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "similarity": 0.416931
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.25,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-REG-09",
+      "requirement_id": "MKT-REG-09",
+      "test_case_id": "MKT-03",
+      "title": "Accurate regulatory and data-residency analysis",
+      "priority": "mandatory",
+      "score": 0.12000000000000002,
+      "status": "missing",
+      "reason": "missing: Distinguishes GDPR personal-data protection/transfer rules from a blanket requirement to store all personal data only in the EU. — The Actual Output includes a claim (M3) that GDPR mandates storing personal data in EU data centers, but it does not provide the required explicit distinction between GDPR’s specific transfer mechanisms and a blanket EU‑only storage rule. This contradicts the Expected Output, which demands a clear differentiation and warns against stating GDPR universally requires EU‑only storage. Since the needed distinction is absent, the response receives a low score.; missing: Does not claim GDPR universally mandates EU-only storage/processing without a specific applicable basis. — The Actual Output contains a claim (M3) that GDPR mandates personal data be stored and processed within the EU, presenting it as a universal requirement without any qualifying legal basis or exception, which directly violates the evaluation criterion.; missing: Explains EU AI Act or other regulation only as supported and identifies scope/timing when stated. — The actual output contains a GDPR explanation (M3) but it overstates the regulation by claiming a blanket EU‑only storage requirement and does not mention scope or timing, nor does it reference the EU AI Act. This violates the acceptance criteria that require distinguishing GDPR rules from universal mandates and identifying regulation scope/timing when stated. Consequently, the response fails to meet the expected regulatory analysis.; missing: Separates legal requirements from customer preferences, procurement policy, sovereignty goals, and practical incentives. — The actual output does not contain any explicit separation of legal requirements from customer preferences, procurement policy, sovereignty goals, or practical incentives; instead it makes a blanket statement that GDPR mandates EU‑only storage, which directly contradicts the expected criteria for distinguishing legal mandates from other considerations.; missing: Covers US-specific rules only with attributable evidence. — The response includes a non‑US regulation (GDPR) and incorrectly states it mandates EU‑only storage, violating the US‑only focus and the nuanced EU analysis required. While US claims are cited with URLs, the EU claim lacks the required distinction and overstates the rule, so the output does not meet the expected scope or citation standards.",
+      "criteria_results": [
+        {
+          "criterion": "Distinguishes GDPR personal-data protection/transfer rules from a blanket requirement to store all personal data only in the EU.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output includes a claim (M3) that GDPR mandates storing personal data in EU data centers, but it does not provide the required explicit distinction between GDPR’s specific transfer mechanisms and a blanket EU‑only storage rule. This contradicts the Expected Output, which demands a clear differentiation and warns against stating GDPR universally requires EU‑only storage. Since the needed distinction is absent, the response receives a low score."
+        },
+        {
+          "criterion": "Does not claim GDPR universally mandates EU-only storage/processing without a specific applicable basis.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output contains a claim (M3) that GDPR mandates personal data be stored and processed within the EU, presenting it as a universal requirement without any qualifying legal basis or exception, which directly violates the evaluation criterion."
+        },
+        {
+          "criterion": "Explains EU AI Act or other regulation only as supported and identifies scope/timing when stated.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output contains a GDPR explanation (M3) but it overstates the regulation by claiming a blanket EU‑only storage requirement and does not mention scope or timing, nor does it reference the EU AI Act. This violates the acceptance criteria that require distinguishing GDPR rules from universal mandates and identifying regulation scope/timing when stated. Consequently, the response fails to meet the expected regulatory analysis."
+        },
+        {
+          "criterion": "Separates legal requirements from customer preferences, procurement policy, sovereignty goals, and practical incentives.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output does not contain any explicit separation of legal requirements from customer preferences, procurement policy, sovereignty goals, or practical incentives; instead it makes a blanket statement that GDPR mandates EU‑only storage, which directly contradicts the expected criteria for distinguishing legal mandates from other considerations."
+        },
+        {
+          "criterion": "Covers US-specific rules only with attributable evidence.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The response includes a non‑US regulation (GDPR) and incorrectly states it mandates EU‑only storage, violating the US‑only focus and the nuanced EU analysis required. While US claims are cited with URLs, the EU claim lacks the required distinction and overstates the rule, so the output does not meet the expected scope or citation standards."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.12000000000000002,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "MKT-REG-09",
+        "requirement_id": "MKT-REG-09",
+        "test_case_id": "MKT-03",
+        "title": "Accurate regulatory and data-residency analysis",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The actual output fails to meet any of the five acceptance criteria. It asserts a blanket GDPR requirement to store data only in the EU, violating the need to distinguish GDPR rules (criteria 1 and 2). It does not discuss the EU AI Act or scope/timing (criterion 3), does not separate legal mandates from customer or policy preferences (criterion 4), and provides no attributable evidence for US-specific regulations (criterion 5). Consequently, coverage is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[2].claim",
+            "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+            "similarity": 0.649336
+          },
+          {
+            "source_path": "$.findings[2].evidence_ids[0]",
+            "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "similarity": 0.594565
+          },
+          {
+            "source_path": "$.findings[2].task",
+            "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+            "similarity": 0.582746
+          },
+          {
+            "source_path": "$.findings[2].quote",
+            "text": "Data residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations.",
+            "similarity": 0.537296
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.305175
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.12000000000000002,
+      "final_status": "missing"
+    },
+    {
+      "finding_id": "MKT-SOURCE-10",
+      "requirement_id": "MKT-SOURCE-10",
+      "test_case_id": "MKT-03",
+      "title": "Traceable, credible and time-relevant evidence",
+      "priority": "mandatory",
+      "score": 0.4,
+      "status": "partial",
+      "reason": "covered: Material numerical claims have URLs and supporting excerpts/citations. — The response includes URLs for each material claim and provides quoted excerpts, satisfying steps 1 and 2. It follows the expected format by listing findings with IDs, claims, and sources, meeting the acceptance criteria outlined in the Expected Output. However, the citation details are limited to quotes without explicit author or date, and one numerical claim (30.56% CAGR) does not exactly match the figure in the source excerpt (29.77% CAGR), which slightly reduces alignment.; partial: Market estimates identify publisher and scope. — The Actual Output includes market estimates with scope (U.S. market size and CAGR to 2031) and provides source URLs, but it does not explicitly name the publisher (Mordor Intelligence) as required by step 1. Consequently, it fails the “identify publisher” part of the acceptance criteria, leading to a low alignment score.; missing: Recent announcements include publication dates where available. — The Actual Output contains no section listing recent announcements, so step 1 cannot be satisfied. Consequently, step 2 cannot verify dates for announcements, and step 3 shows the output does not meet the Expected Output’s requirement that recent announcements include publication dates. While the Retrieval Context dates are correctly ignored (step 4), the core criterion is missing, resulting in a low alignment score.; partial: Does not treat an LLM-generated claim or search snippet alone as verified primary evidence. — The report includes three evidence‑based claims. M1 is directly supported by the Mordor Intelligence page, which contains the quoted market size and is a primary source. However, M2’s 30.56% CAGR and M3’s GDPR‑driven deployment claim are not explicitly found in the provided retrieval snippets; they appear to be inferred or LLM‑generated rather than verifiable primary evidence. The report treats all three as verified evidence without disclosure, violating the criterion that LLM‑generated or snippet‑only statements must not be presented as primary evidence. Because the output mixes genuine primary support with unsupported claims, it receives an intermediate score.; missing: Discloses material contradictory estimates or methodological limitations. — The Actual Output contains no statements that disclose contradictory estimates or methodological limitations; it only presents claims, confidence scores, and gaps without any explicit limitation discussion, resulting in a low alignment with the evaluation criteria.",
+      "criteria_results": [
+        {
+          "criterion": "Material numerical claims have URLs and supporting excerpts/citations.",
+          "score": 0.8,
+          "status": "covered",
+          "reason": "The response includes URLs for each material claim and provides quoted excerpts, satisfying steps 1 and 2. It follows the expected format by listing findings with IDs, claims, and sources, meeting the acceptance criteria outlined in the Expected Output. However, the citation details are limited to quotes without explicit author or date, and one numerical claim (30.56% CAGR) does not exactly match the figure in the source excerpt (29.77% CAGR), which slightly reduces alignment."
+        },
+        {
+          "criterion": "Market estimates identify publisher and scope.",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output includes market estimates with scope (U.S. market size and CAGR to 2031) and provides source URLs, but it does not explicitly name the publisher (Mordor Intelligence) as required by step 1. Consequently, it fails the “identify publisher” part of the acceptance criteria, leading to a low alignment score."
+        },
+        {
+          "criterion": "Recent announcements include publication dates where available.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output contains no section listing recent announcements, so step 1 cannot be satisfied. Consequently, step 2 cannot verify dates for announcements, and step 3 shows the output does not meet the Expected Output’s requirement that recent announcements include publication dates. While the Retrieval Context dates are correctly ignored (step 4), the core criterion is missing, resulting in a low alignment score."
+        },
+        {
+          "criterion": "Does not treat an LLM-generated claim or search snippet alone as verified primary evidence.",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The report includes three evidence‑based claims. M1 is directly supported by the Mordor Intelligence page, which contains the quoted market size and is a primary source. However, M2’s 30.56% CAGR and M3’s GDPR‑driven deployment claim are not explicitly found in the provided retrieval snippets; they appear to be inferred or LLM‑generated rather than verifiable primary evidence. The report treats all three as verified evidence without disclosure, violating the criterion that LLM‑generated or snippet‑only statements must not be presented as primary evidence. Because the output mixes genuine primary support with unsupported claims, it receives an intermediate score."
+        },
+        {
+          "criterion": "Discloses material contradictory estimates or methodological limitations.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The Actual Output contains no statements that disclose contradictory estimates or methodological limitations; it only presents claims, confidence scores, and gaps without any explicit limitation discussion, resulting in a low alignment with the evaluation criteria."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.4,
+      "initial_status": "partial",
+      "second_pass": {
+        "finding_id": "MKT-SOURCE-10",
+        "requirement_id": "MKT-SOURCE-10",
+        "test_case_id": "MKT-03",
+        "title": "Traceable, credible and time-relevant evidence",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The response includes URLs (Passage 1 and 4) but provides no material numerical claims, publisher identification, scope, or dates, so criteria 1, 2, and 3 are missing. It avoids treating LLM snippets as verified evidence, satisfying criterion 4. However, it offers no disclosure of contradictory estimates or methodological limits, leaving criterion 5 missing. Because several criteria are missing, the overall result is missing, resulting in a low score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[0].evidence_ids[0]",
+            "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+            "similarity": 0.342737
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.308827
+          },
+          {
+            "source_path": "$.summary",
+            "text": "3 findings; research tasks: 2 done, 3 skipped of 5.",
+            "similarity": 0.308273
+          },
+          {
+            "source_path": "$.findings[2].evidence_ids[0]",
+            "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+            "similarity": 0.306697
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.223272
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "initial_result_retained_second_pass_lower",
+      "final_score": 0.4,
+      "final_status": "partial"
+    },
+    {
+      "finding_id": "MKT-GAP-11",
+      "requirement_id": "MKT-GAP-11",
+      "test_case_id": "MKT-03",
+      "title": "Honest handling of skipped tasks and research gaps",
+      "priority": "mandatory",
+      "score": 0.9,
+      "status": "covered",
+      "reason": "covered: Reports missing adoption, competitor, or technology evidence as gaps. — The actual output lists explicit gap statements for adoption, competitor, and technology evidence, directly matching the expected acceptance criteria that require reporting these missing pieces. The gaps are clearly articulated, fulfilling the high‑score condition.; covered: Does not present skipped tasks as completed research. — The response clearly labels which research tasks were completed and which were skipped, and it provides concrete evidence for the completed findings while transparently listing gaps for the skipped tasks, matching the expected honest‑handling criteria. No skipped task is presented as finished, and there are no claims of full US‑Europe coverage beyond the evidence provided. The only minor issue is the overall \"status\": \"completed\" label, which could be misread, but the detailed summary mitigates this ambiguity.; covered: Provides limitations/confidence caveats where evidence is missing. — The report lists missing evidence in the \"gaps\" section and includes confidence scores for each finding, which partially satisfies the requirement for limitation statements. However, it lacks an explicit narrative caveat explaining how the missing evidence limits the conclusions, making the handling of limitations only partially complete.; covered: Does not claim complete US-Europe coverage when a region or topic is unsupported. — The actual output does not contain any statement claiming full US‑Europe coverage; it only presents separate US market findings and a European GDPR insight and explicitly lists research gaps. This aligns with the acceptance criteria that forbid claiming complete coverage when evidence is missing, so the response fully satisfies the evaluation steps.",
+      "criteria_results": [
+        {
+          "criterion": "Reports missing adoption, competitor, or technology evidence as gaps.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The actual output lists explicit gap statements for adoption, competitor, and technology evidence, directly matching the expected acceptance criteria that require reporting these missing pieces. The gaps are clearly articulated, fulfilling the high‑score condition."
+        },
+        {
+          "criterion": "Does not present skipped tasks as completed research.",
+          "score": 0.9,
+          "status": "covered",
+          "reason": "The response clearly labels which research tasks were completed and which were skipped, and it provides concrete evidence for the completed findings while transparently listing gaps for the skipped tasks, matching the expected honest‑handling criteria. No skipped task is presented as finished, and there are no claims of full US‑Europe coverage beyond the evidence provided. The only minor issue is the overall \"status\": \"completed\" label, which could be misread, but the detailed summary mitigates this ambiguity."
+        },
+        {
+          "criterion": "Provides limitations/confidence caveats where evidence is missing.",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The report lists missing evidence in the \"gaps\" section and includes confidence scores for each finding, which partially satisfies the requirement for limitation statements. However, it lacks an explicit narrative caveat explaining how the missing evidence limits the conclusions, making the handling of limitations only partially complete."
+        },
+        {
+          "criterion": "Does not claim complete US-Europe coverage when a region or topic is unsupported.",
+          "score": 1.0,
+          "status": "covered",
+          "reason": "The actual output does not contain any statement claiming full US‑Europe coverage; it only presents separate US market findings and a European GDPR insight and explicitly lists research gaps. This aligns with the acceptance criteria that forbid claiming complete coverage when evidence is missing, so the response fully satisfies the evaluation steps."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.9,
+      "initial_status": "covered",
+      "final_score": 0.9,
+      "final_status": "covered",
+      "second_pass": null,
+      "reconciliation": "second_pass_not_needed"
+    },
+    {
+      "finding_id": "MKT-NVIDIA-12",
+      "requirement_id": "MKT-NVIDIA-12",
+      "test_case_id": "MKT-03",
+      "title": "Implications for NVIDIA and target customers",
+      "priority": "mandatory",
+      "score": 0.1,
+      "status": "missing",
+      "reason": "missing: Connects evidence to NVIDIA market exposure or competitive position. — The actual output only presents market size, growth, and GDPR facts without linking any of that evidence to NVIDIA's market exposure or competitive position, which is required by the expected output. No statements address implications for NVIDIA, cloud providers, or AI developers, and the retrieval context is correctly excluded. Because the core criterion of connecting evidence to NVIDIA is missing, the response receives a low score.; missing: Addresses cloud providers and AI developers where evidence supports it. — The actual output only mentions cloud service providers and AI developers in the business_context and gaps sections, but none of the findings provide a substantive claim linking these groups to NVIDIA with supporting evidence, as required by the expected output. Consequently, the core criterion is largely absent, resulting in a low score.; missing: Identifies potential upside, risks, or substitution threats from custom ASICs and alternatives. — The actual output contains no explicit statements about upside, risks, or substitution threats related to custom ASICs or alternative solutions, which is a core acceptance criterion. The findings only report market size, CAGR, and GDPR implications, and the gaps note the missing analysis rather than providing it. Consequently, the expected requirement is largely unmet, resulting in a low score.; missing: Labels forward-looking implications as analysis. — The Actual Output contains forward‑looking claims (e.g., projected market size and CAGR) but none are introduced with an analysis label such as \"Analysis:\". Consequently, the labeling does not match the Expected Output requirement that forward‑looking implications be explicitly marked as analysis, resulting in no alignment with the evaluation steps.",
+      "criteria_results": [
+        {
+          "criterion": "Connects evidence to NVIDIA market exposure or competitive position.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output only presents market size, growth, and GDPR facts without linking any of that evidence to NVIDIA's market exposure or competitive position, which is required by the expected output. No statements address implications for NVIDIA, cloud providers, or AI developers, and the retrieval context is correctly excluded. Because the core criterion of connecting evidence to NVIDIA is missing, the response receives a low score."
+        },
+        {
+          "criterion": "Addresses cloud providers and AI developers where evidence supports it.",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The actual output only mentions cloud service providers and AI developers in the business_context and gaps sections, but none of the findings provide a substantive claim linking these groups to NVIDIA with supporting evidence, as required by the expected output. Consequently, the core criterion is largely absent, resulting in a low score."
+        },
+        {
+          "criterion": "Identifies potential upside, risks, or substitution threats from custom ASICs and alternatives.",
+          "score": 0.1,
+          "status": "missing",
+          "reason": "The actual output contains no explicit statements about upside, risks, or substitution threats related to custom ASICs or alternative solutions, which is a core acceptance criterion. The findings only report market size, CAGR, and GDPR implications, and the gaps note the missing analysis rather than providing it. Consequently, the expected requirement is largely unmet, resulting in a low score."
+        },
+        {
+          "criterion": "Labels forward-looking implications as analysis.",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output contains forward‑looking claims (e.g., projected market size and CAGR) but none are introduced with an analysis label such as \"Analysis:\". Consequently, the labeling does not match the Expected Output requirement that forward‑looking implications be explicitly marked as analysis, resulting in no alignment with the evaluation steps."
+        }
+      ],
+      "method": "criterion-level DeepEval G-Eval",
+      "initial_score": 0.1,
+      "initial_status": "missing",
+      "second_pass": {
+        "finding_id": "MKT-NVIDIA-12",
+        "requirement_id": "MKT-NVIDIA-12",
+        "test_case_id": "MKT-03",
+        "title": "Implications for NVIDIA and target customers",
+        "priority": "mandatory",
+        "score": 0.1,
+        "status": "missing",
+        "reason": "The actual output lists a business context that mentions cloud providers and AI developers but provides no evidence linking this to NVIDIA's market exposure or competitive position, and it does not identify upside, risks, or substitution threats. The forward‑looking hardware‑spending claim is not labeled as analysis. Several required facts are marked as gaps, indicating the acceptance criteria are largely unmet.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "embeddings_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.business_context",
+            "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+            "similarity": 0.596212
+          },
+          {
+            "source_path": "$.gaps[2]",
+            "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+            "similarity": 0.588149
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+            "similarity": 0.483137
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+            "similarity": 0.431644
+          },
+          {
+            "source_path": "$.findings[1].claim",
+            "text": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+            "similarity": 0.375794
+          }
+        ]
+      },
+      "second_pass_applied": false,
+      "reconciliation": "both_passes_agree",
+      "final_score": 0.1,
+      "final_status": "missing"
+    }
+  ],
+  "second_pass_results": [
+    {
+      "finding_id": "MKT-TAM-01",
+      "requirement_id": "MKT-TAM-01",
+      "test_case_id": "MKT-01",
+      "title": "Define and quantify the AI data-center accelerator market",
+      "priority": "mandatory",
+      "score": 0.1,
+      "status": "missing",
+      "reason": "The Actual Output only lists task statements (e.g., \"Quantify the total addressable market (TAM) and CAGR...\") and gap notices, but provides no definition, market size figure, reference year, source, or methodology, nor does it distinguish accelerator hardware from the broader AI data‑center market. Consequently, none of the acceptance criteria are substantively met, resulting in a missing coverage assessment.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[0].task",
+          "text": "Quantify the total addressable market (TAM) and CAGR for AI computing accelerators in data centers across the United States and Europe",
+          "similarity": 0.730752
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.719409
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+          "similarity": 0.671797
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.628803
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.62496
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-US-02",
+      "requirement_id": "MKT-US-02",
+      "test_case_id": "MKT-01",
+      "title": "United States market size and growth",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The Actual Output does not provide any US-specific market value, year, or forecast period, nor does it report a CAGR, name the source, or separate accelerator estimates from overall AI data‑center estimates. Only a URL is listed without accompanying data, so none of the acceptance criteria are substantively addressed, resulting in a missing coverage classification.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.597536
+        },
+        {
+          "source_path": "$.findings[0].evidence_ids[0]",
+          "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+          "similarity": 0.540266
+        },
+        {
+          "source_path": "$.findings[0].task",
+          "text": "Quantify the total addressable market (TAM) and CAGR for AI computing accelerators in data centers across the United States and Europe",
+          "similarity": 0.533224
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.528207
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+          "similarity": 0.503308
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-EU-03",
+      "requirement_id": "MKT-EU-03",
+      "test_case_id": "MKT-01",
+      "title": "European market size and growth",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output does not address any of the acceptance criteria: it provides no Europe-specific market size, year, CAGR, or growth period, and it fails to name a European source. Instead, it cites a US market report (Passage 5) without labeling the limitation, violating the fourth criterion. Consequently, coverage is missing.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[2].evidence_ids[0]",
+          "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+          "similarity": 0.371654
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.313452
+        },
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+          "similarity": 0.282953
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.267193
+        },
+        {
+          "source_path": "$.findings[0].evidence_ids[0]",
+          "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+          "similarity": 0.262658
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-COMP-04",
+      "requirement_id": "MKT-COMP-04",
+      "test_case_id": "MKT-01",
+      "title": "Comparable US versus Europe analysis",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "The actual output only addresses the fourth acceptance criterion by noting missing data for US and Europe (Passage 4). It provides no explicit comparison of the regions, no identification of definition or unit differences, and no avoidance of non‑comparable estimates, leaving three criteria unaddressed. Consequently, the overall classification is Missing, resulting in low alignment.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[2].evidence_ids[0]",
+          "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+          "similarity": 0.380253
+        },
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+          "similarity": 0.297124
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.278089
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.267606
+        },
+        {
+          "source_path": "$.findings[2].quote",
+          "text": "Data residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations.",
+          "similarity": 0.247152
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-ADOPT-05",
+      "requirement_id": "MKT-ADOPT-05",
+      "test_case_id": "MKT-02",
+      "title": "Cloud provider and customer adoption",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output contains only gap notices and a generic business context; it provides no substantive information about AWS, Azure, or Google Cloud adoption, does not distinguish plan types, includes no dates or source links, and makes no regional deployment statements, thus none of the acceptance criteria are met.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.731679
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.560762
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.484974
+        },
+        {
+          "source_path": "$.business_context",
+          "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+          "similarity": 0.479566
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+          "similarity": 0.477408
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-COMP-06",
+      "requirement_id": "MKT-COMP-06",
+      "test_case_id": "MKT-02",
+      "title": "Competitor activity affecting accelerator demand",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output contains only gap notices and a generic business context; it provides no source‑backed statements with dates about Broadcom or Intel activity, product launches, pricing, or market share, thus none of the four acceptance criteria are satisfied. Consequently the overall coverage is missing.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.558151
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+          "similarity": 0.472593
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.426299
+        },
+        {
+          "source_path": "$.business_context",
+          "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+          "similarity": 0.399942
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.376606
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-TECH-07",
+      "requirement_id": "MKT-TECH-07",
+      "test_case_id": "MKT-02",
+      "title": "Technology signals that may shift demand",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "The actual output contains only generic hardware spending forecasts and gap notices; it provides no concrete technology signals, dates, or evidence required by the first acceptance criterion, and it does not explain demand or competitive implications. While it avoids unsupported market‑share claims (satisfying the last criterion), the other three criteria are not met, resulting in minimal overall alignment.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[2]",
+          "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+          "similarity": 0.551592
+        },
+        {
+          "source_path": "$.findings[1].quote",
+          "text": "hardware spending is poised to grow at 30.56% CAGR through 2031",
+          "similarity": 0.454452
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.454173
+        },
+        {
+          "source_path": "$.findings[1].claim",
+          "text": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+          "similarity": 0.441109
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.418699
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-MOM-08",
+      "requirement_id": "MKT-MOM-08",
+      "test_case_id": "MKT-02",
+      "title": "Synthesize market momentum",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output contains only gap notices and a single URL, offering no synthesis or analysis. It fails to connect market size/growth with adoption or technology indicators, does not distinguish observed momentum from projections, does not identify uncertainties or conflicting signals, and provides no evidence‑linked conclusion for either region. All acceptance criteria are missing, resulting in a score of zero.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.50792
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.44628
+        },
+        {
+          "source_path": "$.task_goal",
+          "text": "What is the market momentum for AI computing accelerators in the data center sector across Europe and the United States?",
+          "similarity": 0.439977
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+          "similarity": 0.428065
+        },
+        {
+          "source_path": "$.findings[0].evidence_ids[0]",
+          "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+          "similarity": 0.416931
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-REG-09",
+      "requirement_id": "MKT-REG-09",
+      "test_case_id": "MKT-03",
+      "title": "Accurate regulatory and data-residency analysis",
+      "priority": "mandatory",
+      "score": 0.0,
+      "status": "missing",
+      "reason": "The actual output fails to meet any of the five acceptance criteria. It asserts a blanket GDPR requirement to store data only in the EU, violating the need to distinguish GDPR rules (criteria 1 and 2). It does not discuss the EU AI Act or scope/timing (criterion 3), does not separate legal mandates from customer or policy preferences (criterion 4), and provides no attributable evidence for US-specific regulations (criterion 5). Consequently, coverage is missing.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[2].claim",
+          "text": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+          "similarity": 0.649336
+        },
+        {
+          "source_path": "$.findings[2].evidence_ids[0]",
+          "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+          "similarity": 0.594565
+        },
+        {
+          "source_path": "$.findings[2].task",
+          "text": "Identify regulatory and data‑residency influences on AI accelerator deployment in European data centers (e.g., GDPR, EU AI Act, data‑locality rules)",
+          "similarity": 0.582746
+        },
+        {
+          "source_path": "$.findings[2].quote",
+          "text": "Data residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations.",
+          "similarity": 0.537296
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.305175
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-SOURCE-10",
+      "requirement_id": "MKT-SOURCE-10",
+      "test_case_id": "MKT-03",
+      "title": "Traceable, credible and time-relevant evidence",
+      "priority": "mandatory",
+      "score": 0.2,
+      "status": "missing",
+      "reason": "The response includes URLs (Passage 1 and 4) but provides no material numerical claims, publisher identification, scope, or dates, so criteria 1, 2, and 3 are missing. It avoids treating LLM snippets as verified evidence, satisfying criterion 4. However, it offers no disclosure of contradictory estimates or methodological limits, leaving criterion 5 missing. Because several criteria are missing, the overall result is missing, resulting in a low score.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.findings[0].evidence_ids[0]",
+          "text": "https://www.mordorintelligence.com/industry-reports/united-states-artificial-intelligence-ai-data-center-market",
+          "similarity": 0.342737
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.308827
+        },
+        {
+          "source_path": "$.summary",
+          "text": "3 findings; research tasks: 2 done, 3 skipped of 5.",
+          "similarity": 0.308273
+        },
+        {
+          "source_path": "$.findings[2].evidence_ids[0]",
+          "text": "https://www.kiteworks.com/gdpr-compliance/understand-and-adhere-to-gdpr-data-residency-requirements",
+          "similarity": 0.306697
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.223272
+        }
+      ]
+    },
+    {
+      "finding_id": "MKT-NVIDIA-12",
+      "requirement_id": "MKT-NVIDIA-12",
+      "test_case_id": "MKT-03",
+      "title": "Implications for NVIDIA and target customers",
+      "priority": "mandatory",
+      "score": 0.1,
+      "status": "missing",
+      "reason": "The actual output lists a business context that mentions cloud providers and AI developers but provides no evidence linking this to NVIDIA's market exposure or competitive position, and it does not identify upside, risks, or substitution threats. The forward‑looking hardware‑spending claim is not labeled as analysis. Several required facts are marked as gaps, indicating the acceptance criteria are largely unmet.",
+      "method": "DeepEval second-pass retrieved passages",
+      "retrieval_method": "embeddings_cosine",
+      "retrieved_candidates": [
+        {
+          "source_path": "$.business_context",
+          "text": "Company: NVIDIA Corporation Aliases: Nvidia Products: AI computing, Data center platforms NVIDIA develops GPUs, Al computing platforms, accelerated computing infrastructure, networking technologies, and software used in data centers, Al development, gaming, and professional visualization. Use case: competitive_intelligence Competitors: Broadcom, Intel Corp Markets: Europe, United States Offering: AI computing Target customers: Cloud service providers, AI developers Task focus: Market size, growth rates, adoption trends, regulatory influences, and technology signals affecting AI accelerator demand.",
+          "similarity": 0.596212
+        },
+        {
+          "source_path": "$.gaps[2]",
+          "text": "No page stated a relevant fact for: Detect emerging technology signals (new GPU architectures, custom ASICs, high‑speed interconnects) that could shift demand for NVIDIA AI accelerators in the United States and Europe",
+          "similarity": 0.588149
+        },
+        {
+          "source_path": "$.gaps[0]",
+          "text": "No page stated a relevant fact for: Track recent adoption announcements by major cloud service providers (AWS, Azure, Google Cloud) for AI accelerators in the United States and Europe",
+          "similarity": 0.483137
+        },
+        {
+          "source_path": "$.gaps[1]",
+          "text": "No supported fact for: Analyze competitor activity (Broadcom, Intel) – product launches, pricing, and market share for AI accelerators in data centers in the United States and Europe",
+          "similarity": 0.431644
+        },
+        {
+          "source_path": "$.findings[1].claim",
+          "text": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+          "similarity": 0.375794
+        }
+      ]
+    }
+  ],
+  "additional_claim_results": [
+    {
+      "claim_id": "CLAIM-001",
+      "claim": "3 findings; research tasks: 2 done, 3 skipped of 5.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.0,
+      "novelty_reason": "The actual output only reports a generic count of findings and task status, which does not restate, paraphrase, or address any of the specific factual claims listed in the expected output (the multiple ID‑based market findings). Consequently there is no match, contradiction, or additional relevant information, resulting in no alignment with the evaluation steps.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-002",
+      "claim": "The United States AI data center market is projected to reach a total addressable market of $42.39 billion by 2031.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.1,
+      "novelty_reason": "The actual output contains a single factual statement about a US AI data‑center TAM of $42.39 billion by 2031, which is not present in any of the expected claims. None of the required IDs (MKT‑TAM‑01, MKT‑US‑02, etc.) are addressed, so the response adds an unrelated fact rather than matching, contradicting, or fulfilling the expected findings.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-003",
+      "claim": "Hardware spending, which includes GPU clusters and other AI accelerators, is projected to grow at a 30.56% CAGR through 2031.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.0,
+      "novelty_reason": "The actual output provides only a single CAGR figure for hardware spending, which does not correspond to any of the many specific factual claims required in the expected output (market definitions, US/EU sizes, adoption signals, competitor activity, etc.). No matching, paraphrased, or contradictory claims are found, resulting in no alignment with the evaluation steps.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    },
+    {
+      "claim_id": "CLAIM-004",
+      "claim": "GDPR mandates that personal data be stored and processed within specific geographic locations, compelling AI accelerator deployments to be situated in EU data centers to ensure compliance.",
+      "novelty_status": "already_represented_in_golden",
+      "novelty_score": 0.2,
+      "novelty_reason": "The response only contains a single regulatory statement, which contradicts the expected requirement (ID MKT-REG-09) that GDPR does not mandate blanket EU‑only storage. No other required findings (e.g., market size, adoption, competitor activity) are addressed, so the majority of expected claims are absent, resulting in very low alignment.",
+      "evidence_status": "not_run_not_classified_as_additional",
+      "evidence_score": null
+    }
+  ],
+  "worker_result_quality": {
+    "enabled": true,
+    "metric_count": 4,
+    "scoreable_metric_count": 4,
+    "overall_score": 0.3,
+    "overall_status": "fail",
+    "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+    "metrics": {
+      "relevancy": {
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The output identifies the research goal and includes relevant US market size and CAGR figures with proper citations, but it omits European market size, growth, and adoption data, and lacks technology signal details. While the regulatory point on GDPR is on‑topic, the response adds extensive metadata (worker, summary, business_context) that does not directly answer the question, resulting in incomplete coverage and unnecessary padding.",
+        "method": "DeepEval G-Eval"
+      },
+      "correctness": {
+        "score": 0.2,
+        "status": "fail",
+        "reason": "The actual output provides three specific findings (M1‑M3) that do not correspond to any of the requirement IDs or categories listed in the expected output, and it omits most mandatory findings (Europe market size, adoption, competitor activity, technology signals, synthesis, etc.). Additionally, the claim in M2 cites a 30.56% CAGR, which contradicts the retrieval context that states a 29.77% CAGR, indicating an unsupported or inaccurate fact. The GDPR claim in M3 overstates the regulation by implying a universal EU‑only storage mandate, which the retrieval context does not support. Overall, the actual output fails to meet the expected structure, content, and evidence alignment, resulting in a low alignment score.",
+        "method": "DeepEval G-Eval"
+      },
+      "faithfulness": {
+        "score": 0.4,
+        "status": "partial",
+        "reason": "Only the first claim (M1) is directly backed by the retrieval context, matching the $42.39 billion figure and year. The second claim (M2) cites a 30.56% CAGR for hardware spending, but the source only provides a 29.77% market CAGR and no specific hardware‑spending CAGR, so the claim is unsupported. The third claim (M3) correctly reflects GDPR’s data‑residency requirement, yet the source does not state that this forces AI accelerator deployments to EU data centers, making that part of the claim unsubstantiated. Because two of three factual statements lack proper evidence, the overall faithfulness is low.",
+        "method": "DeepEval G-Eval"
+      },
+      "completeness": {
+        "score": 0.2,
+        "status": "fail",
+        "reason": "The actual output only provides three findings (US market size, growth, and a GDPR note) and lists a few gaps, but it omits most of the mandatory requirements in the expected output such as European market size, US‑EU comparative analysis, adoption signals, competitor activity, technology signals, synthesis of momentum, full regulatory analysis, and NVIDIA implications. While some gaps are disclosed, key missing elements (e.g., EU data) are not acknowledged, failing steps 2‑4 of the evaluation.",
+        "method": "DeepEval G-Eval"
+      }
+    },
+    "limitations": [
+      "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+      "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+      "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+      "Missing trace evidence is not proof that a claim is false.",
+      "An overall mean can hide a weak individual dimension; inspect each reason."
+    ]
+  },
+  "agent_improvement_review": {
+    "enabled": true,
+    "status": "generated",
+    "limitations": [
+      {
+        "limitation": "Failure to define and isolate the AI accelerator hardware market separate from the broader AI data‑center market",
+        "evidence": "The report only provides a US AI data‑center market size (M1) and a vague hardware‑spending CAGR (M2) without stating a definition or scope for the accelerator‑hardware market.",
+        "impact": "Violates mandatory requirement MKT‑TAM‑01, leading to ambiguous market sizing and reducing the credibility of the analysis."
+      },
+      {
+        "limitation": "No Europe‑specific market size, growth, or CAGR provided",
+        "evidence": "Finding M3 addresses GDPR but there is no numeric market estimate for Europe; the evaluation notes missing Europe‑specific value and year (MKT‑EU‑03).",
+        "impact": "Fails mandatory requirement MKT‑EU‑03 and prevents a complete US‑EU comparison, making the answer incomplete."
+      },
+      {
+        "limitation": "Incorrect or unsupported CAGR figure for hardware spending",
+        "evidence": "M2 claims a 30.56% CAGR, while the source excerpt shows a 29.77% CAGR for the overall market; the claim is not directly supported.",
+        "impact": "Reduces factual correctness (overall_quality_evaluation.correctness) and undermines trust in quantitative claims."
+      },
+      {
+        "limitation": "Overstated GDPR requirement that forces AI accelerator deployment in EU data centers",
+        "evidence": "M3 states GDPR mandates storing personal data in EU data centers, which the evaluation flags as a blanket claim violating MKT‑REG‑09.",
+        "impact": "Violates regulatory accuracy requirement, potentially misguiding strategic decisions based on incorrect legal interpretation."
+      },
+      {
+        "limitation": "Missing US‑vs‑Europe comparative analysis and discussion of definitional or currency differences",
+        "evidence": "Evaluation for MKT‑COMP‑04 marks the finding as missing; the report never compares the two regions.",
+        "impact": "Prevents stakeholders from understanding relative market dynamics, breaching a mandatory comparative requirement."
+      },
+      {
+        "limitation": "Absence of adoption signals from major cloud providers and lack of gap explanation detail",
+        "evidence": "While gaps are listed, the report does not provide any dates, source links, or partial evidence for AWS, Azure, or Google Cloud adoption, contrary to MKT‑ADOPT‑05 expectations.",
+        "impact": "Leaves a critical component of market momentum unaddressed, reducing the report’s usefulness for competitive intelligence."
+      },
+      {
+        "limitation": "No technology‑signal findings (new GPU architectures, custom ASICs, interconnects) and no analysis of demand implications",
+        "evidence": "MKT‑TECH‑07 is marked missing; the report contains no statements about concrete technology signals.",
+        "impact": "Omits a key driver of future demand, limiting the ability to forecast market shifts."
+      },
+      {
+        "limitation": "Insufficient source citation detail (missing publisher name, date, and context for each claim)",
+        "evidence": "Sources are listed as URLs only; evaluation for MKT‑SOURCE‑10 notes missing publisher identification and date information.",
+        "impact": "Weakens traceability and credibility of the evidence, making verification harder for reviewers."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Add a dedicated step to define the AI accelerator hardware market, explicitly separating it from broader AI data‑center revenue, and document the definition in the report.",
+        "addresses": "MKT‑TAM‑01 definition requirement",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Expand the data‑collection plan to include Europe‑focused market reports (e.g., IDC, Gartner, Statista) and extract size, CAGR, and source metadata.",
+        "addresses": "Missing Europe market size (MKT‑EU‑03) and comparative analysis (MKT‑COMP‑04)",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Validate quantitative figures against the source text; if the source reports 29.77% CAGR, use that exact number or note the discrepancy with proper attribution.",
+        "addresses": "Incorrect CAGR claim (M2) and overall correctness",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Revise the GDPR discussion to accurately reflect that GDPR governs personal‑data transfer and processing, not a blanket EU‑only storage mandate; cite the specific regulation text or reputable legal analysis.",
+        "addresses": "Regulatory accuracy (MKT‑REG‑09)",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Create a US‑vs‑Europe comparison section that aligns definitions, base years, forecast windows, and currency; explicitly note any mismatches.",
+        "addresses": "MKT‑COMP‑04 comparative requirement",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Add a sub‑task to capture recent cloud‑provider adoption announcements (AWS Trainium, Azure custom chips, Google TPU) with dates, source links, and regional availability; if unavailable, document the gap with a clear statement.",
+        "addresses": "Adoption signals (MKT‑ADOPT‑05)",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Introduce a technology‑signal research step to identify new GPU architectures, custom ASIC releases, interconnect standards, and power‑efficiency trends; link each signal to a source and discuss potential demand impact.",
+        "addresses": "Technology signals (MKT‑TECH‑07)",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Standardize source citations to include publisher name, publication date, and a brief description alongside the URL; use a consistent citation format throughout the report.",
+        "addresses": "Source quality (MKT‑SOURCE‑10)",
+        "priority": "low"
+      }
+    ],
+    "method": "Ollama LLM judge"
+  },
+  "limitations": [
+    {
+      "limitation": "Failure to define and isolate the AI accelerator hardware market separate from the broader AI data‑center market",
+      "evidence": "The report only provides a US AI data‑center market size (M1) and a vague hardware‑spending CAGR (M2) without stating a definition or scope for the accelerator‑hardware market.",
+      "impact": "Violates mandatory requirement MKT‑TAM‑01, leading to ambiguous market sizing and reducing the credibility of the analysis."
+    },
+    {
+      "limitation": "No Europe‑specific market size, growth, or CAGR provided",
+      "evidence": "Finding M3 addresses GDPR but there is no numeric market estimate for Europe; the evaluation notes missing Europe‑specific value and year (MKT‑EU‑03).",
+      "impact": "Fails mandatory requirement MKT‑EU‑03 and prevents a complete US‑EU comparison, making the answer incomplete."
+    },
+    {
+      "limitation": "Incorrect or unsupported CAGR figure for hardware spending",
+      "evidence": "M2 claims a 30.56% CAGR, while the source excerpt shows a 29.77% CAGR for the overall market; the claim is not directly supported.",
+      "impact": "Reduces factual correctness (overall_quality_evaluation.correctness) and undermines trust in quantitative claims."
+    },
+    {
+      "limitation": "Overstated GDPR requirement that forces AI accelerator deployment in EU data centers",
+      "evidence": "M3 states GDPR mandates storing personal data in EU data centers, which the evaluation flags as a blanket claim violating MKT‑REG‑09.",
+      "impact": "Violates regulatory accuracy requirement, potentially misguiding strategic decisions based on incorrect legal interpretation."
+    },
+    {
+      "limitation": "Missing US‑vs‑Europe comparative analysis and discussion of definitional or currency differences",
+      "evidence": "Evaluation for MKT‑COMP‑04 marks the finding as missing; the report never compares the two regions.",
+      "impact": "Prevents stakeholders from understanding relative market dynamics, breaching a mandatory comparative requirement."
+    },
+    {
+      "limitation": "Absence of adoption signals from major cloud providers and lack of gap explanation detail",
+      "evidence": "While gaps are listed, the report does not provide any dates, source links, or partial evidence for AWS, Azure, or Google Cloud adoption, contrary to MKT‑ADOPT‑05 expectations.",
+      "impact": "Leaves a critical component of market momentum unaddressed, reducing the report’s usefulness for competitive intelligence."
+    },
+    {
+      "limitation": "No technology‑signal findings (new GPU architectures, custom ASICs, interconnects) and no analysis of demand implications",
+      "evidence": "MKT‑TECH‑07 is marked missing; the report contains no statements about concrete technology signals.",
+      "impact": "Omits a key driver of future demand, limiting the ability to forecast market shifts."
+    },
+    {
+      "limitation": "Insufficient source citation detail (missing publisher name, date, and context for each claim)",
+      "evidence": "Sources are listed as URLs only; evaluation for MKT‑SOURCE‑10 notes missing publisher identification and date information.",
+      "impact": "Weakens traceability and credibility of the evidence, making verification harder for reviewers."
+    }
+  ],
+  "recommended_enhancements": [
+    {
+      "enhancement": "Add a dedicated step to define the AI accelerator hardware market, explicitly separating it from broader AI data‑center revenue, and document the definition in the report.",
+      "addresses": "MKT‑TAM‑01 definition requirement",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Expand the data‑collection plan to include Europe‑focused market reports (e.g., IDC, Gartner, Statista) and extract size, CAGR, and source metadata.",
+      "addresses": "Missing Europe market size (MKT‑EU‑03) and comparative analysis (MKT‑COMP‑04)",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Validate quantitative figures against the source text; if the source reports 29.77% CAGR, use that exact number or note the discrepancy with proper attribution.",
+      "addresses": "Incorrect CAGR claim (M2) and overall correctness",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Revise the GDPR discussion to accurately reflect that GDPR governs personal‑data transfer and processing, not a blanket EU‑only storage mandate; cite the specific regulation text or reputable legal analysis.",
+      "addresses": "Regulatory accuracy (MKT‑REG‑09)",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Create a US‑vs‑Europe comparison section that aligns definitions, base years, forecast windows, and currency; explicitly note any mismatches.",
+      "addresses": "MKT‑COMP‑04 comparative requirement",
+      "priority": "medium"
+    },
+    {
+      "enhancement": "Add a sub‑task to capture recent cloud‑provider adoption announcements (AWS Trainium, Azure custom chips, Google TPU) with dates, source links, and regional availability; if unavailable, document the gap with a clear statement.",
+      "addresses": "Adoption signals (MKT‑ADOPT‑05)",
+      "priority": "high"
+    },
+    {
+      "enhancement": "Introduce a technology‑signal research step to identify new GPU architectures, custom ASIC releases, interconnect standards, and power‑efficiency trends; link each signal to a source and discuss potential demand impact.",
+      "addresses": "Technology signals (MKT‑TECH‑07)",
+      "priority": "medium"
+    },
+    {
+      "enhancement": "Standardize source citations to include publisher name, publication date, and a brief description alongside the URL; use a consistent citation format throughout the report.",
+      "addresses": "Source quality (MKT‑SOURCE‑10)",
+      "priority": "low"
+    }
+  ],
+  "evaluation_limitations": [
+    "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+    "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+    "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+    "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+    "Scope checks are deterministic string-based checks and can miss semantic references.",
+    "No-judge token overlap is a rough diagnostic; it does not evaluate factuality or acceptance criteria semantically."
+  ]
+}

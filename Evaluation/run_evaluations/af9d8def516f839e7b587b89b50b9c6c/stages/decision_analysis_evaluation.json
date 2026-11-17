@@ -1,0 +1,1358 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6c\\stages\\decision_analysis\\input.json",
+  "source_output": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6c\\stages\\decision_analysis\\output.json",
+  "deterministic_checks": {
+    "known_signal_count": 6,
+    "question_recommendation_count": 6,
+    "option_count": 3,
+    "distinct_option_count": 3,
+    "duplicate_options": [],
+    "items_with_signal_references": 54,
+    "items_with_unknown_signal_references": {},
+    "empty_options": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.6154,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "decision_analysis",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "1.2.0-rubric-only",
+    "finding_count": 13,
+    "mandatory_finding_count": 13,
+    "coverage_score": 0.6154,
+    "strict_coverage_score": 0.3846,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "lexical_fallback_after_embedding_error",
+      "passage_count": 159,
+      "initial_missing_count": 3,
+      "initial_partial_count": 5,
+      "findings_reviewed": 8,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": "ModuleNotFoundError: No module named 'sentence_transformers'",
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "missing: Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch. — The Actual Output does not clearly frame options as distinct competitive responses such as lead, match, differentiate, or hold and watch. While it provides detailed analyses and recommendations, it lacks the explicit framing required by the evaluation steps. The output presents recommendations in a narrative format rather than as distinct options, which does not align with the mandatory acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly frame options as distinct competitive responses such as lead, match, differentiate, or hold and watch. While it provides detailed analyses and recommendations, it lacks the explicit framing required by the evaluation steps. The output presents recommendations in a narrative format rather than as distinct options, which does not align with the mandatory acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "DA-01",
+          "requirement_id": "DA-FRAMING",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not frame options as distinct competitive responses as required by the acceptance criteria. Instead, it presents various passages with similarity scores but lacks clear categorization into competitive strategies like lead, match, differentiate, or hold and watch. Therefore, it fails to meet the mandatory criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.246526
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[0]",
+              "text": "Build a China revenue forecast for H200 that scenarios BIS license approval, delay, and denial for both H200 and MI325X.",
+              "similarity": 0.177319
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.170236
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Monthly BIS decision tracking log for H200 and MI325X.",
+              "similarity": 0.159132
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.rationale",
+              "text": "Signal 441ad982-2439-41fe-84f3-8b9e8b2a8033 confirms AMD's annual Instinct cadence (MI350 in 2025, MI400 in 2026, MI500 planned for 2027, and MI455X unveiled and shipping in late 2026), meaning NVIDIA's Blackwell and Rubin generations will face new AMD competitors within 12 months of launch, reducing NVIDIA's ability to extract long product-cycle rents.",
+              "similarity": 0.158481
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Tie each proposed option to relevant verified findings and supported cross-domain signals",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Tie each proposed option to relevant verified findings and supported cross-domain signals. — The Actual Output effectively ties each proposed option to relevant verified findings and supported cross-domain signals, as evidenced by the detailed rationale provided for each recommendation. Each recommendation is backed by specific signal IDs that establish a clear connection to the findings. However, while the output meets the criteria for clear connections, it lacks a compact evidence-to-signal table or structured narrative that explicitly distinguishes association from causation, which is a preferred alternative in the evaluation steps. This slightly diminishes the overall clarity and structure of the output.",
+        "criteria_results": [
+          {
+            "criterion": "Tie each proposed option to relevant verified findings and supported cross-domain signals.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively ties each proposed option to relevant verified findings and supported cross-domain signals, as evidenced by the detailed rationale provided for each recommendation. Each recommendation is backed by specific signal IDs that establish a clear connection to the findings. However, while the output meets the criteria for clear connections, it lacks a compact evidence-to-signal table or structured narrative that explicitly distinguishes association from causation, which is a preferred alternative in the evaluation steps. This slightly diminishes the overall clarity and structure of the output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Present materially different options rather than paraphrases of the same action",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "missing: Present materially different options rather than paraphrases of the same action. — The Actual Output presents multiple recommendations that are somewhat distinct but largely revolve around similar themes of modeling revenue risks and opportunities related to NVIDIA's H200 and AMD's MI325X. While there are different questions posed, many of the recommendations do not represent materially different options but rather variations on the same underlying analysis. This does not fully align with the requirement to present materially different options rather than paraphrases of the same action.",
+        "criteria_results": [
+          {
+            "criterion": "Present materially different options rather than paraphrases of the same action.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output presents multiple recommendations that are somewhat distinct but largely revolve around similar themes of modeling revenue risks and opportunities related to NVIDIA's H200 and AMD's MI325X. While there are different questions posed, many of the recommendations do not represent materially different options but rather variations on the same underlying analysis. This does not fully align with the requirement to present materially different options rather than paraphrases of the same action."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "DA-03",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "Present materially different options rather than paraphrases of the same action",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to present materially different options, as it primarily reiterates similar actions without offering distinct alternatives. The passages provided do not align with the requirement to present options in a decision matrix or scenario table, nor do they include the necessary evidence, benefits, costs, risks, assumptions, and triggers. This indicates a lack of full coverage of the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.19646
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.172662
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.warnings[0]",
+              "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+              "similarity": 0.159745
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.153478
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.153478
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes. — The Actual Output provides a comprehensive analysis of expected benefits, costs, risks, and tradeoffs related to NVIDIA's competitive landscape, particularly focusing on the implications of BIS licensing for H200 and MI325X. It addresses the required elements clearly, detailing risks and opportunities without inventing quantitative outcomes. However, while it meets the criteria well, some limitations regarding evidence gaps are noted, which slightly detracts from the overall completeness. Thus, it receives a high but not perfect score.",
+        "criteria_results": [
+          {
+            "criterion": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis of expected benefits, costs, risks, and tradeoffs related to NVIDIA's competitive landscape, particularly focusing on the implications of BIS licensing for H200 and MI325X. It addresses the required elements clearly, detailing risks and opportunities without inventing quantitative outcomes. However, while it meets the criteria well, some limitations regarding evidence gaps are noted, which slightly detracts from the overall completeness. Thus, it receives a high but not perfect score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "covered: State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them. — The Actual Output provides a detailed analysis with a clear time horizon related to the December 2025 policy shift for H200 shipments. It includes assumptions about the temporary nature of this advantage and measurable indicators such as tracking BIS license decisions and monitoring inventory. However, while it outlines risks and opportunities, it lacks a structured decision matrix or scenario table as an alternative presentation method, which is part of the acceptance criteria. Therefore, it partially meets the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output provides a detailed analysis with a clear time horizon related to the December 2025 policy shift for H200 shipments. It includes assumptions about the temporary nature of this advantage and measurable indicators such as tracking BIS license decisions and monitoring inventory. However, while it outlines risks and opportunities, it lacks a structured decision matrix or scenario table as an alternative presentation method, which is part of the acceptance criteria. Therefore, it partially meets the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.7,
+        "initial_status": "covered",
+        "final_score": 0.7,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options. — The Actual Output effectively carries forward uncertainty and material evidence gaps, particularly in the limitations sections of the recommendations. It identifies specific evidence gaps related to BIS license approval rates and NVIDIA's China revenue exposure, which aligns with the requirement to acknowledge conflicting evidence and uncertainty. However, while it articulates these gaps well, it could improve by explicitly presenting conflicting source claims side by side, as suggested in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively carries forward uncertainty and material evidence gaps, particularly in the limitations sections of the recommendations. It identifies specific evidence gaps related to BIS license approval rates and NVIDIA's China revenue exposure, which aligns with the requirement to acknowledge conflicting evidence and uncertainty. However, while it articulates these gaps well, it could improve by explicitly presenting conflicting source claims side by side, as suggested in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user. — The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options, which is a critical requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the insufficiency of evidence as required by the evaluation steps. This oversight leads to a lack of clarity regarding the decision-making process for the human user, resulting in a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options, which is a critical requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the insufficiency of evidence as required by the evaluation steps. This oversight leads to a lack of clarity regarding the decision-making process for the human user, resulting in a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-07",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it provides some rationale and limitations, it fails to preserve the decision for the human user as required. Therefore, it is missing coverage of the key acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.338382
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.284463
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.268659
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.268659
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[0]",
+              "text": "Build a China revenue forecast for H200 that scenarios BIS license approval, delay, and denial for both H200 and MI325X.",
+              "similarity": 0.250713
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Cites relevant finding identifiers for each option. — The Actual Output includes several finding identifiers, but it does not explicitly cite all required identifiers for each option presented. While some identifiers are mentioned, the overall clarity and completeness in linking findings to their respective options are lacking. Additionally, the output does not sufficiently distinguish between facts and assumptions, which is a critical requirement. Therefore, it does not fully align with the evaluation steps.; partial: Does not use insufficient or contradicted findings as settled premises. — The Actual Output provides a comprehensive analysis with detailed recommendations and supporting rationale, aligning well with the Expected Output's requirement for evidence traceability. However, it does not fully meet the acceptance criteria as some limitations and evidence gaps are noted, indicating reliance on insufficient findings. Additionally, while it cites relevant signal identifiers, it does not clearly distinguish between facts and assumptions in all cases, which affects its overall robustness.; partial: Distinguishes facts from assumptions and strategic interpretation. — The Actual Output provides a detailed analysis and recommendations but does not clearly distinguish between facts and assumptions, which is a critical requirement outlined in the Expected Output. While it includes supporting signals and limitations, it lacks explicit differentiation of what constitutes fact versus assumption, leading to a lack of clarity in evidence traceability. This shortcoming significantly impacts the alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Cites relevant finding identifiers for each option.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output includes several finding identifiers, but it does not explicitly cite all required identifiers for each option presented. While some identifiers are mentioned, the overall clarity and completeness in linking findings to their respective options are lacking. Additionally, the output does not sufficiently distinguish between facts and assumptions, which is a critical requirement. Therefore, it does not fully align with the evaluation steps."
+          },
+          {
+            "criterion": "Does not use insufficient or contradicted findings as settled premises.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with detailed recommendations and supporting rationale, aligning well with the Expected Output's requirement for evidence traceability. However, it does not fully meet the acceptance criteria as some limitations and evidence gaps are noted, indicating reliance on insufficient findings. Additionally, while it cites relevant signal identifiers, it does not clearly distinguish between facts and assumptions in all cases, which affects its overall robustness."
+          },
+          {
+            "criterion": "Distinguishes facts from assumptions and strategic interpretation.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis and recommendations but does not clearly distinguish between facts and assumptions, which is a critical requirement outlined in the Expected Output. While it includes supporting signals and limitations, it lacks explicit differentiation of what constitutes fact versus assumption, leading to a lack of clarity in evidence traceability. This shortcoming significantly impacts the alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-08",
+          "requirement_id": "DA-EVIDENCE",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Evidence traceability per option",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output cites some relevant finding identifiers for each passage, but it fails to fully meet the acceptance criteria as it does not clearly link every material option to verified findings or provide a structured narrative. Additionally, it does not adequately distinguish between facts and assumptions, particularly in the context of limitations mentioned. Overall, while there are some strengths in referencing findings, the lack of comprehensive evidence traceability and clarity in distinguishing facts from assumptions leads to a low score.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.30143
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+              "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+              "similarity": 0.249068
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.249068
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.199254
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.199254
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.5333333333333333,
+        "status": "partial",
+        "reason": "partial: Options are not merely wording variations. — The Actual Output provides a comprehensive analysis with multiple distinct strategic recommendations, each addressing different aspects of NVIDIA's competitive landscape. However, it lacks a clear presentation of these options in a decision matrix or scenario table format, which is a requirement for meaningful distinct alternatives. While the recommendations are detailed, they do not sufficiently differentiate in terms of resource commitments or risk profiles as required by the evaluation steps. Therefore, the output does not fully meet the acceptance criteria.; partial: Includes a credible lower-commitment or wait-and-watch path when appropriate. — The Actual Output provides detailed analysis and recommendations regarding NVIDIA's competitive landscape, including risks and opportunities. However, it lacks a clear presentation of distinct strategic alternatives in a decision matrix or scenario table format, which is required for a high score. While it discusses various paths, it does not explicitly include a credible lower-commitment or wait-and-watch option, which is a critical aspect of the evaluation criteria.; partial: Explains what would make each option preferable. — The Actual Output provides a comprehensive analysis of various strategic options for NVIDIA, detailing distinct alternatives with associated risks, opportunities, and success criteria. However, it lacks a clear presentation format such as a decision matrix or scenario table, which is necessary to fully align with the evaluation steps. While it does explain what would make each option preferable, the absence of a structured format limits its effectiveness in conveying the distinctiveness of the options. Therefore, it receives a moderate score for partially meeting the criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Options are not merely wording variations.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with multiple distinct strategic recommendations, each addressing different aspects of NVIDIA's competitive landscape. However, it lacks a clear presentation of these options in a decision matrix or scenario table format, which is a requirement for meaningful distinct alternatives. While the recommendations are detailed, they do not sufficiently differentiate in terms of resource commitments or risk profiles as required by the evaluation steps. Therefore, the output does not fully meet the acceptance criteria."
+          },
+          {
+            "criterion": "Includes a credible lower-commitment or wait-and-watch path when appropriate.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed analysis and recommendations regarding NVIDIA's competitive landscape, including risks and opportunities. However, it lacks a clear presentation of distinct strategic alternatives in a decision matrix or scenario table format, which is required for a high score. While it discusses various paths, it does not explicitly include a credible lower-commitment or wait-and-watch option, which is a critical aspect of the evaluation criteria."
+          },
+          {
+            "criterion": "Explains what would make each option preferable.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of various strategic options for NVIDIA, detailing distinct alternatives with associated risks, opportunities, and success criteria. However, it lacks a clear presentation format such as a decision matrix or scenario table, which is necessary to fully align with the evaluation steps. While it does explain what would make each option preferable, the absence of a structured format limits its effectiveness in conveying the distinctiveness of the options. Therefore, it receives a moderate score for partially meeting the criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-09",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Meaningfully distinct alternatives",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as it primarily presents limitations and rationale without offering materially different strategic choices. It does not include a decision matrix or scenario table, nor does it explain what would make each option preferable. Additionally, there is no credible lower-commitment path presented, which is a critical requirement. Overall, the output does not meet the mandatory acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.237508
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.208739
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.warnings[0]",
+              "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+              "similarity": 0.193122
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.185545
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.185545
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.5333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "Second pass upgraded initial missing to partial. Initial: missing: Identifies which parts of the decision have stronger or weaker support. — The Actual Output does not clearly identify which parts of the decision have stronger or weaker support, failing to meet the requirement for asymmetric evidence disclosure. While it provides detailed recommendations and analyses, it lacks explicit indications of evidence imbalances or how missing evidence could affect the rankings. This omission is critical given the evaluation steps that prioritize clarity in evidence support.; missing: Avoids extrapolating from the best-documented segment to all segments. — The Actual Output does not adequately address the requirement to avoid extrapolating from the best-documented segment. While it provides detailed analysis and recommendations, it fails to clearly identify which parts of the decision have stronger or weaker support, and it does not explain how missing evidence could change the ranking. Additionally, it does not sufficiently disclose evidence imbalances, which is critical for the evaluation criteria. Therefore, it does not meet the acceptance criteria outlined in the Expected Output.; missing: Explains how missing evidence could change the ranking. — The Actual Output does not explicitly explain how missing evidence could change the ranking, which is a critical requirement. While it identifies limitations in the evidence, it fails to connect these gaps to potential impacts on the decision-making process. Additionally, the explanation lacks clarity and does not sufficiently compare the Actual Output with the Expected Output, which diminishes its overall effectiveness. Therefore, it does not meet the acceptance criteria for substantive and clear explanations. Second pass: The Actual Output partially addresses the acceptance criteria by identifying limitations in the evidence related to specific recommendations. However, it does not clearly indicate which parts of the decision have stronger or weaker support, nor does it explain how the missing evidence could change the ranking. Additionally, it lacks a discussion on avoiding extrapolation from the best-documented segment. Therefore, it does not fully meet the requirements outlined in the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies which parts of the decision have stronger or weaker support.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly identify which parts of the decision have stronger or weaker support, failing to meet the requirement for asymmetric evidence disclosure. While it provides detailed recommendations and analyses, it lacks explicit indications of evidence imbalances or how missing evidence could affect the rankings. This omission is critical given the evaluation steps that prioritize clarity in evidence support."
+          },
+          {
+            "criterion": "Avoids extrapolating from the best-documented segment to all segments.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not adequately address the requirement to avoid extrapolating from the best-documented segment. While it provides detailed analysis and recommendations, it fails to clearly identify which parts of the decision have stronger or weaker support, and it does not explain how missing evidence could change the ranking. Additionally, it does not sufficiently disclose evidence imbalances, which is critical for the evaluation criteria. Therefore, it does not meet the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "Explains how missing evidence could change the ranking.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly explain how missing evidence could change the ranking, which is a critical requirement. While it identifies limitations in the evidence, it fails to connect these gaps to potential impacts on the decision-making process. Additionally, the explanation lacks clarity and does not sufficiently compare the Actual Output with the Expected Output, which diminishes its overall effectiveness. Therefore, it does not meet the acceptance criteria for substantive and clear explanations."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "DA-EDGE-10",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Asymmetric evidence disclosure",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by identifying limitations in the evidence related to specific recommendations. However, it does not clearly indicate which parts of the decision have stronger or weaker support, nor does it explain how the missing evidence could change the ranking. Additionally, it lacks a discussion on avoiding extrapolation from the best-documented segment. Therefore, it does not fully meet the requirements outlined in the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.334159
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.290346
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.limitations[0]",
+              "text": "Current BIS license approval rates for H200 vs MI325X are not in the evidence.",
+              "similarity": 0.278243
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.limitations[0]",
+              "text": "NVIDIA's own upcoming product release dates are not in the evidence for comparison.",
+              "similarity": 0.278243
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.limitations[1]",
+              "text": "NVIDIA's China revenue exposure to H200 is not quantified in the evidence.",
+              "similarity": 0.26774
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-11",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Observable decision triggers",
+        "priority": "mandatory",
+        "score": 0.7666666666666666,
+        "status": "covered",
+        "reason": "covered: Uses indicators connected to the evidence and strategic objective. — The Actual Output provides a comprehensive analysis that includes measurable indicators and observable events related to NVIDIA's competitive landscape, aligning well with the strategic objectives outlined in the Expected Output. It effectively connects the indicators to the evidence and strategic goals, while also defining potential triggers for review. However, it lacks a clear presentation of alternatives in a decision matrix format, which is a requirement in the Expected Output. This shortcoming affects the overall alignment with the evaluation steps.; covered: Defines direction or threshold only when supported; otherwise states a qualitative trigger. — The Actual Output provides a comprehensive analysis with measurable indicators and observable events that could trigger strategic decisions, aligning well with the evaluation steps. It defines directions based on evidence and outlines qualitative triggers, although some limitations regarding evidence gaps are noted. However, it does not present options in a decision matrix or scenario table as an acceptable alternative, which slightly detracts from its completeness. Overall, it meets most criteria effectively.; covered: Identifies a plausible review horizon without presenting it as a fact. — The Actual Output identifies a plausible review horizon by discussing the temporary nature of NVIDIA's H200 China shipment permission and the potential for policy reversal. However, it presents this as a possibility rather than a definitive fact. The output includes measurable indicators and observable events that could trigger a change in strategic direction, aligning well with the expected output's requirements. Overall, it meets the criteria clearly, but there are some limitations noted regarding the evidence gaps, which slightly detracts from its completeness.",
+        "criteria_results": [
+          {
+            "criterion": "Uses indicators connected to the evidence and strategic objective.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis that includes measurable indicators and observable events related to NVIDIA's competitive landscape, aligning well with the strategic objectives outlined in the Expected Output. It effectively connects the indicators to the evidence and strategic goals, while also defining potential triggers for review. However, it lacks a clear presentation of alternatives in a decision matrix format, which is a requirement in the Expected Output. This shortcoming affects the overall alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Defines direction or threshold only when supported; otherwise states a qualitative trigger.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis with measurable indicators and observable events that could trigger strategic decisions, aligning well with the evaluation steps. It defines directions based on evidence and outlines qualitative triggers, although some limitations regarding evidence gaps are noted. However, it does not present options in a decision matrix or scenario table as an acceptable alternative, which slightly detracts from its completeness. Overall, it meets most criteria effectively."
+          },
+          {
+            "criterion": "Identifies a plausible review horizon without presenting it as a fact.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output identifies a plausible review horizon by discussing the temporary nature of NVIDIA's H200 China shipment permission and the potential for policy reversal. However, it presents this as a possibility rather than a definitive fact. The output includes measurable indicators and observable events that could trigger a change in strategic direction, aligning well with the expected output's requirements. Overall, it meets the criteria clearly, but there are some limitations noted regarding the evidence gaps, which slightly detracts from its completeness."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.7666666666666666,
+        "initial_status": "covered",
+        "final_score": 0.7666666666666666,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Identifies resource and opportunity costs qualitatively or quantitatively when supported. — The Actual Output identifies various resource and opportunity costs related to NVIDIA's H200 and AMD MI325X, including risks and limitations. However, it lacks a clear discussion on reversibility and downside protection, which are critical for the evaluation. The analysis does not present options in a decision matrix or scenario table as suggested in the Expected Output, nor does it adequately address the acceptance criteria regarding the identification of costs. Therefore, while some aspects are covered, the overall alignment with the evaluation steps is insufficient.; partial: Discusses downside exposure and reversibility. — The Actual Output discusses downside exposure by modeling H200 China revenue as contingent on BIS licensing, indicating potential risks and asymmetric outcomes. However, it lacks a clear discussion on reversibility in relation to downside exposure, which is a critical aspect of the evaluation steps. The Expected Output emphasizes the need for a clear explanation of reversibility and the commitments required, which is not adequately addressed in the Actual Output. Therefore, while there are strengths in discussing downside exposure, the absence of a thorough treatment of reversibility limits the overall alignment.; partial: Does not invent ROI, savings, or market-share outcomes. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including risks and opportunities, but it lacks explicit discussion of reversibility and downside protection as required by the Expected Output. While it identifies risks and limitations, it does not clearly articulate which options are reversible or the commitments they entail. Additionally, it does not present a decision matrix or scenario table, which would have strengthened alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies resource and opportunity costs qualitatively or quantitatively when supported.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies various resource and opportunity costs related to NVIDIA's H200 and AMD MI325X, including risks and limitations. However, it lacks a clear discussion on reversibility and downside protection, which are critical for the evaluation. The analysis does not present options in a decision matrix or scenario table as suggested in the Expected Output, nor does it adequately address the acceptance criteria regarding the identification of costs. Therefore, while some aspects are covered, the overall alignment with the evaluation steps is insufficient."
+          },
+          {
+            "criterion": "Discusses downside exposure and reversibility.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output discusses downside exposure by modeling H200 China revenue as contingent on BIS licensing, indicating potential risks and asymmetric outcomes. However, it lacks a clear discussion on reversibility in relation to downside exposure, which is a critical aspect of the evaluation steps. The Expected Output emphasizes the need for a clear explanation of reversibility and the commitments required, which is not adequately addressed in the Actual Output. Therefore, while there are strengths in discussing downside exposure, the absence of a thorough treatment of reversibility limits the overall alignment."
+          },
+          {
+            "criterion": "Does not invent ROI, savings, or market-share outcomes.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including risks and opportunities, but it lacks explicit discussion of reversibility and downside protection as required by the Expected Output. While it identifies risks and limitations, it does not clearly articulate which options are reversible or the commitments they entail. Additionally, it does not present a decision matrix or scenario table, which would have strengthened alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-12",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "Reversibility and downside protection",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to address the required discussions on resource and opportunity costs, downside exposure, and reversibility as outlined in the Expected Output. It does not provide qualitative or quantitative support for these aspects, nor does it present a decision matrix or scenario table. Additionally, there is no mention of ROI, savings, or market-share outcomes, which aligns with the expectations. Overall, the output does not meet the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.342753
+            },
+            {
+              "source_path": "$.task_goal",
+              "text": "What are our competitors doing, and what does it mean for NVIDIA?",
+              "similarity": 0.281546
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.259889
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.238231
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.238231
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.5333333333333333,
+        "status": "partial",
+        "reason": "partial: States which critical unknowns block a recommendation. — The Actual Output does not explicitly state which critical unknowns block a recommendation, which is a key requirement. While it provides detailed analysis and recommendations, it lacks clarity on the specific unknowns that hinder decision-making. Additionally, while it identifies some limitations, it does not sufficiently align with the expectation of stating critical unknowns as outlined in the Expected Output.; partial: Avoids manufacturing a preferred option merely to complete the report. — The Actual Output provides a comprehensive analysis with detailed recommendations, actions, risks, and opportunities, which aligns well with the evaluation steps. However, it does not clearly state which critical unknowns block a recommendation, nor does it avoid the appearance of manufacturing a preferred option, as it presents multiple recommendations without a clear prioritization or indication of which is most defensible given the evidence gaps. This leads to a score that reflects partial alignment with the evaluation criteria.; partial: Identifies evidence needed before an irreversible commitment. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including detailed recommendations and supporting rationale. However, it lacks explicit identification of critical unknowns that block a recommendation, which is essential for a no-go decision. While it presents substantial evidence and considerations, it does not fully align with the requirement to state which critical unknowns prevent a defensible recommendation, leading to a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "States which critical unknowns block a recommendation.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly state which critical unknowns block a recommendation, which is a key requirement. While it provides detailed analysis and recommendations, it lacks clarity on the specific unknowns that hinder decision-making. Additionally, while it identifies some limitations, it does not sufficiently align with the expectation of stating critical unknowns as outlined in the Expected Output."
+          },
+          {
+            "criterion": "Avoids manufacturing a preferred option merely to complete the report.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with detailed recommendations, actions, risks, and opportunities, which aligns well with the evaluation steps. However, it does not clearly state which critical unknowns block a recommendation, nor does it avoid the appearance of manufacturing a preferred option, as it presents multiple recommendations without a clear prioritization or indication of which is most defensible given the evidence gaps. This leads to a score that reflects partial alignment with the evaluation criteria."
+          },
+          {
+            "criterion": "Identifies evidence needed before an irreversible commitment.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including detailed recommendations and supporting rationale. However, it lacks explicit identification of critical unknowns that block a recommendation, which is essential for a no-go decision. While it presents substantial evidence and considerations, it does not fully align with the requirement to state which critical unknowns prevent a defensible recommendation, leading to a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-13",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "No-go and human decision boundary",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output identifies some critical unknowns that block recommendations, such as the NVIDIA H200 China order book and license application status, but it does not clearly state which critical unknowns block a recommendation overall. It also avoids manufacturing a preferred option, as it discusses limitations rather than presenting a definitive choice. However, it fails to fully identify the evidence needed before an irreversible commitment, as it does not explicitly outline what evidence is required. Overall, the coverage is partial compared to the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "lexical_fallback",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.355556
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.310316
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.238705
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+              "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+              "similarity": 0.238705
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Monthly BIS decision tracking log for H200 and MI325X.",
+              "similarity": 0.200821
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.5333333333333333,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not frame options as distinct competitive responses as required by the acceptance criteria. Instead, it presents various passages with similarity scores but lacks clear categorization into competitive strategies like lead, match, differentiate, or hold and watch. Therefore, it fails to meet the mandatory criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.246526
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[0]",
+            "text": "Build a China revenue forecast for H200 that scenarios BIS license approval, delay, and denial for both H200 and MI325X.",
+            "similarity": 0.177319
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.170236
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Monthly BIS decision tracking log for H200 and MI325X.",
+            "similarity": 0.159132
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.rationale",
+            "text": "Signal 441ad982-2439-41fe-84f3-8b9e8b2a8033 confirms AMD's annual Instinct cadence (MI350 in 2025, MI400 in 2026, MI500 planned for 2027, and MI455X unveiled and shipping in late 2026), meaning NVIDIA's Blackwell and Rubin generations will face new AMD competitors within 12 months of launch, reducing NVIDIA's ability to extract long product-cycle rents.",
+            "similarity": 0.158481
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Present materially different options rather than paraphrases of the same action",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to present materially different options, as it primarily reiterates similar actions without offering distinct alternatives. The passages provided do not align with the requirement to present options in a decision matrix or scenario table, nor do they include the necessary evidence, benefits, costs, risks, assumptions, and triggers. This indicates a lack of full coverage of the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.19646
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.172662
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.warnings[0]",
+            "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+            "similarity": 0.159745
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.153478
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.153478
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it provides some rationale and limitations, it fails to preserve the decision for the human user as required. Therefore, it is missing coverage of the key acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.338382
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.284463
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.268659
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.268659
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[0]",
+            "text": "Build a China revenue forecast for H200 that scenarios BIS license approval, delay, and denial for both H200 and MI325X.",
+            "similarity": 0.250713
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output cites some relevant finding identifiers for each passage, but it fails to fully meet the acceptance criteria as it does not clearly link every material option to verified findings or provide a structured narrative. Additionally, it does not adequately distinguish between facts and assumptions, particularly in the context of limitations mentioned. Overall, while there are some strengths in referencing findings, the lack of comprehensive evidence traceability and clarity in distinguishing facts from assumptions leads to a low score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.30143
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+            "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+            "similarity": 0.249068
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.249068
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.199254
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.199254
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as it primarily presents limitations and rationale without offering materially different strategic choices. It does not include a decision matrix or scenario table, nor does it explain what would make each option preferable. Additionally, there is no credible lower-commitment path presented, which is a critical requirement. Overall, the output does not meet the mandatory acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.237508
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.208739
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.warnings[0]",
+            "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+            "similarity": 0.193122
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.185545
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.185545
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by identifying limitations in the evidence related to specific recommendations. However, it does not clearly indicate which parts of the decision have stronger or weaker support, nor does it explain how the missing evidence could change the ranking. Additionally, it lacks a discussion on avoiding extrapolation from the best-documented segment. Therefore, it does not fully meet the requirements outlined in the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.334159
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.290346
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.limitations[0]",
+            "text": "Current BIS license approval rates for H200 vs MI325X are not in the evidence.",
+            "similarity": 0.278243
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.limitations[0]",
+            "text": "NVIDIA's own upcoming product release dates are not in the evidence for comparison.",
+            "similarity": 0.278243
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.limitations[1]",
+            "text": "NVIDIA's China revenue exposure to H200 is not quantified in the evidence.",
+            "similarity": 0.26774
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to address the required discussions on resource and opportunity costs, downside exposure, and reversibility as outlined in the Expected Output. It does not provide qualitative or quantitative support for these aspects, nor does it present a decision matrix or scenario table. Additionally, there is no mention of ROI, savings, or market-share outcomes, which aligns with the expectations. Overall, the output does not meet the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.342753
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are our competitors doing, and what does it mean for NVIDIA?",
+            "similarity": 0.281546
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.259889
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.238231
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.238231
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output identifies some critical unknowns that block recommendations, such as the NVIDIA H200 China order book and license application status, but it does not clearly state which critical unknowns block a recommendation overall. It also avoids manufacturing a preferred option, as it discusses limitations rather than presenting a definitive choice. However, it fails to fully identify the evidence needed before an irreversible commitment, as it does not explicitly outline what evidence is required. Overall, the coverage is partial compared to the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "lexical_fallback",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.355556
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.310316
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.238705
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.limitations[0]",
+            "text": "NVIDIA's Rubin and Blackwell release timing relative to AMD's MI400/MI500 is not in the evidence.",
+            "similarity": 0.238705
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Monthly BIS decision tracking log for H200 and MI325X.",
+            "similarity": 0.200821
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.625,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.9,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing a comprehensive analysis of NVIDIA's competitive landscape, specifically focusing on AMD's actions and their implications for NVIDIA. It includes detailed recommendations, risks, and opportunities related to the competitors' strategies, aligning well with the input question. However, while the output is thorough, it could be considered somewhat verbose, which may detract from clarity. Overall, it remains highly relevant and focused on the specified entities and topics.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, but it lacks clear framing of distinct competitive responses as required by the evaluation steps. While it identifies risks and opportunities, it does not adequately tie each proposed option to verified findings or supported cross-domain signals, which is essential for alignment with the expected output. Additionally, the options presented are not materially distinct, often paraphrasing similar actions without clear differentiation.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output demonstrates a comprehensive analysis of NVIDIA's competitive landscape, supported by relevant signals from the Retrieval Context. However, it includes limitations regarding the lack of specific data on NVIDIA's China revenue exposure and current BIS license approval rates, which are critical for validating the claims made. While the conclusions drawn are generally aligned with the evidence, the unsupported figures and the potential for invented details regarding future scenarios slightly undermine the overall reliability of the analysis.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing various dimensions such as regulatory risks, market opportunities, and strategic recommendations. However, it lacks a clear framing of distinct competitive responses as required by the evaluation steps. While it discusses multiple recommendations, they are not presented as materially different options, and the analysis does not adequately tie each proposed option to verified findings or supported signals. Additionally, the output does not sufficiently carry forward uncertainties and evidence gaps into the options, which is crucial for transparency. Overall, while the output is detailed, it does not fully align with the mandatory requirements outlined in the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Failure to frame options as distinct competitive responses.",
+          "evidence": "The Actual Output does not clearly frame options as distinct competitive responses such as lead, match, differentiate, or hold and watch.",
+          "impact": "This limits the clarity and usability of the recommendations for decision-making."
+        },
+        {
+          "limitation": "Insufficient differentiation of options.",
+          "evidence": "The Actual Output presents multiple recommendations that are somewhat distinct but largely revolve around similar themes.",
+          "impact": "This reduces the effectiveness of the analysis by not providing materially different strategic choices."
+        },
+        {
+          "limitation": "Lack of a structured evidence-to-signal table.",
+          "evidence": "While the output ties options to verified findings, it lacks a compact evidence-to-signal table or structured narrative.",
+          "impact": "This diminishes the clarity and structure of the output, making it harder to trace evidence back to recommendations."
+        },
+        {
+          "limitation": "Inadequate handling of uncertainty and evidence gaps.",
+          "evidence": "The output identifies evidence gaps but does not present conflicting source claims side by side.",
+          "impact": "This limits transparency regarding the reliability of the recommendations."
+        },
+        {
+          "limitation": "Failure to clearly state evidence insufficiency.",
+          "evidence": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options.",
+          "impact": "This leads to a lack of clarity regarding the decision-making process for the human user."
+        },
+        {
+          "limitation": "Inadequate presentation of decision triggers.",
+          "evidence": "While measurable indicators are mentioned, the output lacks a structured decision matrix or scenario table.",
+          "impact": "This affects the ability to visualize and assess decision-making pathways effectively."
+        },
+        {
+          "limitation": "Insufficient identification of critical unknowns.",
+          "evidence": "The Actual Output does not explicitly state which critical unknowns block a recommendation.",
+          "impact": "This reduces the effectiveness of the analysis by not highlighting areas needing further investigation."
+        },
+        {
+          "limitation": "Lack of clear differentiation between facts and assumptions.",
+          "evidence": "The output does not sufficiently distinguish between facts and assumptions in all cases.",
+          "impact": "This affects the overall robustness and reliability of the analysis."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a structured decision matrix for options.",
+          "addresses": "The need for clear framing of distinct competitive responses and differentiation of options.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Create a compact evidence-to-signal table.",
+          "addresses": "The lack of structured evidence presentation linking findings to recommendations.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Explicitly present conflicting evidence side by side.",
+          "addresses": "The need for better handling of uncertainty and evidence gaps.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Clearly state evidence insufficiency when applicable.",
+          "addresses": "The need for clarity regarding the sufficiency of evidence for drafting options.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Define critical unknowns that block recommendations.",
+          "addresses": "The need for transparency in decision-making processes.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Differentiate clearly between facts and assumptions.",
+          "addresses": "The need for improved robustness and reliability of the analysis.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Incorporate a structured presentation of decision triggers.",
+          "addresses": "The need for clearer visualization of decision-making pathways.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Ensure options represent materially different strategic choices.",
+          "addresses": "The need for distinct options rather than paraphrases.",
+          "priority": "high"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Failure to frame options as distinct competitive responses.",
+        "evidence": "The Actual Output does not clearly frame options as distinct competitive responses such as lead, match, differentiate, or hold and watch.",
+        "impact": "This limits the clarity and usability of the recommendations for decision-making."
+      },
+      {
+        "limitation": "Insufficient differentiation of options.",
+        "evidence": "The Actual Output presents multiple recommendations that are somewhat distinct but largely revolve around similar themes.",
+        "impact": "This reduces the effectiveness of the analysis by not providing materially different strategic choices."
+      },
+      {
+        "limitation": "Lack of a structured evidence-to-signal table.",
+        "evidence": "While the output ties options to verified findings, it lacks a compact evidence-to-signal table or structured narrative.",
+        "impact": "This diminishes the clarity and structure of the output, making it harder to trace evidence back to recommendations."
+      },
+      {
+        "limitation": "Inadequate handling of uncertainty and evidence gaps.",
+        "evidence": "The output identifies evidence gaps but does not present conflicting source claims side by side.",
+        "impact": "This limits transparency regarding the reliability of the recommendations."
+      },
+      {
+        "limitation": "Failure to clearly state evidence insufficiency.",
+        "evidence": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options.",
+        "impact": "This leads to a lack of clarity regarding the decision-making process for the human user."
+      },
+      {
+        "limitation": "Inadequate presentation of decision triggers.",
+        "evidence": "While measurable indicators are mentioned, the output lacks a structured decision matrix or scenario table.",
+        "impact": "This affects the ability to visualize and assess decision-making pathways effectively."
+      },
+      {
+        "limitation": "Insufficient identification of critical unknowns.",
+        "evidence": "The Actual Output does not explicitly state which critical unknowns block a recommendation.",
+        "impact": "This reduces the effectiveness of the analysis by not highlighting areas needing further investigation."
+      },
+      {
+        "limitation": "Lack of clear differentiation between facts and assumptions.",
+        "evidence": "The output does not sufficiently distinguish between facts and assumptions in all cases.",
+        "impact": "This affects the overall robustness and reliability of the analysis."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a structured decision matrix for options.",
+        "addresses": "The need for clear framing of distinct competitive responses and differentiation of options.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Create a compact evidence-to-signal table.",
+        "addresses": "The lack of structured evidence presentation linking findings to recommendations.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Explicitly present conflicting evidence side by side.",
+        "addresses": "The need for better handling of uncertainty and evidence gaps.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Clearly state evidence insufficiency when applicable.",
+        "addresses": "The need for clarity regarding the sufficiency of evidence for drafting options.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Define critical unknowns that block recommendations.",
+        "addresses": "The need for transparency in decision-making processes.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Differentiate clearly between facts and assumptions.",
+        "addresses": "The need for improved robustness and reliability of the analysis.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Incorporate a structured presentation of decision triggers.",
+        "addresses": "The need for clearer visualization of decision-making pathways.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Ensure options represent materially different strategic choices.",
+        "addresses": "The need for distinct options rather than paraphrases.",
+        "priority": "high"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\af9d8def516f839e7b587b89b50b9c6c\\stages\\decision_analysis_evaluation.json"
+}

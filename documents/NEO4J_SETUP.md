@@ -68,6 +68,18 @@ Running the loader twice is safe: every write is a `MERGE` on a stable id, so no
 
 > **The sample data is test data.** It compares NVIDIA with Broadcom, Intel Corp and AMD. Some figures are close to public reports, but the sources, posts and several claims are invented. It loads into the `sandbox` workspace, so it never mixes with a real workspace's research. Don't use `--workspace` to load it into a real one.
 
+## 2.1 Temporarily test GraphRAG against the sandbox
+
+Set `GRAPH_WORKSPACE_ID=sandbox` in the root `.env` and restart the backend. Neo4j reads
+and run ingestion then use the sandbox workspace, while the application's active workspace
+and Chroma document retrieval remain unchanged. Verified findings from a test run are written
+to the sandbox graph. Use this only for testing because the legacy sample runs include invented
+claims.
+
+After testing, remove `GRAPH_WORKSPACE_ID` from `.env` and restart the backend. Neo4j reads
+and writes will return to the workspace attached to each request. The override is loaded at
+process startup, so changing `.env` without restarting does not switch the target.
+
 ## 3. Verify the database
 
 ### A. Open Neo4j Browser

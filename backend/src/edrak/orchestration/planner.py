@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 from typing import Protocol
 
 from pydantic import BaseModel
@@ -12,9 +14,9 @@ from ..contracts import (
     WorkerType,
 )
 from ..contracts.vocabulary import describe_context
-from ..core.llm import get_chat_model
+from ..core.llm import DEFAULT_MAX_TOKENS, get_chat_model, message_text
 from ..metrics.planning import requirements_for
-from .prompts import PLANNER_SYSTEM_PROMPT, get_planner_prompt
+from .prompts import get_planner_prompt
 
 MAX_REPAIR_ATTEMPTS = 1
 
@@ -78,30 +80,33 @@ class LlmPlanner:
         return self._build_plan(request, reply)
 
     def _invoke(self, prompt: str) -> PlannerPlan:
-        """Ask for a plan, validated against the assignment schema.
-
-        json_mode rather than function_calling. This is the one call site that
-        needs a list of objects, and gpt-oss:120b does not reliably emit a tool
-        call for a list-of-objects schema here: it answers with prose or a bare
-        JSON array instead, and the binding then yields nothing. json_mode does
-        return parseable JSON, and because the schema constrains `worker` to the
-        real enum, an invented name is rejected rather than silently accepted.
-        Every other call site uses function_calling.
-        """
+        """Ask the shared NVIDIA model for a plan and validate its JSON response."""
         system_prompt = get_planner_prompt()
-        runnable = get_chat_model(agent="orchestrator", temperature=0).with_structured_output(
-            PlannerPlan, method="json_mode"
+        reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=DEFAULT_MAX_TOKENS,
         )
-        try:
-            from edrak.core.observability import get_current_prompt_obj
-            prompt_obj = get_current_prompt_obj()
-            if prompt_obj is not None:
-                runnable = runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
-        except Exception:
-            pass
-        plan = runnable.invoke(system_prompt + "\n\n" + prompt)
+        raw_output = message_text(reply)
 
-        if plan is None or not plan.assignments:
+        clean_output = re.sub(
+            r"^\s*```(?:json)?\s*|\s*```\s*$",
+            "",
+            raw_output,
+            flags=re.IGNORECASE,
+        ).strip()
+        try:
+            parsed = json.loads(clean_output)
+            plan = PlannerPlan.model_validate(parsed)
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise PlanningError(
+                f"NVIDIA planner response did not match the plan schema: {exc}",
+                raw_output,
+            ) from exc
+
+        if not plan.assignments:
             raise PlanningError("model returned no usable plan", "")
         return plan
 

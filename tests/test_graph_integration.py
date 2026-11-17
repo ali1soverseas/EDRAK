@@ -1,8 +1,15 @@
 from types import SimpleNamespace
 
 import pytest
+from edrak.contracts import (
+    BusinessContext,
+    CompanyProfile,
+    ResearchTask,
+    UseCase,
+    WorkerType,
+)
 from edrak.contracts.evidence import Evidence, SourceType
-from edrak.graph.connection import GraphSettings
+from edrak.graph.connection import GraphSettings, effective_graph_workspace_id
 from edrak.graph.loader import load_runs
 from edrak.graph.retrieval.graph_retriever import GraphRetriever
 from edrak.graph.retrieval.hybrid_retriever import HybridRetriever
@@ -21,17 +28,20 @@ class Vector:
 class Graph:
     def __init__(self, available=True):
         self.is_available = available
+        self.workspace_ids = []
 
     def available(self):
         return self.is_available
 
-    def find_findings(self, *args, **kwargs):
+    def find_findings(self, workspace_id, *args, **kwargs):
+        self.workspace_ids.append(workspace_id)
         return ["finding"]
 
     def evidence_from_findings(self, findings, source_types=None):
         return [Evidence(source_type=SourceType.WEB_PAGE, extracted_fact="graph")]
 
-    def findings_citing_sources(self, *args):
+    def findings_citing_sources(self, workspace_id, *args):
+        self.workspace_ids.append(workspace_id)
         return {}
 
 
@@ -80,6 +90,69 @@ def test_settings_find_root_env_from_another_directory(tmp_path, monkeypatch):
     assert GraphSettings.model_config["env_file"].parent.joinpath("requirements.txt").is_file()
 
 
+def test_graph_workspace_override_defaults_to_request_workspace(monkeypatch):
+    from edrak.graph import connection
+
+    monkeypatch.setattr(
+        connection, "get_graph_settings", lambda: SimpleNamespace(GRAPH_WORKSPACE_ID="sandbox")
+    )
+    assert effective_graph_workspace_id("workspace-a") == "sandbox"
+
+    monkeypatch.setattr(
+        connection, "get_graph_settings", lambda: SimpleNamespace(GRAPH_WORKSPACE_ID=" ")
+    )
+    assert effective_graph_workspace_id("workspace-a") == "workspace-a"
+
+
+def test_prior_knowledge_reads_from_graph_workspace_override(monkeypatch):
+    from edrak.graph import connection
+    from edrak.graph.agent_context import prior_knowledge_for_task
+
+    monkeypatch.setattr(
+        connection, "get_graph_settings", lambda: SimpleNamespace(GRAPH_WORKSPACE_ID="sandbox")
+    )
+    task = ResearchTask(
+        parent_request_id="run-a",
+        worker=WorkerType.INTERNAL_INTELLIGENCE,
+        goal="Research NVIDIA GPU.",
+        focus="GPU architecture",
+        company_profile=CompanyProfile(name="NVIDIA", workspace_id="workspace-a"),
+        business_context=BusinessContext(
+            use_case=UseCase.COMPETITIVE_INTELLIGENCE,
+            offering="GPU",
+        ),
+    )
+
+    class Retriever:
+        def __init__(self):
+            self.workspace_ids = []
+
+        def available(self):
+            return True
+
+        def find_findings(self, workspace_id, **_kwargs):
+            self.workspace_ids.append(workspace_id)
+            return []
+
+        def signals(self, workspace_id, **_kwargs):
+            self.workspace_ids.append(workspace_id)
+            return []
+
+        def open_gaps(self, workspace_id, **_kwargs):
+            self.workspace_ids.append(workspace_id)
+            return []
+
+        def metric_history(self, workspace_id, **_kwargs):
+            self.workspace_ids.append(workspace_id)
+            return []
+
+    retriever = Retriever()
+    prior_knowledge_for_task(task, retriever=retriever)
+
+    assert len(retriever.workspace_ids) >= 4
+    assert set(retriever.workspace_ids) == {"sandbox"}
+
+
 def test_hybrid_preserves_positional_arguments_and_vector_only_when_disabled():
     vector = Vector()
     result = HybridRetriever(vector=vector, graph=Graph(False)).retrieve("query", 4, None, 0.7, "ws")
@@ -97,6 +170,21 @@ def test_filtered_hybrid_search_cannot_include_unfiltered_graph_evidence():
     )
     assert [item.extracted_fact for item in result] == ["vector"]
     assert vector.calls[0]["where_filter"] == {"origin": "public_handbook"}
+
+
+def test_hybrid_routes_only_neo4j_reads_to_graph_workspace_override(monkeypatch):
+    from edrak.graph import connection
+
+    monkeypatch.setattr(
+        connection, "get_graph_settings", lambda: SimpleNamespace(GRAPH_WORKSPACE_ID="sandbox")
+    )
+    vector = Vector()
+    graph = Graph()
+
+    HybridRetriever(vector=vector, graph=graph).retrieve("query", workspace_id="workspace-a")
+
+    assert vector.calls[0]["workspace_id"] == "workspace-a"
+    assert graph.workspace_ids == ["sandbox", "sandbox"]
 
 
 def test_entity_and_neighbourhood_reads_require_workspace():
@@ -120,8 +208,12 @@ def test_entity_and_neighbourhood_reads_require_workspace():
     assert [params["ws"] for _, params in conn.calls] == ["ws-a", "ws-a"]
 
 
+@pytest.mark.parametrize(
+    ("override", "expected_workspace"),
+    [(None, "ws-a"), ("sandbox", "sandbox")],
+)
 @pytest.mark.asyncio
-async def test_run_manager_ingests_workspace_state(monkeypatch):
+async def test_run_manager_ingests_workspace_state(monkeypatch, override, expected_workspace):
     from edrak.api.run_manager import RunManager
     from edrak.graph.ingestion.pipeline import GraphIngestor, IngestReport
 
@@ -132,12 +224,15 @@ async def test_run_manager_ingests_workspace_state(monkeypatch):
         return IngestReport(request_id=request.request_id)
 
     monkeypatch.setattr(GraphIngestor, "aingest_run", ingest)
-    monkeypatch.setattr("edrak.graph.connection.get_graph_settings", lambda: SimpleNamespace(GRAPH_ENABLED=True))
+    monkeypatch.setattr(
+        "edrak.graph.connection.get_graph_settings",
+        lambda: SimpleNamespace(GRAPH_ENABLED=True, GRAPH_WORKSPACE_ID=override),
+    )
     run = load_runs()[0]
     active = SimpleNamespace(workspace_id="ws-a", requested_by_id="user-a")
     state = {"results": run.results, "verification_result": run.verification}
     await RunManager()._record_graph(active, run.request, state, run.plan)
-    assert captured["workspace_id"] == "ws-a"
+    assert captured["workspace_id"] == expected_workspace
     assert captured["user_id"] == "user-a"
     assert captured["results"] == run.results
     assert captured["verification"] == run.verification

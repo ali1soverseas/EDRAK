@@ -1,0 +1,620 @@
+{
+  "agent": "competitor_intelligence",
+  "description": "Goal-derived golden evaluation set for the competitor_intelligence worker, populated with concrete, multi-directional findings grounded in the supplied agent output. Findings cover capabilities, software ecosystem, pricing, availability, adoption, regional comparison, and NVIDIA comparison for Broadcom and Intel. All claims are sourced from the trace and treated as ground truth for evaluation.",
+  "dataset_version": "2.1.0-grounded-multidirectional",
+  "snapshot_date": "2026-10-29",
+  "worker_definition": {
+    "worker": "competitor_intelligence",
+    "goal": "What are Broadcom's and Intel's data center AI accelerator capabilities, software ecosystems, pricing, availability, and customer adoption in Europe and the United States?",
+    "focus": "Broadcom and Intel product features, SDKs, pricing tiers, supply constraints, and reported deployments with cloud providers and AI developers.",
+    "configured_competitors": ["Broadcom", "Intel Corp"],
+    "target_company": "NVIDIA Corporation",
+    "markets": ["Europe", "United States"],
+    "target_customers": ["Cloud service providers", "AI developers"]
+  },
+  "scope_conflict": {
+    "configured_competitors": ["Broadcom", "Intel Corp"],
+    "policy": "Broadcom and Intel Corp are the in-scope competitors. NVIDIA is the comparison target. AMD Instinct may be mentioned only as an explicitly labelled out-of-scope comparator."
+  },
+  "research_requirements": [
+    {"id": "REQ-CAP-BCM", "competitor": "Broadcom", "category": "capabilities", "requirement": "Document data-center AI accelerator/custom XPU capabilities and architecture."},
+    {"id": "REQ-CAP-INTEL", "competitor": "Intel Corp", "category": "capabilities", "requirement": "Document Intel AI accelerator hardware, form factors, and specifications."},
+    {"id": "REQ-SW-BCM", "competitor": "Broadcom", "category": "software_ecosystem", "requirement": "Document software, SDKs, frameworks, developer access, and maturity for Broadcom accelerator programs."},
+    {"id": "REQ-SW-INTEL", "competitor": "Intel Corp", "category": "software_ecosystem", "requirement": "Document Intel accelerator SDK/software, frameworks, model support, migration."},
+    {"id": "REQ-PRICE-BCM", "competitor": "Broadcom", "category": "pricing", "requirement": "Document pricing/procurement model and public pricing transparency."},
+    {"id": "REQ-PRICE-INTEL", "competitor": "Intel Corp", "category": "pricing", "requirement": "Document Intel accelerator pricing tiers, system/cloud pricing, TCO."},
+    {"id": "REQ-AVAIL-BCM", "competitor": "Broadcom", "category": "availability", "requirement": "Document Broadcom access channels, regional availability, supply constraints, lead times."},
+    {"id": "REQ-AVAIL-INTEL", "competitor": "Intel Corp", "category": "availability", "requirement": "Document Intel access channels, regional availability, supply constraints, lead times."},
+    {"id": "REQ-ADOPT-BCM", "competitor": "Broadcom", "category": "customer_adoption", "requirement": "Document customer relationships, deployments, adoption scale for Broadcom."},
+    {"id": "REQ-ADOPT-INTEL", "competitor": "Intel Corp", "category": "customer_adoption", "requirement": "Document customer relationships, deployments, adoption scale for Intel."},
+    {"id": "REQ-REGION-BOTH", "competitor": "both", "category": "regional_comparison", "requirement": "Compare US and Europe across access, pricing, supply, adoption."},
+    {"id": "REQ-COMPARE-NVIDIA", "competitor": "both", "category": "competitive_comparison", "requirement": "Compare both competitors with NVIDIA across all five dimensions."}
+  ],
+  "test_cases": [
+    {
+      "test_case": {
+        "id": "GOAL_001",
+        "agent_type": "competitor_intelligence",
+        "title": "Capabilities and software ecosystems",
+        "input_requirements": ["REQ-CAP-BCM", "REQ-CAP-INTEL", "REQ-SW-BCM", "REQ-SW-INTEL"]
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "GOAL-F01",
+            "requirement_id": "REQ-CAP-BCM",
+            "competitor": "Broadcom",
+            "category": "capabilities",
+            "finding": "Broadcom custom XPU revenue scale",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom reported AI semiconductor revenue of $16.7B in Q3 FY2026, up 221% year-over-year and 54% sequentially, representing 56% of total company revenue. Management guided FY2026 AI revenue to approximately $58B, with FY2027 at ~$115B and FY2028 at ~$230B.",
+            "acceptable_alternatives": [
+              "Broadcom Q2 FY2026 AI semiconductor revenue was $10.8B, up 143% YoY, on total revenue of $22.187B.",
+              "Broadcom Q1 FY2026 AI revenue was $8.4B, up 106% YoY, accounting for 43% of $19.31B total quarterly revenue.",
+              "Broadcom FY2025 AI semiconductor revenue was $20B, up ~65% YoY from FY2024."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Tickeron, Broadcom Q3 FY2026 results",
+              "Investing.com, Broadcom Q1 FY2026 results",
+              "Tech Insider, Broadcom AI Revenue Surges 106%"
+            ],
+            "acceptance_criteria": [
+              "Attributes revenue to Broadcom reported results or guidance.",
+              "Distinguishes AI semiconductor revenue from total company revenue.",
+              "Does not present forward guidance as realized revenue."
+            ]
+          },
+          {
+            "id": "GOAL-F02",
+            "requirement_id": "REQ-CAP-BCM",
+            "competitor": "Broadcom",
+            "category": "capabilities",
+            "finding": "Broadcom custom XPU customer roster and deployment commitments",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom's custom XPU customers include Google (TPU v7 Ironwood in volume, TPU v8i production), Anthropic (1 GW Ironwood 2026 → 5 GW TPU v8i 2027 → 10 GW TPU 9 2028), OpenAI (Jalapeño shipped; 1.3 GW 2027 → 5+ GW 2028), and Meta (MTIA production Q4 FY2026, 3 GW through 2028). Broadcom also has a fifth XPU customer with $1B order for late 2026 delivery.",
+            "acceptable_alternatives": [
+              "Broadcom has six XPU customers with ~30 GW of total compute capacity committed.",
+              "Anthropic is expected to become Broadcom's largest XPU customer in 2027 and retain that position in 2028.",
+              "Google's TPU 8i delivers 80% better performance per dollar for inference than the previous generation."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "The Next Platform, Broadcom Rides Rocketing Trend (Sep 2026)",
+              "TradingKey, Broadcom AI Computing Power Expansion Plan"
+            ],
+            "acceptance_criteria": [
+              "Names specific customers and products.",
+              "Includes GW deployment commitments where disclosed.",
+              "Distinguishes custom XPU from merchant availability."
+            ]
+          },
+          {
+            "id": "GOAL-F03",
+            "requirement_id": "REQ-CAP-BCM",
+            "competitor": "Broadcom",
+            "category": "capabilities",
+            "finding": "Broadcom 3.5D XDSiP packaging architecture",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom's 3.5D XDSiP platform combines 2.5D and 3D-IC integration using Face-to-Face technology for custom XPUs. The first 2nm custom compute SoC on this platform shipped in February 2026 for Fujitsu. Broadcom's 3.5D platform supports XPUs for its broader customer base shipping from 2H 2026.",
+            "acceptable_alternatives": [
+              "Broadcom's XDSiP platform enables independent scaling of compute, memory, and network I/O.",
+              "Broadcom's packaging advantage includes SerDes, chip-to-chip interconnect, HBM integration, and advanced packaging IP."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Broadcom, Broadcom Ships 3.5D Face-to-Face Compute SoC (Feb 2026)",
+              "Broadcom Newsroom"
+            ],
+            "acceptance_criteria": [
+              "Describes 3.5D XDSiP and F2F technology.",
+              "Notes the 2nm milestone and Fujitsu as first customer."
+            ]
+          },
+          {
+            "id": "GOAL-F04",
+            "requirement_id": "REQ-CAP-INTEL",
+            "competitor": "Intel Corp",
+            "category": "capabilities",
+            "finding": "Intel Gaudi 3 hardware specifications",
+            "priority": "mandatory",
+            "primary_claim": "Intel Gaudi 3 specifications: 1,835 TFLOPS FP8/BF16, 128 GB HBM2e at 3.7 TB/s bandwidth, 24x 200GbE RoCE v2 networking, OAM form factor at 900W TDP and PCIe CEM form factor at 600W TDP, TSMC 5nm process.",
+            "acceptable_alternatives": [
+              "Gaudi 3 has 128GB HBM2e and 3.7TB/s bandwidth, exceeding H100's 80GB and 3.35TB/s.",
+              "The Universal Baseboard provides 14.6 petaflops of FP8 compute, more than 1TB of HBM2e, and 29.6 TBps of HBM bandwidth.",
+              "The PCIe CEM form factor delivers the same 1,835 TFLOPS FP8 at 600W TDP."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "SDxCentral, Intel reveals Gaudi pricing",
+              "Introl, Intel Gaudi 3 Deployment Guide"
+            ],
+            "acceptance_criteria": [
+              "Reports key specifications with source attribution.",
+              "Distinguishes OAM from PCIe form factors."
+            ]
+          },
+          {
+            "id": "GOAL-F05",
+            "requirement_id": "REQ-CAP-INTEL",
+            "competitor": "Intel Corp",
+            "category": "capabilities",
+            "finding": "Intel Gaudi 3 performance and efficiency claims",
+            "priority": "mandatory",
+            "primary_claim": "Intel claims Gaudi 3 delivers 50% better inference performance and 40% better power efficiency than NVIDIA H100 for LLM workloads. Intel describes Gaudi 3 as 'the only MLPerf-benchmarked alternative to Nvidia H100 for training and inference of LLMs.' Gaudi 3 improves performance per watt by 15% in transformer workloads versus H100.",
+            "acceptable_alternatives": [
+              "Gaudi 3 consumes 600W TDP compared to H100's 700W, saving 100W per card.",
+              "Supermicro Gaudi 3 reference systems achieve 96% scaling efficiency to 1,024 accelerators versus 89% for H100.",
+              "Alibaba Cloud reported 25% performance improvement migrating PyTorch models to Gaudi 3 without modifying training scripts."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Intel press release, Gaudi 3 launch",
+              "SDxCentral, Intel reveals Gaudi pricing",
+              "Introl, Intel Gaudi 3 Deployment Guide"
+            ],
+            "acceptance_criteria": [
+              "Attributes performance claims to Intel or a named third party.",
+              "Distinguishes vendor claims from independent benchmarks."
+            ]
+          },
+          {
+            "id": "GOAL-F06",
+            "requirement_id": "REQ-SW-BCM",
+            "competitor": "Broadcom",
+            "category": "software_ecosystem",
+            "finding": "Broadcom software model: customer-specific, not merchant",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom custom XPUs are co-designed with customer-specific software stacks. Google TPUs are used for Gemini and external AI cloud computing by Apple, Coherent, and SSI. There is no single merchant software ecosystem comparable to CUDA; the software stack is tied to the hyperscaler's own tooling.",
+            "acceptable_alternatives": [
+              "Broadcom's custom XPU engagement model includes hardware, firmware, and software, but software is customer-specific.",
+              "Broadcom emphasizes fastest time-to-market for TPUs from product definition to production without resubmits.",
+              "Broadcom's moat is its SerDes, chip-to-chip interconnect, HBM integration, and advanced packaging IP."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "The Next Platform, Broadcom Rides Rocketing Trend",
+              "Constellation Research, Broadcom CEO comments"
+            ],
+            "acceptance_criteria": [
+              "Describes Broadcom's customer-specific software model.",
+              "Does not claim a general-purpose software ecosystem equivalent to CUDA."
+            ]
+          },
+          {
+            "id": "GOAL-F07",
+            "requirement_id": "REQ-SW-INTEL",
+            "competitor": "Intel Corp",
+            "category": "software_ecosystem",
+            "finding": "Intel SynapseAI software stack and model support",
+            "priority": "mandatory",
+            "primary_claim": "Intel Gaudi 3 is supported by SynapseAI/Habana software, with PyTorch and TensorFlow integration, Hugging Face Optimum Habana support, and graph compilation. Gaudi software requires no licensing fees, unlike NVIDIA enterprise software agreements. Day-zero access is available for Llama 4, Phi 4, Qwen 3, and Falcon 3.",
+            "acceptable_alternatives": [
+              "Graph compilation reduces kernel launch overhead by 40% compared to eager execution.",
+              "SynapseAI supports migration from CUDA with minimal code changes for standard models.",
+              "Intel states 73% of GPU-accelerated servers use Intel Xeon as the host CPU."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Introl, Intel Gaudi 3 Deployment Guide",
+              "Intel, Gaudi 3 Product Page"
+            ],
+            "acceptance_criteria": [
+              "Describes SynapseAI and framework integrations.",
+              "Notes day-zero model access.",
+              "Notes ecosystem maturity characteristics versus CUDA."
+            ]
+          },
+          {
+            "id": "GOAL-F08",
+            "requirement_id": "REQ-SW-INTEL",
+            "competitor": "Intel Corp",
+            "category": "software_ecosystem",
+            "finding": "Intel open software philosophy and ecosystem alliances",
+            "priority": "mandatory",
+            "primary_claim": "Intel emphasizes open, community-based software for Gaudi 3, avoiding proprietary technologies like NVLink and NVSwitch. Intel has announced the intention to create an open platform for enterprise AI with SAP, Red Hat, VMware, and other industry leaders.",
+            "acceptable_alternatives": [
+              "Gaudi 3 uses industry-standard Ethernet networking, avoiding InfiniBand lock-in.",
+              "Intel's open approach is positioned as customer choice at the systems and hardware layer."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Intel press release, Gaudi 3 launch",
+              "Intel, Gaudi 3 Product Page"
+            ],
+            "acceptance_criteria": [
+              "Describes Intel's open software philosophy.",
+              "Notes Ethernet-based networking advantage."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "test_case": {
+        "id": "GOAL_002",
+        "agent_type": "competitor_intelligence",
+        "title": "Pricing, availability, and supply",
+        "input_requirements": ["REQ-PRICE-BCM", "REQ-PRICE-INTEL", "REQ-AVAIL-BCM", "REQ-AVAIL-INTEL"]
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "GOAL-F09",
+            "requirement_id": "REQ-PRICE-BCM",
+            "competitor": "Broadcom",
+            "category": "pricing",
+            "finding": "Broadcom custom XPU pricing model: negotiated, not public list price",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom does not publish public list prices for its custom XPU accelerators. Pricing is negotiated per custom engagement with hyperscaler customers. Broadcom's XPU business is driven by multi-billion-dollar orders, including Anthropic's $10B + $11B Ironwood TPU orders and a $1B order from its fifth XPU customer.",
+            "acceptable_alternatives": [
+              "Broadcom's XPU systems cost roughly $12B/GW excluding CPUs/memory/racks, or ~$15B/GW fully loaded.",
+              "Revenue per gigawatt of XPU deployment is guided at $20B–$30B.",
+              "A $63B financing structure with Bank of America, Blackstone, Citi, and Morgan Stanley enables Anthropic's Broadcom XPU compute capacity deployment, with deliveries starting in calendar 2027."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Broadcom investor release, $63B financing structure (Oct 2026)",
+              "The Next Platform, Broadcom Rides Rocketing Trend"
+            ],
+            "acceptance_criteria": [
+              "States that no public list price exists for Broadcom XPUs.",
+              "Distinguishes system-level revenue-per-GW from per-accelerator pricing.",
+              "Cites specific order values where disclosed."
+            ]
+          },
+          {
+            "id": "GOAL-F10",
+            "requirement_id": "REQ-PRICE-INTEL",
+            "competitor": "Intel Corp",
+            "category": "pricing",
+            "finding": "Intel Gaudi 3 list price and baseboard kit",
+            "priority": "mandatory",
+            "primary_claim": "Intel Gaudi 3 list price is $15,625 per accelerator (based on $125,000 for an 8-accelerator Universal Baseboard kit). Intel estimates the Gaudi 3 kit is two-thirds the cost of comparable competitive platforms. The Gaudi 2 AI kit is priced at $65,000 for 8 accelerators.",
+            "acceptable_alternatives": [
+              "Gaudi 3 list price is approximately $15,000–$15,650 per accelerator depending on source.",
+              "A Gaudi 3-based server is expected to cost about $65,000, a third of a rival NVIDIA product.",
+              "Gaudi 3 consumes 100W less than H100 per card, saving 876 kWh annually per card."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "SDxCentral, Intel reveals Gaudi pricing",
+              "Globes, Intel launches Habana Labs Gaudi 3",
+              "Introl, Intel Gaudi 3 Deployment Guide"
+            ],
+            "acceptance_criteria": [
+              "Reports the $125,000 kit price and derived per-unit price.",
+              "Notes Gaudi 2 kit at $65,000.",
+              "Distinguishes list price from system cost."
+            ]
+          },
+          {
+            "id": "GOAL-F11",
+            "requirement_id": "REQ-PRICE-INTEL",
+            "competitor": "Intel Corp",
+            "category": "pricing",
+            "finding": "Intel Gaudi 3 TCO advantages",
+            "priority": "mandatory",
+            "primary_claim": "A 64-accelerator Gaudi 3 cluster costs $960,000 versus $1,920,000 for H100, saving $960,000 in capital expenditure. Over three years, total savings exceed $1.5 million including power, cooling, and maintenance. SynapseAI requires no licensing fees, versus NVIDIA enterprise software at $3,500 per GPU annually.",
+            "acceptable_alternatives": [
+              "For a 1,024-accelerator deployment, SynapseAI saves $3.58 million yearly in software licensing.",
+              "Lower heat generation reduces cooling requirements by 20%, saving $45,000 annually.",
+              "Carbon footprint reductions reach 450 tons CO2 annually for a 1,024-card deployment."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Introl, Intel Gaudi 3 Deployment Guide"
+            ],
+            "acceptance_criteria": [
+              "States TCO savings based on stated assumptions.",
+              "Distinguishes capex from opex savings."
+            ]
+          },
+          {
+            "id": "GOAL-F12",
+            "requirement_id": "REQ-AVAIL-BCM",
+            "competitor": "Broadcom",
+            "category": "availability",
+            "finding": "Broadcom XPU availability tied to hyperscaler deployments",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom custom XPUs are available through hyperscaler deployments (Google TPU, Anthropic Ironwood, OpenAI Jalapeño, Meta MTIA), not through general merchant channels. Availability is tied to customer-specific deployment schedules. Anthropic's $21B in Ironwood TPU orders are for delivery in late 2026. Broadcom has secured supply for ~$115B of AI revenue in FY2027.",
+            "acceptable_alternatives": [
+              "Google signed a long-term agreement with Broadcom through 2031 for custom AI chips.",
+              "Broadcom's AI XPV Platform with Apollo and Blackstone enables >20 GW of compute infrastructure for Anthropic and OpenAI through 2028.",
+              "Broadcom has secured HBM memory, wafers, and packaging to fulfill its AI revenue forecast through FY2028."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "WSJ, Broadcom/Apollo/Blackstone $35B AI Infrastructure Platform",
+              "The Next Platform, Broadcom Rides Rocketing Trend"
+            ],
+            "acceptance_criteria": [
+              "Describes availability as tied to hyperscaler deployments.",
+              "Does not claim general market availability or lead times.",
+              "Notes delivery timelines where disclosed."
+            ]
+          },
+          {
+            "id": "GOAL-F13",
+            "requirement_id": "REQ-AVAIL-BCM",
+            "competitor": "Broadcom",
+            "category": "availability",
+            "finding": "Broadcom AI rack backstop and financial structure",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom arranged for financial partners to take on a portion of AI rack purchase agreements with a maximum potential backstop liability of approximately $43 billion undiscounted upon deployment. The backstop amount rises with AI rack deployment and declines as the customer pays lease obligations.",
+            "acceptable_alternatives": [
+              "The $63B financing structure with Bank of America, Blackstone, Citi, and Morgan Stanley supports Anthropic's Broadcom XPU deployment starting in calendar 2027.",
+              "Broadcom provides residual value support to the SPV for the first lien portion of the financing."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Broadcom 8-K filing (Oct 2026)",
+              "Broadcom investor release, $63B financing structure"
+            ],
+            "acceptance_criteria": [
+              "Describes the backstop structure.",
+              "Notes the $43B maximum exposure.",
+              "Distinguishes contingent liability from realized cost."
+            ]
+          },
+          {
+            "id": "GOAL-F14",
+            "requirement_id": "REQ-AVAIL-INTEL",
+            "competitor": "Intel Corp",
+            "category": "availability",
+            "finding": "Intel Gaudi 3 availability channels and regional coverage",
+            "priority": "mandatory",
+            "primary_claim": "Intel Gaudi 3 is available through global server OEMs (Dell, HPE, Lenovo, Supermicro) and on IBM Cloud, with IBM Cloud providing availability in Frankfurt, Washington D.C., and Dallas. Intel revised 2025 shipment targets down 30% to 200K–250K units.",
+            "acceptable_alternatives": [
+              "Alibaba Cloud offers Gaudi 3 instances for training workloads.",
+              "Inflection AI and Intel launched an enterprise AI system powered by Gaudi 3, shipping to customers in Q1 2025.",
+              "A 32-node cluster reference design with all-Ethernet fabrics is available."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Introl, Intel Gaudi 3 Deployment Guide",
+              "Intel, Gaudi 3 Partner Enablement"
+            ],
+            "acceptance_criteria": [
+              "Names OEM and cloud channels.",
+              "Identifies European availability (Frankfurt).",
+              "Notes shipment target revision."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "test_case": {
+        "id": "GOAL_003",
+        "agent_type": "competitor_intelligence",
+        "title": "Customer adoption and comparative view",
+        "input_requirements": ["REQ-ADOPT-BCM", "REQ-ADOPT-INTEL", "REQ-REGION-BOTH", "REQ-COMPARE-NVIDIA"]
+      },
+      "golden_reference": {
+        "expected_findings": [
+          {
+            "id": "GOAL-F15",
+            "requirement_id": "REQ-ADOPT-BCM",
+            "competitor": "Broadcom",
+            "category": "customer_adoption",
+            "finding": "Broadcom paying customer evidence",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom secured a $63 billion financing structure with Bank of America, Blackstone, Citi, and Morgan Stanley to enable AI compute capacity for Anthropic, confirming at least one enterprise paying customer for its AI accelerator offerings. Deliveries are expected to start in calendar 2027.",
+            "acceptable_alternatives": [
+              "Broadcom's disclosed XPU customers include Google, Anthropic, OpenAI, Meta, and a fifth customer.",
+              "Broadcom's four biggest customers (Google, Anthropic, OpenAI, Meta) represent ~30 GW of total compute capacity.",
+              "Anthropic is expected to become Broadcom's largest XPU customer in 2027."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Broadcom investor release, $63B financing structure (Oct 2026)",
+              "The Next Platform, Broadcom Rides Rocketing Trend"
+            ],
+            "acceptance_criteria": [
+              "Names the customer relationship and its nature.",
+              "Distinguishes financing from revenue.",
+              "Notes delivery timing."
+            ]
+          },
+          {
+            "id": "GOAL-F16",
+            "requirement_id": "REQ-ADOPT-BCM",
+            "competitor": "Broadcom",
+            "category": "customer_adoption",
+            "finding": "Broadcom revenue concentration and customer risk",
+            "priority": "mandatory",
+            "primary_claim": "Broadcom's AI revenue is concentrated in a small number of hyperscaler customers. Google is the anchor customer (>50% of XPU revenue historically), with top 2 (Google + Meta) at ~75% and top 3 (Google + Meta + ByteDance) at ~85%. Customer concentration is the largest single risk to Broadcom's AI trajectory.",
+            "acceptable_alternatives": [
+              "Anthropic is expected to become Broadcom's largest XPU customer in 2027 and retain that position in 2028.",
+              "OpenAI is expected to become Broadcom's second-largest XPU customer in 2028.",
+              "Broadcom's top customer (Google) represents $9.5B of $17B+ annualized XPU revenue as of Q4 FY2025."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Lambda Finance, Broadcom XPU Customers 2026",
+              "The Next Platform, Broadcom Rides Rocketing Trend"
+            ],
+            "acceptance_criteria": [
+              "Identifies customer concentration.",
+              "Names key customers and their relative scale.",
+              "Notes dependency on hyperscaler deployment schedules."
+            ]
+          },
+          {
+            "id": "GOAL-F17",
+            "requirement_id": "REQ-ADOPT-INTEL",
+            "competitor": "Intel Corp",
+            "category": "customer_adoption",
+            "finding": "Intel Gaudi 3 announced customers and partners",
+            "priority": "mandatory",
+            "primary_claim": "Intel announced at least eleven Gaudi 3 customers/partners: Bharti Airtel, Bosch, CtrlS, IBM, IFF, Landing AI, Ola, NAVER, NielsenIQ, Roboflow, and Seekr. IBM is the most clearly disclosed deployment (watsonx, 2024), with IBM Cloud offering Gaudi 3 in Frankfurt, Washington D.C., and Dallas.",
+            "acceptable_alternatives": [
+              "Gaudi 3 OEM availability includes Dell, HPE, Lenovo, and Supermicro.",
+              "Inflection AI and Intel launched an enterprise AI system powered by Gaudi 3, shipping in Q1 2025.",
+              "Prediction Guard was the first company to support paying customers on Gaudi 2 in Intel Tiber Developer Cloud."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Intel press release, Gaudi 3 customer announcements",
+              "Introl, Intel Gaudi 3 Deployment Guide"
+            ],
+            "acceptance_criteria": [
+              "Names disclosed customers/partners.",
+              "Labels them as announced/partners, not production-scale fleets.",
+              "Distinguishes IBM's disclosed deployment from broader partner announcements."
+            ]
+          },
+          {
+            "id": "GOAL-F18",
+            "requirement_id": "REQ-ADOPT-INTEL",
+            "competitor": "Intel Corp",
+            "category": "customer_adoption",
+            "finding": "Intel Gaudi revenue estimates and trajectory",
+            "priority": "mandatory",
+            "primary_claim": "Analysts estimate Gaudi 3 will generate about $500 million in revenue for Intel by end of 2024. Intel's AI accelerator pipeline reached $1B in July 2023 and exceeded $2B by end of 2023. Intel does not separately disclose Gaudi revenue; third-party estimates place it in the low hundreds of millions.",
+            "acceptable_alternatives": [
+              "Intel missed its $500M Gaudi revenue target for 2024.",
+              "Intel projected only $500M in Gaudi 3 sales for 2025, compared to NVIDIA's $40B+ data center AI revenue.",
+              "Intel DCAI segment revenue was $6.3B in Q2 2026, up 59% YoY, but Gaudi contribution within it is not disclosed."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Globes, Intel launches Habana Labs Gaudi 3",
+              "The Motley Fool, Intel Is Building a Multibillion-Dollar AI Accelerator Business",
+              "SiPoly, Intel Gaudi $500M 2024 target tracker"
+            ],
+            "acceptance_criteria": [
+              "Labels revenue as third-party estimate.",
+              "Notes the 2024 target miss.",
+              "Does not treat Flex GPU revenue as Gaudi-only revenue."
+            ]
+          },
+          {
+            "id": "GOAL-F19",
+            "requirement_id": "REQ-ADOPT-INTEL",
+            "competitor": "Intel Corp",
+            "category": "customer_adoption",
+            "finding": "Intel AI-related data-center revenue",
+            "priority": "mandatory",
+            "primary_claim": "Intel reported AI-related data-center revenue of $6.3 billion in Q2 2026, a 59% year-over-year increase, marking its strongest growth in more than 15 years. Total Q2 2026 revenue was $16.1B, up 25% YoY.",
+            "acceptable_alternatives": [
+              "Intel DCAI segment includes Xeon and AI accelerators; Gaudi-specific revenue is not broken out.",
+              "Intel's Q2 2026 Data Center and AI revenue was $6.3B, up 59% YoY."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Manufacturing Dive, Intel growth reaches highest point in 15 years",
+              "InferenceChips.com, Intel company profile"
+            ],
+            "acceptance_criteria": [
+              "Attributes revenue to Intel reported results.",
+              "Notes DCAI includes Xeon and accelerators.",
+              "Does not conflate DCAI revenue with Gaudi revenue."
+            ]
+          },
+          {
+            "id": "GOAL-F20",
+            "requirement_id": "REQ-REGION-BOTH",
+            "competitor": "Broadcom and Intel Corp",
+            "category": "regional_comparison",
+            "finding": "US vs Europe availability comparison",
+            "priority": "mandatory",
+            "primary_claim": "Intel has clearer documented European availability than Broadcom: IBM Cloud offers Gaudi 3 in Frankfurt, the clearest European data point, alongside Washington D.C. and Dallas. Broadcom's custom XPUs are deployed in hyperscaler data centers with no disclosed regional breakdown; Anthropic's $21B Ironwood TPU orders are for delivery in late 2026, with Anthropic expected to deploy 1 GW in 2026 and 10 GW by 2028.",
+            "acceptable_alternatives": [
+              "Broadcom's AI XPV Platform with Apollo and Blackstone enables >20 GW of compute infrastructure through 2028, spanning Anthropic and OpenAI deployments.",
+              "Intel's OEM availability includes Dell, HPE, Lenovo, and Supermicro across global channels.",
+              "Google's TPU partnership with Broadcom spans Google's own data centers and external AI cloud computing customers."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Introl, Intel Gaudi 3 Deployment Guide",
+              "The Next Platform, Broadcom Rides Rocketing Trend",
+              "Broadcom investor release, $63B financing structure"
+            ],
+            "acceptance_criteria": [
+              "Addresses both US and Europe for both competitors.",
+              "Identifies specific regional differences where supported.",
+              "Marks unsupported region-specific details as unknown."
+            ]
+          },
+          {
+            "id": "GOAL-F21",
+            "requirement_id": "REQ-COMPARE-NVIDIA",
+            "competitor": "Broadcom and Intel Corp",
+            "category": "competitive_comparison",
+            "finding": "Price-performance positioning vs. NVIDIA",
+            "priority": "mandatory",
+            "primary_claim": "Intel Gaudi 3 offers roughly half the cost of NVIDIA H100 ($15,625 vs $30,000 per card) and up to 3X better performance per dollar for inference. Google's TPU Ironwood is estimated at ~$13,000 per chip, versus NVIDIA B200 at $30,000–$40,000 and GB200 at $60,000–$70,000. Broadcom's XPU systems cost ~$12–$15B/GW versus NVIDIA Grace-Hopper at ~$18B/GW and Vera-Rubin at ~$40B/GW.",
+            "acceptable_alternatives": [
+              "Gaudi 3 delivers 50% better inference performance and 40% better power efficiency than H100 for LLM workloads, per Intel claims.",
+              "Broadcom's ASICs provide up to 30% better power efficiency and 40% higher inference throughput than general-purpose GPUs.",
+              "Intel Gaudi 3 consumes 600W TDP versus H100's 700W."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "SDxCentral, Intel reveals Gaudi pricing",
+              "I/O Fund, Broadcom Stock: The Silent Winner",
+              "Investing.com, Broadcom Expands AI Position"
+            ],
+            "acceptance_criteria": [
+              "Compares price-performance across Broadcom, Intel, and NVIDIA.",
+              "Distinguishes vendor claims from estimates.",
+              "Notes that Broadcom's XPU cost is system-level."
+            ]
+          },
+          {
+            "id": "GOAL-F22",
+            "requirement_id": "REQ-COMPARE-NVIDIA",
+            "competitor": "Broadcom and Intel Corp",
+            "category": "competitive_comparison",
+            "finding": "Software ecosystem positioning vs. NVIDIA CUDA",
+            "priority": "mandatory",
+            "primary_claim": "NVIDIA CUDA is the incumbent software standard. Broadcom has no single merchant software ecosystem; its custom XPUs are co-designed with customer-specific stacks. Intel's SynapseAI supports PyTorch and TensorFlow with migration from CUDA, but ecosystem maturity remains Gaudi's primary limitation compared to CUDA's 15-year development. Intel states 73% of GPU-accelerated servers use Intel Xeon as the host CPU.",
+            "acceptable_alternatives": [
+              "Intel emphasizes open, community-based software avoiding proprietary NVLink and NVSwitch.",
+              "Broadcom's software advantage is limited to its co-design relationships, not a general-purpose stack.",
+              "Gaudi 3 day-zero access supports Llama 4, Phi 4, Qwen 3, and Falcon 3."
+            ],
+            "evidence_quality": "medium",
+            "evidence_sources": [
+              "Introl, Intel Gaudi 3 Deployment Guide",
+              "Intel, Gaudi 3 Product Page",
+              "The Next Platform, Broadcom Rides Rocketing Trend"
+            ],
+            "acceptance_criteria": [
+              "Compares software ecosystems across all three vendors.",
+              "Notes CUDA's incumbent position without asserting universal performance superiority.",
+              "Distinguishes Broadcom's customer-specific model from a general ecosystem."
+            ]
+          },
+          {
+            "id": "GOAL-F23",
+            "requirement_id": "REQ-COMPARE-NVIDIA",
+            "competitor": "Broadcom and Intel Corp",
+            "category": "competitive_comparison",
+            "finding": "Market share and competitive positioning vs. NVIDIA",
+            "priority": "mandatory",
+            "primary_claim": "NVIDIA holds 81% of data center chip revenue. Broadcom's custom XPUs target hyperscaler cost and differentiation goals, with Google TPUs being the anchor. Intel remains a distant third in AI accelerators, with Gaudi struggling to gain meaningful market share versus NVIDIA and AMD. Custom ASICs are growing at a faster rate than GPUs, driven by hyperscaler cost and differentiation goals.",
+            "acceptable_alternatives": [
+              "Broadcom's custom XPU model is described as a 'counterbalance to NVIDIA' in the GenAI boom.",
+              "Intel's AI strategy has narrowed to cost- and power-constrained inference rather than frontier training.",
+              "The AI accelerator market was valued at $151B in 2025 and is forecast to reach $443B by 2030."
+            ],
+            "evidence_quality": "high",
+            "evidence_sources": [
+              "Vietnam.vn, Nvidia market share (IDC data)",
+              "The Next Platform, Broadcom Rides Rocketing Trend",
+              "InferenceChips.com, Intel company profile"
+            ],
+            "acceptance_criteria": [
+              "Compares market positioning across all three vendors.",
+              "Notes that ASIC growth is hyperscaler-driven.",
+              "Avoids unsupported overall rankings."
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

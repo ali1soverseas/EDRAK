@@ -148,12 +148,14 @@ async def ask(thread_id: str, body: MessageIn, session: SessionOut = Depends(get
     context, evidence_uids = await _context(db, ws, thread, question)
 
     def answer() -> str:
-        from edrak.core.llm import get_chat_model
+        from edrak.core.llm import DEFAULT_MAX_TOKENS, get_chat_model, message_text
 
         convo = "\n".join(f"{h['role']}: {h['content'][:600]}" for h in reversed(history))
         prompt = f"{SYSTEM}\n\nCONTEXT:\n{context}\n\nCONVERSATION SO FAR:\n{convo}\n\nQUESTION: {question}"
-        reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(prompt)
-        return str(getattr(reply, "content", reply)).strip()
+        reply = get_chat_model(agent="orchestrator", temperature=0.2).invoke(
+            prompt, max_tokens=DEFAULT_MAX_TOKENS
+        )
+        return message_text(reply).strip()
 
     try:
         text = await asyncio.to_thread(answer)

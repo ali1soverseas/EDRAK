@@ -24,7 +24,7 @@ from ..contracts.DecisionAnalysis import (
     RecommendedAction,
     RiskAssessment,
 )
-from ..core.llm import get_chat_model, schema_instruction
+from ..core.llm import DEFAULT_MAX_TOKENS, get_chat_model, schema_instruction
 from .personalization import emphasis_text
 from .state import DecisionAnalysisState
 
@@ -420,23 +420,15 @@ def make_analyze_node():
                 "Run prepare_context_node first."
             )
 
-        # Built through edrak.core.llm so this stage uses the same Ollama Cloud
-        # model and per-agent credential scope as every other component. It
-        # previously constructed ChatOpenAI directly from OPENAI_API_KEY, which
-        # contradicts the migration and only imported at all because a stale
-        # langchain-openai sat in the venv: it is not in requirements.txt, so the
-        # stage would have failed on a clean install.
-        #
-        # json_schema plus schema_instruction, measured against function_calling
-        # and json_mode on the schemas this project actually sends.
+        # Use the shared NVIDIA factory and schema-constrained response format.
         llm = get_chat_model(agent="orchestrator", temperature=0)
         structured_llm = llm.with_structured_output(
-            QuestionRecommendationsDraft, method="json_schema"
+            QuestionRecommendationsDraft,
+            method="json_schema",
+            max_tokens=DEFAULT_MAX_TOKENS,
         )
-        # The schema instruction is not optional. This draft's single top-level
-        # field is a list of objects, and json_schema alone let the model return
-        # that list bare, without the {"question_recommendations": [...]} wrapper
-        # pydantic then refused. Same failure shape as cross-signal.
+        # Repeat the top-level wrapper in the prompt to make the requested
+        # response shape explicit.
         schema_note = schema_instruction(QuestionRecommendationsDraft)
 
         original_questions = context["decision_questions"]

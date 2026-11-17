@@ -9,8 +9,12 @@ from pydantic import BaseModel, ValidationError
 
 from edrak.company_profile.models import ProfileExtraction
 from edrak.company_profile.prompts import CONTEXT_INTRO, REPAIR_PROMPT, SYSTEM_PROMPT
-from edrak.core.config import settings
-from edrak.core.llm import get_chat_model, schema_instruction
+from edrak.core.llm import (
+    DEFAULT_MAX_TOKENS,
+    get_chat_model,
+    message_text,
+    schema_instruction,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -42,21 +46,27 @@ class ProfileExtractionError(ProfileImportError):
 
 
 def schema_caller(schema: type[BaseModel]) -> LLMCall:
-    """A model call that sends `schema` as the response format."""
+    """A model call that asks the shared model for JSON matching `schema`."""
 
     def call(messages: list[dict[str, str]]) -> str:
-        kwargs: dict[str, object] = {"format": schema.model_json_schema()}
-        if settings.PROFILE_IMPORT_REASONING:
-            kwargs["reasoning"] = settings.PROFILE_IMPORT_REASONING
-        reply = get_chat_model(temperature=0).invoke(messages, **kwargs)
-        return str(reply.content)
+        reply = get_chat_model(temperature=0).bind(
+            response_format={
+                "type": "json_object",
+                "schema": schema.model_json_schema(),
+            },
+            max_tokens=DEFAULT_MAX_TOKENS,
+        ).invoke(messages)
+        return message_text(reply)
 
     return call
 
 
 def call_model(messages: list[dict[str, str]]) -> str:
-    """Send `messages` to the shared model with the profile schema as the response format."""
-    return schema_caller(ProfileExtraction)(messages)
+    """Send profile-import messages to the shared NVIDIA model."""
+    reply = get_chat_model(agent="orchestrator", temperature=0).invoke(
+        messages, max_tokens=DEFAULT_MAX_TOKENS
+    )
+    return message_text(reply)
 
 
 def _parse(reply: str, schema: type[SchemaT] = ProfileExtraction) -> SchemaT:  # type: ignore[assignment]
@@ -72,6 +82,7 @@ def _ask(llm: LLMCall, messages: list[dict[str, str]]) -> str:
     except ProfileImportError:
         raise
     except Exception as exc:  # the transport has many failure types; callers need one
+        logger.exception("Profile model call failed")
         raise ProfileLLMError(f"The model call failed: {exc}") from exc
 
 

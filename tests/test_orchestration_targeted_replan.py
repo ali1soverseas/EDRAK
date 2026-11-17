@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import ClassVar
 
 import pytest
@@ -20,9 +21,9 @@ from edrak.contracts import (
     WorkerType,
 )
 from edrak.contracts.verification import FindingVerdict, TargetedAction
-from edrak.core.config import Settings
+from edrak.core.config import Settings, settings
 from edrak.orchestration import graph as orchestration_graph
-from edrak.orchestration.nodes import replan_node
+from edrak.orchestration.nodes import make_dispatch_worker, replan_node
 from edrak.orchestration.state import RESET, merge_by_task_id
 
 
@@ -237,6 +238,35 @@ def test_replan_counts_contradictions_per_worker():
     assert "First conflict." in amended[WorkerType.COMPETITOR_INTELLIGENCE].goal
     assert "Second conflict." in amended[WorkerType.COMPETITOR_INTELLIGENCE].goal
     assert "Market conflict." not in amended[WorkerType.COMPETITOR_INTELLIGENCE].goal
+
+
+@pytest.mark.parametrize("raises", [False, True])
+def test_dispatch_saves_worker_input_and_output_artifacts(tmp_path, monkeypatch, raises):
+    request = _request()
+    task = _task(request, WorkerType.COMPETITOR_INTELLIGENCE, "competitor-task")
+    monkeypatch.setattr(settings, "ARTIFACTS_PATH", tmp_path)
+
+    class _Worker:
+        def run(self, _task):
+            if raises:
+                raise RuntimeError("worker failed")
+            return _result(task)
+
+    dispatched = make_dispatch_worker(WorkerRegistry({task.worker: _Worker()}))({"task": task})
+    result = dispatched["results"][0]
+    artifact_dir = (
+        tmp_path
+        / "runs"
+        / request.request_id
+        / task.worker.value
+        / f"{task.task_id}.a{task.attempt}"
+    )
+
+    saved_input = json.loads((artifact_dir / "input.json").read_text(encoding="utf-8"))
+    saved_output = json.loads((artifact_dir / "output.json").read_text(encoding="utf-8"))
+    assert saved_input == task.model_dump(mode="json")
+    assert saved_output == result.model_dump(mode="json")
+    assert result.status is (WorkerStatus.FAILED if raises else WorkerStatus.COMPLETED)
 
 
 def test_replan_falls_back_to_full_replan_when_no_worker_can_be_targeted(monkeypatch):

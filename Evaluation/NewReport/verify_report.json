@@ -1,0 +1,540 @@
+{
+  "dataset": "verification_golden",
+  "trace_id": "561d26a15b89fcd93d718fd18517bf02",
+  "prediction_source": "artifacts\\runs\\561d26a15b89fcd93d718fd18517bf02\\verification_tracing.json",
+  "deterministic_metrics": {
+    "count": 19,
+    "confusion_matrix_positive_class_verified": {
+      "TP": 11,
+      "FP": 7,
+      "FN": 0,
+      "TN": 1
+    },
+    "accuracy": 0.631578947368421,
+    "precision_verified": 0.6111111111111112,
+    "recall_verified": 1.0,
+    "f1_verified": 0.7586206896551725,
+    "false_verification_rate_among_agent_verified": 0.3888888888888889,
+    "false_positive_rate_among_expected_insufficient": 0.875,
+    "per_case": [
+      {
+        "test_case_id": "VER-NVIDIA-001",
+        "finding_id": "89476b81-8db6-4b96-a3ff-7eb031120809",
+        "worker": "internal_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The internal company-context document explicitly describes the pilot scope as AI computing/data-center platforms, identifies cloud providers and AI developers as target customers, and lists the US and Europe as markets. The claim says 'is described as', so it is verified as a statement about the supplied EDRAK context, not as independent proof of NVIDIA's actual commercial targeting."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-002",
+        "finding_id": "201e6e2a-36f1-450e-9485-29d4ca3fcc6b",
+        "worker": "internal_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The internal source register explicitly lists the NVIDIA data-center product portfolio at the exact URL in the finding. This verifies the locator/reference claim, but it does not verify the live page contents, product availability, or product specifications."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-003",
+        "finding_id": "a0ee6e56-dc25-4e9b-9561-08bf8565e001",
+        "worker": "internal_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The attached internal context document states that accelerated compute consists of GPU-based systems and related processors for AI and high-performance computing workloads. The wording closely matches the evidence."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-004",
+        "finding_id": "daf17c8c-70c2-4920-96c0-03df5ad1179d",
+        "worker": "internal_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The same internal context document explicitly says NVIDIA's software ecosystem includes CUDA and AI software offerings. The evidence directly supports this broad statement."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-005",
+        "finding_id": "72c9e985-cb7e-4dba-b495-c67955189ca9",
+        "worker": "competitor_intelligence",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The cited iBL.ai article's $30 and $60 per-user figures appear in a generic cost-model comparison for Jalapeño/per-seat inference licensing. The evidence does not attribute these tiers to Broadcom. The company attribution is unsupported."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-006",
+        "finding_id": "85029089-0b3a-42a5-9fdb-acfd9cd20780",
+        "worker": "competitor_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The Tickeron evidence excerpt explicitly reports $16.7 billion AI semiconductor revenue, 56% of total revenue, and approximately $58 billion FY2026 AI revenue guidance. The second attached Investing.com source concerns Q1 FY2026 and does not corroborate these Q3 figures, so only the Tickeron item supports the claim."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-007",
+        "finding_id": "cfeb0e93-3e5f-4d57-a1ed-e512ae4d6df3",
+        "worker": "competitor_intelligence",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The Broadcom newsroom excerpt lists a number of announcements, but it mixes product announcements, financial results, facilities, consortium initiatives, and software/security offerings. The captured excerpt is incomplete and does not establish the stated counts or the general rate of three to four public product releases per quarter."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-008",
+        "finding_id": "1abb898d-c669-4426-8773-3b2bf813263f",
+        "worker": "competitor_intelligence",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The Globes evidence supports that analysts made an approximately $500 million Gaudi 3 revenue forecast, but the captured evidence has no publication date or forecast year. The phrase 'by the end of the year' is therefore ambiguous in a 2026 snapshot and cannot safely be interpreted as a current forecast."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-009",
+        "finding_id": "c42929f7-3969-4d53-bdb7-e559b6d51dfc",
+        "worker": "competitor_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The Manufacturing Dive evidence excerpt directly states Intel's data-center and AI products generated $6.3 billion in Q2 2026 revenue, up 59% year over year."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-010",
+        "finding_id": "9d63f996-b964-4208-8699-5394753b2c03",
+        "worker": "competitor_intelligence",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The Broadcom announcement describes a $63 billion financing transaction intended to enable AI compute capacity for Anthropic using Broadcom technology, with expected deliveries beginning in 2027. It does not establish that Anthropic is already a paying customer purchasing Broadcom AI accelerator offerings directly. The finding adds an unsupported customer/payment/product inference."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-011",
+        "finding_id": "3ffd8dba-3277-48ca-88a7-e3489fa6bf3b",
+        "worker": "market_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The Mordor Intelligence evidence explicitly projects the United States artificial-intelligence data-center market to reach $42.39 billion by 2031. The finding accurately states that broader market measure."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-012",
+        "finding_id": "12156014-d381-406b-bc03-815b07cb250a",
+        "worker": "market_intelligence",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The attached market excerpt explicitly states that hardware spending is projected to grow at a 30.56% CAGR through 2031. The extracted fact omitted that sentence, but the full excerpt contains it."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-013",
+        "finding_id": "a81ca8ad-7008-4b8f-8a7a-4c45b37ccbdc",
+        "worker": "market_intelligence",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The cited Kiteworks page discusses data residency, but the finding overstates the legal position by claiming GDPR mandates personal data to be stored and processed in specific geographic locations and thereby compels accelerator deployments in EU data centers. The evidence does not establish that broad mandatory localization rule or the deployment conclusion."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-014",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f1",
+        "worker": "customer_trends",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The Register excerpt supports Broadcom's involvement in Google's TPU work and describes Meta as approaching/engaging Broadcom, but it does not firmly establish a completed Meta collaboration. The second source concerns Broadcom 112G SerDes and OAI contributors, not Google or Meta. The combined claim about collaborations with both companies is not fully supported."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-015",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f2",
+        "worker": "customer_trends",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "Data Center Dynamics explicitly identifies Gcore as a European cloud provider and reports that it launched a generative-AI cluster using NVIDIA A100 and H100 Tensor Core GPUs. Business Wire provides a second source for the cluster and GPU models."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-016",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f3",
+        "worker": "customer_trends",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The T Cloud Public excerpt describes H100 GPUs as bringing additional computing power and efficiency, while GreenNode describes them as designed for cloud-AI compute demands and reduced data bottlenecks. This supports the carefully worded claim that H100 is portrayed positively; it does not establish a quantitative benchmark."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-017",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f4",
+        "worker": "customer_trends",
+        "expected_status": "insufficient",
+        "predicted_status": "verified",
+        "correct": false,
+        "review_reason": "The Computerworld headline references new AI chips and pricing strategies, and its extracted fact supports competitive positioning for Intel Lunar Lake and AMD Instinct MI325X. However, the supplied extracted facts do not establish the specific pricing strategies, and the evidence is from 2024 while the finding uses present-tense 'are launching' in a 2026 snapshot. The complete current claim is therefore not adequately supported."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-018",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f5",
+        "worker": "customer_trends",
+        "expected_status": "insufficient",
+        "predicted_status": "insufficient",
+        "correct": true,
+        "review_reason": "One Arabic-language article about AI chips and US export controls does not establish that the research corpus contains only one Arabic item, nor does it support a conclusion about sentiment coverage in Arabic-speaking markets. The item-count claim needs corpus-level metadata, not a single article as source evidence."
+      },
+      {
+        "test_case_id": "VER-NVIDIA-019",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f6",
+        "worker": "customer_trends",
+        "expected_status": "verified",
+        "predicted_status": "verified",
+        "correct": true,
+        "review_reason": "The Interesting Engineering evidence explicitly states that Broadcom unveiled its 3.5D XDSiP platform to meet rising GenAI chip demand, directly supporting the claim."
+      }
+    ]
+  },
+  "deepeval": {
+    "provider": "Ollama Cloud",
+    "model": "Ollama Cloud / gpt-oss:120b",
+    "endpoint": "https://ollama.com/api/chat",
+    "results": [
+      {
+        "test_case_id": "VER-NVIDIA-001",
+        "finding_id": "89476b81-8db6-4b96-a3ff-7eb031120809",
+        "decision_correctness": {
+          "score": 0.9,
+          "passed": true,
+          "reason": "The response correctly predicts a \"verified\" status, and the provided evidence fully supports the company, product description, and geography components of the finding, matching the expected human‑reviewed status. The only shortcoming is the absence of the expected \"review_reason\" field, though the verification decision itself is accurate."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval context explicitly states that NVIDIA's current offer is \"AI computing and data-center platforms\" and that it \"Names cloud service providers and AI developers as target customers\" and \"Lists the United States and Europe as current markets,\" which directly matches the input."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-002",
+        "finding_id": "201e6e2a-36f1-450e-9485-29d4ca3fcc6b",
+        "decision_correctness": {
+          "score": 0.6,
+          "passed": false,
+          "reason": "The response correctly predicts a \"verified\" status and cites the appropriate evidence, matching the expected verification decision. However, it omits the required \"review_reason\" field and adds unrelated fields (finding_id, worker, evidence_quality, confidence), so the output does not fully conform to the expected format."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.1111111111111111,
+          "passed": false,
+          "reason": "The score is 0.11 because only one retrieved statement directly matches the input URL (\"NVIDIA data-center product portfolio: https://www.nvidia.com/en-us/data-center/products/\"), while all other statements are unrelated, e.g., they mention access dates, DGX platform, networking, SEC filings, Intel Gaudi, Broadcom, EU AI Act, and IEA report, none of which address the NVIDIA data‑center product portfolio URL."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-003",
+        "finding_id": "a0ee6e56-dc25-4e9b-9561-08bf8565e001",
+        "decision_correctness": {
+          "score": 0.9,
+          "passed": true,
+          "reason": "The actual output correctly predicts a \"verified\" status, matching the expected human-reviewed status, and the provided evidence directly supports all material components of the finding (NVIDIA, accelerated compute, GPU‑based systems, AI and HPC workloads). The only shortcoming is the absence of the expected \"review_reason\" field, though the core verification decision is accurate."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.2,
+          "passed": false,
+          "reason": "The score is 0.20 because the majority of retrieved statements are unrelated (e.g., \"The statement focuses on 'Data-center systems' and the DGX platform...\", \"The statement discusses 'Networking and interconnect' details...\", \"The statement pertains to 'AI software and developer tools'...\", \"The statement addresses 'Cloud access' considerations...\"), and only one line directly matches the input – \"Accelerated compute: GPU-based systems and related processors for AI and high-performance computing workloads...\" – resulting in low contextual relevance."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-004",
+        "finding_id": "daf17c8c-70c2-4920-96c0-03df5ad1179d",
+        "decision_correctness": {
+          "score": 0.9,
+          "passed": true,
+          "reason": "The response correctly predicts verification_status as verified, matching the expected status, and cites evidence that directly states NVIDIA's software ecosystem includes CUDA and AI software offerings, covering all material components. No evidence mismatch is present. The only minor shortcoming is the lack of a review_reason field that appears in the expected output, but this does not affect the core verification assessment."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.2,
+          "passed": false,
+          "reason": "The score is 0.20 because only one retrieval statement directly addresses the input – \"AI software and developer tools: NVIDIA's software ecosystem includes CUDA and AI software offerings...\" – while the other statements are about \"Accelerated compute\", \"Data-center systems\", \"Networking and interconnect\", and \"Cloud access\", none of which mention NVIDIA's AI software ecosystem or CUDA."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-005",
+        "finding_id": "72c9e985-cb7e-4dba-b495-c67955189ca9",
+        "decision_correctness": {
+          "score": 0.0,
+          "passed": false,
+          "reason": "The response marks the finding as \"verified\" despite the evidence only showing generic $30/$60 per‑seat pricing for Jalapeño, not attributing it to Broadcom. It fails to confirm the company component, violating step 3, and the verification_status contradicts the expected \"insufficient\" status, violating step 4 and step 5."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.15384615384615385,
+          "passed": false,
+          "reason": "The score is 0.15 because most of the retrieved text talks about unrelated topics such as \"self‑hosted on owned hardware\" and \"hardware competition\" (e.g., Jalapeño, Microsoft’s Maia, etc.) which do not address Broadcom’s per‑seat pricing, while only a small fragment directly mentions the pricing – \"Per-seat licence @ $30/user/mo costs $360,000/yr for 1,000 users...\" and \"Per-seat licence @ $60/user/mo costs $720,000/yr for 1,000 users...\" – making the overall relevance low."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-006",
+        "finding_id": "85029089-0b3a-42a5-9fdb-acfd9cd20780",
+        "decision_correctness": {
+          "score": 0.7,
+          "passed": false,
+          "reason": "The response correctly predicts a \"verified\" status, matching the expected human‑reviewed status, and the evidence cited (Tickeron) fully supports the finding. However, it omits the required review_reason explanation and includes extraneous fields not present in the expected output, which reduces alignment."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.5,
+          "passed": false,
+          "reason": "The score is 0.50 because the retrieval context mixes relevant statements such as \"AI semiconductor revenue reached $16.7 billion... now representing 56% of total revenue\" and \"Management raised fiscal 2026 AI revenue guidance to about $58 billion\" with many irrelevant ones (e.g., \"The statement mentions consolidated revenue, operating income, and EPS...\", \"The statement discusses the stock price level...\", \"Market capitalization and P/E multiples are not relevant...\", \"The statement discusses margin compression...\"), resulting in only moderate contextual relevance."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-007",
+        "finding_id": "cfeb0e93-3e5f-4d57-a1ed-e512ae4d6df3",
+        "decision_correctness": {
+          "score": 0.1,
+          "passed": false,
+          "reason": "The actual output marks the finding as \"verified\" despite the evidence not fully supporting the claimed counts and quarterly rate, and the expected status is \"insufficient\". The evidence mixes product announcements with financial results and other items, failing to substantiate all material components, so the verification decision is incorrect."
+        },
+        "faithfulness": {
+          "score": 0.7,
+          "passed": false,
+          "reason": "The score is 0.70 because the context lists six Q1 2026 announcements (none about Wi‑Fi 8), yet the output claims at least eight items; it also lists six Q3 2026 announcements, contradicting the output’s claim of five; and the output’s stated average of three to four releases per quarter is contradicted by the actual six announcements in each quarter."
+        },
+        "contextual_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval context directly matches the input, e.g., it includes \"AST Completes Singapore's First High-End FC-BGA Substrate Facility to Meet Growing AI Chip Demand\" and the Q3 FY2026 financial results, which are exactly the items described."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-008",
+        "finding_id": "1abb898d-c669-4426-8773-3b2bf813263f",
+        "decision_correctness": {
+          "score": 0.1,
+          "passed": false,
+          "reason": "The actual output marks the finding as \"verified\" despite the evidence lacking a clear forecast year, which means it does not fully support the time‑period component of the claim. The expected status is \"insufficient\" because the evidence is ambiguous about the year, and the evaluator correctly notes this mismatch, resulting in a low alignment score."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.16666666666666666,
+          "passed": false,
+          "reason": "The score is 0.17 because most of the retrieved statements are unrelated—e.g., they discuss server cost, general revenue growth, technical advantages, alliances, or Nvidia's strategy—while only one statement directly matches the input: \"Analysts say the new chip is expected to bring in $500 million for Intel by the end of the year.\""
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-009",
+        "finding_id": "c42929f7-3969-4d53-bdb7-e559b6d51dfc",
+        "decision_correctness": {
+          "score": 0.8,
+          "passed": true,
+          "reason": "The response correctly identifies the finding components and sets verification_status to \"verified\", matching the expected status and supported by the provided evidence. However, it omits the expected review_reason field and provides extra unrelated fields, which makes it incomplete relative to the expected output."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.25,
+          "passed": false,
+          "reason": "The score is 0.25 because most of the retrieved context is unrelated (e.g., it discusses overall quarterly revenue and cookie usage, which \"does not mention the AI‑related data‑center revenue of $6.3 billion or the 59% year‑over‑year increase\"), and only a single sentence is on target: \"The growth came largely from Intel’s products for data center and artificial intelligence customers, which surged to $6.3 billion in revenue — up 59% from last year.\""
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-010",
+        "finding_id": "9d63f996-b964-4208-8699-5394753b2c03",
+        "decision_correctness": {
+          "score": 0.1,
+          "passed": false,
+          "reason": "The actual output marks the finding as \"verified\" despite the evidence only confirming a financing deal and future deliveries, not that Anthropic is already a paying customer for Broadcom's AI accelerator offerings. This contradicts the expected \"insufficient\" status and fails step 4, and the verification decision is penalized per step 5 because the evidence does not fully support the material claim."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.5,
+          "passed": false,
+          "reason": "The score is 0.50 because the retrieval context mixes relevant statements (e.g., \"Bank of America, Blackstone, Citi and Morgan Stanley Announce Landmark $63 Billion Financing Structure to Enable AI Compute Capacity in Partnership with Broadcom\" and \"the $63 billion transaction to enable the deployment of AI compute capacity, leveraging Broadcom Inc.'s technology, for Anthropic\") with irrelevant ones (e.g., \"The statement focuses on Broadcom's general business activities ... which does not relate to the $63 billion financing structure or AI compute capacity for Anthropic\" and \"The statement provides corporate location information ... which is not pertinent to the financing structure\")."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-011",
+        "finding_id": "3ffd8dba-3277-48ca-88a7-e3489fa6bf3b",
+        "decision_correctness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The evidence explicitly projects the United States AI data center market to $42.39 billion by 2031, covering all material components (geography, sector, metric, time period). The predicted verification_status is \"verified\", which matches the expected status, and no partial support or mismatched claim is present, so no penalties apply."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating a perfectly faithful output—great job!"
+        },
+        "contextual_relevancy": {
+          "score": 0.1111111111111111,
+          "passed": false,
+          "reason": "The score is 0.11 because most retrieved statements are unrelated (e.g., \"rack power densities above 100 kilowatts...\" and \"focus on 'hyperscale cloud providers' and 'colocation segment' growth\"), while only one line directly mentions the market size: \"The United States Artificial Intelligence Data Center Market size is projected to expand ... to USD 42.39 billion by 2031\". The abundance of irrelevant content drags the relevance score down."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-012",
+        "finding_id": "12156014-d381-406b-bc03-815b07cb250a",
+        "decision_correctness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The actual output correctly marks the finding as \"verified\", matching the expected status, and the provided evidence explicitly states that hardware spending will grow at a 30.56% CAGR through 2031, fully supporting all material components of the statement."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.2222222222222222,
+          "passed": false,
+          "reason": "The score is 0.22 because most of the retrieved statements are unrelated (e.g., they discuss overall AI data‑center market size, rack power densities, cloud‑provider capacity, Tier IV uptime, colocation market‑share, Tier III revenue, and end‑user industry shares) as listed in the irrelevancy reasons, while only a single statement directly mentions hardware spending growth – \"hardware spending is poised to grow at 30.56% CAGR through 2031\" – providing limited relevance."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-013",
+        "finding_id": "a81ca8ad-7008-4b8f-8a7a-4c45b37ccbdc",
+        "decision_correctness": {
+          "score": 0.1,
+          "passed": false,
+          "reason": "The actual output marks the finding as \"verified\" despite the evidence only covering generic GDPR data residency and not supporting the claim that GDPR mandates specific geographic storage or forces AI accelerator deployments in EU data centers. This contradicts the expected \"insufficient\" status, failing step 4 and the penalty rule in step 5."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval context includes explicit statements about GDPR’s data residency requirements, e.g., \"Data residency, in the context of GDPR, refers to the requirement for organizations to ensure that the personal data they collect and process is stored and handled within specific geographic locations,\" which directly supports the input’s claim about GDPR mandating location‑specific storage for AI accelerators."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-014",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f1",
+        "decision_correctness": {
+          "score": 0.1,
+          "passed": false,
+          "reason": "The actual output marks the finding as \"verified\" despite the evidence only partially supporting the claim (one source mentions Google, the other does not address Meta or the AI chip collaboration). This contradicts the expected \"insufficient\" status, violating steps 3‑5 which require full evidence support and alignment with the human‑reviewed verification_status."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, showing the actual output perfectly aligns with the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 0.5,
+          "passed": false,
+          "reason": "The score is 0.50 because while the retrieval context includes relevant statements like \"Broadcom helped Google make those TPU chips.\" and \"Meta's tapping up Big B too – it's big bucks for this silicon giant,\" it also contains irrelevant statements such as \"The statement only describes a product ('112G SerDes connects generative AI') and does not mention collaborations with Google or Meta\" and mentions \"OAI contributors\" instead of Google or Meta, reducing overall relevance."
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-015",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f2",
+        "decision_correctness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The actual output correctly identifies the finding components (Gcore, European cloud provider, generative AI clusters, NVIDIA A100 and H200 GPUs) and the evidence excerpts fully support each component. The predicted verification_status matches the expected 'verified' status, and there is no partial evidence or misattribution to penalize."
+        },
+        "faithfulness": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions, indicating perfect faithfulness to the retrieval context."
+        },
+        "contextual_relevancy": {
+          "score": 1.0,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval context directly mentions the same facts as the input, e.g., \"Gcore launches generative AI cluster with Nvidia GPUs\" and \"European cloud provider Gcore has launched a generative artificial intelligence (AI) cluster using Nvidia A100 and H100 Tensor Core GPUs.\""
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-016",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f3",
+        "decision_correctness": {
+          "score": 0.8,
+          "passed": true,
+          "reason": "The response correctly predicts a \"verified\" status, matching the expected human-reviewed status, and cites the two evidence excerpts that directly support the claim about NVIDIA H100 GPUs delivering high compute performance and efficiency in cloud AI workloads. However, it does not provide a review_reason explaining the support, which is present in the expected output, so the answer is slightly incomplete."
+        },
+        "faithfulness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 4ca045b4-c2e0-469d-b4d7-b5ed11cd67e8)\"}\n"
+        },
+        "contextual_relevancy": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 3c9ab8d9-0c35-4c7f-a400-792ea0737886)\"}\n"
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-017",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f4",
+        "decision_correctness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 4cd9e917-f75d-4cff-9ece-b61ab165891a)\"}\n"
+        },
+        "faithfulness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 9c7bb470-0daf-4cfe-b11c-c6bf8a93c927)\"}\n"
+        },
+        "contextual_relevancy": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: f29fc426-6893-4b73-91c9-7a7d326239cd)\"}\n"
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-018",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f5",
+        "decision_correctness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: b2d327a8-fb5e-406e-b60d-47d4c063d268)\"}\n"
+        },
+        "faithfulness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 8a5ef4da-4c7f-4aba-aadd-ae6b31479430)\"}\n"
+        },
+        "contextual_relevancy": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 277dd8e3-76b6-4de9-9e40-3e3ef7ba168c)\"}\n"
+        }
+      },
+      {
+        "test_case_id": "VER-NVIDIA-019",
+        "finding_id": "8cb10c5b-2715-48d2-906e-51e5c150a4c6:f6",
+        "decision_correctness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: 5a8fc621-cf82-492b-ab43-9556243a1a0b)\"}\n"
+        },
+        "faithfulness": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: ff213b31-dbba-4957-a6f9-c8cd8840b544)\"}\n"
+        },
+        "contextual_relevancy": {
+          "error": "Ollama Cloud HTTP error: 429 Client Error: Too Many Requests for url: https://ollama.com/api/chat. Response: {\"error\":\"you (nouransalahh4) have reached your monthly usage limit, upgrade for higher limits: https://ollama.com/upgrade or add usage credits: https://ollama.com/settings (ref: bb3a22b9-ad7f-4993-9512-05d8f8df2138)\"}\n"
+        }
+      }
+    ],
+    "status": "completed"
+  }
+}

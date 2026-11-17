@@ -22,6 +22,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Sequence
 
+from ..connection import effective_graph_workspace_id
 from .graph_retriever import GraphFinding, GraphGap, GraphRetriever, GraphSignal
 from .ranking import evidence_key, rrf
 
@@ -102,7 +103,9 @@ class HybridRetriever:
         if not (query or "").strip():
             return HybridResult(evidence=[])
 
-        graph_on = bool(workspace_id) and self.graph.available()
+        graph_workspace_id = effective_graph_workspace_id(workspace_id)
+        # Chroma filters have no equivalent graph predicate, so filtered requests stay vector-only.
+        graph_on = bool(graph_workspace_id) and not where_filter and self.graph.available()
         if not graph_on:
             vector_hits = self.vector.retrieve(
                 query=query, top_k=top_k, where_filter=where_filter, workspace_id=workspace_id,
@@ -116,14 +119,14 @@ class HybridRetriever:
         graph_hits: list[Any] = []
         if graph_on:
             findings = self.graph.find_findings(
-                workspace_id, query=query, entity_ids=entity_ids,
+                graph_workspace_id, query=query, entity_ids=entity_ids,
                 exclude_request_id=exclude_request_id, limit=top_k * 3,
             )
             graph_hits = self.graph.evidence_from_findings(findings, source_types=source_types)[: top_k * 2]
 
         evidence = self._fuse(vector_hits, graph_hits, top_k)
         if graph_on and self.annotate:
-            self._annotate(evidence, workspace_id)
+            self._annotate(evidence, graph_workspace_id)
 
         result = HybridResult(
             evidence=evidence,
@@ -136,8 +139,8 @@ class HybridRetriever:
             },
         )
         if with_context and graph_on:
-            result.signals = self.graph.signals(workspace_id, entity_ids=entity_ids, exclude_request_id=exclude_request_id, limit=5)
-            result.gaps = self.graph.open_gaps(workspace_id, exclude_request_id=exclude_request_id, limit=5)
+            result.signals = self.graph.signals(graph_workspace_id, entity_ids=entity_ids, exclude_request_id=exclude_request_id, limit=5)
+            result.gaps = self.graph.open_gaps(graph_workspace_id, exclude_request_id=exclude_request_id, limit=5)
         logger.info("hybrid retrieve(%r): %s", query[:80], result.counts)
         return result
 

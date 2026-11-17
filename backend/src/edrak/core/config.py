@@ -2,7 +2,8 @@
 
 from pathlib import Path
 from typing import Optional
-from pydantic import AliasChoices, Field
+
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,28 +20,18 @@ class Settings(BaseSettings):
     EDRAK_ENV: str = "development"
     EDRAK_DEBUG: bool = True
 
-    # LLM Settings (Ollama Cloud / Local OSS)
-    # Every component talks to the native Ollama client, so the OLLAMA_* names match
-    # customer_trends' own settings. The LLM_* names stay accepted as environment
-    # aliases so an existing .env keeps working.
-    OLLAMA_MODEL: str = Field(
-        default="gpt-oss:120b",
-        validation_alias=AliasChoices("OLLAMA_MODEL", "LLM_MODEL"),
-    )
-    # The /v1 suffix is an OpenAI-compatible shim path. It still applies to the raw
-    # httpx client; the native client uses the bare host and overrides this in llm.py.
-    OLLAMA_BASE_URL: Optional[str] = Field(
-        default="https://ollama.com/v1",
-        validation_alias=AliasChoices("OLLAMA_BASE_URL", "LLM_BASE_URL"),
-    )
-    OLLAMA_API_KEY: Optional[str] = Field(
-        default=None,
-        validation_alias=AliasChoices("OLLAMA_API_KEY", "LLM_API_KEY"),
-    )
-    OLLAMA_TEMPERATURE: float = Field(
-        default=0.2,
-        validation_alias=AliasChoices("OLLAMA_TEMPERATURE", "LLM_TEMPERATURE"),
-    )
+    # NVIDIA NIM is used by the orchestrator and all production workers.
+    LLM_PROVIDER: str = "nvidia"
+    NVIDIA_MODEL: str = "nvidia/nemotron-3.5-super-vl-120b-a12b"
+    NVIDIA_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
+    NVIDIA_API_KEY: Optional[SecretStr] = None
+    NVIDIA_TEMPERATURE: float = 0.2
+    NVIDIA_TIMEOUT_S: float = 180.0
+    # Generic LLM_* names are retained as backward-compatible fallbacks.
+    LLM_MODEL: Optional[str] = None
+    LLM_BASE_URL: Optional[str] = None
+    LLM_API_KEY: Optional[SecretStr] = None
+    LLM_TEMPERATURE: Optional[float] = None
 
     # Orchestration control-plane limits
     # 1 not 2: a replan now re-dispatches only the workers whose findings
@@ -109,10 +100,8 @@ class Settings(BaseSettings):
     METRICS_GATHERING_ENABLED: bool = True
 
     # Company profile import: source text goes to the model in one labeled, budgeted block.
-    # The model is OLLAMA_MODEL. Reasoning effort is passed to the client as given ("" turns the option off).
     PROFILE_IMPORT_CONTEXT_CHARS: int = 48000
     PROFILE_IMPORT_MIN_CHARS: int = 400
-    PROFILE_IMPORT_REASONING: str = "low"
     PROFILE_IMPORT_MAX_LIST_ITEMS: int = 20
     PROFILE_IMPORT_MAX_ITEM_CHARS: int = 200
     PROFILE_IMPORT_MAX_NOTES_CHARS: int = 600

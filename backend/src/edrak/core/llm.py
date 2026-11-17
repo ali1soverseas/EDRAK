@@ -1,32 +1,4 @@
-"""LLM access for EDRAK.
-
-One model, one client. Every component builds its chat model here, so there is
-a single place where the provider, endpoint, credential and output method are
-decided.
-
-Two things about Ollama are worth knowing before changing anything here.
-
-Auth does not go through an argument. ChatOllama has no api_key field;
-passing one is silently discarded as a pydantic extra and the request goes out
-unauthenticated, which surfaces as a 401 rather than a configuration error.
-
-Structured output goes through json_schema plus the schema restated in the
-prompt, and both halves are load-bearing. Measured on gpt-oss:120b against the
-schemas this project actually sends, first attempt, repair off:
-
-  json_schema + schema instruction   works on flat and nested schemas alike
-  function_calling                  0/5 on every nested-list schema tried
-
-Tool calling is not merely worse here, it returns nothing at all for a schema
-whose top-level field is a list of objects, which is most of them. And
-`json_schema` alone is not sufficient: without the instruction the model
-answers in prose or picks its own shape, such as returning the bare array
-instead of the object wrapping it.
-
-So `get_structured` binds json_schema and `schema_instruction` puts the schema
-in the prompt. Do not drop either, and do not copy a method from another
-worker without measuring it on that worker's own schemas.
-"""
+"""Shared NVIDIA chat model, credential resolution, and structured-output helpers."""
 
 import json
 import logging
@@ -36,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI as EdrakChat
 
 from edrak.core.config import settings
 
@@ -50,13 +22,7 @@ _REPO_ENV = Path(__file__).resolve().parents[4] / ".env"
 if _REPO_ENV.is_file():
     load_dotenv(_REPO_ENV, override=False)
 
-# The native Ollama API lives at the bare host. The /v1 path is an
-# OpenAI-compatible shim that Ollama documents as experimental, and ChatOllama
-# does not speak it.
-NATIVE_BASE_URL = "https://ollama.com"
-
-# Every component that can call a model. Each maps to its own credential so one
-# agent exhausting its quota cannot starve the others.
+# Components that can use independently managed credentials.
 AGENTS = (
     "orchestrator",
     "competitor",
@@ -75,8 +41,7 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
     and the backup is only reached when the primary is absent or empty.
 
     An agent only ever reads its own scoped variables and the shared fallback.
-    It never reads another agent's, which is what keeps one agent's exhausted
-    quota from affecting the rest.
+    It never reads another agent's credentials.
 
     Returns the value and the name of the variable it came from, so a caller can
     log which credential was spent without ever logging the value.
@@ -90,32 +55,45 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
                 return value, candidate
 
     # Scoped variables only exist in the environment. The shared fallback also
-    # checks settings, because a credential renamed with an alias (LLM_API_KEY
-    # for OLLAMA_API_KEY) is resolved there and never reaches os.environ.
+    # checks settings, because API keys are Pydantic SecretStr values.
     value = os.getenv(name, "").strip()
     if value:
         return value, name
     configured = getattr(settings, name, None)
     configured = getattr(configured, "get_secret_value", lambda: configured)()
-    return str(configured or "").strip(), name
+    if configured:
+        return str(configured).strip(), name
+
+    # Legacy generic configuration remains a fallback during provider migration.
+    if name == "NVIDIA_API_KEY":
+        value = os.getenv("LLM_API_KEY", "").strip()
+        if value:
+            return value, "LLM_API_KEY"
+        configured = getattr(settings, "LLM_API_KEY", None)
+        configured = getattr(configured, "get_secret_value", lambda: configured)()
+        if configured:
+            return str(configured).strip(), "LLM_API_KEY"
+    return "", name
 
 
-def ollama_key(agent: str | None = None) -> str:
-    key, variable = provider_key("OLLAMA_API_KEY", agent)
+def nvidia_key(agent: str | None = None) -> str:
+    key, variable = provider_key("NVIDIA_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set it in the environment or .env."
+            f"{variable} is not configured. Set NVIDIA_API_KEY (or legacy LLM_API_KEY) "
+            "in the environment or .env. Create a key at "
+            "https://build.nvidia.com/settings/api-keys"
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
 
 
-# A structured reply over a real evidence pool runs long: internal synthesis
-# reached 2048 on eight items and was cut off mid-string, which surfaces as a
-# JSON parse error rather than as a truncation. This leaves room for a reply
-# several times that size. It is a ceiling, not a target; temperature and the
-# schema decide the actual length.
-DEFAULT_NUM_PREDICT = 16384
+DEFAULT_MAX_TOKENS = 16384
+
+
+def _float_setting(name: str, fallback: float) -> float:
+    value = os.getenv(name)
+    return float(value) if value else fallback
 
 
 def get_chat_model(
@@ -123,36 +101,76 @@ def get_chat_model(
     *,
     agent: Optional[str] = None,
     temperature: Optional[float] = None,
+    timeout_seconds: Optional[float] = None,
+    max_tokens: Optional[int] = None,
     base_url: Optional[str] = None,
-    num_predict: Optional[int] = None,
     callbacks: Optional[list] = None,
-) -> ChatOllama:
+) -> EdrakChat:
     """The chat model every component uses.
 
-    `agent` selects which credential is used. Passing it is what keeps one
-    agent's quota separate from another's.
+    `agent` selects which credential is used.
     """
+    provider = os.getenv("LLM_PROVIDER", settings.LLM_PROVIDER).strip().lower()
+    if provider != "nvidia":
+        raise RuntimeError(
+            f"Unsupported LLM_PROVIDER {provider!r}; this build uses NVIDIA."
+        )
+
     extra_kwargs = {}
     if callbacks is not None:
         extra_kwargs["callbacks"] = callbacks
-    return ChatOllama(
-        model=model or settings.OLLAMA_MODEL,
-        base_url=base_url or NATIVE_BASE_URL,
-        temperature=settings.OLLAMA_TEMPERATURE if temperature is None else temperature,
-        num_predict=num_predict or DEFAULT_NUM_PREDICT,
-        client_kwargs={"headers": {"Authorization": f"Bearer {ollama_key(agent)}"}},
+    configured_temperature = _float_setting(
+        "NVIDIA_TEMPERATURE",
+        _float_setting("LLM_TEMPERATURE", settings.NVIDIA_TEMPERATURE),
+    )
+    configured_timeout = _float_setting(
+        "NVIDIA_TIMEOUT_S", settings.NVIDIA_TIMEOUT_S
+    )
+    configured_model = (
+        os.getenv("NVIDIA_MODEL")
+        or os.getenv("LLM_MODEL")
+        or settings.NVIDIA_MODEL
+        or settings.LLM_MODEL
+    )
+    configured_base_url = (
+        base_url
+        or os.getenv("NVIDIA_BASE_URL")
+        or os.getenv("LLM_BASE_URL")
+        or settings.NVIDIA_BASE_URL
+        or settings.LLM_BASE_URL
+    )
+    return EdrakChat(
+        model=model or configured_model,
+        base_url=configured_base_url,
+        api_key=nvidia_key(agent),
+        temperature=configured_temperature if temperature is None else temperature,
+        max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
+        timeout=timeout_seconds if timeout_seconds is not None else configured_timeout,
+        max_retries=2,
         **extra_kwargs,
     )
 
 
-def schema_instruction(schema: type) -> dict:
-    """Restate `schema` in the prompt as the shape to answer with.
+def message_text(message: object) -> str:
+    """Extract text from a LangChain message, including provider content blocks."""
+    content = getattr(message, "content", message)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        text_blocks = [
+            block["text"]
+            for block in content
+            if isinstance(block, dict)
+            and block.get("type") == "text"
+            and isinstance(block.get("text"), str)
+        ]
+        if text_blocks:
+            return "".join(text_blocks)
+    return str(content)
 
-    Every structured call needs this. json_schema alone does not hard-constrain
-    the decoder, so without it the model answers in prose or picks its own
-    shape. Measured on the cross-signal schema: 0/5 without this message, 5/5
-    with it.
-    """
+
+def schema_instruction(schema: type) -> dict:
+    """Restate the expected output shape in a user-facing prompt message."""
     return {
         "role": "user",
         "content": (
@@ -173,19 +191,14 @@ def get_structured(
 ):
     """A model bound to `schema` for structured output.
 
-    Defaults to `json_schema`, with the schema restated in the prompt by
-    `schema_instruction`. Measured, not preferred: `function_calling`, the
-    previous default, returned no structured output at all on every
-    nested-list schema tried here. Pass `method` only with a measurement
-    behind it, and never without the instruction.
-
-    json_schema steers the reply rather than hard-constraining the decoder, so
-    still validate: a prose reply or a wrong top-level shape does slip
-    through when the instruction is omitted.
+    The schema is also restated in the prompt to keep the requested object
+    shape explicit for NVIDIA's OpenAI-compatible endpoint.
     """
     runnable = get_chat_model(
         model, agent=agent, temperature=temperature
-    ).with_structured_output(schema, method=method)
+    ).with_structured_output(
+        schema, method=method, max_tokens=DEFAULT_MAX_TOKENS
+    )
     try:
         from edrak.core.observability import get_current_prompt_obj
         prompt_obj = get_current_prompt_obj()
@@ -218,8 +231,12 @@ def get_json_object(
         cfg = None
     message = get_chat_model(
         model, agent=agent, temperature=temperature, callbacks=callbacks
-    ).invoke([{"role": "system", "content": system}, {"role": "user", "content": user}], config=cfg)
-    text = str(message.content).strip()
+    ).invoke(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        config=cfg,
+        max_tokens=DEFAULT_MAX_TOKENS,
+    )
+    text = message_text(message).strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         raise ValueError(f"model reply contained no JSON object: {text[:200]!r}")

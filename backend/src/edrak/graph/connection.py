@@ -43,7 +43,7 @@ class GraphSettings(BaseSettings):
         extra="ignore",
     )
 
-    GRAPH_ENABLED: bool = False
+    GRAPH_ENABLED: bool = True
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: SecretStr = SecretStr("neo4j")
@@ -51,6 +51,7 @@ class GraphSettings(BaseSettings):
     NEO4J_CONNECT_TIMEOUT_S: float = 5.0
     NEO4J_RETRY_AFTER_S: float = 60.0
     GRAPH_BATCH_SIZE: int = 500
+    GRAPH_WORKSPACE_ID: str | None = None
     # Append a short "known from earlier runs" note to ResearchTask.focus (agent_context.GraphAwareWorker).
     GRAPH_FOCUS_HINTS: bool = True
 
@@ -58,6 +59,14 @@ class GraphSettings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_graph_settings() -> GraphSettings:
     return GraphSettings()
+
+
+def effective_graph_workspace_id(workspace_id: str | None) -> str | None:
+    """Use an explicit graph-only workspace override, otherwise the request workspace."""
+    override = getattr(get_graph_settings(), "GRAPH_WORKSPACE_ID", None)
+    if isinstance(override, str) and override.strip():
+        return override.strip()
+    return workspace_id
 
 
 class GraphUnavailable(RuntimeError):

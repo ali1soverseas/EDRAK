@@ -936,8 +936,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not runner.resolve_api_key():
         print(
-            "LLM_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
-            "Create a key at https://ollama.com/settings/keys",
+            "NVIDIA_API_KEY is not set. Copy .env.example to .env and add your NVIDIA NIM key.",
             file=sys.stderr,
         )
         return runner.EXIT_FAILED

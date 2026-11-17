@@ -1,19 +1,22 @@
-"""Ollama Cloud chat model factory and the structured-output and retry helpers."""
+"""NVIDIA chat model factory and the structured-output and retry helpers."""
 
 import asyncio
-import json
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Any, Literal, TypeVar
 
 import httpx
-import ollama
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.settings import Settings, get_settings
-from edrak.core.llm import schema_instruction
+from edrak.core.llm import (
+    DEFAULT_MAX_TOKENS,
+    schema_instruction,
+)
+from edrak.core.llm import (
+    get_chat_model as get_shared_chat_model,
+)
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
-from langchain_ollama import ChatOllama
+from langchain_core.messages import BaseMessage, HumanMessage
 from pydantic import BaseModel, ValidationError
 from tenacity import (
     AsyncRetrying,
@@ -41,37 +44,27 @@ class StructuredOutputError(RuntimeError):
     """The model did not produce output matching the requested schema."""
 
 
-def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
-    """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
-    from edrak.core.llm import provider_key
-
+def get_chat_model(role: Role, *, settings: Settings | None = None) -> BaseChatModel:
+    """Build the shared NVIDIA chat model with customer-trends role settings."""
     s = settings or get_settings()
-    # Resolved through the shared resolver so this worker gets its own quota,
-    # with the same own-key-then-backup-then-shared fallback as every other
-    # component.
-    key, variable = provider_key("OLLAMA_API_KEY", "customer_trends")
-    if not key:
-        raise LLMConfigError(
-            f"{variable} is not set: add it to .env at the repository root"
+    model = s.nvidia_model_analysis if role == "analyst" and s.nvidia_model_analysis else s.nvidia_model
+    try:
+        return get_shared_chat_model(
+            model=model,
+            agent="customer_trends",
+            temperature=s.nvidia_temperature,
+            timeout_seconds=s.nvidia_timeout_s,
         )
-    model = s.ollama_model_analysis if role == "analyst" and s.ollama_model_analysis else None
-    return ChatOllama(
-        model=model or s.ollama_model,
-        base_url=s.ollama_base_url,
-        temperature=s.ollama_temperature,
-        client_kwargs={
-            "headers": {"Authorization": f"Bearer {key}"},
-            "timeout": s.ollama_timeout_s,
-        },
-    )
+    except RuntimeError as exc:
+        raise LLMConfigError(str(exc)) from exc
 
 
 def is_transient(exc: BaseException) -> bool:
     """Timeouts, connection failures, 429 and 5xx are worth retrying; the rest are not."""
     if isinstance(exc, httpx.HTTPStatusError):
         return exc.response.status_code in _TRANSIENT_STATUS
-    if isinstance(exc, ollama.ResponseError):
-        return exc.status_code in _TRANSIENT_STATUS
+    if getattr(exc, "status_code", None) in _TRANSIENT_STATUS:
+        return True
     return isinstance(exc, httpx.TransportError | ConnectionError | TimeoutError)
 
 
@@ -93,11 +86,6 @@ async def invoke_with_retry(call: Callable[..., Awaitable[T]], *args: Any, **kwa
     raise AssertionError("unreachable: AsyncRetrying always yields an attempt")
 
 
-def _raw_text(raw: object) -> str:
-    content = getattr(raw, "content", raw)
-    return content if isinstance(content, str) else json.dumps(content, ensure_ascii=False)
-
-
 def _schema_instruction(schema: type[BaseModel]) -> HumanMessage:
     """The shared helper from edrak.core.llm, as a message this worker can append."""
     return HumanMessage(content=schema_instruction(schema)["content"])
@@ -117,25 +105,16 @@ async def structured_call(
     repair: bool = True,
 ) -> S:
     """Get a validated `schema` instance, with at most one repair attempt."""
-    # json_schema, not function_calling. Measured on the four schemas this
-    # worker sends, 10 first-attempt runs each with repair off, three times:
-    # 119/120 for this method against 11/120 for function_calling. The losing
-    # arm scored zero on every nested schema every run, and the only schema it
-    # ever returned was the only flat one. Do not switch this on intuition, and
-    # do not copy the market worker's json_mode choice: it disagrees here.
-    # Re-measure with llm/ab_structured_output.py after changing model,
-    # schemas, or langchain-ollama.
-    runnable = llm.with_structured_output(schema, method="json_schema", include_raw=True)
+    runnable = llm.with_structured_output(
+        schema, method="json_schema", max_tokens=DEFAULT_MAX_TOKENS
+    )
     base = [*messages, _schema_instruction(schema)]
     conversation = list(base)
     attempts = 2 if repair else 1
     error: Exception | None = None
     for attempt in range(1, attempts + 1):
-        out: Any = await invoke_with_retry(runnable.ainvoke, conversation)
-        raw, parsed, error = out["raw"], out["parsed"], out["parsing_error"]
         try:
-            if error is not None or parsed is None:
-                raise error or OutputParserException("model returned no parsable output")
+            parsed: Any = await invoke_with_retry(runnable.ainvoke, conversation)
             result = _parse(schema, parsed)
         except (ValidationError, OutputParserException) as exc:
             error = exc
@@ -147,7 +126,6 @@ async def structured_call(
             )
             conversation = [
                 *base,
-                AIMessage(content=_raw_text(raw)),
                 HumanMessage(
                     content=(
                         f"Your previous output was invalid: {exc}\n"

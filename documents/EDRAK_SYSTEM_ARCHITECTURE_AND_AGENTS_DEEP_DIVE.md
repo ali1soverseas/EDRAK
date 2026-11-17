@@ -317,7 +317,7 @@ flowchart LR
 
 #### Strategy 4: Lean Function Calling & JSON Schema Minification
 * **Current**: Verbose Pydantic schema with nested class definitions string-serialized on every invocation.
-* **Solution**: Strip descriptions and nullability metadata from the schema prompt, or use native Ollama/OpenAI tool calling definitions which are cached in the model context rather than repeated in the user prompt.
+* **Solution**: Strip descriptions and nullability metadata from the schema prompt, or use the NVIDIA OpenAI-compatible structured-output API so schema enforcement is passed through the response format.
 * **Impact**: Cuts ~800 tokens of prompt overhead per call.
 
 #### Strategy 5: Smart Hunt Pruning & Early Termination

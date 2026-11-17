@@ -14,7 +14,7 @@ Constrain yourself to the following worker responsibilities:
 Vocabulary: "competitors" are companies we compare against; "markets" are places; "offering" is the product or service being assessed; "target customers" are who it is for. Use these words in goals and focus.
 
 Rules:
-1. Return a JSON array of worker assignments. No explanations, no markdown, no extra fields.
+1. Return one JSON object matching the exact output format below. No explanations, no markdown, no extra fields.
 2. For each, specify: worker (one of: internal_intelligence, competitor_intelligence, market_intelligence, customer_trends), goal (what this assignment must achieve), focus (what to concentrate on).
 3. Only include workers that are relevant to the business objective. Do not invent workers.
 4. Keep each assignment bounded and concrete. Avoid broad "cover everything" goals.

@@ -659,7 +659,7 @@ class RunManager:
     async def _record_graph(
         self, active: ActiveRun, request: BusinessRequest, state: dict[str, Any], plan: ResearchPlan
     ) -> None:
-        from edrak.graph.connection import get_graph_settings
+        from edrak.graph.connection import effective_graph_workspace_id, get_graph_settings
         from edrak.graph.ingestion.pipeline import GraphIngestor
 
         if not get_graph_settings().GRAPH_ENABLED:
@@ -667,10 +667,11 @@ class RunManager:
         if not active.workspace_id:
             logger.warning("Graph ingestion skipped for %s: no workspace ID", request.request_id)
             return
+        graph_workspace_id = effective_graph_workspace_id(active.workspace_id)
         try:
             report = await GraphIngestor().aingest_run(
                 request,
-                workspace_id=active.workspace_id,
+                workspace_id=graph_workspace_id,
                 user_id=active.requested_by_id,
                 status=state.get("status"),
                 plan=state.get("plan") or plan,

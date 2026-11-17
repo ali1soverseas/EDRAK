@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -77,7 +78,12 @@ def main() -> WorkerResult:
     context_text = format_task_context(task)
 
     _banner("MARKET AGENT  --  STARTING")
-    print(f"\n  LLM            : {settings.OLLAMA_MODEL}")
+    model_name = (
+        os.getenv("NVIDIA_MODEL")
+        or os.getenv("LLM_MODEL")
+        or settings.NVIDIA_MODEL
+    )
+    print(f"\n  LLM            : {model_name}")
     print(f"  Max tasks      : {args.max_tasks or 'all planned'}")
     print(f"\n  Goal:")
     print(f"    {task.goal}")

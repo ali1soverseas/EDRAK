@@ -49,7 +49,7 @@ from edrak.agents.market_intelligence.state import (
 )
 from edrak.core.action_log import log_action
 from edrak.core.config import settings
-from edrak.core.llm import get_chat_model
+from edrak.core.llm import DEFAULT_MAX_TOKENS, get_chat_model
 from edrak.mcp.web_tools import (
     ALL_SCRAPER_TOOLS,
     TOOL_MAP,
@@ -68,8 +68,8 @@ def log_block(agent: str, title: str, body: str) -> None:
 def call_structured(schema, prompt: str, *, method: str = "function_calling", retries: int = 1):
     """Ask for a validated `schema` instance, or None.
 
-    `method` defaults to tool calling, which is what constrains output against
-    Ollama Cloud. A prompt that reads as a prose question can still be answered
+    `method` defaults to tool calling, which constrains output against the model API.
+    A prompt that reads as a prose question can still be answered
     without a tool call, so a caller whose prompt already states the schema uses
     json_mode instead: that parses rather than enforces, and a reply that is
     not JSON fails rather than slipping through.
@@ -82,7 +82,7 @@ def call_structured(schema, prompt: str, *, method: str = "function_calling", re
     for attempt in range(max(retries, 1)):
         try:
             return get_chat_model(agent="market", temperature=0).with_structured_output(
-                schema, method=method
+                schema, method=method, max_tokens=DEFAULT_MAX_TOKENS
             ).invoke(prompt)
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"

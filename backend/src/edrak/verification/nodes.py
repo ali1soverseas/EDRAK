@@ -98,11 +98,8 @@ def _llm_review(statement: str, evidence: list[Evidence]) -> dict | None:
     from edrak.core.llm import get_structured, schema_instruction
 
     try:
-        # The schema must also be stated in the prompt, not just bound on the
-        # model. json_schema steers the reply without hard-constraining the
-        # decoder, so without this the model sometimes answers in prose and the
-        # review is silently skipped: measured 2/3 without, 3/3 with, on this
-        # three-list schema.
+        # State the schema in the prompt as well as binding structured
+        # response format.
         reply = get_structured(_LLMReview, agent="orchestrator", temperature=0).invoke(
             [
                 {

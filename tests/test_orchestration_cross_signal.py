@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from edrak.contracts import (
     BusinessContext,
@@ -23,6 +24,7 @@ from edrak.contracts import (
     WorkerType,
 )
 from edrak.contracts.verification import FindingVerdict
+from edrak.core.config import settings
 from edrak.orchestration import graph as orchestration_graph
 from edrak.orchestration.routing import decide_after_verification
 
@@ -48,8 +50,9 @@ def test_verified_decision_routes_to_cross_signal():
     assert decide_after_verification({"verification": decision}) == "cross_signal"
 
 
-def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
+def test_orchestrator_runs_cross_signal_after_verification(monkeypatch, tmp_path):
     request = _request()
+    monkeypatch.setattr(settings, "ARTIFACTS_PATH", tmp_path)
     task = ResearchTask(
         task_id="competitor-task",
         parent_request_id=request.request_id,
@@ -149,6 +152,22 @@ def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
         "status": "completed",
         "signals": [],
     }
+    stage_root = tmp_path / "runs" / request.request_id / "stages"
+    for stage in ("verification", "cross_signal", "decision_analysis"):
+        assert (stage_root / stage / "input.json").is_file()
+        assert (stage_root / stage / "output.json").is_file()
+    verification_output = json.loads(
+        (stage_root / "verification" / "output.json").read_text(encoding="utf-8")
+    )
+    cross_signal_input = json.loads(
+        (stage_root / "cross_signal" / "input.json").read_text(encoding="utf-8")
+    )
+    cross_signal_output = json.loads(
+        (stage_root / "cross_signal" / "output.json").read_text(encoding="utf-8")
+    )
+    assert verification_output["verification_result"]["research_run_id"] == request.request_id
+    assert cross_signal_input["verified_findings"][0]["finding_id"] == finding.finding_id
+    assert cross_signal_output["cross_signal"]["status"] == "completed"
 
 
 def _run_with_reviews(graph_module, registry, request, answers):

@@ -43,6 +43,7 @@ from edrak.agents.customer_trends.prompts import (
     WRITE_HEADLINE,
     render,
 )
+from edrak.core.llm import message_text
 from edrak.agents.customer_trends.schemas.common import Depth, Platform
 from edrak.agents.customer_trends.schemas.findings import (
     MAX_HEADLINE_WORDS,
@@ -345,8 +346,10 @@ class BranchCapture:
 
 def _final_note(messages: list[BaseMessage]) -> str:
     for message in reversed(messages):
-        if isinstance(message, AIMessage) and isinstance(message.content, str) and message.content:
-            return message.content[:NOTE_CHARS]
+        if isinstance(message, AIMessage):
+            content = message_text(message)
+            if content:
+                return content[:NOTE_CHARS]
     return "the branch gave no summary"
 
 

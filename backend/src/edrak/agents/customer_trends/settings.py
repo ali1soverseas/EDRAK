@@ -39,18 +39,20 @@ class Settings(BaseSettings):
         validate_by_alias=True,
     )
 
-    # LLM (Ollama Cloud)
-    ollama_base_url: str = "https://ollama.com"
-    ollama_model: str = "gpt-oss:120b"
-    # Accepts either OLLAMA_API_KEY (this worker's original name) or the
-    # project's shared LLM_API_KEY, so one key in .env serves every worker.
-    ollama_api_key: SecretStr | None = Field(
-        default=None,
-        validation_alias=AliasChoices("OLLAMA_API_KEY", "LLM_API_KEY"),
+    # NVIDIA NIM; role-specific analyst model is optional.
+    nvidia_model: str = Field(
+        default="nvidia/nemotron-3.5-super-vl-120b-a12b",
+        validation_alias=AliasChoices("NVIDIA_MODEL", "LLM_MODEL"),
     )
-    ollama_model_analysis: str | None = None
-    ollama_temperature: float = 0.2
-    ollama_timeout_s: float = 120.0
+    nvidia_model_analysis: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("NVIDIA_MODEL_ANALYSIS", "LLM_MODEL_ANALYSIS"),
+    )
+    nvidia_temperature: float = Field(
+        default=0.2,
+        validation_alias=AliasChoices("NVIDIA_TEMPERATURE", "LLM_TEMPERATURE"),
+    )
+    nvidia_timeout_s: float = Field(default=180.0, validation_alias="NVIDIA_TIMEOUT_S")
 
     # Data providers
     apify_token: SecretStr | None = None

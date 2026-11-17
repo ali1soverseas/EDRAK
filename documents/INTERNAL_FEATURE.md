@@ -43,8 +43,8 @@ flowchart TD
     end
 
     subgraph LLMPlane [LLM Generation Subsystem]
-        Node1 -->|JSON-RPC / REST| OllamaCloud[Ollama Cloud / Local OSS\ngpt-oss:120b]
-        Node3 -->|JSON-RPC / REST| OllamaCloud
+        Node1 -->|JSON-RPC / REST| NVIDIA[NVIDIA Nemotron via NIM]
+        Node3 -->|JSON-RPC / REST| NVIDIA
     end
 
     subgraph ETLPlane [Handbook ETL & Synthetic Ingestion Pipeline]
@@ -82,11 +82,10 @@ All model endpoints, embeddings, paths, and reranking thresholds are fully confi
 
 ```bash
 # LLM Generation
-LLM_PROVIDER=ollama
-LLM_MODEL=gpt-oss:120b
-LLM_BASE_URL=https://ollama.com/v1
-LLM_API_KEY=your_api_key_here
-LLM_TEMPERATURE=0.2
+NVIDIA_MODEL=nvidia/nemotron-3.5-super-vl-120b-a12b
+NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
+NVIDIA_API_KEY=your_nvidia_api_key
+NVIDIA_TEMPERATURE=0.2
 
 # Embedding Configuration (Local Hugging Face)
 EMBEDDING_PROVIDER=huggingface

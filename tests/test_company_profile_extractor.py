@@ -10,6 +10,7 @@ from edrak.company_profile.extractor import (
     extract_profile,
 )
 from edrak.company_profile.models import SourceDocument, SourceType
+from edrak.core.llm import DEFAULT_MAX_TOKENS
 
 VALID = {
     "profile": {
@@ -93,35 +94,48 @@ def test_two_invalid_replies_raise_the_typed_error():
 
 
 def test_a_failing_model_call_is_a_typed_error_and_is_not_retried():
-    llm = FakeLLM(RuntimeError("OLLAMA_API_KEY is not configured."))
-    with pytest.raises(ProfileLLMError, match="OLLAMA_API_KEY"):
+    llm = FakeLLM(RuntimeError("NVIDIA_API_KEY is not configured."))
+    with pytest.raises(ProfileLLMError, match="NVIDIA_API_KEY"):
         extract_profile("ctx", llm)
     assert len(llm.calls) == 1
 
 
-def test_the_default_call_uses_the_shared_client_with_schema_and_reasoning(monkeypatch):
+def test_profile_import_default_call_uses_nvidia_with_prompt_schema(monkeypatch):
     seen = {}
 
     class Model:
         def invoke(self, messages, **kwargs):
-            seen.update(kwargs, messages=messages)
+            seen["messages"] = messages
+            seen["kwargs"] = kwargs
+            return type("Reply", (), {"content": json.dumps(VALID, ensure_ascii=False)})()
+
+    monkeypatch.setattr(extractor, "get_chat_model", lambda **kwargs: Model())
+    assert extract_profile("ctx").profile.name == "Acme Pay"
+    assert len(seen["messages"]) == 3
+    assert "JSON schema" in seen["messages"][-1]["content"]
+    assert "field_sources" in seen["messages"][-1]["content"]
+    assert seen["kwargs"]["max_tokens"] == DEFAULT_MAX_TOKENS
+
+
+def test_company_research_schema_caller_uses_json_schema(monkeypatch):
+    seen = {}
+
+    class Model:
+        def bind(self, **kwargs):
+            seen["bind"] = kwargs
+            return self
+
+        def invoke(self, messages):
+            seen["messages"] = messages
             return type("Reply", (), {"content": json.dumps(VALID)})()
 
-    def get_chat_model(**kwargs):
-        seen["client"] = kwargs
-        return Model()
+    monkeypatch.setattr(extractor, "get_chat_model", lambda **kwargs: Model())
+    extractor.schema_caller(extractor.ProfileExtraction)([])
 
-    monkeypatch.setattr(extractor, "get_chat_model", get_chat_model)
-    monkeypatch.setattr(extractor.settings, "PROFILE_IMPORT_REASONING", "low")
-    assert extract_profile("ctx").profile.name == "Acme Pay"
-    assert seen["reasoning"] == "low"
-    assert seen["client"] == {"temperature": 0}
-    assert seen["format"]["type"] == "object" and "profile" in seen["format"]["properties"]
-
-    monkeypatch.setattr(extractor.settings, "PROFILE_IMPORT_REASONING", "")
-    seen.clear()
-    extract_profile("ctx")
-    assert "reasoning" not in seen
+    response_format = seen["bind"]["response_format"]
+    assert response_format["type"] == "json_object"
+    assert "profile" in response_format["schema"]["properties"]
+    assert seen["bind"]["max_tokens"] == DEFAULT_MAX_TOKENS
 
 
 def test_the_draft_carries_validated_fields_sources_gaps_and_links():

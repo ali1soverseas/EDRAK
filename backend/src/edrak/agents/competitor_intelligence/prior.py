@@ -230,6 +230,9 @@ def _evidence_text(e: Dict[str, Any]) -> str:
 # ============================================================
 
 def _graph_findings(workspace_id: str | None, competitor: str, exclude: str | None) -> List[Dict[str, Any]]:
+    from edrak.graph.connection import effective_graph_workspace_id
+
+    workspace_id = effective_graph_workspace_id(workspace_id)
     if not workspace_id:
         return []
     try:

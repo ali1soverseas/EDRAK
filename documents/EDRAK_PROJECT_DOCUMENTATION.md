@@ -164,7 +164,7 @@
 |---|---|
 | Backend API | Python 3.11+, FastAPI + Uvicorn, Server-Sent Events (SSE), `aiosqlite` (SQLite at `data/edrak.db`), pydantic v2, structlog, tenacity |
 | Agent runtime | LangGraph (all workers, orchestrator, verification, metrics, cross-signal, decision analysis), `langgraph-checkpoint-sqlite`, LangChain |
-| LLM | Ollama Cloud, model `gpt-oss:120b`, via native `langchain_ollama.ChatOllama` at `https://ollama.com` |
+| LLM | NVIDIA Nemotron 3.5 Super via NVIDIA NIM's OpenAI-compatible endpoint and LangChain `ChatOpenAI` |
 | Retrieval | ChromaDB (cosine HNSW) + `sentence-transformers/all-MiniLM-L6-v2` embeddings (384 dims) |
 | Tools | MCP servers (`mcp<2`, FastMCP) + direct scraper imports, Tavily, Serper, NewsAPI, GDELT, Apify, SocialCrawl, YouTube Data API, and open-data APIs |
 | Export | Playwright (PDF), python-docx (Word), Markdown |
@@ -398,15 +398,7 @@ All contracts live in `backend/src/edrak/contracts/` and are exported through `e
 | `CrossSignal` | at least 2 supporting findings |
 | `Evidence` | `SYNTHETIC_INTERNAL` ⇒ `is_synthetic=True`; `page_text` truncated at 20 000 chars |
 
-**Structured LLM output rule** (`core/llm.py::get_structured`): default `method="json_schema"` **and** the schema must also be restated in the prompt with `schema_instruction(schema)`. Measured on `gpt-oss:120b` (from `documents/` and in code docstrings):
-
-| Schema | `function_calling` | `json_schema` + restated schema |
-|---|---|---|
-| Customer-trends schemas (120 calls) | 11 / 120 | **119 / 120** |
-| Competitor `ResearchRequirements` (5 calls) | 0 / 5 | **4 / 5** |
-| Cross-signal (5 calls) | 0 / 5 | **5 / 5** |
-
-`DEFAULT_NUM_PREDICT = 16384`. The harness `customer_trends/llm/ab_structured_output.py` reproduces the comparison but **spends 80 real model calls**.
+**Structured LLM output rule** (`core/llm.py::get_structured`): the shared helper uses the NVIDIA NIM OpenAI-compatible structured-output interface, then validates against the Pydantic schema. Call sites also use `schema_instruction(schema)` where an explicit natural-language reminder of the object shape is useful. `DEFAULT_MAX_TOKENS = 16384` caps structured replies. The customer-trends A/B harness can compare structured-output methods against that worker's schemas, but **spends 80 real model calls**.
 
 ## 3.3 Shared State and Execution Context
 
@@ -457,7 +449,7 @@ All contracts live in `backend/src/edrak/contracts/` and are exported through `e
 | LangGraph checkpoints | `ORCHESTRATION_CHECKPOINT_PATH`; customer-trends `checkpoints.db` | Resumable graph state |
 | Uploads | `UPLOADS_PATH/<workspace_id>/<document_id>.<ext>` | Original uploaded files |
 | Action logs | `artifacts/logs/<agent>.log` | Per-agent log lines |
-| Run artifacts | `artifacts/runs/*.json`, `artifacts/reports/` | CLI run output (git-ignored except `.gitkeep`) |
+| Run artifacts | `artifacts/runs/<request_id>/<worker>/<task_id>.a<attempt>/{input,output}.json`; `artifacts/runs/<request_id>/stages/<stage>/{input,output}.json`; Customer Trends: `artifacts/runs/<customer_trends_run_id>/customer_trends/result.json` | Per-worker and verification/cross-signal/decision-stage inputs and outputs (git-ignored except `.gitkeep`) |
 | Provider cache | `<data_dir>/cache/<sha256>.json` | Customer-trends provider results (TTL 86 400 s; errors never cached) |
 
 ## 3.5 Error Propagation Between Components
@@ -515,8 +507,10 @@ This chapter covers each agent along the same twelve headings (4.1–4.12). Wher
 
 | Setting | Default / note |
 |---|---|
-| `OLLAMA_BASE_URL` / `OLLAMA_MODEL` | `https://ollama.com` / `gpt-oss:120b` |
-| `OLLAMA_TEMPERATURE` | `0.2` |
+| `NVIDIA_MODEL` | `nvidia/nemotron-3.5-super-vl-120b-a12b` |
+| `NVIDIA_BASE_URL` | `https://integrate.api.nvidia.com/v1` |
+| `NVIDIA_TEMPERATURE` | `0.2` |
+| `NVIDIA_TIMEOUT_S` | `180` |
 | `MAX_REPLANS` | `1` (automatic replans; human replans are capped separately at `MAX_HUMAN_REPLANS = 3`) |
 | `MAX_TASK_ATTEMPTS` | `3` (used only by the unwired `decide_after_verification`) |
 | `RETRIEVAL_MIN_SCORE` | `0.30` |
@@ -526,11 +520,11 @@ This chapter covers each agent along the same twelve headings (4.1–4.12). Wher
 | Limits | `MAX_UPLOAD_MB=25`, `SCRAPE_TEXT_CHARS=2000`, `SESSION_DAYS=30` |
 | Feature flags | `GUARDRAIL_SCOPE_CHECK`, `JEV_GUARD_ENABLED`, `EVALUATION_JUDGE`, `EDRAK_DEBUG` |
 
-**Per-agent credentials** (`core/llm.py::provider_key(base, agent)`): resolves `<BASE>_<AGENT>` → `<BASE>_<AGENT>_BACKUP` → shared `<BASE>`. `AGENTS = (orchestrator, competitor, market, internal, cross_signal, customer_trends)`. **An agent never reads another agent's key**, so one agent's quota exhaustion cannot starve another. The same resolver serves Tavily (`TAVILY_API_KEY[_MARKET|_COMPETITOR]`) and Serper (`SERPER_API_KEY[_MARKET|_CUSTOMER_TRENDS]`).
+**Per-agent credentials** (`core/llm.py::provider_key(base, agent)`): resolves `<BASE>_<AGENT>` → `<BASE>_<AGENT>_BACKUP` → shared `<BASE>`. `AGENTS = (orchestrator, competitor, market, internal, cross_signal, customer_trends)`. An agent never reads another agent's key. NVIDIA keys use `NVIDIA_API_KEY[_<AGENT>[_BACKUP]]`; legacy `LLM_API_KEY` remains a shared fallback. The same resolver serves Tavily (`TAVILY_API_KEY[_MARKET|_COMPETITOR]`) and Serper (`SERPER_API_KEY[_MARKET|_CUSTOMER_TRENDS]`).
 
-**Auth to Ollama Cloud.** `ChatOllama` has no `api_key` field, so the key is passed as `client_kwargs={"headers": {"Authorization": "Bearer …"}}`.
+**NVIDIA credentials.** `ChatOpenAI` connects to NVIDIA NIM with `NVIDIA_API_KEY` and `NVIDIA_BASE_URL`. Scoped NVIDIA keys and backup keys are optional; `LLM_*` values remain supported as backward-compatible aliases.
 
-The Customer & Trends worker has its own `Settings` (`customer_trends/settings.py`): `ollama_timeout_s=120`, `branch_max_steps=8`, `branch_timeout_s=100`, `edrak_cache_ttl_s=86400`, `edrak_fake_llm`, `youtube_daily_quota=10000`, `youtube_search_daily_cap=100`, optional LangSmith tracing (`langsmith_tracing=False`). Collection providers are routed by `config/providers.yaml`; `EDRAK_PROVIDER_MODE=fixture` and `EDRAK_FAKE_LLM` run it offline.
+The Customer & Trends worker has its own `Settings` (`customer_trends/settings.py`): NVIDIA model/timeout and optional analyst model, `branch_max_steps=8`, `branch_timeout_s=100`, `edrak_cache_ttl_s=86400`, `edrak_fake_llm`, `youtube_daily_quota=10000`, `youtube_search_daily_cap=100`, optional LangSmith tracing (`langsmith_tracing=False`). Collection providers are routed by `config/providers.yaml`; `EDRAK_PROVIDER_MODE=fixture` and `EDRAK_FAKE_LLM` run it offline.
 
 ## 4.4 Input Processing and Context Construction
 
@@ -580,7 +574,7 @@ Each worker adapts the shared `ResearchTask` into its own working brief:
 | Cross-Signal | the node-embedded prompts; `CrossSignal/prompts.py` is an older prompt set not used by the nodes |
 | Briefing | `briefing/propose.py` (headline/copy), `briefing/challenge.py` |
 
-**Model access.** `get_chat_model(agent=..., temperature=...)` → `ChatOllama`; `get_structured(Schema, agent=..., temperature=...)` → structured runnable; `get_json_object(system, user, agent=...)` (used by the internal worker). Customer-trends has its own factory (`llm/client.py::get_chat_model(role)`, roles `planner|analyst|writer|branch`) with `invoke_with_retry` (3 attempts, random-exponential back-off, only for 429/5xx/transport errors) but resolves its key through the same `provider_key`.
+**Model access.** `get_chat_model(agent=..., temperature=...)` → NVIDIA-backed `ChatOpenAI`; `get_structured(Schema, agent=..., temperature=...)` → structured runnable; `get_json_object(system, user, agent=...)` (used by the internal worker). Customer-trends has a role-aware factory (`llm/client.py::get_chat_model(role)`, roles `planner|analyst|writer|branch`) with `invoke_with_retry` (3 attempts, random-exponential back-off, only for 429/5xx/transport errors) and the shared credential resolver.
 
 ## 4.7 Tool Selection and Execution
 
@@ -847,7 +841,7 @@ All four workers satisfy the same Protocol and return a `WorkerResult`, but thei
 
 | Provider | Used by | Notes |
 |---|---|---|
-| Ollama Cloud | all LLM calls | `https://ollama.com`, `gpt-oss:120b` |
+| NVIDIA NIM | all LLM calls | `NVIDIA_API_KEY`, configurable `NVIDIA_MODEL` and `NVIDIA_BASE_URL`; generic `LLM_*` aliases are supported |
 | Tavily | competitor, metrics (fallback) | `TAVILY_API_KEY[_MARKET|_COMPETITOR]` |
 | Serper | market, metrics (first choice), customer-trends web | `SERPER_API_KEY[_MARKET|_CUSTOMER_TRENDS]` |
 | NewsAPI, GDELT, Hacker News | market | `NEWS_API_KEY`; GDELT timeline queries (first 2 queries only) |
@@ -872,7 +866,7 @@ Scraper etiquette (`mcp_servers/web/scrapers.py`): `REQUEST_DELAY_SECONDS = 2`, 
 
 | Component | Behaviour |
 |---|---|
-| LLM (customer-trends) | `invoke_with_retry`: 3 attempts, `wait_random_exponential(multiplier=0.5, max=8)`, only on 429/500/502/503/504 or transport errors; `ollama_timeout_s=120` |
+| LLM (customer-trends) | `invoke_with_retry`: 3 attempts, `wait_random_exponential(multiplier=0.5, max=8)`, only on 429/500/502/503/504 or transport errors; `nvidia_timeout_s=180` |
 | LLM (core) | Structured calls retry per agent (competitor `retries=1`); `tenacity` is a project dependency |
 | Collection branch | `branch_timeout_s = 100`, `branch_max_steps = 8`, `MIN_BRANCH_S` guard; accounts branch `min(1.5 × branch_timeout, time_left)` |
 | Run-level budget | 60 tool calls / 2.0 USD / 300 s; `collection_seconds_left()` leaves a reserve for analysis and writing |
@@ -1134,9 +1128,9 @@ To measure latency, add timers around `dispatch_worker`, `verification_gate_node
 
 ## 10.4 Token Usage and LLM Costs
 
-**Token usage is not recorded anywhere in the codebase** (a search for `usage_metadata`, `total_tokens`, `prompt_tokens` and `eval_count` finds nothing). The model is a hosted `gpt-oss:120b` on Ollama Cloud; billing is outside the repo. The cost-relevant levers that *are* in code:
+**Token usage is not recorded anywhere in the codebase** (a search for `usage_metadata`, `total_tokens`, `prompt_tokens` and `eval_count` finds nothing). The model is hosted by NVIDIA NIM; billing is outside the repo. The cost-relevant levers that *are* in code:
 
-- `DEFAULT_NUM_PREDICT = 16384` caps output.
+- Structured replies cap output at `DEFAULT_MAX_TOKENS = 16384`.
 - `branch_max_steps = 8` model calls per branch (`ModelCallLimitMiddleware`).
 - `MAX_QUERIES_TOTAL = 24`, `MAX_RESEARCH_STAGES = 3` (competitor).
 - `MAX_HUNTS = 3`, `MAX_HUNT_CELLS = 20` (metrics).
@@ -1379,8 +1373,8 @@ The rule "don't add agents without need" (`AGENTS.md`) keeps the count at nine, 
 ## 13.2 Model and Framework Selection
 
 - **LangGraph** for explicit state, `Send` fan-out, reducers, checkpointing and `interrupt()` — the human checkpoint needed durable pause/resume.
-- **Ollama Cloud `gpt-oss:120b`** as *one* model for the whole platform (the former "strong" competitor model was collapsed into one). It lacks reliable provider function-calling, hence structured-step loops and `json_schema` + restated schema (measured 119/120 vs 11/120).
-- **Native `ChatOllama`**, not the `/v1` OpenAI shim, to get native structured output.
+- **NVIDIA Nemotron 3.5 Super** as the configurable default for the platform, accessed through NVIDIA NIM's OpenAI-compatible endpoint.
+- **LangChain `ChatOpenAI`** configured with NVIDIA NIM's base URL, key, model, timeout, and retry settings.
 - **pydantic v2 `extra="forbid"`** contracts so schema drift fails fast.
 - **SQLite + aiosqlite** for zero-ops persistence; **ChromaDB** for local RAG; **MiniLM** for small, local embeddings.
 - **React 19 + Vite** SPA with generated TypeScript types from the contract schemas.
@@ -1587,7 +1581,7 @@ EDRAK/
 
 | Group | Variables |
 |---|---|
-| LLM | `OLLAMA_API_KEY`, `OLLAMA_API_KEY_<AGENT>`, `OLLAMA_API_KEY_<AGENT>_BACKUP`, `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `OLLAMA_TEMPERATURE` |
+| LLM | `NVIDIA_API_KEY`, `NVIDIA_API_KEY_<AGENT>`, `NVIDIA_API_KEY_<AGENT>_BACKUP`, `NVIDIA_MODEL`, `NVIDIA_BASE_URL`, `NVIDIA_TEMPERATURE`, `NVIDIA_TIMEOUT_S`; legacy `LLM_*` aliases |
 | Search | `TAVILY_API_KEY[_MARKET|_COMPETITOR]`, `SERPER_API_KEY[_MARKET|_CUSTOMER_TRENDS]`, `NEWS_API_KEY` |
 | Open data | `FRED_API_KEY`, `ALPHAVANTAGE_API_KEY`, `FINNHUB_API_KEY`, `OPENALEX_MAILTO`, `SCRAPER_USER_AGENT` |
 | Social | `APIFY_TOKEN`, `APIFY_FALLBACK_TOKENS`, `SOCIALCRAWL_API_KEY`, `SOCIALCRAWL_FALLBACK_API_KEYS`, `YOUTUBE_API_KEY`, `GOOGLE_TRENDS_API_KEY` |
@@ -1704,7 +1698,7 @@ flowchart LR
     end
 
     subgraph External
-        LLM[Ollama Cloud gpt-oss:120b]
+        LLM[NVIDIA Nemotron 3.5 Super]
         SRCH[Tavily • Serper • NewsAPI • GDELT • Open data]
         SOC[Apify • SocialCrawl • YouTube]
         JEV[JEV Station]

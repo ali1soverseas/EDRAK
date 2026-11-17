@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import logging
+import os
+import re
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from pydantic import ValidationError
@@ -30,6 +34,66 @@ from .planner import LlmPlanner, PlanningError
 from .state import RESET, OrchestrationState
 
 logger = logging.getLogger(__name__)
+
+_ARTIFACT_COMPONENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
+
+
+def _safe_artifact_component(value: str) -> str:
+    if _ARTIFACT_COMPONENT.fullmatch(value):
+        return value
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _artifact_root() -> Path:
+    from ..core.config import settings
+
+    artifacts = settings.ARTIFACTS_PATH
+    return artifacts if artifacts.is_absolute() else settings.BASE_DIR / artifacts
+
+
+def _worker_artifact_dir(task: ResearchTask) -> Path:
+    request_id = _safe_artifact_component(task.parent_request_id)
+    task_id = _safe_artifact_component(task.task_id)
+    root = _artifact_root()
+    return root / "runs" / request_id / task.worker.value / f"{task_id}.a{task.attempt}"
+
+
+def _write_json_artifact(directory: Path, name: str, payload: dict[str, Any]) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{name}.json"
+    temporary = path.with_suffix(".json.tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    os.replace(temporary, path)
+
+
+def _save_stage_artifact(request_id: str, stage: str, name: str, payload: dict[str, Any]) -> None:
+    directory = (
+        _artifact_root()
+        / "runs"
+        / _safe_artifact_component(request_id)
+        / "stages"
+        / stage
+    )
+    _write_json_artifact(directory, name, payload)
+
+
+def _try_save_stage_artifact(
+    request_id: str, stage: str, name: str, payload: dict[str, Any]
+) -> None:
+    try:
+        _save_stage_artifact(request_id, stage, name, payload)
+    except (OSError, TypeError, ValueError):
+        logger.exception("Could not save %s artifact for request %s", stage, request_id)
+
+
+def _save_worker_artifact(task: ResearchTask, name: str, payload: dict[str, Any]) -> None:
+    try:
+        _write_json_artifact(_worker_artifact_dir(task), name, payload)
+    except (OSError, TypeError, ValueError):
+        logger.exception("Could not save worker artifact for task %s", task.task_id)
 
 
 def _metric_context(state: OrchestrationState) -> dict[str, Any]:
@@ -64,6 +128,18 @@ def make_decision_analysis_node():
     ) -> dict[str, Any]:
         raw_cross_signal = state.get("cross_signal")
         request = state.get("request")
+        request_id = request.request_id if request is not None else "unknown-request"
+        stage_input = {
+            "request": request.model_dump(mode="json") if request is not None else None,
+            "cross_signal": (
+                raw_cross_signal.model_dump(mode="json")
+                if hasattr(raw_cross_signal, "model_dump")
+                else raw_cross_signal
+            ),
+            "decision_preference": state.get("decision_preference") or {"status": "none"},
+            **_metric_context(state),
+        }
+        _try_save_stage_artifact(request_id, "decision_analysis", "input", stage_input)
     
         if not raw_cross_signal:
             message = (
@@ -72,6 +148,12 @@ def make_decision_analysis_node():
             )
 
             logger.warning(message)
+            _try_save_stage_artifact(
+                request_id,
+                "decision_analysis",
+                "output",
+                {"status": "skipped", "error": message, "decision_analysis": None},
+            )
 
             return {
                 "decision_analysis": None,
@@ -85,6 +167,12 @@ def make_decision_analysis_node():
             )
 
             logger.error(message)
+            _try_save_stage_artifact(
+                request_id,
+                "decision_analysis",
+                "output",
+                {"status": "skipped", "error": message, "decision_analysis": None},
+            )
 
             return {
                 "decision_analysis": None,
@@ -124,6 +212,18 @@ def make_decision_analysis_node():
             )
 
             dumped_result = result.model_dump(mode="json")
+            _try_save_stage_artifact(
+                request_id,
+                "decision_analysis",
+                "input",
+                decision_input.model_dump(mode="json"),
+            )
+            _try_save_stage_artifact(
+                request_id,
+                "decision_analysis",
+                "output",
+                {"status": "completed", "decision_analysis": dumped_result},
+            )
 
             logger.info(
                 "Decision Analysis finished for run %s with status %s",
@@ -139,13 +239,17 @@ def make_decision_analysis_node():
             logger.exception(
                 "Decision Analysis failed."
             )
+            message = f"Decision Analysis failed: {type(exc).__name__}: {exc}"
+            _try_save_stage_artifact(
+                request_id,
+                "decision_analysis",
+                "output",
+                {"status": "failed", "error": message, "decision_analysis": None},
+            )
 
             return {
                 "decision_analysis": None,
-                "error": (
-                    "Decision Analysis failed: "
-                    f"{type(exc).__name__}: {exc}"
-                ),
+                "error": message,
             }
 
     return decision_analysis_node
@@ -191,15 +295,23 @@ def make_dispatch_worker(
 ) -> Callable[[dict], dict]:
     """Build the ``Send`` target that runs one task.
 
-    Workers run concurrently, so this function must stay pure: it reads only its
-    own payload and returns a partial state update. It deliberately does not
-    receive the full state, which keeps one task from reading another's data.
+    Workers run concurrently, so this function reads only its own payload and
+    returns a partial state update. It records artifacts for this task only and
+    does not receive the full state, keeping tasks isolated from one another.
     """
 
     def dispatch_worker(payload: dict) -> dict:
         task = payload["task"]
         print(f"\n[{task.worker.value}] NODE: dispatch")
+        try:
+            _save_worker_artifact(task, "input", task.model_dump(mode="json"))
+        except (OSError, TypeError, ValueError):
+            logger.exception("Could not save worker input artifact for task %s", task.task_id)
         result = run_task(task, registry)
+        try:
+            _save_worker_artifact(task, "output", result.model_dump(mode="json"))
+        except (OSError, TypeError, ValueError):
+            logger.exception("Could not save worker output artifact for task %s", task.task_id)
         return {"results": [result], "outcomes": [result.to_outcome()]}
 
     return dispatch_worker
@@ -266,31 +378,60 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
     from ..contracts.verification import VerificationInput
     from ..verification.graph import run as run_verification
 
+    request = state["request"]
+    request_id = request.request_id
+    verification_input = VerificationInput(
+        request=request,
+        agent_outputs=state.get("results") or [],
+    )
+    _try_save_stage_artifact(
+        request_id,
+        "verification",
+        "input",
+        verification_input.model_dump(mode="json"),
+    )
     buffer = io.StringIO()
     try:
         with contextlib.redirect_stdout(buffer):
-            result = run_verification(
-                VerificationInput(
-                    request=state["request"],
-                    agent_outputs=state.get("results") or [],
-                )
-            )
+            result = run_verification(verification_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
         # here can. The person at the review checkpoint decides whether to re-plan.
-        return {
+        update = {
             **state,
             "verification": VerificationDecision(
                 status=VerificationStatus.CANNOT_COMPLETE,
                 summary=f"verification stage raised {type(exc).__name__}: {exc}",
             ),
         }
+        _try_save_stage_artifact(
+            request_id,
+            "verification",
+            "output",
+            {
+                "status": "failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "decision": update["verification"].model_dump(mode="json"),
+                "verification_result": None,
+            },
+        )
+        return update
     finally:
         captured = buffer.getvalue()
 
     if captured.strip():
         log_action("verification", captured)
 
+    _try_save_stage_artifact(
+        request_id,
+        "verification",
+        "output",
+        {
+            "status": "completed",
+            "decision": result.decision.model_dump(mode="json"),
+            "verification_result": result.model_dump(mode="json"),
+        },
+    )
     print(
         f"  [verification] {result.decision.status.value} "
         f"({len(result.findings)} findings assessed) "
@@ -310,9 +451,28 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
     from ..contracts.verification import FindingCheckStatus, VerificationResult
     from ..CrossSignal.graph import run_cross_signal
 
+    request = state.get("request")
+    request_id = request.request_id if request is not None else "unknown-request"
     raw = state.get("verification_result")
+    _try_save_stage_artifact(
+        request_id,
+        "cross_signal",
+        "input",
+        {
+            "request": request.model_dump(mode="json") if request is not None else None,
+            "verification_result": (
+                raw.model_dump(mode="json") if hasattr(raw, "model_dump") else raw
+            ),
+        },
+    )
     if raw is None:
         print("  [cross_signal] skipped: no verification result")
+        _try_save_stage_artifact(
+            request_id,
+            "cross_signal",
+            "output",
+            {"status": "skipped", "error": "no verification result", "cross_signal": None},
+        )
         return {**state, "cross_signal": None}
 
     try:
@@ -333,12 +493,34 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
             }
         )
         cs_input = build_cross_signal_input(verified_only, state["request"])
+        _try_save_stage_artifact(
+            request_id,
+            "cross_signal",
+            "input",
+            cs_input.model_dump(mode="json"),
+        )
         output = await run_cross_signal(cs_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
+        _try_save_stage_artifact(
+            request_id,
+            "cross_signal",
+            "output",
+            {
+                "status": "failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "cross_signal": None,
+            },
+        )
         return {**state, "cross_signal": None}
 
     dumped = output.model_dump(mode="json")
+    _try_save_stage_artifact(
+        request_id,
+        "cross_signal",
+        "output",
+        {"status": "completed", "cross_signal": dumped},
+    )
     print("\n" + "=" * 72)
     print("[cross_signal] OUTPUT")
     print("=" * 72)

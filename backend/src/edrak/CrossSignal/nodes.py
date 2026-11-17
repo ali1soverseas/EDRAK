@@ -18,6 +18,7 @@ from ..contracts.CrossSignal import (
     CrossSignalSummary,
     DecisionReadyContext,
 )
+from ..core.llm import DEFAULT_MAX_TOKENS
 
 from ..contracts.base import new_id
 
@@ -1643,12 +1644,12 @@ class CrossSignalNodes:
             len(LENSES),
         )
 
-        # json_schema stated explicitly, plus the schema restated in the prompt
-        # at each call site. Both are required: left to the library default with
-        # no instruction this scored 0/5, returning the bare signals array
-        # instead of the object wrapping it. With both, 5/5.
+        # Use schema-constrained response format and restate the
+        # expected object shape in the prompt.
         structured_llm = self.llm.with_structured_output(
-            SignalDetectionResult, method="json_schema"
+            SignalDetectionResult,
+            method="json_schema",
+            max_tokens=DEFAULT_MAX_TOKENS,
         )
 
         for lens in LENSES:

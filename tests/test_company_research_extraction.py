@@ -130,6 +130,23 @@ def test_the_model_is_told_the_rules_the_categories_the_profile_and_the_sources(
     assert "JSON schema" in schema["content"] and "facts" in schema["content"]
 
 
+def test_list_fact_arrays_are_normalized_to_the_stored_json_string():
+    extracted = ExtractedFact.model_validate(
+        {
+            "category": "technology",
+            "key": "gpu_architectures",
+            "value": ["Blackwell", "Hopper"],
+            "source": "S1",
+            "quote": "Blackwell and Hopper architectures power our GPUs.",
+        }
+    )
+
+    assert extracted.value == '["Blackwell", "Hopper"]'
+    assert extracted.value_type is ValueType.LIST
+    value_schema = ExtractedFact.model_json_schema()["properties"]["value"]
+    assert "anyOf" in value_schema
+
+
 def test_no_documents_means_no_model_call():
     llm = Llm(reply())
     result = run([doc(text=" ")], llm)

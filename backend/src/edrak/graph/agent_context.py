@@ -29,7 +29,12 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Sequence
 
-from .connection import GraphConnection, get_connection, get_graph_settings
+from .connection import (
+    GraphConnection,
+    effective_graph_workspace_id,
+    get_connection,
+    get_graph_settings,
+)
 from .entities import EntityIndex, enum_value, get, slugify
 from .retrieval.graph_retriever import GraphFinding, GraphGap, GraphRetriever, GraphSignal, MetricPoint
 from .retrieval.history import (
@@ -194,7 +199,7 @@ def prior_knowledge_for_task(
     """
     worker = enum_value(get(task, "worker")) or ""
     profile = WORKER_PROFILES.get(worker, _DEFAULT_PROFILE)
-    workspace_id = get(get(task, "company_profile"), "workspace_id")
+    workspace_id = effective_graph_workspace_id(get(get(task, "company_profile"), "workspace_id"))
     prior = PriorKnowledge(worker=worker)
     if not workspace_id:
         return prior

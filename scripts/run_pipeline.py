@@ -41,10 +41,8 @@ from edrak.contracts import (
 )
 from pydantic import BaseModel, Field, field_validator
 
-# The orchestration chain imports core.config, which constructs Settings at import
-# time and raises when OLLAMA_API_KEY is missing. Those imports are deliberately
-# deferred into the functions that need them so a missing key produces a readable
-# message instead of a traceback during module import.
+# The orchestration chain's model imports are deliberately deferred so a missing
+# NVIDIA key produces a readable message instead of a traceback during import.
 
 EXIT_COMPLETED = 0
 EXIT_PARTIAL = 1
@@ -112,11 +110,9 @@ def resolve_api_key() -> str | None:
     it is supposed to live.
     """
     try:
-        from edrak.core.config import settings
+        from edrak.core.llm import provider_key
 
-        raw = settings.OLLAMA_API_KEY
-        # Settings may declare the key as SecretStr or as a plain str; accept both.
-        key = raw.get_secret_value() if hasattr(raw, "get_secret_value") else raw
+        key, _ = provider_key("NVIDIA_API_KEY", "orchestrator")
     except Exception as exc:  # noqa: BLE001 - configuration errors vary by type
         print(f"could not load configuration: {exc}", file=sys.stderr)
         return None
@@ -403,8 +399,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not resolve_api_key():
         print(
-            "OLLAMA_API_KEY is not set. Copy .env.example to .env and fill it in.\n"
-            "Create a key at https://ollama.com/settings/keys",
+            "NVIDIA_API_KEY is not set. Copy .env.example to .env and add your NVIDIA NIM key.",
             file=sys.stderr,
         )
         return EXIT_FAILED

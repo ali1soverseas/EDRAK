@@ -1,8 +1,10 @@
-"""Live smoke test for profile extraction. Skipped unless OLLAMA_API_KEY is configured.
+"""Live smoke test for profile extraction. Skipped unless explicitly enabled.
 
-Makes one real call to the configured model (OLLAMA_MODEL, gpt-oss:120b by default).
-Run: python -m pytest tests/test_company_profile_live.py -s
+Makes one real call to the configured NVIDIA model.
+Run with NVIDIA_LIVE_TESTS=1: python -m pytest tests/test_company_profile_live.py -s
 """
+
+import os
 
 import pytest
 
@@ -11,7 +13,11 @@ from edrak.company_profile.validate import ALLOWED_INDUSTRIES
 from edrak.core.llm import provider_key
 
 pytestmark = pytest.mark.skipif(
-    not provider_key("OLLAMA_API_KEY")[0], reason="OLLAMA_API_KEY is not configured."
+    not (
+        os.getenv("NVIDIA_LIVE_TESTS") == "1"
+        and bool(provider_key("NVIDIA_API_KEY", "orchestrator")[0])
+    ),
+    reason="Set NVIDIA_LIVE_TESTS=1 and configure an NVIDIA API key to run this live test.",
 )
 
 HOME = """Nile Ledger | نايل ليدجر
