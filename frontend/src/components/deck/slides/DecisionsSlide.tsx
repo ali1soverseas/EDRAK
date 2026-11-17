@@ -64,12 +64,33 @@ function EmphasisNote({ personalization }: { personalization: NonNullable<Decisi
   const L = useL();
   const phrase = (table: Record<string, [string, string]>, id?: string) => (id && table[id] ? L(table[id][0], table[id][1]) : "");
   const label = (id?: string) => phrase(CRITERION, id);
-  const focus = personalization.relation ? phrase(RELATION, personalization.relation) : label(personalization.criterion);
+  const labels = (ids?: string[]) => (ids ?? []).map(label).filter(Boolean);
+  const joinFocus = (parts: string[]) => {
+    if (parts.length <= 1) return parts[0] || "";
+    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+    return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;
+  };
+  const joinFocusAr = (parts: string[]) => {
+    if (parts.length <= 1) return parts[0] || "";
+    if (parts.length === 2) return `${parts[0]} و${parts[1]}`;
+    return `${parts.slice(0, -1).join("، ")}، و${parts[parts.length - 1]}`;
+  };
+  const multi = labels(personalization.criteria);
+  const focus = personalization.relation
+    ? phrase(RELATION, personalization.relation)
+    : multi.length > 0
+      ? joinFocus(multi)
+      : label(personalization.criterion);
+  const focusAr = personalization.relation
+    ? phrase(RELATION, personalization.relation)
+    : multi.length > 0
+      ? joinFocusAr(multi)
+      : label(personalization.criterion);
   const titles = (personalization.decisions ?? []).map((d) => d.title).filter(Boolean).join(", ");
   const text = personalization.status === "applied"
     ? L(
         `This analysis looks more closely at ${focus}${titles ? `, based on earlier decisions: ${titles}` : ""}.`,
-        `يتعمق هذا التحليل في ${focus}${titles ? ` بناءً على قرارات سابقة: ${titles}` : ""}.`,
+        `يتعمق هذا التحليل في ${focusAr}${titles ? ` بناءً على قرارات سابقة: ${titles}` : ""}.`,
       )
     : L(
         `Earlier decisions weighed ${label(personalization.criteria?.[0])} and ${label(personalization.criteria?.[1])} differently, so each option compares both.`,

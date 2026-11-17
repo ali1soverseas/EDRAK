@@ -105,6 +105,8 @@ class Settings(BaseSettings):
     # Personalization stays off unless this many decisions pass the threshold, and unless
     # one aspect has a score of at least this value or is carried by at least this many decisions.
     PERSONALIZATION_ASPECT_BAR: int = 2
+    # How many focus areas may steer one analysis when history points at several.
+    PERSONALIZATION_MAX_ASPECTS: int = 3
     GUARDRAIL_SCOPE_CHECK: bool = True
     # Hook A: JEV semantic second layer in check_query (2 Nouls, ~1 credit per
     # novel query). Off by default; the deterministic checks always run.

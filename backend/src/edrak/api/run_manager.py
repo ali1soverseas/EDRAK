@@ -40,7 +40,14 @@ from edrak.db.repositories import results as results_repo
 from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import fetch_one, now_iso
 from edrak.core.config import settings
-from edrak.DecisionAnalysis.personalization import HISTORY_POOL, embed_texts, infer_preference, load_history, select_relevant
+from edrak.DecisionAnalysis.personalization import (
+    HISTORY_POOL,
+    embed_texts,
+    infer_preference,
+    load_history,
+    option_themes,
+    select_relevant,
+)
 from edrak.orchestration.graph import build_graph
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
@@ -590,6 +597,9 @@ class RunManager:
                         )
                         if chosen:
                             preference = infer_preference(chosen, aspect_bar=settings.PERSONALIZATION_ASPECT_BAR)
+                            themes = option_themes(chosen, preference)
+                            if themes:
+                                preference = {**preference, "option_themes": themes}
                     state = {"request": request, "plan": plan, "decision_preference": preference}
                     stream_input = {"request": request, "plan": plan, "decision_preference": preference}
                 logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)

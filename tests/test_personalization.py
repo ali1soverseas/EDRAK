@@ -51,8 +51,9 @@ def test_inference_needs_two_decisions_and_names_a_split():
     assert applied["status"] == "applied" and applied["criterion"] == "speed"
     assert [item["title"] for item in applied["decisions"]] == ["Portal", "Billing"]
 
+    # Equal weight across two aspects applies both focuses (no longer "uncertain").
     split = infer_preference([_row("speed"), _row("speed", title="Other"), _row("cost"), _row("cost", title="Again")])
-    assert split["status"] == "uncertain" and split["criteria"] == ["speed", "cost"]
+    assert split["status"] == "applied" and split["criteria"] == ["speed", "cost"]
 
     # One stated reason outweighs one option tag, but still needs a second decision.
     weighted = infer_preference([_row("speed", reason=True), _row("cost"), _row("speed", title="Second")])
@@ -123,9 +124,25 @@ def test_the_same_decisions_narrow_the_focus_when_speed_outweighs_cost():
     assert "time to value" in note_text(applied)
 
 
-def test_a_split_across_decisions_stays_a_trade_off():
+def test_a_split_across_decisions_applies_both_focuses():
     split = infer_preference([_row("speed"), _row("speed", title="Other"), _row("cost"), _row("cost", title="Again")])
-    assert split["status"] == "uncertain" and split["criteria"] == ["speed", "cost"]
+    assert split["status"] == "applied" and split["criteria"] == ["speed", "cost"]
+    sentence = emphasis_text(split)
+    assert "trade-off" in sentence and "implementation time" in sentence and "total cost" in sentence
+    assert "implementation time and total cost" in note_text(split)
+
+
+def test_three_cleared_aspects_are_examined_together():
+    rows = [
+        _row("speed"), _row("speed", title="S2"),
+        _row("cost"), _row("cost", title="C2"),
+        _row("risk"), _row("risk", title="R2"),
+    ]
+    applied = infer_preference(rows)
+    assert applied["status"] == "applied"
+    assert set(applied["criteria"]) == {"speed", "cost", "risk"}
+    sentence = emphasis_text(applied)
+    assert "Examine" in sentence and "in more depth" in sentence
 
 
 def test_a_weaker_aspect_on_other_decisions_leaves_the_leader():
@@ -141,7 +158,7 @@ def test_an_aspect_must_clear_the_bar_by_score_or_count():
     assert infer_preference([_row("speed"), _row("speed", title="Billing")], aspect_bar=2)["criterion"] == "speed"
 
 
-def test_select_relevant_keeps_the_closest_and_stops_when_too_few_pass():
+def test_select_relevant_averages_strategy_and_business_scores():
     from edrak.DecisionAnalysis.personalization import select_relevant
 
     vectors = {
@@ -149,26 +166,55 @@ def test_select_relevant_keeps_the_closest_and_stops_when_too_few_pass():
         "close": [0.95, 0.05],
         "mid": [0.8, 0.6],
         "far": [0.0, 1.0],
+        "empty": [0.0, 0.0],
     }
 
     def embed(texts):
         out = []
         for text in texts:
-            key = next((name for name in vectors if name in text), "uae")
+            key = next((name for name in vectors if name and name in text), "empty" if not text.strip() else "uae")
             out.append(vectors[key])
         return out
 
+    # Dual texts: [req_strategy, req_business, past_strategy, past_business, ...]
     request = {"goal": "uae market entry", "business_context": {"markets": ["uae"]}}
     rows = [
-        {"id": "1", "title": "far billing", "question": "far", "recorded_at": "2026-03-01", "preference_tags": "{}"},
-        {"id": "2", "title": "close entry", "question": "close", "recorded_at": "2026-01-01", "preference_tags": "{}"},
-        {"id": "3", "title": "mid entry", "question": "mid", "recorded_at": "2026-02-01", "preference_tags": "{}"},
-        {"id": "4", "title": "closer entry", "question": "close", "recorded_at": "2026-04-01", "preference_tags": "{}"},
+        {"id": "1", "title": "far billing", "question": "far", "markets": '["uae"]', "recorded_at": "2026-03-01", "preference_tags": "{}"},
+        {"id": "2", "title": "close entry", "question": "close", "markets": '["uae"]', "recorded_at": "2026-01-01", "preference_tags": "{}"},
+        {"id": "3", "title": "mid entry", "question": "mid", "markets": '["uae"]', "recorded_at": "2026-02-01", "preference_tags": "{}"},
+        {"id": "4", "title": "closer entry", "question": "close", "markets": '["uae"]', "recorded_at": "2026-04-01", "preference_tags": "{}"},
     ]
     kept = select_relevant(rows, request, k=2, threshold=0.7, aspect_bar=2, embed=embed)
     assert [row["id"] for row in kept] == ["4", "2"]
     assert select_relevant(rows[:1], request, k=2, threshold=0.7, aspect_bar=2, embed=embed) == []
     assert infer_preference(select_relevant(rows[:1], request, k=2, threshold=0.7, aspect_bar=2, embed=embed))["status"] == "none"
+
+
+def test_option_themes_keep_only_strategies_that_share_focus_tags():
+    from edrak.DecisionAnalysis.personalization import option_themes
+
+    preference = {"status": "applied", "criteria": ["speed", "cost"]}
+    rows = [
+        {
+            "id": "1",
+            "title": "Faster launch",
+            "option_label": "A",
+            "preference_tags": json.dumps({"version": 2, "option": ["speed"], "reason": []}),
+            "options_json": json.dumps([{"key": "A", "title": "Pilot with a partner", "thesis": "Ship this quarter"}]),
+        },
+        {
+            "id": "2",
+            "title": "Safe wait",
+            "option_label": "B",
+            "preference_tags": json.dumps({"version": 2, "option": ["risk"], "reason": []}),
+            "options_json": json.dumps([{"key": "B", "title": "Wait for proof", "thesis": "Close the gap first"}]),
+        },
+    ]
+    themes = option_themes(rows, preference)
+    assert len(themes) == 1
+    assert themes[0]["title"] == "Pilot with a partner"
+    assert themes[0]["tags"] == ["speed"]
+    assert option_themes(rows, {"status": "none"}) == []
 
 
 def test_each_new_aspect_is_examined_on_its_own():

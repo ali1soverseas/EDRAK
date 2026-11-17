@@ -1,7 +1,7 @@
-"""Turn saved decision tags into one analysis emphasis.
+"""Turn saved decision tags into analysis emphasis and option strategy themes.
 
-The emphasis tells the existing analysis which criterion to examine more deeply.
-It does not rank options, remove options, or choose one.
+The emphasis tells the existing analysis which criteria to examine more deeply.
+Past strategy themes can inspire new options. Neither ranks options nor chooses one.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 TAGS_VERSION = 2
 HISTORY_POOL = 50
+MAX_OPTION_THEMES = 5
 CRITERIA: dict[str, dict[str, Any]] = {
     "speed": {
         "label": "implementation time",
@@ -190,6 +191,7 @@ async def load_history(db, workspace_id: str, use_case: str, limit: int = HISTOR
     return await fetch_all(db, """
         SELECT d.id, d.title, d.option_label, d.preference_tags, d.recorded_at,
                json_extract(b.document, '$.question') AS question,
+               json_extract(b.document, '$.options') AS options_json,
                json_extract(b.document, '$.request.business_context.markets') AS markets,
                json_extract(b.document, '$.request.business_context.targets') AS targets,
                json_extract(b.document, '$.request.business_context.offering') AS offering,
@@ -219,23 +221,43 @@ def _request_data(request: Any) -> dict[str, Any]:
     return request if isinstance(request, dict) else {}
 
 
-def request_text(request: Any) -> str:
-    """The current question, plus the market, competitor and offering names."""
+def _join(*parts: str) -> str:
+    return " ".join(part for part in parts if part)
+
+
+def strategy_text_request(request: Any) -> str:
+    """Current decision intent: the goal / question only."""
+    data = _request_data(request)
+    return str(data.get("goal") or "").strip()
+
+
+def business_text_request(request: Any) -> str:
+    """Current markets, offering and competitors."""
     data = _request_data(request)
     context = data.get("business_context") or {}
     competitors = _names(context.get("competitors")) + _names(context.get("targets"))
-    parts = [data.get("goal") or "", context.get("offering") or "", " ".join(_names(context.get("markets"))), " ".join(competitors)]
-    return " ".join(part for part in parts if part)
+    return _join(context.get("offering") or "", " ".join(_names(context.get("markets"))), " ".join(competitors))
+
+
+def strategy_text_past(row: dict[str, Any]) -> str:
+    """Past brief question and decision title."""
+    return _join(row.get("question") or "", row.get("title") or "")
+
+
+def business_text_past(row: dict[str, Any]) -> str:
+    """Past offering, markets and competitors."""
+    competitors = _names(row.get("competitors")) + _names(row.get("targets"))
+    return _join(row.get("offering") or "", " ".join(_names(row.get("markets"))), " ".join(competitors))
+
+
+def request_text(request: Any) -> str:
+    """Joined strategy + business text (kept for callers that still want one bag)."""
+    return _join(strategy_text_request(request), business_text_request(request))
 
 
 def past_text(row: dict[str, Any]) -> str:
-    """The past brief question and decision title, plus the market, competitor and offering names.
-
-    The stored rationale is left out. It is often generated plan text.
-    """
-    competitors = _names(row.get("competitors")) + _names(row.get("targets"))
-    parts = [row.get("question") or "", row.get("title") or "", row.get("offering") or "", " ".join(_names(row.get("markets"))), " ".join(competitors)]
-    return " ".join(part for part in parts if part)
+    """Joined past strategy + business text (kept for callers that still want one bag)."""
+    return _join(strategy_text_past(row), business_text_past(row))
 
 
 def _cosine(left: list[float], right: list[float]) -> float:
@@ -259,6 +281,12 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     return [[float(value) for value in vector] for vector in vectors]
 
 
+def _side_score(left: list[float] | None, right: list[float] | None, left_text: str, right_text: str) -> float | None:
+    if not left_text.strip() or not right_text.strip() or left is None or right is None:
+        return None
+    return _cosine(left, right)
+
+
 def select_relevant(
     rows: list[dict[str, Any]],
     request: Any,
@@ -268,31 +296,62 @@ def select_relevant(
     aspect_bar: int,
     embed: Embedder,
 ) -> list[dict[str, Any]]:
-    """Past decisions at or above the similarity threshold, highest first, at most k.
+    """Past decisions at or above the averaged strategy/business similarity, highest first, at most k.
 
     Fewer passes than the aspect bar means personalization is not used.
     A failure of the embedder means the same: no rows, and the run continues.
     """
     if not rows or k <= 0:
         return []
+    req_strategy = strategy_text_request(request)
+    req_business = business_text_request(request)
+    texts: list[str] = [req_strategy, req_business]
+    pair_texts: list[tuple[str, str]] = []
+    for row in rows:
+        strategy = strategy_text_past(row)
+        business = business_text_past(row)
+        pair_texts.append((strategy, business))
+        texts.extend([strategy, business])
     try:
-        vectors = embed([request_text(request), *[past_text(row) for row in rows]])
+        vectors = embed(texts)
     except Exception:
         logger.exception("Decision history could not be embedded")
         return []
-    if len(vectors) != len(rows) + 1:
-        logger.error("Embedding returned %s vectors for %s texts", len(vectors), len(rows) + 1)
+    if len(vectors) != len(texts):
+        logger.error("Embedding returned %s vectors for %s texts", len(vectors), len(texts))
         return []
-    current = vectors[0]
+    current_strategy, current_business = vectors[0], vectors[1]
     passed: list[tuple[float, str, dict[str, Any]]] = []
-    for row, vector in zip(rows, vectors[1:]):
-        score = _cosine(current, vector)
+    for index, row in enumerate(rows):
+        past_strategy_vec = vectors[2 + index * 2]
+        past_business_vec = vectors[2 + index * 2 + 1]
+        strategy_t, business_t = pair_texts[index]
+        scores = [
+            score
+            for score in (
+                _side_score(current_strategy, past_strategy_vec, req_strategy, strategy_t),
+                _side_score(current_business, past_business_vec, req_business, business_t),
+            )
+            if score is not None
+        ]
+        if not scores:
+            continue
+        score = sum(scores) / len(scores)
         if score >= threshold:
             passed.append((score, str(row.get("recorded_at") or ""), row))
     if len(passed) < aspect_bar:
         return []
     passed.sort(key=lambda item: (item[0], item[1]), reverse=True)
     return [row for _, _, row in passed[:k]]
+
+
+def _max_aspects() -> int:
+    try:
+        from edrak.core.config import settings
+
+        return max(1, int(getattr(settings, "PERSONALIZATION_MAX_ASPECTS", 3) or 3))
+    except Exception:
+        return 3
 
 
 def _parsed(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -315,12 +374,22 @@ def _parsed(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return parsed
 
 
-def _support(parsed: list[dict[str, Any]], criterion: str) -> list[dict[str, Any]]:
-    return [{"id": row["id"], "title": row["title"], "option": row["option"]} for row in parsed if criterion in row["aspects"]]
+def _support(parsed: list[dict[str, Any]], criteria: list[str]) -> list[dict[str, Any]]:
+    wanted = set(criteria)
+    seen: set[Any] = set()
+    out: list[dict[str, Any]] = []
+    for row in parsed:
+        if not (row["aspects"] & wanted):
+            continue
+        if row["id"] in seen:
+            continue
+        seen.add(row["id"])
+        out.append({"id": row["id"], "title": row["title"], "option": row["option"]})
+    return out
 
 
 def infer_preference(rows: list[dict[str, Any]], aspect_bar: int = 2) -> dict[str, Any]:
-    """A relation when the same decisions carry both aspects, one aspect when history agrees, or none."""
+    """A relation when history co-occurs, several aspects when several clear, one aspect, or none."""
     parsed = _parsed(rows)
     weight: dict[str, float] = {}
     for row in parsed:
@@ -357,16 +426,103 @@ def infer_preference(rows: list[dict[str, Any]], aspect_bar: int = 2) -> dict[st
             "decisions": [{"id": row["id"], "title": row["title"], "option": row["option"]} for row in shared],
         }
 
-    top = ranked[0]
-    second = ranked[1] if len(ranked) > 1 else None
-    if second and (len(together(top, second)) >= aspect_bar or weight[top] < DOMINANCE * weight[second]):
-        seen = {item["id"] for item in _support(parsed, top)}
+    chosen = ranked[: _max_aspects()]
+    if len(chosen) >= 2:
         return {
-            "status": "uncertain",
-            "criteria": [top, second],
-            "decisions": _support(parsed, top) + [item for item in _support(parsed, second) if item["id"] not in seen],
+            "status": "applied",
+            "criteria": chosen,
+            "decisions": _support(parsed, chosen),
         }
-    return {"status": "applied", "criterion": top, "decisions": _support(parsed, top)}
+    top = chosen[0]
+    return {"status": "applied", "criterion": top, "decisions": _support(parsed, [top])}
+
+
+def chosen_focuses(preference: dict[str, Any] | None) -> list[str]:
+    """Focus ids that personalization is currently applying."""
+    preference = preference or {}
+    if preference.get("status") != "applied":
+        # Legacy uncertain trade-offs still count as the two criteria.
+        if preference.get("status") == "uncertain":
+            return [c for c in (preference.get("criteria") or []) if c in CRITERIA]
+        return []
+    if preference.get("relation"):
+        aspects = preference.get("aspects") or []
+        if aspects:
+            return [c for c in aspects if c in CRITERIA]
+        relation = RELATION_BY_ID.get(preference["relation"])
+        if relation:
+            for pair, spec in RELATIONS.items():
+                if spec["id"] == preference["relation"]:
+                    return _ordered(pair)
+        return []
+    if preference.get("criterion") in CRITERIA:
+        return [preference["criterion"]]
+    return [c for c in (preference.get("criteria") or []) if c in CRITERIA]
+
+
+def _chosen_option_theme(row: dict[str, Any]) -> dict[str, str] | None:
+    """Title and thesis of the option the user recorded, when the brief still has it."""
+    label = row.get("option_label")
+    options = loads(row.get("options_json"), row.get("options_json"))
+    if isinstance(options, list) and label:
+        for option in options:
+            if isinstance(option, dict) and option.get("key") == label:
+                title = str(option.get("title") or "").strip()
+                thesis = str(option.get("thesis") or "").strip()
+                if title or thesis:
+                    return {"title": title or thesis, "thesis": thesis}
+    title = str(row.get("title") or "").strip()
+    if title:
+        return {"title": title, "thesis": ""}
+    return None
+
+
+def option_themes(
+    rows: list[dict[str, Any]],
+    preference: dict[str, Any] | None,
+    *,
+    max_themes: int = MAX_OPTION_THEMES,
+) -> list[dict[str, Any]]:
+    """Past strategy ideas whose tags overlap the applied focuses (tighter 2.4 rule)."""
+    focuses = set(chosen_focuses(preference))
+    if not focuses or max_themes <= 0:
+        return []
+    themes: list[dict[str, Any]] = []
+    for row in rows:
+        tags = loads(row.get("preference_tags"), {}) or {}
+        if not isinstance(tags, dict):
+            continue
+        aspects = {
+            criterion
+            for criterion in [*(tags.get("option") or []), *(tags.get("reason") or [])]
+            if criterion in CRITERIA
+        }
+        if not (aspects & focuses):
+            continue
+        theme = _chosen_option_theme(row)
+        if theme is None:
+            continue
+        themes.append({
+            "id": row.get("id"),
+            "title": theme["title"],
+            "thesis": theme["thesis"],
+            "tags": _ordered(aspects),
+            "option_label": row.get("option_label"),
+        })
+        if len(themes) >= max_themes:
+            break
+    return themes
+
+
+def _criteria_phrase(criteria: list[str], *, field: str) -> str | None:
+    parts = [CRITERIA[criterion][field] for criterion in criteria if criterion in CRITERIA]
+    if not parts:
+        return None
+    if len(parts) == 1:
+        return parts[0]
+    if len(parts) == 2:
+        return f"{parts[0]} and {parts[1]}"
+    return f"{', '.join(parts[:-1])}, and {parts[-1]}"
 
 
 def emphasis_text(preference: dict[str, Any] | None) -> str | None:
@@ -377,9 +533,15 @@ def emphasis_text(preference: dict[str, Any] | None) -> str | None:
         return f"Examine {relation['focus']} in more depth."
     if status == "applied" and (preference or {}).get("criterion") in CRITERIA:
         return f"Examine {CRITERIA[preference['criterion']]['focus']} in more depth."
-    criteria = (preference or {}).get("criteria") or []
-    if status == "uncertain" and len(criteria) == 2 and all(criterion in CRITERIA for criterion in criteria):
-        first, second = (CRITERIA[criterion]["focus"] for criterion in criteria)
+    criteria = [c for c in ((preference or {}).get("criteria") or []) if c in CRITERIA]
+    if status == "applied" and len(criteria) >= 2:
+        if len(criteria) == 2:
+            first, second = (CRITERIA[c]["focus"] for c in criteria)
+            return f"Make the trade-off between {first} and {second} explicit."
+        phrase = _criteria_phrase(criteria, field="focus")
+        return f"Examine {phrase} in more depth." if phrase else None
+    if status == "uncertain" and len(criteria) == 2:
+        first, second = (CRITERIA[c]["focus"] for c in criteria)
         return f"Make the trade-off between {first} and {second} explicit."
     return None
 
@@ -394,8 +556,14 @@ def note_text(preference: dict[str, Any] | None) -> str | None:
         return f"This analysis looks more closely at {relation['label']}{basis}."
     if status == "applied" and (preference or {}).get("criterion") in CRITERIA:
         return f"This analysis looks more closely at {CRITERIA[preference['criterion']]['label']}{basis}."
-    criteria = (preference or {}).get("criteria") or []
-    if status == "uncertain" and len(criteria) == 2 and all(criterion in CRITERIA for criterion in criteria):
-        first, second = (CRITERIA[criterion]["label"] for criterion in criteria)
+    criteria = [c for c in ((preference or {}).get("criteria") or []) if c in CRITERIA]
+    if status == "applied" and len(criteria) >= 2:
+        labels = _criteria_phrase(criteria, field="label")
+        if len(criteria) == 2:
+            return f"This analysis looks more closely at {labels}{basis}."
+        return f"This analysis looks more closely at {labels}{basis}."
+    if status == "uncertain" and len(criteria) == 2:
+        first, second = (CRITERIA[c]["label"] for c in criteria)
         return f"Earlier decisions weighed {first} and {second} differently, so each option compares both."
     return None
+

@@ -388,6 +388,9 @@ def prepare_context_node(
         "signals": signals,
         "input_metadata": _to_dict(decision_input.metadata),
         "analysis_emphasis": emphasis_text((decision_input.metadata or {}).get("decision_preference")),
+        "history_option_themes": list(
+            ((decision_input.metadata or {}).get("decision_preference") or {}).get("option_themes") or []
+        ),
     }
 
     logger.info(
@@ -858,7 +861,11 @@ def make_validate_and_assemble_node():
             priorities=priorities,
             recommended_actions=actions,
             options=list(state.get("options") or []),
-            personalization=preference if preference.get("status") in ("applied", "uncertain") else None,
+            personalization=(
+                {key: value for key, value in preference.items() if key != "option_themes"}
+                if preference.get("status") in ("applied", "uncertain")
+                else None
+            ),
             decision_questions=original_questions,
             additional_information_needed=additional_information_needed,
             limitations=limitations,
