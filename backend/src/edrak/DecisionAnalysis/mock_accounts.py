@@ -35,9 +35,13 @@ STRATEGY_BANK: list[dict[str, Any]] = [
 ]
 
 
-def _tags_payload(tags: list[str]) -> str:
+def _tags_payload(tags: list[str], summary: str) -> str:
     option = [tag for tag in tags if tag in CRITERIA]
-    return json.dumps({"version": 2, "option": option, "reason": option[:1]})
+    text = summary.strip()
+    if text and text[-1] not in ".!?":
+        text += "."
+    why = {tag: text for tag in option if text}
+    return json.dumps({"version": 3, "option": option, "reason": option[:1], "why": why})
 
 
 def _options_json(key: str, title: str, thesis: str) -> str:
@@ -68,7 +72,7 @@ def build_mock_accounts(count: int = 20, strategies_per_account: int = 10) -> li
                 "markets": json.dumps(SHARED_BUSINESS["markets"]),
                 "competitors": json.dumps(SHARED_BUSINESS["competitors"]),
                 "targets": json.dumps(SHARED_BUSINESS["targets"]),
-                "preference_tags": _tags_payload(list(template["tags"])),
+                "preference_tags": _tags_payload(list(template["tags"]), thesis),
                 "options_json": _options_json(key, title, thesis),
                 "recorded_at": f"2026-01-{(offset % 28) + 1:02d}T12:00:00Z",
                 "tags": list(template["tags"]),

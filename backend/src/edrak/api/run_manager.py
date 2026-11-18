@@ -43,9 +43,9 @@ from edrak.core.config import settings
 from edrak.DecisionAnalysis.personalization import (
     HISTORY_POOL,
     embed_texts,
+    criteria_focus,
     infer_preference,
     load_history,
-    option_themes,
     select_relevant,
 )
 from edrak.orchestration.graph import build_graph
@@ -597,9 +597,9 @@ class RunManager:
                         )
                         if chosen:
                             preference = infer_preference(chosen, aspect_bar=settings.PERSONALIZATION_ASPECT_BAR)
-                            themes = option_themes(chosen, preference)
-                            if themes:
-                                preference = {**preference, "option_themes": themes}
+                            focus = criteria_focus(chosen)
+                            if focus:
+                                preference = {**preference, "criteria_focus": focus}
                     state = {"request": request, "plan": plan, "decision_preference": preference}
                     stream_input = {"request": request, "plan": plan, "decision_preference": preference}
                 logger.info("Running the orchestration graph for %s (resume=%s)", analysis_id, resuming)

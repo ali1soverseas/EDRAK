@@ -98,8 +98,8 @@ class Settings(BaseSettings):
     # Off in tests and when no model is configured; the pattern checks always run.
     # Read saved decision tags into the decision analysis. Tags are stored either way.
     PERSONALIZATION_ENABLED: bool = False
-    # How many relevant past decisions are scored. The candidate pool is at least 50.
-    PERSONALIZATION_HISTORY_K: int = 20
+    # How many relevant past decisions are passed to option generation. The candidate pool is at least 50.
+    PERSONALIZATION_HISTORY_K: int = 5
     # Minimum cosine similarity for a past decision to count.
     PERSONALIZATION_SIMILARITY_MIN: float = 0.55
     # Personalization stays off unless this many decisions pass the threshold, and unless

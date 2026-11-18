@@ -25,7 +25,6 @@ from ..contracts.DecisionAnalysis import (
     RiskAssessment,
 )
 from ..core.llm import get_chat_model, schema_instruction
-from .personalization import emphasis_text
 from .state import DecisionAnalysisState
 
 load_dotenv()
@@ -108,13 +107,7 @@ RULES
     company's own capability. Use "unknown" whenever the evidence does not say.
     Strong evidence does not make something high impact or easy.
 
-11. If analysis_emphasis is given, go deeper on that criterion, or on the more
-    specific combination it names, in the rationale, actions, risks and success
-    criteria of every question where it is relevant. It decides what to examine,
-    not which answer to give. It does not change confidence, impact or feasibility.
-    Do not mention past decisions or preferences.
-
-12. Return only the structured response.
+11. Return only the structured response.
 """
 
 
@@ -130,8 +123,6 @@ def build_decision_analysis_user_prompt(
         "signals": context["signals"],
         "cross_signal": context["cross_signal"],
     }
-    if context.get("analysis_emphasis"):
-        evidence["analysis_emphasis"] = context["analysis_emphasis"]
 
     return (
         "Generate exactly one complete recommendation for each question "
@@ -362,6 +353,13 @@ def _validated_signal_ids(
 # NODE 1: PREPARE CONTEXT
 # ============================================================================
 
+def _criteria_focus(metadata: Any) -> list[dict[str, Any]]:
+    """Summaries attached to the run. Empty when history was not used."""
+    preference = (metadata or {}).get("decision_preference") if isinstance(metadata, dict) else None
+    focus = preference.get("criteria_focus") if isinstance(preference, dict) else None
+    return list(focus) if isinstance(focus, list) else []
+
+
 def prepare_context_node(
     state: DecisionAnalysisState,
 ) -> dict[str, Any]:
@@ -387,10 +385,7 @@ def prepare_context_node(
         "cross_signal": _to_dict(cross_signal),
         "signals": signals,
         "input_metadata": _to_dict(decision_input.metadata),
-        "analysis_emphasis": emphasis_text((decision_input.metadata or {}).get("decision_preference")),
-        "history_option_themes": list(
-            ((decision_input.metadata or {}).get("decision_preference") or {}).get("option_themes") or []
-        ),
+        "criteria_focus": _criteria_focus(decision_input.metadata),
     }
 
     logger.info(
@@ -862,7 +857,7 @@ def make_validate_and_assemble_node():
             recommended_actions=actions,
             options=list(state.get("options") or []),
             personalization=(
-                {key: value for key, value in preference.items() if key != "option_themes"}
+                {key: value for key, value in preference.items() if key != "criteria_focus"}
                 if preference.get("status") in ("applied", "uncertain")
                 else None
             ),

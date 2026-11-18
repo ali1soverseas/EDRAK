@@ -149,7 +149,7 @@ def _text(value: Any) -> str:
 
 
 def print_decision(email: str, preference: dict[str, Any], analysis: dict[str, Any] | None, error: str | None) -> None:
-    from edrak.DecisionAnalysis.personalization import emphasis_text, note_text
+    from edrak.DecisionAnalysis.personalization import note_text
 
     print()
     print("=" * 72)
@@ -160,8 +160,6 @@ def print_decision(email: str, preference: dict[str, Any], analysis: dict[str, A
         print(f"  criterion  : {preference['criterion']}")
     if preference.get("criteria"):
         print(f"  criteria   : {', '.join(preference['criteria'])}")
-    emphasis = emphasis_text(preference)
-    print(f"  emphasis   : {emphasis or '(none — the analysis is not personalized)'}")
     if error:
         print(f"  error      : {error}")
         return

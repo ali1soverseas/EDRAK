@@ -4,7 +4,7 @@ import json
 
 from edrak.DecisionAnalysis.nodes import build_decision_analysis_user_prompt
 from edrak.DecisionAnalysis.options import _prompt, problems, DraftOption, DraftOpportunity, DraftRisk
-from edrak.DecisionAnalysis.personalization import CRITERIA, emphasis_text, infer_preference, note_text, tag_decision
+from edrak.DecisionAnalysis.personalization import CRITERIA, infer_preference, note_text, tag_decision
 
 NEW_ASPECTS = ("scale", "differentiation", "reversibility", "compliance", "revenue", "customer", "partnership", "talent")
 
@@ -60,18 +60,18 @@ def test_inference_needs_two_decisions_and_names_a_split():
     assert weighted["status"] == "applied" and weighted["criterion"] == "speed"
 
 
-def test_emphasis_reaches_both_prompts_only_when_history_applies():
-    assert emphasis_text({"status": "none"}) is None
-    assert emphasis_text(None) is None
-    speed = emphasis_text({"status": "applied", "criterion": "speed"})
-    assert "implementation time" in speed
+def test_the_old_emphasis_sentence_stays_off_both_prompts():
+    assert note_text({"status": "none"}) is None
+    assert note_text(None) is None
+    speed = "Examine time to market, implementation time and integration effort in more depth."
     context = {"business_goal": "Choose a billing approach", "business_request": {}, "decision_questions": ["Build or buy?"],
-               "signals": [], "cross_signal": {}}
+               "signals": [], "cross_signal": {}, "analysis_emphasis": speed}
     assert "analysis_emphasis" not in build_decision_analysis_user_prompt(context)
-    assert "Examine" in build_decision_analysis_user_prompt({**context, "analysis_emphasis": speed})
-    bare = {"business_goal": "Choose a billing approach", "business_request": {}, "signals": []}
-    assert "ANALYSIS EMPHASIS" not in _prompt(bare)
-    assert "ANALYSIS EMPHASIS" in _prompt({**bare, "analysis_emphasis": speed})
+    assert "implementation time" not in build_decision_analysis_user_prompt(context)
+    bare = {"business_goal": "Choose a billing approach", "business_request": {}, "signals": [], "analysis_emphasis": speed,
+            "history_option_themes": [{"title": "Pilot", "thesis": "Ship this quarter"}]}
+    prompt = _prompt(bare)
+    assert "ANALYSIS EMPHASIS" not in prompt and "STRATEGY THEMES" not in prompt and "implementation time" not in prompt
     assert note_text({"status": "applied", "criterion": "speed", "decisions": [{"title": "Portal"}]}) == (
         "This analysis looks more closely at implementation time, based on earlier decisions: Portal."
     )
@@ -115,20 +115,13 @@ def test_the_same_decisions_narrow_the_focus_when_speed_outweighs_cost():
     applied = infer_preference(rows)
     assert applied["status"] == "applied" and applied["relation"] == "time_to_value"
     assert "speed" in applied["aspects"] and "cost" in applied["aspects"]
-    sentence = emphasis_text(applied)
-    assert "how quickly the spend is recovered" in sentence
-    context = {"business_goal": "Choose a billing approach", "business_request": {}, "decision_questions": ["Build or buy?"],
-               "signals": [], "cross_signal": {}}
-    assert "Examine" in build_decision_analysis_user_prompt({**context, "analysis_emphasis": sentence})
-    assert "ANALYSIS EMPHASIS" in _prompt({"business_goal": "Choose a billing approach", "business_request": {}, "signals": [], "analysis_emphasis": sentence})
     assert "time to value" in note_text(applied)
+    assert "ANALYSIS EMPHASIS" not in _prompt({"business_goal": "Choose a billing approach", "business_request": {}, "signals": []})
 
 
 def test_a_split_across_decisions_applies_both_focuses():
     split = infer_preference([_row("speed"), _row("speed", title="Other"), _row("cost"), _row("cost", title="Again")])
     assert split["status"] == "applied" and split["criteria"] == ["speed", "cost"]
-    sentence = emphasis_text(split)
-    assert "trade-off" in sentence and "implementation time" in sentence and "total cost" in sentence
     assert "implementation time and total cost" in note_text(split)
 
 
@@ -141,8 +134,7 @@ def test_three_cleared_aspects_are_examined_together():
     applied = infer_preference(rows)
     assert applied["status"] == "applied"
     assert set(applied["criteria"]) == {"speed", "cost", "risk"}
-    sentence = emphasis_text(applied)
-    assert "Examine" in sentence and "in more depth" in sentence
+    assert "implementation time" in note_text(applied) and "reliability and risk" in note_text(applied)
 
 
 def test_a_weaker_aspect_on_other_decisions_leaves_the_leader():
@@ -190,34 +182,7 @@ def test_select_relevant_averages_strategy_and_business_scores():
     assert infer_preference(select_relevant(rows[:1], request, k=2, threshold=0.7, aspect_bar=2, embed=embed))["status"] == "none"
 
 
-def test_option_themes_keep_only_strategies_that_share_focus_tags():
-    from edrak.DecisionAnalysis.personalization import option_themes
-
-    preference = {"status": "applied", "criteria": ["speed", "cost"]}
-    rows = [
-        {
-            "id": "1",
-            "title": "Faster launch",
-            "option_label": "A",
-            "preference_tags": json.dumps({"version": 2, "option": ["speed"], "reason": []}),
-            "options_json": json.dumps([{"key": "A", "title": "Pilot with a partner", "thesis": "Ship this quarter"}]),
-        },
-        {
-            "id": "2",
-            "title": "Safe wait",
-            "option_label": "B",
-            "preference_tags": json.dumps({"version": 2, "option": ["risk"], "reason": []}),
-            "options_json": json.dumps([{"key": "B", "title": "Wait for proof", "thesis": "Close the gap first"}]),
-        },
-    ]
-    themes = option_themes(rows, preference)
-    assert len(themes) == 1
-    assert themes[0]["title"] == "Pilot with a partner"
-    assert themes[0]["tags"] == ["speed"]
-    assert option_themes(rows, {"status": "none"}) == []
-
-
-def test_each_new_aspect_is_examined_on_its_own():
+def test_each_new_aspect_is_named_in_the_note():
     for criterion in NEW_ASPECTS:
         rows = [
             _row(criterion, title=f"{criterion} first"),
@@ -225,7 +190,67 @@ def test_each_new_aspect_is_examined_on_its_own():
         ]
         preference = infer_preference(rows)
         assert preference["status"] == "applied" and preference["criterion"] == criterion
-        assert emphasis_text(preference) == f"Examine {CRITERIA[criterion]['focus']} in more depth."
+        assert note_text(preference) == (
+            f"This analysis looks more closely at {CRITERIA[criterion]['label']}, "
+            f"based on earlier decisions: {criterion} first, {criterion} second."
+        )
+
+
+def test_a_tag_keeps_the_phrase_that_selected_it():
+    options = [
+        _option("A", "Launch fast", "Ship with a partner this quarter", opportunities=["Reach the market sooner"]),
+        _option("B", "Build in-house", "Staff a team and keep ownership", opportunities=["Long-term control"]),
+        _option("C", "Wait", "Close the evidence gap before committing"),
+    ]
+    tags = tag_decision(options, "A", "It has to stay compliant")
+    assert tags["version"] == 3
+    assert tags["option"] == ["speed"] and tags["reason"] == ["compliance"]
+    assert tags["why"]["speed"] == "Launch fast. Reach the market sooner."
+    assert tags["why"]["compliance"] == "It has to stay compliant."
+
+    both = tag_decision(options, "A", "We need this live before the deadline")
+    assert both["why"]["speed"] == "Launch fast. We need this live before the deadline."
+
+
+def test_criteria_focus_is_the_only_personalization_in_the_options_prompt():
+    from edrak.DecisionAnalysis.personalization import criteria_focus
+
+    rows = [{
+        "id": "1",
+        "title": "Portal",
+        "preference_tags": json.dumps({
+            "version": 3,
+            "option": ["speed"],
+            "reason": ["compliance"],
+            "why": {"speed": "Ship with a partner this quarter.", "compliance": "It has to stay compliant.", "cost": ""},
+        }),
+    }, {
+        "id": "2",
+        "title": "Old",
+        "preference_tags": json.dumps({"version": 2, "option": ["speed"], "reason": []}),
+    }]
+    focus = criteria_focus(rows)
+    assert focus == [{
+        "id": "1",
+        "title": "Portal",
+        "items": [
+            {"criterion": "speed", "summary": "Ship with a partner this quarter."},
+            {"criterion": "compliance", "summary": "It has to stay compliant."},
+        ],
+    }]
+    prompt = _prompt({
+        "business_goal": "Choose a billing approach",
+        "business_request": {},
+        "signals": [],
+        "analysis_emphasis": "Examine implementation time in more depth.",
+        "history_option_themes": [{"title": "Pilot", "thesis": "Ship this quarter"}],
+        "criteria_focus": focus,
+    })
+    assert "CRITERIA FOCUS FROM SIMILAR PAST DECISIONS:" in prompt
+    assert "- speed: Ship with a partner this quarter." in prompt
+    assert "- compliance: It has to stay compliant." in prompt
+    assert "ANALYSIS EMPHASIS" not in prompt and "STRATEGY THEMES" not in prompt
+    assert "CRITERIA FOCUS" not in _prompt({"business_goal": "Choose a billing approach", "business_request": {}, "signals": []})
 
 
 def test_an_option_that_mentions_the_preference_is_rejected():

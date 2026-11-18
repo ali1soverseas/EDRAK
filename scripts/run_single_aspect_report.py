@@ -34,7 +34,7 @@ def _row(criterion: str, title: str) -> dict[str, Any]:
 
 
 def single_cases() -> list[dict[str, Any]]:
-    from edrak.DecisionAnalysis.personalization import CRITERIA, emphasis_text, infer_preference
+    from edrak.DecisionAnalysis.personalization import CRITERIA, infer_preference, note_text
 
     cases = []
     for criterion in NEW_ASPECTS:
@@ -48,7 +48,7 @@ def single_cases() -> list[dict[str, Any]]:
             "label": CRITERIA[criterion]["label"],
             "pair": [criterion],
             "kind": "single",
-            "emphasis": emphasis_text(preference),
+            "emphasis": note_text(preference),
             "preference": preference,
         })
     return cases

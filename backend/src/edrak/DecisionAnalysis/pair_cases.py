@@ -1,8 +1,8 @@
-"""Histories that turn each criteria pair into a decision-agent emphasis.
+"""Histories that turn each criteria pair into the on-screen note.
 
-The agent does not see the tags. It sees one sentence from ``emphasis_text``.
-Two histories per pair change that sentence. A third keeps the narrower
-sentence even when one criterion outweighs the other.
+Option generation reads stored tag summaries instead, and these rows do not
+carry any. Two histories per pair change the note. A third keeps the
+narrower note even when one criterion outweighs the other.
 """
 
 from __future__ import annotations
@@ -13,7 +13,6 @@ from typing import Any
 from .personalization import (
     CRITERIA,
     RELATIONS,
-    emphasis_text,
     infer_preference,
     note_text,
 )
@@ -62,7 +61,7 @@ def build_cases() -> list[dict[str, Any]]:
     for left, right, spec in pairs():
         for kind in KINDS:
             preference = infer_preference(history_for(left, right, kind))
-            emphasis = emphasis_text(preference)
+            note = note_text(preference)
             cases.append({
                 "id": f"{spec['id']}__{kind}",
                 "relation": spec["id"],
@@ -70,8 +69,8 @@ def build_cases() -> list[dict[str, Any]]:
                 "pair": [left, right],
                 "kind": kind,
                 "preference": preference,
-                "emphasis": emphasis,
-                "note": note_text(preference),
+                "emphasis": note,
+                "note": note,
                 "checks": _checks(left, right, spec, kind),
             })
     return cases

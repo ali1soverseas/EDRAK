@@ -114,18 +114,15 @@ async def run_case(
     skip_llm: bool,
 ) -> dict[str, Any]:
     from edrak.DecisionAnalysis.options import generate_options
-    from edrak.DecisionAnalysis.personalization import emphasis_text, infer_preference, note_text, option_themes
+    from edrak.DecisionAnalysis.personalization import criteria_focus, infer_preference, note_text
 
     rows = account["strategies"]
     # Business context is assumed to match: use the full account history as relevant.
     preference = infer_preference(rows)
-    themes = option_themes(rows, preference)
-    if themes:
-        preference = {**preference, "option_themes": themes}
+    focus = criteria_focus(rows)
 
     cross_signal = fixture["cross_signal"]
     signals = _signal_summaries(cross_signal)
-    emphasis = emphasis_text(preference)
     case: dict[str, Any] = {
         "account_id": account["id"],
         "account_name": account["name"],
@@ -133,9 +130,9 @@ async def run_case(
         "cross_signal_fixture": fixture_name,
         "goal": fixture.get("goal"),
         "use_case": fixture.get("use_case"),
-        "preference": {key: value for key, value in preference.items() if key != "option_themes"},
-        "analysis_emphasis": emphasis,
+        "preference": preference,
         "note": note_text(preference),
+        "criteria_focus": focus,
         "mock_strategies_all": [
             {
                 "id": row["id"],
@@ -146,7 +143,6 @@ async def run_case(
             }
             for row in rows
         ],
-        "mock_strategies_used": themes,
         "cross_signal_signals": signals,
         "options": [],
         "warnings": [],
@@ -169,8 +165,7 @@ async def run_case(
         },
         "signals": signals,
         "recommendation_summaries": _recommendation_summaries(cross_signal),
-        "analysis_emphasis": emphasis,
-        "history_option_themes": themes,
+        "criteria_focus": focus,
         "input_metadata": {"metric_context": [], "blocking_gaps": []},
     }
     try:
@@ -200,21 +195,18 @@ def _write_markdown(report: dict[str, Any], path: Path) -> None:
             f"- Account: {case['account_name']} (`{case['account_email']}`)",
             f"- Goal: {case.get('goal')}",
             f"- Preference: `{case.get('preference')}`",
-            f"- Emphasis: {case.get('analysis_emphasis')}",
             f"- Note: {case.get('note')}",
             "",
-            "### Mock strategies used",
+            "### Criteria focus",
             "",
         ])
-        used = case.get("mock_strategies_used") or []
+        used = case.get("criteria_focus") or []
         if not used:
-            lines.append("_None passed the tighter focus-tag filter._")
+            lines.append("_No stored tag summaries._")
             lines.append("")
-        for theme in used:
-            lines.append(
-                f"- **{theme.get('title')}** — {theme.get('thesis')} "
-                f"(tags: {', '.join(theme.get('tags') or [])})"
-            )
+        for entry in used:
+            for item in entry.get("items") or []:
+                lines.append(f"- {item.get('criterion')}: {item.get('summary')}")
         lines.extend(["", "### Cross-signal signals", ""])
         for signal in case.get("cross_signal_signals") or []:
             lines.append(f"- `{signal.get('signal_id')}` — {signal.get('title')}")
@@ -273,7 +265,7 @@ async def main_async(args: argparse.Namespace) -> int:
             else:
                 print(
                     f"  preference={case['preference'].get('status')} "
-                    f"themes={len(case.get('mock_strategies_used') or [])} "
+                    f"focus={len(case.get('criteria_focus') or [])} "
                     f"options={len(case.get('options') or [])}"
                 )
 

@@ -85,26 +85,3 @@ OUTPUT EXPECTATIONS
   evidence limitations are clearly explained.
 - Recommendations are advisory and require human judgment and approval.
 """
-
-
-def build_decision_analysis_user_prompt(
-    context: dict[str, Any],
-) -> str:
-    """
-    Serialize the prepared decision context for the LLM.
-    """
-
-    serialized_context = json.dumps(
-        context,
-        ensure_ascii=False,
-        indent=2,
-        default=str,
-    )
-
-    return (
-        "Analyze the following EDRAK decision context.\n\n"
-        "Use only the supplied Cross-Signal output and business request. "
-        "Reference exact signal IDs. Do not invent quantitative estimates. "
-        "Prioritize only when the available evidence supports doing so.\n\n"
-        f"DECISION CONTEXT:\n{serialized_context}"
-    )

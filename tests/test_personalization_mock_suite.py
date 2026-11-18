@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from edrak.DecisionAnalysis.mock_accounts import build_mock_accounts
-from edrak.DecisionAnalysis.personalization import infer_preference, option_themes
+from edrak.DecisionAnalysis.personalization import criteria_focus, infer_preference
 
 
 def test_mock_suite_has_twenty_accounts_with_ten_strategies_each():
@@ -18,14 +18,10 @@ def test_mock_suite_has_twenty_accounts_with_ten_strategies_each():
             assert row["tags"]
 
 
-def test_mock_account_history_yields_focus_and_filtered_themes():
+def test_mock_account_history_yields_a_preference_and_criteria_focus():
     account = build_mock_accounts()[0]
     preference = infer_preference(account["strategies"])
     assert preference["status"] == "applied"
-    themes = option_themes(account["strategies"], preference)
-    focuses = set(preference.get("criteria") or preference.get("aspects") or [])
-    if preference.get("criterion"):
-        focuses.add(preference["criterion"])
-    assert focuses
-    for theme in themes:
-        assert set(theme["tags"]) & focuses
+    focus = criteria_focus(account["strategies"])
+    assert focus
+    assert all(item["items"] for item in focus)

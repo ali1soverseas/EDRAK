@@ -25,7 +25,7 @@ def main() -> None:
            JOIN briefs b ON b.id = d.brief_id
            LEFT JOIN evidence_snapshots s ON s.decision_id = d.id
            WHERE d.preference_tags IS NULL
-              OR coalesce(json_extract(d.preference_tags, '$.version'), 0) < 2"""
+              OR coalesce(json_extract(d.preference_tags, '$.version'), 0) < 3"""
     ).fetchall()
     updated = 0
     for row in rows:

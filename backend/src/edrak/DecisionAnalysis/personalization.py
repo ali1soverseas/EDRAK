@@ -1,7 +1,8 @@
-"""Turn saved decision tags into analysis emphasis and option strategy themes.
+"""Turn saved decision tags into a criteria focus for later option generation.
 
-The emphasis tells the existing analysis which criteria to examine more deeply.
-Past strategy themes can inspire new options. Neither ranks options nor chooses one.
+Each tag keeps a short summary of the text that selected it. Similar past
+decisions contribute those summaries to the options prompt. The on-screen
+note is a separate sentence built from the inferred preference.
 """
 
 from __future__ import annotations
@@ -15,9 +16,8 @@ from edrak.db.util import fetch_all, loads
 
 logger = logging.getLogger(__name__)
 
-TAGS_VERSION = 2
+TAGS_VERSION = 3
 HISTORY_POOL = 50
-MAX_OPTION_THEMES = 5
 CRITERIA: dict[str, dict[str, Any]] = {
     "speed": {
         "label": "implementation time",
@@ -151,6 +151,62 @@ def _ordered(names: set[str] | list[str]) -> list[str]:
     return [criterion for criterion in CRITERIA if criterion in chosen]
 
 
+def _mentions(text: str, criterion: str) -> bool:
+    lowered = (text or "").lower()
+    return any(word in lowered for word in CRITERIA[criterion]["keywords"])
+
+
+def _phrases(text: str) -> list[str]:
+    parts = re.split(r"(?<=[.!?])\s+|\n+", (text or "").strip())
+    return [" ".join(part.split()) for part in parts if part.strip()]
+
+
+def _finish(phrase: str) -> str:
+    phrase = " ".join(phrase.split()).strip(" -")
+    if not phrase:
+        return ""
+    if phrase[-1] not in ".!?":
+        phrase += "."
+    return phrase
+
+
+def _matching(text: str, criterion: str, limit: int = 2) -> list[str]:
+    found: list[str] = []
+    for phrase in _phrases(text):
+        if not _mentions(phrase, criterion):
+            continue
+        finished = _finish(phrase)
+        if finished and finished not in found:
+            found.append(finished)
+        if len(found) >= limit:
+            break
+    return found
+
+
+def _option_phrases(option: dict[str, Any]) -> list[str]:
+    raw: list[Any] = [option.get("title") or "", option.get("thesis") or "", *(option.get("what_we_would_do") or [])]
+    for item in option.get("opportunities") or []:
+        raw.append(item.get("text") if isinstance(item, dict) else str(item))
+    phrases: list[str] = []
+    for item in raw:
+        for phrase in _phrases(str(item)):
+            if phrase not in phrases:
+                phrases.append(phrase)
+    return phrases
+
+
+def _why_summary(option_phrases: list[str], reason_text: str, criterion: str, *, from_option: bool, from_reason: bool) -> str:
+    """At most two sentences: one from each source when both selected the tag."""
+    option_hits = [_finish(phrase) for phrase in option_phrases if _mentions(phrase, criterion)] if from_option else []
+    option_hits = [phrase for phrase in option_hits if phrase]
+    reason_hits = _matching(reason_text, criterion) if from_reason else []
+    if option_hits and reason_hits:
+        phrases = option_hits[:1] + [phrase for phrase in reason_hits if phrase not in option_hits[:1]][:1]
+    else:
+        phrases = (option_hits + reason_hits)[:2]
+    return " ".join(phrases)
+
+
 def tag_decision(
     options: list[dict[str, Any]],
     chosen_key: str | None,
@@ -162,6 +218,7 @@ def tag_decision(
     Trade-offs and risks are left out: they describe what the option gives up, not what the user preferred.
     A criterion mentioned equally by every option is not a preference. The option text stays as written.
     An Arabic reason is translated before the English keywords are counted. The stored reason is unchanged.
+    Each kept tag also stores the short phrase that selected it.
     """
     chosen = next((option for option in options if isinstance(option, dict) and option.get("key") == chosen_key), None)
     option_tags: list[str] = []
@@ -183,7 +240,16 @@ def tag_decision(
                 logger.exception("Arabic rationale could not be translated")
                 reason_text = ""
     reason_tags = [criterion for criterion, count in _hits(reason_text).items() if count > 0]
-    return {"version": TAGS_VERSION, "option": option_tags, "reason": reason_tags}
+    option_phrases = _option_phrases(chosen) if chosen else []
+    why = {
+        criterion: summary
+        for criterion in _ordered(set(option_tags) | set(reason_tags))
+        if (summary := _why_summary(
+            option_phrases, reason_text, criterion,
+            from_option=criterion in option_tags, from_reason=criterion in reason_tags,
+        ))
+    }
+    return {"version": TAGS_VERSION, "option": option_tags, "reason": reason_tags, "why": why}
 
 
 async def load_history(db, workspace_id: str, use_case: str, limit: int = HISTORY_POOL) -> list[dict[str, Any]]:
@@ -437,81 +503,27 @@ def infer_preference(rows: list[dict[str, Any]], aspect_bar: int = 2) -> dict[st
     return {"status": "applied", "criterion": top, "decisions": _support(parsed, [top])}
 
 
-def chosen_focuses(preference: dict[str, Any] | None) -> list[str]:
-    """Focus ids that personalization is currently applying."""
-    preference = preference or {}
-    if preference.get("status") != "applied":
-        # Legacy uncertain trade-offs still count as the two criteria.
-        if preference.get("status") == "uncertain":
-            return [c for c in (preference.get("criteria") or []) if c in CRITERIA]
-        return []
-    if preference.get("relation"):
-        aspects = preference.get("aspects") or []
-        if aspects:
-            return [c for c in aspects if c in CRITERIA]
-        relation = RELATION_BY_ID.get(preference["relation"])
-        if relation:
-            for pair, spec in RELATIONS.items():
-                if spec["id"] == preference["relation"]:
-                    return _ordered(pair)
-        return []
-    if preference.get("criterion") in CRITERIA:
-        return [preference["criterion"]]
-    return [c for c in (preference.get("criteria") or []) if c in CRITERIA]
+def criteria_focus(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Tag summaries from the chosen histories, in the order those histories were ranked.
 
-
-def _chosen_option_theme(row: dict[str, Any]) -> dict[str, str] | None:
-    """Title and thesis of the option the user recorded, when the brief still has it."""
-    label = row.get("option_label")
-    options = loads(row.get("options_json"), row.get("options_json"))
-    if isinstance(options, list) and label:
-        for option in options:
-            if isinstance(option, dict) and option.get("key") == label:
-                title = str(option.get("title") or "").strip()
-                thesis = str(option.get("thesis") or "").strip()
-                if title or thesis:
-                    return {"title": title or thesis, "thesis": thesis}
-    title = str(row.get("title") or "").strip()
-    if title:
-        return {"title": title, "thesis": ""}
-    return None
-
-
-def option_themes(
-    rows: list[dict[str, Any]],
-    preference: dict[str, Any] | None,
-    *,
-    max_themes: int = MAX_OPTION_THEMES,
-) -> list[dict[str, Any]]:
-    """Past strategy ideas whose tags overlap the applied focuses (tighter 2.4 rule)."""
-    focuses = set(chosen_focuses(preference))
-    if not focuses or max_themes <= 0:
-        return []
-    themes: list[dict[str, Any]] = []
+    A decision recorded before summaries existed contributes nothing.
+    """
+    focus: list[dict[str, Any]] = []
     for row in rows:
         tags = loads(row.get("preference_tags"), {}) or {}
         if not isinstance(tags, dict):
             continue
-        aspects = {
-            criterion
-            for criterion in [*(tags.get("option") or []), *(tags.get("reason") or [])]
-            if criterion in CRITERIA
-        }
-        if not (aspects & focuses):
+        why = tags.get("why") or {}
+        if not isinstance(why, dict):
             continue
-        theme = _chosen_option_theme(row)
-        if theme is None:
-            continue
-        themes.append({
-            "id": row.get("id"),
-            "title": theme["title"],
-            "thesis": theme["thesis"],
-            "tags": _ordered(aspects),
-            "option_label": row.get("option_label"),
-        })
-        if len(themes) >= max_themes:
-            break
-    return themes
+        items = []
+        for criterion in _ordered(why):
+            summary = str(why.get(criterion) or "").strip()
+            if criterion in CRITERIA and summary:
+                items.append({"criterion": criterion, "summary": summary})
+        if items:
+            focus.append({"id": row.get("id"), "title": row.get("title"), "items": items})
+    return focus
 
 
 def _criteria_phrase(criteria: list[str], *, field: str) -> str | None:
@@ -523,27 +535,6 @@ def _criteria_phrase(criteria: list[str], *, field: str) -> str | None:
     if len(parts) == 2:
         return f"{parts[0]} and {parts[1]}"
     return f"{', '.join(parts[:-1])}, and {parts[-1]}"
-
-
-def emphasis_text(preference: dict[str, Any] | None) -> str | None:
-    """The one sentence the analysis prompts receive. None leaves the prompts unchanged."""
-    status = (preference or {}).get("status")
-    relation = RELATION_BY_ID.get((preference or {}).get("relation") or "")
-    if status == "applied" and relation:
-        return f"Examine {relation['focus']} in more depth."
-    if status == "applied" and (preference or {}).get("criterion") in CRITERIA:
-        return f"Examine {CRITERIA[preference['criterion']]['focus']} in more depth."
-    criteria = [c for c in ((preference or {}).get("criteria") or []) if c in CRITERIA]
-    if status == "applied" and len(criteria) >= 2:
-        if len(criteria) == 2:
-            first, second = (CRITERIA[c]["focus"] for c in criteria)
-            return f"Make the trade-off between {first} and {second} explicit."
-        phrase = _criteria_phrase(criteria, field="focus")
-        return f"Examine {phrase} in more depth." if phrase else None
-    if status == "uncertain" and len(criteria) == 2:
-        first, second = (CRITERIA[c]["focus"] for c in criteria)
-        return f"Make the trade-off between {first} and {second} explicit."
-    return None
 
 
 def note_text(preference: dict[str, Any] | None) -> str | None:
