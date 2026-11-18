@@ -85,3 +85,71 @@ def build_mock_accounts(count: int = 20, strategies_per_account: int = 10) -> li
             "strategies": strategies,
         })
     return accounts
+
+
+# Questions that are not about entering the UAE AI compute market.
+# The other half of each account repeats the fixture goal so only that half can pass.
+OFF_CONTEXT_QUESTIONS = [
+    "Which grocery delivery pricing model should noon adopt in Egypt?",
+    "Should GitLab enter the automotive compliance software market?",
+    "How should a hospital group choose an electronic health record vendor in Germany?",
+    "What packaging format should a dairy brand use for school milk in Brazil?",
+    "Should a regional airline add a cargo-only route between Nairobi and Dubai?",
+    "Which payroll vendor should a retail chain in Canada replace this year?",
+    "How should a hotel group price weekend rooms in Barcelona?",
+    "Should a textile mill in Bangladesh add a second dyeing line?",
+    "What crop insurance product should a cooperative offer wheat farmers in Kansas?",
+    "How should a city bus operator in Lisbon renew its diesel fleet?",
+]
+
+
+def _why_map(tags: list[str], summary: str) -> dict[str, str]:
+    text = summary.strip()
+    if text and text[-1] not in ".!?":
+        text += "."
+    return {tag: text for tag in tags if tag in CRITERIA and text}
+
+
+def build_focus_eval_accounts(
+    question: str,
+    count: int = 20,
+    decisions_per_account: int = 20,
+) -> list[dict[str, Any]]:
+    """Twenty accounts, twenty decisions each.
+
+    A decision is a question, tags, and a why sentence per tag. The first half
+    of each account asks something else. The second half repeats `question`,
+    which is the text relevance is scored on. Tags on that half rotate by account.
+    """
+    goal = question.strip()
+    if not goal:
+        raise ValueError("question is required")
+    half = decisions_per_account // 2
+    accounts: list[dict[str, Any]] = []
+    for index in range(count):
+        account_id = f"mock-account-{index + 1:02d}"
+        decisions: list[dict[str, Any]] = []
+        for offset in range(decisions_per_account):
+            template = STRATEGY_BANK[(index + offset) % len(STRATEGY_BANK)]
+            tags = [tag for tag in template["tags"] if tag in CRITERIA]
+            why = _why_map(tags, template["thesis"])
+            on_context = offset >= half
+            asked = goal if on_context else OFF_CONTEXT_QUESTIONS[(index + offset) % len(OFF_CONTEXT_QUESTIONS)]
+            decisions.append({
+                "id": f"{account_id}-d{offset + 1:02d}",
+                "question": asked,
+                "tags": tags,
+                "why": why,
+                "preference_tags": json.dumps({
+                    "version": 3,
+                    "option": tags,
+                    "reason": tags[:1],
+                    "why": why,
+                }),
+                "recorded_at": f"2026-01-{(offset % 28) + 1:02d}T12:00:00Z",
+            })
+        accounts.append({
+            "id": account_id,
+            "decisions": decisions,
+        })
+    return accounts

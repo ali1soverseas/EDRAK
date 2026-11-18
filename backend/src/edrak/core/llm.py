@@ -110,14 +110,6 @@ def openrouter_key(agent: str | None = None) -> str:
     return key
 
 
-# A structured reply over a real evidence pool runs long: internal synthesis
-# reached 2048 on eight items and was cut off mid-string, which surfaces as a
-# JSON parse error rather than as a truncation. This leaves room for a reply
-# several times that size. It is a ceiling, not a target; temperature and the
-# schema decide the actual length. gpt-oss-120b accepts far more than this;
-# 16384 stays inside a single completion without inviting a runaway reply.
-DEFAULT_MAX_TOKENS = 16384
-
 # One try plus two retries. These happen here, not inside the HTTP client, so
 # each failed attempt can be written to the trace before the next try.
 _CALL_ATTEMPTS = 3
@@ -298,7 +290,7 @@ def get_chat_model(
         base_url=base_url or settings.OPENROUTER_BASE_URL,
         api_key=openrouter_key(agent),
         temperature=settings.OPENROUTER_TEMPERATURE if temperature is None else temperature,
-        max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
+        max_tokens=settings.OPENROUTER_MAX_TOKENS if max_tokens is None else max_tokens,
         timeout=timeout or settings.OPENROUTER_TIMEOUT_S,
         max_retries=0,
         edrak_agent=agent or "",

@@ -53,6 +53,16 @@ class Settings(BaseSettings):
             "OPENROUTER_TIMEOUT_S", "NVIDIA_TIMEOUT_S", "OLLAMA_TIMEOUT_S"
         ),
     )
+    # Output ceiling, not a target. A structured reply once reached 2048 tokens
+    # and was cut off mid-string. OpenRouter reserves credits for this ceiling,
+    # so a smaller value is what lets a low balance accept the call.
+    OPENROUTER_MAX_TOKENS: int = Field(
+        default=16384,
+        ge=1,
+        validation_alias=AliasChoices(
+            "OPENROUTER_MAX_TOKENS", "LLM_MAX_TOKENS", "NVIDIA_MAX_TOKENS", "OLLAMA_MAX_TOKENS"
+        ),
+    )
 
     # Orchestration control-plane limits
     # 1 not 2: a replan now re-dispatches only the workers whose findings
