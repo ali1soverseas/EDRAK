@@ -1,6 +1,6 @@
-"""Live smoke test for profile extraction. Skipped unless OLLAMA_API_KEY is configured.
+"""Live smoke test for profile extraction. Skipped unless OPENROUTER_API_KEY is configured.
 
-Makes one real call to the configured model (OLLAMA_MODEL, gpt-oss:120b by default).
+Makes one real call to the configured model (OPENROUTER_MODEL).
 Run: python -m pytest tests/test_company_profile_live.py -s
 """
 
@@ -11,7 +11,7 @@ from edrak.company_profile.validate import ALLOWED_INDUSTRIES
 from edrak.core.llm import provider_key
 
 pytestmark = pytest.mark.skipif(
-    not provider_key("OLLAMA_API_KEY")[0], reason="OLLAMA_API_KEY is not configured."
+    not provider_key("OPENROUTER_API_KEY")[0], reason="OPENROUTER_API_KEY is not configured."
 )
 
 HOME = """Nile Ledger | نايل ليدجر

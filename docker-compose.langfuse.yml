@@ -32,6 +32,7 @@ services:
       CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
       CLICKHOUSE_USER: ${CLICKHOUSE_USER:-clickhouse}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-clickhouse}
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
 
       # Redis Cache & Queue
       REDIS_HOST: redis
@@ -79,6 +80,7 @@ services:
       CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
       CLICKHOUSE_USER: ${CLICKHOUSE_USER:-clickhouse}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-clickhouse}
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
 
       REDIS_HOST: redis
       REDIS_PORT: 6379

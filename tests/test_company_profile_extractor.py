@@ -93,8 +93,8 @@ def test_two_invalid_replies_raise_the_typed_error():
 
 
 def test_a_failing_model_call_is_a_typed_error_and_is_not_retried():
-    llm = FakeLLM(RuntimeError("OLLAMA_API_KEY is not configured."))
-    with pytest.raises(ProfileLLMError, match="OLLAMA_API_KEY"):
+    llm = FakeLLM(RuntimeError("OPENROUTER_API_KEY is not configured."))
+    with pytest.raises(ProfileLLMError, match="OPENROUTER_API_KEY"):
         extract_profile("ctx", llm)
     assert len(llm.calls) == 1
 

@@ -19,27 +19,39 @@ class Settings(BaseSettings):
     EDRAK_ENV: str = "development"
     EDRAK_DEBUG: bool = True
 
-    # LLM Settings (Ollama Cloud / Local OSS)
-    # Every component talks to the native Ollama client, so the OLLAMA_* names match
-    # customer_trends' own settings. The LLM_* names stay accepted as environment
-    # aliases so an existing .env keeps working.
-    OLLAMA_MODEL: str = Field(
-        default="gpt-oss:120b",
-        validation_alias=AliasChoices("OLLAMA_MODEL", "LLM_MODEL"),
+    # LLM Settings (OpenRouter, OpenAI-compatible).
+    # LLM_* names stay accepted so an existing alias keeps working. NVIDIA_* and
+    # OLLAMA_* names are accepted only so an old environment does not crash on
+    # import; the client talks to OpenRouter.
+    OPENROUTER_MODEL: str = Field(
+        default="openai/gpt-oss-120b",
+        validation_alias=AliasChoices(
+            "OPENROUTER_MODEL", "LLM_MODEL", "NVIDIA_MODEL", "OLLAMA_MODEL"
+        ),
     )
-    # The /v1 suffix is an OpenAI-compatible shim path. It still applies to the raw
-    # httpx client; the native client uses the bare host and overrides this in llm.py.
-    OLLAMA_BASE_URL: Optional[str] = Field(
-        default="https://ollama.com/v1",
-        validation_alias=AliasChoices("OLLAMA_BASE_URL", "LLM_BASE_URL"),
+    OPENROUTER_BASE_URL: str = Field(
+        default="https://openrouter.ai/api/v1",
+        validation_alias=AliasChoices(
+            "OPENROUTER_BASE_URL", "LLM_BASE_URL", "NVIDIA_BASE_URL", "OLLAMA_BASE_URL"
+        ),
     )
-    OLLAMA_API_KEY: Optional[str] = Field(
+    OPENROUTER_API_KEY: Optional[str] = Field(
         default=None,
-        validation_alias=AliasChoices("OLLAMA_API_KEY", "LLM_API_KEY"),
+        validation_alias=AliasChoices(
+            "OPENROUTER_API_KEY", "LLM_API_KEY", "NVIDIA_API_KEY", "OLLAMA_API_KEY"
+        ),
     )
-    OLLAMA_TEMPERATURE: float = Field(
+    OPENROUTER_TEMPERATURE: float = Field(
         default=0.2,
-        validation_alias=AliasChoices("OLLAMA_TEMPERATURE", "LLM_TEMPERATURE"),
+        validation_alias=AliasChoices(
+            "OPENROUTER_TEMPERATURE", "LLM_TEMPERATURE", "NVIDIA_TEMPERATURE", "OLLAMA_TEMPERATURE"
+        ),
+    )
+    OPENROUTER_TIMEOUT_S: float = Field(
+        default=180.0,
+        validation_alias=AliasChoices(
+            "OPENROUTER_TIMEOUT_S", "NVIDIA_TIMEOUT_S", "OLLAMA_TIMEOUT_S"
+        ),
     )
 
     # Orchestration control-plane limits
@@ -109,7 +121,7 @@ class Settings(BaseSettings):
     METRICS_GATHERING_ENABLED: bool = True
 
     # Company profile import: source text goes to the model in one labeled, budgeted block.
-    # The model is OLLAMA_MODEL. Reasoning effort is passed to the client as given ("" turns the option off).
+    # The model is OPENROUTER_MODEL. Reasoning effort is passed to the client as given ("" turns thinking off).
     PROFILE_IMPORT_CONTEXT_CHARS: int = 48000
     PROFILE_IMPORT_MIN_CHARS: int = 400
     PROFILE_IMPORT_REASONING: str = "low"
