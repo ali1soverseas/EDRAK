@@ -1,0 +1,1358 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\stages\\decision_analysis\\input.json",
+  "source_output": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\stages\\decision_analysis\\output.json",
+  "deterministic_checks": {
+    "known_signal_count": 6,
+    "question_recommendation_count": 6,
+    "option_count": 3,
+    "distinct_option_count": 3,
+    "duplicate_options": [],
+    "items_with_signal_references": 54,
+    "items_with_unknown_signal_references": {},
+    "empty_options": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.6923,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "decision_analysis",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "1.2.0-rubric-only",
+    "finding_count": 13,
+    "mandatory_finding_count": 13,
+    "coverage_score": 0.6923,
+    "strict_coverage_score": 0.3846,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 159,
+      "initial_missing_count": 0,
+      "initial_partial_count": 8,
+      "findings_reviewed": 8,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch. — The Actual Output effectively frames options as distinct competitive responses by providing detailed recommendations for various scenarios related to NVIDIA's competitive positioning against AMD. It includes clear decisions, rationales, actions, opportunities, risks, and success criteria, aligning well with the requirement to present options that differentiate or lead. However, while it meets the criteria well, it could improve by explicitly categorizing these responses as lead, match, differentiate, or hold and watch, which would enhance clarity and alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively frames options as distinct competitive responses by providing detailed recommendations for various scenarios related to NVIDIA's competitive positioning against AMD. It includes clear decisions, rationales, actions, opportunities, risks, and success criteria, aligning well with the requirement to present options that differentiate or lead. However, while it meets the criteria well, it could improve by explicitly categorizing these responses as lead, match, differentiate, or hold and watch, which would enhance clarity and alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Tie each proposed option to relevant verified findings and supported cross-domain signals",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Tie each proposed option to relevant verified findings and supported cross-domain signals. — The Actual Output effectively ties each proposed option to relevant verified findings and supported cross-domain signals, as evidenced by the detailed rationale provided for each recommendation, which references specific signal IDs and explains their implications. However, while the connections are generally clear, some limitations regarding the availability of certain data (e.g., NVIDIA's China revenue exposure) are noted, which slightly detracts from the overall robustness of the analysis. Overall, the output meets the criteria of clear and substantive connections but could improve by addressing the evidence gaps more thoroughly.",
+        "criteria_results": [
+          {
+            "criterion": "Tie each proposed option to relevant verified findings and supported cross-domain signals.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively ties each proposed option to relevant verified findings and supported cross-domain signals, as evidenced by the detailed rationale provided for each recommendation, which references specific signal IDs and explains their implications. However, while the connections are generally clear, some limitations regarding the availability of certain data (e.g., NVIDIA's China revenue exposure) are noted, which slightly detracts from the overall robustness of the analysis. Overall, the output meets the criteria of clear and substantive connections but could improve by addressing the evidence gaps more thoroughly."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Present materially different options rather than paraphrases of the same action",
+        "priority": "mandatory",
+        "score": 1.0,
+        "status": "covered",
+        "reason": "covered: Present materially different options rather than paraphrases of the same action. — The Actual Output presents multiple distinct recommendations that address different aspects of NVIDIA's competitive landscape, aligning with the requirement for materially different options. Each recommendation includes unique questions, decisions, rationales, actions, opportunities, risks, and success criteria, demonstrating a clear differentiation in approach rather than mere paraphrasing. This fulfills the acceptance criteria effectively.",
+        "criteria_results": [
+          {
+            "criterion": "Present materially different options rather than paraphrases of the same action.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The Actual Output presents multiple distinct recommendations that address different aspects of NVIDIA's competitive landscape, aligning with the requirement for materially different options. Each recommendation includes unique questions, decisions, rationales, actions, opportunities, risks, and success criteria, demonstrating a clear differentiation in approach rather than mere paraphrasing. This fulfills the acceptance criteria effectively."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 1.0,
+        "initial_status": "covered",
+        "final_score": 1.0,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes. — The Actual Output provides a comprehensive analysis of expected benefits, costs, risks, and tradeoffs related to NVIDIA's competitive positioning against AMD. It clearly outlines various recommendations, risks, and opportunities, addressing the primary claim effectively. However, while it discusses risks and opportunities in detail, it does not explicitly mention costs or provide quantitative outcomes, which slightly detracts from full alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis of expected benefits, costs, risks, and tradeoffs related to NVIDIA's competitive positioning against AMD. It clearly outlines various recommendations, risks, and opportunities, addressing the primary claim effectively. However, while it discusses risks and opportunities in detail, it does not explicitly mention costs or provide quantitative outcomes, which slightly detracts from full alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them. — The Actual Output effectively states a plausible time horizon related to the criterion, specifically referencing the December 2025 policy shift for H200 shipments. It includes clear assumptions about the temporary nature of this advantage and the potential for policy reversal. Additionally, it provides measurable indicators such as tracking BIS license decisions and documenting revenue forecasts. However, while it addresses the required elements well, some evidence gaps remain, particularly regarding the specifics of NVIDIA's China revenue exposure and the timeline for AMD's MI325X decisions, which slightly detracts from full alignment with the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively states a plausible time horizon related to the criterion, specifically referencing the December 2025 policy shift for H200 shipments. It includes clear assumptions about the temporary nature of this advantage and the potential for policy reversal. Additionally, it provides measurable indicators such as tracking BIS license decisions and documenting revenue forecasts. However, while it addresses the required elements well, some evidence gaps remain, particularly regarding the specifics of NVIDIA's China revenue exposure and the timeline for AMD's MI325X decisions, which slightly detracts from full alignment with the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options. — The Actual Output does not adequately carry forward uncertainty, conflicting evidence, and material evidence gaps into the options as required. While it discusses some limitations and risks, it fails to present conflicting source claims side by side or explain differences in authority or scope. The acceptance criteria for carrying forward uncertainty are not fully met, leading to a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not adequately carry forward uncertainty, conflicting evidence, and material evidence gaps into the options as required. While it discusses some limitations and risks, it fails to present conflicting source claims side by side or explain differences in authority or scope. The acceptance criteria for carrying forward uncertainty are not fully met, leading to a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-06",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not address the acceptance criteria of carrying forward uncertainty, conflicting evidence, and material evidence gaps into the options. While it provides rationale and scoring for various priorities and recommendations, it fails to present conflicting source claims or unresolved conflicts as specified in the Expected Output. Therefore, it is missing the required coverage.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.52066
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.369728
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.326056
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+              "text": "Defined early-warning triggers for policy reversal.",
+              "similarity": 0.32417
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.300114
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user. — The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options, which is a critical requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the insufficiency of evidence as required by the evaluation steps. This oversight leads to a lack of clarity for the human user regarding the decision-making process.",
+        "criteria_results": [
+          {
+            "criterion": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options, which is a critical requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the insufficiency of evidence as required by the evaluation steps. This oversight leads to a lack of clarity for the human user regarding the decision-making process."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-07",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it mentions that distinct options could not be generated, it fails to preserve the decision for the human user as required. Therefore, the coverage is missing key elements of the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.502736
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.366857
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.warnings[0]",
+              "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+              "similarity": 0.324801
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.306064
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+              "text": "Defined early-warning triggers for policy reversal.",
+              "similarity": 0.293348
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "covered: Cites relevant finding identifiers for each option. — The Actual Output includes relevant finding identifiers for each option presented, and most required identifiers are explicitly mentioned. However, there are some gaps in evidence traceability, particularly regarding the quantification of NVIDIA's China revenue exposure and the current BIS license approval rates, which slightly detracts from the overall completeness of the evidence linkage.; partial: Does not use insufficient or contradicted findings as settled premises. — The Actual Output provides detailed analysis and recommendations based on various findings, but it lacks clear evidence traceability for some claims, particularly regarding the current BIS license approval rates and NVIDIA's China revenue exposure. While it attempts to link findings to supporting signals, it does not fully meet the requirement for every material option to be linked to verified findings, as specified in the Expected Output. Additionally, some findings appear to be presented as settled premises despite the noted evidence gaps.; partial: Distinguishes facts from assumptions and strategic interpretation. — The Actual Output provides a detailed analysis and recommendations based on the competitive landscape, but it lacks a clear distinction between facts and assumptions. While it references supporting signals and outlines limitations, it does not explicitly categorize information as fact or assumption, which is a key requirement in the Expected Output. Additionally, while the retrieval context is relevant, it does not contain content that could be mistaken for part of the Actual Output, aligning with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Cites relevant finding identifiers for each option.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output includes relevant finding identifiers for each option presented, and most required identifiers are explicitly mentioned. However, there are some gaps in evidence traceability, particularly regarding the quantification of NVIDIA's China revenue exposure and the current BIS license approval rates, which slightly detracts from the overall completeness of the evidence linkage."
+          },
+          {
+            "criterion": "Does not use insufficient or contradicted findings as settled premises.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed analysis and recommendations based on various findings, but it lacks clear evidence traceability for some claims, particularly regarding the current BIS license approval rates and NVIDIA's China revenue exposure. While it attempts to link findings to supporting signals, it does not fully meet the requirement for every material option to be linked to verified findings, as specified in the Expected Output. Additionally, some findings appear to be presented as settled premises despite the noted evidence gaps."
+          },
+          {
+            "criterion": "Distinguishes facts from assumptions and strategic interpretation.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis and recommendations based on the competitive landscape, but it lacks a clear distinction between facts and assumptions. While it references supporting signals and outlines limitations, it does not explicitly categorize information as fact or assumption, which is a key requirement in the Expected Output. Additionally, while the retrieval context is relevant, it does not contain content that could be mistaken for part of the Actual Output, aligning with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-08",
+          "requirement_id": "DA-EVIDENCE",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Evidence traceability per option",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output cites relevant finding identifiers for each option, which aligns with the requirement for evidence traceability. However, it does not clearly distinguish facts from assumptions or strategic interpretations, and it lacks a structured narrative linking findings to their sources, which is necessary for full compliance with the acceptance criteria. Therefore, while some criteria are met, significant gaps remain.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.497065
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.431339
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+              "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+              "similarity": 0.341853
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.296126
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+              "text": "Defined early-warning triggers for policy reversal.",
+              "similarity": 0.280106
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Options are not merely wording variations. — The Actual Output provides a comprehensive analysis with multiple distinct strategic recommendations, each addressing different aspects of NVIDIA's competitive landscape. However, it lacks a clear presentation of these options in a decision matrix or scenario table format, which is a requirement for meaningful distinct alternatives. While the recommendations are detailed, they do not sufficiently differentiate in terms of resource commitments or risk profiles as outlined in the Expected Output. Therefore, the response does not fully meet the acceptance criteria.; missing: Includes a credible lower-commitment or wait-and-watch path when appropriate. — The Actual Output does not present a credible lower-commitment or wait-and-watch path, which is a mandatory requirement. While it provides detailed analyses and recommendations, it lacks distinct alternatives that clearly outline different strategic choices with varying resource commitments or risk profiles. The absence of a decision matrix or scenario table further detracts from its alignment with the expected output criteria.; partial: Explains what would make each option preferable. — The Actual Output provides a detailed analysis of various strategic options for NVIDIA, addressing the expected output's requirement for meaningfully distinct alternatives. However, while it outlines different recommendations, it lacks a clear presentation format like a decision matrix or scenario table, which would enhance clarity. Additionally, while it discusses risks and opportunities, it does not explicitly explain what would make each option preferable, which is a key acceptance criterion.",
+        "criteria_results": [
+          {
+            "criterion": "Options are not merely wording variations.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with multiple distinct strategic recommendations, each addressing different aspects of NVIDIA's competitive landscape. However, it lacks a clear presentation of these options in a decision matrix or scenario table format, which is a requirement for meaningful distinct alternatives. While the recommendations are detailed, they do not sufficiently differentiate in terms of resource commitments or risk profiles as outlined in the Expected Output. Therefore, the response does not fully meet the acceptance criteria."
+          },
+          {
+            "criterion": "Includes a credible lower-commitment or wait-and-watch path when appropriate.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not present a credible lower-commitment or wait-and-watch path, which is a mandatory requirement. While it provides detailed analyses and recommendations, it lacks distinct alternatives that clearly outline different strategic choices with varying resource commitments or risk profiles. The absence of a decision matrix or scenario table further detracts from its alignment with the expected output criteria."
+          },
+          {
+            "criterion": "Explains what would make each option preferable.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of various strategic options for NVIDIA, addressing the expected output's requirement for meaningfully distinct alternatives. However, while it outlines different recommendations, it lacks a clear presentation format like a decision matrix or scenario table, which would enhance clarity. Additionally, while it discusses risks and opportunities, it does not explicitly explain what would make each option preferable, which is a key acceptance criterion."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-09",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Meaningfully distinct alternatives",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as it primarily presents rationale and recommendations without clearly defined options that differ in resource commitments or risk profiles. It does not include a decision matrix or scenario table, nor does it offer a credible lower-commitment path. Additionally, there is no explanation of what makes each option preferable, which is critical for meeting the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.508999
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.390869
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.367878
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.success_criteria[2]",
+              "text": "Defined revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.346022
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.312563
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Identifies which parts of the decision have stronger or weaker support. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing various recommendations and their supporting rationales. However, it lacks explicit identification of which parts of the decision have stronger or weaker support, as required by the evaluation steps. While it discusses limitations and evidence gaps, it does not clearly articulate how these gaps could affect the overall analysis or ranking. This omission prevents it from fully meeting the acceptance criteria for asymmetric evidence disclosure.; partial: Avoids extrapolating from the best-documented segment to all segments. — The Actual Output does not adequately address the requirement to avoid extrapolating from the best-documented segment to all segments. While it provides detailed analysis and recommendations, it lacks explicit identification of which parts of the decision have stronger or weaker support, and it does not sufficiently explain how missing evidence could change the ranking. This indicates a failure to meet the acceptance criteria outlined in the Expected Output.; partial: Explains how missing evidence could change the ranking. — The Actual Output provides a detailed analysis and recommendations regarding NVIDIA's competitive landscape, but it lacks a clear explanation of how missing evidence could change the ranking. While it identifies limitations and evidence gaps, it does not explicitly connect these gaps to potential impacts on the decision-making process, which is a key requirement of the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies which parts of the decision have stronger or weaker support.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing various recommendations and their supporting rationales. However, it lacks explicit identification of which parts of the decision have stronger or weaker support, as required by the evaluation steps. While it discusses limitations and evidence gaps, it does not clearly articulate how these gaps could affect the overall analysis or ranking. This omission prevents it from fully meeting the acceptance criteria for asymmetric evidence disclosure."
+          },
+          {
+            "criterion": "Avoids extrapolating from the best-documented segment to all segments.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not adequately address the requirement to avoid extrapolating from the best-documented segment to all segments. While it provides detailed analysis and recommendations, it lacks explicit identification of which parts of the decision have stronger or weaker support, and it does not sufficiently explain how missing evidence could change the ranking. This indicates a failure to meet the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "Explains how missing evidence could change the ranking.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis and recommendations regarding NVIDIA's competitive landscape, but it lacks a clear explanation of how missing evidence could change the ranking. While it identifies limitations and evidence gaps, it does not explicitly connect these gaps to potential impacts on the decision-making process, which is a key requirement of the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-10",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Asymmetric evidence disclosure",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by providing some rationale for the priorities and recommendations, but it fails to clearly identify which parts of the decision have stronger or weaker support. Additionally, it does not explain how missing evidence could change the ranking, nor does it avoid extrapolating from the best-documented segment. Overall, it lacks the necessary depth and clarity required by the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.44077
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.330123
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[3]",
+              "text": "Quantify NVIDIA's H200 China order book and license application status to size exposure.",
+              "similarity": 0.298707
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+              "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+              "similarity": 0.298328
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.275712
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-11",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Observable decision triggers",
+        "priority": "mandatory",
+        "score": 0.6666666666666666,
+        "status": "partial",
+        "reason": "covered: Uses indicators connected to the evidence and strategic objective. — The Actual Output provides a comprehensive analysis that aligns well with the strategic objective of understanding competitor actions and their implications for NVIDIA. It identifies measurable indicators and connects them to the evidence presented, particularly regarding the BIS licensing regime and its impact on revenue forecasts. However, while it outlines observable decision triggers, it lacks a clear presentation of options in a decision matrix or scenario table, which is a requirement in the Expected Output. This omission affects the overall alignment with the acceptance criteria.; covered: Defines direction or threshold only when supported; otherwise states a qualitative trigger. — The Actual Output provides a comprehensive analysis with measurable indicators and observable events that could trigger a review or change in strategic direction, aligning well with the Expected Output's requirement for observable decision triggers. However, while it defines direction and thresholds, it lacks a clear presentation of these in a decision matrix or scenario table format, which is a preferred alternative. This results in a partial alignment with the evaluation steps.; partial: Identifies a plausible review horizon without presenting it as a fact. — The Actual Output identifies a plausible review horizon by discussing the temporary nature of NVIDIA's H200 China shipment permission and the potential for policy reversal. However, it does not clearly present this as a possibility, which is a requirement of the evaluation steps. Additionally, while it outlines measurable indicators and observable events related to the strategic direction, it lacks a clear decision matrix or scenario table as suggested in the acceptable alternatives. Overall, the output partially meets the criteria but falls short in clarity and presentation of alternatives.",
+        "criteria_results": [
+          {
+            "criterion": "Uses indicators connected to the evidence and strategic objective.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis that aligns well with the strategic objective of understanding competitor actions and their implications for NVIDIA. It identifies measurable indicators and connects them to the evidence presented, particularly regarding the BIS licensing regime and its impact on revenue forecasts. However, while it outlines observable decision triggers, it lacks a clear presentation of options in a decision matrix or scenario table, which is a requirement in the Expected Output. This omission affects the overall alignment with the acceptance criteria."
+          },
+          {
+            "criterion": "Defines direction or threshold only when supported; otherwise states a qualitative trigger.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive analysis with measurable indicators and observable events that could trigger a review or change in strategic direction, aligning well with the Expected Output's requirement for observable decision triggers. However, while it defines direction and thresholds, it lacks a clear presentation of these in a decision matrix or scenario table format, which is a preferred alternative. This results in a partial alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Identifies a plausible review horizon without presenting it as a fact.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies a plausible review horizon by discussing the temporary nature of NVIDIA's H200 China shipment permission and the potential for policy reversal. However, it does not clearly present this as a possibility, which is a requirement of the evaluation steps. Additionally, while it outlines measurable indicators and observable events related to the strategic direction, it lacks a clear decision matrix or scenario table as suggested in the acceptable alternatives. Overall, the output partially meets the criteria but falls short in clarity and presentation of alternatives."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-11",
+          "requirement_id": "DA-EXECUTION",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "Observable decision triggers",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output includes several passages that reference decision analysis and indicators related to urgency and evidence strength, which aligns with the requirement for observable decision triggers. However, it lacks a clear definition of direction or thresholds that are supported by evidence, and it does not identify a plausible review horizon. Therefore, while some acceptance criteria are met, key aspects are missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.522891
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.451368
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.423792
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.416068
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+              "text": "Defined early-warning triggers for policy reversal.",
+              "similarity": 0.392568
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "covered: Identifies resource and opportunity costs qualitatively or quantitatively when supported. — The Actual Output identifies resource and opportunity costs effectively, particularly in the context of NVIDIA's H200 China revenue and its correlation with AMD's MI325X. It discusses potential risks and opportunities related to licensing decisions, which aligns well with the evaluation steps. However, while it mentions limitations and evidence gaps, it could improve by explicitly discussing downside exposure and reversibility in a more structured manner, as outlined in the Expected Output.; partial: Discusses downside exposure and reversibility. — The Actual Output discusses downside exposure by modeling H200 China revenue risks and mentions potential policy reversals that could affect NVIDIA's market position. However, it lacks a clear discussion on reversibility in the context of the options presented, which is a critical requirement. The Expected Output emphasizes the need for a clear explanation of reversibility and the commitments required, which is not adequately addressed in the Actual Output. Additionally, the retrieval context does not contain content that could be mistaken for part of the Actual Output, aligning with the evaluation steps.; partial: Does not invent ROI, savings, or market-share outcomes. — The Actual Output does not explicitly mention ROI, savings, or market-share outcomes, which aligns with the requirement of not inventing outcomes. However, it lacks a clear discussion of downside exposure and reversibility, which is critical for the primary claim. The analysis does provide insights into risks and opportunities but does not sufficiently identify resource and opportunity costs. Therefore, while it meets some criteria, it does not fully satisfy the expectations outlined in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies resource and opportunity costs qualitatively or quantitatively when supported.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output identifies resource and opportunity costs effectively, particularly in the context of NVIDIA's H200 China revenue and its correlation with AMD's MI325X. It discusses potential risks and opportunities related to licensing decisions, which aligns well with the evaluation steps. However, while it mentions limitations and evidence gaps, it could improve by explicitly discussing downside exposure and reversibility in a more structured manner, as outlined in the Expected Output."
+          },
+          {
+            "criterion": "Discusses downside exposure and reversibility.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output discusses downside exposure by modeling H200 China revenue risks and mentions potential policy reversals that could affect NVIDIA's market position. However, it lacks a clear discussion on reversibility in the context of the options presented, which is a critical requirement. The Expected Output emphasizes the need for a clear explanation of reversibility and the commitments required, which is not adequately addressed in the Actual Output. Additionally, the retrieval context does not contain content that could be mistaken for part of the Actual Output, aligning with the evaluation steps."
+          },
+          {
+            "criterion": "Does not invent ROI, savings, or market-share outcomes.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly mention ROI, savings, or market-share outcomes, which aligns with the requirement of not inventing outcomes. However, it lacks a clear discussion of downside exposure and reversibility, which is critical for the primary claim. The analysis does provide insights into risks and opportunities but does not sufficiently identify resource and opportunity costs. Therefore, while it meets some criteria, it does not fully satisfy the expectations outlined in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-12",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "Reversibility and downside protection",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by mentioning a revenue-at-risk threshold and policy reversal indicators, which relate to downside exposure and reversibility. However, it lacks a comprehensive discussion of resource and opportunity costs, and does not provide qualitative or quantitative assessments as required. Additionally, there is no evidence of ROI or market-share outcomes being invented, but the overall coverage is insufficient to meet the mandatory priority fully.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.494041
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.409308
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.success_criteria[2]",
+              "text": "Defined revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.376772
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.364287
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.359899
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: States which critical unknowns block a recommendation. — The Actual Output does not explicitly state which critical unknowns block a recommendation, which is a key requirement. While it identifies some limitations and risks, it fails to clearly articulate the critical unknowns that hinder a definitive recommendation. Additionally, the output is lengthy and complex, making it difficult to discern the main points, which detracts from clarity. The retrieval context does not contain misleading information, but the lack of focus on critical unknowns significantly impacts the overall effectiveness of the analysis.; partial: Avoids manufacturing a preferred option merely to complete the report. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing various aspects such as revenue risks, opportunities, and strategic recommendations. However, it does not clearly state which critical unknowns block a recommendation, nor does it avoid manufacturing a preferred option, as it presents multiple recommendations without indicating which is the most defensible given the evidence gaps. This leads to a lack of clarity on the decision boundary, which is essential according to the evaluation steps.; partial: Identifies evidence needed before an irreversible commitment. — The Actual Output provides a comprehensive analysis with detailed recommendations, but it lacks explicit identification of critical unknowns that block a recommendation, which is essential for a no-go decision. While it presents evidence and considerations, it does not clearly state which specific evidence is needed before making irreversible commitments, leading to a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "States which critical unknowns block a recommendation.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly state which critical unknowns block a recommendation, which is a key requirement. While it identifies some limitations and risks, it fails to clearly articulate the critical unknowns that hinder a definitive recommendation. Additionally, the output is lengthy and complex, making it difficult to discern the main points, which detracts from clarity. The retrieval context does not contain misleading information, but the lack of focus on critical unknowns significantly impacts the overall effectiveness of the analysis."
+          },
+          {
+            "criterion": "Avoids manufacturing a preferred option merely to complete the report.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing various aspects such as revenue risks, opportunities, and strategic recommendations. However, it does not clearly state which critical unknowns block a recommendation, nor does it avoid manufacturing a preferred option, as it presents multiple recommendations without indicating which is the most defensible given the evidence gaps. This leads to a lack of clarity on the decision boundary, which is essential according to the evaluation steps."
+          },
+          {
+            "criterion": "Identifies evidence needed before an irreversible commitment.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with detailed recommendations, but it lacks explicit identification of critical unknowns that block a recommendation, which is essential for a no-go decision. While it presents evidence and considerations, it does not clearly state which specific evidence is needed before making irreversible commitments, leading to a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-13",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "No-go and human decision boundary",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to identify critical unknowns that block a recommendation, which is a mandatory requirement. It does not avoid creating a preferred option, as it presents recommendations without sufficient evidence to support them. Additionally, it does not specify the evidence needed before making an irreversible commitment. Overall, it does not meet the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.559401
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.443109
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+              "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+              "similarity": 0.313769
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+              "text": "Policy reversal early-warning indicators defined.",
+              "similarity": 0.304735
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+              "text": "Defined early-warning triggers for policy reversal.",
+              "similarity": 0.304615
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not address the acceptance criteria of carrying forward uncertainty, conflicting evidence, and material evidence gaps into the options. While it provides rationale and scoring for various priorities and recommendations, it fails to present conflicting source claims or unresolved conflicts as specified in the Expected Output. Therefore, it is missing the required coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.52066
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.369728
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.326056
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+            "text": "Defined early-warning triggers for policy reversal.",
+            "similarity": 0.32417
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.300114
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it mentions that distinct options could not be generated, it fails to preserve the decision for the human user as required. Therefore, the coverage is missing key elements of the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.502736
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.366857
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.warnings[0]",
+            "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+            "similarity": 0.324801
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.306064
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+            "text": "Defined early-warning triggers for policy reversal.",
+            "similarity": 0.293348
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output cites relevant finding identifiers for each option, which aligns with the requirement for evidence traceability. However, it does not clearly distinguish facts from assumptions or strategic interpretations, and it lacks a structured narrative linking findings to their sources, which is necessary for full compliance with the acceptance criteria. Therefore, while some criteria are met, significant gaps remain.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.497065
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.431339
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+            "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+            "similarity": 0.341853
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.296126
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+            "text": "Defined early-warning triggers for policy reversal.",
+            "similarity": 0.280106
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as it primarily presents rationale and recommendations without clearly defined options that differ in resource commitments or risk profiles. It does not include a decision matrix or scenario table, nor does it offer a credible lower-commitment path. Additionally, there is no explanation of what makes each option preferable, which is critical for meeting the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.508999
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.390869
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.367878
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.success_criteria[2]",
+            "text": "Defined revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.346022
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.312563
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by providing some rationale for the priorities and recommendations, but it fails to clearly identify which parts of the decision have stronger or weaker support. Additionally, it does not explain how missing evidence could change the ranking, nor does it avoid extrapolating from the best-documented segment. Overall, it lacks the necessary depth and clarity required by the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.44077
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.330123
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.actions[3]",
+            "text": "Quantify NVIDIA's H200 China order book and license application status to size exposure.",
+            "similarity": 0.298707
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.limitations[0]",
+            "text": "NVIDIA H200 China order book and license application status are not in the evidence.",
+            "similarity": 0.298328
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.275712
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-11",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Observable decision triggers",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output includes several passages that reference decision analysis and indicators related to urgency and evidence strength, which aligns with the requirement for observable decision triggers. However, it lacks a clear definition of direction or thresholds that are supported by evidence, and it does not identify a plausible review horizon. Therefore, while some acceptance criteria are met, key aspects are missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.522891
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.451368
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.423792
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.416068
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+            "text": "Defined early-warning triggers for policy reversal.",
+            "similarity": 0.392568
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by mentioning a revenue-at-risk threshold and policy reversal indicators, which relate to downside exposure and reversibility. However, it lacks a comprehensive discussion of resource and opportunity costs, and does not provide qualitative or quantitative assessments as required. Additionally, there is no evidence of ROI or market-share outcomes being invented, but the overall coverage is insufficient to meet the mandatory priority fully.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.494041
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.409308
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.success_criteria[2]",
+            "text": "Defined revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.376772
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.364287
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.359899
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to identify critical unknowns that block a recommendation, which is a mandatory requirement. It does not avoid creating a preferred option, as it presents recommendations without sufficient evidence to support them. Additionally, it does not specify the evidence needed before making an irreversible commitment. Overall, it does not meet the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.559401
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.443109
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[1].recommendation.actions[3]",
+            "text": "Establish a revenue-at-risk threshold tied to BIS decision timelines.",
+            "similarity": 0.313769
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[4].recommendation.success_criteria[2]",
+            "text": "Policy reversal early-warning indicators defined.",
+            "similarity": 0.304735
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[3]",
+            "text": "Defined early-warning triggers for policy reversal.",
+            "similarity": 0.304615
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.6,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing a comprehensive analysis of competitors' actions and their implications for NVIDIA. It includes detailed recommendations, risks, and opportunities related to the competitive landscape, particularly focusing on the H200 and MI325X products. However, while the output is thorough, it could be seen as overly detailed in some areas, potentially straying from the core question about competitors' actions and their direct implications for NVIDIA. Overall, it aligns well with the evaluation steps but has minor issues with relevance due to excessive detail.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, but it lacks clear framing of distinct competitive responses as required by the evaluation steps. While it identifies risks and opportunities, it does not adequately tie each proposed option to verified findings or present materially different options. Additionally, the analysis does not sufficiently carry forward uncertainties or evidence gaps, which are critical for a robust evaluation.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, supported by specific signals and recommendations. However, it includes limitations regarding the lack of evidence for certain figures, such as NVIDIA's China revenue exposure and current BIS license approval rates, which detracts from its overall reliability. Additionally, while the conclusions drawn are generally aligned with the evidence, some aspects could be seen as exceeding the strength of the available data, particularly regarding the assumptions about future political decisions. Overall, the output is well-structured but has notable gaps in evidence support.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing various dimensions such as regulatory risks, market opportunities, and strategic recommendations. However, it lacks a clear framing of distinct competitive responses as required by the evaluation steps, and while it identifies limitations and evidence gaps, it does not adequately tie each proposed option to verified findings or present materially different options. This results in a moderate score reflecting both strengths in analysis and shortcomings in alignment with the expected output.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Insufficient handling of uncertainty and conflicting evidence.",
+          "evidence": "The Actual Output does not adequately carry forward uncertainty, conflicting evidence, and material evidence gaps into the options as required.",
+          "impact": "This leads to a lack of clarity regarding the robustness of the recommendations and may mislead decision-makers about the reliability of the analysis."
+        },
+        {
+          "limitation": "Failure to clearly state evidence insufficiency.",
+          "evidence": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options.",
+          "impact": "This oversight leads to a lack of clarity for the human user regarding the decision-making process."
+        },
+        {
+          "limitation": "Inadequate evidence traceability.",
+          "evidence": "There are gaps in evidence traceability, particularly regarding the quantification of NVIDIA's China revenue exposure and the current BIS license approval rates.",
+          "impact": "This detracts from the overall completeness of the evidence linkage and may undermine the credibility of the recommendations."
+        },
+        {
+          "limitation": "Lack of distinct presentation of options.",
+          "evidence": "The Actual Output does not present a clear decision matrix or scenario table format for the options.",
+          "impact": "This makes it difficult to assess the materially different strategic choices and their associated resource commitments or risk profiles."
+        },
+        {
+          "limitation": "Absence of a credible lower-commitment or wait-and-watch path.",
+          "evidence": "The Actual Output does not present a credible lower-commitment or wait-and-watch path.",
+          "impact": "This limits the strategic options available to decision-makers and may lead to suboptimal choices."
+        },
+        {
+          "limitation": "Failure to identify stronger or weaker support for decisions.",
+          "evidence": "The Actual Output lacks explicit identification of which parts of the decision have stronger or weaker support.",
+          "impact": "This omission prevents it from fully meeting the acceptance criteria for asymmetric evidence disclosure."
+        },
+        {
+          "limitation": "Inadequate discussion of reversibility and downside exposure.",
+          "evidence": "While it mentions limitations and evidence gaps, it does not adequately discuss downside exposure and reversibility in a structured manner.",
+          "impact": "This could lead to misunderstandings about the risks associated with the proposed options."
+        },
+        {
+          "limitation": "Complexity and lack of focus on critical unknowns.",
+          "evidence": "The output is lengthy and complex, making it difficult to discern the main points, and it does not clearly articulate the critical unknowns that hinder a definitive recommendation.",
+          "impact": "This significantly impacts the overall effectiveness of the analysis."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a structured approach to carry forward uncertainty and conflicting evidence.",
+          "addresses": "This will ensure that all relevant uncertainties and evidence gaps are clearly presented alongside the recommendations.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Explicitly state evidence insufficiency when applicable.",
+          "addresses": "This will provide clarity to users regarding the robustness of the recommendations and the decision-making process.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance evidence traceability by linking all claims to verified findings.",
+          "addresses": "This will improve the credibility of the analysis and ensure that all recommendations are well-supported.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Adopt a decision matrix or scenario table format for presenting options.",
+          "addresses": "This will facilitate clearer differentiation of strategic choices and their associated risks and resource commitments.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Include a credible lower-commitment or wait-and-watch path in recommendations.",
+          "addresses": "This will provide decision-makers with more strategic options and flexibility.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Clearly identify which parts of the decision have stronger or weaker support.",
+          "addresses": "This will enhance the transparency of the analysis and help users understand the basis for recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Discuss reversibility and downside exposure in a structured manner.",
+          "addresses": "This will provide a clearer understanding of the risks associated with each option.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Simplify the presentation of findings to focus on critical unknowns.",
+          "addresses": "This will improve clarity and effectiveness in communicating the analysis.",
+          "priority": "low"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Insufficient handling of uncertainty and conflicting evidence.",
+        "evidence": "The Actual Output does not adequately carry forward uncertainty, conflicting evidence, and material evidence gaps into the options as required.",
+        "impact": "This leads to a lack of clarity regarding the robustness of the recommendations and may mislead decision-makers about the reliability of the analysis."
+      },
+      {
+        "limitation": "Failure to clearly state evidence insufficiency.",
+        "evidence": "The Actual Output does not clearly state whether the evidence is sufficient to draft distinct defensible options.",
+        "impact": "This oversight leads to a lack of clarity for the human user regarding the decision-making process."
+      },
+      {
+        "limitation": "Inadequate evidence traceability.",
+        "evidence": "There are gaps in evidence traceability, particularly regarding the quantification of NVIDIA's China revenue exposure and the current BIS license approval rates.",
+        "impact": "This detracts from the overall completeness of the evidence linkage and may undermine the credibility of the recommendations."
+      },
+      {
+        "limitation": "Lack of distinct presentation of options.",
+        "evidence": "The Actual Output does not present a clear decision matrix or scenario table format for the options.",
+        "impact": "This makes it difficult to assess the materially different strategic choices and their associated resource commitments or risk profiles."
+      },
+      {
+        "limitation": "Absence of a credible lower-commitment or wait-and-watch path.",
+        "evidence": "The Actual Output does not present a credible lower-commitment or wait-and-watch path.",
+        "impact": "This limits the strategic options available to decision-makers and may lead to suboptimal choices."
+      },
+      {
+        "limitation": "Failure to identify stronger or weaker support for decisions.",
+        "evidence": "The Actual Output lacks explicit identification of which parts of the decision have stronger or weaker support.",
+        "impact": "This omission prevents it from fully meeting the acceptance criteria for asymmetric evidence disclosure."
+      },
+      {
+        "limitation": "Inadequate discussion of reversibility and downside exposure.",
+        "evidence": "While it mentions limitations and evidence gaps, it does not adequately discuss downside exposure and reversibility in a structured manner.",
+        "impact": "This could lead to misunderstandings about the risks associated with the proposed options."
+      },
+      {
+        "limitation": "Complexity and lack of focus on critical unknowns.",
+        "evidence": "The output is lengthy and complex, making it difficult to discern the main points, and it does not clearly articulate the critical unknowns that hinder a definitive recommendation.",
+        "impact": "This significantly impacts the overall effectiveness of the analysis."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a structured approach to carry forward uncertainty and conflicting evidence.",
+        "addresses": "This will ensure that all relevant uncertainties and evidence gaps are clearly presented alongside the recommendations.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Explicitly state evidence insufficiency when applicable.",
+        "addresses": "This will provide clarity to users regarding the robustness of the recommendations and the decision-making process.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance evidence traceability by linking all claims to verified findings.",
+        "addresses": "This will improve the credibility of the analysis and ensure that all recommendations are well-supported.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Adopt a decision matrix or scenario table format for presenting options.",
+        "addresses": "This will facilitate clearer differentiation of strategic choices and their associated risks and resource commitments.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Include a credible lower-commitment or wait-and-watch path in recommendations.",
+        "addresses": "This will provide decision-makers with more strategic options and flexibility.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Clearly identify which parts of the decision have stronger or weaker support.",
+        "addresses": "This will enhance the transparency of the analysis and help users understand the basis for recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Discuss reversibility and downside exposure in a structured manner.",
+        "addresses": "This will provide a clearer understanding of the risks associated with each option.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Simplify the presentation of findings to focus on critical unknowns.",
+        "addresses": "This will improve clarity and effectiveness in communicating the analysis.",
+        "priority": "low"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\af9d8def516f839e7b587b89b50b9c6d\\stages\\decision_analysis_evaluation.json"
+}

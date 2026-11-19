@@ -1,0 +1,1222 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\stages\\cross_signal\\input.json",
+  "source_output": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\stages\\cross_signal\\output.json",
+  "deterministic_checks": {
+    "verified_input_finding_count": 50,
+    "signal_count": 6,
+    "signals_without_two_distinct_supporting_findings": [],
+    "signals_with_unverified_or_unknown_references": {},
+    "duplicate_signal_titles": [],
+    "empty_signal_output": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.6364,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "cross_signal",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "1.2.0-rubric-only",
+    "finding_count": 11,
+    "mandatory_finding_count": 11,
+    "coverage_score": 0.6364,
+    "strict_coverage_score": 0.3636,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 147,
+      "initial_missing_count": 1,
+      "initial_partial_count": 6,
+      "findings_reviewed": 7,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "CS-01",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Every cross-domain signal references the underlying verified findings and their evidence",
+        "priority": "mandatory",
+        "score": 0.9,
+        "status": "covered",
+        "reason": "covered: Every cross-domain signal references the underlying verified findings and their evidence. — The actual output effectively identifies and references multiple cross-domain signals, each explicitly linking to verified findings and their evidence. The references are substantive, providing clear connections between the signals and the supporting findings, which enhances the clarity and completeness of the report. However, while the references are strong, there could be slight improvements in the organization of the evidence to further enhance readability. Overall, the output meets the acceptance criteria well.",
+        "criteria_results": [
+          {
+            "criterion": "Every cross-domain signal references the underlying verified findings and their evidence.",
+            "score": 0.9,
+            "status": "covered",
+            "reason": "The actual output effectively identifies and references multiple cross-domain signals, each explicitly linking to verified findings and their evidence. The references are substantive, providing clear connections between the signals and the supporting findings, which enhances the clarity and completeness of the report. However, while the references are strong, there could be slight improvements in the organization of the evidence to further enhance readability. Overall, the output meets the acceptance criteria well."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.9,
+        "initial_status": "covered",
+        "final_score": 0.9,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "CS-02",
+        "requirement_id": "CS-CROSS-DOMAIN",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal. — The Actual Output effectively combines evidence from distinct research domains, particularly market intelligence and competitor intelligence, which aligns well with the requirement for a cross-signal. It integrates multiple findings that support the primary claim regarding NVIDIA's competitive landscape and regulatory dependencies. However, while it presents a comprehensive analysis, some findings are primarily restated rather than synthesized, which slightly detracts from its overall effectiveness as a cross-signal.",
+        "criteria_results": [
+          {
+            "criterion": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively combines evidence from distinct research domains, particularly market intelligence and competitor intelligence, which aligns well with the requirement for a cross-signal. It integrates multiple findings that support the primary claim regarding NVIDIA's competitive landscape and regulatory dependencies. However, while it presents a comprehensive analysis, some findings are primarily restated rather than synthesized, which slightly detracts from its overall effectiveness as a cross-signal."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "CS-03",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "The report explains the relationship between findings and distinguishes observed association from causal inference",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: The report explains the relationship between findings and distinguishes observed association from causal inference. — The Actual Output provides a comprehensive summary of findings and their relationships, effectively distinguishing between observed associations and causal inferences. It meets the clarity and substance criteria outlined in the Expected Output, detailing the implications of export control policies and AMD's product cadence on NVIDIA's market position. However, while it presents a structured narrative, it lacks a compact evidence-to-signal table that could enhance clarity further. Overall, it aligns well with the evaluation steps but could improve in presentation format.",
+        "criteria_results": [
+          {
+            "criterion": "The report explains the relationship between findings and distinguishes observed association from causal inference.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides a comprehensive summary of findings and their relationships, effectively distinguishing between observed associations and causal inferences. It meets the clarity and substance criteria outlined in the Expected Output, detailing the implications of export control policies and AMD's product cadence on NVIDIA's market position. However, while it presents a structured narrative, it lacks a compact evidence-to-signal table that could enhance clarity further. Overall, it aligns well with the evaluation steps but could improve in presentation format."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "partial: Signals preserve source dates, scope, units, confidence, and material limitations. — The Actual Output provides a comprehensive summary of competitive signals and their implications, but it lacks explicit mention of source dates, scope, units, and material limitations as required by the evaluation steps. While it includes confidence levels and some evidence gaps, it does not fully meet the acceptance criteria for preserving all required elements, resulting in a partial alignment.",
+        "criteria_results": [
+          {
+            "criterion": "Signals preserve source dates, scope, units, confidence, and material limitations.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive summary of competitive signals and their implications, but it lacks explicit mention of source dates, scope, units, and material limitations as required by the evaluation steps. While it includes confidence levels and some evidence gaps, it does not fully meet the acceptance criteria for preserving all required elements, resulting in a partial alignment."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-04",
+          "requirement_id": "CS-CONTEXT",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output does not clearly preserve source dates, scope, units, confidence, and material limitations as required by the acceptance criteria. While it provides some relevant information, it lacks explicit statements regarding confidence levels and material limitations, which are crucial for full compliance. Therefore, it is classified as partially covered.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+              "text": "Regulatory risk monitoring for H200 and MI325X",
+              "similarity": 0.28542
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.284947
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[1].dependencies[0]",
+              "text": "BIS license approval timing for H200 and MI325X",
+              "similarity": 0.242749
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[5].signal_id",
+              "text": "62cfefa2-517d-4033-8aa3-cc3861c9da7b",
+              "similarity": 0.239503
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[3].supporting_findings[3].relevance",
+              "text": "Documents MI455X unveiling at Advancing AI 2026 on July 23, 2026, with shipments ramping into Q4 2026 and first half of 2027.",
+              "similarity": 0.22299
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-05",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained. — The Actual Output effectively includes quantified impacts and supports them with evidence, particularly regarding the dependencies and risks associated with NVIDIA's H200 and AMD's MI325X. However, while it retains uncertainty and counterevidence, some areas could benefit from clearer distinctions between correlation and causation, particularly in the implications section. Overall, it aligns well with the evaluation criteria but lacks some compactness in presenting evidence-to-signal relationships.",
+        "criteria_results": [
+          {
+            "criterion": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively includes quantified impacts and supports them with evidence, particularly regarding the dependencies and risks associated with NVIDIA's H200 and AMD's MI325X. However, while it retains uncertainty and counterevidence, some areas could benefit from clearer distinctions between correlation and causation, particularly in the implications section. Overall, it aligns well with the evaluation criteria but lacks some compactness in presenting evidence-to-signal relationships."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "missing: When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap. — The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap. Instead, it presents multiple signals and findings without addressing the requirement to report no signal when no supported relation exists. This misalignment with the acceptance criteria results in a low score.",
+        "criteria_results": [
+          {
+            "criterion": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap. Instead, it presents multiple signals and findings without addressing the requirement to report no signal when no supported relation exists. This misalignment with the acceptance criteria results in a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.0,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-06",
+          "requirement_id": "CS-ABSTENTION",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not address the acceptance criterion, as it fails to report no signal when no supported cross-domain relation exists and does not explain any evidence gaps. Instead, it provides various signals and findings without indicating the absence of support or detailing gaps in evidence, which is a critical requirement of the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.234342
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+              "text": "Regulatory risk monitoring for H200 and MI325X",
+              "similarity": 0.222279
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[3].supporting_findings[3].relevance",
+              "text": "Documents MI455X unveiling at Advancing AI 2026 on July 23, 2026, with shipments ramping into Q4 2026 and first half of 2027.",
+              "similarity": 0.190326
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[5].signal_id",
+              "text": "62cfefa2-517d-4033-8aa3-cc3861c9da7b",
+              "similarity": 0.185064
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+              "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+              "similarity": 0.184549
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.0,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-EDGE-07",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Finding-level provenance",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "partial: Uses stable finding/evidence identifiers. — The Actual Output includes stable finding/evidence identifiers, as evidenced by the presence of 'finding_id' in the supporting findings for each signal. However, while it provides a comprehensive summary and detailed context, it does not explicitly link each synthesized signal to its upstream findings in a compact evidence-to-signal table or structured narrative as required. This results in a partial alignment with the evaluation steps.; partial: Preserves source dates and relevant scope. — The Actual Output does not explicitly mention source dates, which is a critical requirement. While it maintains relevant scope and provides substantive details about the competitive landscape, the absence of source dates significantly impacts its alignment with the evaluation steps. Therefore, it cannot receive a high score despite having some relevant content.; partial: Does not cite an entire worker output when only one finding supports the signal. — The Actual Output does not fully align with the evaluation steps. While it cites multiple findings that support the signals, it fails to meet the criterion of not citing the entire worker output unnecessarily, as it includes extensive details that go beyond a compact evidence-to-signal table or structured narrative. Additionally, it does not clearly distinguish between association and causation in its presentation of findings. Therefore, it does not satisfy the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Uses stable finding/evidence identifiers.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output includes stable finding/evidence identifiers, as evidenced by the presence of 'finding_id' in the supporting findings for each signal. However, while it provides a comprehensive summary and detailed context, it does not explicitly link each synthesized signal to its upstream findings in a compact evidence-to-signal table or structured narrative as required. This results in a partial alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Preserves source dates and relevant scope.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly mention source dates, which is a critical requirement. While it maintains relevant scope and provides substantive details about the competitive landscape, the absence of source dates significantly impacts its alignment with the evaluation steps. Therefore, it cannot receive a high score despite having some relevant content."
+          },
+          {
+            "criterion": "Does not cite an entire worker output when only one finding supports the signal.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not fully align with the evaluation steps. While it cites multiple findings that support the signals, it fails to meet the criterion of not citing the entire worker output unnecessarily, as it includes extensive details that go beyond a compact evidence-to-signal table or structured narrative. Additionally, it does not clearly distinguish between association and causation in its presentation of findings. Therefore, it does not satisfy the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-07",
+          "requirement_id": "CS-TRACEABILITY",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Finding-level provenance",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not meet the acceptance criteria as it fails to use stable finding/evidence identifiers, does not preserve source dates or relevant scope, and cites entire outputs rather than specific findings. Therefore, it is classified as missing coverage.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+              "text": "Regulatory risk monitoring for H200 and MI325X",
+              "similarity": 0.243559
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[2].decision_areas[0]",
+              "text": "Product roadmap timing vs AMD annual cadence",
+              "similarity": 0.220508
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.219385
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+              "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+              "similarity": 0.194826
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[3].strategic_relevance",
+              "text": "Shows competitor product timing is becoming predictable and frequent, which affects NVIDIA's own product launch planning and competitive positioning in the data-center AI accelerator market.",
+              "similarity": 0.187759
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-08",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Conflicting evidence interpretation",
+        "priority": "mandatory",
+        "score": 0.625,
+        "status": "partial",
+        "reason": "covered: Describes the conflict explicitly. — The Actual Output provides a detailed description of the conflict regarding export licensing policies affecting NVIDIA and AMD, explicitly outlining the dependencies and implications for both companies. It meets the expectation of describing the conflict and retaining counterevidence, although it could improve by more clearly distinguishing between correlation and causation in some areas. Overall, it aligns well with the evaluation steps, particularly in detailing the conflicting signals and their strategic relevance.; partial: Distinguishes correlation, plausible mechanism, and demonstrated causality. — The Actual Output provides a detailed analysis of the competitive landscape, including correlations and dependencies between NVIDIA and AMD regarding export licensing and product release cadences. However, it lacks explicit distinctions between correlation, plausible mechanisms, and demonstrated causality, which are critical for fully meeting the evaluation criteria. While it does present some conflicting signals, it does not adequately retain counterevidence or alternative explanations, which is necessary for a higher score.; partial: Retains counterevidence and alternative explanations. — The Actual Output provides a comprehensive analysis of the competitive landscape, including counterevidence and alternative explanations regarding NVIDIA and AMD's market positions. However, it lacks explicit mention of conflicting evidence interpretations and does not clearly distinguish between correlation and causation, which are critical for meeting the acceptance criteria. While it retains some counterevidence, it does not fully address the requirement to leave unresolved conflicts when they cannot be reconciled.; partial: Does not average incompatible measures. — The Actual Output provides a detailed analysis of the competitive landscape and regulatory dependencies affecting NVIDIA and AMD, but it does not explicitly state that incompatible measures are not averaged, which is a critical requirement. While it describes conflicting signals and their implications, it lacks clarity on how these conflicts are resolved without averaging, which is essential for full alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Describes the conflict explicitly.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides a detailed description of the conflict regarding export licensing policies affecting NVIDIA and AMD, explicitly outlining the dependencies and implications for both companies. It meets the expectation of describing the conflict and retaining counterevidence, although it could improve by more clearly distinguishing between correlation and causation in some areas. Overall, it aligns well with the evaluation steps, particularly in detailing the conflicting signals and their strategic relevance."
+          },
+          {
+            "criterion": "Distinguishes correlation, plausible mechanism, and demonstrated causality.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of the competitive landscape, including correlations and dependencies between NVIDIA and AMD regarding export licensing and product release cadences. However, it lacks explicit distinctions between correlation, plausible mechanisms, and demonstrated causality, which are critical for fully meeting the evaluation criteria. While it does present some conflicting signals, it does not adequately retain counterevidence or alternative explanations, which is necessary for a higher score."
+          },
+          {
+            "criterion": "Retains counterevidence and alternative explanations.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of the competitive landscape, including counterevidence and alternative explanations regarding NVIDIA and AMD's market positions. However, it lacks explicit mention of conflicting evidence interpretations and does not clearly distinguish between correlation and causation, which are critical for meeting the acceptance criteria. While it retains some counterevidence, it does not fully address the requirement to leave unresolved conflicts when they cannot be reconciled."
+          },
+          {
+            "criterion": "Does not average incompatible measures.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of the competitive landscape and regulatory dependencies affecting NVIDIA and AMD, but it does not explicitly state that incompatible measures are not averaged, which is a critical requirement. While it describes conflicting signals and their implications, it lacks clarity on how these conflicts are resolved without averaging, which is essential for full alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.625,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-08",
+          "requirement_id": "CS-RELATIONSHIP",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Conflicting evidence interpretation",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not explicitly describe the conflict between the different signals regarding the semiconductor export policy. It fails to distinguish between correlation, plausible mechanisms, and demonstrated causality, as it presents findings without addressing their conflicting nature. Additionally, it does not retain counterevidence or alternative explanations, nor does it avoid averaging incompatible measures. Overall, it does not meet the mandatory acceptance criteria outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.310944
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[1].supporting_findings[0].relevance",
+              "text": "BIS issued a rule revising its licensing policy for semiconductor exports to China.",
+              "similarity": 0.225826
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+              "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+              "similarity": 0.225016
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[1].implications[2]",
+              "text": "Policy shifts can open or close China revenue for both vendors on similar timelines",
+              "similarity": 0.218969
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.summary.risk_relevant_signals[4]",
+              "text": "Export control policy timing shift affecting China market access: Policy could reverse, and case-by-case review for MI325X could eventually be approved, eliminating NVIDIA's timing advantage.",
+              "similarity": 0.206471
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.625,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-09",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Impact calibration",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Uses quantitative impact only when inputs and method support it. — The Actual Output provides a comprehensive analysis of competitive signals and their implications for NVIDIA, but it lacks explicit quantitative impact metrics that align with the evaluation steps. While it discusses dependencies and risks, it does not present numerical data or a structured narrative linking findings to their sources, which is required for strong alignment. The Expected Output emphasizes the necessity of quantitative impact calibration, which is not fulfilled in the Actual Output.; partial: Labels qualitative implications as hypotheses or interpretations. — The Actual Output provides substantial qualitative implications and interpretations, but it lacks explicit labeling of these implications as hypotheses or interpretations, which is a key requirement. While the output does convey the necessary information and supports the claims with evidence, it does not fully meet the acceptance criteria regarding the clear distinction between association and causation.; partial: Carries forward uncertainty from low-confidence upstream findings. — The Actual Output does not clearly articulate uncertainty stemming from low-confidence upstream findings, which is a critical requirement. While it provides detailed insights and implications, it lacks explicit labeling of qualitative implications as hypotheses or interpretations, and does not carry forward uncertainty as mandated. This results in a significant shortcoming in alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Uses quantitative impact only when inputs and method support it.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of competitive signals and their implications for NVIDIA, but it lacks explicit quantitative impact metrics that align with the evaluation steps. While it discusses dependencies and risks, it does not present numerical data or a structured narrative linking findings to their sources, which is required for strong alignment. The Expected Output emphasizes the necessity of quantitative impact calibration, which is not fulfilled in the Actual Output."
+          },
+          {
+            "criterion": "Labels qualitative implications as hypotheses or interpretations.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides substantial qualitative implications and interpretations, but it lacks explicit labeling of these implications as hypotheses or interpretations, which is a key requirement. While the output does convey the necessary information and supports the claims with evidence, it does not fully meet the acceptance criteria regarding the clear distinction between association and causation."
+          },
+          {
+            "criterion": "Carries forward uncertainty from low-confidence upstream findings.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly articulate uncertainty stemming from low-confidence upstream findings, which is a critical requirement. While it provides detailed insights and implications, it lacks explicit labeling of qualitative implications as hypotheses or interpretations, and does not carry forward uncertainty as mandated. This results in a significant shortcoming in alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-09",
+          "requirement_id": "CS-QUALIFICATION",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Impact calibration",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not meet any of the acceptance criteria outlined in the Expected Output. It fails to use quantitative impact appropriately, does not label qualitative implications, and does not carry forward uncertainty from upstream findings. Therefore, it is marked as missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+              "text": "Regulatory risk monitoring for H200 and MI325X",
+              "similarity": 0.276222
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.27287
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+              "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+              "similarity": 0.219038
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[1].supporting_findings[0].relevance",
+              "text": "BIS issued a rule revising its licensing policy for semiconductor exports to China.",
+              "similarity": 0.210631
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+              "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+              "similarity": 0.193724
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-10",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Temporal alignment",
+        "priority": "mandatory",
+        "score": 0.3666666666666667,
+        "status": "partial",
+        "reason": "partial: Preserves each source's date rather than assigning one date to all evidence. — The Actual Output does not clearly preserve the individual dates of each source, which is a critical requirement. While it mentions some dates in the context of findings, it fails to explicitly state the dates associated with each source, leading to ambiguity in temporal alignment. This lack of clarity in date preservation does not meet the mandatory acceptance criteria.; partial: Flags stale or asynchronous evidence. — The Actual Output does not explicitly mention stale or asynchronous evidence, which is a critical requirement. While it provides detailed findings and implications, it fails to flag any evidence that may not align temporally with the expected conditions. Additionally, it does not preserve each source's date, which is necessary for assessing temporal alignment. Therefore, the response partially meets the criteria but lacks the necessary clarity on evidence timing.; missing: Avoids implying contemporaneous conditions when collection windows differ. — The Actual Output provides detailed insights into the competitive landscape and export control policies affecting NVIDIA and AMD. However, it fails to clearly delineate the collection windows for the findings, which is crucial for avoiding implications of contemporaneous conditions. While it mentions case-by-case reviews and political announcements, it does not explicitly preserve each source's date or flag any stale evidence, which is a significant shortcoming against the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Preserves each source's date rather than assigning one date to all evidence.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly preserve the individual dates of each source, which is a critical requirement. While it mentions some dates in the context of findings, it fails to explicitly state the dates associated with each source, leading to ambiguity in temporal alignment. This lack of clarity in date preservation does not meet the mandatory acceptance criteria."
+          },
+          {
+            "criterion": "Flags stale or asynchronous evidence.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly mention stale or asynchronous evidence, which is a critical requirement. While it provides detailed findings and implications, it fails to flag any evidence that may not align temporally with the expected conditions. Additionally, it does not preserve each source's date, which is necessary for assessing temporal alignment. Therefore, the response partially meets the criteria but lacks the necessary clarity on evidence timing."
+          },
+          {
+            "criterion": "Avoids implying contemporaneous conditions when collection windows differ.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output provides detailed insights into the competitive landscape and export control policies affecting NVIDIA and AMD. However, it fails to clearly delineate the collection windows for the findings, which is crucial for avoiding implications of contemporaneous conditions. While it mentions case-by-case reviews and political announcements, it does not explicitly preserve each source's date or flag any stale evidence, which is a significant shortcoming against the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3666666666666667,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-10",
+          "requirement_id": "CS-CONTEXT",
+          "test_case_id": "CS-GENERAL-003",
+          "title": "Temporal alignment",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately preserve the source dates, as it combines findings without clearly indicating the distinct collection windows for each piece of evidence. Additionally, it fails to flag any stale or asynchronous evidence, which is a critical requirement. The output also implies contemporaneous conditions despite differing collection windows, violating the acceptance criteria. Overall, it does not meet the mandatory requirements outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[3].evidence_gaps[0]",
+              "text": "NVIDIA's own upcoming product release dates for comparison",
+              "similarity": 0.233141
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.227996
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[1].dependencies[0]",
+              "text": "BIS license approval timing for H200 and MI325X",
+              "similarity": 0.215667
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+              "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+              "similarity": 0.210634
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[2].decision_areas[0]",
+              "text": "Product roadmap timing vs AMD annual cadence",
+              "similarity": 0.196025
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3666666666666667,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-11",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Evidence-based abstention",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "partial",
+        "reason": "partial: States which domains or links are missing. — The Actual Output does not explicitly state which domains or links are missing, failing to meet the acceptance criteria. While it provides detailed findings and implications, it does not identify the absence of specific domains or links, nor does it mention what additional evidence would be needed. This lack of clarity results in a lower score.; missing: Does not invent a relationship to fill the output quota. — The Actual Output does not adequately address the requirement for evidence-based abstention, as it presents numerous cross-signals without establishing a defensible cross-domain relationship. It fails to identify missing domains or links and does not specify what additional evidence would be needed, which are critical aspects of the acceptance criteria.; missing: Identifies what additional evidence would be needed. — The Actual Output does not clearly identify what additional evidence is needed to establish a defensible cross-domain relationship, which is a key requirement in the Expected Output. While it provides a detailed summary of findings and signals, it fails to explicitly state which domains or links are missing and does not identify specific additional evidence required. This lack of clarity and completeness in addressing the acceptance criteria results in a low score.",
+        "criteria_results": [
+          {
+            "criterion": "States which domains or links are missing.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly state which domains or links are missing, failing to meet the acceptance criteria. While it provides detailed findings and implications, it does not identify the absence of specific domains or links, nor does it mention what additional evidence would be needed. This lack of clarity results in a lower score."
+          },
+          {
+            "criterion": "Does not invent a relationship to fill the output quota.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not adequately address the requirement for evidence-based abstention, as it presents numerous cross-signals without establishing a defensible cross-domain relationship. It fails to identify missing domains or links and does not specify what additional evidence would be needed, which are critical aspects of the acceptance criteria."
+          },
+          {
+            "criterion": "Identifies what additional evidence would be needed.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly identify what additional evidence is needed to establish a defensible cross-domain relationship, which is a key requirement in the Expected Output. While it provides a detailed summary of findings and signals, it fails to explicitly state which domains or links are missing and does not identify specific additional evidence required. This lack of clarity and completeness in addressing the acceptance criteria results in a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-11",
+          "requirement_id": "CS-ABSTENTION",
+          "test_case_id": "CS-GENERAL-003",
+          "title": "Evidence-based abstention",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to state which domains or links are missing, does not identify what additional evidence would be needed, and does not provide a clear connection to the required finding of evidence-based abstention. It also does not adhere to the acceptable alternatives outlined in the Expected Output. Overall, it does not meet the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+              "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+              "similarity": 0.240823
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+              "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+              "similarity": 0.199056
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+              "text": "Regulatory risk monitoring for H200 and MI325X",
+              "similarity": 0.198419
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+              "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+              "similarity": 0.192531
+            },
+            {
+              "source_path": "$.stage_output.cross_signal.signals[4].implications[1]",
+              "text": "The case-by-case review status for MI325X creates uncertainty for AMD's China plans",
+              "similarity": 0.185578
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output does not clearly preserve source dates, scope, units, confidence, and material limitations as required by the acceptance criteria. While it provides some relevant information, it lacks explicit statements regarding confidence levels and material limitations, which are crucial for full compliance. Therefore, it is classified as partially covered.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+            "text": "Regulatory risk monitoring for H200 and MI325X",
+            "similarity": 0.28542
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.284947
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[1].dependencies[0]",
+            "text": "BIS license approval timing for H200 and MI325X",
+            "similarity": 0.242749
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[5].signal_id",
+            "text": "62cfefa2-517d-4033-8aa3-cc3861c9da7b",
+            "similarity": 0.239503
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[3].supporting_findings[3].relevance",
+            "text": "Documents MI455X unveiling at Advancing AI 2026 on July 23, 2026, with shipments ramping into Q4 2026 and first half of 2027.",
+            "similarity": 0.22299
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not address the acceptance criterion, as it fails to report no signal when no supported cross-domain relation exists and does not explain any evidence gaps. Instead, it provides various signals and findings without indicating the absence of support or detailing gaps in evidence, which is a critical requirement of the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.234342
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+            "text": "Regulatory risk monitoring for H200 and MI325X",
+            "similarity": 0.222279
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[3].supporting_findings[3].relevance",
+            "text": "Documents MI455X unveiling at Advancing AI 2026 on July 23, 2026, with shipments ramping into Q4 2026 and first half of 2027.",
+            "similarity": 0.190326
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[5].signal_id",
+            "text": "62cfefa2-517d-4033-8aa3-cc3861c9da7b",
+            "similarity": 0.185064
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+            "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+            "similarity": 0.184549
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-07",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Finding-level provenance",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not meet the acceptance criteria as it fails to use stable finding/evidence identifiers, does not preserve source dates or relevant scope, and cites entire outputs rather than specific findings. Therefore, it is classified as missing coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+            "text": "Regulatory risk monitoring for H200 and MI325X",
+            "similarity": 0.243559
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[2].decision_areas[0]",
+            "text": "Product roadmap timing vs AMD annual cadence",
+            "similarity": 0.220508
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.219385
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+            "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+            "similarity": 0.194826
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[3].strategic_relevance",
+            "text": "Shows competitor product timing is becoming predictable and frequent, which affects NVIDIA's own product launch planning and competitive positioning in the data-center AI accelerator market.",
+            "similarity": 0.187759
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-08",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Conflicting evidence interpretation",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not explicitly describe the conflict between the different signals regarding the semiconductor export policy. It fails to distinguish between correlation, plausible mechanisms, and demonstrated causality, as it presents findings without addressing their conflicting nature. Additionally, it does not retain counterevidence or alternative explanations, nor does it avoid averaging incompatible measures. Overall, it does not meet the mandatory acceptance criteria outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.310944
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[1].supporting_findings[0].relevance",
+            "text": "BIS issued a rule revising its licensing policy for semiconductor exports to China.",
+            "similarity": 0.225826
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+            "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+            "similarity": 0.225016
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[1].implications[2]",
+            "text": "Policy shifts can open or close China revenue for both vendors on similar timelines",
+            "similarity": 0.218969
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.summary.risk_relevant_signals[4]",
+            "text": "Export control policy timing shift affecting China market access: Policy could reverse, and case-by-case review for MI325X could eventually be approved, eliminating NVIDIA's timing advantage.",
+            "similarity": 0.206471
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-09",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Impact calibration",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not meet any of the acceptance criteria outlined in the Expected Output. It fails to use quantitative impact appropriately, does not label qualitative implications, and does not carry forward uncertainty from upstream findings. Therefore, it is marked as missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+            "text": "Regulatory risk monitoring for H200 and MI325X",
+            "similarity": 0.276222
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.27287
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+            "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+            "similarity": 0.219038
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[1].supporting_findings[0].relevance",
+            "text": "BIS issued a rule revising its licensing policy for semiconductor exports to China.",
+            "similarity": 0.210631
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+            "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+            "similarity": 0.193724
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-10",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Temporal alignment",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately preserve the source dates, as it combines findings without clearly indicating the distinct collection windows for each piece of evidence. Additionally, it fails to flag any stale or asynchronous evidence, which is a critical requirement. The output also implies contemporaneous conditions despite differing collection windows, violating the acceptance criteria. Overall, it does not meet the mandatory requirements outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[3].evidence_gaps[0]",
+            "text": "NVIDIA's own upcoming product release dates for comparison",
+            "similarity": 0.233141
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.227996
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[1].dependencies[0]",
+            "text": "BIS license approval timing for H200 and MI325X",
+            "similarity": 0.215667
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+            "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+            "similarity": 0.210634
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[2].decision_areas[0]",
+            "text": "Product roadmap timing vs AMD annual cadence",
+            "similarity": 0.196025
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-11",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Evidence-based abstention",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to state which domains or links are missing, does not identify what additional evidence would be needed, and does not provide a clear connection to the required finding of evidence-based abstention. It also does not adhere to the acceptable alternatives outlined in the Expected Output. Overall, it does not meet the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].supporting_findings[2].relevance",
+            "text": "Establishes that BIS issued a rule revising its licensing policy for semiconductor exports to China, creating the policy context for the timing shift.",
+            "similarity": 0.240823
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].supporting_findings[0].relevance",
+            "text": "Establishes BIS revised licensing policy for semiconductor exports to China",
+            "similarity": 0.199056
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[0].decision_areas[1]",
+            "text": "Regulatory risk monitoring for H200 and MI325X",
+            "similarity": 0.198419
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].evidence_gaps[0]",
+            "text": "Timeline for BIS case-by-case decisions on AMD MI325X",
+            "similarity": 0.192531
+          },
+          {
+            "source_path": "$.stage_output.cross_signal.signals[4].implications[1]",
+            "text": "The case-by-case review status for MI325X creates uncertainty for AMD's China plans",
+            "similarity": 0.185578
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.675,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing detailed insights into competitors' actions, specifically focusing on NVIDIA and AMD's market dynamics, export licensing issues, and product release cadences. It includes relevant signals, implications, and dependencies that directly relate to the competitive landscape. However, while the output is comprehensive, it could be seen as slightly verbose, which may detract from clarity. Overall, it aligns well with the evaluation steps, demonstrating a strong understanding of the competitive context.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of competitive signals and their implications for NVIDIA, referencing multiple findings and maintaining a clear structure. However, it lacks explicit traceability for some signals, as not all cross-domain relationships are clearly established or supported by distinct evidence. Additionally, while the output discusses the implications and dependencies, it does not sufficiently distinguish between correlation and causation in some areas, which is a critical requirement.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The Actual Output effectively summarizes the competitive landscape for NVIDIA, accurately reflecting the evidence from the Retrieval Context. All claims made are supported by the provided findings, particularly regarding the export licensing policies affecting both NVIDIA and AMD. However, while the output does not contain unsupported figures or invented details, it could benefit from clearer connections between the implications and the specific evidence gaps identified. Overall, the output aligns well with the evaluation steps, but slight improvements in clarity could enhance its effectiveness.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing the research goals by detailing competitor actions and implications for NVIDIA. However, it lacks clear traceability to the underlying findings, as required by the evaluation steps. While it presents relevant signals, it does not adequately combine evidence from distinct research domains, nor does it clearly explain the relationships between findings. Additionally, some evidence gaps are noted but not sufficiently addressed, which detracts from the overall completeness of the analysis.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Lacks explicit mention of source dates, scope, units, and material limitations.",
+          "evidence": "The Actual Output provides a comprehensive summary of competitive signals and their implications, but it lacks explicit mention of source dates, scope, units, and material limitations as required by the evaluation steps.",
+          "impact": "This omission affects the clarity and completeness of the report, making it difficult to assess the temporal relevance and context of the findings."
+        },
+        {
+          "limitation": "Does not adequately distinguish between correlation and causation.",
+          "evidence": "While the output discusses the implications and dependencies, it does not sufficiently distinguish between correlation and causation in some areas.",
+          "impact": "This lack of clarity can lead to misinterpretations of the relationships between findings and their implications for NVIDIA."
+        },
+        {
+          "limitation": "Fails to report no signal when no supported cross-domain relation exists.",
+          "evidence": "The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap.",
+          "impact": "This misalignment with the acceptance criteria results in a low score and undermines the credibility of the analysis."
+        },
+        {
+          "limitation": "Does not clearly identify what additional evidence is needed.",
+          "evidence": "The Actual Output does not clearly identify what additional evidence is needed to establish a defensible cross-domain relationship.",
+          "impact": "This lack of specificity hinders the ability to address gaps in the analysis and limits actionable insights."
+        },
+        {
+          "limitation": "Some findings are primarily restated rather than synthesized.",
+          "evidence": "While it presents a comprehensive analysis, some findings are primarily restated rather than synthesized, which slightly detracts from its overall effectiveness as a cross-signal.",
+          "impact": "This can lead to redundancy and reduce the overall impact of the analysis."
+        },
+        {
+          "limitation": "Lacks a compact evidence-to-signal table or structured narrative.",
+          "evidence": "The Actual Output does not fully align with the evaluation steps as it fails to provide a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+          "impact": "This omission affects the traceability and clarity of the report, making it harder for stakeholders to follow the logic of the analysis."
+        },
+        {
+          "limitation": "Does not adequately flag stale or asynchronous evidence.",
+          "evidence": "The Actual Output does not explicitly mention stale or asynchronous evidence, which is a critical requirement.",
+          "impact": "This lack of clarity in evidence timing can lead to misinterpretations of the relevance and applicability of the findings."
+        },
+        {
+          "limitation": "Does not retain counterevidence or alternative explanations adequately.",
+          "evidence": "While it presents some conflicting signals, it does not adequately retain counterevidence or alternative explanations, which is necessary for a higher score.",
+          "impact": "This can lead to an incomplete understanding of the competitive landscape and potential risks."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Incorporate explicit mention of source dates, scope, units, and material limitations.",
+          "addresses": "This will improve clarity and completeness, allowing for better assessment of the temporal relevance and context of findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Implement a clear distinction between correlation and causation in the analysis.",
+          "addresses": "This will enhance the accuracy of interpretations regarding the relationships between findings and their implications.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Clearly state when no supported cross-domain relation exists and explain the evidence gap.",
+          "addresses": "This will align the output with acceptance criteria and enhance the credibility of the analysis.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Identify and specify what additional evidence is needed to establish defensible cross-domain relationships.",
+          "addresses": "This will help address gaps in the analysis and provide actionable insights.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Synthesize findings rather than restate them to enhance overall effectiveness.",
+          "addresses": "This will reduce redundancy and improve the impact of the analysis.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Create a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+          "addresses": "This will improve traceability and clarity, making it easier for stakeholders to follow the logic of the analysis.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Flag stale or asynchronous evidence explicitly.",
+          "addresses": "This will enhance clarity regarding evidence timing and relevance.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Retain counterevidence and alternative explanations more effectively.",
+          "addresses": "This will provide a more complete understanding of the competitive landscape and potential risks.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Lacks explicit mention of source dates, scope, units, and material limitations.",
+        "evidence": "The Actual Output provides a comprehensive summary of competitive signals and their implications, but it lacks explicit mention of source dates, scope, units, and material limitations as required by the evaluation steps.",
+        "impact": "This omission affects the clarity and completeness of the report, making it difficult to assess the temporal relevance and context of the findings."
+      },
+      {
+        "limitation": "Does not adequately distinguish between correlation and causation.",
+        "evidence": "While the output discusses the implications and dependencies, it does not sufficiently distinguish between correlation and causation in some areas.",
+        "impact": "This lack of clarity can lead to misinterpretations of the relationships between findings and their implications for NVIDIA."
+      },
+      {
+        "limitation": "Fails to report no signal when no supported cross-domain relation exists.",
+        "evidence": "The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap.",
+        "impact": "This misalignment with the acceptance criteria results in a low score and undermines the credibility of the analysis."
+      },
+      {
+        "limitation": "Does not clearly identify what additional evidence is needed.",
+        "evidence": "The Actual Output does not clearly identify what additional evidence is needed to establish a defensible cross-domain relationship.",
+        "impact": "This lack of specificity hinders the ability to address gaps in the analysis and limits actionable insights."
+      },
+      {
+        "limitation": "Some findings are primarily restated rather than synthesized.",
+        "evidence": "While it presents a comprehensive analysis, some findings are primarily restated rather than synthesized, which slightly detracts from its overall effectiveness as a cross-signal.",
+        "impact": "This can lead to redundancy and reduce the overall impact of the analysis."
+      },
+      {
+        "limitation": "Lacks a compact evidence-to-signal table or structured narrative.",
+        "evidence": "The Actual Output does not fully align with the evaluation steps as it fails to provide a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+        "impact": "This omission affects the traceability and clarity of the report, making it harder for stakeholders to follow the logic of the analysis."
+      },
+      {
+        "limitation": "Does not adequately flag stale or asynchronous evidence.",
+        "evidence": "The Actual Output does not explicitly mention stale or asynchronous evidence, which is a critical requirement.",
+        "impact": "This lack of clarity in evidence timing can lead to misinterpretations of the relevance and applicability of the findings."
+      },
+      {
+        "limitation": "Does not retain counterevidence or alternative explanations adequately.",
+        "evidence": "While it presents some conflicting signals, it does not adequately retain counterevidence or alternative explanations, which is necessary for a higher score.",
+        "impact": "This can lead to an incomplete understanding of the competitive landscape and potential risks."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Incorporate explicit mention of source dates, scope, units, and material limitations.",
+        "addresses": "This will improve clarity and completeness, allowing for better assessment of the temporal relevance and context of findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Implement a clear distinction between correlation and causation in the analysis.",
+        "addresses": "This will enhance the accuracy of interpretations regarding the relationships between findings and their implications.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Clearly state when no supported cross-domain relation exists and explain the evidence gap.",
+        "addresses": "This will align the output with acceptance criteria and enhance the credibility of the analysis.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Identify and specify what additional evidence is needed to establish defensible cross-domain relationships.",
+        "addresses": "This will help address gaps in the analysis and provide actionable insights.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Synthesize findings rather than restate them to enhance overall effectiveness.",
+        "addresses": "This will reduce redundancy and improve the impact of the analysis.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Create a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+        "addresses": "This will improve traceability and clarity, making it easier for stakeholders to follow the logic of the analysis.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Flag stale or asynchronous evidence explicitly.",
+        "addresses": "This will enhance clarity regarding evidence timing and relevance.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Retain counterevidence and alternative explanations more effectively.",
+        "addresses": "This will provide a more complete understanding of the competitive landscape and potential risks.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\af9d8def516f839e7b587b89b50b9c6d\\stages\\cross_signal_evaluation.json"
+}

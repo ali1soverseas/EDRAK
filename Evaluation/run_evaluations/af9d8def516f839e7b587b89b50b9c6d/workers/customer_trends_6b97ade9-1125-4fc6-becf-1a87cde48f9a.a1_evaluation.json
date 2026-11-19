@@ -1,0 +1,2476 @@
+{
+  "worker": "customer_trends",
+  "task_id": "6b97ade9-1125-4fc6-becf-1a87cde48f9a",
+  "attempt": 1,
+  "source_input": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\customer_trends\\6b97ade9-1125-4fc6-becf-1a87cde48f9a.a1\\input.json",
+  "source_output": "artifacts\\runs\\af9d8def516f839e7b587b89b50b9c6d\\customer_trends\\6b97ade9-1125-4fc6-becf-1a87cde48f9a.a1\\output.json",
+  "status": "partial",
+  "finding_count": 0,
+  "evidence_count": 0,
+  "gap_count": 2,
+  "error": null,
+  "evaluation": {
+    "worker": "customer_trends",
+    "task_goal": "What are AI developers, automotive and robotics companies, and cloud providers saying about NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives in terms of sentiment, needs, complaints, reviews, social conversation, and search interest?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 2,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "customer-trends-rubric-2.2.0",
+    "finding_count": 19,
+    "mandatory_finding_count": 19,
+    "coverage_score": 0.2105,
+    "strict_coverage_score": 0.0,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 21,
+      "initial_missing_count": 12,
+      "initial_partial_count": 7,
+      "findings_reviewed": 19,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 1,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "CT-R01",
+        "requirement_id": "SCOPE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Scope and coverage",
+        "priority": "mandatory",
+        "score": 0.30000000000000004,
+        "status": "partial",
+        "reason": "missing: Names the requested entities, customer segments, regions, and period. — The Actual Output does not explicitly name the requested entities, customer segments, regions, or specify the period requested. While it mentions companies like NVIDIA, AMD, Intel, and Broadcom, it fails to clearly label the customer segments (AI developers, automotive and robotics companies, cloud providers) and regions (Americas, Asia, etc.) as required. Additionally, there is no indication of the time period for the analysis, which is a critical shortcoming against the acceptance criteria.; partial: Clearly labels any requested scope that was not researched. — The actual output identifies two gaps related to unresearched scope, specifically mentioning that no search interest series was collected and that the run stopped due to a time limit. However, it does not clearly label these gaps as unresearched scope in a way that aligns with the expected output's requirement for explicit labeling. Therefore, while it acknowledges the gaps, it fails to meet the acceptance criteria for clear labeling of unresearched scope.",
+        "criteria_results": [
+          {
+            "criterion": "Names the requested entities, customer segments, regions, and period.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly name the requested entities, customer segments, regions, or specify the period requested. While it mentions companies like NVIDIA, AMD, Intel, and Broadcom, it fails to clearly label the customer segments (AI developers, automotive and robotics companies, cloud providers) and regions (Americas, Asia, etc.) as required. Additionally, there is no indication of the time period for the analysis, which is a critical shortcoming against the acceptance criteria."
+          },
+          {
+            "criterion": "Clearly labels any requested scope that was not researched.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The actual output identifies two gaps related to unresearched scope, specifically mentioning that no search interest series was collected and that the run stopped due to a time limit. However, it does not clearly label these gaps as unresearched scope in a way that aligns with the expected output's requirement for explicit labeling. Therefore, while it acknowledges the gaps, it fails to meet the acceptance criteria for clear labeling of unresearched scope."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.30000000000000004,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-R01",
+          "requirement_id": "SCOPE",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Scope and coverage",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not name the requested entities, customer segments, regions, or period, which is a critical requirement. Additionally, it fails to clearly label any scope that was not researched. Therefore, the coverage of acceptance criteria is missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.350343
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.219763
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.206067
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.196391
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.192095
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.30000000000000004,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-R02",
+        "requirement_id": "SAMPLE_SENTIMENT",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Sample-level sentiment",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "Second pass upgraded initial missing to partial. Initial: missing: Reports counts and percentages only when the underlying sample supports them. — The Actual Output fails to provide counts and percentages related to the sample size, which is a critical requirement. It reports '0 findings' without any supporting data or context, and the gaps indicate significant limitations in data collection. Additionally, the output does not align with the Expected Output's criteria for reporting sentiment, as it lacks a clear denominator and does not adequately address the sample context. The retrieval context also does not provide relevant background information, further weakening the response.; missing: Explains classification rules and handles mixed, unknown, or unclassified items consistently. — The Actual Output does not explicitly explain the classification rules, which is a key requirement. While it identifies gaps and provides a summary, it fails to report sentiment with a clear denominator or handle mixed, unknown, or unclassified items according to the expected standards. Additionally, it does not provide counts or percentages that are supported by the underlying sample, nor does it clarify the sampling method or exclusions, leading to a lack of confidence in the findings.; missing: Does not generalize a convenience sample to the whole customer population. — The Actual Output does not explicitly state that the findings are based on a convenience sample, nor does it provide any counts or percentages that would indicate a clear denominator. Additionally, it fails to mention any limitations regarding the sample size or coverage, which is crucial given the low confidence level reported. Therefore, it does not align with the acceptance criteria of not generalizing from the sample. Second pass: The Actual Output provides some relevant information regarding sentiment analysis, such as the collection of evidence items and mentions of coverage gaps. However, it fails to fully address the acceptance criteria, particularly in reporting counts and percentages supported by the sample, explaining classification rules, and avoiding generalizations about the customer population. Therefore, the coverage is classified as 'partial'.",
+        "criteria_results": [
+          {
+            "criterion": "Reports counts and percentages only when the underlying sample supports them.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide counts and percentages related to the sample size, which is a critical requirement. It reports '0 findings' without any supporting data or context, and the gaps indicate significant limitations in data collection. Additionally, the output does not align with the Expected Output's criteria for reporting sentiment, as it lacks a clear denominator and does not adequately address the sample context. The retrieval context also does not provide relevant background information, further weakening the response."
+          },
+          {
+            "criterion": "Explains classification rules and handles mixed, unknown, or unclassified items consistently.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly explain the classification rules, which is a key requirement. While it identifies gaps and provides a summary, it fails to report sentiment with a clear denominator or handle mixed, unknown, or unclassified items according to the expected standards. Additionally, it does not provide counts or percentages that are supported by the underlying sample, nor does it clarify the sampling method or exclusions, leading to a lack of confidence in the findings."
+          },
+          {
+            "criterion": "Does not generalize a convenience sample to the whole customer population.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that the findings are based on a convenience sample, nor does it provide any counts or percentages that would indicate a clear denominator. Additionally, it fails to mention any limitations regarding the sample size or coverage, which is crucial given the low confidence level reported. Therefore, it does not align with the acceptance criteria of not generalizing from the sample."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.20000000000000004,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R02",
+          "requirement_id": "SAMPLE_SENTIMENT",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Sample-level sentiment",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides some relevant information regarding sentiment analysis, such as the collection of evidence items and mentions of coverage gaps. However, it fails to fully address the acceptance criteria, particularly in reporting counts and percentages supported by the sample, explaining classification rules, and avoiding generalizations about the customer population. Therefore, the coverage is classified as 'partial'.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.331149
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.318639
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.314463
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.290762
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.248515
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-R03",
+        "requirement_id": "VENDOR_SENTIMENT",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Vendor sentiment evidence",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "missing: Separates customer opinion from news coverage, vendor statements, and analyst commentary. — The Actual Output fails to separate customer opinions from news coverage, vendor statements, and analyst commentary, which is a critical requirement of the evaluation criteria. It does not provide any findings related to vendor sentiment, nor does it address the separation of customer opinion explicitly. The summary indicates '0 findings', which suggests that no relevant customer sentiment data was collected, leading to a lack of clarity and completeness in the response.; missing: Does not assert sentiment for a vendor when the evidence does not mention it. — The Actual Output indicates '0 findings' and '2 gaps', which means there is no evidence collected to support any sentiment towards the vendor. This directly contradicts the requirement for vendor sentiment evidence as stated in the Expected Output. Additionally, the output does not separate customer opinion from other types of coverage, nor does it provide any alternative forms of sentiment assessment. Therefore, it fails to meet the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Separates customer opinion from news coverage, vendor statements, and analyst commentary.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output fails to separate customer opinions from news coverage, vendor statements, and analyst commentary, which is a critical requirement of the evaluation criteria. It does not provide any findings related to vendor sentiment, nor does it address the separation of customer opinion explicitly. The summary indicates '0 findings', which suggests that no relevant customer sentiment data was collected, leading to a lack of clarity and completeness in the response."
+          },
+          {
+            "criterion": "Does not assert sentiment for a vendor when the evidence does not mention it.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output indicates '0 findings' and '2 gaps', which means there is no evidence collected to support any sentiment towards the vendor. This directly contradicts the requirement for vendor sentiment evidence as stated in the Expected Output. Additionally, the output does not separate customer opinion from other types of coverage, nor does it provide any alternative forms of sentiment assessment. Therefore, it fails to meet the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.0,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R03",
+          "requirement_id": "VENDOR_SENTIMENT",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Vendor sentiment evidence",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to distinctly separate customer opinions from other types of content, such as news coverage or vendor statements, which is a critical requirement. Additionally, it does not provide sufficient evidence to support any vendor sentiment, as required by the acceptance criteria. Overall, the output does not meet the mandatory criteria outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.373155
+            },
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.352071
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.351803
+            },
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.340652
+            },
+            {
+              "source_path": "$.requirements[0].definition",
+              "text": "Share of brand mentions among the company and its competitors.",
+              "similarity": 0.311577
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.0,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R04",
+        "requirement_id": "ADOPTION",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Adoption and deployment signals",
+        "priority": "mandatory",
+        "score": 0.1,
+        "status": "missing",
+        "reason": "missing: Names sources and dates for adoption claims. — The Actual Output does not include specific names of sources or dates that support the adoption claims, which are critical requirements outlined in the Expected Output. Additionally, it fails to provide any findings related to adoption, indicating a lack of evidence to meet the acceptance criteria. The retrieval context also confirms that no relevant evidence was extracted, further supporting the low score.; missing: Does not infer broad adoption from one example or an announcement alone. — The Actual Output indicates a lack of findings and substantial evidence of broad adoption, as it reports '0 findings' and '2 gaps'. It does not provide multiple examples or evidence of adoption, relying instead on a summary that highlights gaps in data collection. This fails to meet the requirement of demonstrating broad adoption with substantial evidence as outlined in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Names sources and dates for adoption claims.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output does not include specific names of sources or dates that support the adoption claims, which are critical requirements outlined in the Expected Output. Additionally, it fails to provide any findings related to adoption, indicating a lack of evidence to meet the acceptance criteria. The retrieval context also confirms that no relevant evidence was extracted, further supporting the low score."
+          },
+          {
+            "criterion": "Does not infer broad adoption from one example or an announcement alone.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output indicates a lack of findings and substantial evidence of broad adoption, as it reports '0 findings' and '2 gaps'. It does not provide multiple examples or evidence of adoption, relying instead on a summary that highlights gaps in data collection. This fails to meet the requirement of demonstrating broad adoption with substantial evidence as outlined in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.1,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R04",
+          "requirement_id": "ADOPTION",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Adoption and deployment signals",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to name any sources or dates for adoption claims, which is a mandatory requirement. Additionally, it infers broad adoption from vague references without providing specific examples or confirmations, contradicting the Expected Output's criteria. Overall, it does not meet any of the acceptance criteria outlined.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.300025
+            },
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.275964
+            },
+            {
+              "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+              "text": "https://www.linkedin.com/company/mordor-intelligence",
+              "similarity": 0.252906
+            },
+            {
+              "source_path": "$.business_context.competitors[2].entity_id",
+              "text": "d9965da8a31670a008096b55cbe5bbb3",
+              "similarity": 0.233134
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.231695
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.1,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R05",
+        "requirement_id": "SEARCH_INTEREST",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Search-interest coverage",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "missing: Does not treat a planned query or unavailable tool as collected evidence. — The Actual Output does not explicitly state whether the planned query or unavailable tool is treated as collected evidence, which is a critical requirement. Additionally, while it identifies gaps in search interest coverage, it fails to meet the acceptance criteria of not treating planned queries as evidence. The summary indicates a lack of findings and mentions gaps, but does not clarify the geographical or temporal scope of the research, which further detracts from its alignment with the expected output.; missing: Identifies geography, period, and comparison basis for any trend. — The Actual Output fails to identify the relevant geography and period for the trend, which are critical elements in the evaluation steps. It mentions gaps in search interest data but does not specify any geographical context or time frame for the findings. Additionally, there is no clear comparison basis provided for the trend, which is necessary for alignment with the Expected Output. Overall, the lack of these key details results in a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Does not treat a planned query or unavailable tool as collected evidence.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state whether the planned query or unavailable tool is treated as collected evidence, which is a critical requirement. Additionally, while it identifies gaps in search interest coverage, it fails to meet the acceptance criteria of not treating planned queries as evidence. The summary indicates a lack of findings and mentions gaps, but does not clarify the geographical or temporal scope of the research, which further detracts from its alignment with the expected output."
+          },
+          {
+            "criterion": "Identifies geography, period, and comparison basis for any trend.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to identify the relevant geography and period for the trend, which are critical elements in the evaluation steps. It mentions gaps in search interest data but does not specify any geographical context or time frame for the findings. Additionally, there is no clear comparison basis provided for the trend, which is necessary for alignment with the Expected Output. Overall, the lack of these key details results in a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.2,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R05",
+          "requirement_id": "SEARCH_INTEREST",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Search-interest coverage",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to identify any search interest series, which is critical for understanding demand over time. It also does not specify the geography, period, or comparison basis for trends, which are essential elements of the evaluation criteria. Additionally, it treats the lack of collected evidence as a gap rather than addressing it as a planned query issue. Overall, the coverage of acceptance criteria is missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.51303
+            },
+            {
+              "source_path": "$.gaps[0]",
+              "text": "no search interest series was collected, so demand over time is unknown",
+              "similarity": 0.346506
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.241668
+            },
+            {
+              "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+              "text": "https://www.linkedin.com/company/mordor-intelligence",
+              "similarity": 0.185884
+            },
+            {
+              "source_path": "$.task_goal",
+              "text": "What are AI developers, automotive and robotics companies, and cloud providers saying about NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives in terms of sentiment, needs, complaints, reviews, social conversation, and search interest?",
+              "similarity": 0.165356
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.2,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R06",
+        "requirement_id": "SOCIAL_COLLECTION",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Social evidence collection",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Reports platforms, collection period, and sample size when available. — The Actual Output mentions that evidence was collected from 3 platforms, which aligns with the requirement to report platforms used. However, it does not specify the collection period for the data, nor does it provide the sample size of the data collected, which are both critical elements of the evaluation criteria. Additionally, the output indicates gaps in the findings, which suggests limitations in the data collection process. Overall, while there is partial alignment with the reporting of platforms, the lack of collection period and sample size significantly impacts the score.; partial: Does not present planned or timed-out queries as observed posts. — The Actual Output indicates that the run stopped due to a time limit, which is a clear presentation of a collection failure. However, it fails to meet the acceptance criteria by including this timeout as part of the findings, which should not be presented as observed posts. Additionally, while it reports the platforms and evidence count, it does not provide a clear qualitative summary or examples of the collected data, leading to insufficient alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Reports platforms, collection period, and sample size when available.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output mentions that evidence was collected from 3 platforms, which aligns with the requirement to report platforms used. However, it does not specify the collection period for the data, nor does it provide the sample size of the data collected, which are both critical elements of the evaluation criteria. Additionally, the output indicates gaps in the findings, which suggests limitations in the data collection process. Overall, while there is partial alignment with the reporting of platforms, the lack of collection period and sample size significantly impacts the score."
+          },
+          {
+            "criterion": "Does not present planned or timed-out queries as observed posts.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output indicates that the run stopped due to a time limit, which is a clear presentation of a collection failure. However, it fails to meet the acceptance criteria by including this timeout as part of the findings, which should not be presented as observed posts. Additionally, while it reports the platforms and evidence count, it does not provide a clear qualitative summary or examples of the collected data, leading to insufficient alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-R06",
+          "requirement_id": "SOCIAL_COLLECTION",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Social evidence collection",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides information on the number of evidence items collected and the platforms used, which partially meets the acceptance criteria. However, it lacks details on the collection period and sample size, and it does not clearly distinguish between planned queries and observed posts. Therefore, the coverage is classified as partial.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.486002
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.288972
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.239737
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.239332
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.220059
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-R07",
+        "requirement_id": "NEWS_EVIDENCE_QUALITY",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "News and web evidence quality",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "missing: Identifies source type and whether full article text was available. — The Actual Output does not explicitly identify the source type of the report or state whether the full article text was available, which are critical criteria from the Expected Output. Additionally, it fails to provide sufficient evidence or context to meet the acceptance criteria, as it treats the findings as complete without addressing the gaps in data collection. The Retrieval Context also lacks relevant information, further diminishing the output's alignment with the evaluation steps.; missing: Does not treat a search snippet as complete evidence or customer testimony. — The Actual Output fails to provide any search snippets or full-text evidence, which is a critical requirement. It reports '0 findings' and identifies gaps in data collection, indicating insufficient evidence quality. Additionally, it does not distinguish between evidence types or provide necessary engagement or source metadata, which is essential for meeting the acceptance criteria. The retrieval context also indicates a lack of trace evidence, further supporting the low score.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies source type and whether full article text was available.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly identify the source type of the report or state whether the full article text was available, which are critical criteria from the Expected Output. Additionally, it fails to provide sufficient evidence or context to meet the acceptance criteria, as it treats the findings as complete without addressing the gaps in data collection. The Retrieval Context also lacks relevant information, further diminishing the output's alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Does not treat a search snippet as complete evidence or customer testimony.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide any search snippets or full-text evidence, which is a critical requirement. It reports '0 findings' and identifies gaps in data collection, indicating insufficient evidence quality. Additionally, it does not distinguish between evidence types or provide necessary engagement or source metadata, which is essential for meeting the acceptance criteria. The retrieval context also indicates a lack of trace evidence, further supporting the low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.2,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R07",
+          "requirement_id": "NEWS_EVIDENCE_QUALITY",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "News and web evidence quality",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to specify the source type and does not indicate whether full article text was available, which is a critical requirement. Additionally, it treats snippets as evidence without addressing the engagement or source metadata, violating the acceptance criteria. Overall, the coverage of the required findings is missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.499387
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.255342
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.245125
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.233474
+            },
+            {
+              "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+              "text": "https://www.linkedin.com/company/mordor-intelligence",
+              "similarity": 0.218426
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.2,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R08",
+        "requirement_id": "LANGUAGE_REGION_COVERAGE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Language and regional coverage",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "missing: Uses corpus metadata for sample counts. — The Actual Output does not include explicit references to corpus metadata for sample counts, which is a critical requirement. While it mentions gaps and findings, it fails to disclose language or regional sampling limitations as specified in the Expected Output. The lack of these details significantly impacts the clarity and completeness of the response, resulting in a low score.; missing: Discloses language or regional sampling limitations. — The Actual Output does not explicitly disclose any language or regional sampling limitations, which is a critical requirement. While it provides some metadata about language distribution, it fails to meet the acceptance criteria of clearly stating limitations. Additionally, the retrieval context indicates no relevant evidence was extracted, further weakening the alignment with the expected output. Overall, the lack of clarity and completeness in disclosures leads to a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Uses corpus metadata for sample counts.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not include explicit references to corpus metadata for sample counts, which is a critical requirement. While it mentions gaps and findings, it fails to disclose language or regional sampling limitations as specified in the Expected Output. The lack of these details significantly impacts the clarity and completeness of the response, resulting in a low score."
+          },
+          {
+            "criterion": "Discloses language or regional sampling limitations.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly disclose any language or regional sampling limitations, which is a critical requirement. While it provides some metadata about language distribution, it fails to meet the acceptance criteria of clearly stating limitations. Additionally, the retrieval context indicates no relevant evidence was extracted, further weakening the alignment with the expected output. Overall, the lack of clarity and completeness in disclosures leads to a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.2,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R08",
+          "requirement_id": "LANGUAGE_REGION_COVERAGE",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Language and regional coverage",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not mention language or regional sampling limitations, which is a critical acceptance criterion. While it provides some metadata regarding sample counts, it fails to address the second criterion, resulting in a classification of 'missing'.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.375723
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.189062
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.178459
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.171362
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.155936
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.2,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R09",
+        "requirement_id": "TEMPORAL_SIGNAL",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Temporal coverage and trends",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "missing: Reports date coverage and missing dates when available. — The Actual Output does not explicitly mention the date coverage of the report, which is a critical requirement. It also fails to identify any missing dates relevant to the analysis, as it only notes gaps related to search interest and time limits. This lack of clarity on date coverage and missing dates does not meet the acceptance criteria outlined in the Expected Output, resulting in a low score.; missing: Distinguishes isolated peaks from sustained trends. — The Actual Output fails to clearly distinguish between isolated peaks and sustained trends, as it reports '0 findings' and mentions gaps without providing any temporal context or analysis of trends. The summary lacks the necessary detail to meet the expectations of the evaluation steps, particularly in articulating the observation window and avoiding conclusions based on insufficient data. Therefore, it does not satisfy the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Reports date coverage and missing dates when available.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention the date coverage of the report, which is a critical requirement. It also fails to identify any missing dates relevant to the analysis, as it only notes gaps related to search interest and time limits. This lack of clarity on date coverage and missing dates does not meet the acceptance criteria outlined in the Expected Output, resulting in a low score."
+          },
+          {
+            "criterion": "Distinguishes isolated peaks from sustained trends.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to clearly distinguish between isolated peaks and sustained trends, as it reports '0 findings' and mentions gaps without providing any temporal context or analysis of trends. The summary lacks the necessary detail to meet the expectations of the evaluation steps, particularly in articulating the observation window and avoiding conclusions based on insufficient data. Therefore, it does not satisfy the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.2,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R09",
+          "requirement_id": "TEMPORAL_SIGNAL",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Temporal coverage and trends",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to report date coverage and mentions missing dates, which is a critical requirement. It also does not distinguish between isolated peaks and sustained trends, as it states that demand over time is unknown. Therefore, the acceptance criteria are not met, leading to a classification of missing coverage.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.477146
+            },
+            {
+              "source_path": "$.gaps[0]",
+              "text": "no search interest series was collected, so demand over time is unknown",
+              "similarity": 0.273576
+            },
+            {
+              "source_path": "$.gaps[1]",
+              "text": "the run stopped at its time limit of 300 s",
+              "similarity": 0.241409
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.222157
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.210748
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.2,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R10",
+        "requirement_id": "SHARE_OF_VOICE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Share of voice",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "missing",
+        "reason": "missing: Explains entity matching and treatment of items with no vendor mention. — The actual output fails to provide a clear explanation of entity matching and does not address the treatment of items that do not mention a vendor. It reports '0 findings' and '2 gaps' but does not explain how these relate to the required finding of share of voice or the acceptance criteria. Additionally, it does not label the small sample size as directional or insufficient, which is a critical requirement. Overall, it does not meet the expected output criteria.; missing: Labels small or imbalanced samples as directional or insufficient. — The Actual Output does not explicitly label the small sample size or imbalanced findings as directional or insufficient, which is a key requirement from the evaluation steps. While it mentions gaps and provides a summary, it fails to meet the labeling criterion clearly outlined in the Expected Output. Additionally, the Retrieval Context does not provide supporting evidence for the claims made in the Actual Output, further weakening its alignment with the evaluation criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Explains entity matching and treatment of items with no vendor mention.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The actual output fails to provide a clear explanation of entity matching and does not address the treatment of items that do not mention a vendor. It reports '0 findings' and '2 gaps' but does not explain how these relate to the required finding of share of voice or the acceptance criteria. Additionally, it does not label the small sample size as directional or insufficient, which is a critical requirement. Overall, it does not meet the expected output criteria."
+          },
+          {
+            "criterion": "Labels small or imbalanced samples as directional or insufficient.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly label the small sample size or imbalanced findings as directional or insufficient, which is a key requirement from the evaluation steps. While it mentions gaps and provides a summary, it fails to meet the labeling criterion clearly outlined in the Expected Output. Additionally, the Retrieval Context does not provide supporting evidence for the claims made in the Actual Output, further weakening its alignment with the evaluation criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R10",
+          "requirement_id": "SHARE_OF_VOICE",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Share of voice",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not explain entity matching or how items without vendor mentions are treated, which is a critical requirement. Additionally, it fails to label small or imbalanced samples as directional or insufficient. The coverage of acceptance criteria is missing, as none of the mandatory requirements are addressed in the output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.344301
+            },
+            {
+              "source_path": "$.requirements[0].definition",
+              "text": "Share of brand mentions among the company and its competitors.",
+              "similarity": 0.320305
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.29965
+            },
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.295873
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.285473
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.25,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R11",
+        "requirement_id": "ENGAGEMENT_METRICS",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Engagement metrics",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "missing",
+        "reason": "missing: Distinguishes zero from missing or uncollected values. — The Actual Output states '0 findings; 2 gaps,' but it does not clearly distinguish between zero values and missing or uncollected values as required. The gaps mentioned do not provide a clear explanation of the absence of data, which is crucial for understanding the context of the findings. Additionally, the output lacks a qualitative summary or explicit labeling of low confidence regarding the findings, which is necessary given the acceptance criteria. Therefore, the response does not fully meet the evaluation steps.; missing: Does not infer zero real-world engagement from absent metrics. — The Actual Output fails to provide any engagement metrics, explicitly stating '0 findings' and identifying gaps in data collection, such as the lack of search interest series. This indicates a significant shortcoming in addressing the requirement for engagement metrics as outlined in the Expected Output. The output does not distinguish between zero and missing values, nor does it provide any qualitative summary or context for the absence of data, which is critical for a high score.",
+        "criteria_results": [
+          {
+            "criterion": "Distinguishes zero from missing or uncollected values.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output states '0 findings; 2 gaps,' but it does not clearly distinguish between zero values and missing or uncollected values as required. The gaps mentioned do not provide a clear explanation of the absence of data, which is crucial for understanding the context of the findings. Additionally, the output lacks a qualitative summary or explicit labeling of low confidence regarding the findings, which is necessary given the acceptance criteria. Therefore, the response does not fully meet the evaluation steps."
+          },
+          {
+            "criterion": "Does not infer zero real-world engagement from absent metrics.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide any engagement metrics, explicitly stating '0 findings' and identifying gaps in data collection, such as the lack of search interest series. This indicates a significant shortcoming in addressing the requirement for engagement metrics as outlined in the Expected Output. The output does not distinguish between zero and missing values, nor does it provide any qualitative summary or context for the absence of data, which is critical for a high score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R11",
+          "requirement_id": "ENGAGEMENT_METRICS",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Engagement metrics",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to distinguish between zero values and missing or uncollected values, as it reports '0 finding(s) were written' without clarifying if this indicates a lack of engagement or simply uncollected data. Additionally, it does not provide any descriptive examples or low-confidence labels for the insufficient data, which is a critical requirement. Therefore, it does not meet the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.354249
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.283185
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.202872
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.202734
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.145729
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.25,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R12",
+        "requirement_id": "VENDOR_COMPARABILITY",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Vendor and regional comparability",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "missing",
+        "reason": "missing: Uses comparable sources, measures, periods, and regions where possible. — The Actual Output does not reference any comparable sources relevant to the topic, nor does it include measures that align with the Expected Output criteria. It mentions gaps in data collection, specifically the lack of search interest series, which indicates an inability to provide balanced evidence for vendor and regional comparisons. Additionally, it fails to explicitly state the use of comparable sources, measures, periods, and regions, which is a requirement of the evaluation steps.; missing: Identifies imbalances and does not fill missing values by inference. — The Actual Output identifies gaps in the data collection process, specifically noting that no search interest series was collected and that the run stopped due to a time limit. However, it fails to explicitly identify any imbalances in the data as required by the evaluation steps. Additionally, it does not attempt to fill in missing values through inference, which is a positive aspect. Overall, while it acknowledges gaps, it does not meet the criteria of identifying imbalances or providing a balanced comparison, leading to a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Uses comparable sources, measures, periods, and regions where possible.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not reference any comparable sources relevant to the topic, nor does it include measures that align with the Expected Output criteria. It mentions gaps in data collection, specifically the lack of search interest series, which indicates an inability to provide balanced evidence for vendor and regional comparisons. Additionally, it fails to explicitly state the use of comparable sources, measures, periods, and regions, which is a requirement of the evaluation steps."
+          },
+          {
+            "criterion": "Identifies imbalances and does not fill missing values by inference.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output identifies gaps in the data collection process, specifically noting that no search interest series was collected and that the run stopped due to a time limit. However, it fails to explicitly identify any imbalances in the data as required by the evaluation steps. Additionally, it does not attempt to fill in missing values through inference, which is a positive aspect. Overall, while it acknowledges gaps, it does not meet the criteria of identifying imbalances or providing a balanced comparison, leading to a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-R12",
+          "requirement_id": "VENDOR_COMPARABILITY",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Vendor and regional comparability",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to use comparable sources, measures, periods, and regions as required. It does not identify imbalances or address missing values appropriately, which is critical for meeting the acceptance criteria. Therefore, it does not fulfill any of the necessary requirements outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.31386
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.192141
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.185354
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.165092
+            },
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.156206
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.25,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-R13",
+        "requirement_id": "OVERALL_CONFIDENCE_AND_GAPS",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Confidence and evidence gaps",
+        "priority": "mandatory",
+        "score": 0.43333333333333335,
+        "status": "partial",
+        "reason": "partial: Ties confidence to evidence coverage and quality. — The Actual Output indicates a low confidence level of 0.3 and identifies two significant gaps in evidence collection, specifically the lack of search interest data and the time limit on the run. However, it does not effectively tie the confidence level to the quality or coverage of the evidence collected, nor does it provide a clear explanation of how these gaps affect the conclusions. While it acknowledges the gaps, it lacks a detailed discussion on their implications, which is necessary for a higher score.; partial: Lists material gaps and their effect on conclusions. — The Actual Output identifies two material gaps but does not explain how these gaps affect the conclusions drawn. While it mentions a low confidence level and a partial status, it fails to explicitly tie these to the evidence coverage and quality, which is a key requirement. Additionally, it does not provide a concise limitations register or evidence-gap table as suggested in the acceptable alternatives. Therefore, it partially meets the criteria but lacks sufficient detail to fully align with the expectations.; partial: Allows a partial or inconclusive result when evidence is insufficient. — The Actual Output indicates a partial result with a confidence level of 0.3 and explicitly lists gaps in evidence, such as the lack of search interest data and the run stopping due to time limits. However, while it communicates these gaps, it does not fully align with the expectation of clearly tying confidence to evidence coverage and quality, nor does it provide a concise limitations register or evidence-gap table. Therefore, it partially meets the criteria but lacks completeness in addressing the required finding and primary claim.",
+        "criteria_results": [
+          {
+            "criterion": "Ties confidence to evidence coverage and quality.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output indicates a low confidence level of 0.3 and identifies two significant gaps in evidence collection, specifically the lack of search interest data and the time limit on the run. However, it does not effectively tie the confidence level to the quality or coverage of the evidence collected, nor does it provide a clear explanation of how these gaps affect the conclusions. While it acknowledges the gaps, it lacks a detailed discussion on their implications, which is necessary for a higher score."
+          },
+          {
+            "criterion": "Lists material gaps and their effect on conclusions.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies two material gaps but does not explain how these gaps affect the conclusions drawn. While it mentions a low confidence level and a partial status, it fails to explicitly tie these to the evidence coverage and quality, which is a key requirement. Additionally, it does not provide a concise limitations register or evidence-gap table as suggested in the acceptable alternatives. Therefore, it partially meets the criteria but lacks sufficient detail to fully align with the expectations."
+          },
+          {
+            "criterion": "Allows a partial or inconclusive result when evidence is insufficient.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output indicates a partial result with a confidence level of 0.3 and explicitly lists gaps in evidence, such as the lack of search interest data and the run stopping due to time limits. However, while it communicates these gaps, it does not fully align with the expectation of clearly tying confidence to evidence coverage and quality, nor does it provide a concise limitations register or evidence-gap table. Therefore, it partially meets the criteria but lacks completeness in addressing the required finding and primary claim."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.43333333333333335,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-R13",
+          "requirement_id": "OVERALL_CONFIDENCE_AND_GAPS",
+          "test_case_id": "CT-GENERAL-001",
+          "title": "Confidence and evidence gaps",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to adequately address the acceptance criteria. It does not clearly tie confidence to evidence coverage and quality, nor does it effectively list material gaps and their impact on conclusions. While it mentions coverage gaps, it lacks a detailed explanation of how these gaps affect the overall confidence in the findings. Additionally, it does not provide an explicit status regarding the completeness of the evidence, which is crucial for a mandatory priority evaluation. Overall, the response is missing key elements required for a comprehensive assessment.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.541434
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.251813
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.242942
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.232734
+            },
+            {
+              "source_path": "$.business_context.competitors[2].entity_id",
+              "text": "d9965da8a31670a008096b55cbe5bbb3",
+              "similarity": 0.127714
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.43333333333333335,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-EDGE-14",
+        "requirement_id": "SAMPLE_SENTIMENT",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Denominator and classification integrity",
+        "priority": "mandatory",
+        "score": 0.15000000000000002,
+        "status": "missing",
+        "reason": "missing: States the number of unique eligible items and the denominator for every percentage. — The Actual Output states '0 findings; 2 gaps' but does not explicitly mention the number of unique eligible items or provide a denominator for any percentages, failing to meet the mandatory acceptance criteria. Additionally, it does not explain exclusions or unclassified items, which is a significant shortcoming. The retrieval context is appropriate as it does not contain report content.; missing: Explains exclusions, duplicates, and unclassified items. — The Actual Output does not explicitly explain exclusions, duplicates, or unclassified items, which is a critical requirement. While it mentions gaps, it fails to provide a clear count of unique eligible items or the denominator for any percentages. The lack of comprehensive explanations regarding the sample and its integrity leads to a low score.; missing: Does not silently discard neutral or mixed items to improve sentiment. — The Actual Output fails to provide any findings or sentiment analysis, which is critical for assessing the sentiment of the items collected. It does not mention neutral or mixed items, nor does it explain exclusions or unclassified items, thus not aligning with the requirement to not discard such items. The summary indicates a lack of findings, which directly contradicts the acceptance criteria that require a clear definition of eligible samples and sentiment labels. Therefore, the output does not meet the evaluation steps.; missing: Keeps conclusions limited to the observed sample. — The actual output indicates a lack of findings and identifies gaps in data collection, specifically mentioning that no search interest series was collected and that the analysis was limited by a time constraint. This suggests that the conclusions drawn are not based on a complete sample, which does not align with the expectation of providing a clear denominator and classification integrity. Additionally, the output does not address exclusions or provide a clear explanation of the sample size, leading to a low score.",
+        "criteria_results": [
+          {
+            "criterion": "States the number of unique eligible items and the denominator for every percentage.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output states '0 findings; 2 gaps' but does not explicitly mention the number of unique eligible items or provide a denominator for any percentages, failing to meet the mandatory acceptance criteria. Additionally, it does not explain exclusions or unclassified items, which is a significant shortcoming. The retrieval context is appropriate as it does not contain report content."
+          },
+          {
+            "criterion": "Explains exclusions, duplicates, and unclassified items.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly explain exclusions, duplicates, or unclassified items, which is a critical requirement. While it mentions gaps, it fails to provide a clear count of unique eligible items or the denominator for any percentages. The lack of comprehensive explanations regarding the sample and its integrity leads to a low score."
+          },
+          {
+            "criterion": "Does not silently discard neutral or mixed items to improve sentiment.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide any findings or sentiment analysis, which is critical for assessing the sentiment of the items collected. It does not mention neutral or mixed items, nor does it explain exclusions or unclassified items, thus not aligning with the requirement to not discard such items. The summary indicates a lack of findings, which directly contradicts the acceptance criteria that require a clear definition of eligible samples and sentiment labels. Therefore, the output does not meet the evaluation steps."
+          },
+          {
+            "criterion": "Keeps conclusions limited to the observed sample.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The actual output indicates a lack of findings and identifies gaps in data collection, specifically mentioning that no search interest series was collected and that the analysis was limited by a time constraint. This suggests that the conclusions drawn are not based on a complete sample, which does not align with the expectation of providing a clear denominator and classification integrity. Additionally, the output does not address exclusions or provide a clear explanation of the sample size, leading to a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.15000000000000002,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-EDGE-14",
+          "requirement_id": "SAMPLE_SENTIMENT",
+          "test_case_id": "CT-GENERAL-002",
+          "title": "Denominator and classification integrity",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to fully address the acceptance criteria. It does not state the number of unique eligible items or the denominator for any percentages, nor does it explain exclusions, duplicates, or unclassified items. Additionally, there is no indication that neutral or mixed items are considered, and the conclusions drawn are not limited to the observed sample. Overall, the output is missing critical information required by the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.351534
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.302055
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.284357
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.258964
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.242218
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.15000000000000002,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-EDGE-15",
+        "requirement_id": "VENDOR_SENTIMENT",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Source-type separation",
+        "priority": "mandatory",
+        "score": 0.13333333333333333,
+        "status": "missing",
+        "reason": "missing: Labels source type where identifiable. — The Actual Output does not explicitly identify the source type, which is a critical requirement for the evaluation. While it provides some context about the findings and gaps, it fails to distinguish between customer-authored opinions and vendor marketing, which is essential according to the acceptance criteria. The lack of clear labeling of source types results in a low score.; missing: Does not count vendor-authored promotional language as independent customer sentiment. — The Actual Output fails to provide any findings or customer sentiment, indicating a lack of independent customer opinions. It does not meet the acceptance criteria of distinguishing between customer-authored opinions and vendor marketing, as there are no customer sentiments reported. Additionally, the retrieval context indicates no evidence was extracted, further supporting the absence of customer sentiment. Therefore, it does not align with the evaluation steps.; missing: Treats unattributed or ambiguous authorship cautiously. — The Actual Output does not address authorship attribution, leaving it ambiguous. It fails to distinguish between customer-authored opinions and vendor marketing, which is a critical requirement. Additionally, it does not treat unattributed authorship cautiously, as there are no references to source types or any indication of how the findings were derived. This lack of clarity directly contradicts the acceptance criteria outlined in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Labels source type where identifiable.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly identify the source type, which is a critical requirement for the evaluation. While it provides some context about the findings and gaps, it fails to distinguish between customer-authored opinions and vendor marketing, which is essential according to the acceptance criteria. The lack of clear labeling of source types results in a low score."
+          },
+          {
+            "criterion": "Does not count vendor-authored promotional language as independent customer sentiment.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide any findings or customer sentiment, indicating a lack of independent customer opinions. It does not meet the acceptance criteria of distinguishing between customer-authored opinions and vendor marketing, as there are no customer sentiments reported. Additionally, the retrieval context indicates no evidence was extracted, further supporting the absence of customer sentiment. Therefore, it does not align with the evaluation steps."
+          },
+          {
+            "criterion": "Treats unattributed or ambiguous authorship cautiously.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not address authorship attribution, leaving it ambiguous. It fails to distinguish between customer-authored opinions and vendor marketing, which is a critical requirement. Additionally, it does not treat unattributed authorship cautiously, as there are no references to source types or any indication of how the findings were derived. This lack of clarity directly contradicts the acceptance criteria outlined in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.13333333333333333,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CT-EDGE-15",
+          "requirement_id": "VENDOR_SENTIMENT",
+          "test_case_id": "CT-GENERAL-002",
+          "title": "Source-type separation",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not label the source type where identifiable, which is a key requirement. It also fails to demonstrate that vendor-authored promotional language is not counted as independent customer sentiment. Additionally, it does not address the treatment of unattributed or ambiguous authorship. Overall, the coverage of the acceptance criteria is missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.399274
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.388322
+            },
+            {
+              "source_path": "$.requirements[0].definition",
+              "text": "Share of brand mentions among the company and its competitors.",
+              "similarity": 0.38014
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.332167
+            },
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.303756
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.13333333333333333,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CT-EDGE-16",
+        "requirement_id": "SHARE_OF_VOICE",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Mention-share denominator integrity",
+        "priority": "mandatory",
+        "score": 0.30000000000000004,
+        "status": "partial",
+        "reason": "missing: Defines whether the denominator is all collected items or only vendor-mentioning items. — The Actual Output does not explicitly define the denominator used for calculating mention share, which is a critical requirement. It fails to clarify whether the denominator includes all collected items or only vendor-mentioning items. Additionally, while it mentions gaps and findings, it does not provide a clear explanation of multi-vendor mentions or entity matching, nor does it address the issue of small or imbalanced samples. These shortcomings lead to a low score.; missing: Explains multi-vendor mentions and entity matching. — The Actual Output does not explicitly explain multi-vendor mentions or provide a substantive explanation of entity matching, which are critical components of the evaluation criteria. Additionally, while the Expected Output outlines clear criteria for evaluating these aspects, the Actual Output fails to meet these requirements, resulting in a lack of alignment. The retrieval context also does not support understanding of the criteria, as it lacks relevant evidence.; partial: Does not call mention share market share, revenue share, or adoption share. — The Actual Output does not explicitly mention share market share, revenue share, or adoption share, which aligns with the acceptance criteria. However, it fails to provide a clear explanation of the denominator used for calculating mention share, nor does it address multi-vendor mentions or entity matching. The gaps identified indicate insufficient data collection, which further detracts from meeting the primary claim of the report. Therefore, while it avoids prohibited terms, it lacks critical details required for a higher score.; partial: Flags small or imbalanced samples as directional. — The Actual Output does not explicitly flag small or imbalanced samples as directional, which is a critical requirement from the evaluation steps. While it mentions gaps and provides a summary, it fails to meet the acceptance criteria regarding the treatment of sample size and confidence levels. Therefore, it does not align well with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Defines whether the denominator is all collected items or only vendor-mentioning items.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly define the denominator used for calculating mention share, which is a critical requirement. It fails to clarify whether the denominator includes all collected items or only vendor-mentioning items. Additionally, while it mentions gaps and findings, it does not provide a clear explanation of multi-vendor mentions or entity matching, nor does it address the issue of small or imbalanced samples. These shortcomings lead to a low score."
+          },
+          {
+            "criterion": "Explains multi-vendor mentions and entity matching.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly explain multi-vendor mentions or provide a substantive explanation of entity matching, which are critical components of the evaluation criteria. Additionally, while the Expected Output outlines clear criteria for evaluating these aspects, the Actual Output fails to meet these requirements, resulting in a lack of alignment. The retrieval context also does not support understanding of the criteria, as it lacks relevant evidence."
+          },
+          {
+            "criterion": "Does not call mention share market share, revenue share, or adoption share.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly mention share market share, revenue share, or adoption share, which aligns with the acceptance criteria. However, it fails to provide a clear explanation of the denominator used for calculating mention share, nor does it address multi-vendor mentions or entity matching. The gaps identified indicate insufficient data collection, which further detracts from meeting the primary claim of the report. Therefore, while it avoids prohibited terms, it lacks critical details required for a higher score."
+          },
+          {
+            "criterion": "Flags small or imbalanced samples as directional.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly flag small or imbalanced samples as directional, which is a critical requirement from the evaluation steps. While it mentions gaps and provides a summary, it fails to meet the acceptance criteria regarding the treatment of sample size and confidence levels. Therefore, it does not align well with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.30000000000000004,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-EDGE-16",
+          "requirement_id": "SHARE_OF_VOICE",
+          "test_case_id": "CT-GENERAL-002",
+          "title": "Mention-share denominator integrity",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to define the denominator of collected items clearly, as it does not specify whether it includes all collected items or only vendor-mentioning items. Additionally, it incorrectly refers to 'share of brand mentions' and 'share of posts' without clarifying that these are not market share or similar terms. There is no mention of multi-vendor mentions or entity matching, and it does not flag small or imbalanced samples as directional. Overall, it does not meet the mandatory acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.363185
+            },
+            {
+              "source_path": "$.requirements[0].definition",
+              "text": "Share of brand mentions among the company and its competitors.",
+              "similarity": 0.353271
+            },
+            {
+              "source_path": "$.requirements[4].definition",
+              "text": "Positive, neutral and negative share of customer posts.",
+              "similarity": 0.34623
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.308116
+            },
+            {
+              "source_path": "$.requirements[16].definition",
+              "text": "Share of posts expressing intent to switch away from or to a vendor.",
+              "similarity": 0.307174
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.30000000000000004,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-EDGE-17",
+        "requirement_id": "TEMPORAL_SIGNAL",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Sparse time-series interpretation",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "partial",
+        "reason": "missing: States the observation window and sampling frequency. — The Actual Output does not explicitly state the observation window or the sampling frequency, which are critical requirements outlined in the acceptance criteria. Additionally, it mentions gaps in data collection but fails to provide a clear interpretation of the time-series data or any relevant details about the collection method. This lack of clarity and completeness leads to a low score.; partial: Identifies missing intervals and irregular collection. — The Actual Output identifies two gaps related to missing data collection, specifically noting that no search interest series was collected and that the run stopped due to a time limit. However, it does not provide substantive details about irregular collection practices or explicitly state the observation window and sampling frequency, which are critical for meeting the acceptance criteria. Therefore, while it acknowledges some missing intervals, it lacks the depth required for a higher score.; missing: Avoids trend or momentum claims from isolated peaks. — The Actual Output fails to meet the avoidance criterion for trend or momentum claims, as it does not provide any analysis that distinguishes isolated observations from sustained movement over time. It also lacks a clear statement of the observation window and sampling frequency, and does not identify missing intervals or irregular collection. The summary indicates no findings and mentions gaps, but does not explicitly label the low confidence or insufficient data, which is required. Therefore, it does not align with the Expected Output's criteria.; missing: Separates seasonal effects and event-driven spikes when evidence permits. — The Actual Output does not explicitly separate seasonal effects from event-driven spikes, which is a critical requirement outlined in the Expected Output. Additionally, while it mentions gaps in data collection, it fails to provide a clear distinction between isolated observations and sustained trends, leading to a lack of clarity in the analysis. The retrieval context is also irrelevant to the report, which further detracts from the overall quality of the output.",
+        "criteria_results": [
+          {
+            "criterion": "States the observation window and sampling frequency.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state the observation window or the sampling frequency, which are critical requirements outlined in the acceptance criteria. Additionally, it mentions gaps in data collection but fails to provide a clear interpretation of the time-series data or any relevant details about the collection method. This lack of clarity and completeness leads to a low score."
+          },
+          {
+            "criterion": "Identifies missing intervals and irregular collection.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies two gaps related to missing data collection, specifically noting that no search interest series was collected and that the run stopped due to a time limit. However, it does not provide substantive details about irregular collection practices or explicitly state the observation window and sampling frequency, which are critical for meeting the acceptance criteria. Therefore, while it acknowledges some missing intervals, it lacks the depth required for a higher score."
+          },
+          {
+            "criterion": "Avoids trend or momentum claims from isolated peaks.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to meet the avoidance criterion for trend or momentum claims, as it does not provide any analysis that distinguishes isolated observations from sustained movement over time. It also lacks a clear statement of the observation window and sampling frequency, and does not identify missing intervals or irregular collection. The summary indicates no findings and mentions gaps, but does not explicitly label the low confidence or insufficient data, which is required. Therefore, it does not align with the Expected Output's criteria."
+          },
+          {
+            "criterion": "Separates seasonal effects and event-driven spikes when evidence permits.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly separate seasonal effects from event-driven spikes, which is a critical requirement outlined in the Expected Output. Additionally, while it mentions gaps in data collection, it fails to provide a clear distinction between isolated observations and sustained trends, leading to a lack of clarity in the analysis. The retrieval context is also irrelevant to the report, which further detracts from the overall quality of the output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-EDGE-17",
+          "requirement_id": "TEMPORAL_SIGNAL",
+          "test_case_id": "CT-GENERAL-003",
+          "title": "Sparse time-series interpretation",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to state the observation window and sampling frequency, which is a critical requirement. It also does not identify missing intervals or irregular collection, as indicated by the lack of a search interest series. Additionally, it does not separate seasonal effects or event-driven spikes, nor does it avoid trend claims from isolated peaks. Overall, it does not meet any of the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.413387
+            },
+            {
+              "source_path": "$.gaps[0]",
+              "text": "no search interest series was collected, so demand over time is unknown",
+              "similarity": 0.267828
+            },
+            {
+              "source_path": "$.gaps[1]",
+              "text": "the run stopped at its time limit of 300 s",
+              "similarity": 0.196803
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.194635
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.173052
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.25,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-EDGE-18",
+        "requirement_id": "ENGAGEMENT_METRICS",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Missing-versus-zero metric handling",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "partial",
+        "reason": "partial: Preserves null/missing states rather than coercing them to zero. — The Actual Output indicates '0 findings; 2 gaps' and lists specific gaps related to missing data, which aligns with the requirement to preserve null/missing states. However, it does not clearly articulate how these gaps affect the interpretation of the findings, nor does it provide a qualitative summary or details about the collection coverage for engagement fields. This lack of clarity and detail results in a lower score.; missing: Reports collection coverage for engagement fields. — The Actual Output indicates a partial status with 0 findings and mentions gaps in data collection, specifically noting that no search interest series was collected. This directly impacts the ability to report collection coverage for engagement fields, which is a key requirement. The output fails to clearly distinguish between true zeros and uncollected data, thus not meeting the acceptance criteria. Overall, the clarity and completeness regarding the coverage of engagement fields are insufficient.; missing: Does not infer no audience activity from missing metrics. — The Actual Output does not explicitly state the absence of audience activity due to missing metrics, which is a critical requirement. While it mentions gaps, it does not clarify that these gaps imply missing data rather than zero audience activity. Additionally, it fails to align with the acceptance criteria of preserving null states and not inferring audience activity from missing metrics. Therefore, it does not meet the evaluation steps adequately.",
+        "criteria_results": [
+          {
+            "criterion": "Preserves null/missing states rather than coercing them to zero.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output indicates '0 findings; 2 gaps' and lists specific gaps related to missing data, which aligns with the requirement to preserve null/missing states. However, it does not clearly articulate how these gaps affect the interpretation of the findings, nor does it provide a qualitative summary or details about the collection coverage for engagement fields. This lack of clarity and detail results in a lower score."
+          },
+          {
+            "criterion": "Reports collection coverage for engagement fields.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output indicates a partial status with 0 findings and mentions gaps in data collection, specifically noting that no search interest series was collected. This directly impacts the ability to report collection coverage for engagement fields, which is a key requirement. The output fails to clearly distinguish between true zeros and uncollected data, thus not meeting the acceptance criteria. Overall, the clarity and completeness regarding the coverage of engagement fields are insufficient."
+          },
+          {
+            "criterion": "Does not infer no audience activity from missing metrics.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state the absence of audience activity due to missing metrics, which is a critical requirement. While it mentions gaps, it does not clarify that these gaps imply missing data rather than zero audience activity. Additionally, it fails to align with the acceptance criteria of preserving null states and not inferring audience activity from missing metrics. Therefore, it does not meet the evaluation steps adequately."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-EDGE-18",
+          "requirement_id": "ENGAGEMENT_METRICS",
+          "test_case_id": "CT-GENERAL-003",
+          "title": "Missing-versus-zero metric handling",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to preserve null/missing states, as it does not clearly indicate which metrics are unavailable or uncollected, instead presenting a count of evidence items without distinguishing between true zeros and missing data. Additionally, it does not report collection coverage for engagement fields as required, nor does it address the inference of audience activity from missing metrics. Overall, the output does not meet the mandatory acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.423339
+            },
+            {
+              "source_path": "$.requirements[8].definition",
+              "text": "Average review rating on a public review site.",
+              "similarity": 0.298122
+            },
+            {
+              "source_path": "$.metadata.control_summary.warnings[0]",
+              "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+              "similarity": 0.249473
+            },
+            {
+              "source_path": "$.requirements[12].definition",
+              "text": "Most frequent complaint themes with their share of mentions.",
+              "similarity": 0.224961
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.197212
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CT-EDGE-19",
+        "requirement_id": "VENDOR_COMPARABILITY",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Balanced comparison windows",
+        "priority": "mandatory",
+        "score": 0.3333333333333333,
+        "status": "partial",
+        "reason": "partial: Identifies differences in sample size and collection coverage. — The Actual Output identifies gaps in data collection, specifically mentioning that no search interest series was collected and that the run stopped due to a time limit. However, it does not explicitly identify differences in sample size and collection coverage as required by the evaluation steps. Additionally, it fails to explain how these imbalances affect confidence, which is crucial for a high score. Therefore, while there are some relevant details, the output does not fully meet the mandatory acceptance criteria.; missing: Avoids ranking vendors on incomparable datasets. — The Actual Output does not explicitly state that vendors are not ranked based on incomparable datasets, nor does it articulate the avoidance of such rankings clearly. While it mentions gaps and findings, it fails to address the requirement of balanced comparison windows and does not explain how any imbalances affect confidence. Therefore, it does not meet the acceptance criteria fully.; missing: Explains how imbalance affects confidence. — The Actual Output does not explicitly explain how imbalance affects confidence, which is a critical requirement. While it identifies gaps in data collection, it fails to provide a clear and substantive explanation regarding the impact of these imbalances on the overall confidence level. Additionally, the summary lacks a direct comparison to the Expected Output, which emphasizes the need for balanced comparisons and the disclosure of mismatches. Therefore, the response does not meet the evaluation criteria adequately.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies differences in sample size and collection coverage.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies gaps in data collection, specifically mentioning that no search interest series was collected and that the run stopped due to a time limit. However, it does not explicitly identify differences in sample size and collection coverage as required by the evaluation steps. Additionally, it fails to explain how these imbalances affect confidence, which is crucial for a high score. Therefore, while there are some relevant details, the output does not fully meet the mandatory acceptance criteria."
+          },
+          {
+            "criterion": "Avoids ranking vendors on incomparable datasets.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that vendors are not ranked based on incomparable datasets, nor does it articulate the avoidance of such rankings clearly. While it mentions gaps and findings, it fails to address the requirement of balanced comparison windows and does not explain how any imbalances affect confidence. Therefore, it does not meet the acceptance criteria fully."
+          },
+          {
+            "criterion": "Explains how imbalance affects confidence.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly explain how imbalance affects confidence, which is a critical requirement. While it identifies gaps in data collection, it fails to provide a clear and substantive explanation regarding the impact of these imbalances on the overall confidence level. Additionally, the summary lacks a direct comparison to the Expected Output, which emphasizes the need for balanced comparisons and the disclosure of mismatches. Therefore, the response does not meet the evaluation criteria adequately."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CT-EDGE-19",
+          "requirement_id": "VENDOR_COMPARABILITY",
+          "test_case_id": "CT-GENERAL-003",
+          "title": "Balanced comparison windows",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to address the acceptance criteria effectively. It does not identify differences in sample size and collection coverage, nor does it avoid ranking vendors on incomparable datasets. Additionally, there is no explanation provided on how imbalance affects confidence. Therefore, all criteria are missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.metadata.control_summary.headline",
+              "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+              "similarity": 0.350602
+            },
+            {
+              "source_path": "$.task_goal",
+              "text": "What are AI developers, automotive and robotics companies, and cloud providers saying about NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives in terms of sentiment, needs, complaints, reviews, social conversation, and search interest?",
+              "similarity": 0.236331
+            },
+            {
+              "source_path": "$.requirements[0].check_rule",
+              "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+              "similarity": 0.209152
+            },
+            {
+              "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+              "text": "https://www.linkedin.com/company/mordor-intelligence",
+              "similarity": 0.193573
+            },
+            {
+              "source_path": "$.requirements[4].check_rule",
+              "text": "parts_sum_100=True, min_sample=30",
+              "similarity": 0.193173
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3333333333333333,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "CT-R01",
+        "requirement_id": "SCOPE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Scope and coverage",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not name the requested entities, customer segments, regions, or period, which is a critical requirement. Additionally, it fails to clearly label any scope that was not researched. Therefore, the coverage of acceptance criteria is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.350343
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.219763
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.206067
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.196391
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.192095
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R02",
+        "requirement_id": "SAMPLE_SENTIMENT",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Sample-level sentiment",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output provides some relevant information regarding sentiment analysis, such as the collection of evidence items and mentions of coverage gaps. However, it fails to fully address the acceptance criteria, particularly in reporting counts and percentages supported by the sample, explaining classification rules, and avoiding generalizations about the customer population. Therefore, the coverage is classified as 'partial'.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.331149
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.318639
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.314463
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.290762
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.248515
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R03",
+        "requirement_id": "VENDOR_SENTIMENT",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Vendor sentiment evidence",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to distinctly separate customer opinions from other types of content, such as news coverage or vendor statements, which is a critical requirement. Additionally, it does not provide sufficient evidence to support any vendor sentiment, as required by the acceptance criteria. Overall, the output does not meet the mandatory criteria outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.373155
+          },
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.352071
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.351803
+          },
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.340652
+          },
+          {
+            "source_path": "$.requirements[0].definition",
+            "text": "Share of brand mentions among the company and its competitors.",
+            "similarity": 0.311577
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R04",
+        "requirement_id": "ADOPTION",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Adoption and deployment signals",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to name any sources or dates for adoption claims, which is a mandatory requirement. Additionally, it infers broad adoption from vague references without providing specific examples or confirmations, contradicting the Expected Output's criteria. Overall, it does not meet any of the acceptance criteria outlined.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.300025
+          },
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.275964
+          },
+          {
+            "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+            "text": "https://www.linkedin.com/company/mordor-intelligence",
+            "similarity": 0.252906
+          },
+          {
+            "source_path": "$.business_context.competitors[2].entity_id",
+            "text": "d9965da8a31670a008096b55cbe5bbb3",
+            "similarity": 0.233134
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.231695
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R05",
+        "requirement_id": "SEARCH_INTEREST",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Search-interest coverage",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to identify any search interest series, which is critical for understanding demand over time. It also does not specify the geography, period, or comparison basis for trends, which are essential elements of the evaluation criteria. Additionally, it treats the lack of collected evidence as a gap rather than addressing it as a planned query issue. Overall, the coverage of acceptance criteria is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.51303
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.346506
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.241668
+          },
+          {
+            "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+            "text": "https://www.linkedin.com/company/mordor-intelligence",
+            "similarity": 0.185884
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are AI developers, automotive and robotics companies, and cloud providers saying about NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives in terms of sentiment, needs, complaints, reviews, social conversation, and search interest?",
+            "similarity": 0.165356
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R06",
+        "requirement_id": "SOCIAL_COLLECTION",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Social evidence collection",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output provides information on the number of evidence items collected and the platforms used, which partially meets the acceptance criteria. However, it lacks details on the collection period and sample size, and it does not clearly distinguish between planned queries and observed posts. Therefore, the coverage is classified as partial.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.486002
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.288972
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.239737
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.239332
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.220059
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R07",
+        "requirement_id": "NEWS_EVIDENCE_QUALITY",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "News and web evidence quality",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to specify the source type and does not indicate whether full article text was available, which is a critical requirement. Additionally, it treats snippets as evidence without addressing the engagement or source metadata, violating the acceptance criteria. Overall, the coverage of the required findings is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.499387
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.255342
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.245125
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.233474
+          },
+          {
+            "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+            "text": "https://www.linkedin.com/company/mordor-intelligence",
+            "similarity": 0.218426
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R08",
+        "requirement_id": "LANGUAGE_REGION_COVERAGE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Language and regional coverage",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not mention language or regional sampling limitations, which is a critical acceptance criterion. While it provides some metadata regarding sample counts, it fails to address the second criterion, resulting in a classification of 'missing'.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.375723
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.189062
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.178459
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.171362
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.155936
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R09",
+        "requirement_id": "TEMPORAL_SIGNAL",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Temporal coverage and trends",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to report date coverage and mentions missing dates, which is a critical requirement. It also does not distinguish between isolated peaks and sustained trends, as it states that demand over time is unknown. Therefore, the acceptance criteria are not met, leading to a classification of missing coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.477146
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.273576
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "the run stopped at its time limit of 300 s",
+            "similarity": 0.241409
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.222157
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.210748
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R10",
+        "requirement_id": "SHARE_OF_VOICE",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Share of voice",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not explain entity matching or how items without vendor mentions are treated, which is a critical requirement. Additionally, it fails to label small or imbalanced samples as directional or insufficient. The coverage of acceptance criteria is missing, as none of the mandatory requirements are addressed in the output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.344301
+          },
+          {
+            "source_path": "$.requirements[0].definition",
+            "text": "Share of brand mentions among the company and its competitors.",
+            "similarity": 0.320305
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.29965
+          },
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.295873
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.285473
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R11",
+        "requirement_id": "ENGAGEMENT_METRICS",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Engagement metrics",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to distinguish between zero values and missing or uncollected values, as it reports '0 finding(s) were written' without clarifying if this indicates a lack of engagement or simply uncollected data. Additionally, it does not provide any descriptive examples or low-confidence labels for the insufficient data, which is a critical requirement. Therefore, it does not meet the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.354249
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.283185
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.202872
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.202734
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.145729
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R12",
+        "requirement_id": "VENDOR_COMPARABILITY",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Vendor and regional comparability",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to use comparable sources, measures, periods, and regions as required. It does not identify imbalances or address missing values appropriately, which is critical for meeting the acceptance criteria. Therefore, it does not fulfill any of the necessary requirements outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.31386
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.192141
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.185354
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.165092
+          },
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.156206
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-R13",
+        "requirement_id": "OVERALL_CONFIDENCE_AND_GAPS",
+        "test_case_id": "CT-GENERAL-001",
+        "title": "Confidence and evidence gaps",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to adequately address the acceptance criteria. It does not clearly tie confidence to evidence coverage and quality, nor does it effectively list material gaps and their impact on conclusions. While it mentions coverage gaps, it lacks a detailed explanation of how these gaps affect the overall confidence in the findings. Additionally, it does not provide an explicit status regarding the completeness of the evidence, which is crucial for a mandatory priority evaluation. Overall, the response is missing key elements required for a comprehensive assessment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.541434
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.251813
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.242942
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.232734
+          },
+          {
+            "source_path": "$.business_context.competitors[2].entity_id",
+            "text": "d9965da8a31670a008096b55cbe5bbb3",
+            "similarity": 0.127714
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-14",
+        "requirement_id": "SAMPLE_SENTIMENT",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Denominator and classification integrity",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to fully address the acceptance criteria. It does not state the number of unique eligible items or the denominator for any percentages, nor does it explain exclusions, duplicates, or unclassified items. Additionally, there is no indication that neutral or mixed items are considered, and the conclusions drawn are not limited to the observed sample. Overall, the output is missing critical information required by the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.351534
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.302055
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.284357
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.258964
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.242218
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-15",
+        "requirement_id": "VENDOR_SENTIMENT",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Source-type separation",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not label the source type where identifiable, which is a key requirement. It also fails to demonstrate that vendor-authored promotional language is not counted as independent customer sentiment. Additionally, it does not address the treatment of unattributed or ambiguous authorship. Overall, the coverage of the acceptance criteria is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.399274
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.388322
+          },
+          {
+            "source_path": "$.requirements[0].definition",
+            "text": "Share of brand mentions among the company and its competitors.",
+            "similarity": 0.38014
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.332167
+          },
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.303756
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-16",
+        "requirement_id": "SHARE_OF_VOICE",
+        "test_case_id": "CT-GENERAL-002",
+        "title": "Mention-share denominator integrity",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to define the denominator of collected items clearly, as it does not specify whether it includes all collected items or only vendor-mentioning items. Additionally, it incorrectly refers to 'share of brand mentions' and 'share of posts' without clarifying that these are not market share or similar terms. There is no mention of multi-vendor mentions or entity matching, and it does not flag small or imbalanced samples as directional. Overall, it does not meet the mandatory acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.363185
+          },
+          {
+            "source_path": "$.requirements[0].definition",
+            "text": "Share of brand mentions among the company and its competitors.",
+            "similarity": 0.353271
+          },
+          {
+            "source_path": "$.requirements[4].definition",
+            "text": "Positive, neutral and negative share of customer posts.",
+            "similarity": 0.34623
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.308116
+          },
+          {
+            "source_path": "$.requirements[16].definition",
+            "text": "Share of posts expressing intent to switch away from or to a vendor.",
+            "similarity": 0.307174
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-17",
+        "requirement_id": "TEMPORAL_SIGNAL",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Sparse time-series interpretation",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to state the observation window and sampling frequency, which is a critical requirement. It also does not identify missing intervals or irregular collection, as indicated by the lack of a search interest series. Additionally, it does not separate seasonal effects or event-driven spikes, nor does it avoid trend claims from isolated peaks. Overall, it does not meet any of the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.413387
+          },
+          {
+            "source_path": "$.gaps[0]",
+            "text": "no search interest series was collected, so demand over time is unknown",
+            "similarity": 0.267828
+          },
+          {
+            "source_path": "$.gaps[1]",
+            "text": "the run stopped at its time limit of 300 s",
+            "similarity": 0.196803
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.194635
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.173052
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-18",
+        "requirement_id": "ENGAGEMENT_METRICS",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Missing-versus-zero metric handling",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to preserve null/missing states, as it does not clearly indicate which metrics are unavailable or uncollected, instead presenting a count of evidence items without distinguishing between true zeros and missing data. Additionally, it does not report collection coverage for engagement fields as required, nor does it address the inference of audience activity from missing metrics. Overall, the output does not meet the mandatory acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.423339
+          },
+          {
+            "source_path": "$.requirements[8].definition",
+            "text": "Average review rating on a public review site.",
+            "similarity": 0.298122
+          },
+          {
+            "source_path": "$.metadata.control_summary.warnings[0]",
+            "text": "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+            "similarity": 0.249473
+          },
+          {
+            "source_path": "$.requirements[12].definition",
+            "text": "Most frequent complaint themes with their share of mentions.",
+            "similarity": 0.224961
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.197212
+          }
+        ]
+      },
+      {
+        "finding_id": "CT-EDGE-19",
+        "requirement_id": "VENDOR_COMPARABILITY",
+        "test_case_id": "CT-GENERAL-003",
+        "title": "Balanced comparison windows",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to address the acceptance criteria effectively. It does not identify differences in sample size and collection coverage, nor does it avoid ranking vendors on incomparable datasets. Additionally, there is no explanation provided on how imbalance affects confidence. Therefore, all criteria are missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.metadata.control_summary.headline",
+            "text": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+            "similarity": 0.350602
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are AI developers, automotive and robotics companies, and cloud providers saying about NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives in terms of sentiment, needs, complaints, reviews, social conversation, and search interest?",
+            "similarity": 0.236331
+          },
+          {
+            "source_path": "$.requirements[0].check_rule",
+            "text": "parts_sum_100=True, min_sample=30, min_platforms=2",
+            "similarity": 0.209152
+          },
+          {
+            "source_path": "$.business_context.competitors[1].social_accounts[2].url",
+            "text": "https://www.linkedin.com/company/mordor-intelligence",
+            "similarity": 0.193573
+          },
+          {
+            "source_path": "$.requirements[4].check_rule",
+            "text": "parts_sum_100=True, min_sample=30",
+            "similarity": 0.193173
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [
+      {
+        "claim_id": "CLAIM-001",
+        "claim": "402 evidence items were collected from 3 platform(s) and 0 finding(s) were written; 1 critical and 1 minor coverage gap(s) remain.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific metrics about evidence collection and coverage gaps but lacks alignment with the detailed requirements outlined in the Expected Output. It does not address the necessary claims regarding scope, sample-level sentiment, or vendor sentiment evidence, which are critical for the evaluation. Additionally, it fails to mention any specific entities, customer segments, or regions, which are mandatory according to the acceptance criteria. Therefore, the response does not meet the evaluation steps adequately.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      }
+    ],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 3,
+      "overall_score": 0.1667,
+      "overall_status": "fail",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.2,
+          "status": "fail",
+          "reason": "The actual output fails to provide any findings related to the sentiment, needs, complaints, reviews, or social conversation regarding NVIDIA GPUs versus AMD, Intel, and Broadcom alternatives, which directly contradicts the research goal. Additionally, it highlights significant gaps, including the lack of search interest data and a premature run time limit, indicating a lack of thoroughness in addressing the requested topics. The output does not adequately emphasize customer sentiment or provide sufficient evidence to support any conclusions, resulting in a low score.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.1,
+          "status": "fail",
+          "reason": "The Actual Output indicates a lack of findings and significant gaps in data collection, which directly contradicts the expectations outlined in the Expected Output. Specifically, it fails to provide any evidence or sentiment analysis for the requested companies, and the gaps identified highlight critical areas where data was not collected, such as search interest. Additionally, the Retrieval Context confirms that no trace evidence was extracted, further undermining the credibility of the claims made in the Actual Output. Overall, the response does not align with the evaluation steps, particularly in terms of evidence support and logical conclusions.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": null,
+          "status": "not_evaluable_no_trace_evidence",
+          "reason": "No trace evidence was extracted. This is not proof that the report's claims are false.",
+          "method": "evidence-gated"
+        },
+        "completeness": {
+          "score": 0.2,
+          "status": "fail",
+          "reason": "The Actual Output fails to provide any findings related to the requested entities, customer segments, and dimensions, resulting in a complete lack of coverage. While it identifies gaps, it does not substantively address the required sentiment analysis or comparisons between NVIDIA and its competitors. The stated gaps are relevant but do not compensate for the absence of findings, leading to a low score.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Lack of explicit naming of requested entities, customer segments, regions, and time period.",
+          "evidence": "The Actual Output does not explicitly name the requested entities, customer segments, regions, or specify the period requested.",
+          "impact": "This omission leads to a lack of clarity and completeness in the analysis, making it difficult to assess the relevance of the findings."
+        },
+        {
+          "limitation": "Failure to provide counts and percentages related to the sample size.",
+          "evidence": "The Actual Output reports '0 findings' without any supporting data or context.",
+          "impact": "This results in an inability to assess the sentiment accurately and undermines the credibility of the analysis."
+        },
+        {
+          "limitation": "Inability to separate customer opinion from other types of coverage.",
+          "evidence": "The Actual Output fails to separate customer opinions from news coverage, vendor statements, and analyst commentary.",
+          "impact": "This leads to a lack of clarity regarding the sentiment towards vendors, which is critical for understanding customer perspectives."
+        },
+        {
+          "limitation": "Missing sources and dates for adoption claims.",
+          "evidence": "The Actual Output does not include specific names of sources or dates that support the adoption claims.",
+          "impact": "This absence prevents the analysis from demonstrating credible adoption evidence."
+        },
+        {
+          "limitation": "Failure to identify geographical and temporal scope for search interest.",
+          "evidence": "The Actual Output fails to identify the relevant geography and period for the trend.",
+          "impact": "This limits the ability to contextualize the findings and assess their relevance over time."
+        },
+        {
+          "limitation": "Insufficient reporting of collection period and sample size.",
+          "evidence": "The Actual Output does not specify the collection period for the data or provide the sample size of the data collected.",
+          "impact": "This lack of detail diminishes the reliability of the findings and the overall analysis."
+        },
+        {
+          "limitation": "Inability to distinguish between zero values and missing or uncollected values.",
+          "evidence": "The Actual Output states '0 findings; 2 gaps' but does not clearly distinguish between zero values and missing or uncollected values.",
+          "impact": "This ambiguity affects the interpretation of the findings and the understanding of engagement metrics."
+        },
+        {
+          "limitation": "Failure to tie confidence level to evidence coverage and quality.",
+          "evidence": "The Actual Output indicates a low confidence level of 0.3 but does not effectively tie this to the quality or coverage of the evidence collected.",
+          "impact": "This lack of connection undermines the credibility of the analysis and the conclusions drawn."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Explicitly name all requested entities, customer segments, regions, and time period in the report.",
+          "addresses": "This will improve clarity and completeness, ensuring that the analysis aligns with the research task.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide counts and percentages related to the sample size when reporting findings.",
+          "addresses": "This will enhance the credibility of the sentiment analysis and allow for better assessment of the data.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Implement a clear separation of customer opinion from news coverage, vendor statements, and analyst commentary.",
+          "addresses": "This will clarify the sentiment towards vendors and improve the overall quality of the analysis.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Include specific names of sources and dates for any adoption claims made.",
+          "addresses": "This will provide credible evidence for adoption claims and enhance the reliability of the findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Clearly identify the geographical and temporal scope for search interest.",
+          "addresses": "This will contextualize the findings and improve the relevance of the analysis over time.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Report the collection period and sample size for the data collected.",
+          "addresses": "This will enhance the reliability of the findings and provide necessary context for the analysis.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Distinguish between zero values and missing or uncollected values in the reporting.",
+          "addresses": "This will improve the interpretation of findings and provide clarity regarding engagement metrics.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Tie the confidence level to the quality and coverage of the evidence collected.",
+          "addresses": "This will enhance the credibility of the analysis and provide a clearer understanding of the conclusions drawn.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Lack of explicit naming of requested entities, customer segments, regions, and time period.",
+        "evidence": "The Actual Output does not explicitly name the requested entities, customer segments, regions, or specify the period requested.",
+        "impact": "This omission leads to a lack of clarity and completeness in the analysis, making it difficult to assess the relevance of the findings."
+      },
+      {
+        "limitation": "Failure to provide counts and percentages related to the sample size.",
+        "evidence": "The Actual Output reports '0 findings' without any supporting data or context.",
+        "impact": "This results in an inability to assess the sentiment accurately and undermines the credibility of the analysis."
+      },
+      {
+        "limitation": "Inability to separate customer opinion from other types of coverage.",
+        "evidence": "The Actual Output fails to separate customer opinions from news coverage, vendor statements, and analyst commentary.",
+        "impact": "This leads to a lack of clarity regarding the sentiment towards vendors, which is critical for understanding customer perspectives."
+      },
+      {
+        "limitation": "Missing sources and dates for adoption claims.",
+        "evidence": "The Actual Output does not include specific names of sources or dates that support the adoption claims.",
+        "impact": "This absence prevents the analysis from demonstrating credible adoption evidence."
+      },
+      {
+        "limitation": "Failure to identify geographical and temporal scope for search interest.",
+        "evidence": "The Actual Output fails to identify the relevant geography and period for the trend.",
+        "impact": "This limits the ability to contextualize the findings and assess their relevance over time."
+      },
+      {
+        "limitation": "Insufficient reporting of collection period and sample size.",
+        "evidence": "The Actual Output does not specify the collection period for the data or provide the sample size of the data collected.",
+        "impact": "This lack of detail diminishes the reliability of the findings and the overall analysis."
+      },
+      {
+        "limitation": "Inability to distinguish between zero values and missing or uncollected values.",
+        "evidence": "The Actual Output states '0 findings; 2 gaps' but does not clearly distinguish between zero values and missing or uncollected values.",
+        "impact": "This ambiguity affects the interpretation of the findings and the understanding of engagement metrics."
+      },
+      {
+        "limitation": "Failure to tie confidence level to evidence coverage and quality.",
+        "evidence": "The Actual Output indicates a low confidence level of 0.3 but does not effectively tie this to the quality or coverage of the evidence collected.",
+        "impact": "This lack of connection undermines the credibility of the analysis and the conclusions drawn."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Explicitly name all requested entities, customer segments, regions, and time period in the report.",
+        "addresses": "This will improve clarity and completeness, ensuring that the analysis aligns with the research task.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide counts and percentages related to the sample size when reporting findings.",
+        "addresses": "This will enhance the credibility of the sentiment analysis and allow for better assessment of the data.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Implement a clear separation of customer opinion from news coverage, vendor statements, and analyst commentary.",
+        "addresses": "This will clarify the sentiment towards vendors and improve the overall quality of the analysis.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Include specific names of sources and dates for any adoption claims made.",
+        "addresses": "This will provide credible evidence for adoption claims and enhance the reliability of the findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Clearly identify the geographical and temporal scope for search interest.",
+        "addresses": "This will contextualize the findings and improve the relevance of the analysis over time.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Report the collection period and sample size for the data collected.",
+        "addresses": "This will enhance the reliability of the findings and provide necessary context for the analysis.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Distinguish between zero values and missing or uncollected values in the reporting.",
+        "addresses": "This will improve the interpretation of findings and provide clarity regarding engagement metrics.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Tie the confidence level to the quality and coverage of the evidence collected.",
+        "addresses": "This will enhance the credibility of the analysis and provide a clearer understanding of the conclusions drawn.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "mandatory_evaluation_failures": [],
+  "evaluation_file": "Evaluation\\run_evaluations\\af9d8def516f839e7b587b89b50b9c6d\\workers\\customer_trends_6b97ade9-1125-4fc6-becf-1a87cde48f9a.a1_evaluation.json"
+}
