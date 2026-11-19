@@ -1,0 +1,143 @@
+{
+  "name_a": "Optimized",
+  "name_b": "GraphRAG",
+  "verdict": "Optimized",
+  "reason": "GraphRAG has critical failures: GraphRAG: worker:market_intelligence has an error",
+  "overall_a": 0.5075872448979591,
+  "overall_b": 0.4689804081632653,
+  "components": [
+    {
+      "component": "stage:cross_signal",
+      "score_a": 0.65954,
+      "score_b": 0.64046,
+      "delta": -0.019079999999999986,
+      "metrics_a": {
+        "correctness": 0.7,
+        "faithfulness": 0.9,
+        "completeness": 0.5,
+        "coverage": 0.3636
+      },
+      "metrics_b": {
+        "correctness": 0.6,
+        "faithfulness": 0.8,
+        "completeness": 0.5,
+        "coverage": 0.6364
+      }
+    },
+    {
+      "component": "stage:decision_analysis",
+      "score_a": 0.54807,
+      "score_b": 0.558845,
+      "delta": 0.01077500000000009,
+      "metrics_a": {
+        "correctness": 0.5,
+        "faithfulness": 0.5,
+        "completeness": 0.6,
+        "coverage": 0.6538
+      },
+      "metrics_b": {
+        "correctness": 0.4,
+        "faithfulness": 0.7,
+        "completeness": 0.5,
+        "coverage": 0.6923
+      }
+    },
+    {
+      "component": "stage:verification",
+      "score_a": 0.552495,
+      "score_b": 0.5599999999999999,
+      "delta": 0.007504999999999984,
+      "metrics_a": {
+        "correctness": 0.6,
+        "faithfulness": 0.7,
+        "completeness": 0.3,
+        "coverage": 0.5833
+      },
+      "metrics_b": {
+        "correctness": 0.6,
+        "faithfulness": 0.6,
+        "completeness": 0.5,
+        "coverage": 0.5
+      }
+    },
+    {
+      "component": "worker:competitor_intelligence",
+      "score_a": 0.56167,
+      "score_b": 0.50584,
+      "delta": -0.055830000000000046,
+      "metrics_a": {
+        "correctness": 0.6,
+        "faithfulness": 0.8,
+        "completeness": 0.4,
+        "coverage": 0.2778
+      },
+      "metrics_b": {
+        "correctness": 0.5,
+        "faithfulness": 0.7,
+        "completeness": 0.4,
+        "coverage": 0.3056
+      }
+    },
+    {
+      "component": "worker:customer_trends",
+      "score_a": 0.1838357142857143,
+      "score_b": 0.15939285714285717,
+      "delta": -0.024442857142857127,
+      "metrics_a": {
+        "correctness": 0.1,
+        "faithfulness": null,
+        "completeness": 0.3,
+        "coverage": 0.1579
+      },
+      "metrics_b": {
+        "correctness": 0.1,
+        "faithfulness": null,
+        "completeness": 0.2,
+        "coverage": 0.2105
+      }
+    },
+    {
+      "component": "worker:internal_intelligence",
+      "score_a": 0.469995,
+      "score_b": 0.37333,
+      "delta": -0.096665,
+      "metrics_a": {
+        "correctness": 0.3,
+        "faithfulness": 0.6,
+        "completeness": 0.6,
+        "coverage": 0.3333
+      },
+      "metrics_b": {
+        "correctness": 0.3,
+        "faithfulness": 0.5,
+        "completeness": 0.4,
+        "coverage": 0.2222
+      }
+    },
+    {
+      "component": "worker:market_intelligence",
+      "score_a": 0.5775049999999999,
+      "score_b": 0.484995,
+      "delta": -0.09250999999999993,
+      "metrics_a": {
+        "correctness": 0.6,
+        "faithfulness": 0.7,
+        "completeness": 0.5,
+        "coverage": 0.4167
+      },
+      "metrics_b": {
+        "correctness": 0.3,
+        "faithfulness": 0.9,
+        "completeness": 0.3,
+        "coverage": 0.3333
+      }
+    }
+  ],
+  "only_in_a": [],
+  "only_in_b": [],
+  "blockers_a": [],
+  "blockers_b": [
+    "GraphRAG: worker:market_intelligence has an error"
+  ],
+  "compatibility_issues": []
+}

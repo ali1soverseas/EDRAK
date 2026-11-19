@@ -26,6 +26,7 @@ from ..contracts.verification import VerificationDecision, VerificationStatus
 from ..contracts.worker import WorkerNotRegisteredError
 from ..core.action_log import log_action
 from ..DecisionAnalysis.service import run_decision_analysis
+from .artifacts import save_task_artifacts
 from .planner import LlmPlanner, PlanningError
 from .state import RESET, OrchestrationState
 
@@ -171,16 +172,16 @@ def run_task(task: ResearchTask, registry: WorkerRegistry) -> WorkerResult:
     """
     try:
         worker = registry.get(task.worker)
-    except WorkerNotRegisteredError as exc:
-        return _failed(task, str(exc))
-
-    try:
         result = WorkerResult.model_validate(worker.run(task))
+    except WorkerNotRegisteredError as exc:
+        result = _failed(task, str(exc))
     except ValidationError as exc:
-        return _failed(task, f"worker returned an invalid WorkerResult: {exc}")
+        result = _failed(task, f"worker returned an invalid WorkerResult: {exc}")
     # A worker is third-party code. Any failure is contained, not propagated.
     except Exception as exc:  # noqa: BLE001
-        return _failed(task, f"worker raised {type(exc).__name__}: {exc}")
+        result = _failed(task, f"worker raised {type(exc).__name__}: {exc}")
+
+    save_task_artifacts(task, result)
     # Numbers are the metrics agent's job (metrics_node): it reads what every worker saved,
     # hunts for what is missing and checks the checklist. A worker is never re-run for a figure.
     return result

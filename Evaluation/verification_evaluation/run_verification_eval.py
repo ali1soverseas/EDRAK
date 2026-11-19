@@ -4,15 +4,14 @@
 Evaluate Edrak Verification output against verification_golden.json.
 
 LLM Judge:
-    GPT-OSS 120B through Ollama Cloud.
+    OpenAI through the official chat completions endpoint.
 
 Install:
     pip install deepeval requests
 
 Environment:
-    OLLAMA_API_KEY=...
-    OLLAMA_MODEL=gpt-oss:120b
-    OLLAMA_BASE_URL=https://ollama.com
+    OPENAI_API_KEY is read from the repository .env file.
+    OPENAI_MODEL=gpt-4o-mini
 
 Usage:
     python run_verification_eval.py \
@@ -25,13 +24,18 @@ verification statuses stored in the golden dataset.
 """
 
 import argparse
-import asyncio
 import json
-import os
-import re
+import sys
 from pathlib import Path
 
-import requests
+
+def _make_openai_judge():
+    repo_root = Path(__file__).resolve().parents[2]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+    from Evaluation.generic.evaluator import DEFAULT_CONFIG, _make_openai_judge as make_judge
+
+    return make_judge(DEFAULT_CONFIG)
 
 
 # ============================================================
@@ -114,179 +118,6 @@ def make_context(case):
             )
 
     return context
-
-
-# ============================================================
-# OLLAMA CLOUD - DEEPEVAL CUSTOM MODEL
-# ============================================================
-
-from deepeval.models import DeepEvalBaseLLM
-
-
-class OllamaCloudDeepEvalModel(DeepEvalBaseLLM):
-
-    def __init__(self):
-
-        self.model_name = os.getenv(
-            "OLLAMA_MODEL",
-            "gpt-oss:120b"
-        )
-
-        self.base_url = os.getenv(
-            "OLLAMA_BASE_URL",
-            "https://ollama.com"
-        ).rstrip("/")
-
-        self.api_key = os.getenv("OLLAMA_API_KEY")
-
-        self.timeout = int(
-            os.getenv("OLLAMA_TIMEOUT", "300")
-        )
-
-        if not self.api_key:
-            raise RuntimeError(
-                "OLLAMA_API_KEY is missing. "
-                "Set your Ollama Cloud API key first."
-            )
-
-        self.endpoint = f"{self.base_url}/api/chat"
-
-        self.session = requests.Session()
-
-        self.session.headers.update({
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        })
-
-    def load_model(self):
-        return self
-
-    def get_model_name(self):
-        return f"Ollama Cloud / {self.model_name}"
-
-    def generate(self, prompt: str, schema=None):
-
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a careful and objective LLM evaluation judge. "
-                    "Evaluate only using the information provided. "
-                    "Do not invent evidence or assume unsupported facts. "
-                    "Follow the requested output schema exactly."
-                )
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-
-        payload = {
-            "model": self.model_name,
-            "messages": messages,
-            "stream": False,
-            "options": {
-                "temperature": 0,
-            }
-        }
-
-        # Enforce the Pydantic schema when DeepEval supplies one.
-        if schema is not None:
-
-            if hasattr(schema, "model_json_schema"):
-                json_schema = schema.model_json_schema()
-            else:
-                json_schema = schema.schema()
-
-            payload["format"] = json_schema
-
-        else:
-            payload["format"] = "json"
-
-        try:
-
-            response = self.session.post(
-                self.endpoint,
-                json=payload,
-                timeout=self.timeout
-            )
-
-            response.raise_for_status()
-
-            result = response.json()
-
-        except requests.exceptions.Timeout as exc:
-
-            raise RuntimeError(
-                "Ollama Cloud request timed out. "
-                "Increase OLLAMA_TIMEOUT or retry."
-            ) from exc
-
-        except requests.exceptions.HTTPError as exc:
-
-            raise RuntimeError(
-                f"Ollama Cloud HTTP error: {exc}. "
-                f"Response: {response.text[:2000]}"
-            ) from exc
-
-        except requests.exceptions.RequestException as exc:
-
-            raise RuntimeError(
-                f"Could not connect to Ollama Cloud: {exc}"
-            ) from exc
-
-        content = (
-            result.get("message", {}).get("content", "")
-        ).strip()
-
-        if not content:
-            raise RuntimeError(
-                f"Ollama returned empty content: {result}"
-            )
-
-        # Remove accidental Markdown fences.
-        content = re.sub(
-            r"^\s*```(?:json)?\s*",
-            "",
-            content,
-            flags=re.IGNORECASE
-        )
-
-        content = re.sub(
-            r"\s*```\s*$",
-            "",
-            content
-        )
-
-        if schema is None:
-            return content
-
-        try:
-
-            parsed = json.loads(content)
-
-            # Pydantic v2
-            if hasattr(schema, "model_validate"):
-                return schema.model_validate(parsed)
-
-            # Pydantic v1
-            return schema.parse_obj(parsed)
-
-        except Exception as exc:
-
-            raise RuntimeError(
-                "Ollama returned JSON that did not match "
-                f"the DeepEval schema.\nOutput: {content[:2000]}"
-            ) from exc
-
-    async def a_generate(self, prompt: str, schema=None):
-
-        return await asyncio.to_thread(
-            self.generate,
-            prompt,
-            schema
-        )
 
 
 # ============================================================
@@ -401,8 +232,8 @@ def run_deepeval(cases, predictions):
             "Run: pip install deepeval requests"
         ) from exc
 
-    # One shared Ollama Cloud judge for all metrics.
-    model = OllamaCloudDeepEvalModel()
+    # One shared OpenAI judge for all metrics.
+    model = _make_openai_judge()
 
     test_cases = []
 
@@ -542,7 +373,7 @@ def run_deepeval(cases, predictions):
         results.append(item)
 
     return {
-        "provider": "Ollama Cloud",
+        "provider": "OpenAI",
         "model": model.get_model_name(),
         "endpoint": model.endpoint,
         "results": results
@@ -654,7 +485,7 @@ def main():
             "status": "not_run",
             "reason": str(exc),
             "setup": (
-                "Configure OLLAMA_API_KEY and install "
+                "Configure OPENAI_API_KEY in .env and install "
                 "deepeval and requests."
             )
         }

@@ -1,0 +1,118 @@
+{
+  "task_id": "a87d4f3c-eaf2-4c54-9901-32280074e0fd",
+  "worker": "customer_trends",
+  "status": "failed",
+  "attempt": 1,
+  "findings": [],
+  "evidence": [],
+  "gaps": [
+    "only 0 evidence items were collected; at least 30 are needed",
+    "0 platform(s) have at least 20 items; at least 2 are needed",
+    "no search interest series was collected, so demand over time is unknown",
+    "0 item(s) in 'ar'; at least 10 are needed",
+    "0 item(s) in 'en'; at least 10 are needed",
+    "the run failed with LLMConfigError: OLLAMA_API_KEY is not set: add it to .env at the repository root"
+  ],
+  "conflicts": [],
+  "confidence": null,
+  "started_at": "2026-11-18T01:53:02.179503Z",
+  "completed_at": "2026-11-18T01:53:02.549503Z",
+  "error": "the run failed with LLMConfigError: OLLAMA_API_KEY is not set: add it to .env at the repository root",
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "a87d4f3c-eaf2-4c54-9901-32280074e0fd.a1",
+    "control_summary": {
+      "status": "insufficient",
+      "headline": "0 evidence items were collected from 0 platform(s) and 0 finding(s) were written; 3 critical and 3 minor coverage gap(s) remain.",
+      "overall_confidence": "low",
+      "findings_count": 0,
+      "evidence_count": 0,
+      "coverage": {
+        "by_platform": {},
+        "by_source_type": {},
+        "by_language": {},
+        "relevance_filter": {
+          "enabled": true,
+          "item_types": [
+            "social_comment"
+          ],
+          "token_estimate": "tokens are an estimate: characters divided by 4",
+          "comments_in": 0,
+          "dropped": {},
+          "kept": 0,
+          "kept_by_reason": {},
+          "sent_to_llm": 0,
+          "tokens_before": 0,
+          "tokens_after": 0,
+          "by_platform": {}
+        }
+      },
+      "gaps": [
+        "only 0 evidence items were collected; at least 30 are needed",
+        "0 platform(s) have at least 20 items; at least 2 are needed",
+        "no search interest series was collected, so demand over time is unknown",
+        "0 item(s) in 'ar'; at least 10 are needed",
+        "0 item(s) in 'en'; at least 10 are needed",
+        "the run failed with LLMConfigError: OLLAMA_API_KEY is not set: add it to .env at the repository root"
+      ],
+      "warnings": [
+        "the run failed with LLMConfigError: OLLAMA_API_KEY is not set: add it to .env at the repository root"
+      ],
+      "budget_used": {
+        "tool_calls": 0.0,
+        "cost_usd": 0.0,
+        "seconds": 0.37
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\artifacts\\runs\\e5f8ed22025517c0513bc9997536c1f1\\customer_trends_tracing.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\backend\\data\\evidence.db",
+      "evidence_count": 0,
+      "batch_ids": []
+    },
+    "finding_metrics": {},
+    "themes": [],
+    "trend_series": [],
+    "official_accounts": [
+      {
+        "owner": "NVIDIA",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/NVIDIA",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "x",
+        "url": "https://x.com/nvidia",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/nvidia",
+        "is_entity": true
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/Intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "x",
+        "url": "https://x.com/intel",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {},
+    "research_goal": "What are software and AI developers, governments and sovereign-AI programs, and cloud and hyperscale providers saying about NVIDIA versus AMD, Broadcom, and Intel Corp?",
+    "research_focus": "Customer sentiment, needs, complaints, reviews, social conversation, and search interest around GPU and AI infrastructure in the target markets."
+  }
+}

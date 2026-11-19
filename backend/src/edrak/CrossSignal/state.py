@@ -7,7 +7,6 @@ import operator
 from pydantic import Field
 
 from ..contracts.base import ContractModel
-from ..core.config import settings as core_settings
 from ..contracts.CrossSignal import (
     CrossSignal,
     CrossSignalInput,
@@ -35,7 +34,7 @@ class CrossSignalSettings:
       deduplication, and output assembly
     """
 
-    model: str = core_settings.OLLAMA_MODEL
+    model: str | None = None
 
     temperature: float = 0.2
 

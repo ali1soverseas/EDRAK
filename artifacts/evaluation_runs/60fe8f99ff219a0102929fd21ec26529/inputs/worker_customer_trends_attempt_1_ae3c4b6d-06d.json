@@ -1,0 +1,209 @@
+{
+  "task_id": "ae3c4b6d-06d6-4b4e-80bb-fd49a8ff62f0",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [],
+  "evidence": [],
+  "gaps": [
+    "the demand branch reported an error: the branch did not finish in 100 s; providers: socialcrawl quota exceeded, google_trends_api not configured, gdelt rate limited",
+    "no search interest series was collected, so demand over time is unknown",
+    "the run stopped at its time limit of 300 s"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-11-18T02:02:45.790463Z",
+  "completed_at": "2026-11-18T02:07:46.070463Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "ae3c4b6d-06d6-4b4e-80bb-fd49a8ff62f0.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "524 evidence items were collected from 5 platform(s) and 0 finding(s) were written; 2 critical and 1 minor coverage gap(s) remain.",
+      "overall_confidence": "low",
+      "findings_count": 0,
+      "evidence_count": 524,
+      "coverage": {
+        "by_platform": {
+          "reddit": 117,
+          "youtube": 117,
+          "x": 116,
+          "facebook": 68,
+          "unknown": 64,
+          "instagram": 42
+        },
+        "by_source_type": {
+          "social_post": 410,
+          "social_comment": 50,
+          "news": 45,
+          "web": 19
+        },
+        "by_language": {
+          "en": 461,
+          "ar": 25,
+          "es": 6,
+          "pt": 5,
+          "hi": 4,
+          "tr": 4,
+          "de": 3,
+          "ko": 3,
+          "unknown": 2,
+          "id": 2,
+          "fr": 1,
+          "hu": 1,
+          "ja": 1,
+          "nl": 1,
+          "sv": 1,
+          "th": 1,
+          "ur": 1,
+          "vi": 1,
+          "zh": 1
+        },
+        "relevance_filter": {
+          "enabled": true,
+          "item_types": [
+            "social_comment"
+          ],
+          "token_estimate": "tokens are an estimate: characters divided by 4",
+          "comments_in": 52,
+          "dropped": {
+            "llm_irrelevant": 1,
+            "too_short": 1
+          },
+          "kept": 50,
+          "kept_by_reason": {
+            "llm_relevant": 37,
+            "term_match": 13
+          },
+          "sent_to_llm": 38,
+          "tokens_before": 1958,
+          "tokens_after": 1929,
+          "by_platform": {
+            "facebook": {
+              "comments_in": 39,
+              "dropped": {
+                "llm_irrelevant": 1
+              },
+              "kept": 38,
+              "kept_by_reason": {
+                "llm_relevant": 27,
+                "term_match": 11
+              },
+              "sent_to_llm": 28,
+              "tokens_before": 1780,
+              "tokens_after": 1750
+            },
+            "instagram": {
+              "comments_in": 13,
+              "dropped": {
+                "too_short": 1
+              },
+              "kept": 12,
+              "kept_by_reason": {
+                "llm_relevant": 10,
+                "term_match": 2
+              },
+              "sent_to_llm": 10,
+              "tokens_before": 179,
+              "tokens_after": 179
+            }
+          }
+        }
+      },
+      "gaps": [
+        "the demand branch reported an error: the branch did not finish in 100 s; providers: socialcrawl quota exceeded, google_trends_api not configured, gdelt rate limited",
+        "no search interest series was collected, so demand over time is unknown",
+        "the run stopped at its time limit of 300 s"
+      ],
+      "warnings": [
+        "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+        "the run stopped at its time limit of 300 s"
+      ],
+      "budget_used": {
+        "tool_calls": 36.0,
+        "cost_usd": 0.28400000000000003,
+        "seconds": 300.28
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\customer_trends_tracing.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\backend\\data\\evidence.db",
+      "evidence_count": 524,
+      "batch_ids": [
+        "b_0f058a77db7b",
+        "b_624e53a7e3bf",
+        "b_eafe37a472af",
+        "b_9f4f78fa9c2f",
+        "b_e52b2cc3e8f9",
+        "b_c9885191de03",
+        "b_82d9a497aeec",
+        "b_b3885ed3566c",
+        "b_392fb8dd1e2c",
+        "b_4b02a34a28ee",
+        "b_ba3b6a2397c7",
+        "b_309ac556a5c6",
+        "b_c0b86a47f5d5",
+        "b_41f09ee4440e",
+        "b_970d2282452b",
+        "b_2504aca6e4d6",
+        "b_f46f19ea3917",
+        "b_dcc2ce60a0ee",
+        "b_b3d62e1a64af",
+        "b_50de6b819f5b",
+        "b_1644cd2ceb9f",
+        "b_c50dbf8904dc",
+        "b_aaf665325824",
+        "b_401c21eeb8ef",
+        "b_9838cabab7b6",
+        "b_831fc6e1ecd9",
+        "b_cd3cc6af37b9",
+        "b_e40d3a116eb6"
+      ]
+    },
+    "finding_metrics": {},
+    "themes": [],
+    "trend_series": [],
+    "official_accounts": [
+      {
+        "owner": "NVIDIA",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/NVIDIA",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "x",
+        "url": "https://x.com/nvidia",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/nvidia",
+        "is_entity": true
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/Intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel Corp",
+        "platform": "x",
+        "url": "https://x.com/intel",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {},
+    "research_goal": "What do customers say and search for? What are our competitors doing, and what does it mean for NVIDIA?",
+    "research_focus": "Read reviews, social posts and search interest for demand and complaints. Focus on the key signals for this decision."
+  }
+}

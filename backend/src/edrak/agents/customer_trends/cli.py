@@ -20,6 +20,7 @@ from typing import Any, TextIO
 from pydantic import ValidationError
 
 from edrak.agents.customer_trends.logging import configure_logging
+from edrak.agents.customer_trends.llm.client import LLMConfigError, get_chat_model
 from edrak.agents.customer_trends.runner import stream_task
 from edrak.agents.customer_trends.schemas.findings import CustomerTrendsResult
 from edrak.agents.customer_trends.schemas.task import TaskBrief
@@ -141,13 +142,12 @@ def command_run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     if brief is None:
         return EXIT_FAILED
     settings = _settings(args)
-    if not settings.edrak_fake_llm and not settings.has_key("ollama_api_key"):
-        print(
-            "OLLAMA_API_KEY is not set: add it to .env at the repository root, "
-            "or use --fake-llm for a demo with no keys",
-            file=err,
-        )
-        return EXIT_FAILED
+    if not settings.edrak_fake_llm:
+        try:
+            get_chat_model("planner", settings=settings)
+        except LLMConfigError as exc:
+            print(f"{exc}; or use --fake-llm for a demo with no keys", file=err)
+            return EXIT_FAILED
     failed, _ = asyncio.run(_stream(brief, settings, out))
     stored = _read_result(settings, brief.run_id)
     if stored is None:

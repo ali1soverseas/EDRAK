@@ -70,6 +70,15 @@ from edrak.mcp.web_tools import (
     scrape_url_content,
 )
 
+_TRACE_REQUEST_ID: ContextVar[str | None] = ContextVar("market_trace_request_id", default=None)
+_TRACE_TASK_ID: ContextVar[str | None] = ContextVar("market_trace_task_id", default=None)
+_TRACE_ATTEMPT: ContextVar[int | None] = ContextVar("market_trace_attempt", default=None)
+_TRACE_RUN_ID: ContextVar[str | None] = ContextVar("market_trace_run_id", default=None)
+_TRACE_PARENT_ID: ContextVar[str | None] = ContextVar("market_trace_parent_id", default=None)
+_TRACE_RECORDS: dict[str, list[dict[str, Any]]] = {}
+_TRACE_LOCK = threading.Lock()
+
+
 def _jsonable(value: Any) -> Any:
     """Convert common application objects to JSON-safe values without dropping results."""
     if value is None or isinstance(value, (str, int, float, bool)):

@@ -90,8 +90,8 @@ def test_an_open_breaker_stays_open_and_providers_are_independent() -> None:
 def test_collection_may_use_the_time_that_is_not_kept_for_the_findings() -> None:
     clock = FakeClock(0.0)
     budget = tracker(clock, max_seconds=300)
-    assert budget.collection_seconds_left() == pytest.approx(150)  # half is kept for the findings
+    assert budget.collection_seconds_left() == pytest.approx(75)  # 75% is kept for analysis/writing
     clock.now = 100
-    assert budget.collection_seconds_left() == pytest.approx(50)
+    assert budget.collection_seconds_left() == pytest.approx(-25)
     clock.now = 250
     assert budget.collection_seconds_left() < 0

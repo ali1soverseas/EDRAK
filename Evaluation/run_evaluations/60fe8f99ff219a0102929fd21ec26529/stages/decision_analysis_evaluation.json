@@ -1,0 +1,1436 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\decision_analysis\\input.json",
+  "source_output": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\decision_analysis\\output.json",
+  "deterministic_checks": {
+    "known_signal_count": 3,
+    "question_recommendation_count": 0,
+    "option_count": 3,
+    "distinct_option_count": 3,
+    "duplicate_options": [],
+    "items_with_signal_references": 9,
+    "items_with_unknown_signal_references": {},
+    "empty_options": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.6538,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "decision_analysis",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "1.2.0-rubric-only",
+    "finding_count": 13,
+    "mandatory_finding_count": 13,
+    "coverage_score": 0.6538,
+    "strict_coverage_score": 0.3077,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 146,
+      "initial_missing_count": 0,
+      "initial_partial_count": 9,
+      "findings_reviewed": 9,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch. — The Actual Output effectively frames options as distinct competitive responses, specifically categorizing them into 'Lead', 'Differentiate', and 'Hold and Watch'. Each option includes a clear thesis, actionable steps, trade-offs, opportunities, and risks, aligning well with the requirement to present distinct competitive strategies. However, while the options are distinct, the clarity of how they directly respond to the competitive landscape could be enhanced, which prevents a perfect score.",
+        "criteria_results": [
+          {
+            "criterion": "Frame options as distinct competitive responses, such as lead, match, differentiate, or hold and watch.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively frames options as distinct competitive responses, specifically categorizing them into 'Lead', 'Differentiate', and 'Hold and Watch'. Each option includes a clear thesis, actionable steps, trade-offs, opportunities, and risks, aligning well with the requirement to present distinct competitive strategies. However, while the options are distinct, the clarity of how they directly respond to the competitive landscape could be enhanced, which prevents a perfect score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Tie each proposed option to relevant verified findings and supported cross-domain signals",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Tie each proposed option to relevant verified findings and supported cross-domain signals. — The Actual Output effectively ties proposed options to relevant verified findings and supported cross-domain signals, particularly in the opportunities and risks sections. It provides a clear analysis of NVIDIA's competitive landscape, linking specific actions to identified risks and opportunities. However, while it includes substantial evidence and rationale, some areas could benefit from more explicit connections to the supporting signal IDs, particularly in the recommendations, which would enhance clarity and alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Tie each proposed option to relevant verified findings and supported cross-domain signals.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively ties proposed options to relevant verified findings and supported cross-domain signals, particularly in the opportunities and risks sections. It provides a clear analysis of NVIDIA's competitive landscape, linking specific actions to identified risks and opportunities. However, while it includes substantial evidence and rationale, some areas could benefit from more explicit connections to the supporting signal IDs, particularly in the recommendations, which would enhance clarity and alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Present materially different options rather than paraphrases of the same action",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: Present materially different options rather than paraphrases of the same action. — The Actual Output presents three distinct options (A, B, C) that address different strategic approaches for NVIDIA regarding its Blackwell deployment and competitive positioning. Each option includes unique strategies, trade-offs, opportunities, and risks, fulfilling the requirement to present materially different options rather than mere paraphrases. This aligns well with the evaluation steps, particularly in presenting distinct actions. However, the clarity of the options could be improved, as some details may overwhelm the reader. Overall, the output meets the acceptance criteria effectively.",
+        "criteria_results": [
+          {
+            "criterion": "Present materially different options rather than paraphrases of the same action.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output presents three distinct options (A, B, C) that address different strategic approaches for NVIDIA regarding its Blackwell deployment and competitive positioning. Each option includes unique strategies, trade-offs, opportunities, and risks, fulfilling the requirement to present materially different options rather than mere paraphrases. This aligns well with the evaluation steps, particularly in presenting distinct actions. However, the clarity of the options could be improved, as some details may overwhelm the reader. Overall, the output meets the acceptance criteria effectively."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "partial: Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including expected benefits, risks, and tradeoffs associated with the Blackwell architecture. However, it lacks explicit explanations of costs and does not adhere to the requirement of avoiding invented quantitative outcomes, as it includes specific gross margin targets. The Expected Output outlines the need for these elements but does not provide a clear comparison or qualitative assessment of costs. The Retrieval Context supports understanding but does not contain report content. Overall, the response partially meets the evaluation criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including expected benefits, risks, and tradeoffs associated with the Blackwell architecture. However, it lacks explicit explanations of costs and does not adhere to the requirement of avoiding invented quantitative outcomes, as it includes specific gross margin targets. The Expected Output outlines the need for these elements but does not provide a clear comparison or qualitative assessment of costs. The Retrieval Context supports understanding but does not contain report content. Overall, the response partially meets the evaluation criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-04",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output addresses some aspects of the acceptance criteria by discussing risks and trade-offs, but it fails to explain expected benefits and costs. Additionally, it does not provide any quantitative outcomes or acceptable alternatives as specified in the Expected Output. Therefore, it is classified as partially covered.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.442998
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+              "text": "Published CUDA/NIM differentiation priorities",
+              "similarity": 0.36162
+            },
+            {
+              "source_path": "$.stage_output.limitations[1]",
+              "text": "Quantitative financial estimates (revenue, margin dollars, ROI) are not provided in the source signals and cannot be derived.",
+              "similarity": 0.336862
+            },
+            {
+              "source_path": "$.stage_output.options[2].trade_offs[1]",
+              "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+              "similarity": 0.333772
+            },
+            {
+              "source_path": "$.stage_output.options[2].risks[0].mitigation",
+              "text": "Prepare a rapid CUDA update or pricing adjustment playbook triggered by ROCm adoption milestones.",
+              "similarity": 0.319539
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them",
+        "priority": "mandatory",
+        "score": 0.8,
+        "status": "covered",
+        "reason": "covered: State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them. — The Actual Output effectively states a plausible time horizon of 'through 2026' and includes clear assumptions regarding Blackwell supply and gross margin targets. It also provides measurable indicators such as gross margin targets of 74-76% and specific opportunities and risks associated with the competitive landscape. However, while it addresses the criterion well, it could improve by explicitly stating decision triggers related to the assumptions and indicators.",
+        "criteria_results": [
+          {
+            "criterion": "State a plausible time horizon, assumptions, and measurable indicators or decision triggers when evidence supports them.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively states a plausible time horizon of 'through 2026' and includes clear assumptions regarding Blackwell supply and gross margin targets. It also provides measurable indicators such as gross margin targets of 74-76% and specific opportunities and risks associated with the competitive landscape. However, while it addresses the criterion well, it could improve by explicitly stating decision triggers related to the assumptions and indicators."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8,
+        "initial_status": "covered",
+        "final_score": 0.8,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "partial: Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options. — The Actual Output identifies several evidence gaps and uncertainties, particularly regarding deployment timelines and competitive responses, which aligns with the evaluation steps. However, it does not fully carry forward these uncertainties into the options as required by the Expected Output. While it discusses risks and opportunities, it lacks a clear presentation of conflicting evidence or unresolved points, which is a key aspect of the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies several evidence gaps and uncertainties, particularly regarding deployment timelines and competitive responses, which aligns with the evaluation steps. However, it does not fully carry forward these uncertainties into the options as required by the Expected Output. While it discusses risks and opportunities, it lacks a clear presentation of conflicting evidence or unresolved points, which is a key aspect of the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-06",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not address the acceptance criteria of carrying forward uncertainty, conflicting evidence, and material evidence gaps into the options. While it includes warnings and recommended actions, it fails to present the required findings or acceptable alternatives specified in the Expected Output. Therefore, the coverage is classified as missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.358529
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+              "text": "Published CUDA/NIM differentiation priorities",
+              "similarity": 0.34304
+            },
+            {
+              "source_path": "$.stage_output.warnings[0]",
+              "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+              "similarity": 0.325081
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].action_id",
+              "text": "action-blackwell-allocation-review-001",
+              "similarity": 0.306261
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.289431
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.6,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user. — The Actual Output does not clearly state whether evidence is sufficient to draft distinct defensible options, which is a mandatory requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the sufficiency of evidence, thus not meeting the acceptance criteria outlined in the Expected Output. This results in a lower score due to the lack of clarity on evidence sufficiency.",
+        "criteria_results": [
+          {
+            "criterion": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly state whether evidence is sufficient to draft distinct defensible options, which is a mandatory requirement. While it provides detailed analysis and recommendations, it fails to explicitly address the sufficiency of evidence, thus not meeting the acceptance criteria outlined in the Expected Output. This results in a lower score due to the lack of clarity on evidence sufficiency."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-07",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-001",
+          "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it provides some relevant information, it fails to preserve the decision for the human user as required. Therefore, the coverage is missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.513228
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].action_id",
+              "text": "action-blackwell-allocation-review-001",
+              "similarity": 0.389626
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.31252
+            },
+            {
+              "source_path": "$.stage_output.options[2].risks[1].mitigation",
+              "text": "Maintain flexible Blackwell supply to pivot toward inference-optimized configurations if needed.",
+              "similarity": 0.26407
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+              "text": "Published CUDA/NIM differentiation priorities",
+              "similarity": 0.262009
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "covered: Cites relevant finding identifiers for each option. — The Actual Output includes relevant finding identifiers for each option presented, such as 'c90de942-5115-42b4-9a20-434b61eaf0d2' and '5ef15032-666f-4bbe-8fff-13750eb7cb91'. It effectively cites these identifiers in the context of opportunities and risks, aligning well with the requirement for evidence traceability. However, while it provides a comprehensive overview, there are some areas where the clarity of the connections between findings and options could be improved, particularly in distinguishing facts from assumptions.; partial: Does not use insufficient or contradicted findings as settled premises. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing opportunities and risks associated with Blackwell's deployment. However, it lacks clear evidence traceability for each option, as required by the Expected Output. While it cites relevant findings and identifies evidence gaps, it does not sufficiently distinguish between facts and assumptions, which is a critical aspect of the acceptance criteria.; partial: Distinguishes facts from assumptions and strategic interpretation. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including opportunities and risks, but it lacks a clear distinction between facts and assumptions. While it lists assumptions and evidence gaps, it does not explicitly address how these relate to the primary claim of evidence traceability per option. The output partially meets the acceptance criteria by citing relevant findings but does not sufficiently distinguish between facts and strategic interpretations.",
+        "criteria_results": [
+          {
+            "criterion": "Cites relevant finding identifiers for each option.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output includes relevant finding identifiers for each option presented, such as 'c90de942-5115-42b4-9a20-434b61eaf0d2' and '5ef15032-666f-4bbe-8fff-13750eb7cb91'. It effectively cites these identifiers in the context of opportunities and risks, aligning well with the requirement for evidence traceability. However, while it provides a comprehensive overview, there are some areas where the clarity of the connections between findings and options could be improved, particularly in distinguishing facts from assumptions."
+          },
+          {
+            "criterion": "Does not use insufficient or contradicted findings as settled premises.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing opportunities and risks associated with Blackwell's deployment. However, it lacks clear evidence traceability for each option, as required by the Expected Output. While it cites relevant findings and identifies evidence gaps, it does not sufficiently distinguish between facts and assumptions, which is a critical aspect of the acceptance criteria."
+          },
+          {
+            "criterion": "Distinguishes facts from assumptions and strategic interpretation.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including opportunities and risks, but it lacks a clear distinction between facts and assumptions. While it lists assumptions and evidence gaps, it does not explicitly address how these relate to the primary claim of evidence traceability per option. The output partially meets the acceptance criteria by citing relevant findings but does not sufficiently distinguish between facts and strategic interpretations."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-08",
+          "requirement_id": "DA-EVIDENCE",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Evidence traceability per option",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides some citations of relevant finding identifiers, but it does not fully meet the requirement of linking every material option to verified findings. It also fails to clearly distinguish between facts and assumptions in some passages, particularly in the interpretation of signal confidence levels. Overall, the coverage of acceptance criteria is partial, as not all criteria are adequately fulfilled.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[0]",
+              "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+              "similarity": 0.510155
+            },
+            {
+              "source_path": "$.stage_output.limitations[2]",
+              "text": "Signal confidence levels are medium (0.75-0.82), so findings should be treated as directional rather than definitive.",
+              "similarity": 0.334801
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].action_id",
+              "text": "action-rocm-cuda-nim-assessment-001",
+              "similarity": 0.312939
+            },
+            {
+              "source_path": "$.stage_output.limitations[0]",
+              "text": "Analysis is based solely on the supplied Cross-Signal output; no independent verification or new research was conducted.",
+              "similarity": 0.307197
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].title",
+              "text": "Assess ROCm Adoption and CUDA/NIM Differentiation",
+              "similarity": 0.306721
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "covered: Options are not merely wording variations. — The options presented in the Actual Output are distinct and provide meaningful strategic choices, addressing different aspects of NVIDIA's competitive positioning. Each option outlines unique actions, trade-offs, and risks, aligning well with the requirement for materially different alternatives. However, while the options are distinct, they could benefit from clearer articulation of the resource commitments and risk profiles associated with each choice. Overall, the response meets the acceptance criteria but lacks some depth in explaining the implications of each option, leading to a moderate score.; missing: Includes a credible lower-commitment or wait-and-watch path when appropriate. — The Actual Output does not present a credible lower-commitment or wait-and-watch path, which is a mandatory requirement. While it outlines various strategic options, they do not distinctly represent materially different choices with varying resource commitments or risk profiles. The options are primarily prose-based and lack a decision matrix or scenario table format. Additionally, the output does not clearly explain what would make each option preferable, failing to meet the acceptance criteria.; partial: Explains what would make each option preferable. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including specific opportunities and risks associated with Blackwell deployment and AMD's ROCm software. However, it lacks a clear explanation of what makes each option preferable, as required by the evaluation steps. The options presented are distinct but do not sufficiently articulate the rationale behind their preferences or how they differ in terms of resource commitments or risk profiles. Additionally, while the output includes relevant evidence and trade-offs, it does not meet the acceptance criteria for explaining what would make each option preferable. Therefore, the score reflects these shortcomings.",
+        "criteria_results": [
+          {
+            "criterion": "Options are not merely wording variations.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The options presented in the Actual Output are distinct and provide meaningful strategic choices, addressing different aspects of NVIDIA's competitive positioning. Each option outlines unique actions, trade-offs, and risks, aligning well with the requirement for materially different alternatives. However, while the options are distinct, they could benefit from clearer articulation of the resource commitments and risk profiles associated with each choice. Overall, the response meets the acceptance criteria but lacks some depth in explaining the implications of each option, leading to a moderate score."
+          },
+          {
+            "criterion": "Includes a credible lower-commitment or wait-and-watch path when appropriate.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not present a credible lower-commitment or wait-and-watch path, which is a mandatory requirement. While it outlines various strategic options, they do not distinctly represent materially different choices with varying resource commitments or risk profiles. The options are primarily prose-based and lack a decision matrix or scenario table format. Additionally, the output does not clearly explain what would make each option preferable, failing to meet the acceptance criteria."
+          },
+          {
+            "criterion": "Explains what would make each option preferable.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including specific opportunities and risks associated with Blackwell deployment and AMD's ROCm software. However, it lacks a clear explanation of what makes each option preferable, as required by the evaluation steps. The options presented are distinct but do not sufficiently articulate the rationale behind their preferences or how they differ in terms of resource commitments or risk profiles. Additionally, while the output includes relevant evidence and trade-offs, it does not meet the acceptance criteria for explaining what would make each option preferable. Therefore, the score reflects these shortcomings."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-09",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Meaningfully distinct alternatives",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as the options presented do not demonstrate materially different strategic choices or resource commitments. Additionally, there is no credible lower-commitment path offered, and the explanations for the options are insufficient to clarify their preferences. Overall, the output does not meet the mandatory acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.422866
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.387234
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].action_id",
+              "text": "action-blackwell-allocation-review-001",
+              "similarity": 0.341493
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[0]",
+              "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+              "similarity": 0.335201
+            },
+            {
+              "source_path": "$.stage_output.options[2].trade_offs[1]",
+              "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+              "similarity": 0.329473
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.43333333333333335,
+        "status": "partial",
+        "reason": "partial: Identifies which parts of the decision have stronger or weaker support. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing opportunities and risks associated with Blackwell's deployment. However, it lacks explicit identification of which parts of the decision have stronger or weaker support, failing to meet the requirement of clearly indicating asymmetric evidence disclosure. Additionally, while it discusses evidence gaps, it does not adequately explain how missing evidence could change the ranking, which is a critical aspect of the acceptance criteria.; partial: Avoids extrapolating from the best-documented segment to all segments. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape but fails to explicitly avoid extrapolating from the best-documented segment. It does not clearly identify which parts of the decision have stronger or weaker support, nor does it adequately explain how missing evidence could change the ranking. The report includes comprehensive insights but lacks the necessary clarity on evidence imbalances as required by the evaluation steps.; partial: Explains how missing evidence could change the ranking. — The Actual Output does not explicitly explain how missing evidence could change the ranking, which is a critical requirement. While it provides a detailed analysis of NVIDIA's competitive landscape, it lacks a clear statement on the implications of the identified evidence gaps. Additionally, the explanation does not sufficiently compare the Actual Output with the Expected Output, particularly in terms of identifying stronger or weaker support for the decision. Therefore, the response only partially meets the evaluation criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies which parts of the decision have stronger or weaker support.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, detailing opportunities and risks associated with Blackwell's deployment. However, it lacks explicit identification of which parts of the decision have stronger or weaker support, failing to meet the requirement of clearly indicating asymmetric evidence disclosure. Additionally, while it discusses evidence gaps, it does not adequately explain how missing evidence could change the ranking, which is a critical aspect of the acceptance criteria."
+          },
+          {
+            "criterion": "Avoids extrapolating from the best-documented segment to all segments.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape but fails to explicitly avoid extrapolating from the best-documented segment. It does not clearly identify which parts of the decision have stronger or weaker support, nor does it adequately explain how missing evidence could change the ranking. The report includes comprehensive insights but lacks the necessary clarity on evidence imbalances as required by the evaluation steps."
+          },
+          {
+            "criterion": "Explains how missing evidence could change the ranking.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly explain how missing evidence could change the ranking, which is a critical requirement. While it provides a detailed analysis of NVIDIA's competitive landscape, it lacks a clear statement on the implications of the identified evidence gaps. Additionally, the explanation does not sufficiently compare the Actual Output with the Expected Output, particularly in terms of identifying stronger or weaker support for the decision. Therefore, the response only partially meets the evaluation criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.43333333333333335,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-10",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-GENERAL-002",
+          "title": "Asymmetric evidence disclosure",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output provides relevant passages but fails to explicitly identify which parts of the decision have stronger or weaker support, as required. It does not address the need to avoid extrapolating from the best-documented segment to all segments, nor does it explain how missing evidence could change the ranking. Overall, it lacks critical analysis and clarity regarding evidence imbalances.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.options[0].opportunities[0].text",
+              "text": "Capture early Blackwell volume in enterprise and sovereign segments before competitors offer comparable sampling.",
+              "similarity": 0.348409
+            },
+            {
+              "source_path": "$.stage_output.opportunities[0].business_rationale",
+              "text": "Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.",
+              "similarity": 0.343741
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[0]",
+              "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+              "similarity": 0.342845
+            },
+            {
+              "source_path": "$.stage_output.priorities[2].rationale",
+              "text": "Intel's inference hardware reaches customer sampling in H2 2026, giving NVIDIA a planning window, but commercial availability dates and cloud adoption rates remain unknown, making this a medium-priority monitoring item.",
+              "similarity": 0.335674
+            },
+            {
+              "source_path": "$.stage_output.risks[1].mitigation_considerations[1]",
+              "text": "Track Crescent Island commercial availability beyond sampling",
+              "similarity": 0.328647
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.43333333333333335,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-11",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Observable decision triggers",
+        "priority": "mandatory",
+        "score": 0.6666666666666666,
+        "status": "partial",
+        "reason": "covered: Uses indicators connected to the evidence and strategic objective. — The Actual Output effectively identifies measurable indicators related to NVIDIA's competitive landscape, such as the ramping of the Blackwell architecture and the risks posed by AMD's ROCm and Intel's inference products. It aligns well with the strategic objective of understanding competitor actions and their implications for NVIDIA. However, while it provides substantial connections between indicators and evidence, it could improve by explicitly stating qualitative triggers for review or changes in strategy, as required by the acceptance criteria.; partial: Defines direction or threshold only when supported; otherwise states a qualitative trigger. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including specific opportunities and risks, which aligns with the requirement for observable decision triggers. However, it lacks a clear presentation of measurable indicators or thresholds that could trigger a review or change in strategic direction, as specified in the Expected Output. Additionally, while it outlines various strategic options, it does not present them in a decision matrix format, which is an acceptable alternative. Therefore, the response partially meets the evaluation criteria but does not fully align with the mandatory requirements.; covered: Identifies a plausible review horizon without presenting it as a fact. — The Actual Output identifies a plausible review horizon by discussing NVIDIA's competitive landscape and potential actions based on competitor movements. However, it presents some aspects as possibilities rather than definitive facts, which slightly undermines its alignment with the evaluation steps. While it meets the criterion of plausibility in terms of the analysis provided, it could improve by clearly defining observable decision triggers and ensuring all claims are presented with appropriate support.",
+        "criteria_results": [
+          {
+            "criterion": "Uses indicators connected to the evidence and strategic objective.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively identifies measurable indicators related to NVIDIA's competitive landscape, such as the ramping of the Blackwell architecture and the risks posed by AMD's ROCm and Intel's inference products. It aligns well with the strategic objective of understanding competitor actions and their implications for NVIDIA. However, while it provides substantial connections between indicators and evidence, it could improve by explicitly stating qualitative triggers for review or changes in strategy, as required by the acceptance criteria."
+          },
+          {
+            "criterion": "Defines direction or threshold only when supported; otherwise states a qualitative trigger.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including specific opportunities and risks, which aligns with the requirement for observable decision triggers. However, it lacks a clear presentation of measurable indicators or thresholds that could trigger a review or change in strategic direction, as specified in the Expected Output. Additionally, while it outlines various strategic options, it does not present them in a decision matrix format, which is an acceptable alternative. Therefore, the response partially meets the evaluation criteria but does not fully align with the mandatory requirements."
+          },
+          {
+            "criterion": "Identifies a plausible review horizon without presenting it as a fact.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output identifies a plausible review horizon by discussing NVIDIA's competitive landscape and potential actions based on competitor movements. However, it presents some aspects as possibilities rather than definitive facts, which slightly undermines its alignment with the evaluation steps. While it meets the criterion of plausibility in terms of the analysis provided, it could improve by clearly defining observable decision triggers and ensuring all claims are presented with appropriate support."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-11",
+          "requirement_id": "DA-EXECUTION",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "Observable decision triggers",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output includes several indicators related to the strategic objective, such as warnings about human judgment and specific recommended actions. However, it lacks a clear definition of direction or thresholds supported by evidence, and it does not identify a plausible review horizon. Additionally, while it provides some relevant information, it does not fully meet the acceptance criteria outlined in the Expected Output, particularly regarding observable decision triggers and the presentation of alternatives. Therefore, the alignment is partial.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.386127
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].action_id",
+              "text": "action-blackwell-allocation-review-001",
+              "similarity": 0.354286
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.347336
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[0]",
+              "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+              "similarity": 0.310086
+            },
+            {
+              "source_path": "$.stage_output.executive_summary",
+              "text": "Concurrently, AMD's accelerating ROCm release cadence and Intel's staggered inference accelerator sampling schedule present software-moat and inference-positioning risks that require monitoring and defensive positioning through 2026.','opportunities':[{'opportunity_id':'opp-blackwell-multi-segment-001','title':'Blackwell Multi-Segment Revenue Expansion','description':'NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises deployments.','business_rationale':'Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.','potential_impact':'Revenue expansion across four customer segments with gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries, supporting sustained revenue momentum through 2026 and beyond.','strategic_fit':'high','feasibility':'high','urgency':'high','supporting_signal_ids':['c90de942-5115-42b4-9a20-434b61eaf0d2'],'assumptions':['Blackwell supply can meet demand across all four segments simultaneously','Gross margin targets of",
+              "similarity": 0.303046
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: Identifies resource and opportunity costs qualitatively or quantitatively when supported. — The output identifies resource and opportunity costs qualitatively, particularly through the detailed analysis of NVIDIA's Blackwell architecture and its competitive positioning against AMD and Intel. However, it lacks a clear discussion on reversibility and downside protection, which are critical aspects of the evaluation steps. While it provides insights into potential impacts and risks, it does not explicitly outline which options are reversible or the commitments they require, leading to a score that reflects partial alignment with the expected output.; missing: Discusses downside exposure and reversibility. — The Actual Output does not explicitly discuss downside exposure or reversibility in relation to downside exposure, which are critical criteria outlined in the evaluation steps. While it provides a detailed analysis of opportunities and risks, it fails to clearly identify which options are reversible or the commitments they require. Additionally, it does not compare well with the Expected Output, which mandates a clear discussion of these concepts.; partial: Does not invent ROI, savings, or market-share outcomes. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including potential revenue expansion opportunities and risks associated with competitors. However, it lacks explicit discussion of reversibility and downside protection, which are critical elements of the Expected Output. While it identifies risks and opportunities, it does not clearly articulate which options are reversible or the commitments they require, leading to a partial alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies resource and opportunity costs qualitatively or quantitatively when supported.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The output identifies resource and opportunity costs qualitatively, particularly through the detailed analysis of NVIDIA's Blackwell architecture and its competitive positioning against AMD and Intel. However, it lacks a clear discussion on reversibility and downside protection, which are critical aspects of the evaluation steps. While it provides insights into potential impacts and risks, it does not explicitly outline which options are reversible or the commitments they require, leading to a score that reflects partial alignment with the expected output."
+          },
+          {
+            "criterion": "Discusses downside exposure and reversibility.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly discuss downside exposure or reversibility in relation to downside exposure, which are critical criteria outlined in the evaluation steps. While it provides a detailed analysis of opportunities and risks, it fails to clearly identify which options are reversible or the commitments they require. Additionally, it does not compare well with the Expected Output, which mandates a clear discussion of these concepts."
+          },
+          {
+            "criterion": "Does not invent ROI, savings, or market-share outcomes.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including potential revenue expansion opportunities and risks associated with competitors. However, it lacks explicit discussion of reversibility and downside protection, which are critical elements of the Expected Output. While it identifies risks and opportunities, it does not clearly articulate which options are reversible or the commitments they require, leading to a partial alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-12",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "Reversibility and downside protection",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the evaluation steps by mentioning resource and opportunity costs related to the Blackwell Multi-Segment Revenue Expansion. However, it lacks a clear discussion on downside exposure and reversibility, which are critical components of the Expected Output. Additionally, there is no evidence of invented ROI or market-share outcomes, but the overall coverage of the acceptance criteria is insufficient.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.398555
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.366997
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+              "text": "Published CUDA/NIM differentiation priorities",
+              "similarity": 0.317324
+            },
+            {
+              "source_path": "$.stage_output.options[2].trade_offs[1]",
+              "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+              "similarity": 0.304155
+            },
+            {
+              "source_path": "$.stage_output.executive_summary",
+              "text": "Concurrently, AMD's accelerating ROCm release cadence and Intel's staggered inference accelerator sampling schedule present software-moat and inference-positioning risks that require monitoring and defensive positioning through 2026.','opportunities':[{'opportunity_id':'opp-blackwell-multi-segment-001','title':'Blackwell Multi-Segment Revenue Expansion','description':'NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises deployments.','business_rationale':'Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.','potential_impact':'Revenue expansion across four customer segments with gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries, supporting sustained revenue momentum through 2026 and beyond.','strategic_fit':'high','feasibility':'high','urgency':'high','supporting_signal_ids':['c90de942-5115-42b4-9a20-434b61eaf0d2'],'assumptions':['Blackwell supply can meet demand across all four segments simultaneously','Gross margin targets of",
+              "similarity": 0.29282
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "partial: States which critical unknowns block a recommendation. — The Actual Output identifies some critical unknowns, such as deployment timelines and competitive response timing, but does not explicitly state which critical unknowns block a recommendation. While it provides detailed analysis and context, it lacks a clear presentation of how these unknowns impact decision-making, which is essential for a higher score.; partial: Avoids manufacturing a preferred option merely to complete the report. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including opportunities and risks, but it does not clearly state which critical unknowns block a recommendation or avoid manufacturing a preferred option. While it presents options, they are not distinctly separated into a decision matrix or scenario table as required. The output lacks a clear identification of evidence needed before making irreversible commitments, which is essential for a high score.; partial: Identifies evidence needed before an irreversible commitment. — The Actual Output identifies evidence gaps and critical unknowns that block a recommendation, such as deployment timelines and competitive response timing. However, it lacks a clear statement on which evidence is needed before making an irreversible commitment, which is a key requirement. The output does not sufficiently preserve human judgment when evidence is inadequate, as it does not present options in a decision matrix or scenario table. Therefore, while it partially meets the criteria, it does not fully align with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "States which critical unknowns block a recommendation.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies some critical unknowns, such as deployment timelines and competitive response timing, but does not explicitly state which critical unknowns block a recommendation. While it provides detailed analysis and context, it lacks a clear presentation of how these unknowns impact decision-making, which is essential for a higher score."
+          },
+          {
+            "criterion": "Avoids manufacturing a preferred option merely to complete the report.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including opportunities and risks, but it does not clearly state which critical unknowns block a recommendation or avoid manufacturing a preferred option. While it presents options, they are not distinctly separated into a decision matrix or scenario table as required. The output lacks a clear identification of evidence needed before making irreversible commitments, which is essential for a high score."
+          },
+          {
+            "criterion": "Identifies evidence needed before an irreversible commitment.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies evidence gaps and critical unknowns that block a recommendation, such as deployment timelines and competitive response timing. However, it lacks a clear statement on which evidence is needed before making an irreversible commitment, which is a key requirement. The output does not sufficiently preserve human judgment when evidence is inadequate, as it does not present options in a decision matrix or scenario table. Therefore, while it partially meets the criteria, it does not fully align with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-EDGE-13",
+          "requirement_id": "DA-ABSTENTION",
+          "test_case_id": "DA-GENERAL-003",
+          "title": "No-go and human decision boundary",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output identifies the need for human judgment and approval before making recommendations, which aligns with the requirement to preserve human decision boundaries. However, it does not explicitly state which critical unknowns block a recommendation, nor does it provide a decision matrix or scenario table as acceptable alternatives. Additionally, while it avoids manufacturing a preferred option, it lacks clarity on the evidence needed before making irreversible commitments. Overall, the coverage is partial against the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.warnings[1]",
+              "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+              "similarity": 0.46668
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].action_id",
+              "text": "action-blackwell-allocation-review-001",
+              "similarity": 0.338433
+            },
+            {
+              "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+              "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+              "similarity": 0.320804
+            },
+            {
+              "source_path": "$.stage_output.warnings[0]",
+              "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+              "similarity": 0.275813
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[0]",
+              "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+              "similarity": 0.272289
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Explain expected benefits, costs, risks, and tradeoffs without inventing quantitative outcomes",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output addresses some aspects of the acceptance criteria by discussing risks and trade-offs, but it fails to explain expected benefits and costs. Additionally, it does not provide any quantitative outcomes or acceptable alternatives as specified in the Expected Output. Therefore, it is classified as partially covered.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.442998
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+            "text": "Published CUDA/NIM differentiation priorities",
+            "similarity": 0.36162
+          },
+          {
+            "source_path": "$.stage_output.limitations[1]",
+            "text": "Quantitative financial estimates (revenue, margin dollars, ROI) are not provided in the source signals and cannot be derived.",
+            "similarity": 0.336862
+          },
+          {
+            "source_path": "$.stage_output.options[2].trade_offs[1]",
+            "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+            "similarity": 0.333772
+          },
+          {
+            "source_path": "$.stage_output.options[2].risks[0].mitigation",
+            "text": "Prepare a rapid CUDA update or pricing adjustment playbook triggered by ROCm adoption milestones.",
+            "similarity": 0.319539
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "Carry forward uncertainty, conflicting evidence, and material evidence gaps into the options",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not address the acceptance criteria of carrying forward uncertainty, conflicting evidence, and material evidence gaps into the options. While it includes warnings and recommended actions, it fails to present the required findings or acceptable alternatives specified in the Expected Output. Therefore, the coverage is classified as missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.358529
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+            "text": "Published CUDA/NIM differentiation priorities",
+            "similarity": 0.34304
+          },
+          {
+            "source_path": "$.stage_output.warnings[0]",
+            "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+            "similarity": 0.325081
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].action_id",
+            "text": "action-blackwell-allocation-review-001",
+            "similarity": 0.306261
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.289431
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-001",
+        "title": "If evidence is insufficient to draft distinct defensible options, state that clearly and preserve the decision for the human user",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not clearly state that evidence is insufficient to draft distinct defensible options, which is a mandatory acceptance criterion. While it provides some relevant information, it fails to preserve the decision for the human user as required. Therefore, the coverage is missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.513228
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].action_id",
+            "text": "action-blackwell-allocation-review-001",
+            "similarity": 0.389626
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.31252
+          },
+          {
+            "source_path": "$.stage_output.options[2].risks[1].mitigation",
+            "text": "Maintain flexible Blackwell supply to pivot toward inference-optimized configurations if needed.",
+            "similarity": 0.26407
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+            "text": "Published CUDA/NIM differentiation priorities",
+            "similarity": 0.262009
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-08",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output provides some citations of relevant finding identifiers, but it does not fully meet the requirement of linking every material option to verified findings. It also fails to clearly distinguish between facts and assumptions in some passages, particularly in the interpretation of signal confidence levels. Overall, the coverage of acceptance criteria is partial, as not all criteria are adequately fulfilled.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[0]",
+            "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+            "similarity": 0.510155
+          },
+          {
+            "source_path": "$.stage_output.limitations[2]",
+            "text": "Signal confidence levels are medium (0.75-0.82), so findings should be treated as directional rather than definitive.",
+            "similarity": 0.334801
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].action_id",
+            "text": "action-rocm-cuda-nim-assessment-001",
+            "similarity": 0.312939
+          },
+          {
+            "source_path": "$.stage_output.limitations[0]",
+            "text": "Analysis is based solely on the supplied Cross-Signal output; no independent verification or new research was conducted.",
+            "similarity": 0.307197
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].title",
+            "text": "Assess ROCm Adoption and CUDA/NIM Differentiation",
+            "similarity": 0.306721
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-09",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Meaningfully distinct alternatives",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to provide meaningfully distinct alternatives, as the options presented do not demonstrate materially different strategic choices or resource commitments. Additionally, there is no credible lower-commitment path offered, and the explanations for the options are insufficient to clarify their preferences. Overall, the output does not meet the mandatory acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.422866
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.387234
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].action_id",
+            "text": "action-blackwell-allocation-review-001",
+            "similarity": 0.341493
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[0]",
+            "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+            "similarity": 0.335201
+          },
+          {
+            "source_path": "$.stage_output.options[2].trade_offs[1]",
+            "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+            "similarity": 0.329473
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-10",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-GENERAL-002",
+        "title": "Asymmetric evidence disclosure",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output provides relevant passages but fails to explicitly identify which parts of the decision have stronger or weaker support, as required. It does not address the need to avoid extrapolating from the best-documented segment to all segments, nor does it explain how missing evidence could change the ranking. Overall, it lacks critical analysis and clarity regarding evidence imbalances.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.options[0].opportunities[0].text",
+            "text": "Capture early Blackwell volume in enterprise and sovereign segments before competitors offer comparable sampling.",
+            "similarity": 0.348409
+          },
+          {
+            "source_path": "$.stage_output.opportunities[0].business_rationale",
+            "text": "Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.",
+            "similarity": 0.343741
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[0]",
+            "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+            "similarity": 0.342845
+          },
+          {
+            "source_path": "$.stage_output.priorities[2].rationale",
+            "text": "Intel's inference hardware reaches customer sampling in H2 2026, giving NVIDIA a planning window, but commercial availability dates and cloud adoption rates remain unknown, making this a medium-priority monitoring item.",
+            "similarity": 0.335674
+          },
+          {
+            "source_path": "$.stage_output.risks[1].mitigation_considerations[1]",
+            "text": "Track Crescent Island commercial availability beyond sampling",
+            "similarity": 0.328647
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-11",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Observable decision triggers",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output includes several indicators related to the strategic objective, such as warnings about human judgment and specific recommended actions. However, it lacks a clear definition of direction or thresholds supported by evidence, and it does not identify a plausible review horizon. Additionally, while it provides some relevant information, it does not fully meet the acceptance criteria outlined in the Expected Output, particularly regarding observable decision triggers and the presentation of alternatives. Therefore, the alignment is partial.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.386127
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].action_id",
+            "text": "action-blackwell-allocation-review-001",
+            "similarity": 0.354286
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.347336
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[0]",
+            "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+            "similarity": 0.310086
+          },
+          {
+            "source_path": "$.stage_output.executive_summary",
+            "text": "Concurrently, AMD's accelerating ROCm release cadence and Intel's staggered inference accelerator sampling schedule present software-moat and inference-positioning risks that require monitoring and defensive positioning through 2026.','opportunities':[{'opportunity_id':'opp-blackwell-multi-segment-001','title':'Blackwell Multi-Segment Revenue Expansion','description':'NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises deployments.','business_rationale':'Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.','potential_impact':'Revenue expansion across four customer segments with gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries, supporting sustained revenue momentum through 2026 and beyond.','strategic_fit':'high','feasibility':'high','urgency':'high','supporting_signal_ids':['c90de942-5115-42b4-9a20-434b61eaf0d2'],'assumptions':['Blackwell supply can meet demand across all four segments simultaneously','Gross margin targets of",
+            "similarity": 0.303046
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-12",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "Reversibility and downside protection",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the evaluation steps by mentioning resource and opportunity costs related to the Blackwell Multi-Segment Revenue Expansion. However, it lacks a clear discussion on downside exposure and reversibility, which are critical components of the Expected Output. Additionally, there is no evidence of invented ROI or market-share outcomes, but the overall coverage of the acceptance criteria is insufficient.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.398555
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.366997
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[1].success_indicators[1]",
+            "text": "Published CUDA/NIM differentiation priorities",
+            "similarity": 0.317324
+          },
+          {
+            "source_path": "$.stage_output.options[2].trade_offs[1]",
+            "text": "Delaying response could cede narrative momentum if competitors announce aggressive pricing or availability.",
+            "similarity": 0.304155
+          },
+          {
+            "source_path": "$.stage_output.executive_summary",
+            "text": "Concurrently, AMD's accelerating ROCm release cadence and Intel's staggered inference accelerator sampling schedule present software-moat and inference-positioning risks that require monitoring and defensive positioning through 2026.','opportunities':[{'opportunity_id':'opp-blackwell-multi-segment-001','title':'Blackwell Multi-Segment Revenue Expansion','description':'NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises deployments.','business_rationale':'Expanding Blackwell adoption across multiple customer segments creates multi-segment revenue expansion opportunity, reduces concentration risk in any single customer type, and validates Blackwell Ultra performance and cost claims at scale.','potential_impact':'Revenue expansion across four customer segments with gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries, supporting sustained revenue momentum through 2026 and beyond.','strategic_fit':'high','feasibility':'high','urgency':'high','supporting_signal_ids':['c90de942-5115-42b4-9a20-434b61eaf0d2'],'assumptions':['Blackwell supply can meet demand across all four segments simultaneously','Gross margin targets of",
+            "similarity": 0.29282
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-EDGE-13",
+        "requirement_id": "DA-ABSTENTION",
+        "test_case_id": "DA-GENERAL-003",
+        "title": "No-go and human decision boundary",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output identifies the need for human judgment and approval before making recommendations, which aligns with the requirement to preserve human decision boundaries. However, it does not explicitly state which critical unknowns block a recommendation, nor does it provide a decision matrix or scenario table as acceptable alternatives. Additionally, while it avoids manufacturing a preferred option, it lacks clarity on the evidence needed before making irreversible commitments. Overall, the coverage is partial against the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.warnings[1]",
+            "text": "No write operations or autonomous business decisions should be executed based on this draft; all recommendations require human judgment and approval.",
+            "similarity": 0.46668
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].action_id",
+            "text": "action-blackwell-allocation-review-001",
+            "similarity": 0.338433
+          },
+          {
+            "source_path": "$.stage_output.risks[1].potential_consequences[0]",
+            "text": "Price-competitive inference alternatives entering evaluation stages during Blackwell ramp",
+            "similarity": 0.320804
+          },
+          {
+            "source_path": "$.stage_output.warnings[0]",
+            "text": "Cross-Signal relationships are interpretations of verified findings, not verified facts for downstream hypotheses.",
+            "similarity": 0.275813
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[0]",
+            "text": "Recommendation: Prioritize hyperscale GB200 NVL72/GB300 NVL72 deliveries first to validate performance and cost claims at scale and lock in 74-76% gross margin targets, then sequence neocloud, sovereign, and enterprise allocations based on segment-specific readiness and margin headroom, using a cross-functional allocation review before each quarter.",
+            "similarity": 0.272289
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.6,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing a detailed analysis of NVIDIA's competitors, specifically AMD and Intel, and their implications for NVIDIA. It discusses competitor strategies, risks, and opportunities, aligning well with the input question. However, the output contains some excessive detail that may distract from the core focus, such as extensive technical specifications and internal metrics that are not directly relevant to the research goal. Overall, it is comprehensive but could be more concise.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including opportunities and risks associated with Blackwell and AMD's ROCm. However, it lacks clear framing of options as distinct competitive responses, which is a mandatory requirement. While it ties some proposed actions to evidence, it does not fully meet the criteria for presenting materially different options or explaining trade-offs without inventing quantitative outcomes. Additionally, it does not adequately carry forward uncertainties and evidence gaps into the options, which is essential for a robust analysis.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including specific details about AMD's ROCm and Intel's product timelines. However, it contains unsupported claims regarding gross margin targets and deployment timelines that are not explicitly backed by the Retrieval Context. Additionally, some conclusions drawn about the implications of competitor actions exceed the evidence provided, particularly regarding the potential impact on NVIDIA's market position. Overall, while the output is detailed, it lacks full alignment with the evaluation steps due to unsupported assertions.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing the input question effectively. It identifies key competitors, outlines opportunities and risks, and discusses strategic actions. However, it lacks a clear framing of options as distinct competitive responses, which is a critical requirement. Additionally, while it mentions evidence gaps, it does not adequately carry forward uncertainties or conflicting evidence into the options, which is necessary for a complete evaluation. Overall, the response is informative but does not fully align with the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Insufficient clarity in framing options as distinct competitive responses.",
+          "evidence": "The Actual Output effectively frames options as distinct competitive responses, specifically categorizing them into 'Lead', 'Differentiate', and 'Hold and Watch'. However, the clarity of how they directly respond to the competitive landscape could be enhanced.",
+          "impact": "This limitation may lead to confusion regarding the strategic implications of each option, potentially hindering decision-making."
+        },
+        {
+          "limitation": "Lack of explicit connections to supporting signal IDs.",
+          "evidence": "While it includes substantial evidence and rationale, some areas could benefit from more explicit connections to the supporting signal IDs, particularly in the recommendations.",
+          "impact": "This may reduce the perceived credibility of the recommendations and make it harder for stakeholders to trace the evidence supporting each option."
+        },
+        {
+          "limitation": "Failure to carry forward uncertainties and conflicting evidence into the options.",
+          "evidence": "The Actual Output identifies several evidence gaps and uncertainties but does not fully carry forward these uncertainties into the options.",
+          "impact": "This could lead to an incomplete understanding of the risks associated with each option, potentially resulting in poor strategic decisions."
+        },
+        {
+          "limitation": "Inadequate discussion of costs and trade-offs.",
+          "evidence": "The Actual Output lacks explicit explanations of costs and does not adhere to the requirement of avoiding invented quantitative outcomes, as it includes specific gross margin targets.",
+          "impact": "This may mislead stakeholders regarding the financial implications of each option, affecting budgetary decisions."
+        },
+        {
+          "limitation": "Insufficient clarity on evidence sufficiency.",
+          "evidence": "The Actual Output does not clearly state whether evidence is sufficient to draft distinct defensible options.",
+          "impact": "This could lead to overconfidence in the recommendations despite underlying uncertainties, risking strategic missteps."
+        },
+        {
+          "limitation": "Lack of a decision matrix or scenario table format.",
+          "evidence": "The options are primarily prose-based and lack a decision matrix or scenario table format.",
+          "impact": "This may hinder the ability of stakeholders to quickly compare options and make informed decisions."
+        },
+        {
+          "limitation": "Failure to identify which parts of the decision have stronger or weaker support.",
+          "evidence": "The Actual Output lacks explicit identification of which parts of the decision have stronger or weaker support.",
+          "impact": "This could obscure critical insights regarding the robustness of the analysis and the reliability of the recommendations."
+        },
+        {
+          "limitation": "Inadequate discussion of reversibility and downside protection.",
+          "evidence": "The Actual Output does not explicitly discuss downside exposure or reversibility in relation to downside exposure.",
+          "impact": "This may lead to a lack of awareness regarding the potential risks associated with each option, affecting risk management strategies."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Improve clarity in framing options as distinct competitive responses.",
+          "addresses": "This will enhance understanding of how each option directly responds to the competitive landscape.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Explicitly connect recommendations to supporting signal IDs.",
+          "addresses": "This will improve the credibility of the recommendations and facilitate evidence tracing.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Incorporate uncertainties and conflicting evidence into the options.",
+          "addresses": "This will provide a more comprehensive understanding of the risks associated with each option.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide explicit explanations of costs and trade-offs.",
+          "addresses": "This will ensure stakeholders have a clear understanding of the financial implications of each option.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Clearly state evidence sufficiency regarding drafting defensible options.",
+          "addresses": "This will help manage expectations and clarify the reliability of the recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Adopt a decision matrix or scenario table format for options.",
+          "addresses": "This will facilitate quick comparisons and informed decision-making.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Identify which parts of the decision have stronger or weaker support.",
+          "addresses": "This will enhance transparency regarding the robustness of the analysis.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Discuss reversibility and downside protection explicitly.",
+          "addresses": "This will improve risk management strategies by highlighting potential risks associated with each option.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Insufficient clarity in framing options as distinct competitive responses.",
+        "evidence": "The Actual Output effectively frames options as distinct competitive responses, specifically categorizing them into 'Lead', 'Differentiate', and 'Hold and Watch'. However, the clarity of how they directly respond to the competitive landscape could be enhanced.",
+        "impact": "This limitation may lead to confusion regarding the strategic implications of each option, potentially hindering decision-making."
+      },
+      {
+        "limitation": "Lack of explicit connections to supporting signal IDs.",
+        "evidence": "While it includes substantial evidence and rationale, some areas could benefit from more explicit connections to the supporting signal IDs, particularly in the recommendations.",
+        "impact": "This may reduce the perceived credibility of the recommendations and make it harder for stakeholders to trace the evidence supporting each option."
+      },
+      {
+        "limitation": "Failure to carry forward uncertainties and conflicting evidence into the options.",
+        "evidence": "The Actual Output identifies several evidence gaps and uncertainties but does not fully carry forward these uncertainties into the options.",
+        "impact": "This could lead to an incomplete understanding of the risks associated with each option, potentially resulting in poor strategic decisions."
+      },
+      {
+        "limitation": "Inadequate discussion of costs and trade-offs.",
+        "evidence": "The Actual Output lacks explicit explanations of costs and does not adhere to the requirement of avoiding invented quantitative outcomes, as it includes specific gross margin targets.",
+        "impact": "This may mislead stakeholders regarding the financial implications of each option, affecting budgetary decisions."
+      },
+      {
+        "limitation": "Insufficient clarity on evidence sufficiency.",
+        "evidence": "The Actual Output does not clearly state whether evidence is sufficient to draft distinct defensible options.",
+        "impact": "This could lead to overconfidence in the recommendations despite underlying uncertainties, risking strategic missteps."
+      },
+      {
+        "limitation": "Lack of a decision matrix or scenario table format.",
+        "evidence": "The options are primarily prose-based and lack a decision matrix or scenario table format.",
+        "impact": "This may hinder the ability of stakeholders to quickly compare options and make informed decisions."
+      },
+      {
+        "limitation": "Failure to identify which parts of the decision have stronger or weaker support.",
+        "evidence": "The Actual Output lacks explicit identification of which parts of the decision have stronger or weaker support.",
+        "impact": "This could obscure critical insights regarding the robustness of the analysis and the reliability of the recommendations."
+      },
+      {
+        "limitation": "Inadequate discussion of reversibility and downside protection.",
+        "evidence": "The Actual Output does not explicitly discuss downside exposure or reversibility in relation to downside exposure.",
+        "impact": "This may lead to a lack of awareness regarding the potential risks associated with each option, affecting risk management strategies."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Improve clarity in framing options as distinct competitive responses.",
+        "addresses": "This will enhance understanding of how each option directly responds to the competitive landscape.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Explicitly connect recommendations to supporting signal IDs.",
+        "addresses": "This will improve the credibility of the recommendations and facilitate evidence tracing.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Incorporate uncertainties and conflicting evidence into the options.",
+        "addresses": "This will provide a more comprehensive understanding of the risks associated with each option.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide explicit explanations of costs and trade-offs.",
+        "addresses": "This will ensure stakeholders have a clear understanding of the financial implications of each option.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Clearly state evidence sufficiency regarding drafting defensible options.",
+        "addresses": "This will help manage expectations and clarify the reliability of the recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Adopt a decision matrix or scenario table format for options.",
+        "addresses": "This will facilitate quick comparisons and informed decision-making.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Identify which parts of the decision have stronger or weaker support.",
+        "addresses": "This will enhance transparency regarding the robustness of the analysis.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Discuss reversibility and downside protection explicitly.",
+        "addresses": "This will improve risk management strategies by highlighting potential risks associated with each option.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\60fe8f99ff219a0102929fd21ec26529\\stages\\decision_analysis_evaluation.json"
+}

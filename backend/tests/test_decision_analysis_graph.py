@@ -62,7 +62,11 @@ def test_default_analysis_model_uses_ollama_and_schema_instruction(monkeypatch) 
     node = make_analyze_node()
     asyncio.run(node({"prepared_context": {"research_run_id": "test", "signals": []}}))
 
-    assert calls["model_kwargs"] == {"agent": "orchestrator", "temperature": 0.0}
+    assert calls["model_kwargs"] == {
+        "agent": "orchestrator",
+        "temperature": 0.0,
+        "num_predict": 32768,
+    }
     assert calls["schema"] is DecisionAnalysisDraft
     assert calls["method"] == "json_schema"
     assert "JSON schema" in calls["messages"][-1]["content"]

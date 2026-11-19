@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "analysis_id": "c131b2ab8a41c9f45ea39e15d1469dd9",
+  "status": "completed",
+  "started_at_utc": "2026-11-19T14:33:58.884550+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-19T14:34:04.019460+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-19T14:36:48.612729+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_3e03787d-74f.json",
+        "inputs\\rag_internal_intelligence_attempt_1_3e03787d-74f_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_3e03787d-74f_002.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-19T14:39:05.296721+00:00",
+      "artifacts": [
+        "inputs\\worker_customer_trends_attempt_1_147841ee-951.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-19T14:43:38.933674+00:00",
+      "artifacts": [
+        "inputs\\worker_market_intelligence_attempt_1_5f6e3d9e-afb.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-19T14:48:24.865132+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_710c5914-68c.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-19T14:48:49.162260+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-19T15:47:16.253554+00:00",
+      "artifacts": [
+        "outputs\\human_review_007.json"
+      ]
+    },
+    {
+      "node": "cross_signal",
+      "completed_at_utc": "2026-11-19T15:53:11.044395+00:00",
+      "artifacts": [
+        "inputs\\cross_signal.json"
+      ]
+    },
+    {
+      "node": "decision_analysis",
+      "completed_at_utc": "2026-11-19T15:57:31.690340+00:00",
+      "artifacts": [
+        "inputs\\decision_analysis.json"
+      ]
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-11-19T15:57:31.840191+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:3e03787d-74fb-4b13-920d-e562116e6bb7:1": "inputs\\worker_internal_intelligence_attempt_1_3e03787d-74f.json",
+    "rag:3e03787d-74fb-4b13-920d-e562116e6bb7:1:1": "inputs\\rag_internal_intelligence_attempt_1_3e03787d-74f_001.json",
+    "rag:3e03787d-74fb-4b13-920d-e562116e6bb7:1:2": "inputs\\rag_internal_intelligence_attempt_1_3e03787d-74f_002.json",
+    "worker:147841ee-9516-49c6-b320-6e68a5553c22:1": "inputs\\worker_customer_trends_attempt_1_147841ee-951.json",
+    "worker:5f6e3d9e-afb7-4ba5-8f64-ef75708c7403:1": "inputs\\worker_market_intelligence_attempt_1_5f6e3d9e-afb.json",
+    "worker:710c5914-68ce-4871-9fff-5fd86352dd7b:1": "inputs\\worker_competitor_intelligence_attempt_1_710c5914-68c.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "cross_signal": "inputs\\cross_signal.json",
+    "decision_analysis": "inputs\\decision_analysis.json",
+    "orchestration_result": "inputs\\orchestration_result.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-19T15:57:31.925880+00:00",
+  "completed_at_utc": "2026-11-19T15:57:31.925872+00:00"
+}

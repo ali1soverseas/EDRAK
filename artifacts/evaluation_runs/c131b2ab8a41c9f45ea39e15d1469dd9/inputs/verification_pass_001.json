@@ -1,0 +1,981 @@
+{
+  "research_run_id": "c131b2ab8a41c9f45ea39e15d1469dd9",
+  "decision": {
+    "status": "verified",
+    "targeted_actions": [],
+    "summary": "70 of 71 findings are evidence-backed; 1 were insufficient and recorded for follow-up."
+  },
+  "findings": [
+    {
+      "finding_id": "7e625acf-7d39-488c-8717-3b6708dfed4a",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers the Instinct MI300X accelerator, based on the CDNA 3 architecture, with up to 192 GB of HBM3 memory for large language model training and inference. The MI300X was sampling to key customers starting in Q3 2023. AMD also offers the Instinct MI300A, described as the world's first APU accelerator for HPC and AI workloads, which was sampling to customers.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "2b873338-4055-4993-8c47-c28fc9013923"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "9d8ff607-1ef7-463a-8fc1-dbd1e70be620",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's Instinct accelerator roadmap includes the MI325X accelerator, available in Q4 2024 with up to 288 GB of HBM3E memory. The MI350 series, based on the CDNA 4 architecture, is expected to be available in 2025. The MI400 series, based on the CDNA Next architecture, is expected to arrive in 2026 for inference and large-scale AI training.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "9b41ca01-9a30-4fa9-a49e-d7c22813aa08"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "15e985b7-a166-4d0f-a2b6-3a252d678afb",
+      "worker": "competitor_intelligence",
+      "statement": "AMD Instinct MI350X and MI355X GPUs are built on the CDNA 4 architecture with 288 GB of HBM3E memory and 8 TB/s memory bandwidth. The MI350X delivers peak FP16 performance of 4.6 PFLOPS and peak FP8 performance of 9.228 PFLOPS. These air-cooled GPUs integrate with prior-generation MI300X and MI325X infrastructure.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "5556c781-60c6-43b1-8d0e-aecc8c037e52"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "a915b0e7-2893-472f-91e2-f4a4f4755515",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers the Instinct MI350P PCIe card as part of the MI350 Series for deploying generative and agentic AI within existing infrastructure. The product page lists 128 GPU compute units and 144 GB of HBM3E memory. AMD positions it for leadership operating expense and simplified deployment in data centers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e0e3ced2-1ae0-4949-85fe-818821ec11fa"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "8813a693-d7c1-4799-a4b1-78e872c5f5bb",
+      "worker": "competitor_intelligence",
+      "statement": "AMD provides ROCm, a full open-source, production-ready software stack compatible with a broad range of AMD GPUs. ROCm includes drivers, libraries, and developer tools for programming AMD GPUs and supports AI frameworks including PyTorch, TensorFlow, and JAX. Compatible hardware spans AMD Instinct GPUs, Radeon GPUs, and iGPUs in select Ryzen AI processors.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9ba78e99-be37-4408-babf-7fc4f36af2c6"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "a11b83a4-91be-492b-8d86-063446514924",
+      "worker": "competitor_intelligence",
+      "statement": "AMD: ROCm 7.14, released July 15, 2026, adds support for PyTorch 2.12 and JAX 0.10.0, and validates TensorFlow versions 2.21, 2.20, and 2.19.1. Transformer Engine v2.12 is validated for MI300A, MI300X, MI350X, and MI355X. The release introduces TheRock, AMD's automated open-source build and release system for ROCm.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ddfe3e6d-262b-4cf2-b2da-63a5d5dd007d"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e3815d21-a2ac-4d77-a821-c046cd13aa02",
+      "worker": "competitor_intelligence",
+      "statement": "AMD: ROCm 7.0, released September 16, 2025, provides hardware enablement for Instinct MI350X and MI355X and supports FP4, FP6, and FP8 precision formats. It includes day-0 support for PyTorch 2.7 and 2.8, TensorFlow 2.19.1, and JAX 0.6.x, along with AITER pre-optimized operators and AMD Quark production-ready models.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "0ef8c22a-9de9-41c0-9ccb-20ffc8d58cb2"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "429e54ae-cd31-4001-b334-b880037608a8",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers AMD Inference Microservices (AIMs), described as a no licensing fee, open, standards-based enterprise-ready AI stack. AIMs is intended to simplify AI deployment and migration for generative and agentic AI workloads on AMD Instinct GPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "b30b19b2-9ef9-40b8-9052-48262de83bd8"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e1822044-64a8-4083-a629-69cf396168e7",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's Data Center Segment customers consist primarily of hyperscale data centers, OEMs, ODMs, system integrators, and independent distributors in domestic and international markets. Large hyperscale customers, OEMs, and ODMs deployed AMD Instinct MI350X Series GPUs in 2025. Client and Gaming Segment customers include PC OEMs, independent distributors, AIBs, and game console manufacturers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "3130a7f2-68cc-4810-bc75-3c9ce23b279a"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d05da3ed-9176-4738-9e05-8e6771e9e0b3",
+      "worker": "competitor_intelligence",
+      "statement": "AMD Instinct MI300X accelerators have been adopted by customers and partners including Microsoft Azure, Meta, Dell Technologies, HPE, and Lenovo. These adoptions span cloud providers and OEMs deploying AMD AI accelerators in data centers.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "f4f2766d-7e9a-43b5-835f-1b9655e66a36"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "237eb15b-472d-4173-8a10-cf71cae032a6",
+      "worker": "competitor_intelligence",
+      "statement": "AMD announced in November 2026 that Neysa is scaling AI infrastructure in India with AMD Instinct, expanding access to bare-metal AI infrastructure and accelerator choice for Indian enterprises. AMD also completed the acquisition of Taalas, a specialized AI inference silicon company, in November 2026.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "815ab06e-0e7b-4c3e-ac6c-61c0cb204c1b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "fa240d3a-63a4-4c6f-8cba-120892238d59",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's Instinct line of accelerators has been adopted by major cloud providers and research organizations for running large AI models. In October 2025, AMD signed a chip-supply agreement with OpenAI for OpenAI's expanding data center network. AMD also entered a $1 billion agreement with the U.S. Department of Energy to supply chips for federal high-performance computing projects.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "aa6621a0-0d98-4275-a7f9-82e56a0ab0ca"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "8db95f3d-0906-4726-9c73-4e398997957d",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's go-to-market model includes the AMD Partner Network with Build Partners (OEMs, ODMs, hosting providers, and add-in board partners), Distributors, Solution Providers, and Embedded Partners. Sell partners include solution providers, etailers, retailers, system builders, value-added resellers, and distributors.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ce1a5d71-60fc-4fed-ac86-fd32f70aa311"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "9f877488-8413-4d7b-a879-5a7ddc60c7f6",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's internal estimated pricing for an MI350P-based server is $327,238.40 USD, as cited in AMD's Advancing AI 2026 materials from July 2026. This figure is used in per-concurrency throughput-per-dollar comparisons.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "95ce55de-ad23-4ff9-8d1d-41897941a4a6"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "bd2ee234-51d2-4eb7-823d-ae81151e3c97",
+      "worker": "competitor_intelligence",
+      "statement": "AMD states the Instinct MI355X GPU hardware cost is $1.48 per hour per GPU. At a typical operating point of 129 tokens per second per user, the MI355X delivers inference at $0.173 per million tokens with 2,378 tokens per second per GPU on 24 GPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "b2611807-46fa-4988-9ae5-359a0de37294"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "bc36d0cf-f7a0-4db7-b213-700236437e39",
+      "worker": "competitor_intelligence",
+      "statement": "AMD Inference Microservices (AIMs) is offered with no licensing fee as an open, standards-based enterprise-ready AI stack. AMD also works with cloud providers such as Vultr, which offers cloud GPU and bare-metal servers advanced by AMD Instinct GPUs and AMD EPYC CPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "2fd3bf3b-3054-4d48-90c1-78c131e2aa25"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d5c35e2c-8bfa-4af5-b91f-358b5bce3fd4",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers the AMD Instinct GPU as a data center AI accelerator intended for AI training and inferencing workloads. AMD positions these accelerators across deployment options that include cloud, data center, edge, and AI PCs. The Instinct accelerator is combined with EPYC CPUs and networking products for rack-scale data center AI infrastructure.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "54c6c89c-5ee9-4285-b798-c325c6264eae",
+        "db225aef-c557-4411-ac9c-636c1fe00952"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "e362f9d9-e799-4a8a-b225-deabe8b37fc4",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's data center computing portfolio includes GPUs, AI accelerators, DPUs, SmartNICs, FPGAs, and Adaptive SoCs. These products are intended to meet computing performance requirements for data centers, supercomputers, AI and machine learning data center environments, and cloud environments.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "bde6bbad-6aa3-4840-bbd9-134aa50c0f12"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "1dea769d-46a6-4fbd-9dc5-aa3beb9d108e",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers AMD RyzenAI processors for AI PCs and workstations. These processors support local AI experiences and responsive performance for on-device agentic AI tasks.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "2ae24f71-bd6d-47a6-aee8-0131148e4f2f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "690dc532-0da7-4e9a-bc8e-10a66c15699d",
+      "worker": "competitor_intelligence",
+      "statement": "AMD provides ROCm software as part of an open, standards-based software platform. The platform is designed to enable AMD AI hardware to be deployed broadly and easily, with support for leading frameworks, cloud providers, OEMs, ISVs, and ecosystem partners.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e8320841-675c-4cd2-a139-b245340e075a",
+        "6fea1b06-c052-41da-9f57-cbb2579e2232"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "a613218f-6d40-478c-8c77-0e4330ad581a",
+      "worker": "competitor_intelligence",
+      "statement": "AMD targets cloud and enterprise customers, including the world's largest hyperscale computing companies, with data center AI systems. AMD seeks to deliver end-to-end data center AI infrastructure at scale with its ecosystem for cloud and enterprise deployment.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "5f6b43dc-729a-460d-bcca-71e75a6079b3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "f91d86bb-7e86-471d-8251-9138c34e1b72",
+      "worker": "competitor_intelligence",
+      "statement": "AMD markets and sells its products directly to OEMs and through authorized third-party distributors. This distribution model applies to AMD's data center and client computing products.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "c83ff6d5-e060-487d-8e34-78d611f1e493"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d6e55df6-ad6d-4d26-bd63-f560193ae68f",
+      "worker": "competitor_intelligence",
+      "statement": "AMD addresses regulated and sovereign AI, hybrid AI, edge and embedded AI, and AI PC and workstation segments. Deployment options span cloud, data center, edge, and on-device environments.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "151fd640-e3b4-4368-81e6-5f68271a6271"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "0832f7e6-f7e0-46b3-b18f-40a46af9558c",
+      "worker": "competitor_intelligence",
+      "statement": "AMD's enterprise go-to-market model emphasizes OEM go-to-market models, channel ecosystems, and enterprise infrastructure markets. AMD sells its products directly to OEMs and through authorized third-party distributors rather than exclusively through direct sales.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a4f80010-19ee-4d9a-9ba7-73ea48b71b32",
+        "aab888b1-892a-4b27-a2e1-61aaad476ddc"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e826c39c-5c14-458b-9c7b-b5c1aad43125",
+      "worker": "competitor_intelligence",
+      "statement": "AMD offers AMD-based virtual machines in the cloud so customers can achieve performance and OPEX advantages. This represents a cloud consumption option for AMD GPU compute.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "b6c6f161-75d5-429c-beca-aeb0618aaed4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "acc9c95f-fb2e-4b1f-8656-1ca4b626497f",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom offers custom AI accelerators, described as application-specific integrated circuits (ASICs) or XPUs, co-designed with large hyperscale customers. Broadcom does not sell its own branded AI chip; instead it partners with hyperscalers to design bespoke chips and manages manufacturing relationships and packaging. These accelerators support AI training and inference workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d9c56907-70e5-441d-ad12-b1dfee756c15",
+        "a6a57a84-0b67-4196-b41f-101b6e1b98ca"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "6354056b-1cf5-4402-a0c0-60cec1a38e9f",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom: Reported Broadcom custom AI silicon customers include Google, for whom Broadcom helped design Tensor Processing Units, as well as Meta. ByteDance is reported as a third customer. A fourth hyperscaler customer was qualified in FQ3 with over $10 billion in AI rack orders based on Broadcom XPUs. Separately, OpenAI is collaborating with Broadcom on co-designed inference-optimized chips and systems.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "634de9f8-320e-4158-a926-0ca9666cd7d7",
+        "4f2e8108-eeae-44d8-8806-2766f50a35ed",
+        "b66b86a9-65d1-4f78-b4da-09f73b43e840"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "77e012dc-abeb-4459-8ae6-444667443d9e",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom offers Ethernet-based AI networking chips and Ethernet solutions for AI cluster scale-up and scale-out. Through its OpenAI collaboration, Broadcom supplies Ethernet networking alongside accelerators, with systems planned for deployment starting in the second half of 2026 and completion by end of 2029.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "6e186611-76ff-4879-a55c-5440136d76ba",
+        "166c843f-8348-4ac1-8537-2b7d4ea53348",
+        "a680fc2e-da59-4f19-8304-8b18383726f9"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "213a1e8f-4d92-4531-9678-8aefff80c2de",
+      "worker": "competitor_intelligence",
+      "statement": "Broadcom: Cloud and hyperscale customers using Broadcom AI silicon or networking include Google, Meta, ByteDance (reported), an unnamed fourth hyperscaler, and OpenAI. Broadcom has indicated that four hyperscaler customers are each racing toward 1 million XPU clusters by the end of 2027. The supplied evidence does not specify the geographic markets (Americas, Asia, Europe) for these customers.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a9124a20-bb62-4435-91e7-4fadd0404967",
+        "a1a69cf5-2ff0-45ea-b475-b3700e1aaaf0",
+        "2464ec17-703c-47e9-874d-d90ff940fe97"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "4a9307ec-a532-4cb9-b437-eb499914ae29",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers Gaudi AI accelerators and Gaudi software designed for data center training and inference to bring compute advantages and choice to data center workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "c0b9e1c5-435d-4d31-b2af-430668ca3d6f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "86f7478a-1889-4588-bfe8-f48b1f7e2321",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers Data Center GPU Flex Series for virtual desktop infrastructure, media processing, and visual AI workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d2f2088a-03c7-4052-b244-35366e180d6d"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "47b60789-3c72-4709-95ea-1259f8cf5141",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers Arc Pro B-Series GPU for workstation performance to run larger models and process richer data.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "f7896a71-4883-4143-92ff-65dd657b78df"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "416682b0-6952-4219-8122-45cd3a15de38",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon 6, Xeon 6+, and Xeon CPU Max processors are positioned for data center, network, edge, and workstation workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "1b5f63aa-5ec4-480a-98bf-879f328abfa0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d63dbc96-9463-4067-a210-18b97bdfca02",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Arc Graphics are engineered for immersive gameplay, fast content creation, and easy-to-use AI capabilities.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "0853a22e-c89b-47f2-a603-c7d839dab564"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "a228f566-2ff7-4530-baec-87fd72daa752",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Arc G-Series processors target handheld gaming with smooth gameplay at high settings, AI-powered XeSS 3, and ray tracing.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "644ab838-6c2f-4f41-ab04-7c531df60d8b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "ddb5205c-05cb-49bd-a464-566a08b5a8f3",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Arc A750 Graphics is part of Intel's Arc dedicated graphics family for client systems.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d84c78e9-9284-406b-82aa-40f3979f7c65"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "c8bc011d-839a-417b-893d-fc6ab6186ad5",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel oneAPI is an open, unified cross-architecture programming model supporting CPUs and accelerator architectures including GPUs and FPGAs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "7bbd74cd-be60-45e1-a923-591bb3c80c02"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e8ea3eec-6975-4c2d-9611-6bd09d0ff5dd",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel oneAPI includes the DPC++ Compatibility Tool for CUDA-to-SYCL code migration, enabling developers to port CUDA applications.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9ad33825-5879-4652-8b75-1ea1fa61009c"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "182def56-1145-41fc-b4bb-d88ee3a585a8",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel oneAPI provides AI tools, optimized frameworks, and the OpenVINO toolkit, including oneDNN and PyTorch optimizations for Intel Core Ultra processors and Arc GPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "62a3020c-d2f8-41ec-aae3-c1a1c4eaeba0"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "4f9b510f-f698-47d6-9694-3c3bc52d05e4",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel released oneAPI 2025.0 tools with a standalone oneAPI HPC Toolkit and an AI Tools Selector for OpenVINO Toolkit and Gaudi AI accelerator packages.",
+      "verification_status": "insufficient",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a331534a-2d31-474b-ada6-3c09e91dbde2"
+      ],
+      "contradictions": [],
+      "missing_information": [
+        "Claim quantity 2025 is not in the saved source.",
+        "Claim includes details that are not in the saved source: 2025.0"
+      ],
+      "confidence": 0.37
+    },
+    {
+      "finding_id": "bae86c73-7292-42d3-96f6-4072a9566ac5",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel's Edge AI Portfolio combines OpenVINO for model inference, Geti platform for vision AI training, DL Streamer, and oneAPI toolkit for edge AI solutions.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "9deea713-be2d-443e-a620-6939974edfe7"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "1b59f75e-e204-4169-adaa-dfc574f48f6e",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel oneAPI offers a Unified Runtime and Codeplay plug-ins for cross-vendor GPU support.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "3eacbd71-f81b-4aa4-99e2-00139a8f52cf"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d6ceae08-c3e0-4186-a975-958558802525",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon 6787P (2S) delivers 4x throughput on Speech Recognition (OpenAI Whisper) and 2.2x throughput on Computer Vision (RetinaNet) in MLPerf v5.1 inference.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "3af1a452-d084-4944-9fd1-70b9d36a67d1"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "9acf40ba-7446-4b4d-8c2a-f6350f211a9f",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon processors include built-in Intel AMX acceleration for higher precision ML/DL workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "41e6c597-931c-4dae-9cff-d0587dd16050"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "f653feed-b05f-4526-8626-9ed7f3e646bf",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon 6 processors with P-cores include Intel AMX and AVX-512 in every core, with AMX supporting INT8, BF16, and FP16 data types.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "468ed261-e1ab-4e48-a686-963c19be8da3"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "dc9f27b3-da63-46d8-9e3e-0db312383880",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon processors handle AI workloads from traditional ML inference to agentic and frontier AI without GPU lock-in.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "5c1737fb-b4b5-45ee-a8be-031a0f5f4677"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b7982d44-4d32-4f49-a018-addb5c7a7c2e",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: 5th Generation Intel Xeon processors with Intel AMX achieved up to 17x faster BERT-Large inference in documented testing.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "1d30b903-e8ce-4d73-934e-272124f40d01"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "25aebe66-049c-413b-8750-da46d7f5dc4c",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon processors serve as hosts for accelerator-dense AI systems and are available across AI systems from leading OEMs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "d13f95c4-5ce7-4f30-b4e9-1044284a07e7",
+        "05617174-c7b2-43e2-98fe-70fa84f756c8"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "01921d24-3fb2-43c0-9ee4-6cc7d17e1b61",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers the Intel Data Center GPU Max Series as a datacenter GPU for HPC and AI workloads. The product is positioned as ideal for AI inference and training workflows and is deployed with Intel Xeon Scalable processors. It is powered by oneAPI and Intel AI developer tools, with oneDNN using Intel XMX to accelerate AI training and inference.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ca3b29bb-99c5-409a-bf30-0ad4ccdde6e6"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "34d3af89-f1be-4752-91f1-1921b973c099",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel offers the Intel Gaudi AI Processor as an AI accelerator for training and inferencing. Intel provides Gaudi tutorials with step-by-step instructions for running PyTorch and PyTorch Lightning models, covering beginner to advanced use cases. The tutorials support both training and inference on the Gaudi processor.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "7262cc1f-ca3c-4a10-8b8d-20b944926e1e"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "d520b396-46ae-4007-8fd0-047ca78ea719",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel provides the oneAPI software stack through the oneAPI-samples repository, offering samples for Intel oneAPI Toolkits. The stack supports cross-architecture development across AI, CPU, GPU, FPGA, and other domains, with libraries including oneDNN, oneMKL, oneDPL, oneTBB, oneCCL, and oneDAL. Developers can use SYCL and Jupyter notebooks for AI and GPU workloads.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "a8ce44e2-e325-4081-a6bc-c06a5c4361b6"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "350671ef-3131-40a0-979c-bcbde12faf34",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel provides the OpenVINO Toolkit as an open-source AI toolkit that enables write once, deploy anywhere inference across CPU, GPU, and NPU. The toolkit includes a model optimizer and runtime for optimizing, fine-tuning, and running AI inference. It supports AI PC development on Intel Core Ultra and Intel Core Desktop Processors, including configurations for Intel Processor Graphics and Intel NPU.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "e6565220-6f87-4cda-a74f-9f3bc58b3a35"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "9610ef4d-c7b5-4135-b2cc-21eff7e4d25a",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel provides AI framework extensions and migration tools for its GPU and CPU products. Intel Extension for PyTorch and Intel Extension for TensorFlow accelerate deep learning frameworks on Intel CPUs and GPUs. The open-source DPC++ Compatibility Tool, based on SYCLomatic, automates migration of CUDA code to SYCL for portability across architectures including Intel Data Center GPUs.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "2df5b0e6-dc3a-48e6-a337-7e1772bcb83e"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "558f9723-97db-4475-968e-c82e19512005",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon 6 is used as the host CPU in GPU-accelerated AI systems. The host CPU governs orchestration, memory access, model security, and throughput across GPU-accelerated AI systems. It handles memory management, task orchestration, and workload distribution while supporting security, reliability, and operational continuity.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "3cd12b5a-3bb6-4f0c-ab58-29a00906f50f"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "3cdf58a1-22f6-4fcf-b655-db90ca0bf58f",
+      "worker": "competitor_intelligence",
+      "statement": "Intel Corp: Intel Xeon 6 delivers fast memory speeds, balanced performance across a range of workloads, lower long-term total cost of ownership, and a mature enterprise-proven x86 software ecosystem. It supports scaling inference workloads across data centers, cloud, and edge use cases.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "95152f70-e2c5-46b9-b9ed-e93ce34c5060"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "bd193889-38bd-4692-aa53-f65715fa0f38",
+      "worker": "market_intelligence",
+      "statement": "The artificial intelligence (AI) data center graphics processing units (GPUs) market is projected to rise from $11.12 billion in 2025 to $32.3 billion by 2030, reflecting a compound annual growth rate (CAGR) of 23.8%.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "ca273b20-ee1e-4281-ab15-fd57b4d918c4"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "37633f7c-3165-41bf-97f3-df529df6c911",
+      "worker": "market_intelligence",
+      "statement": "The artificial intelligence (AI) data center graphics processing units (GPUs) market is projected to rise from $11.12 billion in 2025 to $32.3 billion by 2030, reflecting a compound annual growth rate (CAGR) of 23.8%.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "4695a19a-c158-4ee4-8b28-49bad8702f72"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b50b104e-2440-4552-ba61-ede8210d9c75",
+      "worker": "market_intelligence",
+      "statement": "BIS will now review export license applications for the Nvidia H200 on a case-by-case basis provided certain security requirements are met.",
+      "verification_status": "verified",
+      "evidence_quality": "high",
+      "evidence_ids": [
+        "cf8621f6-ce74-489b-ac07-f877a9c57825"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.94
+    },
+    {
+      "finding_id": "3534a77e-bb83-42c9-8176-982322577c7f",
+      "worker": "market_intelligence",
+      "statement": "Most high performance GPUs and accelerators fall under ECCN 3A090 or 4A090.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "b7ac6003-6cd7-493b-ab33-a85f4796cba5"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "28058323-2a90-4269-afae-cae732b5bb91",
+      "worker": "market_intelligence",
+      "statement": "BIS has warned that giving remote cloud access to restricted users can trigger a license requirement.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "36cb97ee-b348-45e5-8d9e-6d94b8c165c5"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "0524f4c1-5006-44ab-b344-b39318b737b3",
+      "worker": "market_intelligence",
+      "statement": "Advanced Micro Devices (commonly known as \"AMD\") has enjoyed robust demand for its Instinct series GPUs, and AMD can leverage its more attractive pricing and shorter wait times to attract larger orders.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "bc5d1916-79e9-4262-b4a1-38e15ffd7d94"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "896f13b6-d874-434c-8e64-bc94bad71ed8",
+      "worker": "market_intelligence",
+      "statement": "Broadcom specializes in application-specific integrated circuits (ASICs) as a key player in custom AI chips for select hyperscalers, serving as an alternative to Nvidia's general-purpose AI hardware.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "64147a9d-40e6-493e-b03f-e5c9295c1374"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b65be491-d008-400b-baf2-f6a607abe1d8",
+      "worker": "market_intelligence",
+      "statement": "For latency-sensitive, single-model inference serving, AMD's memory-dense MI300X/MI350 series offer compelling cost and speed advantages, while Intel's Gaudi 3 remains the lowest-cost entry point for enterprises prioritizing budget over peak throughput.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "5a7ef009-ab99-431c-8653-20ef7f05cb58"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "9be8397d-f87b-4cc0-ad67-db288847a3fe",
+      "worker": "market_intelligence",
+      "statement": "Supermicro and #Verda 's deployment in Europe runs on the latest NVIDIA Blackwell Systems",
+      "verification_status": "verified",
+      "evidence_quality": "low",
+      "evidence_ids": [
+        "6495d4d0-fca4-467f-8c05-29d779c20780"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.8
+    },
+    {
+      "finding_id": "207f6c9d-4f4b-46f3-95d1-5baf43ccddff",
+      "worker": "market_intelligence",
+      "statement": "collaboration between Supermicro and Verda pioneering sovereign AI in Europe with full-stack AI cloud",
+      "verification_status": "verified",
+      "evidence_quality": "low",
+      "evidence_ids": [
+        "814109cd-64ed-4dfa-a344-2d78347d4439"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.8
+    },
+    {
+      "finding_id": "7d8ff902-080c-4b19-bb73-5a8a7b97d8e3",
+      "worker": "market_intelligence",
+      "statement": "The artificial intelligence (AI) data center graphics processing units (GPUs) market is projected to rise from $11.12 billion in 2025 to $32.3 billion by 2030, reflecting a compound annual growth rate (CAGR) of 23.8%.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "00225d83-f72a-49de-a782-99adc0a9aebd"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "b2d80fc0-fd44-4c62-b209-49372399c3f6",
+      "worker": "internal_intelligence",
+      "statement": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "7bbe3123-3a15-48a3-81dc-94c31e681428"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "e6cab8b1-01bb-42d4-a4a8-cc91007184ee",
+      "worker": "internal_intelligence",
+      "statement": "Direct database extraction from 'software_arr' returned 2 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "727a7fe3-1709-4920-bc10-9f647b7dcd82"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "6833d889-aa2e-44f6-bc24-84e75bc07508",
+      "worker": "internal_intelligence",
+      "statement": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "8955ea9e-ce6a-423d-930f-8e9f7d388a5b"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "dfe94fa1-8751-470f-a46a-d285d722894b",
+      "worker": "internal_intelligence",
+      "statement": "Value: The NVIDIA Blackwell architecture powers GeForce RTX 50 Series with fourth-gen RT Cores and fifth-gen Tensor Cores for path tracing and neural rendering",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "041aa274-cf46-46b4-8ce8-0469b43604ad"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    },
+    {
+      "finding_id": "422ffa88-c928-4b2e-ab07-aefcaf377408",
+      "worker": "internal_intelligence",
+      "statement": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+      "verification_status": "verified",
+      "evidence_quality": "medium",
+      "evidence_ids": [
+        "03e63461-9846-4b1b-ba69-dac89bca4de7"
+      ],
+      "contradictions": [],
+      "missing_information": [],
+      "confidence": 0.78
+    }
+  ],
+  "control_summary": {
+    "missing_information": [
+      "Claim quantity 2025 is not in the saved source.",
+      "Claim includes details that are not in the saved source: 2025.0",
+      "No supported fact for: Measure NVIDIA GPU market size and year-over-year growth in Asia for AI infrastructure, data center build-out, and sovereign AI programs. (Europe)",
+      "the demand branch reported an error: the branch did not finish in 72.4 s; providers: gdelt bad response, gdelt rate limited",
+      "2 item(s) in 'ar'; at least 10 are needed",
+      "the run stopped at its time limit of 300 s",
+      "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+    ],
+    "conflicts": [],
+    "failures": [],
+    "next_research_targets": [
+      "Intel Corp: Intel released oneAPI 2025.0 tools with a standalone oneAPI HPC Toolkit and an AI Tools Selector for OpenVINO Toolkit and Gaudi AI accelerator packages. — Claim quantity 2025 is not in the saved source.",
+      "No supported fact for: Measure NVIDIA GPU market size and year-over-year growth in Asia for AI infrastructure, data center build-out, and sovereign AI programs. (Europe)",
+      "the demand branch reported an error: the branch did not finish in 72.4 s; providers: gdelt bad response, gdelt rate limited",
+      "2 item(s) in 'ar'; at least 10 are needed",
+      "the run stopped at its time limit of 300 s",
+      "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+    ]
+  },
+  "metadata": {
+    "workers": [
+      "competitor_intelligence",
+      "market_intelligence",
+      "customer_trends",
+      "internal_intelligence"
+    ],
+    "finding_count": 71,
+    "verified_count": 70,
+    "insufficient_count": 1,
+    "completed_at": "2026-11-19T14:48:48.180584+00:00"
+  },
+  "completed_at": "2026-11-19T14:48:48.182925Z"
+}

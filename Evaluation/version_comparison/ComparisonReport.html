@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edrak comparison</title>
+<style>
+  :root {
+    --page:#f5f4f1; --card:#fcfcfb; --soft:#f0efec; --line:#e2e1dc;
+    --text:#0b0b0b; --text2:#52514e; --muted:#7a7974;
+    --a:#2a78d6; --b:#eb6834;
+    --good:#0ca30c; --good-text:#006300; --good-bg:#e6f4e6;
+    --bad:#d03b3b; --bad-text:#a92b2b; --bad-bg:#fbe9e9;
+    --tie-bg:#ecebe7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page:#111110; --card:#1a1a19; --soft:#232322; --line:#33332f;
+      --text:#f0efec; --text2:#c3c2b7; --muted:#8f8e86;
+      --a:#3987e5; --b:#d95926;
+      --good-text:#5fd35f; --good-bg:#16301a; --bad-text:#f08a8a; --bad-bg:#3a1c1c; --tie-bg:#2a2a27;
+    }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--page); color:var(--text);
+         font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif }
+  .wrap { max-width:900px; margin:0 auto; padding:32px 20px 60px }
+  h1 { font-size:22px; margin:0 0 4px }
+  h2 { font-size:16px; margin:0 0 4px }
+  .sub { color:var(--text2); font-size:13px }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-top:16px }
+  .dot { width:10px; height:10px; border-radius:3px; display:inline-block; vertical-align:middle; margin-right:6px }
+
+  .verdict { display:flex; gap:16px; align-items:center; border-radius:12px; padding:20px; margin-top:20px }
+  .verdict .icon { width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+                   font-size:22px; font-weight:700; color:#fff; flex:none }
+  .verdict .small { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text2) }
+  .verdict .big { font-size:24px; font-weight:700 }
+  .win { background:var(--good-bg) } .win .icon { background:var(--good) }
+  .tie { background:var(--tie-bg) }  .tie .icon { background:var(--muted) }
+  .stop { background:var(--bad-bg) } .stop .icon { background:var(--bad) }
+
+  .scores { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px }
+  .score { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; position:relative }
+  .score .name { color:var(--text2); font-size:14px }
+  .score .num { font-size:34px; font-weight:700; font-variant-numeric:tabular-nums }
+  .score.best { border:2px solid var(--good) }
+  .score .crown { position:absolute; top:14px; right:16px; font-size:12px; font-weight:600;
+                  background:var(--good-bg); color:var(--good-text); padding:2px 10px; border-radius:999px }
+
+  table { width:100%; border-collapse:collapse; font-size:14px; margin-top:10px }
+  th, td { padding:10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--text2); background:var(--soft) }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums }
+  .help { display:block; font-size:12px; color:var(--muted) }
+  .bold { font-weight:700 }
+  .badge { display:inline-block; font-size:13px; font-weight:600; padding:3px 10px; border-radius:999px; white-space:nowrap }
+  .badge.wa { background:color-mix(in srgb,var(--a) 18%,transparent) }
+  .badge.wb { background:color-mix(in srgb,var(--b) 20%,transparent) }
+  .badge.t  { background:var(--tie-bg); color:var(--text2) }
+  .up { color:var(--good-text); font-weight:600 } .down { color:var(--bad-text); font-weight:600 } .flat { color:var(--muted) }
+  tr.total td { background:var(--soft); font-weight:600; border-top:2px solid var(--line) }
+
+  .bars { display:grid; grid-template-columns:170px 1fr 96px; gap:10px 14px; align-items:center; margin-top:12px }
+  .bars .label { font-size:13px }
+  .bars .label small { display:block; color:var(--muted); font-size:11px }
+  .track { display:flex; flex-direction:column; gap:3px }
+  .bar { height:12px; border-radius:0 4px 4px 0; min-width:2px }
+  .bar.a { background:var(--a) } .bar.b { background:var(--b) }
+  .legend { font-size:13px; color:var(--text2); display:flex; gap:16px; margin-top:6px }
+  .grid { width:100%; border-collapse:separate; border-spacing:4px; margin-top:12px; table-layout:fixed }
+  .grid th { background:none; text-align:center; padding:4px; font-size:11.5px }
+  .grid th:first-child { text-align:left; width:180px }
+  .grid td { border:none; padding:0; height:52px; text-align:center; border-radius:8px; font-variant-numeric:tabular-nums }
+  .grid td.name { text-align:left; padding-left:4px; font-size:13.5px }
+  .grid td.name small { display:block; color:var(--muted); font-size:11px }
+  .grid .g { font-size:15px; font-weight:600 }
+  .grid .w { font-size:11px; color:var(--text2); display:block }
+  .grid td.tie { background:var(--soft); color:var(--muted) }
+  .grid td.na { background:transparent; color:var(--muted); border:1px dashed var(--line) }
+  .grid tr.skip td:not(.name) { opacity:.35 } .grid tr.skip td.name { color:var(--muted) }
+  .grid td.total { outline:2px solid var(--line); outline-offset:-2px }
+  .grid .exact { font-size:13px; line-height:1.35 } .grid .exact b { font-weight:700 }
+  .gridhead { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap }
+  .keys { display:flex; gap:14px; font-size:12.5px; color:var(--text2); align-items:center; margin-top:8px; flex-wrap:wrap }
+  .keys .sw { width:26px; height:12px; border-radius:3px; display:inline-block; vertical-align:middle; margin-right:5px }
+  .toggle { font-size:13px; color:var(--text2); display:inline-flex; gap:6px; align-items:center; cursor:pointer }
+  ul { margin:8px 0 0; padding-left:20px } li { margin:4px 0; color:var(--text2); font-size:14px }
+  @media (max-width:640px) { .scores { grid-template-columns:1fr } .bars { grid-template-columns:110px 1fr 84px } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title"></h1>
+  <div class="sub mono" id="runs"></div>
+
+  <div class="verdict" id="verdict"></div>
+  <div class="scores" id="scores"></div>
+
+  <div class="card">
+    <h2>Which version is best on each metric?</h2>
+    <div class="sub">Each metric is averaged over the workers and stages (workers with no findings are left out). A difference of <span id="tm"></span> or less counts as a tie.</div>
+    <table id="metrics"></table>
+  </div>
+
+  <div class="card">
+    <h2>Score for each worker and stage</h2>
+    <div class="sub">Worker rows show how many findings each version produced (first / second). Faded rows had no findings, so they are not scored. On the right: the Optimized score, the GraphRAG score, and the difference (second minus first).</div>
+    <div class="legend" id="legend"></div>
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="gridhead">
+      <div><h2>Who wins each metric, for each worker and stage</h2>
+        <div class="sub">The color shows which version scored higher, and the number shows by how much.
+          Stronger color means a bigger gap. Hover over a cell to see both scores.</div></div>
+      <label class="toggle"><input type="checkbox" id="exact"> Show exact scores</label>
+    </div>
+    <div class="keys" id="keys"></div>
+    <div class="scroll-x"><table class="grid" id="grid"></table></div>
+  </div>
+
+  <div class="card" id="problems"></div>
+
+  <p class="sub">Score = correctness 30% + faithfulness 30% + completeness 25% + coverage 15%.
+     The overall score is the simple average of the scored workers and stages.
+     This is a practical comparison, not a statistical test.</p>
+</div>
+
+<script>
+const R = {"name_a": "Optimized", "name_b": "GraphRAG", "run_id_a": "60fe8f99ff219a0102929fd21ec26529", "run_id_b": "af9d8def516f839e7b587b89b50b9c6d", "verdict": "Optimized", "reason": "Optimized has the higher overall score (0.562 vs 0.521) across 6 workers and stages.", "overall_a": 0.5615458333333333, "overall_b": 0.5205783333333334, "metric_summary": {"correctness": {"a": 0.5499999999999999, "b": 0.45, "best": "Optimized"}, "faithfulness": {"a": 0.7000000000000001, "b": 0.7000000000000001, "best": "TIE"}, "completeness": {"a": 0.48333333333333334, "b": 0.43333333333333335, "best": "Optimized"}, "coverage": {"a": 0.4380833333333333, "b": 0.4483, "best": "GraphRAG"}}, "components": [{"component": "worker:competitor_intelligence", "score_a": 0.56167, "score_b": 0.50584, "delta": -0.055830000000000046, "metrics_a": {"correctness": 0.6, "faithfulness": 0.8, "completeness": 0.4, "coverage": 0.2778}, "metrics_b": {"correctness": 0.5, "faithfulness": 0.7, "completeness": 0.4, "coverage": 0.3056}, "findings_a": 47, "findings_b": 34, "skipped": false}, {"component": "worker:customer_trends", "score_a": 0.1838357142857143, "score_b": 0.15939285714285717, "delta": -0.024442857142857127, "metrics_a": {"correctness": 0.1, "faithfulness": null, "completeness": 0.3, "coverage": 0.1579}, "metrics_b": {"correctness": 0.1, "faithfulness": null, "completeness": 0.2, "coverage": 0.2105}, "findings_a": 0, "findings_b": 0, "skipped": true}, {"component": "worker:internal_intelligence", "score_a": 0.469995, "score_b": 0.37333, "delta": -0.096665, "metrics_a": {"correctness": 0.3, "faithfulness": 0.6, "completeness": 0.6, "coverage": 0.3333}, "metrics_b": {"correctness": 0.3, "faithfulness": 0.5, "completeness": 0.4, "coverage": 0.2222}, "findings_a": 10, "findings_b": 5, "skipped": false}, {"component": "worker:market_intelligence", "score_a": 0.5775049999999999, "score_b": 0.484995, "delta": -0.09250999999999993, "metrics_a": {"correctness": 0.6, "faithfulness": 0.7, "completeness": 0.5, "coverage": 0.4167}, "metrics_b": {"correctness": 0.3, "faithfulness": 0.9, "completeness": 0.3, "coverage": 0.3333}, "findings_a": 17, "findings_b": 15, "skipped": false}, {"component": "stage:cross_signal", "score_a": 0.65954, "score_b": 0.64046, "delta": -0.019079999999999986, "metrics_a": {"correctness": 0.7, "faithfulness": 0.9, "completeness": 0.5, "coverage": 0.3636}, "metrics_b": {"correctness": 0.6, "faithfulness": 0.8, "completeness": 0.5, "coverage": 0.6364}, "findings_a": null, "findings_b": null, "skipped": false}, {"component": "stage:decision_analysis", "score_a": 0.54807, "score_b": 0.558845, "delta": 0.01077500000000009, "metrics_a": {"correctness": 0.5, "faithfulness": 0.5, "completeness": 0.6, "coverage": 0.6538}, "metrics_b": {"correctness": 0.4, "faithfulness": 0.7, "completeness": 0.5, "coverage": 0.6923}, "findings_a": null, "findings_b": null, "skipped": false}, {"component": "stage:verification", "score_a": 0.552495, "score_b": 0.5599999999999999, "delta": 0.007504999999999984, "metrics_a": {"correctness": 0.6, "faithfulness": 0.7, "completeness": 0.3, "coverage": 0.5833}, "metrics_b": {"correctness": 0.6, "faithfulness": 0.6, "completeness": 0.5, "coverage": 0.5}, "findings_a": null, "findings_b": null, "skipped": false}], "skipped": ["worker:customer_trends"], "only_in_a": [], "only_in_b": [], "blockers_a": [], "blockers_b": [], "compatibility_issues": [], "weights": {"correctness": 0.3, "faithfulness": 0.3, "completeness": 0.25, "coverage": 0.15}, "labels": {"correctness": ["Correctness", "Are the facts right?"], "faithfulness": ["Faithfulness", "Does it stick to the evidence, with nothing made up?"], "completeness": ["Completeness", "Was anything important left out?"], "coverage": ["Coverage", "How many of the expected points it answered"]}, "tie_margin": 0.01};
+const A = R.name_a, B = R.name_b, TM = R.tie_margin;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const f = v => v == null ? "—" : v.toFixed(3);
+const pretty = k => k.replace(/^(worker|stage):/, "").replace(/_/g, " ");
+const dot = side => `<span class="dot" style="background:var(--${side})"></span>`;
+
+function diff(a, b) {
+  if (a == null || b == null) return `<span class="flat">—</span>`;
+  const d = b - a;
+  if (Math.abs(d) <= TM) return `<span class="flat">${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(3)}</span>`;
+  return d > 0 ? `<span class="up">▲ +${d.toFixed(3)}</span>` : `<span class="down">▼ −${Math.abs(d).toFixed(3)}</span>`;
+}
+function best(a, b) {
+  if (a == null || b == null) return {html:`<span class="badge t">n/a</span>`, w:null};
+  if (Math.abs(b - a) <= TM) return {html:`<span class="badge t">= Tie</span>`, w:"tie"};
+  return b > a ? {html:`<span class="badge wb">${dot("b")}${esc(B)}</span>`, w:"b"}
+               : {html:`<span class="badge wa">${dot("a")}${esc(A)}</span>`, w:"a"};
+}
+
+// header
+$("title").textContent = `${A} vs ${B}`;
+$("runs").textContent = `${A}: ${R.run_id_a ?? "?"}   ·   ${B}: ${R.run_id_b ?? "?"}`;
+$("tm").textContent = TM.toFixed(2);
+$("legend").innerHTML = `<span>${dot("a")}${esc(A)}</span><span>${dot("b")}${esc(B)}</span>`;
+
+// verdict
+(() => {
+  const v = R.verdict;
+  let cls = "tie", icon = "=", small = "Result", plain = "";
+  if (v === A || v === B) {
+    cls = "win"; icon = "✓"; small = "Winner";
+    plain = `${v} is the better version.`;
+  } else if (v === "TIE") {
+    plain = "Both versions performed about the same.";
+  } else {
+    cls = "stop"; icon = "!"; small = "Can't decide";
+    plain = "The script couldn't pick a winner. The reason is below.";
+  }
+  $("verdict").className = "verdict " + cls;
+  $("verdict").innerHTML = `<div class="icon">${icon}</div>
+    <div><div class="small">${small}</div><div class="big">${esc(v)}</div>
+    <div>${esc(plain)}</div><div class="sub">${esc(R.reason)}</div></div>`;
+})();
+
+// overall score boxes
+(() => {
+  const ov = best(R.overall_a, R.overall_b);
+  const box = (name, val, side, isBest) => `<div class="score ${isBest ? "best" : ""}">
+      ${isBest ? `<span class="crown">Higher score</span>` : ""}
+      <div class="name">${dot(side)}${esc(name)} — overall score</div>
+      <div class="num">${f(val)}</div></div>`;
+  $("scores").innerHTML = box(A, R.overall_a, "a", ov.w === "a") + box(B, R.overall_b, "b", ov.w === "b");
+})();
+
+// best by metric
+(() => {
+  let rows = "";
+  for (const m of Object.keys(R.weights)) {
+    const s = R.metric_summary[m] || {}, a = s.a ?? null, b = s.b ?? null, w = best(a, b);
+    const [name, help] = R.labels[m] || [m, ""];
+    rows += `<tr><td><b>${esc(name)}</b> <span class="sub">(${Math.round(R.weights[m] * 100)}% of score)</span>
+        <span class="help">${esc(help)}</span></td>
+      <td class="num ${w.w === "a" ? "bold" : ""}">${f(a)}</td>
+      <td class="num ${w.w === "b" ? "bold" : ""}">${f(b)}</td>
+      <td class="num">${diff(a, b)}</td><td>${w.html}</td></tr>`;
+  }
+  const ov = best(R.overall_a, R.overall_b);
+  rows += `<tr class="total"><td>Overall<span class="help">All metrics combined</span></td>
+    <td class="num">${f(R.overall_a)}</td><td class="num">${f(R.overall_b)}</td>
+    <td class="num">${diff(R.overall_a, R.overall_b)}</td><td>${ov.html}</td></tr>`;
+  $("metrics").innerHTML = `<thead><tr><th>Metric</th><th class="num">${dot("a")}${esc(A)}</th>
+    <th class="num">${dot("b")}${esc(B)}</th><th class="num">Difference</th><th>Best</th></tr></thead><tbody>${rows}</tbody>`;
+})();
+
+// bars per worker / stage
+$("bars").innerHTML = R.components.map(c => {
+  const a = c.score_a ?? 0, b = c.score_b ?? 0, sk = c.skipped ? ' style="opacity:.4"' : "";
+  const kind = c.component.startsWith("stage") ? "stage" : `worker · findings ${c.findings_a ?? "?"} / ${c.findings_b ?? "?"}`;
+  return `<div class="label"${sk}>${esc(pretty(c.component))}<small>${kind}</small></div>
+    <div class="track"${sk} title="${esc(A)}: ${f(c.score_a)}  |  ${esc(B)}: ${f(c.score_b)}">
+      <div class="bar a" style="width:${a * 100}%"></div><div class="bar b" style="width:${b * 100}%"></div></div>
+    <div class="num" style="font-size:13px;text-align:right;line-height:1.4">
+      <div style="white-space:nowrap">${dot("a")}${f(c.score_a)}</div>
+      <div style="white-space:nowrap">${dot("b")}${f(c.score_b)}</div>
+      <div>${c.skipped ? '<span class="flat">not scored</span>' : diff(c.score_a, c.score_b)}</div></div>`;
+}).join("");
+
+// winner grid
+(() => {
+  const metrics = Object.keys(R.weights);
+  const tint = (side, gap) => {
+    const pct = Math.round(14 + Math.min(gap / 0.3, 1) * 46);   // 14% .. 60% color strength
+    return `background:color-mix(in srgb,var(--${side}) ${pct}%,var(--card))`;
+  };
+  const cell = (a, b, extraCls = "") => {
+    if (a == null || b == null) return `<td class="na ${extraCls}" title="Not measured">n/a</td>`;
+    const tipTxt = `${A}: ${a.toFixed(3)}   |   ${B}: ${b.toFixed(3)}`;
+    const exact = `<div class="exact">${dot("a")}${a.toFixed(2)}<br>${dot("b")}${b.toFixed(2)}</div>`;
+    const gap = Math.abs(b - a);
+    if (gap <= TM) return `<td class="tie ${extraCls}" title="${esc(tipTxt)}"><span class="sum"><span class="g">=</span><span class="w">tie</span></span>${exact}</td>`;
+    const side = b > a ? "b" : "a", who = b > a ? B : A;
+    return `<td class="${extraCls}" style="${tint(side, gap)}" title="${esc(tipTxt)}">
+      <span class="sum"><span class="g">+${gap.toFixed(2)}</span><span class="w">${esc(who)}</span></span>${exact}</td>`;
+  };
+  let h = `<thead><tr><th></th>${metrics.map(m => `<th>${esc(R.labels[m]?.[0] ?? m)}</th>`).join("")}<th>Row score</th></tr></thead><tbody>`;
+  for (const c of R.components) {
+    const kind = c.component.startsWith("stage") ? "stage" : "worker";
+    h += `<tr class="${c.skipped ? "skip" : ""}"><td class="name">${esc(pretty(c.component))}<small>${kind}${c.skipped ? " · not scored" : ""}</small></td>
+      ${metrics.map(m => cell(c.metrics_a[m], c.metrics_b[m])).join("")}${cell(c.score_a, c.score_b, "total")}</tr>`;
+  }
+  $("grid").innerHTML = h + `</tbody>`;
+  $("keys").innerHTML = `<span><i class="sw" style="${tint("a", .2)}"></i>${esc(A)} higher</span>
+    <span><i class="sw" style="${tint("b", .2)}"></i>${esc(B)} higher</span>
+    <span><i class="sw" style="background:var(--soft)"></i>tie (gap of ${TM.toFixed(2)} or less)</span>
+    <span><i class="sw" style="border:1px dashed var(--line)"></i>n/a = couldn't be measured</span>`;
+  const apply = () => {
+    const on = $("exact").checked;
+    document.querySelectorAll("#grid .exact").forEach(e => e.style.display = on ? "block" : "none");
+    document.querySelectorAll("#grid .sum").forEach(e => e.style.display = on ? "none" : "inline");
+  };
+  $("exact").onchange = apply; apply();
+})();
+
+// problems
+(() => {
+  const groups = [
+    ["Reports can't be compared", R.compatibility_issues],
+    [`${A} problems`, R.blockers_a],
+    [`${B} problems`, R.blockers_b],
+    ["Left out of the overall score (no findings in at least one version)", (R.skipped || []).map(pretty)],
+    [`Only in ${A}`, R.only_in_a],
+    [`Only in ${B}`, R.only_in_b],
+  ].filter(([, items]) => items && items.length);
+  $("problems").innerHTML = `<h2>Problems found</h2>` + (groups.length
+    ? groups.map(([t, items]) => `<p style="margin:12px 0 0"><b>${esc(t)}</b></p><ul>${items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`).join("")
+    : `<div class="sub" style="margin-top:6px">✓ No problems — both reports are valid and comparable.</div>`);
+})();
+</script>
+</body>
+</html>

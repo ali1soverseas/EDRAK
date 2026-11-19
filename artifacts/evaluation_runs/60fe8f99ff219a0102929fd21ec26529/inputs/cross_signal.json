@@ -1,0 +1,302 @@
+{
+  "research_run_id": "60fe8f99ff219a0102929fd21ec26529",
+  "status": "completed",
+  "signals": [
+    {
+      "signal_id": "c90de942-5115-42b4-9a20-434b61eaf0d2",
+      "signal_type": "momentum",
+      "title": "Blackwell deployment momentum across hyperscale and enterprise segments",
+      "signal": "NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously.",
+      "interpretation": "Blackwell is transitioning from product launch to volume deployment, with Microsoft, CoreWeave, and Oracle Cloud Infrastructure deploying GB300 NVL72 systems at scale. Adoption is broadening beyond hyperscalers into neoclouds, sovereign AI programs, and Fortune 500 on-premises deployments, indicating sustained demand momentum rather than a single-segment launch.",
+      "supporting_findings": [
+        {
+          "finding_id": "3c1a0882-5963-4e85-a880-1630b8696bc8",
+          "relevance": "Establishes Blackwell GB200 NVL72 cluster delivery to hyperscalers with a 74-76% gross margin target, anchoring the margin expectation for the ramp."
+        },
+        {
+          "finding_id": "e60cd597-bc87-4b26-81c9-d732ed7e244b",
+          "relevance": "Confirms Blackwell Ultra performance and cost claims and names Microsoft, CoreWeave, and Oracle Cloud Infrastructure as deploying GB300 NVL72 systems at scale."
+        },
+        {
+          "finding_id": "3e998d3b-a7fe-4345-add9-bc3e41c1ccea",
+          "relevance": "Shows Hopper and Blackwell adoption expanding across four distinct customer segments: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises."
+        }
+      ],
+      "domains_involved": [
+        "internal_intelligence"
+      ],
+      "confidence": 0.82,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Confirms NVIDIA's next-generation architecture is achieving multi-segment adoption with margin targets intact, reinforcing revenue momentum through 2026 and beyond.",
+      "implications": [
+        "Blackwell volume deployment supports gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries",
+        "Four-segment adoption reduces concentration risk in any single customer type",
+        "Cloud provider deployment at scale validates Blackwell Ultra performance and cost claims"
+      ],
+      "decision_relevance": "opportunity_relevant",
+      "opportunity_relevance": "Expanding Blackwell adoption across hyperscale, neocloud, sovereign, and enterprise segments creates multi-segment revenue expansion opportunity.",
+      "risk_relevance": null,
+      "affected_business_areas": [
+        "Data Center GPU Sales",
+        "Hyperscale Cloud Partnerships",
+        "Enterprise On-Premises AI",
+        "Sovereign AI Programs"
+      ],
+      "decision_areas": [
+        "Blackwell supply allocation across segments",
+        "Gross margin realization at volume",
+        "Segment-specific go-to-market sequencing"
+      ],
+      "decision_question": "How should NVIDIA sequence Blackwell allocation across hyperscale, neocloud, sovereign, and enterprise segments to sustain momentum while protecting gross margin targets?",
+      "urgency": "high",
+      "dependencies": [
+        "Blackwell GB200 NVL72 cluster delivery to hyperscalers",
+        "Cloud provider readiness to deploy GB300 NVL72 systems at scale"
+      ],
+      "evidence_gaps": [
+        "Quantified deployment timelines for each of the four customer segments",
+        "Competitive response timing from AMD and Broadcom as Blackwell volume ramps"
+      ]
+    },
+    {
+      "signal_id": "5ef15032-666f-4bbe-8fff-13750eb7cb91",
+      "signal_type": "timing",
+      "title": "AMD ROCm release cadence accelerating Instinct hardware enablement",
+      "signal": "AMD's ROCm software stack is advancing through sequential major releases (7.0 and 7.13) with day-0 framework support and expanding GPU enablement, compressing the time between new Instinct hardware availability and software readiness.",
+      "interpretation": "ROCm 7.0 introduced day-0 support for PyTorch 2.7/2.8, TensorFlow 2.19.1, and JAX 0.6.x alongside FP4/FP6/FP8 enablement for MI350X/MI355X. ROCm 7.13 further expanded support to MI350P and added modular packaging, streamlined profiling, and generative AI optimizations. This release cadence indicates AMD is maturing its software stack in lockstep with hardware rollouts, reducing adoption friction for new Instinct accelerators.",
+      "supporting_findings": [
+        {
+          "finding_id": "b1ff9af8-0bed-452b-a869-c298df590bc1",
+          "relevance": "Describes ROCm 7.0 day-0 framework support for PyTorch, TensorFlow, and JAX, and FP4/FP6/FP8 enablement for MI350X and MI355X."
+        },
+        {
+          "finding_id": "3244c9fc-f700-47c3-9d5c-80cf201c7188",
+          "relevance": "Documents ROCm 7.13 hardware enablement for MI350X, MI355X, MI325X, MI300X, MI210X, and MI350P via AMD GPU Driver 31.30."
+        },
+        {
+          "finding_id": "1f731f96-b94c-4f3a-820c-ee62d4985069",
+          "relevance": "Details ROCm 7.13 modular packaging, ROCm-Extras, streamlined profiling, and generative AI/LLM optimizations across supported Instinct hardware."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence"
+      ],
+      "confidence": 0.8,
+      "evidence_quality": "medium",
+      "strategic_relevance": "AMD's software maturity trajectory narrows the gap between hardware announcement and production readiness, potentially accelerating Instinct adoption in cloud and enterprise environments.",
+      "implications": [
+        "Day-0 framework support reduces developer friction for new MI350-series hardware",
+        "Modular packaging and profiling tools in ROCm 7.13 lower operational overhead for multi-node deployments",
+        "Sequential ROCm releases suggest predictable software availability aligned with hardware launches"
+      ],
+      "decision_relevance": "risk_relevant",
+      "opportunity_relevance": null,
+      "risk_relevance": "AMD's maturing ROCm stack could accelerate Instinct MI300/MI350 adoption among developers and cloud providers, eroding NVIDIA's software moat.",
+      "affected_business_areas": [
+        "AI Developer Ecosystem",
+        "Cloud AI Accelerator Sales",
+        "Enterprise AI Software"
+      ],
+      "decision_areas": [
+        "CUDA and NIM portability strategy relative to ROCm maturity",
+        "Developer retention as alternative software stacks mature"
+      ],
+      "decision_question": "How does AMD's ROCm release cadence and day-0 framework support affect the timing of NVIDIA's CUDA/NIM differentiation advantage?",
+      "urgency": "medium",
+      "dependencies": [
+        "ROCm 7.0 day-0 framework support for PyTorch, TensorFlow, and JAX",
+        "ROCm 7.13 hardware enablement for MI350X, MI355X, MI325X, MI300X, MI210X, and MI350P"
+      ],
+      "evidence_gaps": [
+        "ROCm adoption rates among NVIDIA's current developer base",
+        "Timeline for ROCm to reach parity with CUDA ecosystem maturity"
+      ]
+    },
+    {
+      "signal_id": "d82c622b-69a2-4438-8931-36b392cfa5ee",
+      "signal_type": "timing",
+      "title": "Intel accelerator product pivot and staggered sampling schedule",
+      "signal": "Intel is executing a sequenced product transition—cancelling Falcon Shores, pivoting to Jaguar Shores, and announcing Crescent Island with October 2025 disclosure and H2 2026 customer sampling—creating a defined but shifted timeline for its AI accelerator portfolio.",
+      "interpretation": "Intel cancelled Falcon Shores to pivot to Jaguar Shores, a rack-scale AI accelerator. Separately, Crescent Island (Xe3P-based inference GPU) was announced October 14, 2025 with 160GB LPDDR5X and customer sampling expected in the second half of 2026, then detailed at Computex 2026 as a 350W air-cooled PCIe card. These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+      "supporting_findings": [
+        {
+          "finding_id": "139cc786-3520-45cd-b5ec-25eeb0eb1a90",
+          "relevance": "Documents Intel's cancellation of Falcon Shores and pivot to Jaguar Shores, a rack-scale AI accelerator."
+        },
+        {
+          "finding_id": "659cab6d-3ee4-4f13-8785-f18b954c5898",
+          "relevance": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation."
+        },
+        {
+          "finding_id": "6ceffa67-a239-4a08-9910-2bd050b9e5af",
+          "relevance": "Provides Computex 2026 technical disclosure of Crescent Island as a 350W air-cooled PCIe card supporting FP4 through FP64 with 160GB memory."
+        }
+      ],
+      "domains_involved": [
+        "market_intelligence"
+      ],
+      "confidence": 0.75,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+      "implications": [
+        "Falcon Shores cancellation removes a near-term Intel GPU competitor from the timeline",
+        "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+        "Jaguar Shores pivot signals Intel's strategic shift toward rack-scale AI rather than discrete GPU form factors"
+      ],
+      "decision_relevance": "risk_relevant",
+      "opportunity_relevance": null,
+      "risk_relevance": "Intel's H2 2026 Crescent Island sampling and Jaguar Shores pivot could introduce price-competitive inference alternatives during NVIDIA's Blackwell ramp.",
+      "affected_business_areas": [
+        "Inference GPU Sales",
+        "Data Center AI Accelerator Competition",
+        "Product Lifecycle Planning"
+      ],
+      "decision_areas": [
+        "Intel inference accelerator timing relative to NVIDIA product cycles",
+        "Price/performance positioning against Intel Gaudi and Crescent Island"
+      ],
+      "decision_question": "How does Intel's staggered accelerator announcement and sampling schedule affect NVIDIA's inference product positioning through 2026?",
+      "urgency": "medium",
+      "dependencies": [
+        "Intel cancellation of Falcon Shores and pivot to Jaguar Shores",
+        "Crescent Island announcement October 14, 2025 and H2 2026 customer sampling",
+        "Crescent Island technical disclosure at Computex 2026"
+      ],
+      "evidence_gaps": [
+        "Crescent Island and Jaguar Shores commercial availability dates beyond sampling",
+        "Intel Gaudi 3 adoption rate in cloud environments relative to NVIDIA GPU instances"
+      ]
+    }
+  ],
+  "summary": {
+    "dominant_patterns": [
+      "NVIDIA Blackwell (GB200 NVL72/GB300 NVL72) is ramping into hyperscaler deployments at scale with defined gross margin targets, while Hopper and Blackwell adoption expands across four customer segments simultaneously.",
+      "AMD's ROCm software stack is advancing through sequential major releases (7.0 and 7.13) with day-0 framework support and expanding GPU enablement, compressing the time between new Instinct hardware availability and software readiness.",
+      "Intel is executing a sequenced product transition—cancelling Falcon Shores, pivoting to Jaguar Shores, and announcing Crescent Island with October 2025 disclosure and H2 2026 customer sampling—creating a defined but shifted timeline for its AI accelerator portfolio."
+    ],
+    "important_dependencies": [
+      "Blackwell GB200 NVL72 cluster delivery to hyperscalers",
+      "Cloud provider readiness to deploy GB300 NVL72 systems at scale",
+      "ROCm 7.0 day-0 framework support for PyTorch, TensorFlow, and JAX",
+      "ROCm 7.13 hardware enablement for MI350X, MI355X, MI325X, MI300X, MI210X, and MI350P",
+      "Intel cancellation of Falcon Shores and pivot to Jaguar Shores",
+      "Crescent Island announcement October 14, 2025 and H2 2026 customer sampling",
+      "Crescent Island technical disclosure at Computex 2026"
+    ],
+    "business_impacts": [
+      "Blackwell volume deployment supports gross margin targets of 74-76% for GB200 NVL72 hyperscaler deliveries",
+      "Four-segment adoption reduces concentration risk in any single customer type",
+      "Cloud provider deployment at scale validates Blackwell Ultra performance and cost claims",
+      "Day-0 framework support reduces developer friction for new MI350-series hardware",
+      "Modular packaging and profiling tools in ROCm 7.13 lower operational overhead for multi-node deployments",
+      "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+      "Falcon Shores cancellation removes a near-term Intel GPU competitor from the timeline",
+      "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+      "Jaguar Shores pivot signals Intel's strategic shift toward rack-scale AI rather than discrete GPU form factors"
+    ],
+    "timing_signals": [
+      "AMD ROCm release cadence accelerating Instinct hardware enablement",
+      "Intel accelerator product pivot and staggered sampling schedule"
+    ],
+    "momentum_signals": [
+      "Blackwell deployment momentum across hyperscale and enterprise segments"
+    ],
+    "opportunity_relevant_signals": [
+      "Blackwell deployment momentum across hyperscale and enterprise segments: Expanding Blackwell adoption across hyperscale, neocloud, sovereign, and enterprise segments creates multi-segment revenue expansion opportunity."
+    ],
+    "risk_relevant_signals": [
+      "AMD ROCm release cadence accelerating Instinct hardware enablement: AMD's maturing ROCm stack could accelerate Instinct MI300/MI350 adoption among developers and cloud providers, eroding NVIDIA's software moat.",
+      "Intel accelerator product pivot and staggered sampling schedule: Intel's H2 2026 Crescent Island sampling and Jaguar Shores pivot could introduce price-competitive inference alternatives during NVIDIA's Blackwell ramp."
+    ],
+    "evidence_gaps": [
+      "Quantified deployment timelines for each of the four customer segments",
+      "Competitive response timing from AMD and Broadcom as Blackwell volume ramps",
+      "ROCm adoption rates among NVIDIA's current developer base",
+      "Timeline for ROCm to reach parity with CUDA ecosystem maturity",
+      "Crescent Island and Jaguar Shores commercial availability dates beyond sampling",
+      "Intel Gaudi 3 adoption rate in cloud environments relative to NVIDIA GPU instances"
+    ],
+    "strategic_themes": [
+      "Confirms NVIDIA's next-generation architecture is achieving multi-segment adoption with margin targets intact, reinforcing revenue momentum through 2026 and beyond.",
+      "AMD's software maturity trajectory narrows the gap between hardware announcement and production readiness, potentially accelerating Instinct adoption in cloud and enterprise environments.",
+      "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads."
+    ]
+  },
+  "decision_ready_context": {
+    "business_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "decision_areas": [
+      "Data Center GPU Sales",
+      "Hyperscale Cloud Partnerships",
+      "Enterprise On-Premises AI",
+      "Sovereign AI Programs",
+      "Blackwell supply allocation across segments",
+      "Gross margin realization at volume",
+      "Segment-specific go-to-market sequencing",
+      "AI Developer Ecosystem",
+      "Cloud AI Accelerator Sales",
+      "Enterprise AI Software"
+    ],
+    "key_signals": [
+      "Blackwell deployment momentum across hyperscale and enterprise segments",
+      "AMD ROCm release cadence accelerating Instinct hardware enablement",
+      "Intel accelerator product pivot and staggered sampling schedule"
+    ],
+    "opportunity_indicators": [
+      "Blackwell deployment momentum across hyperscale and enterprise segments: Expanding Blackwell adoption across hyperscale, neocloud, sovereign, and enterprise segments creates multi-segment revenue expansion opportunity."
+    ],
+    "risk_indicators": [
+      "AMD ROCm release cadence accelerating Instinct hardware enablement: AMD's maturing ROCm stack could accelerate Instinct MI300/MI350 adoption among developers and cloud providers, eroding NVIDIA's software moat.",
+      "Intel accelerator product pivot and staggered sampling schedule: Intel's H2 2026 Crescent Island sampling and Jaguar Shores pivot could introduce price-competitive inference alternatives during NVIDIA's Blackwell ramp."
+    ],
+    "dependencies": [
+      "Blackwell GB200 NVL72 cluster delivery to hyperscalers",
+      "Cloud provider readiness to deploy GB300 NVL72 systems at scale",
+      "ROCm 7.0 day-0 framework support for PyTorch, TensorFlow, and JAX",
+      "ROCm 7.13 hardware enablement for MI350X, MI355X, MI325X, MI300X, MI210X, and MI350P",
+      "Intel cancellation of Falcon Shores and pivot to Jaguar Shores",
+      "Crescent Island announcement October 14, 2025 and H2 2026 customer sampling",
+      "Crescent Island technical disclosure at Computex 2026"
+    ],
+    "timing_signals": [
+      "AMD ROCm release cadence accelerating Instinct hardware enablement",
+      "Intel accelerator product pivot and staggered sampling schedule"
+    ],
+    "momentum_signals": [
+      "Blackwell deployment momentum across hyperscale and enterprise segments"
+    ],
+    "evidence_gaps": [
+      "Quantified deployment timelines for each of the four customer segments",
+      "Competitive response timing from AMD and Broadcom as Blackwell volume ramps",
+      "ROCm adoption rates among NVIDIA's current developer base",
+      "Timeline for ROCm to reach parity with CUDA ecosystem maturity",
+      "Crescent Island and Jaguar Shores commercial availability dates beyond sampling",
+      "Intel Gaudi 3 adoption rate in cloud environments relative to NVIDIA GPU instances"
+    ],
+    "decision_questions": [
+      "How should NVIDIA sequence Blackwell allocation across hyperscale, neocloud, sovereign, and enterprise segments to sustain momentum while protecting gross margin targets?",
+      "How does AMD's ROCm release cadence and day-0 framework support affect the timing of NVIDIA's CUDA/NIM differentiation advantage?",
+      "How does Intel's staggered accelerator announcement and sampling schedule affect NVIDIA's inference product positioning through 2026?"
+    ]
+  },
+  "input_statistics": {
+    "verified_findings": 72,
+    "unique_findings": 72,
+    "finding_aliases": 81,
+    "lenses": 3,
+    "candidate_signals": 4,
+    "normalized_signals": 3,
+    "final_signals": 3,
+    "support_references_seen": 12,
+    "support_references_resolved": 12,
+    "support_references_unresolved": 0,
+    "candidate_support_references_unresolved": 0,
+    "discarded_missing_support": 0,
+    "discarded_insufficient_support": 1,
+    "unresolved_candidate_support_references": [],
+    "final_signal_count": 3,
+    "decision_question_count": 3,
+    "decision_area_count": 10
+  },
+  "warnings": [],
+  "created_at": "2026-11-18T02:22:09.248696Z"
+}

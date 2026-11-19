@@ -14,7 +14,7 @@ from ..contracts.DecisionAnalysis import (
     DecisionAnalysisStatus,
     DecisionOption,
 )
-from ..core.llm import get_chat_model, schema_instruction
+from ..core.llm import LONG_FORM_NUM_PREDICT, get_chat_model, schema_instruction
 from .options import generate_options
 from .personalization import emphasis_text
 from .prompts import (
@@ -138,6 +138,7 @@ def make_analyze_node(model: BaseChatModel | None = None):
         else get_chat_model(
             agent="orchestrator",
             temperature=0.0,
+            num_predict=LONG_FORM_NUM_PREDICT,
         )
     )
     structured_llm = analysis_model.with_structured_output(

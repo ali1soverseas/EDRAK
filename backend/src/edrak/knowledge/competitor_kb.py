@@ -506,10 +506,26 @@ RULES
 """
 
 
-def _llm_terms(name: str, pages: list[Page], ctx: DiscoveryContext) -> Optional[TermsDraft]:
-    from edrak.core.llm import get_structured, schema_instruction
+def _kb_structured(schema: type[BaseModel], *, timeout: float):
+    import os
 
-    model = get_structured(TermsDraft, agent="competitor", temperature=0, timeout=120)
+    from edrak.core.llm import get_structured
+
+    model_name = os.getenv("COMPETITOR_KB_MODEL", "gpt-4o-mini").strip()
+    return get_structured(
+        schema,
+        model=model_name or "gpt-4o-mini",
+        agent="competitor",
+        temperature=0,
+        timeout=timeout,
+        provider="openai",
+    )
+
+
+def _llm_terms(name: str, pages: list[Page], ctx: DiscoveryContext) -> Optional[TermsDraft]:
+    from edrak.core.llm import schema_instruction
+
+    model = _kb_structured(TermsDraft, timeout=120)
     return model.invoke([_terms_prompt(name, pages), schema_instruction(TermsDraft)])
 
 
@@ -527,7 +543,7 @@ class ScopeDraft(BaseModel):
 
 
 def _llm_scope(ctx: DiscoveryContext) -> Optional[ScopeDraft]:
-    from edrak.core.llm import get_structured, schema_instruction
+    from edrak.core.llm import schema_instruction
 
     prompt = f"""List the product and market domains the company {ctx.company} competes in, so research on its
 competitors can stay inside that field.
@@ -539,7 +555,7 @@ COMPANY
 - For each: 4 to 12 keywords that any company's product in that domain is described with (product
   types, technical terms, synonyms), lower case. Generic words that fit every industry are useless.
 """
-    model = get_structured(ScopeDraft, agent="competitor", temperature=0, timeout=60)
+    model = _kb_structured(ScopeDraft, timeout=60)
     return model.invoke([prompt, schema_instruction(ScopeDraft)])
 
 
@@ -649,9 +665,9 @@ RULES
 
 
 def _llm_aspect(name: str, aspect: Aspect, pages: list[Page], scope: Optional[Scope] = None) -> Optional[AspectDraft]:
-    from edrak.core.llm import get_structured, schema_instruction
+    from edrak.core.llm import schema_instruction
 
-    model = get_structured(AspectDraft, agent="competitor", temperature=0, timeout=120)
+    model = _kb_structured(AspectDraft, timeout=120)
     return model.invoke([_aspect_prompt(name, aspect, pages, scope), schema_instruction(AspectDraft)])
 
 
@@ -954,9 +970,9 @@ def flag_conflicts(profile: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _llm_profile(name: str, pages: list[Page], ctx: DiscoveryContext) -> Optional[ProfileDraft]:
-    from edrak.core.llm import get_structured, schema_instruction
+    from edrak.core.llm import schema_instruction
 
-    model = get_structured(ProfileDraft, agent="competitor", temperature=0, timeout=180)
+    model = _kb_structured(ProfileDraft, timeout=180)
     return model.invoke([_profile_prompt(name, pages, ctx), schema_instruction(ProfileDraft)])
 
 

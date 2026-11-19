@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import os
 from typing import Callable, Optional, TypeVar
 
 from pydantic import BaseModel, ValidationError
@@ -45,10 +47,20 @@ def schema_caller(schema: type[BaseModel]) -> LLMCall:
     """A model call that sends `schema` as the response format."""
 
     def call(messages: list[dict[str, str]]) -> str:
+        provider = os.getenv("LLM_PROVIDER", settings.LLM_PROVIDER).strip().lower()
+        model = get_chat_model(temperature=0)
+        if provider == "nvidia":
+            reply = model.with_structured_output(schema, method="json_schema").invoke(messages)
+            if isinstance(reply, BaseModel):
+                return reply.model_dump_json()
+            if isinstance(reply, dict):
+                return json.dumps(reply, ensure_ascii=False)
+            return str(reply)
+
         kwargs: dict[str, object] = {"format": schema.model_json_schema()}
         if settings.PROFILE_IMPORT_REASONING:
             kwargs["reasoning"] = settings.PROFILE_IMPORT_REASONING
-        reply = get_chat_model(temperature=0).invoke(messages, **kwargs)
+        reply = model.invoke(messages, **kwargs)
         return str(reply.content)
 
     return call

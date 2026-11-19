@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Icon } from "../ui/Icon";
 import { useL } from "../../lib/useL";
@@ -960,7 +961,7 @@ export function CompetitorProfileView({ entityId, compact = false }: Props) {
         <KeyFacts p={p} />
         <EvidenceStrip sources={sources} />
         <WhatWeKnow p={p} />
-        <a className="kb-link" href={`/competitors/${entityId}`}>{L("Open the full profile", "افتح الملف الكامل")}</a>
+        <Link className="kb-link" to={`/competitors/${entityId}`}>{L("Open the full profile", "افتح الملف الكامل")}</Link>
       </div>
     );
   }

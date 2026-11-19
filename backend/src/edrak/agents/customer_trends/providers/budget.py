@@ -7,9 +7,9 @@ from typing import Literal
 
 from edrak.agents.customer_trends.schemas.common import Budget, BudgetSnapshot
 
-# The share of `max_seconds` kept back for analysis and writing, so that collecting never uses
-# the time the findings need.
-FINISH_RESERVE = 0.5
+# The share of `max_seconds` kept back for relevance analysis and writing, so that collection
+# cannot use the time needed to turn its evidence into findings.
+FINISH_RESERVE = 0.75
 
 
 class BudgetExceeded(Exception):

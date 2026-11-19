@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "analysis_id": "e5f8ed22025517c0513bc9997536c1f1",
+  "status": "cancelled",
+  "started_at_utc": "2026-11-18T01:53:00.613505+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-18T01:53:02.057215+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-18T01:53:02.131056+00:00",
+      "artifacts": [
+        "inputs\\worker_market_intelligence_attempt_1_df3b90a4-d6c.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-18T01:53:02.592781+00:00",
+      "artifacts": [
+        "inputs\\worker_customer_trends_attempt_1_a87d4f3c-eaf.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:df3b90a4-d6cc-4488-9a30-a259ba44bbe5:1": "inputs\\worker_market_intelligence_attempt_1_df3b90a4-d6c.json",
+    "worker:a87d4f3c-eaf2-4c54-9901-32280074e0fd:1": "inputs\\worker_customer_trends_attempt_1_a87d4f3c-eaf.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-18T01:53:07.940241+00:00",
+  "completed_at_utc": "2026-11-18T01:53:07.940230+00:00"
+}

@@ -20,6 +20,7 @@ def home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Data and artifacts in a temporary directory, the way a developer's .env would set them."""
     monkeypatch.setenv("EDRAK_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setenv("ARTIFACTS_PATH", str(tmp_path / "artifacts"))
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
     get_settings.cache_clear()
     return tmp_path
 
@@ -128,11 +129,34 @@ def test_a_brief_that_cannot_be_used_exits_with_one_and_says_why(
 
 
 def test_a_live_run_without_the_model_key_says_what_to_do(
-    home: Path, capsys: pytest.CaptureFixture[str]
+    home: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    monkeypatch.delenv("OLLAMA_API_KEY", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS_BACKUP", raising=False)
     assert call("run", "--brief", str(CI_BRIEF), "--fixture") == 1
     err = capsys.readouterr().err
     assert "OLLAMA_API_KEY is not set" in err and "--fake-llm" in err
+
+
+def test_a_live_run_accepts_nvidia_without_an_ollama_key(
+    home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class ReachedStream(Exception):
+        pass
+
+    async def stop_after_preflight(*_args: Any, **_kwargs: Any) -> Any:
+        raise ReachedStream
+
+    monkeypatch.setenv("LLM_PROVIDER", "nvidia")
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvidia-test-key")
+    monkeypatch.delenv("OLLAMA_API_KEY", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS_BACKUP", raising=False)
+    monkeypatch.setattr(cli, "_stream", stop_after_preflight)
+
+    with pytest.raises(ReachedStream):
+        call("run", "--brief", str(CI_BRIEF), "--fixture")
 
 
 def test_show_for_an_unknown_run_exits_with_one(

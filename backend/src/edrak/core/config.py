@@ -19,10 +19,9 @@ class Settings(BaseSettings):
     EDRAK_ENV: str = "development"
     EDRAK_DEBUG: bool = True
 
-    # LLM Settings (Ollama Cloud / Local OSS)
-    # Every component talks to the native Ollama client, so the OLLAMA_* names match
-    # customer_trends' own settings. The LLM_* names stay accepted as environment
-    # aliases so an existing .env keeps working.
+    # LLM Settings
+    # OLLAMA_* remains available for the native Ollama and customer_trends clients.
+    # The LLM_* names stay accepted as environment aliases for existing .env files.
     OLLAMA_MODEL: str = Field(
         default="gpt-oss:120b",
         validation_alias=AliasChoices("OLLAMA_MODEL", "LLM_MODEL"),
@@ -41,6 +40,12 @@ class Settings(BaseSettings):
         default=0.2,
         validation_alias=AliasChoices("OLLAMA_TEMPERATURE", "LLM_TEMPERATURE"),
     )
+    LLM_PROVIDER: str = "ollama"
+    NVIDIA_MODEL: str = "meta/llama-3.1-70b-instruct"
+    NVIDIA_BASE_URL: Optional[str] = "https://integrate.api.nvidia.com/v1"
+    NVIDIA_API_KEY: Optional[str] = None
+    NVIDIA_TEMPERATURE: float = 0.2
+    NVIDIA_TIMEOUT_S: float = 120.0
 
     # Orchestration control-plane limits
     # 1 not 2: a replan now re-dispatches only the workers whose findings

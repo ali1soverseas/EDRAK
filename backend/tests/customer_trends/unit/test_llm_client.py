@@ -2,6 +2,7 @@ import httpx
 import ollama
 import pytest
 from langchain_core.messages import HumanMessage
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
 
 from edrak.agents.customer_trends.llm import client
@@ -31,6 +32,7 @@ def no_backoff(monkeypatch: pytest.MonkeyPatch) -> None:
     async def instant(_: float) -> None:
         return None
 
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
     monkeypatch.setattr(client, "_sleep", instant)
 
 
@@ -75,10 +77,25 @@ def test_only_the_relevance_role_gets_a_reasoning_effort_and_it_can_be_turned_of
     assert get_chat_model("relevance", settings=off).reasoning is None
 
 
-def test_missing_key_raises_only_when_a_model_is_requested() -> None:
+def test_missing_key_raises_only_when_a_model_is_requested(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("OLLAMA_API_KEY", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS", raising=False)
+    monkeypatch.delenv("OLLAMA_API_KEY_CUSTOMER_TRENDS_BACKUP", raising=False)
     s = make_settings()
     with pytest.raises(LLMConfigError, match="OLLAMA_API_KEY"):
         get_chat_model("branch", settings=s)
+
+
+def test_nvidia_provider_uses_shared_nvidia_client(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LLM_PROVIDER", "nvidia")
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvidia-test-key")
+    monkeypatch.setenv("NVIDIA_MODEL", "test-nvidia-model")
+
+    model = get_chat_model("planner", settings=make_settings())
+
+    assert isinstance(model, ChatOpenAI)
+    assert model.model_name == "test-nvidia-model"
+    assert model.openai_api_key.get_secret_value() == "nvidia-test-key"
 
 
 async def test_structured_call_success() -> None:

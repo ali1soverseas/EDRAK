@@ -1,0 +1,229 @@
+{
+  "task_id": "3e03787d-74fb-4b13-920d-e562116e6bb7",
+  "worker": "internal_intelligence",
+  "status": "completed",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "b2d80fc0-fd44-4c62-b209-49372399c3f6",
+      "statement": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "7bbe3123-3a15-48a3-81dc-94c31e681428",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"product_id\": 3,\n    \"product_name\": \"H200 GPU\",\n    \"architecture\": \""
+      ]
+    },
+    {
+      "finding_id": "e6cab8b1-01bb-42d4-a4a8-cc91007184ee",
+      "statement": "Direct database extraction from 'software_arr' returned 2 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "727a7fe3-1709-4920-bc10-9f647b7dcd82",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"offering_name\": \"NVIDIA AI Enterprise\",\n    \"pricing_model\": \"Per GPU"
+      ]
+    },
+    {
+      "finding_id": "6833d889-aa2e-44f6-bc24-84e75bc07508",
+      "statement": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "8955ea9e-ce6a-423d-930f-8e9f7d388a5b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: {\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": "
+      ]
+    },
+    {
+      "finding_id": "dfe94fa1-8751-470f-a46a-d285d722894b",
+      "statement": "Value: The NVIDIA Blackwell architecture powers GeForce RTX 50 Series with fourth-gen RT Cores and fifth-gen Tensor Cores for path tracing and neural rendering",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "041aa274-cf46-46b4-8ce8-0469b43604ad",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.53,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # NVIDIA - Technology\n## Tech Stack\n\n**Value**: The NVIDIA Blackwell architectur"
+      ]
+    },
+    {
+      "finding_id": "422ffa88-c928-4b2e-ab07-aefcaf377408",
+      "statement": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+      "category": "other",
+      "evidence_refs": [
+        {
+          "evidence_id": "03e63461-9846-4b1b-ba69-dac89bca4de7",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.5,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # NVIDIA - News And Events\n## Product Launch\n\n**Value**: NVIDIA Blackwell Ultra "
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "7bbe3123-3a15-48a3-81dc-94c31e681428",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.gpu_products]",
+      "source_url": "sql://nvidia_enterprise_db/gpu_products",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"product_id\": 3,\n    \"product_name\": \"H200 GPU\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q1 FY2025\",\n    \"target_asp_usd\": 27000.0,\n    \"target_gross_margin_pct\": 71.0,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 141,\n    \"memory_bandwidth_tbps\": 4.8,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 3958.0,\n    \"bf16_tflops\": 1979.0\n  },\n  {\n    \"product_id\": 8,\n    \"product_name\": \"A100 GPU (legacy)\",\n    \"architecture\": \"Ampere\",\n    \"segment\": \"Maintenance / Budget\",\n    \"release_quarter\": \"Q2 FY2020\",\n    \"target_asp_usd\": 12000.0,\n    \"target_gross_margin_pct\": 58.0,\n    \"tdp_watts\": 400,\n    \"hbm_capacity_gb\": 80,\n    \"memory_bandwidth_tbps\": 2.0,\n    \"nvlink_version\": \"NVLink 3.0\",\n    \"nvlink_bandwidth_gbps\": 600,\n    \"cuda_compute_capability\": \"8.0\",\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": 312.0\n  },\n  {\n    \"product_id\": 7,\n    \"product_name\": \"DGX H200 system\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"On-Prem Enterprise\",\n    \"release_quarter\": \"Q2 FY2025\",\n    \"target_asp_usd\": 300000.0,\n    \"target_gross_margin_pct\": 68.0,\n    \"tdp_watts\": 10200,\n    \"hbm_capacity_gb\": 1128,\n    \"memory_bandwidth_tbps\": 38.4,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 31664.0,\n    \"bf16_tflops\": 15832.0\n  },\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  },\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  }\n]",
+      "page_text": "[\n  {\n    \"product_id\": 3,\n    \"product_name\": \"H200 GPU\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q1 FY2025\",\n    \"target_asp_usd\": 27000.0,\n    \"target_gross_margin_pct\": 71.0,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 141,\n    \"memory_bandwidth_tbps\": 4.8,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 3958.0,\n    \"bf16_tflops\": 1979.0\n  },\n  {\n    \"product_id\": 8,\n    \"product_name\": \"A100 GPU (legacy)\",\n    \"architecture\": \"Ampere\",\n    \"segment\": \"Maintenance / Budget\",\n    \"release_quarter\": \"Q2 FY2020\",\n    \"target_asp_usd\": 12000.0,\n    \"target_gross_margin_pct\": 58.0,\n    \"tdp_watts\": 400,\n    \"hbm_capacity_gb\": 80,\n    \"memory_bandwidth_tbps\": 2.0,\n    \"nvlink_version\": \"NVLink 3.0\",\n    \"nvlink_bandwidth_gbps\": 600,\n    \"cuda_compute_capability\": \"8.0\",\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": 312.0\n  },\n  {\n    \"product_id\": 7,\n    \"product_name\": \"DGX H200 system\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"On-Prem Enterprise\",\n    \"release_quarter\": \"Q2 FY2025\",\n    \"target_asp_usd\": 300000.0,\n    \"target_gross_margin_pct\": 68.0,\n    \"tdp_watts\": 10200,\n    \"hbm_capacity_gb\": 1128,\n    \"memory_bandwidth_tbps\": 38.4,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 31664.0,\n    \"bf16_tflops\": 15832.0\n  },\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  },\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  },\n  {\n    \"product_id\": 4,\n    \"product_name\": \"H100 GPU (legacy)\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"Price-sensitive\",\n    \"release_quarter\": \"Q3 FY2023\",\n    \"target_asp_usd\": 19500.0,\n    \"target_gross_margin_pct\": 66.5,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 80,\n    \"memory_bandwidth_tbps\": 3.35,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 3958.0,\n    \"bf16_tflops\": 1979.0\n  },\n  {\n    \"product_id\": 6,\n    \"product_name\": \"GB300 GPU (preview)\",\n    \"architecture\": \"Blackwell Ultra\",\n    \"segment\": \"Hyperscaler Preview\",\n    \"release_quarter\": \"Q3 FY2026\",\n    \"target_asp_usd\": 45000.0,\n    \"target_gross_margin_pct\": 76.0,\n    \"tdp_watts\": 800,\n    \"hbm_capacity_gb\": 288,\n    \"memory_bandwidth_tbps\": 10.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 12000.0,\n    \"bf16_tflops\": 6000.0\n  },\n  {\n    \"product_id\": 5,\n    \"product_name\": \"Spectrum-X switch bundle\",\n    \"architecture\": \"Spectrum-X\",\n    \"segment\": \"Enterprise Ethernet\",\n    \"release_quarter\": \"Q4 FY2024\",\n    \"target_asp_usd\": 250000.0,\n    \"target_gross_margin_pct\": 62.5,\n    \"tdp_watts\": null,\n    \"hbm_capacity_gb\": null,\n    \"memory_bandwidth_tbps\": null,\n    \"nvlink_version\": \"Spectrum-4\",\n    \"nvlink_bandwidth_gbps\": 51200,\n    \"cuda_compute_capability\": null,\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": null\n  }\n]",
+      "retrieved_at": "2026-11-19T14:34:30.081181Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "gpu_products",
+        "query": "SELECT\n    product_id,\n    product_name,\n    architecture,\n    segment,\n    release_quarter,\n    target_asp_usd,\n    target_gross_margin_pct,\n    tdp_watts,\n    hbm_capacity_gb,\n    memory_bandwidth_tbps,\n    nvlink_version,\n    nvlink_bandwidth_gbps,\n    cuda_compute_capability,\n    fp8_tflops,\n    bf16_tflops\nFROM gpu_products\nORDER BY\n    release_quarter,\n    target_asp_usd DESC;",
+        "row_count": 8,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 1
+      }
+    },
+    {
+      "evidence_id": "727a7fe3-1709-4920-bc10-9f647b7dcd82",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.software_arr]",
+      "source_url": "sql://nvidia_enterprise_db/software_arr",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'software_arr' returned 2 records relevant to goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"offering_name\": \"NVIDIA AI Enterprise\",\n    \"pricing_model\": \"Per GPU / year\",\n    \"annual_list_price_usd\": 4500.0,\n    \"active_licenses\": 320000,\n    \"total_arr_usd\": 1440000000.0,\n    \"fiscal_year\": 2026,\n    \"yoy_growth_pct\": 42.0\n  },\n  {\n    \"offering_name\": \"NIM microservices\",\n    \"pricing_model\": \"Per GPU / hour (annualized)\",\n    \"annual_list_price_usd\": 8760.0,\n    \"active_licenses\": 95000,\n    \"total_arr_usd\": 832200000.0,\n    \"fiscal_year\": 2026,\n    \"yoy_growth_pct\": 68.0\n  }\n]",
+      "page_text": "[\n  {\n    \"offering_name\": \"NVIDIA AI Enterprise\",\n    \"pricing_model\": \"Per GPU / year\",\n    \"annual_list_price_usd\": 4500.0,\n    \"active_licenses\": 320000,\n    \"total_arr_usd\": 1440000000.0,\n    \"fiscal_year\": 2026,\n    \"yoy_growth_pct\": 42.0\n  },\n  {\n    \"offering_name\": \"NIM microservices\",\n    \"pricing_model\": \"Per GPU / hour (annualized)\",\n    \"annual_list_price_usd\": 8760.0,\n    \"active_licenses\": 95000,\n    \"total_arr_usd\": 832200000.0,\n    \"fiscal_year\": 2026,\n    \"yoy_growth_pct\": 68.0\n  }\n]",
+      "retrieved_at": "2026-11-19T14:34:35.758019Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "software_arr",
+        "query": "SELECT offering_name, pricing_model, annual_list_price_usd, active_licenses, total_arr_usd, fiscal_year, yoy_growth_pct FROM software_arr WHERE pricing_model LIKE '%GPU%' ORDER BY fiscal_year DESC, total_arr_usd DESC;",
+        "row_count": 2,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 2
+      }
+    },
+    {
+      "evidence_id": "8955ea9e-ce6a-423d-930f-8e9f7d388a5b",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal REST API [nvidia_ops_api: /v1/competitive/benchmark-summary]",
+      "source_url": "api://nvidia_ops_api/v1/competitive/benchmark-summary",
+      "publisher": "Internal Microservice: nvidia_ops_api",
+      "extracted_fact": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+      "excerpt": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "page_text": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "retrieved_at": "2026-11-19T14:34:40.847985Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "rest_api",
+        "api_id": "nvidia_ops_api",
+        "endpoint": "/v1/competitive/benchmark-summary",
+        "params": {},
+        "relevance_score": 0.96,
+        "origin": "internal_api",
+        "rank": 3
+      }
+    },
+    {
+      "evidence_id": "041aa274-cf46-46b4-8ce8-0469b43604ad",
+      "source_type": "internal_document",
+      "source_title": "NVIDIA - Technology",
+      "source_url": "internal://research/3eaccc804a9beafde76b5a693c231916/technology",
+      "publisher": "Company document",
+      "extracted_fact": "Value: The NVIDIA Blackwell architecture powers GeForce RTX 50 Series with fourth-gen RT Cores and fifth-gen Tensor Cores for path tracing and neural rendering",
+      "excerpt": "# NVIDIA - Technology\n## Tech Stack\n\n**Value**: The NVIDIA Blackwell architecture powers GeForce RTX 50 Series with fourth-gen RT Cores and fifth-gen Tensor Cores for path tracing and neural rendering\n**Source URL**: https://www.nvidia.com/en-me/geforce/rtx/",
+      "page_text": null,
+      "retrieved_at": "2026-11-19T14:34:22.770279Z",
+      "is_synthetic": false,
+      "metadata": {
+        "source_uri": "internal://research/3eaccc804a9beafde76b5a693c231916/technology",
+        "title": "NVIDIA - Technology",
+        "doc_type": "internal_research_fact",
+        "heading": "Tech Stack",
+        "is_synthetic": "false",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "origin": "internal",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_2dd97e93e87a",
+        "search_query": "NVIDIA GeForce RTX 50 Series GPU release date specifications and core capabilities",
+        "confidence_score": 0.69,
+        "relevance_score": 0.626,
+        "rank": 4
+      }
+    },
+    {
+      "evidence_id": "03e63461-9846-4b1b-ba69-dac89bca4de7",
+      "source_type": "internal_document",
+      "source_title": "NVIDIA - News And Events",
+      "source_url": "internal://research/3eaccc804a9beafde76b5a693c231916/news_and_events",
+      "publisher": "Company document",
+      "extracted_fact": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+      "excerpt": "# NVIDIA - News And Events\n## Product Launch\n\n**Value**: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale\n**Source URL**: https://www.nvidia.com/en-eu/data-center/gpu-cloud-computing/",
+      "page_text": null,
+      "retrieved_at": "2026-11-19T14:34:22.841485Z",
+      "is_synthetic": false,
+      "metadata": {
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "heading": "Product Launch",
+        "is_synthetic": "false",
+        "source_uri": "internal://research/3eaccc804a9beafde76b5a693c231916/news_and_events",
+        "origin": "internal",
+        "title": "NVIDIA - News And Events",
+        "doc_type": "internal_research_fact",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_4bc458074818",
+        "search_query": "NVIDIA Blackwell and Rubin GPU architecture capabilities known limitations and constraints",
+        "confidence_score": 0.65,
+        "relevance_score": 0.591,
+        "rank": 5
+      }
+    }
+  ],
+  "gaps": [
+    "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+  ],
+  "conflicts": [],
+  "confidence": 0.67,
+  "started_at": "2026-11-19T14:34:04.241961Z",
+  "completed_at": "2026-11-19T14:36:48.011686Z",
+  "error": null,
+  "metadata": {
+    "query_count": 10,
+    "evidence_count": 5,
+    "finding_count": 5,
+    "discarded_count": 0,
+    "discarded_evidence": [],
+    "llm_used": false,
+    "summary": "Internal Intelligence Assessment for 'What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?':\n- Analyzed 5 internal evidence sources covering: other, positioning, product_feature.",
+    "research_goal": "What are NVIDIA's own GPU capabilities, constraints, internal gaps, and prior strategic decisions that determine how competitor moves affect NVIDIA?",
+    "research_focus": "NVIDIA GPU product line (GeForce RTX 50 Series, DLSS, Blackwell, Rubin, Grace, BlueField, Spectrum-X, NVLink, CUDA, Omniverse), known limitations, and prior competitive responses."
+  }
+}

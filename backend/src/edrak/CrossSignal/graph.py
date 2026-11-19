@@ -7,7 +7,7 @@ from ..contracts.CrossSignal import (
     CrossSignalInput,
     CrossSignalOutput,
 )
-from ..core.llm import get_chat_model
+from ..core.llm import LONG_FORM_NUM_PREDICT, get_chat_model
 from .nodes import CrossSignalNodes
 from .state import CrossSignalSettings, CrossSignalState
 
@@ -68,7 +68,10 @@ def build_cross_signal_graph(
 
     if llm is None:
         llm = get_chat_model(
-            settings.model, agent="cross_signal", temperature=settings.temperature
+            settings.model,
+            agent="cross_signal",
+            temperature=settings.temperature,
+            num_predict=LONG_FORM_NUM_PREDICT,
         )
 
     nodes = CrossSignalNodes(

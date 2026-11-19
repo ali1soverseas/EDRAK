@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import os
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Any, Literal, TypeVar
 
@@ -16,7 +17,8 @@ from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt, wait
 
 from edrak.agents.customer_trends.logging import get_logger
 from edrak.agents.customer_trends.settings import Settings, get_settings
-from edrak.core.llm import schema_instruction
+from edrak.core.config import settings as core_settings
+from edrak.core.llm import get_chat_model as get_shared_chat_model, schema_instruction
 
 T = TypeVar("T")
 S = TypeVar("S", bound=BaseModel)
@@ -37,11 +39,22 @@ class StructuredOutputError(RuntimeError):
     """The model did not produce output matching the requested schema."""
 
 
-def get_chat_model(role: Role, *, settings: Settings | None = None) -> ChatOllama:
-    """Build the native Ollama Cloud chat model for a role (never the /v1 shim)."""
+def get_chat_model(role: Role, *, settings: Settings | None = None) -> BaseChatModel:
+    """Build this worker's model using the configured shared LLM provider."""
+    s = settings or get_settings()
+    provider = os.getenv("LLM_PROVIDER", core_settings.LLM_PROVIDER).strip().lower()
+    if provider == "nvidia":
+        try:
+            return get_shared_chat_model(
+                agent="customer_trends",
+                temperature=s.ollama_temperature,
+                timeout=s.ollama_timeout_s,
+            )
+        except RuntimeError as exc:
+            raise LLMConfigError(str(exc)) from exc
+
     from edrak.core.llm import provider_key
 
-    s = settings or get_settings()
     # Resolved through the shared resolver so this worker gets its own quota,
     # with the same own-key-then-backup-then-shared fallback as every other
     # component.

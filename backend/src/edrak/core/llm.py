@@ -33,7 +33,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
@@ -110,12 +110,41 @@ def ollama_key(agent: str | None = None) -> str:
     return key
 
 
+def nvidia_key(agent: str | None = None) -> str:
+    key, variable = provider_key("NVIDIA_API_KEY", agent)
+    if not key:
+        raise RuntimeError(
+            f"{variable} is not configured. Set NVIDIA_API_KEY (or a scoped "
+            "NVIDIA_API_KEY_<AGENT>) in the environment or repository .env file. "
+            "Create a key at https://build.nvidia.com/settings/api-keys"
+        )
+    logger.info("LLM credential resolved from %s", variable)
+    return key
+
+
+def openai_key(agent: str | None = None) -> str:
+    key, variable = provider_key("OPENAI_API_KEY", agent)
+    if not key:
+        raise RuntimeError(
+            f"{variable} is not configured. Set OPENAI_API_KEY (or a scoped "
+            "OPENAI_API_KEY_<AGENT>) in the environment or repository .env file."
+        )
+    logger.info("LLM credential resolved from %s", variable)
+    return key
+
+
+def _float_setting(name: str, fallback: float) -> float:
+    value = os.getenv(name)
+    return float(value) if value else fallback
+
+
 # A structured reply over a real evidence pool runs long: internal synthesis
 # reached 2048 on eight items and was cut off mid-string, which surfaces as a
 # JSON parse error rather than as a truncation. This leaves room for a reply
 # several times that size. It is a ceiling, not a target; temperature and the
 # schema decide the actual length.
 DEFAULT_NUM_PREDICT = 16384
+LONG_FORM_NUM_PREDICT = 32768
 
 
 def get_chat_model(
@@ -127,15 +156,69 @@ def get_chat_model(
     num_predict: Optional[int] = None,
     timeout: Optional[float] = None,
     callbacks: Optional[list] = None,
-) -> ChatOllama:
+    provider: Optional[str] = None,
+) -> Any:
     """The chat model every component uses.
 
-    `agent` selects which credential is used. Passing it is what keeps one
-    agent's quota separate from another's.
+    `LLM_PROVIDER` selects Ollama or NVIDIA. `agent` selects the corresponding
+    scoped credential when one is configured.
     """
     extra_kwargs = {}
     if callbacks is not None:
         extra_kwargs["callbacks"] = callbacks
+    selected_provider = (
+        provider or os.getenv("LLM_PROVIDER", settings.LLM_PROVIDER)
+    ).strip().lower()
+    if selected_provider == "openai":
+        from langchain_openai import ChatOpenAI
+
+        return ChatOpenAI(
+            model=model or os.getenv("OPENAI_MODEL") or "gpt-4o-mini",
+            base_url=base_url or os.getenv("OPENAI_BASE_URL") or None,
+            api_key=openai_key(agent),
+            temperature=(
+                settings.NVIDIA_TEMPERATURE if temperature is None else temperature
+            ),
+            max_tokens=num_predict or DEFAULT_NUM_PREDICT,
+            timeout=(
+                timeout
+                if timeout is not None
+                else _float_setting("OPENAI_TIMEOUT_S", 120.0)
+            ),
+            max_retries=2,
+            **extra_kwargs,
+        )
+    if selected_provider == "nvidia":
+        from langchain_openai import ChatOpenAI
+
+        configured_model = os.getenv("NVIDIA_MODEL") or settings.NVIDIA_MODEL
+        configured_base_url = (
+            base_url
+            or os.getenv("NVIDIA_BASE_URL")
+            or settings.NVIDIA_BASE_URL
+        )
+        configured_temperature = _float_setting(
+            "NVIDIA_TEMPERATURE", settings.NVIDIA_TEMPERATURE
+        )
+        configured_timeout = _float_setting(
+            "NVIDIA_TIMEOUT_S", settings.NVIDIA_TIMEOUT_S
+        )
+        return ChatOpenAI(
+            model=model or configured_model,
+            base_url=configured_base_url,
+            api_key=nvidia_key(agent),
+            temperature=(
+                configured_temperature if temperature is None else temperature
+            ),
+            max_tokens=num_predict or DEFAULT_NUM_PREDICT,
+            timeout=timeout if timeout is not None else configured_timeout,
+            max_retries=2,
+            **extra_kwargs,
+        )
+    if selected_provider != "ollama":
+        raise RuntimeError(
+            f"Unsupported LLM provider {selected_provider!r}; use 'ollama', 'nvidia', or 'openai'."
+        )
     return ChatOllama(
         model=model or settings.OLLAMA_MODEL,
         base_url=base_url or NATIVE_BASE_URL,
@@ -173,6 +256,7 @@ def get_structured(
     temperature: Optional[float] = None,
     method: str = "json_schema",
     timeout: Optional[float] = None,
+    provider: Optional[str] = None,
 ):
     """A model bound to `schema` for structured output.
 
@@ -187,7 +271,7 @@ def get_structured(
     through when the instruction is omitted.
     """
     runnable = get_chat_model(
-        model, agent=agent, temperature=temperature, timeout=timeout
+        model, agent=agent, temperature=temperature, timeout=timeout, provider=provider
     ).with_structured_output(schema, method=method)
     try:
         from edrak.core.observability import get_current_prompt_obj

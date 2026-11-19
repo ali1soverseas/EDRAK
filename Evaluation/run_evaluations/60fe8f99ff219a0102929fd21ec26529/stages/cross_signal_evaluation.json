@@ -1,0 +1,1456 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\cross_signal\\input.json",
+  "source_output": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\cross_signal\\output.json",
+  "deterministic_checks": {
+    "verified_input_finding_count": 72,
+    "signal_count": 3,
+    "signals_without_two_distinct_supporting_findings": [],
+    "signals_with_unverified_or_unknown_references": {},
+    "duplicate_signal_titles": [],
+    "empty_signal_output": false
+  },
+  "quality_judgment": {
+    "status": "fail",
+    "score": 0.3636,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "cross_signal",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "1.2.0-rubric-only",
+    "finding_count": 11,
+    "mandatory_finding_count": 11,
+    "coverage_score": 0.3636,
+    "strict_coverage_score": 0.0909,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 83,
+      "initial_missing_count": 5,
+      "initial_partial_count": 5,
+      "findings_reviewed": 10,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "CS-01",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Every cross-domain signal references the underlying verified findings and their evidence",
+        "priority": "mandatory",
+        "score": 1.0,
+        "status": "covered",
+        "reason": "covered: Every cross-domain signal references the underlying verified findings and their evidence. — The actual output successfully identifies and references multiple cross-domain signals, each explicitly linking to verified findings and their evidence. The connections between the signals and findings are clear and substantive, fulfilling the requirement that every cross-domain signal references the underlying verified findings. The output aligns well with the expected output criteria, demonstrating a strong understanding of the competitive landscape and strategic implications for NVIDIA.",
+        "criteria_results": [
+          {
+            "criterion": "Every cross-domain signal references the underlying verified findings and their evidence.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The actual output successfully identifies and references multiple cross-domain signals, each explicitly linking to verified findings and their evidence. The connections between the signals and findings are clear and substantive, fulfilling the requirement that every cross-domain signal references the underlying verified findings. The output aligns well with the expected output criteria, demonstrating a strong understanding of the competitive landscape and strategic implications for NVIDIA."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 1.0,
+        "initial_status": "covered",
+        "final_score": 1.0,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "CS-02",
+        "requirement_id": "CS-CROSS-DOMAIN",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "missing: A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal. — The Actual Output does not present evidence from distinct research domains, as all findings are categorized under 'internal_intelligence', 'competitor_intelligence', and 'market_intelligence', which do not sufficiently combine distinct domains to form a cross-signal. Additionally, the summary restates findings without integrating them into a cohesive cross-signal narrative, failing to meet the acceptance criteria. Therefore, it does not align with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not present evidence from distinct research domains, as all findings are categorized under 'internal_intelligence', 'competitor_intelligence', and 'market_intelligence', which do not sufficiently combine distinct domains to form a cross-signal. Additionally, the summary restates findings without integrating them into a cohesive cross-signal narrative, failing to meet the acceptance criteria. Therefore, it does not align with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-02",
+          "requirement_id": "CS-CROSS-DOMAIN",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not demonstrate a cross-signal that combines relevant evidence from distinct research domains, as it primarily presents individual findings without linking them together. The acceptance criteria specify that a cross-signal is required, and the output fails to meet this mandatory requirement.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.232379
+            },
+            {
+              "source_path": "$.stage_output.signals[0].implications[1]",
+              "text": "Four-segment adoption reduces concentration risk in any single customer type",
+              "similarity": 0.221964
+            },
+            {
+              "source_path": "$.stage_output.signals[1].evidence_gaps[0]",
+              "text": "ROCm adoption rates among NVIDIA's current developer base",
+              "similarity": 0.190387
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.181215
+            },
+            {
+              "source_path": "$.stage_output.signals[0].decision_areas[2]",
+              "text": "Segment-specific go-to-market sequencing",
+              "similarity": 0.174732
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-03",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "The report explains the relationship between findings and distinguishes observed association from causal inference",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: The report explains the relationship between findings and distinguishes observed association from causal inference. — The report provides a detailed summary of findings and their implications, but it does not explicitly explain the relationship between findings or distinguish between observed associations and causal inferences. While it lists supporting findings and implications, it lacks a clear narrative linking these elements as required by the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "The report explains the relationship between findings and distinguishes observed association from causal inference.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The report provides a detailed summary of findings and their implications, but it does not explicitly explain the relationship between findings or distinguish between observed associations and causal inferences. While it lists supporting findings and implications, it lacks a clear narrative linking these elements as required by the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-03",
+          "requirement_id": "CS-RELATIONSHIP",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "The report explains the relationship between findings and distinguishes observed association from causal inference",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately explain the relationship between findings or distinguish between observed association and causal inference. While it presents various passages with similarities, it lacks a structured narrative or clear linkage to the required findings, which is essential according to the acceptance criteria. Therefore, it is categorized as missing coverage.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.186691
+            },
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.184145
+            },
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.183829
+            },
+            {
+              "source_path": "$.stage_output.signals[0].implications[1]",
+              "text": "Four-segment adoption reduces concentration risk in any single customer type",
+              "similarity": 0.181673
+            },
+            {
+              "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+              "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+              "similarity": 0.171073
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "Second pass upgraded initial missing to partial. Initial: missing: Signals preserve source dates, scope, units, confidence, and material limitations. — The Actual Output lacks explicit mention of source dates, scope, units, confidence, and material limitations, which are critical elements outlined in the evaluation steps. While it provides detailed signals and interpretations, it does not clearly preserve the required elements as specified in the Expected Output. Therefore, it does not meet the mandatory acceptance criteria. Second pass: The Actual Output does not fully meet the acceptance criteria as it lacks explicit preservation of source dates, scope, units, confidence, and material limitations. While it provides some insights into timelines and product stages, it does not address the required elements such as confidence levels or material limitations, resulting in a partial coverage of the criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Signals preserve source dates, scope, units, confidence, and material limitations.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output lacks explicit mention of source dates, scope, units, confidence, and material limitations, which are critical elements outlined in the evaluation steps. While it provides detailed signals and interpretations, it does not clearly preserve the required elements as specified in the Expected Output. Therefore, it does not meet the mandatory acceptance criteria."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-04",
+          "requirement_id": "CS-CONTEXT",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output does not fully meet the acceptance criteria as it lacks explicit preservation of source dates, scope, units, confidence, and material limitations. While it provides some insights into timelines and product stages, it does not address the required elements such as confidence levels or material limitations, resulting in a partial coverage of the criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[1].implications[2]",
+              "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+              "similarity": 0.28567
+            },
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.277196
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.260029
+            },
+            {
+              "source_path": "$.stage_output.signals[2].interpretation",
+              "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+              "similarity": 0.248792
+            },
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.24809
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-05",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "partial: Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained. — The Actual Output provides detailed insights into NVIDIA's competitive landscape, including quantified impacts such as gross margin targets and multi-segment adoption. However, while it mentions evidence gaps, it does not sufficiently retain uncertainty or counterevidence related to the stated impacts, which is a key requirement. The report could benefit from a clearer distinction between supported impacts and those that are speculative.",
+        "criteria_results": [
+          {
+            "criterion": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed insights into NVIDIA's competitive landscape, including quantified impacts such as gross margin targets and multi-segment adoption. However, while it mentions evidence gaps, it does not sufficiently retain uncertainty or counterevidence related to the stated impacts, which is a key requirement. The report could benefit from a clearer distinction between supported impacts and those that are speculative."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-05",
+          "requirement_id": "CS-QUALIFICATION",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides some quantified impacts and mentions supporting findings, but it does not clearly state whether these impacts are supported by evidence or retain uncertainty and counterevidence as required by the acceptance criteria. The output lacks a structured narrative linking findings to their sources, which is a significant shortcoming in meeting the criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.253704
+            },
+            {
+              "source_path": "$.stage_output.signals[0].implications[1]",
+              "text": "Four-segment adoption reduces concentration risk in any single customer type",
+              "similarity": 0.239658
+            },
+            {
+              "source_path": "$.stage_output.signals[1].implications[2]",
+              "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+              "similarity": 0.216847
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.211352
+            },
+            {
+              "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+              "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+              "similarity": 0.199136
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "missing: When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap. — The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap. Instead, it presents multiple signals with supporting findings, which contradicts the requirement that no signal should be reported when no cross-domain relation exists. Additionally, the output fails to meet the acceptance criteria outlined in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap.",
+            "score": 0.0,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that there is no supported cross-domain relation, nor does it provide a clear explanation of the evidence gap. Instead, it presents multiple signals with supporting findings, which contradicts the requirement that no signal should be reported when no cross-domain relation exists. Additionally, the output fails to meet the acceptance criteria outlined in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.0,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-06",
+          "requirement_id": "CS-ABSTENTION",
+          "test_case_id": "CS-GENERAL-001",
+          "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not state that there is no supported cross-domain relation, nor does it explain any evidence gap. It provides various signals and implications without addressing the acceptance criterion directly, resulting in a missing evaluation of the required information.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.280524
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.254212
+            },
+            {
+              "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+              "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+              "similarity": 0.238276
+            },
+            {
+              "source_path": "$.stage_output.signals[1].implications[2]",
+              "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+              "similarity": 0.236557
+            },
+            {
+              "source_path": "$.stage_output.signals[2].interpretation",
+              "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+              "similarity": 0.225342
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.0,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-EDGE-07",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Finding-level provenance",
+        "priority": "mandatory",
+        "score": 0.3333333333333333,
+        "status": "partial",
+        "reason": "partial: Uses stable finding/evidence identifiers. — The Actual Output includes stable finding/evidence identifiers, as evidenced by the presence of 'finding_id' in the supporting findings for each signal. However, it lacks a clear linkage between the synthesized signals and their upstream findings, which is a requirement in the Expected Output. The output does not provide a compact evidence-to-signal table or a structured narrative that explicitly connects each finding to its source IDs, dates, and scope. Therefore, while it meets some criteria, it does not fully align with the acceptance criteria, particularly in clarity and completeness.; missing: Preserves source dates and relevant scope. — The Actual Output does not explicitly mention source dates, which is a critical requirement for finding-level provenance. While it provides detailed signals and supporting findings, it fails to preserve the necessary source dates and relevant scope as outlined in the Expected Output. Additionally, it does not utilize stable finding/evidence identifiers effectively, which detracts from its alignment with the acceptance criteria.; missing: Does not cite an entire worker output when only one finding supports the signal. — The Actual Output does not meet the acceptance criteria as it cites entire worker outputs instead of linking signals to specific findings. While it provides detailed information about multiple signals, it fails to demonstrate that each synthesized signal is supported by only one finding, which is a key requirement. Additionally, the output does not use stable finding/evidence identifiers effectively, as it presents a comprehensive summary rather than a structured narrative linking findings to their sources. This misalignment with the evaluation steps results in a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Uses stable finding/evidence identifiers.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output includes stable finding/evidence identifiers, as evidenced by the presence of 'finding_id' in the supporting findings for each signal. However, it lacks a clear linkage between the synthesized signals and their upstream findings, which is a requirement in the Expected Output. The output does not provide a compact evidence-to-signal table or a structured narrative that explicitly connects each finding to its source IDs, dates, and scope. Therefore, while it meets some criteria, it does not fully align with the acceptance criteria, particularly in clarity and completeness."
+          },
+          {
+            "criterion": "Preserves source dates and relevant scope.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention source dates, which is a critical requirement for finding-level provenance. While it provides detailed signals and supporting findings, it fails to preserve the necessary source dates and relevant scope as outlined in the Expected Output. Additionally, it does not utilize stable finding/evidence identifiers effectively, which detracts from its alignment with the acceptance criteria."
+          },
+          {
+            "criterion": "Does not cite an entire worker output when only one finding supports the signal.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not meet the acceptance criteria as it cites entire worker outputs instead of linking signals to specific findings. While it provides detailed information about multiple signals, it fails to demonstrate that each synthesized signal is supported by only one finding, which is a key requirement. Additionally, the output does not use stable finding/evidence identifiers effectively, as it presents a comprehensive summary rather than a structured narrative linking findings to their sources. This misalignment with the evaluation steps results in a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-07",
+          "requirement_id": "CS-TRACEABILITY",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Finding-level provenance",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output lacks stable finding/evidence identifiers and does not preserve source dates or relevant scope as required. Additionally, it does not provide a complete worker output when only one finding supports the signal, which is a critical shortcoming against the acceptance criteria. Overall, the coverage is missing key elements outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.28404
+            },
+            {
+              "source_path": "$.stage_output.signals[2].strategic_relevance",
+              "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+              "similarity": 0.251861
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.240768
+            },
+            {
+              "source_path": "$.stage_output.signals[2].interpretation",
+              "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+              "similarity": 0.239747
+            },
+            {
+              "source_path": "$.stage_output.signals[0].decision_areas[2]",
+              "text": "Segment-specific go-to-market sequencing",
+              "similarity": 0.236032
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-08",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Conflicting evidence interpretation",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "partial",
+        "reason": "missing: Describes the conflict explicitly. — The Actual Output does not explicitly describe any conflicting evidence interpretation, nor does it present conflicting source claims side by side as required. It lacks a clear distinction between correlation, plausible mechanisms, and demonstrated causality. Additionally, it fails to retain counterevidence or alternative explanations, which are critical for meeting the acceptance criteria. Overall, the output does not align with the mandatory evaluation steps.; missing: Distinguishes correlation, plausible mechanism, and demonstrated causality. — The Actual Output does not address the requirement for conflicting evidence interpretation as specified in the Expected Output. It fails to explicitly describe any conflicts between domain signals or retain counterevidence and alternative explanations. Additionally, it does not distinguish between correlation, plausible mechanisms, and demonstrated causality, which are critical for meeting the acceptance criteria. Therefore, it does not align with the evaluation steps.; missing: Retains counterevidence and alternative explanations. — The Actual Output does not explicitly describe any conflicting evidence or alternative explanations, which is a critical requirement of the evaluation steps. While it provides detailed insights into NVIDIA's competitive landscape, it fails to present conflicting signals side by side or leave unresolved conflicts, thus not meeting the acceptance criteria for retaining counterevidence. The summary lacks the necessary depth to distinguish between correlation and causation, leading to a significant shortfall in fulfilling the primary claim.; partial: Does not average incompatible measures. — The actual output provides detailed insights into competitor activities but fails to explicitly describe conflicting evidence interpretations as required. While it presents various signals and implications, it does not adequately distinguish between conflicting claims or retain counterevidence, which is crucial for meeting the acceptance criteria. The summary lacks clarity on how these conflicting signals relate without averaging incompatible measures.",
+        "criteria_results": [
+          {
+            "criterion": "Describes the conflict explicitly.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly describe any conflicting evidence interpretation, nor does it present conflicting source claims side by side as required. It lacks a clear distinction between correlation, plausible mechanisms, and demonstrated causality. Additionally, it fails to retain counterevidence or alternative explanations, which are critical for meeting the acceptance criteria. Overall, the output does not align with the mandatory evaluation steps."
+          },
+          {
+            "criterion": "Distinguishes correlation, plausible mechanism, and demonstrated causality.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not address the requirement for conflicting evidence interpretation as specified in the Expected Output. It fails to explicitly describe any conflicts between domain signals or retain counterevidence and alternative explanations. Additionally, it does not distinguish between correlation, plausible mechanisms, and demonstrated causality, which are critical for meeting the acceptance criteria. Therefore, it does not align with the evaluation steps."
+          },
+          {
+            "criterion": "Retains counterevidence and alternative explanations.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly describe any conflicting evidence or alternative explanations, which is a critical requirement of the evaluation steps. While it provides detailed insights into NVIDIA's competitive landscape, it fails to present conflicting signals side by side or leave unresolved conflicts, thus not meeting the acceptance criteria for retaining counterevidence. The summary lacks the necessary depth to distinguish between correlation and causation, leading to a significant shortfall in fulfilling the primary claim."
+          },
+          {
+            "criterion": "Does not average incompatible measures.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The actual output provides detailed insights into competitor activities but fails to explicitly describe conflicting evidence interpretations as required. While it presents various signals and implications, it does not adequately distinguish between conflicting claims or retain counterevidence, which is crucial for meeting the acceptance criteria. The summary lacks clarity on how these conflicting signals relate without averaging incompatible measures."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-08",
+          "requirement_id": "CS-RELATIONSHIP",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Conflicting evidence interpretation",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not explicitly describe any conflicts between the domain signals, nor does it provide a clear distinction between correlation, plausible mechanisms, and demonstrated causality. It lacks counterevidence and alternative explanations, and there is no indication of averaging incompatible measures. Overall, it fails to meet the mandatory acceptance criteria outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].strategic_relevance",
+              "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+              "similarity": 0.231777
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.229401
+            },
+            {
+              "source_path": "$.stage_output.signals[1].implications[2]",
+              "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+              "similarity": 0.202817
+            },
+            {
+              "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+              "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+              "similarity": 0.190798
+            },
+            {
+              "source_path": "$.stage_output.signals[0].supporting_findings[2].relevance",
+              "text": "Shows Hopper and Blackwell adoption expanding across four distinct customer segments: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises.",
+              "similarity": 0.183059
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.25,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-EDGE-09",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Impact calibration",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "missing: Uses quantitative impact only when inputs and method support it. — The Actual Output lacks explicit quantitative impact metrics, which is a critical requirement. While it provides qualitative interpretations and implications, it does not sufficiently link these to the underlying evidence with clear quantitative support. Additionally, the evidence gaps noted in the output indicate uncertainty that is not carried forward, which is contrary to the acceptance criteria. Overall, the response does not meet the mandatory priority requirements for impact calibration.; missing: Labels qualitative implications as hypotheses or interpretations. — The Actual Output does not explicitly label qualitative implications as hypotheses or interpretations, which is a critical requirement. While it provides interpretations, it fails to clearly distinguish them as hypotheses. Additionally, the output does not adequately carry forward uncertainty from low-confidence findings, which is necessary for alignment with the acceptance criteria. Overall, the lack of clear labeling and the omission of uncertainty handling significantly detract from its alignment with the evaluation steps.; missing: Carries forward uncertainty from low-confidence upstream findings. — The Actual Output does not explicitly mention uncertainty from low-confidence upstream findings, which is a critical requirement. While it provides detailed signals and interpretations, it fails to articulate any uncertainty or limitations in the findings, which is necessary for alignment with the acceptance criteria. The absence of this explicit acknowledgment of uncertainty significantly detracts from the clarity and completeness of the output.",
+        "criteria_results": [
+          {
+            "criterion": "Uses quantitative impact only when inputs and method support it.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output lacks explicit quantitative impact metrics, which is a critical requirement. While it provides qualitative interpretations and implications, it does not sufficiently link these to the underlying evidence with clear quantitative support. Additionally, the evidence gaps noted in the output indicate uncertainty that is not carried forward, which is contrary to the acceptance criteria. Overall, the response does not meet the mandatory priority requirements for impact calibration."
+          },
+          {
+            "criterion": "Labels qualitative implications as hypotheses or interpretations.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly label qualitative implications as hypotheses or interpretations, which is a critical requirement. While it provides interpretations, it fails to clearly distinguish them as hypotheses. Additionally, the output does not adequately carry forward uncertainty from low-confidence findings, which is necessary for alignment with the acceptance criteria. Overall, the lack of clear labeling and the omission of uncertainty handling significantly detract from its alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Carries forward uncertainty from low-confidence upstream findings.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention uncertainty from low-confidence upstream findings, which is a critical requirement. While it provides detailed signals and interpretations, it fails to articulate any uncertainty or limitations in the findings, which is necessary for alignment with the acceptance criteria. The absence of this explicit acknowledgment of uncertainty significantly detracts from the clarity and completeness of the output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-EDGE-09",
+          "requirement_id": "CS-QUALIFICATION",
+          "test_case_id": "CS-GENERAL-002",
+          "title": "Impact calibration",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately adhere to the acceptance criteria. While it presents some quantitative impacts, it fails to clearly label qualitative implications as hypotheses or interpretations. Additionally, there is no indication of uncertainty being carried forward from low-confidence upstream findings, which is a critical requirement. Overall, the output lacks the necessary structure and clarity to meet the evaluation steps effectively.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[0].implications[1]",
+              "text": "Four-segment adoption reduces concentration risk in any single customer type",
+              "similarity": 0.287291
+            },
+            {
+              "source_path": "$.stage_output.signals[1].evidence_gaps[0]",
+              "text": "ROCm adoption rates among NVIDIA's current developer base",
+              "similarity": 0.274883
+            },
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.244712
+            },
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.243863
+            },
+            {
+              "source_path": "$.stage_output.signals[1].decision_areas[0]",
+              "text": "CUDA and NIM portability strategy relative to ROCm maturity",
+              "similarity": 0.219168
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-EDGE-10",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Temporal alignment",
+        "priority": "mandatory",
+        "score": 0.2333333333333333,
+        "status": "missing",
+        "reason": "missing: Preserves each source's date rather than assigning one date to all evidence. — The Actual Output does not explicitly mention the dates of each source, which is a critical requirement for preserving individual source dates. This omission fails to meet the acceptance criteria that mandates the preservation of each source's date rather than assigning a single date to all evidence. As a result, the output lacks clarity and completeness regarding date preservation.; missing: Flags stale or asynchronous evidence. — The Actual Output does not explicitly mention any stale or asynchronous evidence, nor does it preserve each source's date as required. It fails to flag stale evidence or indicate any differences in observation windows, which is critical for temporal alignment. The output lacks the necessary details to satisfy the acceptance criteria, leading to a low score.; missing: Avoids implying contemporaneous conditions when collection windows differ. — The Actual Output does not clearly state the collection windows or differentiate between the temporal contexts of the findings. It combines findings without preserving each source's date, which is a critical requirement. Additionally, it fails to flag stale or asynchronous evidence, thus implying contemporaneous conditions despite differing collection windows. These shortcomings lead to a significant misalignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Preserves each source's date rather than assigning one date to all evidence.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention the dates of each source, which is a critical requirement for preserving individual source dates. This omission fails to meet the acceptance criteria that mandates the preservation of each source's date rather than assigning a single date to all evidence. As a result, the output lacks clarity and completeness regarding date preservation."
+          },
+          {
+            "criterion": "Flags stale or asynchronous evidence.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention any stale or asynchronous evidence, nor does it preserve each source's date as required. It fails to flag stale evidence or indicate any differences in observation windows, which is critical for temporal alignment. The output lacks the necessary details to satisfy the acceptance criteria, leading to a low score."
+          },
+          {
+            "criterion": "Avoids implying contemporaneous conditions when collection windows differ.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly state the collection windows or differentiate between the temporal contexts of the findings. It combines findings without preserving each source's date, which is a critical requirement. Additionally, it fails to flag stale or asynchronous evidence, thus implying contemporaneous conditions despite differing collection windows. These shortcomings lead to a significant misalignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.2333333333333333,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-EDGE-10",
+          "requirement_id": "CS-CONTEXT",
+          "test_case_id": "CS-GENERAL-003",
+          "title": "Temporal alignment",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to preserve each source's date, as it does not specify the dates of the evidence presented. It also does not flag any stale or asynchronous evidence, nor does it address the differences in collection windows, implying contemporaneous conditions without clarification. Therefore, it does not meet the mandatory acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].interpretation",
+              "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+              "similarity": 0.286753
+            },
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.269748
+            },
+            {
+              "source_path": "$.stage_output.signals[2].decision_question",
+              "text": "How does Intel's staggered accelerator announcement and sampling schedule affect NVIDIA's inference product positioning through 2026?",
+              "similarity": 0.262912
+            },
+            {
+              "source_path": "$.stage_output.signals[2].strategic_relevance",
+              "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+              "similarity": 0.252942
+            },
+            {
+              "source_path": "$.stage_output.signals[0].decision_areas[2]",
+              "text": "Segment-specific go-to-market sequencing",
+              "similarity": 0.246568
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.2333333333333333,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-EDGE-11",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Evidence-based abstention",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "partial",
+        "reason": "missing: States which domains or links are missing. — The Actual Output does not explicitly state which domains or links are missing, nor does it identify what additional evidence would be needed to establish a defensible cross-domain relationship. While it provides a detailed summary of findings, it fails to meet the acceptance criteria of stating missing domains or links, which is a mandatory requirement. Therefore, it lacks clarity and completeness in addressing the evaluation steps.; missing: Does not invent a relationship to fill the output quota. — The Actual Output fails to meet the acceptance criteria as it does not explicitly state which domains or links are missing, nor does it identify what additional evidence would be needed. It also does not provide a compact evidence-to-signal table or a structured narrative linking findings to their sources, which is essential for establishing a defensible cross-domain relationship. Overall, the output lacks clarity and completeness regarding the required finding of evidence-based abstention.; partial: Identifies what additional evidence would be needed. — The Actual Output identifies evidence gaps, specifically mentioning the need for quantified deployment timelines and competitive response timing, which aligns with the requirement to state missing domains or links. However, it does not explicitly state which domains or links are missing or what additional evidence is needed to establish a defensible cross-domain relationship. This partial fulfillment of the criteria results in an intermediate score.",
+        "criteria_results": [
+          {
+            "criterion": "States which domains or links are missing.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state which domains or links are missing, nor does it identify what additional evidence would be needed to establish a defensible cross-domain relationship. While it provides a detailed summary of findings, it fails to meet the acceptance criteria of stating missing domains or links, which is a mandatory requirement. Therefore, it lacks clarity and completeness in addressing the evaluation steps."
+          },
+          {
+            "criterion": "Does not invent a relationship to fill the output quota.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to meet the acceptance criteria as it does not explicitly state which domains or links are missing, nor does it identify what additional evidence would be needed. It also does not provide a compact evidence-to-signal table or a structured narrative linking findings to their sources, which is essential for establishing a defensible cross-domain relationship. Overall, the output lacks clarity and completeness regarding the required finding of evidence-based abstention."
+          },
+          {
+            "criterion": "Identifies what additional evidence would be needed.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies evidence gaps, specifically mentioning the need for quantified deployment timelines and competitive response timing, which aligns with the requirement to state missing domains or links. However, it does not explicitly state which domains or links are missing or what additional evidence is needed to establish a defensible cross-domain relationship. This partial fulfillment of the criteria results in an intermediate score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-EDGE-11",
+          "requirement_id": "CS-ABSTENTION",
+          "test_case_id": "CS-GENERAL-003",
+          "title": "Evidence-based abstention",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not state which domains or links are missing, failing to meet the first evaluation step. Additionally, it does not identify what additional evidence would be needed to satisfy the criteria, which is a critical shortcoming. While it does not invent relationships, the lack of clarity on missing domains and required evidence significantly impacts its alignment with the expected output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].implications[1]",
+              "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+              "similarity": 0.274827
+            },
+            {
+              "source_path": "$.stage_output.signals[0].implications[1]",
+              "text": "Four-segment adoption reduces concentration risk in any single customer type",
+              "similarity": 0.236243
+            },
+            {
+              "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+              "text": "Quantified deployment timelines for each of the four customer segments",
+              "similarity": 0.22987
+            },
+            {
+              "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+              "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+              "similarity": 0.212516
+            },
+            {
+              "source_path": "$.stage_output.signals[2].dependencies[2]",
+              "text": "Crescent Island technical disclosure at Computex 2026",
+              "similarity": 0.212287
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "CS-02",
+        "requirement_id": "CS-CROSS-DOMAIN",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "A cross-signal combines relevant evidence from distinct research domains; one finding restated is not a cross-signal",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not demonstrate a cross-signal that combines relevant evidence from distinct research domains, as it primarily presents individual findings without linking them together. The acceptance criteria specify that a cross-signal is required, and the output fails to meet this mandatory requirement.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.232379
+          },
+          {
+            "source_path": "$.stage_output.signals[0].implications[1]",
+            "text": "Four-segment adoption reduces concentration risk in any single customer type",
+            "similarity": 0.221964
+          },
+          {
+            "source_path": "$.stage_output.signals[1].evidence_gaps[0]",
+            "text": "ROCm adoption rates among NVIDIA's current developer base",
+            "similarity": 0.190387
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.181215
+          },
+          {
+            "source_path": "$.stage_output.signals[0].decision_areas[2]",
+            "text": "Segment-specific go-to-market sequencing",
+            "similarity": 0.174732
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-03",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "The report explains the relationship between findings and distinguishes observed association from causal inference",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately explain the relationship between findings or distinguish between observed association and causal inference. While it presents various passages with similarities, it lacks a structured narrative or clear linkage to the required findings, which is essential according to the acceptance criteria. Therefore, it is categorized as missing coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.186691
+          },
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.184145
+          },
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.183829
+          },
+          {
+            "source_path": "$.stage_output.signals[0].implications[1]",
+            "text": "Four-segment adoption reduces concentration risk in any single customer type",
+            "similarity": 0.181673
+          },
+          {
+            "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+            "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+            "similarity": 0.171073
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Signals preserve source dates, scope, units, confidence, and material limitations",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output does not fully meet the acceptance criteria as it lacks explicit preservation of source dates, scope, units, confidence, and material limitations. While it provides some insights into timelines and product stages, it does not address the required elements such as confidence levels or material limitations, resulting in a partial coverage of the criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[1].implications[2]",
+            "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+            "similarity": 0.28567
+          },
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.277196
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.260029
+          },
+          {
+            "source_path": "$.stage_output.signals[2].interpretation",
+            "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+            "similarity": 0.248792
+          },
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.24809
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-05",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "Quantified or directional impacts are stated only when supported; uncertainty and counterevidence are retained",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output provides some quantified impacts and mentions supporting findings, but it does not clearly state whether these impacts are supported by evidence or retain uncertainty and counterevidence as required by the acceptance criteria. The output lacks a structured narrative linking findings to their sources, which is a significant shortcoming in meeting the criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.253704
+          },
+          {
+            "source_path": "$.stage_output.signals[0].implications[1]",
+            "text": "Four-segment adoption reduces concentration risk in any single customer type",
+            "similarity": 0.239658
+          },
+          {
+            "source_path": "$.stage_output.signals[1].implications[2]",
+            "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+            "similarity": 0.216847
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.211352
+          },
+          {
+            "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+            "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+            "similarity": 0.199136
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-001",
+        "title": "When no supported cross-domain relation exists, the stage reports no signal and explains the evidence gap",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not state that there is no supported cross-domain relation, nor does it explain any evidence gap. It provides various signals and implications without addressing the acceptance criterion directly, resulting in a missing evaluation of the required information.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.280524
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.254212
+          },
+          {
+            "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+            "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+            "similarity": 0.238276
+          },
+          {
+            "source_path": "$.stage_output.signals[1].implications[2]",
+            "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+            "similarity": 0.236557
+          },
+          {
+            "source_path": "$.stage_output.signals[2].interpretation",
+            "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+            "similarity": 0.225342
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-07",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Finding-level provenance",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output lacks stable finding/evidence identifiers and does not preserve source dates or relevant scope as required. Additionally, it does not provide a complete worker output when only one finding supports the signal, which is a critical shortcoming against the acceptance criteria. Overall, the coverage is missing key elements outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.28404
+          },
+          {
+            "source_path": "$.stage_output.signals[2].strategic_relevance",
+            "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+            "similarity": 0.251861
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.240768
+          },
+          {
+            "source_path": "$.stage_output.signals[2].interpretation",
+            "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+            "similarity": 0.239747
+          },
+          {
+            "source_path": "$.stage_output.signals[0].decision_areas[2]",
+            "text": "Segment-specific go-to-market sequencing",
+            "similarity": 0.236032
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-08",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Conflicting evidence interpretation",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not explicitly describe any conflicts between the domain signals, nor does it provide a clear distinction between correlation, plausible mechanisms, and demonstrated causality. It lacks counterevidence and alternative explanations, and there is no indication of averaging incompatible measures. Overall, it fails to meet the mandatory acceptance criteria outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].strategic_relevance",
+            "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+            "similarity": 0.231777
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.229401
+          },
+          {
+            "source_path": "$.stage_output.signals[1].implications[2]",
+            "text": "Sequential ROCm releases suggest predictable software availability aligned with hardware launches",
+            "similarity": 0.202817
+          },
+          {
+            "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+            "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+            "similarity": 0.190798
+          },
+          {
+            "source_path": "$.stage_output.signals[0].supporting_findings[2].relevance",
+            "text": "Shows Hopper and Blackwell adoption expanding across four distinct customer segments: hyperscale CSPs, Tier-2 neoclouds, sovereign AI programs, and Fortune 500 on-premises.",
+            "similarity": 0.183059
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-09",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-GENERAL-002",
+        "title": "Impact calibration",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately adhere to the acceptance criteria. While it presents some quantitative impacts, it fails to clearly label qualitative implications as hypotheses or interpretations. Additionally, there is no indication of uncertainty being carried forward from low-confidence upstream findings, which is a critical requirement. Overall, the output lacks the necessary structure and clarity to meet the evaluation steps effectively.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[0].implications[1]",
+            "text": "Four-segment adoption reduces concentration risk in any single customer type",
+            "similarity": 0.287291
+          },
+          {
+            "source_path": "$.stage_output.signals[1].evidence_gaps[0]",
+            "text": "ROCm adoption rates among NVIDIA's current developer base",
+            "similarity": 0.274883
+          },
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.244712
+          },
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.243863
+          },
+          {
+            "source_path": "$.stage_output.signals[1].decision_areas[0]",
+            "text": "CUDA and NIM portability strategy relative to ROCm maturity",
+            "similarity": 0.219168
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-10",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Temporal alignment",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to preserve each source's date, as it does not specify the dates of the evidence presented. It also does not flag any stale or asynchronous evidence, nor does it address the differences in collection windows, implying contemporaneous conditions without clarification. Therefore, it does not meet the mandatory acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].interpretation",
+            "text": "These announcements show Intel moving products through announcement, detail, and sampling stages on a staggered calendar, with inference-optimized hardware reaching customers in late 2026.",
+            "similarity": 0.286753
+          },
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.269748
+          },
+          {
+            "source_path": "$.stage_output.signals[2].decision_question",
+            "text": "How does Intel's staggered accelerator announcement and sampling schedule affect NVIDIA's inference product positioning through 2026?",
+            "similarity": 0.262912
+          },
+          {
+            "source_path": "$.stage_output.signals[2].strategic_relevance",
+            "text": "Intel's product timeline shifts and inference-focused sampling schedule indicate when Intel may become a more direct price/performance competitor in specific AI workloads.",
+            "similarity": 0.252942
+          },
+          {
+            "source_path": "$.stage_output.signals[0].decision_areas[2]",
+            "text": "Segment-specific go-to-market sequencing",
+            "similarity": 0.246568
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-EDGE-11",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-GENERAL-003",
+        "title": "Evidence-based abstention",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not state which domains or links are missing, failing to meet the first evaluation step. Additionally, it does not identify what additional evidence would be needed to satisfy the criteria, which is a critical shortcoming. While it does not invent relationships, the lack of clarity on missing domains and required evidence significantly impacts its alignment with the expected output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].implications[1]",
+            "text": "Crescent Island customer sampling in H2 2026 establishes when Intel inference hardware may reach evaluation stages",
+            "similarity": 0.274827
+          },
+          {
+            "source_path": "$.stage_output.signals[0].implications[1]",
+            "text": "Four-segment adoption reduces concentration risk in any single customer type",
+            "similarity": 0.236243
+          },
+          {
+            "source_path": "$.stage_output.signals[0].evidence_gaps[0]",
+            "text": "Quantified deployment timelines for each of the four customer segments",
+            "similarity": 0.22987
+          },
+          {
+            "source_path": "$.stage_output.signals[2].supporting_findings[1].relevance",
+            "text": "Establishes Crescent Island's October 14, 2025 announcement, 160GB LPDDR5X specification, and H2 2026 customer sampling expectation.",
+            "similarity": 0.212516
+          },
+          {
+            "source_path": "$.stage_output.signals[2].dependencies[2]",
+            "text": "Crescent Island technical disclosure at Computex 2026",
+            "similarity": 0.212287
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.725,
+      "overall_status": "pass",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The output effectively addresses the research goal by providing a comprehensive analysis of competitors' activities and their implications for NVIDIA. It includes detailed signals regarding AMD and Intel's strategies, which are relevant to NVIDIA's market position. The findings remain focused on the requested entities and topics, with no excessive off-topic material. However, the summary section could have been more concise, as it presents a lot of information that may overwhelm the reader. Overall, the response is well-aligned with the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output demonstrates a strong alignment with the evaluation steps, particularly in referencing verified findings and providing a comprehensive summary of competitive signals. However, it lacks explicit evidence-to-signal traceability for some claims, which is a critical requirement. Additionally, while the output discusses implications and strategic relevance, it does not sufficiently distinguish between correlation and causation in some areas, which is necessary for a complete evaluation. Overall, the output is informative but falls short in traceability and clarity of relationships.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.9,
+          "status": "pass",
+          "reason": "The Actual Output effectively summarizes the competitive landscape for NVIDIA, accurately reflecting the evidence provided in the Retrieval Context. It supports claims about Blackwell's deployment momentum and AMD's ROCm advancements with relevant findings. However, while the output identifies evidence gaps, it does not overreach conclusions beyond the provided evidence, maintaining a cautious interpretation of the implications. Overall, the response aligns well with the evaluation steps, demonstrating a strong connection to the evidence.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of competitors' activities relevant to NVIDIA, covering multiple signals from different domains. However, it lacks explicit references to the underlying verified findings and their evidence, which is a critical requirement. Additionally, while it identifies evidence gaps, it does not sufficiently explain the implications of these gaps on the overall analysis. This results in a significant shortcoming in traceability and clarity, leading to a lower score.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "The output does not present evidence from distinct research domains, failing to form a cross-signal.",
+          "evidence": "The Actual Output does not present evidence from distinct research domains, as all findings are categorized under 'internal_intelligence', 'competitor_intelligence', and 'market_intelligence'.",
+          "impact": "This limits the ability to synthesize insights across different domains, reducing the comprehensiveness of the analysis."
+        },
+        {
+          "limitation": "The report does not explicitly explain the relationship between findings or distinguish between observed associations and causal inferences.",
+          "evidence": "While it lists supporting findings and implications, it lacks a clear narrative linking these elements.",
+          "impact": "This ambiguity can lead to misinterpretations of the data and weaken the overall analysis."
+        },
+        {
+          "limitation": "The output lacks explicit mention of source dates, scope, units, confidence, and material limitations.",
+          "evidence": "The Actual Output does not clearly preserve the required elements as specified in the Expected Output.",
+          "impact": "This omission affects the traceability and reliability of the findings presented."
+        },
+        {
+          "limitation": "The report does not sufficiently retain uncertainty or counterevidence related to the stated impacts.",
+          "evidence": "While it mentions evidence gaps, it does not adequately explain the implications of these gaps on the overall analysis.",
+          "impact": "This can lead to overconfidence in the conclusions drawn from the data."
+        },
+        {
+          "limitation": "The output does not explicitly state that there is no supported cross-domain relation when applicable.",
+          "evidence": "It presents multiple signals with supporting findings, which contradicts the requirement that no signal should be reported when no cross-domain relation exists.",
+          "impact": "This can mislead stakeholders regarding the existence of actionable insights."
+        },
+        {
+          "limitation": "The output lacks a clear linkage between synthesized signals and their upstream findings.",
+          "evidence": "It does not provide a compact evidence-to-signal table or a structured narrative that explicitly connects each finding to its source IDs.",
+          "impact": "This reduces the clarity and completeness of the analysis, making it harder for stakeholders to verify the findings."
+        },
+        {
+          "limitation": "The report does not explicitly describe any conflicting evidence interpretation.",
+          "evidence": "It lacks a clear distinction between correlation, plausible mechanisms, and demonstrated causality.",
+          "impact": "This can lead to an oversimplified understanding of complex competitive dynamics."
+        },
+        {
+          "limitation": "The output does not carry forward uncertainty from low-confidence findings.",
+          "evidence": "The lack of clear labeling and the omission of uncertainty handling significantly detract from its alignment with the evaluation steps.",
+          "impact": "This can result in stakeholders making decisions based on incomplete or overly optimistic assessments."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Integrate evidence from distinct research domains to form cohesive cross-signals.",
+          "addresses": "The limitation of not presenting evidence from distinct research domains.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Develop a clear narrative that explains the relationships between findings and distinguishes between association and causation.",
+          "addresses": "The limitation of not explicitly explaining relationships between findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Ensure explicit mention of source dates, scope, units, confidence, and material limitations in the output.",
+          "addresses": "The limitation of lacking critical elements for traceability.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Retain and clearly present uncertainty and counterevidence related to stated impacts.",
+          "addresses": "The limitation of not sufficiently retaining uncertainty or counterevidence.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Clearly state when no supported cross-domain relation exists and explain the evidence gap.",
+          "addresses": "The limitation of not stating the absence of supported cross-domain relations.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Create a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+          "addresses": "The limitation of lacking clear linkage between synthesized signals and upstream findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Explicitly describe conflicting evidence interpretations and retain counterevidence.",
+          "addresses": "The limitation of not describing conflicting evidence interpretations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Implement a system for carrying forward uncertainty from low-confidence findings.",
+          "addresses": "The limitation of not carrying forward uncertainty from low-confidence findings.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "The output does not present evidence from distinct research domains, failing to form a cross-signal.",
+        "evidence": "The Actual Output does not present evidence from distinct research domains, as all findings are categorized under 'internal_intelligence', 'competitor_intelligence', and 'market_intelligence'.",
+        "impact": "This limits the ability to synthesize insights across different domains, reducing the comprehensiveness of the analysis."
+      },
+      {
+        "limitation": "The report does not explicitly explain the relationship between findings or distinguish between observed associations and causal inferences.",
+        "evidence": "While it lists supporting findings and implications, it lacks a clear narrative linking these elements.",
+        "impact": "This ambiguity can lead to misinterpretations of the data and weaken the overall analysis."
+      },
+      {
+        "limitation": "The output lacks explicit mention of source dates, scope, units, confidence, and material limitations.",
+        "evidence": "The Actual Output does not clearly preserve the required elements as specified in the Expected Output.",
+        "impact": "This omission affects the traceability and reliability of the findings presented."
+      },
+      {
+        "limitation": "The report does not sufficiently retain uncertainty or counterevidence related to the stated impacts.",
+        "evidence": "While it mentions evidence gaps, it does not adequately explain the implications of these gaps on the overall analysis.",
+        "impact": "This can lead to overconfidence in the conclusions drawn from the data."
+      },
+      {
+        "limitation": "The output does not explicitly state that there is no supported cross-domain relation when applicable.",
+        "evidence": "It presents multiple signals with supporting findings, which contradicts the requirement that no signal should be reported when no cross-domain relation exists.",
+        "impact": "This can mislead stakeholders regarding the existence of actionable insights."
+      },
+      {
+        "limitation": "The output lacks a clear linkage between synthesized signals and their upstream findings.",
+        "evidence": "It does not provide a compact evidence-to-signal table or a structured narrative that explicitly connects each finding to its source IDs.",
+        "impact": "This reduces the clarity and completeness of the analysis, making it harder for stakeholders to verify the findings."
+      },
+      {
+        "limitation": "The report does not explicitly describe any conflicting evidence interpretation.",
+        "evidence": "It lacks a clear distinction between correlation, plausible mechanisms, and demonstrated causality.",
+        "impact": "This can lead to an oversimplified understanding of complex competitive dynamics."
+      },
+      {
+        "limitation": "The output does not carry forward uncertainty from low-confidence findings.",
+        "evidence": "The lack of clear labeling and the omission of uncertainty handling significantly detract from its alignment with the evaluation steps.",
+        "impact": "This can result in stakeholders making decisions based on incomplete or overly optimistic assessments."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Integrate evidence from distinct research domains to form cohesive cross-signals.",
+        "addresses": "The limitation of not presenting evidence from distinct research domains.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Develop a clear narrative that explains the relationships between findings and distinguishes between association and causation.",
+        "addresses": "The limitation of not explicitly explaining relationships between findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Ensure explicit mention of source dates, scope, units, confidence, and material limitations in the output.",
+        "addresses": "The limitation of lacking critical elements for traceability.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Retain and clearly present uncertainty and counterevidence related to stated impacts.",
+        "addresses": "The limitation of not sufficiently retaining uncertainty or counterevidence.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Clearly state when no supported cross-domain relation exists and explain the evidence gap.",
+        "addresses": "The limitation of not stating the absence of supported cross-domain relations.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Create a compact evidence-to-signal table or structured narrative linking findings to their sources.",
+        "addresses": "The limitation of lacking clear linkage between synthesized signals and upstream findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Explicitly describe conflicting evidence interpretations and retain counterevidence.",
+        "addresses": "The limitation of not describing conflicting evidence interpretations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Implement a system for carrying forward uncertainty from low-confidence findings.",
+        "addresses": "The limitation of not carrying forward uncertainty from low-confidence findings.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\60fe8f99ff219a0102929fd21ec26529\\stages\\cross_signal_evaluation.json"
+}

@@ -1,0 +1,17 @@
+{
+  "weights": {
+    "correctness": 0.25,
+    "faithfulness": 0.25,
+    "completeness": 0.2,
+    "mandatory_coverage": 0.2,
+    "numeric_grounding": 0.1
+  },
+  "quality_gates": {
+    "same_task_goal_required": true,
+    "same_ground_truth_version_required": true,
+    "same_mandatory_requirements_required": true,
+    "scope_policy_failure_requires_manual_review": true,
+    "unsupported_numbers_require_finding_level_review": true
+  },
+  "repeated_runs_recommended": 5
+}

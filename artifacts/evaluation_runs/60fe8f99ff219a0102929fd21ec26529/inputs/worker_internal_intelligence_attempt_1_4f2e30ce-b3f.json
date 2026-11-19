@@ -1,0 +1,513 @@
+{
+  "task_id": "4f2e30ce-b3fe-4f58-9ffc-fd92d50d90ab",
+  "worker": "internal_intelligence",
+  "status": "completed",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "0bffed02-e92e-44ec-81a5-05f31aa5361d",
+      "statement": "Direct database extraction from 'enterprise_deals' returned 14 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "00e811bb-4fd0-42c7-b2d4-808320b509e9",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"deal_id\": \"DEAL-2026-001\",\n    \"customer_name\": \"Microsoft Azure\",\n  "
+      ]
+    },
+    {
+      "finding_id": "e54b12d5-fe0a-4e4b-b69f-6070fc135719",
+      "statement": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "76b49228-80bd-48bb-b8b1-be98112ec912",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architec"
+      ]
+    },
+    {
+      "finding_id": "e2e71ff8-7e14-4ee9-9028-1f3d075a529f",
+      "statement": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "5a79d0eb-5e5f-4e97-8437-5abc42ef1113",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: {\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": "
+      ]
+    },
+    {
+      "finding_id": "3c1a0882-5963-4e85-a880-1630b8696bc8",
+      "statement": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "category": "market_signal",
+      "evidence_refs": [
+        {
+          "evidence_id": "fce89749-3220-4680-ad8e-c5d9c6004c71",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: {\n  \"fiscal_year\": 2026,\n  \"total_software_arr_usd\": 3543600000.0,\n  \"subscripti"
+      ]
+    },
+    {
+      "finding_id": "e60cd597-bc87-4b26-81c9-d732ed7e244b",
+      "statement": "KR 1.1: Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "b98f9230-9be2-4e04-ab65-5a7e81919c86",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.54,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_internal_strategy_2026.md\n## Objective 1: Accelerate Enterprise Full-St"
+      ]
+    },
+    {
+      "finding_id": "18c9c8d0-334c-4be1-a29e-e8d13e6fd169",
+      "statement": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+      "category": "other",
+      "evidence_refs": [
+        {
+          "evidence_id": "919bde14-d5a3-41eb-9584-f0420c01ebda",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.53,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # NVIDIA - News And Events\n## Product Launch\n\n**Value**: NVIDIA Blackwell Ultra "
+      ]
+    },
+    {
+      "finding_id": "38865742-4623-4068-b873-6e242f5db26d",
+      "statement": "Software & Microservices Subscriptions: Enterprise software suites (NVIDIA AI Enterprise, NIM, NeMo) billed per GPU or per hour.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "30485816-0332-4265-901e-f8acd4997841",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.53,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_pricing_commercial_2026.md\n## Procurement Models Overview\n\nNVIDIA produ"
+      ]
+    },
+    {
+      "finding_id": "c2a60433-275b-4f79-b7b0-84b52af6a596",
+      "statement": "Make NVIDIA the default for third-party / enterprise workloads through CUDA and NIM portability.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "2ddff6f0-3711-4bc3-84ca-c2dbb68935c5",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.51,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_internal_competitive_playbook_2026.md\n## Hyperscaler Custom Silicon (Go"
+      ]
+    },
+    {
+      "finding_id": "b7a74780-3ef8-4a31-884a-5434e8f2dea2",
+      "statement": "NVIDIA AI Enterprise; Per GPU / year; ~$4,500 per GPU per year",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "b7f5efd4-c85f-4cf7-95d4-f3d15e2b0b8f",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.51,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_internal_pricing_packaging_2026.md\n## Software Subscription Packaging\n\n"
+      ]
+    },
+    {
+      "finding_id": "3e998d3b-a7fe-4345-add9-bc3e41c1ccea",
+      "statement": "Enterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "fa7a3246-bdd9-4d87-86c5-15ff59b0ba60",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.5,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_customer_adoption_2026.md\n## Executive Summary\n\nEnterprise and hypersca"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "00e811bb-4fd0-42c7-b2d4-808320b509e9",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.enterprise_deals]",
+      "source_url": "sql://nvidia_enterprise_db/enterprise_deals",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'enterprise_deals' returned 14 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"deal_id\": \"DEAL-2026-001\",\n    \"customer_name\": \"Microsoft Azure\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 120,\n    \"discount_pct\": 14.5,\n    \"total_deal_value_usd\": 297540000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-01-15\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-002\",\n    \"customer_name\": \"Amazon AWS\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 15000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 414375000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-02-01\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-003\",\n    \"customer_name\": \"CoreWeave\",\n    \"segment\": \"Tier 2 Cloud\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 6000,\n    \"discount_pct\": 11.0,\n    \"total_deal_value_usd\": 173550000.0,\n    \"approval_status\": \"Approved (Sales Director)\",\n    \"deal_date\": \"2026-02-18\",\n    \"deal_desk_owner\": \"James Park\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-004\",\n    \"customer_name\": \"Sovereign AI France/Mistral\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"EMEA\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 3000,\n    \"discount_pct\": 9.5,\n    \"total_deal_value_usd\": 73305000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-02\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-005\",\n    \"customer_name\": \"Saudi Sovereign AI (SDAIA)\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"MENA\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 40,\n    \"discount_pct\": 12.0,\n    \"total_deal_value_usd\": 102080000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-10\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  }\n]",
+      "page_text": "[\n  {\n    \"deal_id\": \"DEAL-2026-001\",\n    \"customer_name\": \"Microsoft Azure\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 120,\n    \"discount_pct\": 14.5,\n    \"total_deal_value_usd\": 297540000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-01-15\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-002\",\n    \"customer_name\": \"Amazon AWS\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 15000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 414375000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-02-01\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-003\",\n    \"customer_name\": \"CoreWeave\",\n    \"segment\": \"Tier 2 Cloud\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 6000,\n    \"discount_pct\": 11.0,\n    \"total_deal_value_usd\": 173550000.0,\n    \"approval_status\": \"Approved (Sales Director)\",\n    \"deal_date\": \"2026-02-18\",\n    \"deal_desk_owner\": \"James Park\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-004\",\n    \"customer_name\": \"Sovereign AI France/Mistral\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"EMEA\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 3000,\n    \"discount_pct\": 9.5,\n    \"total_deal_value_usd\": 73305000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-02\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-005\",\n    \"customer_name\": \"Saudi Sovereign AI (SDAIA)\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"MENA\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 40,\n    \"discount_pct\": 12.0,\n    \"total_deal_value_usd\": 102080000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-10\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-006\",\n    \"customer_name\": \"Meta Platforms\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 25000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 690625000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-03-22\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-007\",\n    \"customer_name\": \"Lambda Labs\",\n    \"segment\": \"Tier 2 Cloud\",\n    \"region\": \"North America\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 2500,\n    \"discount_pct\": 9.0,\n    \"total_deal_value_usd\": 61425000.0,\n    \"approval_status\": \"Approved (Sales Director)\",\n    \"deal_date\": \"2026-03-29\",\n    \"deal_desk_owner\": \"James Park\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-008\",\n    \"customer_name\": \"Google Cloud (GCP)\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 20000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 552500000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-04-05\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-009\",\n    \"customer_name\": \"UAE G42\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"MENA\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 5000,\n    \"discount_pct\": 10.0,\n    \"total_deal_value_usd\": 121500000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-04-12\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-010\",\n    \"customer_name\": \"Softbank Japan\",\n    \"segment\": \"Tier 1 Cloud\",\n    \"region\": \"APAC\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 30,\n    \"discount_pct\": 11.5,\n    \"total_deal_value_usd\": 77085000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-04-18\",\n    \"deal_desk_owner\": \"Kevin Tanaka\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-011\",\n    \"customer_name\": \"Oracle Cloud\",\n    \"segment\": \"Enterprise\",\n    \"region\": \"North America\",\n    \"product_name\": \"DGX H200 system\",\n    \"units_ordered\": 50,\n    \"discount_pct\": 8.0,\n    \"total_deal_value_usd\": 13800000.0,\n    \"approval_status\": \"Approved (Sales Director)\",\n    \"deal_date\": \"2026-04-25\",\n    \"deal_desk_owner\": \"James Park\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-012\",\n    \"customer_name\": \"Deutsche Telekom AI Lab\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"EMEA\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 1200,\n    \"discount_pct\": 9.0,\n    \"total_deal_value_usd\": 29484000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-05-03\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-013\",\n    \"customer_name\": \"Tencent Cloud\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"APAC\",\n    \"product_name\": \"H200 GPU\",\n    \"units_ordered\": 8000,\n    \"discount_pct\": 12.0,\n    \"total_deal_value_usd\": 190080000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-05-10\",\n    \"deal_desk_owner\": \"Kevin Tanaka\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-014\",\n    \"customer_name\": \"NVIDIA DGX SuperPOD demo\",\n    \"segment\": \"Internal\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 4,\n    \"discount_pct\": 0.0,\n    \"total_deal_value_usd\": 11600000.0,\n    \"approval_status\": \"Internal Allocation\",\n    \"deal_date\": \"2026-05-15\",\n    \"deal_desk_owner\": \"Engineering\"\n  }\n]",
+      "retrieved_at": "2026-11-18T02:03:05.339680Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "enterprise_deals",
+        "query": "SELECT * FROM enterprise_deals LIMIT 50",
+        "row_count": 14,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 1
+      }
+    },
+    {
+      "evidence_id": "76b49228-80bd-48bb-b8b1-be98112ec912",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.gpu_products]",
+      "source_url": "sql://nvidia_enterprise_db/gpu_products",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"release_quarter\": \"Q2 FY2026\",\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  },\n  {\n    \"product_id\": 7,\n    \"product_name\": \"DGX H200 system\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"On-Prem Enterprise\",\n    \"target_asp_usd\": 300000.0,\n    \"target_gross_margin_pct\": 68.0,\n    \"release_quarter\": \"Q2 FY2025\",\n    \"tdp_watts\": 10200,\n    \"hbm_capacity_gb\": 1128,\n    \"memory_bandwidth_tbps\": 38.4,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 31664.0,\n    \"bf16_tflops\": 15832.0\n  },\n  {\n    \"product_id\": 5,\n    \"product_name\": \"Spectrum-X switch bundle\",\n    \"architecture\": \"Spectrum-X\",\n    \"segment\": \"Enterprise Ethernet\",\n    \"target_asp_usd\": 250000.0,\n    \"target_gross_margin_pct\": 62.5,\n    \"release_quarter\": \"Q4 FY2024\",\n    \"tdp_watts\": null,\n    \"hbm_capacity_gb\": null,\n    \"memory_bandwidth_tbps\": null,\n    \"nvlink_version\": \"Spectrum-4\",\n    \"nvlink_bandwidth_gbps\": 51200,\n    \"cuda_compute_capability\": null,\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": null\n  },\n  {\n    \"product_id\": 6,\n    \"product_name\": \"GB300 GPU (preview)\",\n    \"architecture\": \"Blackwell Ultra\",\n    \"segment\": \"Hyperscaler Preview\",\n    \"target_asp_usd\": 45000.0,\n    \"target_gross_margin_pct\": 76.0,\n    \"release_quarter\": \"Q3 FY2026\",\n    \"tdp_watts\": 800,\n    \"hbm_capacity_gb\": 288,\n    \"memory_bandwidth_tbps\": 10.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 12000.0,\n    \"bf16_tflops\": 6000.0\n  },\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"release_quarter\": \"Q2 FY2026\",\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  }\n]",
+      "page_text": "[\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"release_quarter\": \"Q2 FY2026\",\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  },\n  {\n    \"product_id\": 7,\n    \"product_name\": \"DGX H200 system\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"On-Prem Enterprise\",\n    \"target_asp_usd\": 300000.0,\n    \"target_gross_margin_pct\": 68.0,\n    \"release_quarter\": \"Q2 FY2025\",\n    \"tdp_watts\": 10200,\n    \"hbm_capacity_gb\": 1128,\n    \"memory_bandwidth_tbps\": 38.4,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 31664.0,\n    \"bf16_tflops\": 15832.0\n  },\n  {\n    \"product_id\": 5,\n    \"product_name\": \"Spectrum-X switch bundle\",\n    \"architecture\": \"Spectrum-X\",\n    \"segment\": \"Enterprise Ethernet\",\n    \"target_asp_usd\": 250000.0,\n    \"target_gross_margin_pct\": 62.5,\n    \"release_quarter\": \"Q4 FY2024\",\n    \"tdp_watts\": null,\n    \"hbm_capacity_gb\": null,\n    \"memory_bandwidth_tbps\": null,\n    \"nvlink_version\": \"Spectrum-4\",\n    \"nvlink_bandwidth_gbps\": 51200,\n    \"cuda_compute_capability\": null,\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": null\n  },\n  {\n    \"product_id\": 6,\n    \"product_name\": \"GB300 GPU (preview)\",\n    \"architecture\": \"Blackwell Ultra\",\n    \"segment\": \"Hyperscaler Preview\",\n    \"target_asp_usd\": 45000.0,\n    \"target_gross_margin_pct\": 76.0,\n    \"release_quarter\": \"Q3 FY2026\",\n    \"tdp_watts\": 800,\n    \"hbm_capacity_gb\": 288,\n    \"memory_bandwidth_tbps\": 10.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 12000.0,\n    \"bf16_tflops\": 6000.0\n  },\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"release_quarter\": \"Q2 FY2026\",\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  },\n  {\n    \"product_id\": 3,\n    \"product_name\": \"H200 GPU\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"target_asp_usd\": 27000.0,\n    \"target_gross_margin_pct\": 71.0,\n    \"release_quarter\": \"Q1 FY2025\",\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 141,\n    \"memory_bandwidth_tbps\": 4.8,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 3958.0,\n    \"bf16_tflops\": 1979.0\n  },\n  {\n    \"product_id\": 4,\n    \"product_name\": \"H100 GPU (legacy)\",\n    \"architecture\": \"Hopper\",\n    \"segment\": \"Price-sensitive\",\n    \"target_asp_usd\": 19500.0,\n    \"target_gross_margin_pct\": 66.5,\n    \"release_quarter\": \"Q3 FY2023\",\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 80,\n    \"memory_bandwidth_tbps\": 3.35,\n    \"nvlink_version\": \"NVLink 4.0\",\n    \"nvlink_bandwidth_gbps\": 900,\n    \"cuda_compute_capability\": \"9.0\",\n    \"fp8_tflops\": 3958.0,\n    \"bf16_tflops\": 1979.0\n  },\n  {\n    \"product_id\": 8,\n    \"product_name\": \"A100 GPU (legacy)\",\n    \"architecture\": \"Ampere\",\n    \"segment\": \"Maintenance / Budget\",\n    \"target_asp_usd\": 12000.0,\n    \"target_gross_margin_pct\": 58.0,\n    \"release_quarter\": \"Q2 FY2020\",\n    \"tdp_watts\": 400,\n    \"hbm_capacity_gb\": 80,\n    \"memory_bandwidth_tbps\": 2.0,\n    \"nvlink_version\": \"NVLink 3.0\",\n    \"nvlink_bandwidth_gbps\": 600,\n    \"cuda_compute_capability\": \"8.0\",\n    \"fp8_tflops\": null,\n    \"bf16_tflops\": 312.0\n  }\n]",
+      "retrieved_at": "2026-11-18T02:03:09.950368Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "gpu_products",
+        "query": "SELECT\n    product_id,\n    product_name,\n    architecture,\n    segment,\n    target_asp_usd,\n    target_gross_margin_pct,\n    release_quarter,\n    tdp_watts,\n    hbm_capacity_gb,\n    memory_bandwidth_tbps,\n    nvlink_version,\n    nvlink_bandwidth_gbps,\n    cuda_compute_capability,\n    fp8_tflops,\n    bf16_tflops\nFROM gpu_products\nORDER BY target_asp_usd DESC;",
+        "row_count": 8,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 2
+      }
+    },
+    {
+      "evidence_id": "5a79d0eb-5e5f-4e97-8437-5abc42ef1113",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal REST API [nvidia_ops_api: /v1/competitive/benchmark-summary]",
+      "source_url": "api://nvidia_ops_api/v1/competitive/benchmark-summary",
+      "publisher": "Internal Microservice: nvidia_ops_api",
+      "extracted_fact": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "excerpt": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "page_text": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "retrieved_at": "2026-11-18T02:03:12.376163Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "rest_api",
+        "api_id": "nvidia_ops_api",
+        "endpoint": "/v1/competitive/benchmark-summary",
+        "params": {},
+        "relevance_score": 0.96,
+        "origin": "internal_api",
+        "rank": 3
+      }
+    },
+    {
+      "evidence_id": "fce89749-3220-4680-ad8e-c5d9c6004c71",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal REST API [nvidia_ops_api: /v1/finance/arr-summary]",
+      "source_url": "api://nvidia_ops_api/v1/finance/arr-summary",
+      "publisher": "Internal Microservice: nvidia_ops_api",
+      "extracted_fact": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+      "excerpt": "{\n  \"fiscal_year\": 2026,\n  \"total_software_arr_usd\": 3543600000.0,\n  \"subscriptions\": [\n    {\n      \"offering_name\": \"NVIDIA AI Enterprise\",\n      \"pricing_model\": \"Per GPU / year\",\n      \"annual_list_price_usd\": 4500.0,\n      \"active_licenses\": 320000,\n      \"total_arr_usd\": 1440000000.0,\n      \"yoy_growth_pct\": 42.0\n    },\n    {\n      \"offering_name\": \"NIM microservices\",\n      \"pricing_model\": \"Per GPU / hour (annualized)\",\n      \"annual_list_price_usd\": 8760.0,\n      \"active_licenses\": 95000,\n      \"total_arr_usd\": 832200000.0,\n      \"yoy_growth_pct\": 68.0\n    },\n    {\n      \"offering_name\": \"DGX Cloud\",\n      \"pricing_model\": \"Monthly per node (ann.)\",\n      \"annual_list_price_usd\": 444000.0,\n      \"active_licenses\": 1850,\n      \"total_arr_usd\": 821400000.0,\n      \"yoy_growth_pct\": 55.0\n    },\n    {\n      \"offering_name\": \"NVIDIA Omniverse Enterprise\",\n      \"pricing_model\": \"Per seat / year\",\n      \"annual_list_price_usd\": 3000.0,\n      \"active_licenses\": 22000,\n      \"total_arr_usd\": 66000000.0,\n      \"yoy_growth_pct\": 29.0\n    },\n    {\n      \"offering_name\": \"Base Command Platform\",\n      \"pricing_model\": \"Per cluster / month (ann.)\",\n      \"annual_list_price_usd\": 600000.0,\n      \"active_licenses\": 640,\n      \"total_arr_usd\": 384000000.0,\n      \"yoy_growth_pct\": 37.0\n    }\n  ]\n}",
+      "page_text": "{\n  \"fiscal_year\": 2026,\n  \"total_software_arr_usd\": 3543600000.0,\n  \"subscriptions\": [\n    {\n      \"offering_name\": \"NVIDIA AI Enterprise\",\n      \"pricing_model\": \"Per GPU / year\",\n      \"annual_list_price_usd\": 4500.0,\n      \"active_licenses\": 320000,\n      \"total_arr_usd\": 1440000000.0,\n      \"yoy_growth_pct\": 42.0\n    },\n    {\n      \"offering_name\": \"NIM microservices\",\n      \"pricing_model\": \"Per GPU / hour (annualized)\",\n      \"annual_list_price_usd\": 8760.0,\n      \"active_licenses\": 95000,\n      \"total_arr_usd\": 832200000.0,\n      \"yoy_growth_pct\": 68.0\n    },\n    {\n      \"offering_name\": \"DGX Cloud\",\n      \"pricing_model\": \"Monthly per node (ann.)\",\n      \"annual_list_price_usd\": 444000.0,\n      \"active_licenses\": 1850,\n      \"total_arr_usd\": 821400000.0,\n      \"yoy_growth_pct\": 55.0\n    },\n    {\n      \"offering_name\": \"NVIDIA Omniverse Enterprise\",\n      \"pricing_model\": \"Per seat / year\",\n      \"annual_list_price_usd\": 3000.0,\n      \"active_licenses\": 22000,\n      \"total_arr_usd\": 66000000.0,\n      \"yoy_growth_pct\": 29.0\n    },\n    {\n      \"offering_name\": \"Base Command Platform\",\n      \"pricing_model\": \"Per cluster / month (ann.)\",\n      \"annual_list_price_usd\": 600000.0,\n      \"active_licenses\": 640,\n      \"total_arr_usd\": 384000000.0,\n      \"yoy_growth_pct\": 37.0\n    }\n  ]\n}",
+      "retrieved_at": "2026-11-18T02:03:14.771812Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "rest_api",
+        "api_id": "nvidia_ops_api",
+        "endpoint": "/v1/finance/arr-summary",
+        "params": {},
+        "relevance_score": 0.96,
+        "origin": "internal_api",
+        "rank": 4
+      }
+    },
+    {
+      "evidence_id": "b98f9230-9be2-4e04-ab65-5a7e81919c86",
+      "source_type": "internal_document",
+      "source_title": "nvidia_internal_strategy_2026.md",
+      "source_url": "internal://1d50cb28b04e31c2c1537c3577fac112/nvidia_internal_strategy_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "KR 1.1: Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.",
+      "excerpt": "# nvidia_internal_strategy_2026.md\n## Objective 1: Accelerate Enterprise Full-Stack AI Platform (Blackwell & NIM)\n\n- **KR 1.1:** Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.\n- **KR 1.2:** Grow NVIDIA AI Enterprise and NIM microservices recurring revenue to a $2.0B annualized run rate.\n- **KR 1.3:** Maintain 85%+ developer stickiness on CUDA / TensorRT despite open-source alternatives (ROCm, PyTorch Triton).",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.304630Z",
+      "is_synthetic": false,
+      "metadata": {
+        "doc_type": "internal_doc",
+        "note": "Synthetic document for EDRAK testing. Figures are illustrative, not real NVIDIA data.",
+        "is_synthetic": "false",
+        "author": "Corporate Strategy & Hyperscaler GTM",
+        "title": "nvidia_internal_strategy_2026.md",
+        "origin": "internal",
+        "classification": "Internal Strategic Telemetry (Adapted / Synthetic)",
+        "source_uri": "internal://1d50cb28b04e31c2c1537c3577fac112/nvidia_internal_strategy_2026.md",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "document_id": "1d50cb28b04e31c2c1537c3577fac112",
+        "heading": "Objective 1: Accelerate Enterprise Full-Stack AI Platform (Blackwell & NIM)",
+        "last_updated": "Q1 FY2026",
+        "filename": "nvidia_internal_strategy_2026.md",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_7596142492f9",
+        "search_query": "NVIDIA GPU product roadmap release dates and core capabilities for Blackwell and Rubin targeting AI developers and cloud hyperscale providers",
+        "confidence_score": 0.75,
+        "relevance_score": 0.631,
+        "rank": 5
+      }
+    },
+    {
+      "evidence_id": "919bde14-d5a3-41eb-9584-f0420c01ebda",
+      "source_type": "internal_document",
+      "source_title": "NVIDIA - News And Events",
+      "source_url": "internal://research/3eaccc804a9beafde76b5a693c231916/news_and_events",
+      "publisher": "Company document",
+      "extracted_fact": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+      "excerpt": "# NVIDIA - News And Events\n## Product Launch\n\n**Value**: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale\n**Source URL**: https://www.nvidia.com/en-eu/data-center/gpu-cloud-computing/",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.304848Z",
+      "is_synthetic": false,
+      "metadata": {
+        "is_synthetic": "false",
+        "heading": "Product Launch",
+        "origin": "internal",
+        "title": "NVIDIA - News And Events",
+        "source_uri": "internal://research/3eaccc804a9beafde76b5a693c231916/news_and_events",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "doc_type": "internal_research_fact",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_4bc458074818",
+        "search_query": "NVIDIA GPU product roadmap release dates and core capabilities for Blackwell and Rubin targeting AI developers and cloud hyperscale providers",
+        "confidence_score": 0.74,
+        "relevance_score": 0.625,
+        "rank": 6
+      }
+    },
+    {
+      "evidence_id": "7c4baa08-b4a7-4543-ac95-d3ac95612934",
+      "source_type": "internal_document",
+      "source_title": "nvidia_software_ecosystem_2026.md",
+      "source_url": "internal://b213d201a20fe6b510cb6a7fc2272dff/nvidia_software_ecosystem_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "NVIDIA AI Enterprise (NVAIE) 5.x:",
+      "excerpt": "# nvidia_software_ecosystem_2026.md\n## 3.1 Packaging & Pricing Structure\n\n- **NVIDIA AI Enterprise (NVAIE) 5.x**:\n  - **Subscription Cost**: $4,500 per GPU per year (list price) for on-premises deployments.\n  - **Perpetual License**: $10,125 per GPU + $2,025/year for 24/7 business-critical support.\n  - **Cloud Consumption**: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Cloud Marketplace.\n  - **Included SLA**: 24/7 enterprise support with guaranteed 1-hour response for severity-1 issues, long-term support (LTS) maintenance releases for 3 years, and direct access to NVIDIA solution architects.",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.403996Z",
+      "is_synthetic": false,
+      "metadata": {
+        "document_id": "b213d201a20fe6b510cb6a7fc2272dff",
+        "title": "nvidia_software_ecosystem_2026.md",
+        "filename": "nvidia_software_ecosystem_2026.md",
+        "doc_type": "internal_doc",
+        "origin": "internal",
+        "source_uri": "internal://b213d201a20fe6b510cb6a7fc2272dff/nvidia_software_ecosystem_2026.md",
+        "heading": "3.1 Packaging & Pricing Structure",
+        "is_synthetic": "false",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_0877bbea2887",
+        "search_query": "NVIDIA GPU pricing models and packaging tiers for cloud hyperscale providers enterprise customers and sovereign AI programs worldwide",
+        "confidence_score": 0.74,
+        "relevance_score": 0.625,
+        "rank": 7
+      }
+    },
+    {
+      "evidence_id": "30485816-0332-4265-901e-f8acd4997841",
+      "source_type": "internal_document",
+      "source_title": "nvidia_pricing_commercial_2026.md",
+      "source_url": "internal://15e76ce006f6d3e1d4e7af2042f7ced5/nvidia_pricing_commercial_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Software & Microservices Subscriptions: Enterprise software suites (NVIDIA AI Enterprise, NIM, NeMo) billed per GPU or per hour.",
+      "excerpt": "# nvidia_pricing_commercial_2026.md\n## Procurement Models Overview\n\nNVIDIA products are consumed via three primary commercial models:\n1. **Direct Hardware Capital Purchase (CapEx)**: Bare-metal chips, boards, and DGX turnkey systems purchased via OEM/distributor partners.\n2. **Cloud Infrastructure-as-a-Service (OpEx)**: On-demand and reserved instances hosted by Tier-1 CSPs and specialized GPU clouds.\n3. **Software & Microservices Subscriptions**: Enterprise software suites (NVIDIA AI Enterprise, NIM, NeMo) billed per GPU or per hour.",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.404951Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_pricing_commercial_2026.md",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "is_synthetic": "false",
+        "document_id": "15e76ce006f6d3e1d4e7af2042f7ced5",
+        "heading": "Procurement Models Overview",
+        "filename": "nvidia_pricing_commercial_2026.md",
+        "doc_type": "internal_doc",
+        "origin": "internal",
+        "source_uri": "internal://15e76ce006f6d3e1d4e7af2042f7ced5/nvidia_pricing_commercial_2026.md",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_3e6f581fa456",
+        "search_query": "NVIDIA GPU pricing models and packaging tiers for cloud hyperscale providers enterprise customers and sovereign AI programs worldwide",
+        "confidence_score": 0.71,
+        "relevance_score": 0.622,
+        "rank": 8
+      }
+    },
+    {
+      "evidence_id": "2ddff6f0-3711-4bc3-84ca-c2dbb68935c5",
+      "source_type": "internal_document",
+      "source_title": "nvidia_internal_competitive_playbook_2026.md",
+      "source_url": "internal://266e13c0004782b20b93b136e265b3af/nvidia_internal_competitive_playbook_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Make NVIDIA the default for third-party / enterprise workloads through CUDA and NIM portability.",
+      "excerpt": "# nvidia_internal_competitive_playbook_2026.md\n## Hyperscaler Custom Silicon (Google TPU, AWS Trainium, Microsoft Maia, Meta MTIA)\n\n- **Threat level:** High, long-term.\n- **Their pitch:** Lower cost per token on internal and select customer workloads.\n- **Our response:**\n  - Keep hyperscalers as partners: they remain our largest customers and also our largest potential competitors.\n  - Make NVIDIA the default for third-party / enterprise workloads through CUDA and NIM portability.\n  - Co-design roadmap commitments (Rubin) to stay one generation ahead.",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.658525Z",
+      "is_synthetic": false,
+      "metadata": {
+        "document_id": "266e13c0004782b20b93b136e265b3af",
+        "classification": "Internal Competitive Intelligence (Adapted / Synthetic)",
+        "heading": "Hyperscaler Custom Silicon (Google TPU, AWS Trainium, Microsoft Maia, Meta MTIA)",
+        "source_uri": "internal://266e13c0004782b20b93b136e265b3af/nvidia_internal_competitive_playbook_2026.md",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "author": "Competitive Strategy Team",
+        "last_updated": "Q1 FY2026",
+        "note": "Synthetic document for EDRAK testing. Assessments are illustrative.",
+        "is_synthetic": "false",
+        "title": "nvidia_internal_competitive_playbook_2026.md",
+        "doc_type": "internal_doc",
+        "origin": "internal",
+        "filename": "nvidia_internal_competitive_playbook_2026.md",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_ca693ea1759d",
+        "search_query": "NVIDIA GPU prior competitive decisions win loss reasons and lessons learned from deals against AMD Intel Broadcom in hyperscale cloud",
+        "confidence_score": 0.63,
+        "relevance_score": 0.605,
+        "rank": 9
+      }
+    },
+    {
+      "evidence_id": "b7f5efd4-c85f-4cf7-95d4-f3d15e2b0b8f",
+      "source_type": "internal_document",
+      "source_title": "nvidia_internal_pricing_packaging_2026.md",
+      "source_url": "internal://66566abd7ed59ee133828a6b0a4fdc2a/nvidia_internal_pricing_packaging_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "NVIDIA AI Enterprise; Per GPU / year; ~$4,500 per GPU per year",
+      "excerpt": "# nvidia_internal_pricing_packaging_2026.md\n## Software Subscription Packaging\n\n| Offering | Pricing Model | List Price |\n|----------|--------------|-----------|\n| NVIDIA AI Enterprise | Per GPU / year | ~$4,500 per GPU per year |\n| NIM microservices | Per GPU / hour (cloud) or per GPU / year | ~$1 per GPU per hour |\n| NeMo Customizer | Included with AI Enterprise | n/a |\n| DGX Cloud | Monthly per node | ~$37,000 per node per month |",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.404367Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_internal_pricing_packaging_2026.md",
+        "document_id": "66566abd7ed59ee133828a6b0a4fdc2a",
+        "source_uri": "internal://66566abd7ed59ee133828a6b0a4fdc2a/nvidia_internal_pricing_packaging_2026.md",
+        "is_synthetic": "false",
+        "note": "Synthetic document for EDRAK testing. All prices and discounts are illustrative.",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "filename": "nvidia_internal_pricing_packaging_2026.md",
+        "classification": "Internal Pricing (Adapted / Synthetic)",
+        "origin": "internal",
+        "doc_type": "internal_doc",
+        "heading": "Software Subscription Packaging",
+        "author": "Pricing & Deal Desk",
+        "last_updated": "Q1 FY2026",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_a1b84304c1f0",
+        "search_query": "NVIDIA GPU pricing models and packaging tiers for cloud hyperscale providers enterprise customers and sovereign AI programs worldwide",
+        "confidence_score": 0.73,
+        "relevance_score": 0.603,
+        "rank": 10
+      }
+    },
+    {
+      "evidence_id": "30de9920-1e64-4687-b63b-b5bf29b43836",
+      "source_type": "internal_document",
+      "source_title": "nvidia_pricing_commercial_2026.md",
+      "source_url": "internal://15e76ce006f6d3e1d4e7af2042f7ced5/nvidia_pricing_commercial_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "NVIDIA AI Enterprise (NVAIE) 5.x:",
+      "excerpt": "# nvidia_pricing_commercial_2026.md\n## Software Subscription Pricing: NVIDIA AI Enterprise\n\nSoftware subscriptions provide critical enterprise IP, security maintenance, and production support:\n\n- **NVIDIA AI Enterprise (NVAIE) 5.x**:\n  - **List Price**: $4,500 per GPU per year (perpetual license option: $10,125 + $2,025/year support).\n  - **Cloud Utility Model**: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Marketplaces.\n  - **Included Toolsets**: NVIDIA NIM microservices, NeMo Framework, Triton Inference Server Enterprise, RAPIDS Accelerator for Apache Spark, BioNeMo.\n- **DGX Cloud Fully Managed Service**:\n  - **Pricing**: $36,900 per node per month (includes 8× H100 or H200 GPUs, 3.2Tb/s fabric, and complete NVAIE software stack).",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.404709Z",
+      "is_synthetic": false,
+      "metadata": {
+        "is_synthetic": "false",
+        "title": "nvidia_pricing_commercial_2026.md",
+        "source_uri": "internal://15e76ce006f6d3e1d4e7af2042f7ced5/nvidia_pricing_commercial_2026.md",
+        "filename": "nvidia_pricing_commercial_2026.md",
+        "document_id": "15e76ce006f6d3e1d4e7af2042f7ced5",
+        "heading": "Software Subscription Pricing: NVIDIA AI Enterprise",
+        "origin": "internal",
+        "doc_type": "internal_doc",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_c7d113155cd8",
+        "search_query": "NVIDIA GPU pricing models and packaging tiers for cloud hyperscale providers enterprise customers and sovereign AI programs worldwide",
+        "confidence_score": 0.71,
+        "relevance_score": 0.591,
+        "rank": 11
+      }
+    },
+    {
+      "evidence_id": "fa7a3246-bdd9-4d87-86c5-15ff59b0ba60",
+      "source_type": "internal_document",
+      "source_title": "nvidia_customer_adoption_2026.md",
+      "source_url": "internal://dd4d2f394cade168f765cbd876a5b538/nvidia_customer_adoption_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Enterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "excerpt": "# nvidia_customer_adoption_2026.md\n## Executive Summary\n\nEnterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "page_text": null,
+      "retrieved_at": "2026-11-18T02:02:59.305065Z",
+      "is_synthetic": false,
+      "metadata": {
+        "filename": "nvidia_customer_adoption_2026.md",
+        "heading": "Executive Summary",
+        "title": "nvidia_customer_adoption_2026.md",
+        "source_uri": "internal://dd4d2f394cade168f765cbd876a5b538/nvidia_customer_adoption_2026.md",
+        "is_synthetic": "false",
+        "document_id": "dd4d2f394cade168f765cbd876a5b538",
+        "doc_type": "internal_doc",
+        "workspace_id": "3eaccc804a9beafde76b5a693c231916",
+        "origin": "internal",
+        "chunk_id": "3eaccc804a9beafde76b5a693c231916_chunk_312f77606f93",
+        "search_query": "NVIDIA GPU product roadmap release dates and core capabilities for Blackwell and Rubin targeting AI developers and cloud hyperscale providers",
+        "confidence_score": 0.68,
+        "relevance_score": 0.589,
+        "rank": 12
+      }
+    }
+  ],
+  "gaps": [
+    "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+  ],
+  "conflicts": [],
+  "confidence": 0.62,
+  "started_at": "2026-11-18T02:02:45.750942Z",
+  "completed_at": "2026-11-18T02:04:58.861399Z",
+  "error": null,
+  "metadata": {
+    "query_count": 10,
+    "evidence_count": 12,
+    "finding_count": 10,
+    "discarded_count": 0,
+    "discarded_evidence": [],
+    "llm_used": false,
+    "summary": "Internal Intelligence Assessment for 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?':\n- Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+    "research_goal": "What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?",
+    "research_focus": "Read internal documents for capabilities, constraints and prior decisions. Focus on the key signals for this decision."
+  }
+}

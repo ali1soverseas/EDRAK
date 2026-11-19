@@ -1121,10 +1121,12 @@ def _confidence(ctx: DiscoveryContext, s: dict[str, Any]) -> float:
 
 
 def _require_model() -> None:
-    model_key, _ = provider_key("OLLAMA_API_KEY", "competitor")
+    provider = os.getenv("LLM_PROVIDER", "ollama").strip().lower()
+    key_name = "NVIDIA_API_KEY" if provider == "nvidia" else "OLLAMA_API_KEY"
+    model_key, variable = provider_key(key_name, "competitor")
     if not model_key:
         raise CompetitorDiscoveryConfigurationError(
-            "Competitor discovery needs OLLAMA_API_KEY (or OLLAMA_API_KEY_COMPETITOR) to evaluate web results."
+            f"Competitor discovery needs {variable} to evaluate web results."
         )
 
 

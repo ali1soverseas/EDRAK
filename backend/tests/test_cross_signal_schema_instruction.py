@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 
 from edrak.CrossSignal.nodes import CrossSignalNodes
+from edrak.CrossSignal.graph import build_cross_signal_graph
 from edrak.CrossSignal.state import CrossSignalSettings, SignalDetectionResult
 
 
@@ -19,7 +20,7 @@ def test_detection_includes_the_structured_schema_for_each_lens(monkeypatch) -> 
         def __init__(self) -> None:
             self.structured = FakeStructuredModel()
 
-        def with_structured_output(self, _schema):
+        def with_structured_output(self, _schema, **_kwargs):
             return self.structured
 
     model = FakeModel()
@@ -43,3 +44,20 @@ def test_detection_includes_the_structured_schema_for_each_lens(monkeypatch) -> 
         schema_message = messages[-1].content
         assert "JSON schema" in schema_message
         assert '"signals"' in schema_message
+
+
+def test_cross_signal_uses_configured_model_and_long_form_output_budget(monkeypatch) -> None:
+    calls = {}
+
+    def fake_get_chat_model(model, **kwargs):
+        calls["model"] = model
+        calls.update(kwargs)
+        return object()
+
+    monkeypatch.setattr("edrak.CrossSignal.graph.get_chat_model", fake_get_chat_model)
+
+    build_cross_signal_graph(settings=CrossSignalSettings())
+
+    assert calls["model"] is None
+    assert calls["agent"] == "cross_signal"
+    assert calls["num_predict"] == 32768

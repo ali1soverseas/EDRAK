@@ -1,0 +1,536 @@
+{
+  "research_run_id": "c131b2ab8a41c9f45ea39e15d1469dd9",
+  "status": "completed",
+  "signals": [
+    {
+      "signal_id": "342008b2-b984-48f6-acfb-c49323fd217b",
+      "signal_type": "convergence",
+      "title": "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model",
+      "signal": "Broadcom's co-designed custom AI accelerators (XPUs) for Google, Meta, ByteDance, and OpenAI, combined with its Ethernet networking for AI clusters and hyperscalers' plans for 1 million XPU clusters by 2027, represent a convergent alternative architecture to NVIDIA's general-purpose GPU approach.",
+      "interpretation": "Broadcom is not selling a branded chip but is building customized silicon and networking for the same hyperscale customers NVIDIA targets, which means competition is shifting from chip-to-chip to architecture-model-to-architecture-model at the hyperscale layer.",
+      "supporting_findings": [
+        {
+          "finding_id": "acc9c95f-fb2e-4b1f-8656-1ca4b626497f",
+          "relevance": "Broadcom co-designs custom AI accelerators with hyperscalers rather than selling branded chips."
+        },
+        {
+          "finding_id": "6354056b-1cf5-4402-a0c0-60cec1a38e9f",
+          "relevance": "Broadcom's custom AI silicon customers include Google, Meta, ByteDance, a fourth hyperscaler, and OpenAI."
+        },
+        {
+          "finding_id": "77e012dc-abeb-4459-8ae6-444667443d9e",
+          "relevance": "Broadcom supplies Ethernet networking alongside accelerators for OpenAI systems planned for deployment starting in the second half of 2026."
+        },
+        {
+          "finding_id": "213a1e8f-4d92-4531-9678-8aefff80c2de",
+          "relevance": "Four hyperscaler customers are racing toward 1 million XPU clusters by the end of 2027."
+        },
+        {
+          "finding_id": "896f13b6-d874-434c-8e64-bc94bad71ed8",
+          "relevance": "Broadcom is positioned as an alternative to Nvidia's general-purpose AI hardware."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence",
+        "market_intelligence"
+      ],
+      "confidence": 0.8,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Broadcom's model directly targets NVIDIA's core hyperscale customer segment with a different economic and technical approach.",
+      "implications": [
+        "Hyperscale customers may split workloads between NVIDIA GPUs and custom Broadcom XPUs.",
+        "NVIDIA's general-purpose value proposition faces pressure at the largest scale where customization pays off.",
+        "Broadcom's Ethernet networking competes with NVIDIA's Spectrum-X and InfiniBand in AI clusters."
+      ],
+      "decision_relevance": "both",
+      "opportunity_relevance": "NVIDIA can emphasize the flexibility and software ecosystem of general-purpose GPUs for customers not ready to commit to custom silicon.",
+      "risk_relevance": "Custom ASICs co-designed with hyperscalers could capture a growing share of the largest AI training and inference deployments, reducing NVIDIA's addressable market at the high end.",
+      "affected_business_areas": [
+        "Hyperscale cloud",
+        "Data center AI",
+        "Networking",
+        "Custom silicon partnerships"
+      ],
+      "decision_areas": [
+        "Hyperscale customer retention",
+        "Product segmentation strategy",
+        "Networking competitiveness"
+      ],
+      "decision_question": "To what extent are hyperscale customers shifting AI infrastructure spend from NVIDIA general-purpose GPUs to Broadcom co-designed custom XPUs?",
+      "urgency": "high",
+      "dependencies": [
+        "Broadcom's XPU deployments depend on hyperscaler co-design commitments",
+        "OpenAI cluster deployment depends on Broadcom Ethernet and accelerator delivery by end of 2029"
+      ],
+      "evidence_gaps": [
+        "Revenue or unit share of custom XPUs versus NVIDIA GPUs at hyperscale customers",
+        "Timeline for 1 million XPU cluster deployments"
+      ]
+    },
+    {
+      "signal_id": "8cefdca5-fb74-4291-a69a-9225d535ca13",
+      "signal_type": "timing",
+      "title": "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption",
+      "signal": "AMD's Instinct product roadmap sequences MI325X availability in Q4 2024, MI350 series in 2025, and MI400 series in 2026, while ROCm software releases provide day-0 hardware enablement (ROCm 7.0 in September 2025 for MI350X/MI355X) followed by further validation (ROCm 7.14 in July 2026), and hyperscale customers and OEMs deployed MI350X GPUs in 2025.",
+      "interpretation": "The tight sequencing between AMD's hardware roadmap, ROCm software enablement, and customer deployments indicates a coordinated release cadence that compresses the gap between product availability and production readiness, accelerating AMD's competitive momentum against NVIDIA.",
+      "supporting_findings": [
+        {
+          "finding_id": "9d8ff607-1ef7-463a-8fc1-dbd1e70be620",
+          "relevance": "Provides the AMD Instinct hardware roadmap dates for MI325X, MI350, and MI400 series."
+        },
+        {
+          "finding_id": "e3815d21-a2ac-4d77-a821-c046cd13aa02",
+          "relevance": "Shows ROCm 7.0 released September 2025 with day-0 enablement for MI350X and MI355X."
+        },
+        {
+          "finding_id": "e1822044-64a8-4083-a629-69cf396168e7",
+          "relevance": "Documents hyperscale customer, OEM, and ODM deployment of MI350X Series GPUs in 2025."
+        },
+        {
+          "finding_id": "a11b83a4-91be-492b-8d86-063446514924",
+          "relevance": "Shows ROCm 7.14 released July 2026 with further validation for MI350X and MI355X."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence"
+      ],
+      "confidence": 0.85,
+      "evidence_quality": "medium",
+      "strategic_relevance": "AMD's ability to synchronize hardware and software releases reduces the time from product launch to customer deployment, challenging NVIDIA's software ecosystem advantage.",
+      "implications": [
+        "AMD's coordinated release cadence may shorten customer evaluation and deployment cycles for Instinct accelerators.",
+        "ROCm day-0 enablement for new MI350 hardware reduces software integration risk for adopters.",
+        "Successive ROCm releases validate AMD's commitment to software maturity alongside hardware shipments."
+      ],
+      "decision_relevance": "both",
+      "opportunity_relevance": null,
+      "risk_relevance": "AMD's synchronized hardware-software releases could erode NVIDIA's CUDA software advantage by reducing switching costs for customers adopting MI350-series accelerators.",
+      "affected_business_areas": [
+        "Data Center AI",
+        "Software Ecosystem",
+        "Competitive Positioning"
+      ],
+      "decision_areas": [
+        "CUDA software moat durability",
+        "AMD ROCm adoption trajectory",
+        "MI350-series competitive response timing"
+      ],
+      "decision_question": "How does AMD's synchronized hardware-software release cadence affect the timeline for customer migration away from NVIDIA's CUDA ecosystem?",
+      "urgency": "high",
+      "dependencies": [
+        "ROCm software enablement must coincide with MI350 hardware availability for customer deployment",
+        "Customer deployment of MI350X in 2025 depends on both hardware supply and ROCm 7.0 support"
+      ],
+      "evidence_gaps": [
+        "NVIDIA's comparable software release cadence for Blackwell and Rubin architectures",
+        "Customer churn rates from NVIDIA to AMD following ROCm releases"
+      ]
+    },
+    {
+      "signal_id": "2bab6495-b966-405c-9fb4-2a6f046059fa",
+      "signal_type": "momentum",
+      "title": "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure",
+      "signal": "AMD Instinct MI300X was adopted by Microsoft Azure, Meta, Dell, HPE, and Lenovo; MI350X Series GPUs were deployed by hyperscale customers, OEMs, and ODMs in 2025; AMD signed a chip-supply agreement with OpenAI in October 2025 and a $1 billion U.S. Department of Energy agreement; in November 2026 AMD announced Neysa scaling AI infrastructure in India and completed the Taalas acquisition.",
+      "interpretation": "AMD's adoption is accelerating across multiple segments and geographies, moving from initial cloud and OEM customers to frontier AI labs (OpenAI), federal high-performance computing, and sovereign AI infrastructure in India, supported by strategic acquisitions.",
+      "supporting_findings": [
+        {
+          "finding_id": "d05da3ed-9176-4738-9e05-8e6771e9e0b3",
+          "relevance": "Documents MI300X adoption by Microsoft Azure, Meta, Dell, HPE, and Lenovo."
+        },
+        {
+          "finding_id": "e1822044-64a8-4083-a629-69cf396168e7",
+          "relevance": "Shows MI350X Series GPU deployments by hyperscale customers, OEMs, and ODMs in 2025."
+        },
+        {
+          "finding_id": "fa240d3a-63a4-4c6f-8cba-120892238d59",
+          "relevance": "Documents AMD's October 2025 OpenAI chip-supply agreement and $1 billion U.S. Department of Energy agreement."
+        },
+        {
+          "finding_id": "237eb15b-472d-4173-8a10-cf71cae032a6",
+          "relevance": "Shows November 2026 Neysa India infrastructure scaling and Taalas acquisition."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence"
+      ],
+      "confidence": 0.85,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Demonstrates that AMD's Instinct line is gaining traction beyond traditional data center customers into strategic accounts (OpenAI, DOE) and sovereign markets (India), broadening the competitive threat to NVIDIA.",
+      "implications": [
+        "AMD's OpenAI and DOE agreements validate Instinct accelerators for frontier AI and federal HPC workloads.",
+        "Neysa deployment in India extends AMD's reach into sovereign AI markets.",
+        "Taalas acquisition adds AI inference silicon capability to AMD's portfolio."
+      ],
+      "decision_relevance": "both",
+      "opportunity_relevance": "AMD's expansion into sovereign AI (India/Neysa) and federal HPC (DOE) opens market segments where NVIDIA may face export control or procurement competition.",
+      "risk_relevance": "AMD's adoption by OpenAI, DOE, and hyperscale customers across multiple geographies erodes NVIDIA's exclusive access to strategic AI infrastructure accounts.",
+      "affected_business_areas": [
+        "Sovereign AI",
+        "Federal HPC",
+        "Cloud AI",
+        "Strategic Accounts"
+      ],
+      "decision_areas": [
+        "OpenAI infrastructure strategy",
+        "Sovereign AI market response",
+        "Federal HPC competitiveness"
+      ],
+      "decision_question": "How quickly is AMD's Instinct adoption among strategic accounts (OpenAI, DOE, Neysa) translating into workload displacement from NVIDIA GPUs?",
+      "urgency": "high",
+      "dependencies": [
+        "OpenAI chip-supply agreement depends on AMD accelerator availability and OpenAI data center buildout",
+        "DOE $1 billion agreement depends on federal HPC procurement timelines",
+        "Neysa India deployment depends on local infrastructure and enterprise demand"
+      ],
+      "evidence_gaps": [
+        "Workload displacement metrics from NVIDIA to AMD at OpenAI and DOE",
+        "NVIDIA's sovereign AI presence in India",
+        "Taalas acquisition integration timeline with AMD Instinct roadmap"
+      ]
+    },
+    {
+      "signal_id": "d32a9abe-998f-480b-b3c8-4d420526a358",
+      "signal_type": "dependency",
+      "title": "Broadcom custom AI silicon depends on hyperscale co-design partnerships",
+      "signal": "Broadcom's custom AI accelerator business is conditioned on hyperscale customer co-design relationships and volume commitments rather than a standalone branded product.",
+      "interpretation": "Broadcom does not sell its own branded AI chip; it co-designs ASICs or XPUs with hyperscalers and manages manufacturing relationships and packaging. Verified custom AI silicon customers include Google, Meta, ByteDance, an unnamed fourth hyperscaler, and OpenAI. Four hyperscaler customers are reportedly racing toward 1 million XPU clusters by the end of 2027. Broadcom's accelerator revenue and roadmap depend on these hyperscale partnerships continuing and scaling.",
+      "supporting_findings": [
+        {
+          "finding_id": "acc9c95f-fb2e-4b1f-8656-1ca4b626497f",
+          "relevance": "Establishes Broadcom co-designs custom AI accelerators with hyperscalers and has no branded AI chip."
+        },
+        {
+          "finding_id": "6354056b-1cf5-4402-a0c0-60cec1a38e9f",
+          "relevance": "Identifies Broadcom's custom AI silicon customers including Google, Meta, ByteDance, a fourth hyperscaler, and OpenAI."
+        },
+        {
+          "finding_id": "213a1e8f-4d92-4531-9678-8aefff80c2de",
+          "relevance": "Shows four hyperscaler customers are racing toward 1 million XPU clusters by end of 2027."
+        },
+        {
+          "finding_id": "b65be491-d008-400b-baf2-f6a607abe1d8",
+          "relevance": "Positions Broadcom custom AI chips as an alternative to NVIDIA's general-purpose AI hardware."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence",
+        "market_intelligence"
+      ],
+      "confidence": 0.85,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Broadcom's custom silicon model positions it as an alternative to NVIDIA's general-purpose AI hardware, and its viability depends on hyperscale co-design relationships.",
+      "implications": [
+        "Broadcom's AI accelerator business is concentrated in a few hyperscale relationships",
+        "Loss or delay of a hyperscale customer would materially affect Broadcom's XPU roadmap",
+        "Competition occurs against customer-specific silicon that is not sold on the open market"
+      ],
+      "decision_relevance": "risk_relevant",
+      "opportunity_relevance": "Broadcom's dependence on a few hyperscalers creates customer-concentration exposure that general-purpose alternatives could address.",
+      "risk_relevance": "Successful deployment of 1 million XPU clusters by hyperscalers could shift significant data center AI volume from general-purpose GPU vendors to custom silicon.",
+      "affected_business_areas": [
+        "Hyperscale data center AI",
+        "Custom ASIC competition",
+        "Customer concentration"
+      ],
+      "decision_areas": [
+        "Hyperscale customer silicon strategy",
+        "Broadcom customer concentration monitoring"
+      ],
+      "decision_question": "To what extent does Broadcom's reliance on a small number of hyperscale co-design customers constrain or accelerate its ability to capture data center AI spend from general-purpose GPU vendors?",
+      "urgency": "high",
+      "dependencies": [
+        "Broadcom custom AI accelerators depend on hyperscale co-design partnerships",
+        "XPU cluster deployments depend on hyperscale customer capital commitments"
+      ],
+      "evidence_gaps": [
+        "Verified geographic markets for Broadcom's four hyperscaler customers",
+        "Verified timeline and scale of OpenAI's Broadcom co-designed chip deployment"
+      ]
+    },
+    {
+      "signal_id": "f3f49bbb-1485-4ca3-8a54-7bbce0fbcb78",
+      "signal_type": "timing",
+      "title": "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure",
+      "signal": "AMD's MI325X (Q4 2024), MI350 series (2025), and MI400 series (2026) roadmap advances as NVIDIA deploys Blackwell and Blackwell Ultra systems at scale, while AMD's attractive pricing and shorter wait times position it to capture orders during NVIDIA's production ramp.",
+      "interpretation": "The sequence of AMD's product launches relative to NVIDIA's Blackwell ramp means AMD can offer immediate availability and lower cost during periods when NVIDIA supply is constrained, altering the competitive dynamics of the current generation cycle.",
+      "supporting_findings": [
+        {
+          "finding_id": "9d8ff607-1ef7-463a-8fc1-dbd1e70be620",
+          "relevance": "AMD's roadmap establishes the timing of MI325X, MI350, and MI400 releases relative to NVIDIA's Blackwell ramp."
+        },
+        {
+          "finding_id": "0524f4c1-5006-44ab-b344-b39318b737b3",
+          "relevance": "AMD's attractive pricing and shorter wait times enable it to attract larger orders during NVIDIA supply constraints."
+        },
+        {
+          "finding_id": "422ffa88-c928-4b2e-ab07-aefcaf377408",
+          "relevance": "NVIDIA Blackwell Ultra systems are being deployed at scale by Microsoft, CoreWeave, and Oracle Cloud Infrastructure, defining the competitive timing context."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence",
+        "market_intelligence",
+        "internal_intelligence"
+      ],
+      "confidence": 0.78,
+      "evidence_quality": "medium",
+      "strategic_relevance": "Timing of product availability and pricing can shift customer orders between generations, affecting NVIDIA's revenue during its Blackwell ramp.",
+      "implications": [
+        "Customers facing NVIDIA supply constraints or long wait times may choose AMD accelerators for immediate deployment.",
+        "NVIDIA's Blackwell ramp may face competition from AMD's available and cheaper alternatives.",
+        "The competitive window during NVIDIA's production ramp is narrowed by AMD's immediate availability."
+      ],
+      "decision_relevance": "both",
+      "opportunity_relevance": "NVIDIA can leverage its Blackwell performance advantage and ecosystem to justify wait times and premium pricing for customers prioritizing peak performance.",
+      "risk_relevance": "AMD's shorter wait times and attractive pricing could capture customers who cannot wait for NVIDIA supply, eroding NVIDIA's near-term order book.",
+      "affected_business_areas": [
+        "Data center sales",
+        "Supply chain",
+        "Customer relationships"
+      ],
+      "decision_areas": [
+        "Allocation strategy",
+        "Pricing policy",
+        "Customer communication during supply constraints"
+      ],
+      "decision_question": "How does AMD's combination of availability and pricing affect NVIDIA's order capture during the Blackwell ramp period?",
+      "urgency": "high",
+      "dependencies": [
+        "AMD's ability to attract orders depends on sustained pricing and wait-time advantages",
+        "NVIDIA's Blackwell ramp depends on supply chain capacity"
+      ],
+      "evidence_gaps": [
+        "NVIDIA Blackwell supply constraint data",
+        "Customer order migration data between NVIDIA and AMD during supply constraints"
+      ]
+    },
+    {
+      "signal_id": "0c099b2d-b98d-4a1c-a5fb-f106cdebba6e",
+      "signal_type": "dependency",
+      "title": "AMD MI350 hardware deployment depends on ROCm software enablement",
+      "signal": "AMD's MI350 series hardware roadmap is materially conditioned on ROCm software releases that provide day-0 hardware enablement and framework validation for the MI350X and MI355X accelerators.",
+      "interpretation": "ROCm 7.0, released September 16, 2025, provides hardware enablement for Instinct MI350X and MI355X, and ROCm 7.14, released July 15, 2026, further validates Transformer Engine v2.12 on those same chips. The MI350 series was expected to be available in 2025, and its usability for AI training and inference depends on the software stack being ready first. Hardware availability alone does not translate into deployable AI infrastructure without the corresponding ROCm enablement.",
+      "supporting_findings": [
+        {
+          "finding_id": "9d8ff607-1ef7-463a-8fc1-dbd1e70be620",
+          "relevance": "Establishes the MI350 series hardware roadmap expected in 2025."
+        },
+        {
+          "finding_id": "e3815d21-a2ac-4d77-a821-c046cd13aa02",
+          "relevance": "Shows ROCm 7.0 provides hardware enablement for MI350X and MI355X."
+        },
+        {
+          "finding_id": "a11b83a4-91be-492b-8d86-063446514924",
+          "relevance": "Shows ROCm 7.14 validates Transformer Engine v2.12 for MI350X and MI355X."
+        }
+      ],
+      "domains_involved": [
+        "competitor_intelligence"
+      ],
+      "confidence": 0.82,
+      "evidence_quality": "medium",
+      "strategic_relevance": "A competitor whose new accelerator deployability is gated by software stack readiness creates timing-dependent competitive pressure in data center AI markets.",
+      "implications": [
+        "AMD's MI350 series competitiveness depends on ROCm release timing",
+        "Software enablement delays could slow AMD's data center AI deployments",
+        "A mature software ecosystem contrasts with a ROCm dependency cycle"
+      ],
+      "decision_relevance": "both",
+      "opportunity_relevance": "Delays in ROCm enablement could slow AMD's MI350 adoption, creating a window for established GPU vendors to retain data center AI customers.",
+      "risk_relevance": "Timely ROCm enablement could accelerate AMD's MI350 deployment and intensify competition in data center AI.",
+      "affected_business_areas": [
+        "Data center AI",
+        "Competitive positioning",
+        "Software ecosystem"
+      ],
+      "decision_areas": [
+        "ROCm software maturity tracking",
+        "MI350 deployment timeline assessment"
+      ],
+      "decision_question": "How does the timing of ROCm software enablement relative to MI350 hardware availability affect AMD's ability to challenge established GPU vendors in data center AI?",
+      "urgency": "medium",
+      "dependencies": [
+        "AMD Instinct hardware deployment depends on ROCm day-0 software enablement",
+        "MI350 series availability depends on ROCm hardware enablement and framework validation"
+      ],
+      "evidence_gaps": [
+        "Verified software release timing relative to hardware launches for direct platform comparison",
+        "Verified adoption rates among MI350X and MI355X customers"
+      ]
+    }
+  ],
+  "summary": {
+    "dominant_patterns": [
+      "Broadcom's co-designed custom AI accelerators (XPUs) for Google, Meta, ByteDance, and OpenAI, combined with its Ethernet networking for AI clusters and hyperscalers' plans for 1 million XPU clusters by 2027, represent a convergent alternative architecture to NVIDIA's general-purpose GPU approach.",
+      "AMD's Instinct product roadmap sequences MI325X availability in Q4 2024, MI350 series in 2025, and MI400 series in 2026, while ROCm software releases provide day-0 hardware enablement (ROCm 7.0 in September 2025 for MI350X/MI355X) followed by further validation (ROCm 7.14 in July 2026), and hyperscale customers and OEMs deployed MI350X GPUs in 2025.",
+      "AMD Instinct MI300X was adopted by Microsoft Azure, Meta, Dell, HPE, and Lenovo; MI350X Series GPUs were deployed by hyperscale customers, OEMs, and ODMs in 2025; AMD signed a chip-supply agreement with OpenAI in October 2025 and a $1 billion U.S. Department of Energy agreement; in November 2026 AMD announced Neysa scaling AI infrastructure in India and completed the Taalas acquisition.",
+      "Broadcom's custom AI accelerator business is conditioned on hyperscale customer co-design relationships and volume commitments rather than a standalone branded product.",
+      "AMD's MI325X (Q4 2024), MI350 series (2025), and MI400 series (2026) roadmap advances as NVIDIA deploys Blackwell and Blackwell Ultra systems at scale, while AMD's attractive pricing and shorter wait times position it to capture orders during NVIDIA's production ramp.",
+      "AMD's MI350 series hardware roadmap is materially conditioned on ROCm software releases that provide day-0 hardware enablement and framework validation for the MI350X and MI355X accelerators."
+    ],
+    "important_dependencies": [
+      "Broadcom's XPU deployments depend on hyperscaler co-design commitments",
+      "OpenAI cluster deployment depends on Broadcom Ethernet and accelerator delivery by end of 2029",
+      "ROCm software enablement must coincide with MI350 hardware availability for customer deployment",
+      "Customer deployment of MI350X in 2025 depends on both hardware supply and ROCm 7.0 support",
+      "OpenAI chip-supply agreement depends on AMD accelerator availability and OpenAI data center buildout",
+      "DOE $1 billion agreement depends on federal HPC procurement timelines",
+      "Neysa India deployment depends on local infrastructure and enterprise demand",
+      "Broadcom custom AI accelerators depend on hyperscale co-design partnerships",
+      "XPU cluster deployments depend on hyperscale customer capital commitments",
+      "AMD's ability to attract orders depends on sustained pricing and wait-time advantages"
+    ],
+    "business_impacts": [
+      "Hyperscale customers may split workloads between NVIDIA GPUs and custom Broadcom XPUs.",
+      "NVIDIA's general-purpose value proposition faces pressure at the largest scale where customization pays off.",
+      "Broadcom's Ethernet networking competes with NVIDIA's Spectrum-X and InfiniBand in AI clusters.",
+      "AMD's coordinated release cadence may shorten customer evaluation and deployment cycles for Instinct accelerators.",
+      "ROCm day-0 enablement for new MI350 hardware reduces software integration risk for adopters.",
+      "Successive ROCm releases validate AMD's commitment to software maturity alongside hardware shipments.",
+      "AMD's OpenAI and DOE agreements validate Instinct accelerators for frontier AI and federal HPC workloads.",
+      "Neysa deployment in India extends AMD's reach into sovereign AI markets.",
+      "Taalas acquisition adds AI inference silicon capability to AMD's portfolio.",
+      "Broadcom's AI accelerator business is concentrated in a few hyperscale relationships"
+    ],
+    "timing_signals": [
+      "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure"
+    ],
+    "momentum_signals": [
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure"
+    ],
+    "opportunity_relevant_signals": [
+      "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model: NVIDIA can emphasize the flexibility and software ecosystem of general-purpose GPUs for customers not ready to commit to custom silicon.",
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure: AMD's expansion into sovereign AI (India/Neysa) and federal HPC (DOE) opens market segments where NVIDIA may face export control or procurement competition.",
+      "Broadcom custom AI silicon depends on hyperscale co-design partnerships: Broadcom's dependence on a few hyperscalers creates customer-concentration exposure that general-purpose alternatives could address.",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure: NVIDIA can leverage its Blackwell performance advantage and ecosystem to justify wait times and premium pricing for customers prioritizing peak performance.",
+      "AMD MI350 hardware deployment depends on ROCm software enablement: Delays in ROCm enablement could slow AMD's MI350 adoption, creating a window for established GPU vendors to retain data center AI customers."
+    ],
+    "risk_relevant_signals": [
+      "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model: Custom ASICs co-designed with hyperscalers could capture a growing share of the largest AI training and inference deployments, reducing NVIDIA's addressable market at the high end.",
+      "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption: AMD's synchronized hardware-software releases could erode NVIDIA's CUDA software advantage by reducing switching costs for customers adopting MI350-series accelerators.",
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure: AMD's adoption by OpenAI, DOE, and hyperscale customers across multiple geographies erodes NVIDIA's exclusive access to strategic AI infrastructure accounts.",
+      "Broadcom custom AI silicon depends on hyperscale co-design partnerships: Successful deployment of 1 million XPU clusters by hyperscalers could shift significant data center AI volume from general-purpose GPU vendors to custom silicon.",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure: AMD's shorter wait times and attractive pricing could capture customers who cannot wait for NVIDIA supply, eroding NVIDIA's near-term order book.",
+      "AMD MI350 hardware deployment depends on ROCm software enablement: Timely ROCm enablement could accelerate AMD's MI350 deployment and intensify competition in data center AI."
+    ],
+    "evidence_gaps": [
+      "Revenue or unit share of custom XPUs versus NVIDIA GPUs at hyperscale customers",
+      "Timeline for 1 million XPU cluster deployments",
+      "NVIDIA's comparable software release cadence for Blackwell and Rubin architectures",
+      "Customer churn rates from NVIDIA to AMD following ROCm releases",
+      "Workload displacement metrics from NVIDIA to AMD at OpenAI and DOE",
+      "NVIDIA's sovereign AI presence in India",
+      "Taalas acquisition integration timeline with AMD Instinct roadmap",
+      "Verified geographic markets for Broadcom's four hyperscaler customers",
+      "Verified timeline and scale of OpenAI's Broadcom co-designed chip deployment",
+      "NVIDIA Blackwell supply constraint data"
+    ],
+    "strategic_themes": [
+      "Broadcom's model directly targets NVIDIA's core hyperscale customer segment with a different economic and technical approach.",
+      "AMD's ability to synchronize hardware and software releases reduces the time from product launch to customer deployment, challenging NVIDIA's software ecosystem advantage.",
+      "Demonstrates that AMD's Instinct line is gaining traction beyond traditional data center customers into strategic accounts (OpenAI, DOE) and sovereign markets (India), broadening the competitive threat to NVIDIA.",
+      "Broadcom's custom silicon model positions it as an alternative to NVIDIA's general-purpose AI hardware, and its viability depends on hyperscale co-design relationships.",
+      "Timing of product availability and pricing can shift customer orders between generations, affecting NVIDIA's revenue during its Blackwell ramp.",
+      "A competitor whose new accelerator deployability is gated by software stack readiness creates timing-dependent competitive pressure in data center AI markets."
+    ]
+  },
+  "decision_ready_context": {
+    "business_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "decision_areas": [
+      "Hyperscale cloud",
+      "Data center AI",
+      "Networking",
+      "Custom silicon partnerships",
+      "Hyperscale customer retention",
+      "Product segmentation strategy",
+      "Networking competitiveness",
+      "Software Ecosystem",
+      "Competitive Positioning",
+      "CUDA software moat durability"
+    ],
+    "key_signals": [
+      "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model",
+      "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption",
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure",
+      "Broadcom custom AI silicon depends on hyperscale co-design partnerships",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure",
+      "AMD MI350 hardware deployment depends on ROCm software enablement"
+    ],
+    "opportunity_indicators": [
+      "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model: NVIDIA can emphasize the flexibility and software ecosystem of general-purpose GPUs for customers not ready to commit to custom silicon.",
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure: AMD's expansion into sovereign AI (India/Neysa) and federal HPC (DOE) opens market segments where NVIDIA may face export control or procurement competition.",
+      "Broadcom custom AI silicon depends on hyperscale co-design partnerships: Broadcom's dependence on a few hyperscalers creates customer-concentration exposure that general-purpose alternatives could address.",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure: NVIDIA can leverage its Blackwell performance advantage and ecosystem to justify wait times and premium pricing for customers prioritizing peak performance.",
+      "AMD MI350 hardware deployment depends on ROCm software enablement: Delays in ROCm enablement could slow AMD's MI350 adoption, creating a window for established GPU vendors to retain data center AI customers."
+    ],
+    "risk_indicators": [
+      "Broadcom's custom ASIC and Ethernet strategy converges on hyperscale AI infrastructure as an alternative to NVIDIA's general-purpose GPU model: Custom ASICs co-designed with hyperscalers could capture a growing share of the largest AI training and inference deployments, reducing NVIDIA's addressable market at the high end.",
+      "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption: AMD's synchronized hardware-software releases could erode NVIDIA's CUDA software advantage by reducing switching costs for customers adopting MI350-series accelerators.",
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure: AMD's adoption by OpenAI, DOE, and hyperscale customers across multiple geographies erodes NVIDIA's exclusive access to strategic AI infrastructure accounts.",
+      "Broadcom custom AI silicon depends on hyperscale co-design partnerships: Successful deployment of 1 million XPU clusters by hyperscalers could shift significant data center AI volume from general-purpose GPU vendors to custom silicon.",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure: AMD's shorter wait times and attractive pricing could capture customers who cannot wait for NVIDIA supply, eroding NVIDIA's near-term order book.",
+      "AMD MI350 hardware deployment depends on ROCm software enablement: Timely ROCm enablement could accelerate AMD's MI350 deployment and intensify competition in data center AI."
+    ],
+    "dependencies": [
+      "Broadcom's XPU deployments depend on hyperscaler co-design commitments",
+      "OpenAI cluster deployment depends on Broadcom Ethernet and accelerator delivery by end of 2029",
+      "ROCm software enablement must coincide with MI350 hardware availability for customer deployment",
+      "Customer deployment of MI350X in 2025 depends on both hardware supply and ROCm 7.0 support",
+      "OpenAI chip-supply agreement depends on AMD accelerator availability and OpenAI data center buildout",
+      "DOE $1 billion agreement depends on federal HPC procurement timelines",
+      "Neysa India deployment depends on local infrastructure and enterprise demand",
+      "Broadcom custom AI accelerators depend on hyperscale co-design partnerships",
+      "XPU cluster deployments depend on hyperscale customer capital commitments",
+      "AMD's ability to attract orders depends on sustained pricing and wait-time advantages"
+    ],
+    "timing_signals": [
+      "AMD's synchronized Instinct hardware-software release cadence drives 2025-2026 adoption",
+      "AMD's accelerator roadmap cadence coincides with NVIDIA's Blackwell ramp, with AMD's pricing and wait-time advantages creating timing pressure"
+    ],
+    "momentum_signals": [
+      "AMD Instinct adoption momentum expands from cloud/OEMs to OpenAI, federal HPC, and India sovereign infrastructure"
+    ],
+    "evidence_gaps": [
+      "Revenue or unit share of custom XPUs versus NVIDIA GPUs at hyperscale customers",
+      "Timeline for 1 million XPU cluster deployments",
+      "NVIDIA's comparable software release cadence for Blackwell and Rubin architectures",
+      "Customer churn rates from NVIDIA to AMD following ROCm releases",
+      "Workload displacement metrics from NVIDIA to AMD at OpenAI and DOE",
+      "NVIDIA's sovereign AI presence in India",
+      "Taalas acquisition integration timeline with AMD Instinct roadmap",
+      "Verified geographic markets for Broadcom's four hyperscaler customers",
+      "Verified timeline and scale of OpenAI's Broadcom co-designed chip deployment",
+      "NVIDIA Blackwell supply constraint data"
+    ],
+    "decision_questions": [
+      "To what extent are hyperscale customers shifting AI infrastructure spend from NVIDIA general-purpose GPUs to Broadcom co-designed custom XPUs?",
+      "How does AMD's synchronized hardware-software release cadence affect the timeline for customer migration away from NVIDIA's CUDA ecosystem?",
+      "How quickly is AMD's Instinct adoption among strategic accounts (OpenAI, DOE, Neysa) translating into workload displacement from NVIDIA GPUs?",
+      "To what extent does Broadcom's reliance on a small number of hyperscale co-design customers constrain or accelerate its ability to capture data center AI spend from general-purpose GPU vendors?",
+      "How does AMD's combination of availability and pricing affect NVIDIA's order capture during the Blackwell ramp period?",
+      "How does the timing of ROCm software enablement relative to MI350 hardware availability affect AMD's ability to challenge established GPU vendors in data center AI?"
+    ]
+  },
+  "input_statistics": {
+    "verified_findings": 70,
+    "unique_findings": 70,
+    "finding_aliases": 79,
+    "lenses": 3,
+    "candidate_signals": 11,
+    "normalized_signals": 10,
+    "final_signals": 6,
+    "support_references_seen": 39,
+    "support_references_resolved": 39,
+    "support_references_unresolved": 0,
+    "candidate_support_references_unresolved": 0,
+    "discarded_missing_support": 0,
+    "discarded_insufficient_support": 1,
+    "unresolved_candidate_support_references": [],
+    "final_signal_count": 6,
+    "decision_question_count": 6,
+    "decision_area_count": 10
+  },
+  "warnings": [],
+  "created_at": "2026-11-19T15:53:10.819452Z"
+}

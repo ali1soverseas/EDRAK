@@ -1,0 +1,1283 @@
+{
+  "status": "unknown",
+  "source_input": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\verification\\input.json",
+  "source_output": "artifacts\\runs\\60fe8f99ff219a0102929fd21ec26529\\stages\\verification\\output.json",
+  "deterministic_checks": {
+    "input_finding_count": 0,
+    "assessed_finding_count": 74,
+    "assessment_coverage": null,
+    "status_counts": {
+      "verified": 72,
+      "insufficient": 2
+    },
+    "duplicate_finding_ids": [],
+    "missing_finding_ids": [],
+    "unknown_finding_ids": [],
+    "evidence_reference_count": 80,
+    "unresolved_evidence_ids": [
+      "00e811bb-4fd0-42c7-b2d4-808320b509e9",
+      "0376cffa-64b6-4740-b116-235feafeb52b",
+      "08c3412a-4f7c-4277-9fe8-e2ead21efb94",
+      "0c1f922b-bae2-4b36-a480-c95c85ec2bf9",
+      "0c76de07-0388-4975-862b-c8ff88a1e592",
+      "11040111-24ec-446d-8e3c-97594e5cde29",
+      "1516106e-d2de-4cd7-8971-eb0ca2af50e4",
+      "1de3326f-6c08-4557-886e-64c3424fa84d",
+      "2712c694-f624-4590-b0a2-53ce478a90c1",
+      "27b4e1b3-d929-4acd-b2fa-54616d046aff",
+      "2ddff6f0-3711-4bc3-84ca-c2dbb68935c5",
+      "2ecb5c89-bd86-4dcf-9f99-0b821d2050c0",
+      "30485816-0332-4265-901e-f8acd4997841",
+      "32f529cb-9d60-4453-84b4-b8c60c072930",
+      "34717078-ed10-441c-9bff-c3771ab6f9a4",
+      "34e986f7-2597-462c-ac83-9751e4ee75e7",
+      "37d6f299-493d-4ed3-a126-de5c9f9c5773",
+      "38d0ae42-9a3a-44ef-8c70-46214015910a",
+      "39a92082-79dc-44a5-a7ea-8d8b21ca59de",
+      "413c9185-885d-442d-b6cb-30c90808f6eb",
+      "46bd2f13-0d88-45ec-8b21-a983f7b493eb",
+      "48d8fa60-61a5-498a-baee-3bf291d96ec0",
+      "4998d45c-5b2b-4635-a9ef-24fbf48b15a2",
+      "4a02560e-f0e6-4eab-aa6c-d17ed4be479f",
+      "4ce015a9-84cd-4c4c-ac76-3728b9acd329",
+      "4daa7cc2-d12d-4141-a2c8-a343147fd528",
+      "510be248-e698-43a4-b060-c7d4eed063b3",
+      "516f0b68-75a0-4276-af29-d691edc467f6",
+      "548d731d-0ac6-4dce-a2a4-66dfc723d5d5",
+      "554a12c6-1c4c-4e79-b47a-e0622d2ea168",
+      "57cec685-1b5a-480d-83af-63f82f3f2fde",
+      "58f63161-63b0-419d-9f1c-68de6efed49f",
+      "5a79d0eb-5e5f-4e97-8437-5abc42ef1113",
+      "5c041c0c-a823-4c89-9882-6c12f182f3f5",
+      "68bbbdfb-9ba0-415a-af3e-68a12a463578",
+      "6963ef9b-7949-4098-9e26-ed9c29e4f65d",
+      "6a7a643c-f829-43b8-9753-3fbd16ee584b",
+      "6ac48359-64e6-430d-9cbf-236e6ecd5af8",
+      "6ec312fe-c320-4566-95aa-cf3d1cf00410",
+      "7512367f-35b1-4a45-bd41-76e3859866d0",
+      "76b49228-80bd-48bb-b8b1-be98112ec912",
+      "785f43ee-22f1-43b0-89b7-7b8098460868",
+      "7c23d418-28bc-4cec-9a54-3fa84b4728ed",
+      "80251039-73d7-44c5-8921-6b5965f1f452",
+      "8c4d8701-cb3d-4508-abdb-61eb779559db",
+      "90cc4e94-cb3c-4825-8658-22c861a6770f",
+      "919bde14-d5a3-41eb-9584-f0420c01ebda",
+      "959c0d7b-fa13-4469-b83a-a52be0f0582f",
+      "968a8551-fcca-42b6-9808-a5161151fa52",
+      "981c5ec2-a2e0-4a8f-8f7d-75332dc5ae08",
+      "98adbc41-c81f-4e88-b7e7-66fd990a65b4",
+      "a617b8a1-c249-441a-a42f-6d257cee5f94",
+      "abd9fdbe-40eb-413d-953c-a751ee0f2d72",
+      "ae60ee37-10a5-4028-8258-be4ebb90c7ea",
+      "af69db45-ca1b-4cd8-8bfc-902a4698a0a8",
+      "b07aa7f2-49f9-4770-85db-b97862d96296",
+      "b22cb00c-3d06-423a-9024-64765473b277",
+      "b5dbfcb4-b267-489c-88b0-ee0d7cac5cbe",
+      "b7f5efd4-c85f-4cf7-95d4-f3d15e2b0b8f",
+      "b98f9230-9be2-4e04-ab65-5a7e81919c86",
+      "b990c854-c102-4576-847d-52706d9232bc",
+      "bf1c9a6e-83b5-49c6-aa2d-6b30a36b9cfa",
+      "c972c427-c8b2-4b6b-9f46-0108ec9f7ef1",
+      "cd1665e3-cfb7-411c-8d2a-74e76a25311d",
+      "d0b733e9-6f86-40c9-9615-13c7a7742c77",
+      "d69a9054-4fc8-4f69-9a8c-66dc3026fa04",
+      "dc1aa4c8-f9d0-4419-8aa0-adf4a785e7e2",
+      "df90065f-2d89-40cd-8f7d-6e348edd674c",
+      "e0f41779-180a-4683-a6b8-05a1c82547da",
+      "e300a309-7121-423e-9d75-4d957c49ed3f",
+      "eb78ac53-7f8c-427d-81dd-eec018a95358",
+      "ef19d8e9-1f64-4869-9629-81c82b23d6ab",
+      "f38e7949-f5b5-46e9-91e9-f26e54325fe8",
+      "f57be8cd-928c-4076-b96e-086c2451a9f8",
+      "f77d39af-06d0-4d96-b442-264d7525a0ac",
+      "f8dabde6-a540-413b-ae20-9e5281cdcb1b",
+      "fa7a3246-bdd9-4d87-86c5-15ff59b0ba60",
+      "fb338e75-15d6-420f-a97c-1dc1a7e6192d",
+      "fce89749-3220-4680-ad8e-c5d9c6004c71",
+      "fd534155-a47e-45ee-b4b6-316602b26b05"
+    ]
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.5833,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "verification",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "verification-stage-rubric-1.0.0",
+    "finding_count": 6,
+    "mandatory_finding_count": 6,
+    "coverage_score": 0.5833,
+    "strict_coverage_score": 0.1667,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 279,
+      "initial_missing_count": 1,
+      "initial_partial_count": 4,
+      "findings_reviewed": 5,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 40,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "VS-01",
+        "requirement_id": "VS-COVERAGE",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Assess every input finding exactly once, preserving its finding ID and reporting missing, duplicate, or unknown assessments",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "covered: Assess every input finding exactly once, preserving its finding ID and reporting missing, duplicate, or unknown assessments. — The Actual Output successfully assesses each input finding exactly once, preserving the finding IDs and providing verification statuses. However, it does not explicitly report any missing, duplicate, or unknown assessments, which is a critical requirement of the evaluation steps. This omission affects the completeness of the output.",
+        "criteria_results": [
+          {
+            "criterion": "Assess every input finding exactly once, preserving its finding ID and reporting missing, duplicate, or unknown assessments.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output successfully assesses each input finding exactly once, preserving the finding IDs and providing verification statuses. However, it does not explicitly report any missing, duplicate, or unknown assessments, which is a critical requirement of the evaluation steps. This omission affects the completeness of the output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.7,
+        "initial_status": "covered",
+        "final_score": 0.7,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "VS-02",
+        "requirement_id": "VS-SUPPORT",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Mark a finding verified only when cited input evidence supports the complete claim; use insufficient when support is incomplete, ambiguous, stale, or conflicting",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "partial: Mark a finding verified only when cited input evidence supports the complete claim; use insufficient when support is incomplete, ambiguous, stale, or conflicting. — The Actual Output presents a comprehensive set of findings that are verified and relevant to the task goal. However, while 72 of 74 findings are evidence-backed, the two findings marked as insufficient indicate that not all claims are fully supported. This results in some ambiguity regarding the completeness of the claims, which affects the overall clarity and completeness of the support provided.",
+        "criteria_results": [
+          {
+            "criterion": "Mark a finding verified only when cited input evidence supports the complete claim; use insufficient when support is incomplete, ambiguous, stale, or conflicting.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output presents a comprehensive set of findings that are verified and relevant to the task goal. However, while 72 of 74 findings are evidence-backed, the two findings marked as insufficient indicate that not all claims are fully supported. This results in some ambiguity regarding the completeness of the claims, which affects the overall clarity and completeness of the support provided."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-02",
+          "requirement_id": "VS-SUPPORT",
+          "test_case_id": "VS-GENERAL-001",
+          "title": "Mark a finding verified only when cited input evidence supports the complete claim; use insufficient when support is incomplete, ambiguous, stale, or conflicting",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output partially covers the acceptance criteria by identifying findings as evidence-backed or insufficient. However, it does not fully verify claims based on complete support from cited input evidence, as indicated by the missing information in several passages. This leads to a classification of partially covered rather than fully covered.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+              "similarity": 0.443391
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[2]",
+              "text": "Claim quantity 32.3 is not in the saved source.",
+              "similarity": 0.303801
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[1]",
+              "text": "Claim quantity 2030 is not in the saved source.",
+              "similarity": 0.296895
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[0]",
+              "text": "No evidence was attached to the claim.",
+              "similarity": 0.285198
+            },
+            {
+              "source_path": "$.stage_output.control_summary.missing_information[4]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.225827
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-03",
+        "requirement_id": "VS-REFERENCES",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Use only evidence references present in the worker inputs and explain how each reference supports or limits the assessment",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Use only evidence references present in the worker inputs and explain how each reference supports or limits the assessment. — The Actual Output lacks a summary that explicitly connects the evidence references to the primary claim regarding competitors' actions and their implications for NVIDIA. While it includes numerous findings with evidence references, it does not adequately explain how each reference supports or limits the assessment, which is a critical requirement. Additionally, the summary field is empty, indicating a lack of clarity and completeness in addressing the task goal.",
+        "criteria_results": [
+          {
+            "criterion": "Use only evidence references present in the worker inputs and explain how each reference supports or limits the assessment.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output lacks a summary that explicitly connects the evidence references to the primary claim regarding competitors' actions and their implications for NVIDIA. While it includes numerous findings with evidence references, it does not adequately explain how each reference supports or limits the assessment, which is a critical requirement. Additionally, the summary field is empty, indicating a lack of clarity and completeness in addressing the task goal."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-03",
+          "requirement_id": "VS-REFERENCES",
+          "test_case_id": "VS-GENERAL-001",
+          "title": "Use only evidence references present in the worker inputs and explain how each reference supports or limits the assessment",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by providing some evidence references and their corresponding similarities. However, it fails to explicitly explain how each reference supports or limits the assessment, which is a critical requirement. The lack of detailed explanations for each finding means it does not fully meet the mandatory criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+              "similarity": 0.403558
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[1]",
+              "text": "Claim quantity 2030 is not in the saved source.",
+              "similarity": 0.272568
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[2]",
+              "text": "Claim quantity 32.3 is not in the saved source.",
+              "similarity": 0.267817
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[0]",
+              "text": "No evidence was attached to the claim.",
+              "similarity": 0.247423
+            },
+            {
+              "source_path": "$.stage_output.control_summary.missing_information[4]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.240886
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-04",
+        "requirement_id": "VS-REASONS",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Provide a concise, finding-specific reason that distinguishes direct evidence, inference, and missing information",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "Second pass upgraded initial missing to partial. Initial: missing: Provide a concise, finding-specific reason that distinguishes direct evidence, inference, and missing information. — The Actual Output fails to provide a concise, finding-specific reason that distinguishes between direct evidence, inference, and missing information. While it lists numerous findings, it does not explicitly address the requirement to differentiate these categories as outlined in the Expected Output. The summary is empty, and the decision section does not clarify the distinctions needed for the evaluation. Therefore, it does not meet the acceptance criteria. Second pass: The Actual Output partially addresses the acceptance criteria by providing some details about findings and missing information. However, it lacks a concise, finding-specific reason that clearly distinguishes between direct evidence, inference, and missing information as required. The summary mentions evidence-backed findings but does not explicitly categorize them as requested.",
+        "criteria_results": [
+          {
+            "criterion": "Provide a concise, finding-specific reason that distinguishes direct evidence, inference, and missing information.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to provide a concise, finding-specific reason that distinguishes between direct evidence, inference, and missing information. While it lists numerous findings, it does not explicitly address the requirement to differentiate these categories as outlined in the Expected Output. The summary is empty, and the decision section does not clarify the distinctions needed for the evaluation. Therefore, it does not meet the acceptance criteria."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.2,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "VS-04",
+          "requirement_id": "VS-REASONS",
+          "test_case_id": "VS-GENERAL-001",
+          "title": "Provide a concise, finding-specific reason that distinguishes direct evidence, inference, and missing information",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by providing some details about findings and missing information. However, it lacks a concise, finding-specific reason that clearly distinguishes between direct evidence, inference, and missing information as required. The summary mentions evidence-backed findings but does not explicitly categorize them as requested.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+              "similarity": 0.491911
+            },
+            {
+              "source_path": "$.stage_output.control_summary.missing_information[4]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.266003
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[0]",
+              "text": "No evidence was attached to the claim.",
+              "similarity": 0.252632
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[1]",
+              "text": "Claim quantity 2030 is not in the saved source.",
+              "similarity": 0.241322
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[2]",
+              "text": "Claim quantity 32.3 is not in the saved source.",
+              "similarity": 0.239373
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-05",
+        "requirement_id": "VS-CALIBRATION",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Keep confidence and status conservative; do not treat an unsupported claim as false or invent evidence to fill gaps",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Keep confidence and status conservative; do not treat an unsupported claim as false or invent evidence to fill gaps. — The Actual Output does not adequately keep confidence and status conservative, as it presents findings with a confidence level of 0.78 without sufficient caution regarding the potential for unsupported claims. Additionally, while the output does not invent evidence, it fails to explicitly address the requirement to treat unsupported claims conservatively. The findings are presented as verified without acknowledging any limitations or uncertainties, which does not align with the evaluation criteria. Overall, the output lacks the necessary caution and does not meet the expectations set by the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Keep confidence and status conservative; do not treat an unsupported claim as false or invent evidence to fill gaps.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not adequately keep confidence and status conservative, as it presents findings with a confidence level of 0.78 without sufficient caution regarding the potential for unsupported claims. Additionally, while the output does not invent evidence, it fails to explicitly address the requirement to treat unsupported claims conservatively. The findings are presented as verified without acknowledging any limitations or uncertainties, which does not align with the evaluation criteria. Overall, the output lacks the necessary caution and does not meet the expectations set by the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-05",
+          "requirement_id": "VS-CALIBRATION",
+          "test_case_id": "VS-GENERAL-001",
+          "title": "Keep confidence and status conservative; do not treat an unsupported claim as false or invent evidence to fill gaps",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output does not fully address the acceptance criteria, which emphasizes maintaining a conservative stance on unsupported claims. While it provides details on findings, it does not explicitly state that unsupported claims are not treated as false or that evidence is not invented to fill gaps. Therefore, the coverage is classified as missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+              "similarity": 0.424974
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[1]",
+              "text": "Claim quantity 2030 is not in the saved source.",
+              "similarity": 0.300793
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[2]",
+              "text": "Claim quantity 32.3 is not in the saved source.",
+              "similarity": 0.285302
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[0]",
+              "text": "No evidence was attached to the claim.",
+              "similarity": 0.238018
+            },
+            {
+              "source_path": "$.stage_output.findings[71].statement",
+              "text": "The Trump administration has revoked the Biden-era restrictions and indicated that it would be replacing them with new restrictions which as of the date of this briefing have not yet been issued",
+              "similarity": 0.204304
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-06",
+        "requirement_id": "VS-TRACEABILITY",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Preserve source dates, scope, and attribution needed to audit the decision",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Preserve source dates, scope, and attribution needed to audit the decision. — The actual output lacks specific source dates, which are crucial for auditing the decision. While it provides a summary of findings and their verification status, it does not maintain the necessary scope for auditing as required by the expected output. Additionally, there is no clear attribution for the sources used in the report, which is a significant shortcoming. The expected output emphasizes the importance of preserving source dates, scope, and attribution, which the actual output fails to adequately address.",
+        "criteria_results": [
+          {
+            "criterion": "Preserve source dates, scope, and attribution needed to audit the decision.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The actual output lacks specific source dates, which are crucial for auditing the decision. While it provides a summary of findings and their verification status, it does not maintain the necessary scope for auditing as required by the expected output. Additionally, there is no clear attribution for the sources used in the report, which is a significant shortcoming. The expected output emphasizes the importance of preserving source dates, scope, and attribution, which the actual output fails to adequately address."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-06",
+          "requirement_id": "VS-TRACEABILITY",
+          "test_case_id": "VS-GENERAL-001",
+          "title": "Preserve source dates, scope, and attribution needed to audit the decision",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output fails to preserve source dates, scope, and attribution needed to audit the decision, as it indicates missing information and lacks sufficient evidence from authentic records. This results in a classification of missing coverage against the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[2]",
+              "text": "Claim quantity 32.3 is not in the saved source.",
+              "similarity": 0.384505
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[1]",
+              "text": "Claim quantity 2030 is not in the saved source.",
+              "similarity": 0.379647
+            },
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+              "similarity": 0.344492
+            },
+            {
+              "source_path": "$.stage_output.control_summary.missing_information[4]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.321059
+            },
+            {
+              "source_path": "$.stage_output.findings[72].missing_information[3]",
+              "text": "Claim includes details that are not in the saved source: $32.3 billion; 2030",
+              "similarity": 0.29404
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "VS-02",
+        "requirement_id": "VS-SUPPORT",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Mark a finding verified only when cited input evidence supports the complete claim; use insufficient when support is incomplete, ambiguous, stale, or conflicting",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output partially covers the acceptance criteria by identifying findings as evidence-backed or insufficient. However, it does not fully verify claims based on complete support from cited input evidence, as indicated by the missing information in several passages. This leads to a classification of partially covered rather than fully covered.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+            "similarity": 0.443391
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[2]",
+            "text": "Claim quantity 32.3 is not in the saved source.",
+            "similarity": 0.303801
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[1]",
+            "text": "Claim quantity 2030 is not in the saved source.",
+            "similarity": 0.296895
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[0]",
+            "text": "No evidence was attached to the claim.",
+            "similarity": 0.285198
+          },
+          {
+            "source_path": "$.stage_output.control_summary.missing_information[4]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.225827
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-03",
+        "requirement_id": "VS-REFERENCES",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Use only evidence references present in the worker inputs and explain how each reference supports or limits the assessment",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by providing some evidence references and their corresponding similarities. However, it fails to explicitly explain how each reference supports or limits the assessment, which is a critical requirement. The lack of detailed explanations for each finding means it does not fully meet the mandatory criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+            "similarity": 0.403558
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[1]",
+            "text": "Claim quantity 2030 is not in the saved source.",
+            "similarity": 0.272568
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[2]",
+            "text": "Claim quantity 32.3 is not in the saved source.",
+            "similarity": 0.267817
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[0]",
+            "text": "No evidence was attached to the claim.",
+            "similarity": 0.247423
+          },
+          {
+            "source_path": "$.stage_output.control_summary.missing_information[4]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.240886
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-04",
+        "requirement_id": "VS-REASONS",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Provide a concise, finding-specific reason that distinguishes direct evidence, inference, and missing information",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by providing some details about findings and missing information. However, it lacks a concise, finding-specific reason that clearly distinguishes between direct evidence, inference, and missing information as required. The summary mentions evidence-backed findings but does not explicitly categorize them as requested.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+            "similarity": 0.491911
+          },
+          {
+            "source_path": "$.stage_output.control_summary.missing_information[4]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.266003
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[0]",
+            "text": "No evidence was attached to the claim.",
+            "similarity": 0.252632
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[1]",
+            "text": "Claim quantity 2030 is not in the saved source.",
+            "similarity": 0.241322
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[2]",
+            "text": "Claim quantity 32.3 is not in the saved source.",
+            "similarity": 0.239373
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-05",
+        "requirement_id": "VS-CALIBRATION",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Keep confidence and status conservative; do not treat an unsupported claim as false or invent evidence to fill gaps",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output does not fully address the acceptance criteria, which emphasizes maintaining a conservative stance on unsupported claims. While it provides details on findings, it does not explicitly state that unsupported claims are not treated as false or that evidence is not invented to fill gaps. Therefore, the coverage is classified as missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+            "similarity": 0.424974
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[1]",
+            "text": "Claim quantity 2030 is not in the saved source.",
+            "similarity": 0.300793
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[2]",
+            "text": "Claim quantity 32.3 is not in the saved source.",
+            "similarity": 0.285302
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[0]",
+            "text": "No evidence was attached to the claim.",
+            "similarity": 0.238018
+          },
+          {
+            "source_path": "$.stage_output.findings[71].statement",
+            "text": "The Trump administration has revoked the Biden-era restrictions and indicated that it would be replacing them with new restrictions which as of the date of this briefing have not yet been issued",
+            "similarity": 0.204304
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-06",
+        "requirement_id": "VS-TRACEABILITY",
+        "test_case_id": "VS-GENERAL-001",
+        "title": "Preserve source dates, scope, and attribution needed to audit the decision",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output fails to preserve source dates, scope, and attribution needed to audit the decision, as it indicates missing information and lacks sufficient evidence from authentic records. This results in a classification of missing coverage against the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[2]",
+            "text": "Claim quantity 32.3 is not in the saved source.",
+            "similarity": 0.384505
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[1]",
+            "text": "Claim quantity 2030 is not in the saved source.",
+            "similarity": 0.379647
+          },
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+            "similarity": 0.344492
+          },
+          {
+            "source_path": "$.stage_output.control_summary.missing_information[4]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.321059
+          },
+          {
+            "source_path": "$.stage_output.findings[72].missing_information[3]",
+            "text": "Claim includes details that are not in the saved source: $32.3 billion; 2030",
+            "similarity": 0.29404
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [
+      {
+        "claim_id": "CLAIM-001",
+        "claim": "72 of 74 findings are evidence-backed; 2 were insufficient and recorded for follow-up.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a summary of findings but lacks detailed alignment with the Expected Output's specific claims regarding evidence assessment and verification processes. It does not address the requirements for preserving finding IDs, explaining evidence references, or providing concise reasons for findings, which are critical elements in the evaluation steps. Therefore, it does not meet the necessary criteria for a strong score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-002",
+        "claim": "Direct database extraction from 'enterprise_deals' returned 14 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output does not align with the Expected Output as it fails to address the specific required findings outlined in the evaluation steps. It lacks the necessary detail regarding the assessment of input findings, verification of claims, and the use of evidence references. Additionally, it does not provide a concise reason distinguishing evidence types or preserve source dates and scope, which are critical for auditing decisions. Overall, the response does not meet the mandatory criteria set forth in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-003",
+        "claim": "Direct database extraction from 'gpu_products' returned 8 records relevant to goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output does not address the specific requirements outlined in the Expected Output. It fails to provide a structured assessment of findings, lacks verification of claims based on evidence, and does not preserve necessary details for auditing decisions. The response does not align with any of the mandatory priorities, indicating a significant shortfall in meeting the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-004",
+        "claim": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output does not align with the Expected Output as it fails to address the specific required findings and acceptance criteria outlined in the test case. It lacks the necessary detail regarding the assessment of input findings, verification processes, and the use of evidence references. Additionally, it does not provide a concise reason distinguishing evidence types or preserve source dates and attributions, which are critical for auditing decisions. Overall, the response does not meet the evaluation steps effectively.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-005",
+        "claim": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What do our own documents say about this? What are our competitors doing, and what does it mean for NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output does not address the specific requirements outlined in the Expected Output. It fails to provide a structured assessment of findings, lacks clarity on verification of claims, and does not preserve source dates or attribution necessary for auditing. The response does not align with any of the mandatory priorities set forth in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-006",
+        "claim": "KR 1.1: Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output presents a specific claim about a cluster delivery with a gross margin target, which does not align with the Expected Output's focus on assessment criteria and finding IDs. There is no comparison of factual claims or paraphrases, and the Actual Output lacks the structured assessment required by the Expected Output. Therefore, it fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-007",
+        "claim": "Value: NVIDIA Blackwell Ultra delivers up to 50x better performance and 35x lower cost for agentic AI; Microsoft, CoreWeave, and Oracle Cloud Infrastructure are deploying NVIDIA GB300 NVL72 systems at scale",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents a performance claim about NVIDIA Blackwell Ultra and mentions specific companies deploying NVIDIA systems, but it does not align with the structured requirements of the Expected Output, which focuses on assessing findings, verifying claims, and providing evidence-based reasoning. The Actual Output lacks the necessary detail and structure to meet the evaluation criteria, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-008",
+        "claim": "Software & Microservices Subscriptions: Enterprise software suites (NVIDIA AI Enterprise, NIM, NeMo) billed per GPU or per hour.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It provides information about software subscriptions without any connection to the specific assessment criteria or claims regarding evidence, verification, or reasoning. This lack of alignment with the evaluation steps results in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-009",
+        "claim": "Make NVIDIA the default for third-party / enterprise workloads through CUDA and NIM portability.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not align with any of the claims made in the Expected Output. It presents a single claim about making NVIDIA the default for workloads, which does not correspond to the multiple required findings and specific claims outlined in the Expected Output. There are no references to the required assessments, evidence, or criteria specified, indicating a complete lack of alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-010",
+        "claim": "NVIDIA AI Enterprise; Per GPU / year; ~$4,500 per GPU per year",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a specific financial figure related to NVIDIA AI Enterprise, which does not align with the structured findings and requirements outlined in the Expected Output. The Expected Output focuses on assessment criteria and does not mention any financial metrics, indicating a lack of relevance and alignment with the evaluation steps. Additionally, there are no factual claims or comparisons made between the two outputs, leading to a significant disconnect.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-011",
+        "claim": "Enterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about the adoption of NVIDIA architectures across various customer segments, which does not align with the Expected Output's focus on assessment criteria and finding IDs. The Actual Output lacks the structured assessment and verification process outlined in the Expected Output, failing to address the required findings or criteria. Therefore, it does not meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-012",
+        "claim": "AMD offers the Instinct MI300 Series of data center AI accelerators, including the MI300X, MI300A, and MI325X, built on CDNA 3 architecture for AI and HPC workloads. The MI325X provides 256 GB of HBM3E memory, 6 TB/s peak memory bandwidth, and 304 compute units for training and inference. These accelerators support precision formats from INT8 and FP8 to FP64 for HPC.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about AMD's Instinct MI300 Series, including model names, architecture, memory specifications, and supported precision formats. However, it does not align with the Expected Output's requirements for assessing findings, verifying claims, or providing evidence references. The Actual Output lacks the structured assessment and reasoning required by the evaluation steps, leading to a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-013",
+        "claim": "AMD targets data center, edge, and end-user customer segments with AI solutions deployable on-premises and in the cloud. The company offers CPU, GPU, and adaptable computing solutions for optimized deployments tailored to customer needs. AMD's technologies advance the future of the data center, embedded, gaming, and PC markets.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the specific evaluation steps outlined in the Expected Output. It fails to identify or assess any findings, lacks references to evidence, and does not provide any reasoning related to the claims made. Therefore, it does not align with the mandatory requirements.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-014",
+        "claim": "AMD Instinct MI300 accelerators are adopted by cloud providers such as Microsoft Azure and Oracle Cloud Infrastructure, OEMs including Dell, HPE, Lenovo, and Supermicro, and government/HPC customers such as Lawrence Livermore National Laboratory's El Capitan supercomputer. Specialized AI cloud providers including Aligned, Arkon Energy, Cirrascale, Crusoe, Denvr Dataworks, and Tensorwave also plan to offer MI300X access. Dell announced integration of MI300X with PowerEdge XE9680 servers for generative AI workloads.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific claims about the adoption of AMD Instinct MI300 accelerators by various entities, but it does not align with the structured requirements of the Expected Output, which focuses on assessing findings with specific IDs and criteria. The Actual Output lacks the necessary format and does not address the mandatory priorities outlined in the Expected Output, leading to a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-015",
+        "claim": "AMD: By the mid-2020s, AMD had become a major player in data center and AI computing. Its Instinct line of accelerators has been adopted by major cloud providers and research organizations for running large AI models. In October 2025, AMD signed a chip-supply agreement with OpenAI and a $1 billion agreement with the U.S. Department of Energy for federal high-performance computing chips.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific claims about AMD's status and agreements, but it does not align with the structured requirements of the Expected Output, which focuses on assessment processes and criteria. The Actual Output lacks the necessary detail to verify claims against the provided acceptance criteria, such as preserving finding IDs and explaining evidence references. Therefore, it fails to meet the mandatory evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-016",
+        "claim": "AMD: ROCm is an open software stack that includes programming models, tools, compilers, libraries, and runtimes for AI and HPC solution development on AMD GPUs. Developers can use PyTorch, TensorFlow, and JAX with AMD-optimized containers and workflows, and use HIP to adapt existing GPU applications and frameworks for supported AMD hardware. The stack helps data center teams quickly set up, deploy, and scale AI and HPC workloads across GPUs and nodes.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It provides information about AMD's ROCm software stack but fails to assess findings, verify claims, or reference evidence as required. There is no alignment with the mandatory priorities or acceptance criteria specified in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-017",
+        "claim": "AMD: ROCm supports AI training at scale through AMD Primus and ROCm communication libraries for pre-training, fine-tuning, and distributed training across AMD Instinct GPUs. For inference, ROCm provides AMD Quark, AITER, vLLM, and SGLang to optimize models and deploy high-throughput serving from individual GPUs to multi-node environments using containers, Kubernetes, Slurm, and telemetry. ROCm also provides a CLI for unified setup, management, and operation of AI workloads on AMD hardware.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides detailed information about AMD ROCm's capabilities for AI training and inference, but it does not address any of the specific evaluation steps outlined in the Expected Output. There is no mention of assessing findings, verifying claims with evidence, or providing concise reasons for assessments. Therefore, it fails to align with the mandatory requirements of the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-018",
+        "claim": "AMD: ROCm 7.0 supports PyTorch 2.7 and 2.8, TensorFlow 2.19.1, and JAX 0.6.x with day-0 framework support, and enables hardware for the Instinct MI350X and MI355X with FP4, FP6, and FP8 precision formats. The release also includes AITER pre-optimized operators and production-ready models from AMD Quark. Developers can run leading frameworks with ROCm 7.0 while taking advantage of performance optimizations and tighter integrations across the stack.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output does not align with the Expected Output as it fails to address the specific evaluation steps outlined. It presents technical details about ROCm 7.0 and its supported frameworks but does not assess findings, verify claims, or provide evidence references as required. There is no mention of finding IDs or the necessary criteria for verification, leading to a lack of compliance with the mandatory priorities stated in the Expected Output.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-019",
+        "claim": "AMD: ROCm officially supports AMD Instinct accelerators including MI355X, MI350X, MI325X, MI300X, MI300A, MI250X, MI250, MI210, and MI100, as well as select Radeon, Radeon PRO, and Radeon AI PRO graphics cards for compute workloads. Unsupported or deprecated GPUs are explicitly excluded from official ROCm support. Support status varies by GPU architecture and LLVM target.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides specific details about the supported AMD GPUs for ROCm, but it does not address any of the required findings or claims from the Expected Output. There is no alignment with the evaluation steps, as it fails to assess findings, verify claims, or provide evidence references. Therefore, it does not meet any of the mandatory criteria outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-020",
+        "claim": "AMD: ROCm includes AI-driven development capabilities such as AMD Skills, which allow agentic coding tools like Cursor, Claude, Codex, and Gemini to understand ROCm natively. The stack also includes Hyperloom for AI-assisted workload optimization and the ROCm Core SDK as the foundational software stack. These tools are designed to accelerate development velocity and performance optimization on AMD GPUs.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output discusses AMD's ROCm and its AI-driven capabilities, which does not align with the Expected Output's focus on assessment criteria and finding IDs. There is no comparison of factual claims or any mention of the required findings outlined in the Expected Output. The response fails to address the evaluation steps, resulting in a lack of alignment.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-021",
+        "claim": "AMD Instinct MI300X GPUs are available through cloud providers including Microsoft Azure via the ND MI300x v5 virtual machine series, Oracle Cloud Infrastructure via MI300X-based bare metal instances and OCI Supercluster, and specialized AI cloud providers such as TensorWave, Aligned, Arkon Energy, Cirrascale, Crusoe, and Denvr Dataworks. Oracle plans to support OCI Supercluster with ultrafast RDMA networking. These cloud offerings target AI workloads and high-performance accelerated computing instances.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about the availability of AMD Instinct MI300X GPUs through various cloud providers, which does not align with the Expected Output's focus on assessing findings and claims. The Actual Output lacks any reference to the required findings, acceptance criteria, or the need for verification based on input evidence. Therefore, it does not meet the evaluation steps outlined, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-022",
+        "claim": "AMD: The AMD Developer Cloud provides access to AMD Instinct MI300X GPUs through a third-party cloud website, Digital Ocean. AMD AI Developer Program members receive complimentary $100 credits, and pay-as-you-go options are available for scaling AI workloads. Pre-installed Docker containers and Jupyter Notebook environments minimize setup time for developers.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It provides information about AMD's Developer Cloud and its offerings but fails to assess input findings, verify claims, or provide evidence references as required. There is no alignment with the evaluation steps, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-023",
+        "claim": "AMD: TensorWave offers AMD Instinct MI300X GPUs available now and is seeing increased demand for the product. Lamini uses MI300X and MI210 at scale to help companies build enterprise LLM offerings. Microsoft Azure, Oracle Cloud Infrastructure, Dell, Supermicro, and Lenovo are bringing MI300X-powered systems to market.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output does not align with the Expected Output as it fails to address the required findings and claims specified in the evaluation steps. It provides information about AMD's products and market presence but does not assess input findings, verify claims, or explain evidence as required. There is no mention of preserving source dates or providing concise reasons for findings, which are critical for the evaluation process.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-024",
+        "claim": "AMD offers the Instinct MI300 Series data center GPU based on the CDNA 3 architecture for HPC, AI, and machine learning workloads. The MI300 Series uses an Accelerator Complex Die (XCD) design with up to 8 vertically stacked XCDs, 8 stacks of HBM3, and 4 I/O dies linked by AMD Infinity Fabric. CDNA 3 Matrix Cores triple FP16 and BF16 performance and provide 6.8 times the INT8 performance compared to MI250X GPUs. The product is suited for deployments ranging from individual servers to exascale supercomputers.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides detailed specifications and performance metrics of the AMD Instinct MI300 Series GPU, but it does not address any of the required findings or claims outlined in the Expected Output. There is no assessment of input findings, verification of claims, or explanation of evidence references, which are all mandatory. Therefore, the response fails to align with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-025",
+        "claim": "AMD's Instinct accelerator lineup referenced in the ROCm 7.13 release includes the MI350X, MI355X, MI325X, MI300X, and MI210X. AMD GPU Driver 31.30 additionally enables the MI350P GPU, expanding the Instinct hardware ecosystem. These accelerators are targeted at enterprise datacenter deployment.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about AMD's Instinct accelerator lineup and its deployment status, but it does not address the evaluation steps related to assessing findings, verifying claims, or providing evidence references as outlined in the Expected Output. There is a lack of alignment with the required findings, particularly in preserving source dates and providing concise reasons for assessments. Therefore, the response does not meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-026",
+        "claim": "AMD positions the Instinct MI300 accelerators for generative AI and large language model workloads. AMD also markets EPYC 9754 and 9734 processors for cloud native computing and EPYC 9004 with 3D V-Cache for high performance technical computing. These products serve cloud, hyperscale, and technical computing customer segments.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It provides information about AMD products but fails to assess findings, verify claims, or explain evidence as required. There is no alignment with the evaluation steps, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-027",
+        "claim": "AMD's ROCm 7.13 AI software stack consists of ROCm Core 7.13, AMD GPU Driver 31.30, and AMD GPU Virtualization 9.0. The release introduces a modular packaging and installation model, ROCm-Extras packages starting with the ROCm Validation Suite (RVS), and streamlined profiling and visualization capabilities. ROCm 7.13 delivers optimized performance for generative AI and large language models across supported Instinct hardware.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides specific details about AMD's ROCm 7.13 AI software stack, including components and features, but it does not address any of the evaluation steps outlined in the Expected Output. There is no assessment of findings, verification of claims, or use of evidence references as required. Therefore, it fails to align with the mandatory criteria set forth in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-028",
+        "claim": "AMD: ROCm 7.13 supports GPU passthrough on Instinct MI350X, MI355X, MI325X, MI300X, and MI210X accelerators on KVM with Ubuntu and RHEL host and guest environments. It also supports GPU passthrough for MI300X on VMware ESXi 8.0 Update 3. GPU passthrough dedicates an entire GPU to a single virtual machine to deliver bare-metal performance.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about AMD's ROCm 7.13 and its support for GPU passthrough on various accelerators, which does not align with the Expected Output's focus on assessment criteria and verification processes. There is no comparison of factual claims or evaluation of evidence as required by the evaluation steps, leading to a lack of alignment.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-029",
+        "claim": "AMD collaborates with NAVER Cloud to advance AI infrastructure in Korea and with Upstage to advance sovereign AI infrastructure in Korea. These partnerships indicate AMD AI infrastructure is available through Korean cloud providers.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output discusses AMD's collaborations with NAVER Cloud and Upstage to enhance AI infrastructure in Korea, which does not align with the Expected Output's focus on assessing findings and providing specific evidence-based evaluations. The Actual Output lacks the structured assessment and verification criteria outlined in the Expected Output, failing to address the required findings or provide evidence references. Therefore, it does not meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-030",
+        "claim": "AMD and Celestica announced a collaboration to advance the next era of AI with the Helios rack-scale AI platform. This represents a rack-scale AI system offering involving AMD technology.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output discusses a collaboration between AMD and Celestica regarding an AI platform, which does not align with the Expected Output's focus on assessment criteria and finding IDs. There are no factual claims or metrics to compare, and the Actual Output does not address any of the required findings or criteria outlined in the Expected Output. This indicates a complete lack of alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-031",
+        "claim": "Broadcom co-designs custom AI accelerator chips, also called XPUs or ASICs, with hyperscale cloud providers, tailoring the hardware to each customer's specific workloads rather than offering a standardized general-purpose GPU roadmap.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It focuses solely on Broadcom's AI accelerator chips without referencing the specific assessment criteria or findings IDs. This lack of alignment with the evaluation steps results in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-032",
+        "claim": "Broadcom supplies Google with custom TPUs; Google's Ironwood TPU delivers 2x performance per watt versus Trillium, 6x more HBM, 4.5x HBM bandwidth, and more than 10x peak performance per chip and per pod versus TPU v5p.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not align with the Expected Output as it fails to address the required findings and acceptance criteria outlined in the evaluation steps. It presents performance metrics of Google's TPU but does not assess input findings, verify claims, or provide evidence references as mandated. Additionally, it lacks a concise reason distinguishing evidence types and does not maintain conservative confidence regarding unsupported claims. Overall, it does not fulfill any of the mandatory requirements.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-033",
+        "claim": "Broadcom: OpenAI and Broadcom co-designed AI accelerators optimized for inference and networked through Broadcom's Ethernet stack; the systems include networking, memory and compute customized for OpenAI's workloads, with rack deployment planned starting late next year.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about a collaboration between OpenAI and Broadcom regarding AI accelerators, including deployment plans. However, it does not address the evaluation steps related to assessing input findings, verifying claims with evidence, or providing concise reasons for assessments. The output lacks the structured approach required by the Expected Output, which focuses on verifying claims and preserving evidence. Therefore, it does not align with the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-034",
+        "claim": "Broadcom secured over $10 billion of orders for AI racks based on XPUs from a fourth qualified hyperscale customer, and Broadcom states that three hyperscalers plus a fourth are each racing toward 1 million XPU clusters by the end of 2027.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents specific claims about Broadcom's orders and customer engagement, but it does not align with the structured requirements of the Expected Output, which focuses on assessing findings and providing evidence-based evaluations. The Actual Output lacks the necessary detail to fulfill the mandatory criteria of verifying claims, using evidence references, and providing concise reasons for assessments. Therefore, it does not meet the evaluation steps effectively.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-035",
+        "claim": "Broadcom Thor Ultra is an 800G AI Ethernet NIC, described as the industry's first, capable of interconnecting hundreds of thousands of XPUs for trillion-parameter AI workloads; it is Ultra Ethernet Consortium compliant and supports 100G and 200G SerDes.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides a description of a product, Broadcom Thor Ultra, but does not address any of the required findings or claims outlined in the Expected Output. There is no comparison of claims, nor does it assess input findings or provide evidence references as required. Therefore, it fails to align with any of the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-036",
+        "claim": "Broadcom 400G PCIe Gen 5.0 Ethernet adapters provide RoCE/RDMA connectivity with a third-generation RoCE pipeline, low-latency congestion control, and telemetry for AI data centers.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It provides information about Broadcom's Ethernet adapters but fails to assess input findings, verify claims, or provide evidence references as required. There is no alignment with the evaluation steps, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-037",
+        "claim": "Broadcom Jericho4 fabric router supports congestion-free RoCE across data centers more than 100 kilometers apart to interconnect over one million XPUs.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output presents a specific technical claim about the Broadcom Jericho4 fabric router, which does not align with the structured requirements and findings outlined in the Expected Output. The Expected Output focuses on assessment criteria and verification processes without any mention of the router or its capabilities. This indicates a complete lack of alignment with the evaluation steps, as the factual claims cannot be compared or assessed meaningfully.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-038",
+        "claim": "Broadcom: Google deploys Broadcom-designed custom TPUs, with Broadcom's custom silicon relationship with Google reported as the most prominent hyperscale AI chip design partnership.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output does not address any of the required findings or claims outlined in the Expected Output. It focuses solely on a partnership between Broadcom and Google regarding AI chip design, which is unrelated to the mandatory assessments of findings, verification, evidence usage, or confidence levels specified in the Expected Output. Therefore, it fails to meet any of the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-039",
+        "claim": "Broadcom: Meta is a Broadcom custom AI silicon customer.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output makes a factual claim about Broadcom being a customer of Meta's AI silicon, which does not align with the detailed requirements and findings outlined in the Expected Output. The Expected Output specifies multiple mandatory findings related to assessment processes, evidence support, and maintaining conservative confidence, none of which are addressed in the Actual Output. Therefore, the response fails to meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-040",
+        "claim": "Broadcom: ByteDance reportedly emerged as a third Broadcom custom silicon customer.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output presents a specific claim about Broadcom and ByteDance, which does not align with the structured requirements of the Expected Output that focuses on assessing findings with specific IDs and criteria. There is no evidence of addressing the mandatory priorities outlined in the Expected Output, such as verifying claims with evidence or providing concise reasons for assessments. Therefore, the response fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      }
+    ],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.6,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing detailed findings about competitors' activities and their implications for NVIDIA. It includes verified statements about AMD, Broadcom, and Intel, which are relevant to the competitive landscape. However, the summary field is empty, which detracts from the overall clarity and synthesis of the findings. Despite this shortcoming, the output remains focused on the specified entities and topics, with no excessive off-topic material present.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output demonstrates a thorough assessment of findings, with 72 out of 74 findings being evidence-backed. However, it lacks specific references to the evidence used to support each claim, which is crucial for verifying the completeness of the claims as per the evaluation steps. Additionally, while the verification status is marked as 'verified', the explanation of how each reference supports the assessment is missing, leading to a lack of traceability and clarity. Overall, the output aligns with the evaluation steps but falls short in providing detailed evidence references and reasoning for each finding.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output effectively summarizes the findings related to NVIDIA's competitors, with 72 out of 74 findings being evidence-backed. However, the two unsupported findings indicate a shortcoming in fully adhering to the evaluation steps, particularly in ensuring all claims are supported by the Retrieval Context. Additionally, while the output provides a comprehensive overview, it lacks specific details on the nature of the unsupported findings, which could enhance clarity and transparency.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.3,
+          "status": "fail",
+          "reason": "The Actual Output fails to provide a summary and does not adequately cover the requested entities, markets, and dimensions related to NVIDIA's competitors. While it lists findings, it lacks a clear assessment of each finding's support and does not disclose any missing information, which is critical for transparency. Additionally, the confidence levels are uniformly high without addressing any potential gaps or uncertainties, violating the calibration requirement. Overall, the output does not align well with the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "The agent does not report missing, duplicate, or unknown assessments.",
+          "evidence": "The Actual Output successfully assesses each input finding exactly once, preserving the finding IDs and providing verification statuses. However, it does not explicitly report any missing, duplicate, or unknown assessments.",
+          "impact": "This omission affects the completeness of the output and may lead to misunderstandings about the thoroughness of the assessment."
+        },
+        {
+          "limitation": "The agent's findings are not fully supported by evidence.",
+          "evidence": "While 72 of 74 findings are evidence-backed, the two findings marked as insufficient indicate that not all claims are fully supported.",
+          "impact": "This results in ambiguity regarding the completeness of the claims, affecting the overall clarity and completeness of the support provided."
+        },
+        {
+          "limitation": "The agent fails to explain how evidence references support or limit the assessment.",
+          "evidence": "The Actual Output lacks a summary that explicitly connects the evidence references to the primary claim regarding competitors' actions and their implications for NVIDIA.",
+          "impact": "This lack of explanation diminishes the clarity and traceability of the findings."
+        },
+        {
+          "limitation": "The agent does not provide concise, finding-specific reasons that distinguish direct evidence, inference, and missing information.",
+          "evidence": "The Actual Output fails to provide a concise, finding-specific reason that distinguishes between direct evidence, inference, and missing information.",
+          "impact": "This lack of differentiation affects the evaluation's clarity and completeness."
+        },
+        {
+          "limitation": "The agent does not maintain conservative confidence levels.",
+          "evidence": "The Actual Output presents findings with a confidence level of 0.78 without sufficient caution regarding the potential for unsupported claims.",
+          "impact": "This could mislead users into overestimating the reliability of the findings."
+        },
+        {
+          "limitation": "The agent lacks specific source dates and attribution.",
+          "evidence": "The actual output lacks specific source dates, which are crucial for auditing the decision.",
+          "impact": "This omission hinders the ability to verify the credibility and context of the findings."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a reporting mechanism for missing, duplicate, or unknown assessments.",
+          "addresses": "This will ensure completeness and transparency in the assessment process.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance the evidence evaluation process to ensure all claims are fully supported.",
+          "addresses": "This will reduce ambiguity and improve the clarity of the findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Add detailed explanations connecting evidence references to findings.",
+          "addresses": "This will improve traceability and clarity in the assessment.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide concise, finding-specific reasons that distinguish between direct evidence, inference, and missing information.",
+          "addresses": "This will enhance the clarity and completeness of the evaluation.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Adopt a conservative approach to confidence levels in findings.",
+          "addresses": "This will help prevent overestimation of the reliability of findings.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Ensure that source dates and attributions are included in the output.",
+          "addresses": "This will facilitate auditing and verification of the findings.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "The agent does not report missing, duplicate, or unknown assessments.",
+        "evidence": "The Actual Output successfully assesses each input finding exactly once, preserving the finding IDs and providing verification statuses. However, it does not explicitly report any missing, duplicate, or unknown assessments.",
+        "impact": "This omission affects the completeness of the output and may lead to misunderstandings about the thoroughness of the assessment."
+      },
+      {
+        "limitation": "The agent's findings are not fully supported by evidence.",
+        "evidence": "While 72 of 74 findings are evidence-backed, the two findings marked as insufficient indicate that not all claims are fully supported.",
+        "impact": "This results in ambiguity regarding the completeness of the claims, affecting the overall clarity and completeness of the support provided."
+      },
+      {
+        "limitation": "The agent fails to explain how evidence references support or limit the assessment.",
+        "evidence": "The Actual Output lacks a summary that explicitly connects the evidence references to the primary claim regarding competitors' actions and their implications for NVIDIA.",
+        "impact": "This lack of explanation diminishes the clarity and traceability of the findings."
+      },
+      {
+        "limitation": "The agent does not provide concise, finding-specific reasons that distinguish direct evidence, inference, and missing information.",
+        "evidence": "The Actual Output fails to provide a concise, finding-specific reason that distinguishes between direct evidence, inference, and missing information.",
+        "impact": "This lack of differentiation affects the evaluation's clarity and completeness."
+      },
+      {
+        "limitation": "The agent does not maintain conservative confidence levels.",
+        "evidence": "The Actual Output presents findings with a confidence level of 0.78 without sufficient caution regarding the potential for unsupported claims.",
+        "impact": "This could mislead users into overestimating the reliability of the findings."
+      },
+      {
+        "limitation": "The agent lacks specific source dates and attribution.",
+        "evidence": "The actual output lacks specific source dates, which are crucial for auditing the decision.",
+        "impact": "This omission hinders the ability to verify the credibility and context of the findings."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a reporting mechanism for missing, duplicate, or unknown assessments.",
+        "addresses": "This will ensure completeness and transparency in the assessment process.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance the evidence evaluation process to ensure all claims are fully supported.",
+        "addresses": "This will reduce ambiguity and improve the clarity of the findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Add detailed explanations connecting evidence references to findings.",
+        "addresses": "This will improve traceability and clarity in the assessment.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide concise, finding-specific reasons that distinguish between direct evidence, inference, and missing information.",
+        "addresses": "This will enhance the clarity and completeness of the evaluation.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Adopt a conservative approach to confidence levels in findings.",
+        "addresses": "This will help prevent overestimation of the reliability of findings.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Ensure that source dates and attributions are included in the output.",
+        "addresses": "This will facilitate auditing and verification of the findings.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\60fe8f99ff219a0102929fd21ec26529\\stages\\verification_evaluation.json"
+}

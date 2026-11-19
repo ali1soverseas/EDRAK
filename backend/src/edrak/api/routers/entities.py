@@ -183,7 +183,6 @@ async def discover(
             target_customers=company["target_customers"] or None,
             exclude=company["aliases"],
             limit=max(1, min(body.limit, 8)),
-            include_pricing=True,
         )
     except CompetitorDiscoveryConfigurationError as exc:
         raise HTTPException(
