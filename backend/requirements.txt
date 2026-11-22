@@ -29,11 +29,11 @@ structlog
 # Language detection (customer trends evidence language tagging)
 langdetect
 
-# Local Argos Translate for Arabic output. The language package downloads on first use.
-# The CUDA 12 libraries let CTranslate2 run that model on an NVIDIA GPU.
-argostranslate
-nvidia-cublas-cu12
-nvidia-cuda-runtime-cu12
+# Local Helsinki OPUS-MT. en→ar translates findings. ar→en tags an Arabic decision reason.
+# Each model downloads on first use. Translation uses CUDA only when PyTorch was built with it.
+transformers
+sentencepiece
+torch
 
 # MCP
 mcp<2

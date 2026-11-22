@@ -16,7 +16,6 @@ import os
 import sys
 from pathlib import Path
 
-os.environ["ARGOS_DEBUG"] = "0"
 if os.name == "nt":
     try:
         import ctypes
@@ -110,22 +109,10 @@ def _sentences(args: argparse.Namespace) -> list[str]:
     return units
 
 
-def _quiet_argos() -> None:
-    """Argos logs each token to stdout when debug is on. That shreds the Arabic sentence."""
-    from edrak.briefing.translate import _prefer_gpu
-
-    _prefer_gpu()
-    import argostranslate.utils as utils
-
-    utils.logger.setLevel(logging.ERROR)
-    utils.logger.handlers.clear()
-    utils.logger.propagate = False
-    logging.getLogger("stanza").setLevel(logging.ERROR)
-
-
 def main() -> None:
     logging.basicConfig(level=logging.WARNING, format="%(message)s")
-    _quiet_argos()
+    logging.getLogger("transformers").setLevel(logging.ERROR)
+    logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
     parser = argparse.ArgumentParser(description="Try English sentences on the Arabic translation pipeline.")
     parser.add_argument("sentences", nargs="*", help="English sentences. With none, the examples in this file are used.")
     parser.add_argument("--names", nargs="*", default=[], help="Company or place names to leave in English.")

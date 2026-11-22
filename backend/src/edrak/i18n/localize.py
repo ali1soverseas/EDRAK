@@ -58,10 +58,11 @@ SKIP_KEYS = frozenset({
     "source_url", "email", "note",
 })
 
-# Full run dumps embedded in the brief. The UI never shows these trees; walking
-# them re-translates every worker finding and blocks Arabic brief loads.
+# Full run dumps embedded in the brief, and the finding sentences. The findings stay
+# in English. Walking them re-translates every worker finding and blocks Arabic brief loads.
 SKIP_BRANCHES = frozenset({
     "request", "orchestration", "verification", "cross_signal", "decision_analysis", "result",
+    "findings", "key_findings",
 })
 
 # Parameters of a fixed sentence that are themselves generated.
@@ -85,7 +86,38 @@ _PROTECT = re.compile(
     r"[A-Z][a-zA-Z0-9&+./-]{1,}(?:\s+[A-Z][a-zA-Z0-9&+./-]{1,}){1,4}|"
     r"[A-Z][a-zA-Z0-9&+./-]{1,})\b"
 )
-_ACRONYM = re.compile(r"\b[A-Z]{2,}\b")
+_ACRONYM = re.compile(r"\b[A-Z]{2,}s?\b")
+# Product codes stay in English: CoWoS, CoWoS-L, HBM3e, GB200, B200, Q1, FY2026.
+_PRODUCT = re.compile(
+    r"\b(?:"
+    r"[A-Z][a-z]+(?:[A-Z][a-z0-9]+)+"
+    r"|[A-Z][A-Za-z]*\d[A-Za-z0-9]*"
+    r"|[A-Z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)+"
+    r")\b"
+)
+# Words the model translates into the wrong technical sense, and the section label it drops.
+_GLOSSARY = (
+    ("bottlenecks", "اختناقات"),
+    ("bottleneck", "اختناق"),
+    ("stage gate", "بوابة المراحل"),
+    ("on premise", "في المقر"),
+    ("decisions", "القرارات"),
+)
+# Title-case English that is not a company or product name.
+_ORDINARY = frozenset(
+    """
+    list price number annual revenue release total potential current future however recent
+    supply chain loss growth delay offer build partner expand implement negotiate engage
+    maintain hold watch lead accelerate differentiate launch managed service cloud partners
+    availability rack sales buffer inventory enterprise prioritize capacity demand market
+    share software hardware platform using focus create commit what which when where while
+    with from into over after before under their this that these those have been were was
+    are not but for and the per via its our may can will also new more most some any all
+    one two key net raw end top out use used using both each such other than then them you
+    your high low paid plan seat month customers subscribers billed unit publicly reported
+    quarter slower direct native upcoming limited strong rapid quantitative strategic
+    """.split()
+)
 _EASTERN_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 _WORD = re.compile(r"[A-Za-z]{3,}")
 # Argos copies "the" and turns a lone "a" into the letter alef. Arabic uses ال and has no word for "a".
@@ -139,15 +171,12 @@ def _split_sentences(text: str) -> list[str]:
     return parts if len(parts) > 1 else [value]
 
 
+_PLACEHOLDER_BASE = 810001
+
+
 def _marker(index: int) -> str:
-    """A letter code in parentheses. Argos copies it and still translates the sentence."""
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    chars: list[str] = []
-    n = index + 1
-    while n:
-        n, rem = divmod(n - 1, 26)
-        chars.append(alphabet[rem])
-    return "(ZQK" + "".join(reversed(chars)) + ")"
+    """A number the translator copies unchanged. It cannot occur in the sentence."""
+    return str(_PLACEHOLDER_BASE + index)
 
 
 def _fresh_marker(text: str, used: set[str], index: int) -> tuple[str, int]:
@@ -187,7 +216,7 @@ def _opens_sentence(text: str, start: int, span: str) -> bool:
     """A short title-case word that opens a sentence is ordinary English, not a name."""
     if " " in span or not span.istitle() or len(span) >= 12:
         return False
-    before = text[:start].rstrip(" \t\n\r\"'“”‘’([")
+    before = text[:start].rstrip(" \t\n\r\"'“”‘’(")
     return not before or before[-1] in ".!?"
 
 
@@ -206,8 +235,8 @@ def _name_span(text: str, start: int, end: int, span: str) -> tuple[int, str] | 
     return rest, text[rest:end]
 
 
-def _kept_words(text: str) -> list[str]:
-    """Tokens that must stay in English: all-caps, and any word that starts with a capital."""
+def _kept_words(text: str, *, titles: bool = True) -> list[str]:
+    """Tokens that must stay in English: all-caps, and, outside options, a capitalised word."""
     found: list[str] = []
     seen: set[str] = set()
 
@@ -218,6 +247,10 @@ def _kept_words(text: str) -> list[str]:
 
     for match in _ACRONYM.finditer(text):
         add(match.group(0))
+    for match in _PRODUCT.finditer(text):
+        add(match.group(0))
+    if not titles:
+        return found
     for match in _PROTECT.finditer(text):
         kept = _name_span(text, match.start(), match.end(), match.group(0))
         if kept:
@@ -225,20 +258,107 @@ def _kept_words(text: str) -> list[str]:
     return found
 
 
-def _protect_names(text: str, names: list[str]) -> tuple[str, dict[str, str]]:
-    """Swap acronyms and words that start with a capital for markers. A string replace puts the English back."""
+def _mask_parentheses(text: str, mapping: dict[str, str], used: set[str], index: int) -> tuple[str, int]:
+    """Swap each parenthetical for a marker, innermost first. The original text is put back."""
+    pattern = re.compile(r"\([^()]*\)")
+    while True:
+        match = pattern.search(text)
+        if match is None:
+            return text, index
+        token, index = _fresh_marker(text, used, index)
+        mapping[token] = match.group(0)
+        text = text[:match.start()] + token + text[match.end():]
+
+
+def _mask_brackets(text: str, mapping: dict[str, str], used: set[str], index: int) -> tuple[str, int]:
+    """Swap a label such as [Intel] for one marker, brackets included."""
+    pattern = re.compile(r"\[[^\[\]]*\]")
+    while True:
+        match = pattern.search(text)
+        if match is None:
+            return text, index
+        token, index = _fresh_marker(text, used, index)
+        mapping[token] = match.group(0)
+        text = text[: match.start()] + token + text[match.end() :]
+
+
+def _mask_glossary(text: str, mapping: dict[str, str], used: set[str], index: int) -> tuple[str, int]:
+    """Swap a term the model mistranslates for a marker. The marker comes back as Arabic."""
+    for phrase, arabic in _GLOSSARY:
+        pattern = re.compile(rf"\b{re.escape(phrase)}\b", re.IGNORECASE)
+        while True:
+            match = pattern.search(text)
+            if match is None:
+                break
+            token, index = _fresh_marker(text, used, index)
+            mapping[token] = arabic
+            text = text[: match.start()] + token + text[match.end() :]
+    return text, index
+
+
+def _mask_products(text: str, mapping: dict[str, str], used: set[str], index: int) -> tuple[str, int]:
+    """Swap a product code such as CoWoS-L for a marker. It is put back in English."""
+    while True:
+        match = _PRODUCT.search(text)
+        if match is None:
+            return text, index
+        token, index = _fresh_marker(text, used, index)
+        mapping[token] = match.group(0)
+        text = text[: match.start()] + token + text[match.end() :]
+
+
+def _surface_names(text: str) -> list[str]:
+    """A capitalised word used as a name in the middle of a sentence, such as Azure."""
+    found: list[str] = []
+    for match in _PROTECT.finditer(text):
+        kept = _name_span(text, match.start(), match.end(), match.group(0))
+        if kept is None:
+            continue
+        span = kept[1]
+        if " " in span or span.isupper() or len(span) < 3:
+            continue
+        if span.casefold() in _ORDINARY:
+            continue
+        found.append(span)
+    return found
+
+
+def _protect_names(text: str, names: list[str], *, titles: bool = True) -> tuple[str, dict[str, str]]:
+    """Swap parentheticals, acronyms, and capital words for markers. A string replace puts them back.
+
+    Option text passes titles=False. A title-case phrase such as "Rack Availability" is wording,
+    so it is translated. Acronyms, product codes, known names, and parentheses still stay in English.
+    """
     text = text.replace("\u2019", "'").replace("\u2018", "'").replace("\u201c", '"').replace("\u201d", '"')
-    text, mapping = _mask_acronyms(text)
+    mapping: dict[str, str] = {}
+    used: set[str] = set()
+    text, index = _mask_glossary(text, mapping, used, 0)
+    text, index = _mask_brackets(text, mapping, used, index)
+    text, index = _mask_parentheses(text, mapping, used, index)
+    text, acronym_map = _mask_acronyms(text)
+    mapping.update(acronym_map)
+    used = set(mapping)
+    text, index = _mask_products(text, mapping, used, 0)
     out = text
     used = set(mapping)
     index = 0
     ordered = sorted({n.strip() for n in names if n and len(n.strip()) >= 2}, key=len, reverse=True)
     for name in ordered:
+        if re.fullmatch(r"[A-Za-z0-9.+-]+", name):
+            pattern = re.compile(rf"\b{re.escape(name)}\b")
+            if pattern.search(out) is None:
+                continue
+            token, index = _fresh_marker(out, used, index)
+            mapping[token] = name
+            out = pattern.sub(token, out)
+            continue
         if name not in out:
             continue
         token, index = _fresh_marker(out, used, index)
         mapping[token] = name
         out = out.replace(name, token)
+    if not titles:
+        return out, mapping
     pieces: list[str] = []
     cursor = 0
     for match in _PROTECT.finditer(out):
@@ -249,6 +369,8 @@ def _protect_names(text: str, names: list[str]) -> tuple[str, dict[str, str]]:
         if kept is None:
             continue
         keep_at, span = kept
+        if " " not in span and span.casefold() in _ORDINARY:
+            continue
         token, index = _fresh_marker(out, used, index)
         mapping[token] = span
         pieces.append(out[cursor:keep_at])
@@ -263,14 +385,47 @@ def _normalize_markers(text: str) -> str:
     return html.unescape(text or "").translate(_EASTERN_DIGITS)
 
 
+def _placeholder_patterns(token: str) -> list[str]:
+    """The marker, and the same digits with the first digit moved to the end.
+
+    The model rewrites 810001 as 10001 8. An extra 0 between digits is allowed.
+    """
+    sep = r"[\s,.\u060c\u066c]*"
+    patterns = [r"(?<!\d)" + sep.join(re.escape(digit) for digit in token) + r"(?!\d)"]
+    if len(token) < 4:
+        return patterns
+    body, head = token[1:], token[0]
+    rotated = r"(?<!\d)"
+    for index, digit in enumerate(body):
+        rotated += re.escape(digit) + sep
+        if index != len(body) - 1:
+            rotated += r"0?" + sep
+    rotated += re.escape(head) + r"(?!\d)"
+    patterns.append(rotated)
+    return patterns
+
+
 def _restore_names(text: str, mapping: dict[str, str]) -> str:
     out = _normalize_markers(text)
-    for token, name in sorted(mapping.items(), key=lambda item: len(item[0]), reverse=True):
+    ordered = sorted(mapping.items(), key=lambda item: (len(item[0]), item[0]), reverse=True)
+    for token, name in ordered:
+        if token.isdigit():
+            for pattern in _placeholder_patterns(token):
+                out = re.sub(pattern, lambda _match, value=name: value, out)
+            continue
         inner = token[1:-1] if token.startswith("(") and token.endswith(")") else token
         for variant in (token, f"( {inner} )", f"){inner}(", f") {inner} ("):
             out = out.replace(variant, name)
         out = re.sub(rf"(?<![A-Za-z]){re.escape(inner)}(?![A-Za-z])", name, out)
-    return out
+    return _strip_brackets(out)
+
+
+def _strip_brackets(text: str) -> str:
+    """Drop leftover name-tag brackets. The name itself is restored before this."""
+    if not text or not re.search(r"[<>＜＞]", text):
+        return text
+    cleaned = re.sub(r"[<>＜＞]", "", text)
+    return re.sub(r"[ \t]{2,}", " ", cleaned).strip()
 
 
 def _translate_articles(text: str) -> str:
@@ -304,19 +459,27 @@ def _splice_word_translations(text: str, translate: Translator) -> str:
     return out
 
 
-def _keep_acronyms(source: str, arabic: str) -> str:
+def _keep_acronyms(source: str, arabic: str, *, titles: bool = True) -> str:
     """Put any kept English token the translation lost back onto the end of an Arabic sentence."""
     if not arabic or not _ARABIC.search(arabic):
         return arabic
-    missing = [token for token in _kept_words(source) if token not in arabic]
+    missing = [
+        token
+        for token in _kept_words(source, titles=titles)
+        if token not in arabic and token.casefold() not in _ORDINARY
+    ]
     if not missing:
         return arabic
     return arabic.rstrip() + " " + " ".join(missing)
 
 
-def _keeps_acronyms(source: str, arabic: str) -> bool:
-    """A token like GPU or Intel stays as written. A translation that drops one is not stored."""
-    return all(token in arabic for token in _kept_words(source))
+def _keeps_acronyms(source: str, arabic: str, *, titles: bool = True) -> bool:
+    """A token like GPU stays as written. A translation that drops one is not stored."""
+    return all(
+        token in arabic
+        for token in _kept_words(source, titles=titles)
+        if token.casefold() not in _ORDINARY
+    )
 
 
 def _with_ar_mark(arabic: str) -> str:
@@ -335,41 +498,208 @@ def _mark_rtl(arabic: str) -> str:
     return _RTL + text
 
 
-def _usable_arabic(source: str, arabic: str) -> bool:
-    """Reject blank, unchanged, Latin-only, or results that dropped a kept English token."""
+_DASH = re.compile(r"[\u002d\u2010\u2011\u2012\u2013\u2014\u2015\u2212\ufe63\uff0d]+")
+
+
+def _soften_dashes(text: str) -> str:
+    """Turn a hyphen into a space. A product code such as CoWoS-L keeps its hyphen."""
+
+    def replace(match: re.Match[str]) -> str:
+        start, end = match.start(), match.end()
+        left = start
+        while left > 0 and text[left - 1].isalnum():
+            left -= 1
+        right = end
+        while right < len(text) and text[right].isalnum():
+            right += 1
+        token = text[left:start] + text[end:right]
+        if re.search(r"\d", token) or len(re.findall(r"[A-Z]", token)) >= 2:
+            return "-"
+        return " "
+
+    return _DASH.sub(replace, text)
+
+
+def _prepare_source(text: str) -> str:
+    """The sentence sent to the translator. The cache is still keyed by the original.
+
+    Dashes become spaces outside parentheses, except inside a product code.
+    Text inside parentheses is left as written.
+    """
+    cleaned = _strip_repeated_arabic(text)
+    pieces: list[str] = []
+    cursor = 0
+    for match in re.finditer(r"\([^()]*\)", cleaned):
+        pieces.append(_soften_dashes(cleaned[cursor:match.start()]))
+        pieces.append(match.group(0))
+        cursor = match.end()
+    pieces.append(_soften_dashes(cleaned[cursor:]))
+    return re.sub(r"[ \t]{2,}", " ", "".join(pieces)).strip()
+
+
+def _strip_repeated_arabic(text: str) -> str:
+    """Drop a repeated word, a run of the same Arabic letter, and tatweel.
+
+    A doubled Arabic letter stays, so a real word is left intact. The same English
+    or Arabic word written twice in a row is kept once.
+    """
+    if not text:
+        return text
+    collapsed = text
+    if _ARABIC.search(collapsed):
+        collapsed = re.sub(r"\u0640+", "", collapsed)
+        collapsed = re.sub(r"([\u0600-\u06FF])\1{2,}", r"\1", collapsed)
+    kept: list[str] = []
+    for word in collapsed.split():
+        if kept and word.casefold() == kept[-1].casefold():
+            continue
+        kept.append(word)
+    return re.sub(r"[ \t]{2,}", " ", " ".join(kept)).strip()
+
+
+_NUM = re.compile(r"\d+")
+_CURRENCY = re.compile(r"دولار|يورو|جنيه")
+_MONEY = re.compile(r"\$|\bdollars?\b|\bUSD\b|\beuros?\b|\bpounds?\b", re.IGNORECASE)
+
+
+def _invented_number(source: str, arabic: str) -> bool:
+    """A digit run the English sentence does not contain. Placeholder debris looks like one."""
+    allowed = set(_NUM.findall(source))
+    return any(number not in allowed for number in _NUM.findall(arabic))
+
+
+def _invented_currency(source: str, arabic: str) -> bool:
+    """The model turns a price sentence into a dollar amount the English never stated."""
+    return bool(_CURRENCY.search(arabic)) and _MONEY.search(source) is None
+
+
+def _usable_arabic(source: str, arabic: str, *, titles: bool = True) -> bool:
+    """Reject blank, unchanged, Latin-only, invented figures, or a dropped English token."""
     value = (arabic or "").strip()
     if not value or value == source.strip():
         return False
-    if not _ARABIC.findall(value) or not _keeps_acronyms(source, value):
+    if re.search(r"[<>＜＞]|ZQK|\(زك|(?<![A-Za-z])a\d+\b|(?<!\d)810\d{3}(?!\d)", value, re.IGNORECASE):
+        return False
+    if _invented_number(source, value) or _invented_currency(source, value):
+        return False
+    if not _ARABIC.findall(value) or not _keeps_acronyms(source, value, titles=titles):
         return False
     return True
 
 
-def _translate_units(units: list[str], translate: Translator, names: list[str]) -> dict[str, str]:
+_CONTENT = re.compile(r"[A-Za-z]{3,}")
+_SMALL = frozenset(
+    "the and for with that from this are was were has have its into over per not but than then also while their they you our out any may can will via".split()
+)
+
+
+def _strip_invented(source: str, arabic: str) -> str:
+    """Drop a figure or a currency word the English sentence never stated."""
+    allowed = set(_NUM.findall(source))
+    text = _NUM.sub(lambda match: match.group(0) if match.group(0) in allowed else "", arabic)
+    if _MONEY.search(source) is None:
+        text = _CURRENCY.sub("", text)
+    return re.sub(r"[ \t]{2,}", " ", text).strip()
+
+
+def _thin_translation(source: str, arabic: str, *, folded: bool = False) -> bool:
+    """The Arabic kept too few words, so a clause was dropped."""
+    english = [word for word in _CONTENT.findall(source) if word.lower() not in _SMALL]
+    arabic_words = [word for word in arabic.split() if word]
+    if len(english) < 4:
+        return False
+    if folded and len(english) <= 8:
+        return len(arabic_words) < len(english)
+    return len(arabic_words) < len(english) * 0.75
+
+
+def _put_back(arabic: str, mapping: dict[str, str]) -> str:
+    """Append a name or glossary term the model deleted with its marker."""
+    if not arabic or not _ARABIC.search(arabic):
+        return arabic
+    missing = [name for name in mapping.values() if name not in arabic]
+    missing = [name for name in missing if not any(name != other and name in other for other in missing)]
+    if not missing:
+        return arabic
+    return arabic.rstrip() + " " + " ".join(dict.fromkeys(missing))
+
+
+def _settle(source: str, protected: str, arabic: str, mapping: dict[str, str], translate: Translator, *, folded: bool) -> str | None:
+    """Pick a sentence translation, or the word fallback when that sentence drops text or invents a figure."""
+
+    def accept(text: str) -> str:
+        restored = _strip_repeated_arabic(_restore_names(text, mapping).strip())
+        restored = re.sub(r"\[\s*\]|\]\s*\[", " ", restored)
+        if _ARABIC.search(restored):
+            restored = _translate_articles(restored)
+        restored = _keep_acronyms(source, restored, titles=not folded)
+        restored = _put_back(restored, mapping)
+        restored = _strip_invented(source, restored)
+        return _strip_repeated_arabic(restored)
+
+    first = accept(arabic)
+    first_ok = _usable_arabic(source, first, titles=not folded)
+    needs_words = not first_ok or (folded and _thin_translation(source, first, folded=folded))
+    if not needs_words:
+        return first
+    spliced = accept(_splice_word_translations(protected, translate))
+    if _usable_arabic(source, spliced, titles=not folded) and not (folded and _thin_translation(source, spliced, folded=folded)):
+        return spliced
+    if first_ok:
+        return first
+    if _usable_arabic(source, spliced, titles=not folded):
+        return spliced
+    return None
+
+
+def _translate_units(units: list[str], translate: Translator, names: list[str], fold: set[str] | None = None) -> dict[str, str]:
     """Translate sentence units with name protection. Returns unit -> arabic."""
     if not units:
         return {}
+    fold = fold or set()
+    out: dict[str, str] = {}
+    direct: list[str] = []
+    for unit in units:
+        if unit not in fold or ", " not in unit:
+            direct.append(unit)
+            continue
+        clauses = [clause.strip() for clause in unit.split(", ") if clause.strip()]
+        if len(clauses) < 2:
+            direct.append(unit)
+            continue
+        parts = _translate_units(clauses, translate, names, set(clauses))
+        if all(clause in parts for clause in clauses):
+            out[unit] = "، ".join(parts[clause] for clause in clauses)
+        else:
+            direct.append(unit)
+    if not direct:
+        return out
     prepared: list[str] = []
     maps: list[dict[str, str]] = []
-    for unit in units:
-        protected, mapping = _protect_names(unit, names)
+    sources: list[str] = []
+    folded_units = [unit in fold for unit in direct]
+    for unit, folded_unit in zip(direct, folded_units):
+        source = _prepare_source(unit)
+        protected, mapping = _protect_names(source, names, titles=not folded_unit)
+        if folded_unit:
+            protected = protected.lower()
+        sources.append(source)
         prepared.append(protected)
         maps.append(mapping)
-    raw = translate(prepared)
-    out: dict[str, str] = {}
-    for unit, protected, arabic, mapping in zip(units, prepared, raw, maps):
-        restored = _restore_names(str(arabic or ""), mapping).strip()
-        if _ARABIC.search(restored):
-            restored = _translate_articles(restored)
-        restored = _keep_acronyms(unit, restored)
-        if not _usable_arabic(unit, restored):
-            restored = _keep_acronyms(unit, _restore_names(_splice_word_translations(protected, translate), mapping).strip())
-        if _usable_arabic(unit, restored):
-            out[unit] = restored
+    raw = [""] * len(prepared)
+    send = [(index, text) for index, text in enumerate(prepared) if _LATIN.search(text)]
+    if send:
+        translated = translate([text for _index, text in send])
+        for (index, _text), arabic in zip(send, translated):
+            raw[index] = arabic
+    for unit, source, protected, arabic, mapping, folded_unit in zip(direct, sources, prepared, raw, maps, folded_units):
+        settled = _settle(source, protected, str(arabic or ""), mapping, translate, folded=folded_unit)
+        if settled:
+            out[unit] = settled
     return out
 
 
-async def _load_cached(db: aiosqlite.Connection, hashes: dict[str, str]) -> dict[str, str]:
+async def _load_cached(db: aiosqlite.Connection, hashes: dict[str, str], folded: set[str] | None = None) -> dict[str, str]:
     """Stored Arabic for these exact strings. A row that dropped an acronym is ignored."""
     found: dict[str, str] = {}
     pending = list(hashes.values())
@@ -385,18 +715,23 @@ async def _load_cached(db: aiosqlite.Connection, hashes: dict[str, str]) -> dict
         for row in rows:
             source = str(row["source_text"] or "")
             arabic = str(row["translated_text"] or "").strip()
-            if hashes.get(source) == row["source_hash"] and _usable_arabic(source, arabic):
+            option = source in (folded or ())
+            if re.search(r"[<>＜＞]", arabic):
+                _protected, mapping = _protect_names(_prepare_source(source), [], titles=not option)
+                arabic = _restore_names(arabic, mapping)
+            arabic = _strip_repeated_arabic(arabic)
+            if hashes.get(source) == row["source_hash"] and _usable_arabic(source, arabic, titles=not option):
                 found[source] = arabic
     return found
 
 
-async def _store(db: aiosqlite.Connection, source: str, arabic: str) -> None:
+async def _store(db: aiosqlite.Connection, source: str, arabic: str, cache_key: str | None = None) -> None:
     text = _with_ar_mark(arabic)
     await db.execute(
         "INSERT INTO text_translations (source_hash, target_lang, source_text, translated_text) "
         "VALUES (?, 'ar', ?, ?) "
         "ON CONFLICT(source_hash, target_lang) DO UPDATE SET translated_text = excluded.translated_text",
-        (_hash(source), source, text),
+        (cache_key or _hash(source), source, text),
     )
 
 
@@ -408,6 +743,7 @@ async def translate_cached(
     names: list[str] | None = None,
     fill: bool = False,
     budget_s: float | None = None,
+    fold: set[str] | None = None,
 ) -> dict[str, str]:
     """Arabic for each string. Reads only use the cache. `fill` translates what is missing."""
     unique = list(dict.fromkeys(text for text in texts if text and not skip_string(text)))
@@ -421,16 +757,28 @@ async def translate_cached(
             fixed_now[text] = hit
         else:
             rest.append(text)
-    found = await _load_cached(db, {text: _hash(text) for text in rest}) if rest else {}
+    folded = set(fold or ())
+
+    def cache_hash(text: str) -> str:
+        # v3 ignores rows from before names, glossary terms, and invented figures were kept out.
+        marker = "\noption" if text in folded else ""
+        return _hash(text + marker + "\nv3")
+
+    found = await _load_cached(db, {text: cache_hash(text) for text in rest}, folded) if rest else {}
     found.update(fixed_now)
     missing = [text for text in rest if text not in found]
     if not missing:
         return _present(found, fixed_now)
 
     # Sentence rows let a paragraph be reused without translating it again as one blob.
-    unit_for = {text: _split_sentences(text) for text in missing}
+    unit_for: dict[str, list[str]] = {}
+    for text in missing:
+        parts = _split_sentences(text)
+        unit_for[text] = parts
+        if text in folded:
+            folded.update(parts)
     units = list(dict.fromkeys(unit for parts in unit_for.values() for unit in parts))
-    unit_found = await _load_cached(db, {unit: _hash(unit) for unit in units})
+    unit_found = await _load_cached(db, {unit: cache_hash(unit) for unit in units}, folded)
 
     ran = False
     stopped_early = False
@@ -459,14 +807,14 @@ async def translate_cached(
                     break
                 batch = to_run[start:start + TRANSLATE_CHUNK]
                 try:
-                    mapped = await asyncio.to_thread(_translate_units, batch, translator, known_names)
+                    mapped = await asyncio.to_thread(_translate_units, batch, translator, known_names, folded)
                 except Exception:
                     logger.exception("Brief translation failed")
                     stopped_early = True
                     break
                 for source, arabic in mapped.items():
                     unit_found[source] = arabic
-                    await _store(db, source, arabic)
+                    await _store(db, source, arabic, cache_hash(source))
                     stored += 1
                 await db.commit()
 
@@ -475,11 +823,11 @@ async def translate_cached(
         if not all(part in unit_found for part in parts):
             continue
         joined = " ".join(unit_found[part] for part in parts).strip()
-        if not _usable_arabic(text, joined):
+        if not _usable_arabic(text, joined, titles=text not in folded):
             continue
         found[text] = joined
         if fill and len(parts) > 1:
-            await _store(db, text, joined)
+            await _store(db, text, joined, cache_hash(text))
             stored_join = True
     if stored_join:
         await db.commit()
@@ -571,9 +919,12 @@ def _collect_names(value: Any, found: list[str]) -> None:
     if not isinstance(value, dict) or _bilingual(value):
         return
     for name, item in value.items():
-        if name in _NAME_KEYS and isinstance(item, str) and item.strip():
-            found.append(item.strip())
-        elif name == "company_profile" and isinstance(item, dict):
+        if isinstance(item, str):
+            if name in _NAME_KEYS and item.strip():
+                found.append(item.strip())
+            found.extend(_surface_names(item))
+            continue
+        if name == "company_profile" and isinstance(item, dict):
             profile_name = item.get("name")
             if isinstance(profile_name, str) and profile_name.strip():
                 found.append(profile_name.strip())
@@ -589,12 +940,12 @@ def _collect_names(value: Any, found: list[str]) -> None:
             _collect_names(item, found)
 
 
-def _collect(value: Any, keys: frozenset[str], found: list[str]) -> None:
+def _collect(value: Any, keys: frozenset[str], found: list[str], fold: set[str] | None = None, *, lower: bool = False) -> None:
     if isinstance(value, str):
         return
     if isinstance(value, list):
         for item in value:
-            _collect(item, keys, found)
+            _collect(item, keys, found, fold, lower=lower)
         return
     if not isinstance(value, dict) or _bilingual(value):
         return
@@ -603,19 +954,34 @@ def _collect(value: Any, keys: frozenset[str], found: list[str]) -> None:
         for name, item in value.items():
             if name in _PROFILE or name in {"description", "name", "notes"}:
                 continue
-            _collect(item, keys, found)
+            _collect(item, keys, found, fold, lower=lower)
         return
     for name, item in value.items():
         if name in SKIP_BRANCHES:
             _collect_verifier_notes(name, item, found)
             continue
+        option_branch = name == "options" and _option_list(item)
         if isinstance(item, str) and _translate_key(value, name, keys):
             found.append(item)
+            if lower and fold is not None:
+                fold.add(item)
         elif isinstance(item, list) and name in keys and name != "notes" and all(isinstance(x, str) for x in item):
             if not (name == "content" and value.get("role") not in (None, "assistant")):
                 found.extend(item)
+                if lower and fold is not None:
+                    fold.update(item)
+        elif option_branch:
+            _collect(item, keys, found, fold, lower=True)
         else:
-            _collect(item, keys, found)
+            _collect(item, keys, found, fold, lower=lower)
+
+
+def _option_list(item: Any) -> bool:
+    """The three decision options. Their wording is lowercased before translation."""
+    return isinstance(item, list) and any(
+        isinstance(entry, dict) and ("option_id" in entry or (entry.get("key") in {"A", "B", "C"} and "title" in entry))
+        for entry in item
+    )
 
 
 def _note_lists(summary: Any) -> dict[str, list[str]]:
@@ -681,13 +1047,14 @@ def _apply_verifier_notes(name: str, item: Any, mapped: dict[str, str]) -> Any:
     return out
 
 
-def _prepared(payload: Any, keys: frozenset[str] | set[str] | None) -> tuple[frozenset[str], list[str], list[str]]:
+def _prepared(payload: Any, keys: frozenset[str] | set[str] | None) -> tuple[frozenset[str], list[str], list[str], set[str]]:
     chosen = frozenset(keys) if keys is not None else PROSE_KEYS
     texts: list[str] = []
     names: list[str] = []
-    _collect(payload, chosen, texts)
+    fold: set[str] = set()
+    _collect(payload, chosen, texts, fold)
     _collect_names(payload, names)
-    return chosen, texts, names
+    return chosen, texts, names, fold
 
 
 async def fill_arabic(
@@ -698,8 +1065,8 @@ async def fill_arabic(
     keys: frozenset[str] | set[str] | None = None,
 ) -> None:
     """Translate a brief into the cache. The caller does not wait on a page request."""
-    _chosen, texts, names = _prepared(payload, keys)
-    await translate_cached(db, texts, translate=translate, names=names, fill=True)
+    _chosen, texts, names, fold = _prepared(payload, keys)
+    await translate_cached(db, texts, translate=translate, names=names, fill=True, fold=fold)
 
 
 async def localize_generated(
@@ -717,8 +1084,8 @@ async def localize_generated(
     """
     if lang != "ar":
         return payload
-    chosen, texts, _names = _prepared(payload, keys)
-    mapped = await translate_cached(db, texts, fill=fill)
+    chosen, texts, names, fold = _prepared(payload, keys)
+    mapped = await translate_cached(db, texts, names=names, fill=fill, fold=fold)
     return _apply(payload, chosen, mapped)
 
 

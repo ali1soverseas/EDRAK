@@ -1,7 +1,8 @@
-"""Local Argos Translate for Arabic output and for tagging an Arabic decision reason.
+"""Local Helsinki OPUS-MT for Arabic output and for tagging an Arabic decision reason.
 
-The language package stays on this machine. It downloads on the first translation.
-A CUDA device runs the model; otherwise it stays on the CPU. ARGOS_DEVICE_TYPE overrides this.
+English findings use Helsinki-NLP/opus-mt-en-ar. An Arabic decision reason is tagged
+with Helsinki-NLP/opus-mt-ar-en. Each model downloads on first use.
+Translation runs on CUDA when this PyTorch build has it, and on the CPU otherwise.
 """
 
 from __future__ import annotations
@@ -9,165 +10,77 @@ from __future__ import annotations
 import logging
 import os
 import threading
-from pathlib import Path
 from typing import Any
+
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
 
 logger = logging.getLogger(__name__)
 
 _LOCK = threading.Lock()
-_TRANSLATORS: dict[tuple[str, str], Any] = {}
+_MODELS: dict[tuple[str, str], str] = {
+    ("en", "ar"): "Helsinki-NLP/opus-mt-en-ar",
+    ("ar", "en"): "Helsinki-NLP/opus-mt-ar-en",
+}
+_LOADED: dict[tuple[str, str], tuple[Any, Any]] = {}
 _DEVICE_NOTED = False
-_LOADED = False
 
 
-def _register_cuda_dlls() -> None:
-    """Windows loads cublas64_12.dll only from known directories. The pip CUDA packages put it under nvidia/."""
-    if os.name != "nt":
-        return
-    import ctranslate2
+def _device() -> str:
+    import torch
 
-    root = Path(ctranslate2.__file__).resolve().parent.parent / "nvidia"
-    if not root.is_dir():
-        return
-    path = os.environ.get("PATH", "")
-    for bin_dir in sorted(root.glob("*/bin")):
-        if not any(bin_dir.glob("*.dll")):
-            continue
-        os.add_dll_directory(str(bin_dir))
-        folder = str(bin_dir)
-        if folder not in path:
-            path = folder + os.pathsep + path
-    os.environ["PATH"] = path
+    if torch.cuda.is_available():
+        return "cuda"
+    return "cpu"
 
 
-def _split_on_cpu() -> None:
-    """Sentence splitting uses PyTorch. This install has no CUDA build of it, so the splitter stays on the CPU."""
-    import argostranslate.sbd as sbd
-
-    def wrap(cls: type, method_name: str) -> None:
-        original = getattr(cls, method_name)
-        if getattr(original, "_edrak_cpu", False):
-            return
-
-        def on_cpu(self: Any) -> Any:
-            import argostranslate.settings as settings
-
-            device = settings.device
-            settings.device = "cpu"
-            try:
-                return original(self)
-            finally:
-                settings.device = device
-
-        on_cpu._edrak_cpu = True
-        setattr(cls, method_name, on_cpu)
-
-    wrap(sbd.StanzaSentencizer, "lazy_pipeline")
-    wrap(sbd.MiniSBDSentencizer, "lazy_detector")
-
-
-def _prefer_gpu() -> None:
-    """Set the Argos device before its settings module reads the environment."""
-    try:
-        import ctranslate2
-    except Exception:
-        logger.warning("Argos Translate could not check for a GPU, so it will use the CPU.")
-        return
-    if ctranslate2.get_cuda_device_count() <= 0:
-        return
-    _register_cuda_dlls()
-    if not os.environ.get("ARGOS_DEVICE_TYPE"):
-        os.environ["ARGOS_DEVICE_TYPE"] = "cuda"
-
-
-def _note_device() -> None:
+def _note_device(name: str, device: str) -> None:
     global _DEVICE_NOTED
     if _DEVICE_NOTED:
         return
     _DEVICE_NOTED = True
-    import argostranslate.settings as settings
-
-    where = "GPU (CUDA)" if settings.device == "cuda" else "CPU"
+    where = "GPU (CUDA)" if device == "cuda" else "CPU"
     logger.warning(
-        "\n======== ARGOS TRANSLATE DEVICE ========\n"
+        "\n======== OPUS-MT TRANSLATE DEVICE ========\n"
+        "Model: %s\n"
         "Running on: %s\n"
-        "=========================================",
+        "==========================================",
+        name,
         where,
     )
 
 
-def _translator(from_code: str, to_code: str) -> Any:
+def _pair(from_code: str, to_code: str) -> tuple[Any, Any]:
     key = (from_code, to_code)
-    cached = _TRANSLATORS.get(key)
+    cached = _LOADED.get(key)
     if cached is not None:
         return cached
-    _prefer_gpu()
-    import argostranslate.package
-    import argostranslate.translate
+    name = _MODELS.get(key)
+    if name is None:
+        raise RuntimeError(f"No OPUS-MT model for {from_code} -> {to_code}")
+    from transformers import MarianMTModel, MarianTokenizer
 
-    _split_on_cpu()
-
-    def _pair() -> Any | None:
-        installed = argostranslate.translate.get_installed_languages()
-        source = next((lang for lang in installed if lang.code == from_code), None)
-        target = next((lang for lang in installed if lang.code == to_code), None)
-        if source is None or target is None:
-            return None
-        return source.get_translation(target)
-
-    translation = _pair()
-    if translation is None:
-        argostranslate.package.update_package_index()
-        available = argostranslate.package.get_available_packages()
-        package = next(
-            (pkg for pkg in available if pkg.from_code == from_code and pkg.to_code == to_code),
-            None,
-        )
-        if package is None:
-            raise RuntimeError(f"No Argos Translate package for {from_code} -> {to_code}")
-        argostranslate.package.install_from_path(package.download())
-        translation = _pair()
-    if translation is None:
-        raise RuntimeError(f"Argos Translate package for {from_code} -> {to_code} did not install")
-    _TRANSLATORS[key] = translation
-    _note_device()
-    return translation
-
-
-def _use_cpu(translator: Any) -> None:
-    """The GPU model did not start. Later calls in this process use the CPU."""
-    import argostranslate.settings as settings
-
-    settings.device = "cpu"
-    os.environ["ARGOS_DEVICE_TYPE"] = "cpu"
-    translator.translator = None
+    tokenizer = MarianTokenizer.from_pretrained(name)
+    device = _device()
+    model = MarianMTModel.from_pretrained(name).to(device)
+    model.eval()
+    _LOADED[key] = (tokenizer, model)
+    _note_device(name, device)
+    return tokenizer, model
 
 
 def translate_many(texts: list[str], *, from_code: str = "en", to_code: str = "ar") -> list[str]:
-    """Translate each string. The language package loads on the first call."""
+    """Translate each string. The model loads on the first call."""
     if not texts:
         return []
     with _LOCK:
-        translator = _translator(from_code, to_code)
-        try:
-            translated = [(translator.translate(text) or "").strip() for text in texts]
-        except Exception as exc:
-            global _LOADED
-            if _LOADED:
-                raise
-            import argostranslate.settings as settings
+        import torch
 
-            if settings.device != "cuda":
-                raise
-            logger.warning("Argos Translate could not start on the GPU (%s). Using the CPU.", exc)
-            _use_cpu(translator)
-            global _DEVICE_NOTED
-            _DEVICE_NOTED = False
-            _note_device()
-            translated = [(translator.translate(text) or "").strip() for text in texts]
-        _LOADED = True
-        _note_device()
-        return translated
+        tokenizer, model = _pair(from_code, to_code)
+        batch = tokenizer(list(texts), return_tensors="pt", padding=True, truncation=True).to(model.device)
+        with torch.inference_mode():
+            generated = model.generate(**batch, num_beams=1, max_length=256)
+        return [tokenizer.decode(row, skip_special_tokens=True).strip() for row in generated]
 
 
 def translate_ar_to_en(text: str) -> str:

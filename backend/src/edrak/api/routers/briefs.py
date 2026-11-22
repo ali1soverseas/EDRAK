@@ -379,7 +379,7 @@ async def brief_evidence(
             (r["task_id"], r["attempt"], r["evidence_id"]))
     from edrak.i18n.localize import localize_generated, ui_language
 
-    return await localize_generated(db, rows, ui_language(request), keys={"extracted_fact", "statement"})
+    return await localize_generated(db, rows, ui_language(request), keys={"extracted_fact"})
 
 
 class AnnotationIn(BaseModel):
