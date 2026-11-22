@@ -20,6 +20,12 @@ _CLIENT_INITIALIZED: bool = False
 _CURRENT_PROMPT_OBJ: contextvars.ContextVar[Optional[Any]] = contextvars.ContextVar(
     "_CURRENT_PROMPT_OBJ", default=None
 )
+_CURRENT_AGENT: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "_CURRENT_AGENT", default=None
+)
+_CURRENT_SESSION_ID: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "_CURRENT_SESSION_ID", default=None
+)
 
 
 def get_current_prompt_obj() -> Optional[Any]:
@@ -30,6 +36,26 @@ def get_current_prompt_obj() -> Optional[Any]:
 def set_current_prompt_obj(prompt_obj: Optional[Any]) -> None:
     """Explicitly set the active Langfuse prompt client object in the current context."""
     _CURRENT_PROMPT_OBJ.set(prompt_obj)
+
+
+def get_current_agent() -> Optional[str]:
+    """Return the active agent identifier in the current context."""
+    return _CURRENT_AGENT.get()
+
+
+def set_current_agent(agent: Optional[str]) -> None:
+    """Set the active agent identifier in the current context."""
+    _CURRENT_AGENT.set(agent)
+
+
+def get_current_session_id() -> Optional[str]:
+    """Return the active session/request ID in the current context."""
+    return _CURRENT_SESSION_ID.get()
+
+
+def set_current_session_id(session_id: Optional[str]) -> None:
+    """Set the active session/request ID in the current context."""
+    _CURRENT_SESSION_ID.set(session_id)
 
 
 def is_observability_enabled() -> bool:

@@ -354,15 +354,24 @@ def analyze_and_synthesize_node(state: InternalAgentState) -> Dict[str, Any]:
         # Parse conflicts
         raw_conflicts = res_data.get("conflicts", [])
         if isinstance(raw_conflicts, list) and findings:
+            findings_by_id = {f.finding_id: f for f in findings}
             for rc in raw_conflicts:
                 if isinstance(rc, dict):
                     desc = rc.get("description", "").strip()
                     c_eids = [eid for eid in rc.get("evidence_ids", []) if eid in evidence_by_id]
                     if desc:
+                        target_finding = findings_by_id.get(rc.get("finding_id"), findings[0])
+                        # Filter out any evidence IDs cited as SUPPORTS by this finding to avoid contract validation paradox
+                        supported_ids = {
+                            ref.evidence_id
+                            for ref in target_finding.evidence_refs
+                            if ref.relation is EvidenceRelation.SUPPORTS
+                        }
+                        clean_c_eids = [eid for eid in c_eids if eid not in supported_ids]
                         conflicts.append(
                             Conflict(
-                                finding_id=findings[0].finding_id,
-                                contradicting_evidence_ids=c_eids,
+                                finding_id=target_finding.finding_id,
+                                contradicting_evidence_ids=clean_c_eids,
                                 description=desc,
                             )
                         )
