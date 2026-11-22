@@ -30,7 +30,10 @@ langdetect
 
 # Local Argos Translate for Arabic output and for tagging an Arabic decision reason.
 # The language package downloads on first use. A failed translation stores no reason tags.
+# The CUDA 12 libraries let CTranslate2 run that model on an NVIDIA GPU.
 argostranslate
+nvidia-cublas-cu12
+nvidia-cuda-runtime-cu12
 
 # MCP
 mcp<2

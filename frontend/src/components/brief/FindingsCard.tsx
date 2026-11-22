@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useI18n, type TKey } from "../../i18n";
+import { usePhrase } from "../../lib/phrase";
 import { api } from "../../services/api";
 import { workerKey } from "../../lib/workers";
 import type { Brief, BriefFinding, BriefLens } from "../../types/app";
@@ -110,6 +111,7 @@ function LensCard({ lens, analysisId }: { lens: BriefLens; analysisId: string })
 
 export function FindingsCard({ brief }: { brief: Brief }) {
   const { t } = useI18n();
+  const phrase = usePhrase();
   const lenses = brief.lenses ?? [];
   const reported = lenses.filter((lens) => !lens.failed).length;
   const synthesis = brief.synthesis;
@@ -124,11 +126,10 @@ export function FindingsCard({ brief }: { brief: Brief }) {
     titleText = localized && localized !== specificKey ? localized : t("brief.sec.2.title", { n: count });
   }
 
-  const statement = typeof synthesis?.statement === "string" ? synthesis.statement : "";
+  const statement = typeof synthesis?.statement === "string" ? phrase(synthesis.statement, synthesis.statement_key, synthesis.statement_params) : "";
   const highlightTerm = typeof synthesis?.highlight === "string" ? synthesis.highlight : "";
   const highlight = highlightTerm && statement.includes(highlightTerm) ? statement.indexOf(highlightTerm) : -1;
 
-  const patterns = synthesis?.patterns || [];
   const signals = synthesis?.signals || [];
   const impacts = synthesis?.impacts || [];
 
@@ -169,7 +170,7 @@ export function FindingsCard({ brief }: { brief: Brief }) {
               {synthesis.support && (
                 <span className="synthesis-pill">
                   <Icon name="shield" size={13} />
-                  <span>{synthesis.support}</span>
+                  <span>{phrase(synthesis.support, synthesis.support_key, synthesis.support_params)}</span>
                 </span>
               )}
             </div>
@@ -189,25 +190,8 @@ export function FindingsCard({ brief }: { brief: Brief }) {
             </div>
           </div>
 
-          {(patterns.length > 0 || signals.length > 0 || impacts.length > 0) && (
+          {(signals.length > 0 || impacts.length > 0) && (
             <div className="synthesis-grid">
-              {patterns.length > 0 && (
-                <div className="synthesis-item-box" style={{ gridColumn: patterns.length > 0 && signals.length === 0 ? "1 / -1" : undefined }}>
-                  <div className="synthesis-subheading">
-                    <Icon name="trend" size={13} />
-                    <span>{t("brief.synthesis.patterns")}</span>
-                  </div>
-                  <div className="synthesis-patterns-list">
-                    {patterns.slice(0, 4).map((p, idx) => (
-                      <div key={idx} className="synthesis-pattern-row" dir="auto">
-                        <span className="synthesis-pattern-dot" />
-                        <span>{p}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {signals.length > 0 && (
                 <div className="synthesis-item-box">
                   <div className="synthesis-subheading">
@@ -230,9 +214,9 @@ export function FindingsCard({ brief }: { brief: Brief }) {
                             </Chip>
                           )}
                         </div>
-                        {sig.description && (
+                        {(sig.signal || sig.description) && (
                           <div className="s12 lh14" style={{ color: "rgba(226, 232, 240, 0.75)" }} dir="auto">
-                            {sig.description}
+                            {sig.signal || sig.description}
                           </div>
                         )}
                       </div>

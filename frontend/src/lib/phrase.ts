@@ -32,6 +32,24 @@ export function usePhrase() {
       const changeKey = `alert.change.${filled.change}` as TKey;
       if (t(changeKey) !== changeKey) filled.change = t(changeKey);
     }
+    if (lang === "ar" && typeof filled.metric_ar === "string") filled.metric = filled.metric_ar;
+    if (key === "brief.fixedVisual" && typeof filled.visual === "string") {
+      const visualKey = `visual.${filled.visual}` as TKey;
+      const word = t(visualKey);
+      if (word !== visualKey) filled.visual = word;
+    }
     return t(key as TKey, filled);
+  };
+}
+
+/** A stored string, or the Arabic side of `{en, ar}` when the page is Arabic. */
+export function useShown() {
+  const { lang } = useI18n();
+  return (value: unknown): string => {
+    if (value && typeof value === "object" && !Array.isArray(value) && "en" in (value as object)) {
+      const row = value as { en?: string; ar?: string };
+      return (lang === "ar" ? row.ar || row.en : row.en) || "";
+    }
+    return typeof value === "string" ? value : "";
   };
 }

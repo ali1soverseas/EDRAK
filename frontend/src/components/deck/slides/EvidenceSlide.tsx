@@ -37,7 +37,7 @@ export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
 
   return (
     <div className="slide">
-      <SlideHead no={5} name={L("Evidence and gaps", "الأدلة والفجوات")} title={L("How much to trust this, and what is missing", "إلى أي حد نثق بهذا، وما الناقص")}
+      <SlideHead no={5} name={L("Evidence and gaps", "الأدلة والفجوات")} title={L("How much to trust this, and what is missing", "إلى أي حد نثق بهذا، وما الذي ينقص")}
         aside={<button type="button" className="btn ghost sm" onClick={() => navigate(`/evidence/${brief.brief_id}`)}><Icon name="link" size={13} /> {L("All sources", "كل المصادر")}</button>} />
       <div className="slide-body">
         <div className="ev-top">
@@ -48,7 +48,7 @@ export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
               const pct = l.findings ? Math.round((l.verified / l.findings) * 100) : (l.required ? Math.round((l.met / l.required) * 100) : 0);
               return (
                 <div key={l.lens} className={`lens-cov ${l.collapsed ? "collapsed" : ""}`}>
-                  <span className="row g6"><span className={`lens-dot ${LENS[l.lens]?.css ?? ""}`} /><b className="s13">{L(LENS[l.lens]?.en ?? l.label, LENS[l.lens]?.ar ?? l.label)}</b></span>
+                  <span className="row g6"><span className={`lens-dot ${LENS[l.lens]?.css ?? ""}`} /><b className="s13">{L(LENS[l.lens]?.en ?? (typeof l.label === "string" ? l.label : l.label.en), LENS[l.lens]?.ar ?? (typeof l.label === "string" ? l.label : l.label.ar || l.label.en))}</b></span>
                   <span className="bar"><i style={{ width: `${pct}%` }} /></span>
                   <span className="s12 t2 mono" title={L("Findings verified", "نتائج موثقة")}>{`${l.verified}/${l.findings}`}</span>
                   <span className="s12 t3">
@@ -101,7 +101,7 @@ export function EvidenceSlide({ slide }: { slide: EvidenceSlideData }) {
                 onClick={() => g.card_key && brief.cards[g.card_key] && openCard(g.card_key)} onKeyDown={(e) => e.key === "Enter" && g.card_key && brief.cards[g.card_key] && openCard(g.card_key)}>
                 <span className="gap-icon"><Icon name="warning" size={16} /></span>
                 <div className="grow" style={{ minWidth: 0 }}>
-                  <div className="b6 s14 lh12" dir="auto">{g.title}{g.blocking && <span className="chip c-bad" style={{ marginInlineStart: 8 }}>{L("Required", "مطلوب")}</span>}</div>
+                  <div className="b6 s14 lh12" dir="auto">{phrase(g.title, g.title_key, g.title_params)}{g.blocking && <span className="chip c-bad" style={{ marginInlineStart: 8 }}>{L("Required", "مطلوب")}</span>}</div>
                   <div className="s13 t2" style={{ marginTop: 2 }}>{g.reason ? L(REASON[g.reason]?.[0] ?? g.reason, REASON[g.reason]?.[1] ?? g.reason) : g.explanation}</div>
                 </div>
                 <span className="chip c-line">{g.action === "provide_data" ? L("Provide data", "زوّد بيانات") : L("Re-run", "أعد التشغيل")}</span>

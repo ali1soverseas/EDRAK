@@ -179,7 +179,22 @@ def apply_copy(copy: Optional[ProposedCopy], cards: list[dict[str, Any]], signal
             rejected.append(card["card_key"])
         defn = reg.get(card.get("metric_id"))
         card["headline"] = headline or card["title"]
-        card["why_visual"] = why or (f"{defn.visual} is the fixed visual for {defn.label()}." if defn else None)
+        if headline or not card.get("title_key"):
+            card.pop("headline_key", None)
+            card.pop("headline_params", None)
+        else:
+            card["headline_key"] = card["title_key"]
+            card["headline_params"] = card.get("title_params") or {}
+        if why:
+            card["why_visual"] = why
+            card.pop("why_visual_key", None)
+            card.pop("why_visual_params", None)
+        elif defn:
+            card["why_visual"] = f"{defn.visual} is the fixed visual for {defn.label()}."
+            card["why_visual_key"] = "brief.fixedVisual"
+            card["why_visual_params"] = {"visual": defn.visual, "metric": defn.label(), "metric_ar": defn.label("ar")}
+        else:
+            card["why_visual"] = None
     by_sig = {s.signal_id: s for s in (copy.signals if copy else [])}
     written: list[str] = []
     for sig in signals:

@@ -2117,12 +2117,6 @@ class CrossSignalNodes:
                 ).lower()
             )
 
-            if signal.signal:
-
-                dominant_patterns.append(
-                    signal.signal
-                )
-
             dependencies.extend(
                 signal.dependencies
             )

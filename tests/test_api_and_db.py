@@ -433,6 +433,117 @@ def test_brief_numbers_are_per_workspace(isolated):
     asyncio.run(go())
 
 
+def test_a_brief_can_be_deleted_unless_a_decision_locked_it(client):
+    from edrak.db.repositories import analyses as analyses_repo
+    from edrak.db.repositories import briefs as briefs_repo
+    from edrak.db.repositories import runs as runs_repo
+
+    acct = _account(client)
+    ws = acct["workspace"]["workspace_id"]
+    user = acct["user"]["user_id"]
+
+    async def seed() -> tuple[str, str]:
+        async with connection.get_db() as db:
+            req = BusinessRequest(
+                goal="g", company_profile=CompanyProfile(name="Acme"),
+                business_context=BusinessContext(use_case=UseCase.COMPETITIVE_INTELLIGENCE),
+            )
+            await analyses_repo.create_request(
+                db, request=req, workspace_id=ws, created_by=user, title="Pricing", form={}, competitors=[],
+                markets=[], offering=None, target_customers=None, allowed_source_types=["web_search"], status="completed",
+            )
+            task = ResearchTask(
+                parent_request_id=req.request_id, worker=WorkerType.COMPETITOR_INTELLIGENCE, goal="g", focus="f",
+                company_profile=req.company_profile, business_context=req.business_context,
+            )
+            plan = ResearchPlan(request_id=req.request_id, tasks=[task])
+            await analyses_repo.save_plan(db, plan)
+            assert await analyses_repo.approve_plan(db, plan.plan_id, user_id=user)
+            await runs_repo.create_run(db, request_id=req.request_id, plan_id=plan.plan_id, triggered_by=user)
+            saved = await briefs_repo.save_brief(
+                db, workspace_id=ws, request_id=req.request_id, requested_by=user,
+                build=lambda bid, no: {
+                    "brief_id": bid, "brief_no": no, "title": "Pricing brief", "use_case": "competitive_intelligence",
+                    "summary": {"found": [{"text": "Prices moved"}]}, "evidence": [], "lenses": [],
+                },
+            )
+            brief_id = saved["id"]
+            await db.execute(
+                "INSERT INTO brief_cards (id, brief_id, card_key, version, component) VALUES ('card-1', ?, 'summary', 1, 'prose')",
+                (brief_id,),
+            )
+            await db.execute(
+                "INSERT INTO brief_cards (id, brief_id, card_key, version, component, supersedes_id) VALUES ('card-2', ?, 'summary', 2, 'prose', 'card-1')",
+                (brief_id,),
+            )
+            await db.execute(
+                "INSERT INTO action_plans (id, brief_id, workspace_id, option_key, version, status, document) VALUES ('plan-1', ?, ?, 'A', 1, 'draft', '{}')",
+                (brief_id, ws),
+            )
+            await db.execute(
+                "INSERT INTO brief_search (brief_id, kind, ref_id, card_version, text) VALUES (?, 'card', 'summary', 1, 'Prices moved')",
+                (brief_id,),
+            )
+            await db.execute(
+                "INSERT INTO notifications (id, workspace_id, user_id, kind, title, brief_id) VALUES ('note-1', ?, ?, 'brief_ready', 'Ready', ?)",
+                (ws, user, brief_id),
+            )
+            await db.execute(
+                "INSERT INTO chat_threads (id, workspace_id, user_id, kind, scope, brief_id) VALUES ('thread-1', ?, ?, 'ask_edrak', 'brief', ?)",
+                (ws, user, brief_id),
+            )
+            await db.commit()
+            return brief_id, req.request_id
+
+    brief_id, request_id = asyncio.run(seed())
+    deleted = client.delete(f"/api/briefs/{brief_id}")
+    assert deleted.status_code == 200, deleted.text
+    assert deleted.json() == {"status": "deleted"}
+    assert client.get(f"/api/briefs/{brief_id}").status_code == 404
+    assert client.get("/api/reports").json() == []
+    analyses = client.get("/api/analyses").json()
+    assert analyses[0]["analysis_id"] == request_id
+    assert analyses[0]["brief_id"] is None
+
+    db = sqlite3.connect(settings.EDRAK_DB_PATH)
+    db.row_factory = sqlite3.Row
+    assert db.execute("SELECT count(*) FROM briefs").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM brief_cards").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM action_plans").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM brief_search").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM notifications").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM chat_threads").fetchone()[0] == 0
+    assert db.execute("SELECT count(*) FROM business_requests").fetchone()[0] == 1
+    assert db.execute("SELECT action FROM audit_log WHERE target_id = ?", (brief_id,)).fetchone()[0] == "brief.deleted"
+
+    async def lock_another() -> str:
+        async with connection.get_db() as conn:
+            saved = await briefs_repo.save_brief(
+                conn, workspace_id=ws, request_id=request_id, requested_by=user,
+                build=lambda bid, no: {
+                    "brief_id": bid, "brief_no": no, "title": "Pricing brief", "use_case": "competitive_intelligence",
+                    "summary": {"found": [{"text": "Still true"}]}, "evidence": [], "lenses": [],
+                },
+            )
+            await conn.execute(
+                "INSERT INTO decisions (id, workspace_id, brief_id, title, recorded_by) VALUES ('dec-1', ?, ?, 'Hold prices', ?)",
+                (ws, saved["id"], user),
+            )
+            await conn.execute(
+                "INSERT INTO evidence_snapshots (id, decision_id, brief_id, source_count, worker_count, brief_content) VALUES ('snap-1', 'dec-1', ?, 0, 0, '{}')",
+                (saved["id"],),
+            )
+            await conn.commit()
+            return saved["id"]
+
+    locked_id = asyncio.run(lock_another())
+    refused = client.delete(f"/api/briefs/{locked_id}")
+    assert refused.status_code == 409, refused.text
+    assert client.get(f"/api/briefs/{locked_id}").status_code == 200
+    assert client.delete("/api/briefs/missing").status_code == 404
+    db.close()
+
+
 # ------------------------------------------------------------------ migration from v1
 
 

@@ -132,11 +132,11 @@ def _prompt(brief: dict[str, Any], option: dict[str, Any], note: Optional[str], 
     gaps = "\n".join(f"- {g['title']}: {g['explanation']}" for g in (brief.get("gaps_panel") or {}).get("gaps", [])[:15])
     risks = "\n".join(f"- {r.get('text')} (likelihood {r.get('likelihood')}, impact {r.get('impact')}); mitigation idea: {r.get('mitigation')}" for r in option.get("risks") or [])
     opps = "\n".join(f"- {o.get('text')}: {o.get('how_to_capture', '')}" for o in option.get("opportunities") or [])
-    alts = "\n".join(f"- {o['key']}: {o['title']} — {o.get('thesis', '')}" for o in others)
+    alts = "\n".join(f"- {o['key']}: {o['title']} — {o.get('description', '')}" for o in others)
     req = brief.get("request") or {}
     return (
         f"BUSINESS GOAL: {brief.get('question')}\nCOMPANY: {(req.get('company_profile') or {}).get('name')}\n"
-        f"CHOSEN OPTION {option.get('key')}: {option.get('title')}\nThesis: {option.get('thesis')}\n"
+        f"CHOSEN OPTION {option.get('key')}: {option.get('title')}\nDescription: {option.get('description')}\n"
         f"What we would do: {'; '.join(option.get('what_we_would_do') or [])}\nTrade-offs: {'; '.join(option.get('trade_offs') or [])}\n"
         f"Would change if: {option.get('would_change_if')}\nCost of waiting: {option.get('cost_of_waiting')}\n\n"
         f"OPPORTUNITIES OF THIS OPTION:\n{opps or '- none'}\n\nRISKS OF THIS OPTION:\n{risks or '- none'}\n\n"

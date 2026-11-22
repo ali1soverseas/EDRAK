@@ -126,7 +126,9 @@ def _apply_additions(path: Path) -> None:
             ).fetchall()
             for source_hash, target_lang, source_text, translated_text in rows:
                 arabic = str(translated_text or "").strip()
-                if not arabic or arabic == str(source_text or "").strip() or not re.search(r"[\u0600-\u06FF]", arabic):
+                source = str(source_text or "")
+                dropped_acronym = any(token not in arabic for token in re.findall(r"\b[A-Z]{2,}\b", source))
+                if not arabic or arabic == source.strip() or not re.search(r"[\u0600-\u06FF]", arabic) or dropped_acronym:
                     conn.execute(
                         "DELETE FROM text_translations WHERE source_hash = ? AND target_lang = ?",
                         (source_hash, target_lang),

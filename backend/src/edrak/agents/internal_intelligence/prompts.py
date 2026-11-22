@@ -45,6 +45,7 @@ STRICT GROUNDING & FIDELITY RULES
    - Each finding states ONE single idea or metric. Do not bundle multiple cohort figures (e.g. keep >$100k cohort and >$1M cohort as separate findings).
    - Keep claims about different products, tiers or deployment options separate.
    - Name the exact scope (e.g. a named product, a named tier, a named market).
+6. STATEMENT: the generated statement should contain simple english.
 
 CATEGORIES
 - "product_feature": what our offerings do, architecture, capabilities, governance, privacy.

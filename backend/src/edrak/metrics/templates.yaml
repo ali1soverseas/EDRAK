@@ -9,9 +9,10 @@ templates:
     lens_weights: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.7, market_intelligence: 0.5}
     collapse_below_evidence: 2
     headline_framing: "Say where the company stands against its named competitors, using only the figures and signals given, and the one move that matters most."
-    metrics_theme: {title: "Us versus them", subtitle: "Our figures next to each competitor's: price, scale, revenue and what customers say."}
+    metrics_theme: {title: "Us versus them", title_key: brief.theme.versus, subtitle: "Our figures next to each competitor's: price, scale, revenue and what customers say.", subtitle_key: brief.theme.versus.sub}
     signal_emphasis: {competitor_intelligence: 1.0, customer_trends: 0.8, internal_intelligence: 0.6, market_intelligence: 0.5}
     decision_framing: "Frame each option as a competitive response: how the company positions against the named competitors (for example lead, match, differentiate, or hold and watch)."
+    decision_framing_key: brief.framing.compete
   market_entry_expansion:
     kpi_strip: [market_size, market_cagr, adoption_rate, market_concentration, segment_growth, regulation_events, search_interest, price_per_tier, share_of_voice, capacity]
     required: [market_size, market_cagr, adoption_rate, regulation_events, capacity]
@@ -20,9 +21,10 @@ templates:
     lens_weights: {market_intelligence: 1.0, competitor_intelligence: 0.7, customer_trends: 0.6, internal_intelligence: 0.8}
     collapse_below_evidence: 2
     headline_framing: "Say whether the market looks worth entering, using only the figures and signals given, and the condition that matters most."
-    metrics_theme: {title: "The market", subtitle: "Size, growth, adoption and the rules that apply, with our capacity to deliver."}
+    metrics_theme: {title: "The market", title_key: brief.theme.market, subtitle: "Size, growth, adoption and the rules that apply, with our capacity to deliver.", subtitle_key: brief.theme.market.sub}
     signal_emphasis: {market_intelligence: 1.0, internal_intelligence: 0.8, competitor_intelligence: 0.7, customer_trends: 0.6}
     decision_framing: "Frame each option as an entry path: when and how to enter (for example enter now, enter through a partner or a pilot, or wait for a condition)."
+    decision_framing_key: brief.framing.enter
   product_launch:
     kpi_strip: [search_interest, top_pain_points, switching_intent, sentiment_split, price_per_tier, own_price, market_size, adoption_rate, capacity, roadmap_items]
     required: [search_interest, top_pain_points, price_per_tier, own_price, capacity]
@@ -31,6 +33,7 @@ templates:
     lens_weights: {customer_trends: 1.0, competitor_intelligence: 0.8, market_intelligence: 0.6, internal_intelligence: 0.8}
     collapse_below_evidence: 2
     headline_framing: "Say whether customers want this offering now, using only the figures and signals given, and what the company must be ready to ship."
-    metrics_theme: {title: "Demand and price room", subtitle: "What customers search for and complain about, and where competitors price."}
+    metrics_theme: {title: "Demand and price room", title_key: brief.theme.demand, subtitle: "What customers search for and complain about, and where competitors price.", subtitle_key: brief.theme.demand.sub}
     signal_emphasis: {customer_trends: 1.0, competitor_intelligence: 0.8, internal_intelligence: 0.7, market_intelligence: 0.6}
     decision_framing: "Frame each option as a launch choice: what to launch, for whom and at what price position (for example launch broadly, launch a narrow first version, or validate demand first)."
+    decision_framing_key: brief.framing.launch

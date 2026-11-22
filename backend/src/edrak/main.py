@@ -63,7 +63,11 @@ async def lifespan(app: FastAPI):
         logger.exception("Could not check OCR availability")
 
     scheduler = asyncio.create_task(run_forever())
+    from edrak.i18n.localize import schedule_brief_backfill
+
+    backfill = schedule_brief_backfill()
     yield
+    backfill.cancel()
     scheduler.cancel()
 
 

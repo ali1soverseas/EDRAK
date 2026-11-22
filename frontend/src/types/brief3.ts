@@ -13,10 +13,18 @@ export interface BriefCard {
   metric_id: string | null;
   entity: string;
   title: string;
+  title_key?: string | null;
+  title_params?: Record<string, string | number>;
   headline: string | null;
+  headline_key?: string | null;
+  headline_params?: Record<string, string | number>;
   why_visual: string | null;
+  why_visual_key?: string | null;
+  why_visual_params?: Record<string, string | number>;
   status: CardStatus;
   caveat: string | null;
+  caveat_key?: string | null;
+  caveat_params?: Record<string, string | number>;
   slots: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   refs: number[];
   metric_uids: string[];
@@ -37,17 +45,19 @@ export interface KpiItem {
   comparator: Comparator | null; uid: string | null;
 }
 
-export interface SectionInfo { lens: string; label: string; weight: number; cards: string[]; gap_cards: string[]; evidence_count: number; collapsed: boolean }
-export interface GapItem { card_key: string; metric_id: string; entity: string; title: string; blocking: boolean; reason: string; explanation: string }
+export interface SectionInfo { lens: string; label: string | { en: string; ar?: string }; weight: number; cards: string[]; gap_cards: string[]; evidence_count: number; collapsed: boolean }
+export interface GapItem { card_key: string; metric_id: string; entity: string; title: string; title_key?: string | null; title_params?: Record<string, string | number>; blocking: boolean; reason: string; explanation: string; explanation_key?: string | null }
 export interface SignalView {
   signal_id: string; title: string; signal: string; interpretation: string | null; why_it_matters: string | null; refs: number[]; domains: string[];
+  title_key?: string | null; title_params?: Record<string, string | number>;
+  signal_key?: string | null; signal_params?: Record<string, string | number>;
   type?: string | null; urgency?: string | null; emphasis?: number; confidence?: number | null; evidence_gaps?: string[];
   sides?: { value: string; uid: string; ref: number | null }[];
 }
 
 export interface OptionItem { text: string; how_to_capture?: string; likelihood?: string; impact?: string; early_warning?: string; mitigation?: string; metric_uids?: string[]; evidence_refs?: number[] }
 export interface BriefOption {
-  option_id: string; key: string; title: string; thesis: string; description: string; what_we_would_do: string[]; trade_offs: string[];
+  option_id: string; key: string; title: string; description: string; what_we_would_do: string[]; trade_offs: string[];
   opportunities: OptionItem[]; risks: OptionItem[]; would_change_if: string; cost_of_waiting?: string;
   supporting_signal_ids: string[]; metric_uids?: string[]; evidence_refs?: number[]; guardrail?: string;
 }
@@ -60,7 +70,7 @@ export interface BriefEvidenceItem {
 export interface BriefV3 {
   brief_id: string; brief_no: number; analysis_id: string; analysis_title: string; title: string; question: string; use_case: string;
   lifecycle: string; evidence_status: string; document_version: number; created_at: string; partial: boolean;
-  headline: string; summary_text: string;
+  headline: string;
   kpis: KpiItem[];
   coverage: { score: number | null; met: number; required: number; items: { metric_id: string; entity: string; met: boolean }[] };
   gaps_panel: { gaps: GapItem[]; collapsed_lenses: string[] };
@@ -83,9 +93,9 @@ export interface BriefV3 {
 export interface KeyFinding { text: string; lens: string; finding_id: string; refs: number[]; reliability: number }
 export interface ComparisonCell { entity: string; value: string; label: string | null; period: string | null; uid: string; ref: number | null; status: string }
 export interface ComparisonRow { metric_id: string; name: { en: string; ar?: string }; ours: ComparisonCell[]; theirs: ComparisonCell[]; comparable: boolean; note: string | null; note_key?: string | null }
-export interface LensCoverage { lens: string; label: string; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
+export interface LensCoverage { lens: string; label: string | { en: string; ar?: string }; sources: number; findings: number; verified: number; required: number; met: number; failed: boolean; collapsed: boolean }
 export interface DeckGap {
-  kind: "figure" | "research"; title: string; reason: string | null; explanation: string | null;
+  kind: "figure" | "research"; title: string; title_key?: string | null; title_params?: Record<string, string | number>; reason: string | null; explanation: string | null;
   explanation_key?: string | null; explanation_params?: Record<string, string | number>;
   blocking: boolean; card_key: string | null; action: "rerun" | "provide_data"; lens?: string;
 }
@@ -97,11 +107,11 @@ export interface SummarySlideData {
   counts?: BriefV3["counts"]; unmet: string[];
 }
 export interface MetricsSlideData {
-  id: "business_metrics"; title: string; subtitle: string; kpis: string[]; cards: string[]; gap_cards: string[];
+  id: "business_metrics"; title: string; title_key?: string | null; subtitle: string; subtitle_key?: string | null; kpis: string[]; cards: string[]; gap_cards: string[];
   comparison: ComparisonRow[]; company: string; collapsed: boolean; collapsed_reason: string | null;
   collapsed_reason_key?: string | null;
 }
-export interface SignalsSlideData { id: "signals"; title: string; items: string[]; lenses: { lens: string; label: string }[]; emphasis: Record<string, number> }
+export interface SignalsSlideData { id: "signals"; title: string; items: string[]; lenses: { lens: string; label: string | { en: string; ar?: string } }[]; emphasis: Record<string, number> }
 export interface DecisionPersonalization {
   status: "applied" | "uncertain";
   criterion?: string;
@@ -110,7 +120,7 @@ export interface DecisionPersonalization {
   aspects?: string[];
   decisions: { id: string; title: string; option: string | null }[];
 }
-export interface DecisionsSlideData { id: "decisions"; title: string; framing: string; options: string[]; priorities_known: boolean; personalization?: DecisionPersonalization | null }
+export interface DecisionsSlideData { id: "decisions"; title: string; framing: string; framing_key?: string | null; options: string[]; priorities_known: boolean; personalization?: DecisionPersonalization | null }
 export interface EvidenceSlideData {
   id: "evidence_gaps"; title: string; coverage: BriefV3["coverage"]; by_lens: LensCoverage[];
   source_mix: { total: number; internal: number; external: number; by_reliability: Record<string, number>; by_kind: Record<string, number> };

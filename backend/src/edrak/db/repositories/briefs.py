@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sqlite3
 from typing import Any, Callable, Optional
 
 import aiosqlite
@@ -46,7 +47,7 @@ async def save_brief(
     evidence_status = document.get("evidence_status") or ("partial" if document.get("partial") else "verified")
     if evidence_status not in ("verified", "partial", "insufficient", "failed"):
         evidence_status = "partial"
-    summary = document.get("summary_text") or _summary_text(document.get("summary"))
+    summary = document.get("headline") or _summary_text(document.get("summary"))
     await db.execute(
         """
         INSERT INTO briefs (id, workspace_id, request_id, number, title, use_case, language, summary, evidence_status,
@@ -116,3 +117,42 @@ async def list_briefs(db: aiosqlite.Connection, workspace_id: str) -> list[dict[
 async def set_lifecycle(db: aiosqlite.Connection, brief_id: str, lifecycle: str) -> None:
     await db.execute("UPDATE briefs SET lifecycle = ? WHERE id = ?", (lifecycle, brief_id))
     await db.commit()
+
+
+async def delete_brief(db: aiosqlite.Connection, brief_id: str, workspace_id: str) -> str:
+    """Remove a brief and the rows that hang off it.
+
+    Returns ``deleted``, ``missing``, or ``locked``. A recorded decision keeps an evidence
+    snapshot that the database will not delete, so that brief stays.
+    """
+    row = await get_brief(db, brief_id, workspace_id)
+    if not row:
+        return "missing"
+    locked = await fetch_one(
+        db,
+        "SELECT 1 AS locked FROM evidence_snapshots WHERE brief_id = ? UNION ALL SELECT 1 FROM decisions WHERE brief_id = ? LIMIT 1",
+        (brief_id, brief_id),
+    )
+    if locked:
+        return "locked"
+    try:
+        # Card and plan versions point at each other. Clear those links so the cascade can finish.
+        card_ids = [r["id"] for r in await fetch_all(db, "SELECT id FROM brief_cards WHERE brief_id = ?", (brief_id,))]
+        plan_ids = [r["id"] for r in await fetch_all(db, "SELECT id FROM action_plans WHERE brief_id = ?", (brief_id,))]
+        if card_ids:
+            marks = ",".join("?" * len(card_ids))
+            await db.execute(f"UPDATE brief_cards SET supersedes_id = NULL WHERE supersedes_id IN ({marks})", card_ids)
+        if plan_ids:
+            marks = ",".join("?" * len(plan_ids))
+            await db.execute(f"UPDATE action_plans SET supersedes_id = NULL WHERE supersedes_id IN ({marks})", plan_ids)
+            await db.execute(f"UPDATE decisions SET action_plan_id = NULL WHERE action_plan_id IN ({marks})", plan_ids)
+        await db.execute("DELETE FROM brief_search WHERE brief_id = ?", (brief_id,))
+        cursor = await db.execute("DELETE FROM briefs WHERE id = ? AND workspace_id = ?", (brief_id, workspace_id))
+        if cursor.rowcount != 1:
+            await db.rollback()
+            return "missing"
+        await db.commit()
+    except sqlite3.IntegrityError:
+        await db.rollback()
+        return "locked"
+    return "deleted"

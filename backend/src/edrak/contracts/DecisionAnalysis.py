@@ -161,7 +161,7 @@ class OpportunityAssessment(ContractModel):
     opportunity_id: NonBlankStr = Field(default_factory=new_id)
     title: NonBlankStr
     description: NonBlankStr
-    business_rationale: NonBlankStr
+    rationale: NonBlankStr
     potential_impact: NonBlankStr
     strategic_fit: AssessmentLevel
     feasibility: AssessmentLevel
@@ -185,7 +185,7 @@ class RiskAssessment(ContractModel):
     risk_id: NonBlankStr = Field(default_factory=new_id)
     title: NonBlankStr
     description: NonBlankStr
-    business_rationale: NonBlankStr
+    rationale: NonBlankStr
 
     potential_consequences: list[NonBlankStr] = Field(
         default_factory=list

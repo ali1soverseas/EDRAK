@@ -228,6 +228,7 @@ def build_brief(
     # Build gaps
     gaps: list[dict[str, Any]] = []
     seen_gaps: set[str] = set()
+    from edrak.briefing.deck import internal_gap
 
     for w_val in workers:
         wr = result_by_worker.get(w_val)
@@ -235,7 +236,7 @@ def build_brief(
             for g in wr.gaps:
                 clean = g.strip()
                 norm = clean.lower()
-                if norm and norm not in seen_gaps:
+                if norm and norm not in seen_gaps and not internal_gap(clean):
                     seen_gaps.add(norm)
                     gaps.append({"text": clean, "reported_by": w_val})
 
@@ -254,7 +255,7 @@ def build_brief(
     for idx, opt in enumerate((da.get("options") or [])[:3]):
         options.append({
             "option_id": f"opt-{idx + 1}", "key": opt.get("key") or keys[idx], "title": opt.get("title") or f"Option {keys[idx]}",
-            "description": opt.get("thesis") or "", "thesis": opt.get("thesis") or "",
+            "description": opt.get("description") or opt.get("thesis") or "",
             "what_we_would_do": opt.get("what_we_would_do") or [], "trade_offs": opt.get("trade_offs") or [],
             "opportunities": opt.get("opportunities") or [], "risks": opt.get("risks") or [],
             "would_change_if": opt.get("would_change_if") or "", "cost_of_waiting": opt.get("cost_of_waiting") or "",
@@ -267,7 +268,7 @@ def build_brief(
             rec = qr.get("recommendation") or {}
             options.append({
                 "option_id": f"opt-{idx + 1}", "key": keys[idx], "title": (rec.get("decision") or f"Option {keys[idx]}")[:120],
-                "description": rec.get("decision") or "", "thesis": rec.get("decision") or "", "supported_by": rec.get("rationale") or "",
+                "description": rec.get("decision") or "", "supported_by": rec.get("rationale") or "",
                 "would_change_if": "", "opportunities": [{"text": t} for t in rec.get("opportunities") or []],
                 "risks": [{"text": t} for t in rec.get("risks") or []], "what_we_would_do": rec.get("actions") or [],
                 "supporting_signal_ids": rec.get("supporting_signal_ids") or [], "metric_refs": [], "trade_offs": [],
@@ -278,7 +279,7 @@ def build_brief(
         for r in rows or []:
             if isinstance(r, dict) and r.get("title"):
                 out.append({"kind": kind, "title": r["title"], "description": r.get("description", ""),
-                            "rationale": r.get("business_rationale", "")})
+                            "rationale": r.get("rationale", "")})
         return out
 
     opportunities = _items(da.get("opportunities"), "opportunity")
@@ -297,24 +298,38 @@ def build_brief(
     synthesis = None
     if cross_signal:
         raw_summary = cross_signal.get("summary")
-        patterns = themes = impacts = []
+        themes: list[str] = []
+        impacts: list[str] = []
         statement = ""
+        signals = cross_signal.get("signals") or []
+        signal_lines = [str(s.get("signal")).strip() for s in signals if isinstance(s, dict) and str(s.get("signal") or "").strip()]
         if isinstance(raw_summary, dict):
-            patterns = [str(p) for p in (raw_summary.get("dominant_patterns") or []) if str(p).strip()]
             themes = [str(p) for p in (raw_summary.get("strategic_themes") or []) if str(p).strip()]
             impacts = [str(p) for p in (raw_summary.get("business_impacts") or []) if str(p).strip()]
-            statement = " ".join(patterns or themes or impacts)
+            statement = " ".join(signal_lines or themes or impacts)
         elif isinstance(raw_summary, str):
             statement = raw_summary
-        signals = cross_signal.get("signals") or []
         if statement or signals:
+            shown = []
+            for s in signals[:4] if isinstance(signals, list) else []:
+                if isinstance(s, dict):
+                    shown.append({k: v for k, v in s.items() if k != "implications"})
+                else:
+                    shown.append(s)
+            n_signals = len(signals)
+            fallback = not statement and bool(signals)
             synthesis = {
-                "statement": statement or f"{len(signals)} pattern(s) connect findings across workers.",
+                "statement": statement or f"{n_signals} signal(s) connect findings across workers.",
                 "highlight": signals[0].get("title", "") if signals and isinstance(signals[0], dict) else "",
                 "support": f"From {len(evidence_list)} sources.",
-                "patterns": patterns, "themes": themes, "impacts": impacts,
-                "signals": signals[:4] if isinstance(signals, list) else [],
+                "support_key": "brief.fromSources",
+                "support_params": {"n": len(evidence_list)},
+                "themes": themes, "impacts": impacts,
+                "signals": shown,
             }
+            if fallback:
+                synthesis["statement_key"] = "brief.signalsConnect.one" if n_signals == 1 else "brief.signalsConnect.other"
+                synthesis["statement_params"] = {"n": n_signals}
 
     # Card 3: the comparison matrix from the competitor worker, with E-numbers for its evidence.
     comparison = None
@@ -408,7 +423,7 @@ def build_brief(
         "requested_by": requested_by,
         "partial": is_partial,
         "evidence_status": evidence_status,
-        "summary_text": exec_summary,
+        "headline": exec_summary,
         "counts": {"findings": total_n, "verified": verified_n, "sources": len(evidence_list), "workers": len(workers)},
         "request": request.model_dump(mode="json"),
         "orchestration": orchestration.model_dump(mode="json"),
@@ -432,7 +447,8 @@ def build_brief(
         _link_options(options, v3)
         # Typed half of the brief: headline, KPI strip, coverage, cards. The old keys stay so v2 readers still work.
         document.update(v3)
-        document["summary_text"] = v3.get("headline") or document["summary_text"]
+        if not document.get("headline"):
+            document["headline"] = exec_summary
         from edrak.briefing.deck import build_deck
 
         document["deck"] = build_deck(document)

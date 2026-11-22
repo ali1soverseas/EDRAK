@@ -143,6 +143,23 @@ async def index_brief(db: aiosqlite.Connection, brief_id: str, document: dict[st
     return len(docs)
 
 
+def drop_vector_index(brief_id: str) -> None:
+    """Remove the brief's Chroma collection. A missing store or collection is fine."""
+    try:
+        import chromadb
+        from chromadb.config import Settings as ChromaSettings
+
+        from edrak.core.config import settings
+
+        path = settings.get_absolute_vector_store_path()
+        if not path.exists():
+            return
+        client = chromadb.PersistentClient(path=str(path), settings=ChromaSettings(anonymized_telemetry=False))
+        client.delete_collection(f"brief_{brief_id}")
+    except Exception as exc:  # noqa: BLE001 - the brief is already gone; search can lose the vectors
+        logger.info("Vector index not removed for brief %s: %s", brief_id, exc)
+
+
 async def index_card_version(db: aiosqlite.Connection, brief_id: str, card: dict[str, Any], version: int) -> None:
     """A new card version replaces the old one in search; the old row stays in brief_cards."""
     doc = card_doc(card, version)

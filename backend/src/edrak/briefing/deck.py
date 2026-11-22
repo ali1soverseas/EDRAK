@@ -12,12 +12,38 @@ numbers). Nothing here writes text a model produced or a number that is not in t
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 from typing import Any
 
 from edrak.briefing.layout import LENS_LABELS
 from edrak.metrics.registry import get_registry
 
+# Worker bookkeeping. These are not missing facts a person can supply.
+_INTERNAL_GAP = re.compile(
+    r"branch reported an error:"
+    r"|platform\(s\) have at least \d+ items; at least \d+ are needed"
+    r"|item\(s\) in '[^']+'; at least \d+ are needed"
+    r"|the run stopped at its time limit of [\d.]+ s",
+    re.IGNORECASE,
+)
+
+
+def internal_gap(text: str) -> bool:
+    """True for a runtime or sample-size note that should not appear as a gap."""
+    return bool(_INTERNAL_GAP.search(text or ""))
+
+
+def omit_internal_gaps(document: dict[str, Any]) -> None:
+    """Drop those notes from a saved brief, including a deck that was stored with them."""
+    document["gaps"] = [g for g in document.get("gaps") or [] if not internal_gap(str(g.get("text") or ""))]
+    for slide in (document.get("deck") or {}).get("slides") or []:
+        if slide.get("id") != "evidence_gaps":
+            continue
+        slide["gaps"] = [
+            g for g in slide.get("gaps") or []
+            if g.get("kind") != "research" or not internal_gap(str(g.get("title") or ""))
+        ]
 DECK_VERSION = 1
 SLIDES = ("summary", "business_metrics", "signals", "decisions", "evidence_gaps")
 KEY_FINDINGS = 5
@@ -25,8 +51,8 @@ TOP_SIGNALS = 3
 OWN_IDS = {"price_per_tier": "own_price"}
 
 
-def _lens_label(lens: str) -> str:
-    return LENS_LABELS.get(lens, {}).get("en") or lens.replace("_", " ")
+def _lens_label(lens: str) -> dict[str, str]:
+    return LENS_LABELS.get(lens) or {"en": lens.replace("_", " "), "ar": lens.replace("_", " ")}
 
 
 def _key_findings(doc: dict[str, Any], template: Any) -> list[dict[str, Any]]:
@@ -98,10 +124,13 @@ def _source_mix(doc: dict[str, Any]) -> dict[str, Any]:
 def _gaps(doc: dict[str, Any]) -> list[dict[str, Any]]:
     out = []
     for g in (doc.get("gaps_panel") or {}).get("gaps") or []:
-        out.append({"kind": "figure", "title": g["title"], "reason": g.get("reason"), "explanation": g.get("explanation"),
+        out.append({"kind": "figure", "title": g["title"], "title_key": g.get("title_key"), "title_params": g.get("title_params") or {},
+                    "reason": g.get("reason"), "explanation": g.get("explanation"), "explanation_key": g.get("explanation_key"),
                     "blocking": g.get("blocking", False), "card_key": g.get("card_key"), "metric_id": g.get("metric_id"),
                     "entity": g.get("entity"), "action": "provide_data" if g.get("reason") == "not_publicly_disclosed" else "rerun"})
     for g in doc.get("gaps") or []:
+        if internal_gap(str(g.get("text") or "")):
+            continue
         reported = str(g.get("reported_by") or "")
         if reported == "verification":
             explanation = "Reported by Verification as missing information."
@@ -146,7 +175,7 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
 
     summary = {
         "id": "summary", "title": "Summary", "title_key": "brief.sec.1.title",
-        "headline": doc.get("headline") or doc.get("summary_text") or doc.get("question"),
+        "headline": doc.get("headline") or doc.get("question"),
         "question": doc.get("question"), "use_case": template.use_case,
         "key_findings": _key_findings(doc, template),
         "top_signals": [s["signal_id"] for s in signals[:TOP_SIGNALS]],
@@ -160,7 +189,10 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
     }
     business = {
         "id": "business_metrics", "title": template.metrics_theme.get("title") or "Business metrics",
-        "subtitle": template.metrics_theme.get("subtitle") or "", "kpis": kpi_keys, "cards": [c["card_key"] for c in metric_cards],
+        "title_key": template.metrics_theme.get("title_key"),
+        "subtitle": template.metrics_theme.get("subtitle") or "",
+        "subtitle_key": template.metrics_theme.get("subtitle_key"),
+        "kpis": kpi_keys, "cards": [c["card_key"] for c in metric_cards],
         "gap_cards": gap_cards, "comparison": comparison, "company": company,
         "collapsed": metrics_empty,
         "collapsed_reason": "No figure could be found and checked for this question." if metrics_empty else None,
@@ -176,6 +208,7 @@ def build_deck(doc: dict[str, Any]) -> dict[str, Any]:
     decisions = {
         "id": "decisions", "title": "Decisions", "title_key": "deck.decisions",
         "framing": template.decision_framing,
+        "framing_key": template.decision_framing_key or None,
         "options": [o["key"] for o in doc.get("options") or []],
         "priorities_known": _priorities_known(doc),
         "personalization": doc.get("personalization"),

@@ -8,7 +8,7 @@ from datetime import date
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, ValidationError
 
 from edrak.action_plan.contracts import ActionPlan
@@ -122,7 +122,7 @@ def _spawn(coro: Any) -> None:
 
 
 @router.get("/briefs/{brief_id}/action-plans")
-async def list_plans(brief_id: str, request: Request, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)) -> list[dict[str, Any]]:
+async def list_plans(brief_id: str, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)) -> list[dict[str, Any]]:
     await _brief_doc(db, session, brief_id)
     rows = await plans_repo.for_brief(db, brief_id)
     keys = sorted({r["option_key"] for r in rows})
@@ -131,12 +131,6 @@ async def list_plans(brief_id: str, request: Request, session: SessionOut = Depe
         versions = [r for r in rows if r["option_key"] == k]
         live = next((r for r in reversed(versions) if r["status"] != "superseded"), versions[-1])
         out.append(_present(live, versions))
-    from edrak.i18n.localize import ACTION_KEYS, localize_generated, ui_language
-
-    lang = ui_language(request)
-    for item in out:
-        if item.get("document"):
-            item["document"] = await localize_generated(db, item["document"], lang, keys=ACTION_KEYS)
     return out
 
 
@@ -171,17 +165,12 @@ def check_plan_text(text: str) -> Optional[str]:
 
 
 @router.get("/action-plans/{plan_id}")
-async def get_plan(plan_id: str, request: Request, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)) -> dict[str, Any]:
-    from edrak.i18n.localize import ACTION_KEYS, localize_generated, ui_language
-
+async def get_plan(plan_id: str, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)) -> dict[str, Any]:
     row = await plans_repo.get(db, plan_id, session.workspace.workspace_id)
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
     versions = [r for r in await plans_repo.for_brief(db, row["brief_id"]) if r["option_key"] == row["option_key"]]
-    presented = _present(row, versions)
-    if presented.get("document"):
-        presented["document"] = await localize_generated(db, presented["document"], ui_language(request), keys=ACTION_KEYS)
-    return presented
+    return _present(row, versions)
 
 
 @router.put("/action-plans/{plan_id}")

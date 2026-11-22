@@ -79,10 +79,14 @@ async def _require(db: aiosqlite.Connection, session: SessionOut, analysis_id: s
 
 @router.get("", response_model=list[AnalysisSummaryOut])
 async def list_analyses(
+    request: Request,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> list[AnalysisSummaryOut]:
+    from edrak.i18n.localize import localize_generated, ui_language
+
     rows = await analyses_repo.list_requests(db, session.workspace.workspace_id)
+    rows = await localize_generated(db, rows, ui_language(request), keys={"title"}, fill=False)
     return [
         AnalysisSummaryOut(
             analysis_id=r["request_id"], title=r["title"], use_case=UseCase(r["use_case"]), status=r["status"],
@@ -104,11 +108,8 @@ async def get_analysis(
     from edrak.i18n.localize import localize_generated, ui_language
 
     detail = await _detail(db, await _require(db, session, analysis_id))
-    if ui_language(request) != "ar" or detail.plan is None:
-        return detail
-    data = detail.model_dump(mode="json")
-    data["plan"] = await localize_generated(db, data["plan"], "ar", keys=frozenset({"rationale", "focus"}))
-    return AnalysisDetailOut.model_validate(data)
+    shown = await localize_generated(db, {"title": detail.title}, ui_language(request), keys={"title"}, fill=False)
+    return detail.model_copy(update={"title": shown["title"]})
 
 
 async def draft(

@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
+import { usePhrase } from "../../lib/phrase";
 import { useL } from "../../lib/useL";
 import type { BriefCard, CardStatus } from "../../types/brief3";
 import { CardBody } from "../dashboard/charts";
@@ -59,26 +60,28 @@ export function AskButton({ onAsk, label }: { onAsk: () => void; label: string }
 /** A typed card: title, value or chart, period, comparator, evidence, status, and a chat button. */
 export function InsightCard({ card, compact = false }: { card: BriefCard; compact?: boolean }) {
   const L = useL();
+  const phrase = usePhrase();
   const { openCard, ask } = useDeck();
   const gap = card.component === "gap";
+  const title = phrase(card.title, card.title_key, card.title_params);
   return (
-    <Clickable onOpen={() => openCard(card.card_key)} label={card.title}
+    <Clickable onOpen={() => openCard(card.card_key)} label={title}
       className={`icard st-${card.status} comp-${card.component} ${compact ? "compact" : ""}`}>
       <header className="icard-head">
         <div className="stack grow" style={{ minWidth: 0 }}>
-          <span className="eyebrow ellip">{card.title}</span>
+          <span className="eyebrow ellip">{title}</span>
           {!gap && card.headline && card.headline !== card.title && <span className="icard-headline" dir="auto">{card.headline}</span>}
         </div>
         <StatusBadge status={card.status} />
       </header>
       <div className="icard-body"><CardBody card={card} /></div>
-      {card.caveat && <p className="icard-caveat"><Icon name="info" size={12} /> <span>{card.caveat}</span></p>}
+      {card.caveat && <p className="icard-caveat"><Icon name="info" size={12} /> <span>{phrase(card.caveat, card.caveat_key, card.caveat_params)}</span></p>}
       <footer className="icard-foot">
         <EvChips refs={card.refs} max={compact ? 3 : 5} />
         {card.derived && <span className="chip c-line" title={L("Computed by Edrak from stored figures. Open the card for the formula.", "حُسب من الأرقام المخزنة. افتح البطاقة لرؤية المعادلة.")}>ƒ {L("derived", "مشتق")}</span>}
         {card.version && card.version > 1 ? <span className="chip c-blue">v{card.version}</span> : null}
         <span className="grow" />
-        {!gap && <AskButton label={L("Ask about this card", "اسأل عن هذه البطاقة")} onAsk={() => ask({ cardKey: card.card_key, title: card.title })} />}
+        {!gap && <AskButton label={L("Ask about this card", "اسأل عن هذه البطاقة")} onAsk={() => ask({ cardKey: card.card_key, title })} />}
         <Icon name="chevron" size={14} className="icard-go" flip />
       </footer>
     </Clickable>

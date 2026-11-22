@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { deleteBrief } from "../../lib/deleteBrief";
 import { useFullscreen } from "../../lib/useFullscreen";
 import { modKey } from "../../lib/platform";
 import { useI18n } from "../../i18n";
@@ -163,6 +164,7 @@ export function BriefDeck({ initial }: { initial: BriefV3 }) {
                   <button type="button" className="list-row" onClick={() => navigate(`/evidence/${brief.brief_id}`)}><Icon name="link" size={14} /> {L("All sources", "كل المصادر")}</button>
                   {lifecycle === "ready" && <button type="button" className="list-row" onClick={() => void edrak.reviewBrief(brief.brief_id, "accepted_as_reviewed").then(() => { setLifecycle("reviewed"); setMenu(false); })}><Icon name="check" size={14} /> {L("Accept as reviewed", "اعتمد كمراجَع")}</button>}
                   {lifecycle === "decided" && <button type="button" className="list-row" onClick={() => void edrak.undoDecision(brief.brief_id).then(() => { setMenu(false); reload(); })}><Icon name="refresh" size={14} /> {L("Undo decision", "تراجع عن القرار")}</button>}
+                  <button type="button" className="list-row" onClick={() => { setMenu(false); void deleteBrief(brief.brief_id, L).then((gone) => { if (gone) navigate("/reports"); }); }}><Icon name="trash" size={14} /> {L("Delete brief", "احذف الموجز")}</button>
                 </div>
               )}
             </div>

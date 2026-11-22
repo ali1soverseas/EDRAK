@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { PageChrome } from "../components/shell/AppShell";
 import { Icon } from "../components/ui/Icon";
 import { useI18n, type TKey } from "../i18n";
+import { deleteBrief } from "../lib/deleteBrief";
 import { usePhrase } from "../lib/phrase";
 import { useL } from "../lib/useL";
 import { edrak, type Dict } from "../services/edrak";
@@ -42,12 +43,17 @@ export function Reports() {
   const [diff, setDiff] = useState<Dict | null>(null);
   useEffect(() => { void edrak.reports(useCase ? `?use_case=${useCase}` : "").then(setRows).catch(() => setRows([])); }, [useCase, lang]);
   const pick = (id: string) => setCompare((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id].slice(-2)));
+  const remove = async (id: string) => {
+    if (!(await deleteBrief(id, L))) return;
+    setRows((current) => current?.filter((row) => row.id !== id) ?? null);
+    setCompare((current) => current.filter((rowId) => rowId !== id));
+  };
   useEffect(() => { if (compare.length === 2) void edrak.compare(compare[0], compare[1]).then(setDiff); else setDiff(null); }, [compare]);
 
   return (
     <>
       <PageChrome crumbs={[{ label: L("Reports", "التقارير") }]} title={L("Reports", "التقارير")} />
-      <div className="stack gap16" style={{ maxWidth: 1180 }}>
+      <div className="stack gap16" style={{ maxWidth: 1320 }}>
         <Header eyebrow={L("Reports", "التقارير")} title={L("Every brief.", "كل الموجزات.")}>
           <div className="row g8">
             <select className="input" style={{ width: 230 }} value={useCase} onChange={(e) => setUseCase(e.target.value)}>
@@ -70,6 +76,7 @@ export function Reports() {
                 <span className="chip c-line">{r.lifecycle}</span>
                 <span className="s12 muted">{formatWhen(r.generated_at)}</span>
                 <button type="button" className="btn ghost" style={{ height: 26 }} onClick={(e) => { e.stopPropagation(); pick(r.id); }}>{compare.includes(r.id) ? L("Selected", "محدد") : L("Compare", "قارن")}</button>
+                <button type="button" className="iconbtn" aria-label={L("Delete brief", "احذف الموجز")} title={L("Delete brief", "احذف الموجز")} style={{ marginInlineStart: "auto" }} onClick={(e) => { e.stopPropagation(); void remove(r.id); }}><Icon name="trash" size={14} /></button>
               </div>
             </div>
           ))}

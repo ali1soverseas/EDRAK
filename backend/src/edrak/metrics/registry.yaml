@@ -8,6 +8,7 @@ metrics:
     name: {en: "Price per tier", ar: "السعر لكل باقة"}
     aliases: [pricing, plan price, price per seat, price per user]
     definition: "List price of each paid plan, per seat per month unless stated."
+    definition_ar: "السعر المعلن لكل باقة مدفوعة، لكل مقعد في الشهر ما لم يُذكر غير ذلك."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -20,6 +21,7 @@ metrics:
     name: {en: "Effective price under usage billing", ar: "السعر الفعلي عند الفوترة بالاستهلاك"}
     aliases: [usage price, overage price, cost per minute]
     definition: "Price per billed unit (e.g. CI minute, API call) beyond the included allowance."
+    definition_ar: "السعر لكل وحدة مُفوترة (مثل دقيقة التكامل أو طلب الواجهة) بعد الحصة المشمولة."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -32,6 +34,7 @@ metrics:
     name: {en: "Paid subscribers", ar: "المشتركون المدفوعون"}
     aliases: [customers, paying customers, subscribers, active merchants]
     definition: "Number of paying customers or subscribers."
+    definition_ar: "عدد العملاء أو المشتركين الذين يدفعون."
     unit_kind: count
     period: latest_reported
     owner: competitor_intelligence
@@ -44,6 +47,7 @@ metrics:
     name: {en: "Revenue or ARR", ar: "الإيرادات"}
     aliases: [arr, annual revenue, revenue]
     definition: "Annual revenue or annual recurring revenue, if publicly reported."
+    definition_ar: "الإيراد السنوي أو الإيراد السنوي المتكرر، إن أُعلن."
     unit_kind: currency
     period: fiscal_year
     owner: competitor_intelligence
@@ -56,6 +60,7 @@ metrics:
     name: {en: "Release cadence", ar: "وتيرة الإصدارات"}
     aliases: [release frequency, shipping cadence]
     definition: "Releases shipped per month or quarter."
+    definition_ar: "الإصدارات التي تُشحن في الشهر أو الربع."
     unit_kind: count
     period: trailing_12m
     owner: competitor_intelligence
@@ -68,6 +73,7 @@ metrics:
     name: {en: "Certifications", ar: "الشهادات"}
     aliases: [compliance, soc2, iso 27001, pci]
     definition: "Security and compliance certifications held."
+    definition_ar: "شهادات الأمن والامتثال التي تحملها الشركة."
     unit_kind: count
     period: point_in_time
     owner: competitor_intelligence
@@ -80,6 +86,7 @@ metrics:
     name: {en: "Funding raised", ar: "التمويل المجمّع"}
     aliases: [funding, total raised]
     definition: "Total external funding raised to date."
+    definition_ar: "إجمالي التمويل الخارجي الذي جُمع حتى الآن."
     unit_kind: currency
     period: point_in_time
     owner: competitor_intelligence
@@ -93,6 +100,7 @@ metrics:
     name: {en: "Market size", ar: "حجم السوق"}
     aliases: [tam, market value]
     definition: "Total addressable market value for the offering in the target market."
+    definition_ar: "قيمة السوق الممكنة للعرض في السوق المستهدف."
     unit_kind: currency
     period: year
     owner: market_intelligence
@@ -105,6 +113,7 @@ metrics:
     name: {en: "Market growth (CAGR)", ar: "نمو السوق (CAGR)"}
     aliases: [cagr, growth rate]
     definition: "Compound annual growth rate of the market."
+    definition_ar: "معدل النمو السنوي المركّب للسوق."
     unit_kind: percent
     period: forecast_range
     owner: market_intelligence
@@ -117,6 +126,7 @@ metrics:
     name: {en: "Segment growth", ar: "نمو القطاع"}
     aliases: [segment cagr]
     definition: "Growth rate of the specific segment the offering targets."
+    definition_ar: "معدل نمو الشريحة التي يستهدفها العرض."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -129,6 +139,7 @@ metrics:
     name: {en: "Adoption rate", ar: "معدل التبني"}
     aliases: [penetration, adoption]
     definition: "Share of target customers already using the category."
+    definition_ar: "نصيب العملاء المستهدفين الذين يستخدمون الفئة أصلًا."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -141,6 +152,7 @@ metrics:
     name: {en: "Market concentration", ar: "تركّز السوق"}
     aliases: [market share, top players share]
     definition: "Share of the market held by the top players."
+    definition_ar: "نصيب السوق الذي يحمله كبار اللاعبين."
     unit_kind: percent
     period: year
     owner: market_intelligence
@@ -153,6 +165,7 @@ metrics:
     name: {en: "Regulation events", ar: "الأحداث التنظيمية"}
     aliases: [regulation, licensing]
     definition: "Dated regulatory changes that affect the offering."
+    definition_ar: "تغييرات تنظيمية مؤرخة تؤثر في العرض."
     unit_kind: date
     period: upcoming_and_recent
     owner: market_intelligence
@@ -166,6 +179,7 @@ metrics:
     name: {en: "Share of voice", ar: "حصة الحديث"}
     aliases: [sov, mention share]
     definition: "Share of brand mentions among the company and its competitors."
+    definition_ar: "نصيب ذكر العلامة بين الشركة ومنافسيها."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -178,6 +192,7 @@ metrics:
     name: {en: "Sentiment split", ar: "توزيع المشاعر"}
     aliases: [sentiment]
     definition: "Positive, neutral and negative share of customer posts."
+    definition_ar: "النصيب الإيجابي والمحايد والسلبي من منشورات العملاء."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -190,6 +205,7 @@ metrics:
     name: {en: "Rating", ar: "التقييم"}
     aliases: [stars, review score]
     definition: "Average review rating on a public review site."
+    definition_ar: "متوسط تقييم المراجعات في موقع مراجعات عام."
     unit_kind: index
     period: latest_reported
     owner: customer_trends
@@ -202,6 +218,7 @@ metrics:
     name: {en: "Top pain points", ar: "أبرز نقاط الألم"}
     aliases: [complaints, pain points]
     definition: "Most frequent complaint themes with their share of mentions."
+    definition_ar: "أكثر مواضيع الشكاوى تكرارًا مع نصيبها من الذكر."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -214,6 +231,7 @@ metrics:
     name: {en: "Switching intent", ar: "نية التحويل"}
     aliases: [churn intent, considering switching]
     definition: "Share of posts expressing intent to switch away from or to a vendor."
+    definition_ar: "نصيب المنشورات التي تعبّر عن نية الانتقال من مورّد أو إليه."
     unit_kind: percent
     period: time_window
     owner: customer_trends
@@ -226,6 +244,7 @@ metrics:
     name: {en: "Search interest", ar: "الاهتمام البحثي"}
     aliases: [google trends, demand]
     definition: "Relative search interest over time (0-100)."
+    definition_ar: "الاهتمام النسبي بالبحث عبر الزمن (من 0 إلى 100)."
     unit_kind: index
     period: time_window
     owner: customer_trends
@@ -239,6 +258,7 @@ metrics:
     name: {en: "Our price", ar: "سعرنا"}
     aliases: [our pricing, list price, internal price, target asp]
     definition: "The company's own price for the offering, from internal documents."
+    definition_ar: "سعر الشركة نفسه للعرض، من الوثائق الداخلية."
     unit_kind: currency
     period: point_in_time
     owner: internal_intelligence
@@ -251,6 +271,7 @@ metrics:
     name: {en: "Win/loss rate", ar: "معدل الفوز والخسارة"}
     aliases: [win rate, loss rate, win/loss, deal win rate]
     definition: "Share of competitive deals won."
+    definition_ar: "نصيب الصفقات التنافسية التي كُسبت."
     unit_kind: percent
     period: quarter
     owner: internal_intelligence
@@ -263,6 +284,7 @@ metrics:
     name: {en: "Delivery capacity", ar: "الطاقة التشغيلية"}
     aliases: [headcount, capacity, team capacity, delivery capacity, headcount capacity]
     definition: "Team or delivery capacity available for the initiative."
+    definition_ar: "طاقة الفريق أو التسليم المتاحة للمبادرة."
     unit_kind: count
     period: point_in_time
     owner: internal_intelligence
@@ -275,6 +297,7 @@ metrics:
     name: {en: "Roadmap commitments", ar: "التزامات خارطة الطريق"}
     aliases: [roadmap, milestone, release target]
     definition: "Dated roadmap commitments relevant to the decision."
+    definition_ar: "التزامات خارطة الطريق المؤرخة ذات الصلة بالقرار."
     unit_kind: date
     period: upcoming
     owner: internal_intelligence

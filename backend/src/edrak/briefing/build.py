@@ -65,12 +65,17 @@ def conflict_signals(conflicts: list[dict[str, Any]], rows: dict[str, dict[str, 
         name = defn.label() if defn else (c.get("metric_id") or "A figure")
         unit = members[0].get("unit")
         sides = sorted(members, key=lambda r: r["value"])
+        low, high = format_value(c["low"], unit), format_value(c["high"], unit)
+        period = c.get("period") or ""
         out.append({
             "signal_id": f"conflict:{c.get('metric_id')}:{(c.get('entity') or '').lower()}", "type": "conflict",
             "title": f"Sources disagree on {name.lower()} for {c.get('entity')}",
-            "signal": f"Reported from {format_value(c['low'], unit)} to {format_value(c['high'], unit)}"
-                      + (f" for {c['period']}" if c.get("period") else "") + ". Neither source is authoritative, so no single value is used.",
-            "interpretation": None, "implications": [], "domains": [defn.owner] if defn else [],
+            "title_key": "brief.conflict.title",
+            "title_params": {"metric": name, "metric_ar": defn.label("ar") if defn else name, "entity": c.get("entity") or ""},
+            "signal": f"Reported from {low} to {high}" + (f" for {period}" if period else "") + ". Neither source is authoritative, so no single value is used.",
+            "signal_key": "brief.conflict.period" if period else "brief.conflict.signal",
+            "signal_params": {"low": low, "high": high, "period": period},
+            "interpretation": None, "domains": [defn.owner] if defn else [],
             "sides": [{"value": format_value(r["value"], r["unit"]), "uid": r["uid"], "ref": r.get("display_no")} for r in sides],
             "refs": sorted({r["display_no"] for r in sides if r.get("display_no")}), "confidence": None,
             "decision_question": None, "supporting_findings": [],
@@ -123,6 +128,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
         headline, _ = apply_copy(copy, cards, narrative, metrics_by_uid, names, unmet)
     if headline is None:
         headline = next((s["title"] for s in narrative if s.get("title")), None) or request.goal
+    for s in signals:  # impacts already hold these sentences; the brief stores them once
+        s.pop("implications", None)
 
     evidence_by_lens = {wr.worker.value: len(wr.evidence) for wr in results}
     secs, collapsed = sections(cards, evidence_by_lens, template, lang)
@@ -134,7 +141,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
         "kpis": strip,
         "coverage": cov,
         "gaps_panel": {
-            "gaps": [{k: g[k] for k in ("card_key", "metric_id", "entity", "title", "blocking")} | {"reason": g["slots"]["reason"], "explanation": g["slots"]["explanation"]} for g in gaps],
+            "gaps": [{k: g[k] for k in ("card_key", "metric_id", "entity", "title", "title_key", "title_params", "blocking")}
+                     | {"reason": g["slots"]["reason"], "explanation": g["slots"]["explanation"], "explanation_key": g["slots"].get("explanation_key")} for g in gaps],
             "collapsed_lenses": collapsed,
         },
         "sections": secs,

@@ -1,5 +1,6 @@
 import { useEffect, useState, type RefObject } from "react";
 import { useNavigate } from "react-router-dom";
+import { deleteBrief } from "../../lib/deleteBrief";
 import { useL } from "../../lib/useL";
 import { edrak, type Dict } from "../../services/edrak";
 import { Icon } from "../ui/Icon";
@@ -126,6 +127,7 @@ export function BriefToolbar({ brief, container, fullscreen, setFullscreen, type
         ) : (
           <button type="button" className="btn ghost" onClick={() => void edrak.undoDecision(id).then(() => { setLifecycle("reviewed"); onChanged?.(); })}>{L("Undo decision", "تراجع عن القرار")}</button>
         )}
+        <button type="button" className="btn ghost" onClick={() => void deleteBrief(id, L).then((gone) => { if (gone) navigate("/reports"); })}><Icon name="trash" size={14} /> {L("Delete", "حذف")}</button>
       </div>
 
       {extras && (

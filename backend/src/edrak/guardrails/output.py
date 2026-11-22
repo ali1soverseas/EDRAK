@@ -113,7 +113,6 @@ def _check_typed(document: dict[str, Any], checks: list[dict[str, Any]]) -> None
         checks.append({"check": "headline_rewritten", "action": "redacted", "numbers": bad[:4]})
         sig = next((s.get("title") for s in document.get("signals_view") or [] if s.get("title")), None)
         document["headline"] = sig or document.get("question") or headline
-        document["summary_text"] = document["headline"]
     for sig in document.get("signals_view") or []:
         text = sig.get("why_it_matters") or ""
         if text and (stray(text) or verdict_language(text)):
@@ -154,7 +153,7 @@ def check_brief(document: dict[str, Any]) -> dict[str, Any]:
         if option.get("key") and not option.get("supporting_signal_ids") and document.get("cards") is not None:
             checks.append({"check": "uncited_option", "action": "flagged", "where": f"option {option.get('key')}"})
             option["guardrail"] = "uncited"
-        for field in ("title", "description", "body", "thesis", "would_change_if", "cost_of_waiting"):
+        for field in ("title", "description", "body", "would_change_if", "cost_of_waiting"):
             text = option.get(field)
             if not isinstance(text, str):
                 continue

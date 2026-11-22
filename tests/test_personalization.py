@@ -10,7 +10,7 @@ NEW_ASPECTS = ("scale", "differentiation", "reversibility", "compliance", "reven
 
 
 def _option(key, title, thesis="", trade_offs=(), opportunities=()):
-    return {"key": key, "title": title, "thesis": thesis, "trade_offs": list(trade_offs),
+    return {"key": key, "title": title, "description": thesis, "trade_offs": list(trade_offs),
             "opportunities": [{"text": item} for item in opportunities]}
 
 

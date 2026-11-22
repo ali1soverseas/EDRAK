@@ -1029,6 +1029,9 @@ class RunManager:
             )
             await db.commit()
 
+        from edrak.i18n.localize import schedule_brief_translation
+
+        schedule_brief_translation(saved["document"])
         run_view.state = final_state
         run_view.stage = "brief"
         run_view.finished_at = now

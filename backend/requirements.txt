@@ -30,7 +30,10 @@ structlog
 langdetect
 
 # Local Argos Translate for Arabic output. The language package downloads on first use.
+# The CUDA 12 libraries let CTranslate2 run that model on an NVIDIA GPU.
 argostranslate
+nvidia-cublas-cu12
+nvidia-cuda-runtime-cu12
 
 # MCP
 mcp<2

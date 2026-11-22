@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any, Literal, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from edrak.api.deps import get_current_session, get_db_conn
@@ -219,7 +219,6 @@ async def list_fact_categories(session: SessionOut = Depends(get_current_session
 
 @router.get("/company/facts", response_model=FactsOut)
 async def list_company_facts(
-    request: Request,
     status: Optional[list[FactStatus]] = Query(default=None, description="Repeat to allow several."),
     category: Optional[list[str]] = Query(default=None, description="Repeat to allow several."),
     source_tier: Optional[list[SourceTier]] = Query(default=None, description="Repeat to allow several."),
@@ -256,10 +255,7 @@ async def list_company_facts(
                 for g, fs in conflicts.items()
             ],
         ))
-    from edrak.i18n.localize import FACT_KEYS, localize_generated, ui_language
-
-    result = FactsOut(total=len(facts), categories=categories)
-    return await localize_generated(db, result.model_dump(mode="json"), ui_language(request), keys=FACT_KEYS)
+    return FactsOut(total=len(facts), categories=categories)
 
 
 @router.patch("/company/facts/{fact_id}", response_model=FactOut)

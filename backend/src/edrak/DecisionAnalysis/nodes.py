@@ -714,7 +714,7 @@ def make_validate_and_assemble_node():
                     opportunity = OpportunityAssessment(
                         title=description[:160],
                         description=description,
-                        business_rationale=details.rationale,
+                        rationale=details.rationale,
                         potential_impact=description,
                         strategic_fit=fit,
                         feasibility=feasibility,
@@ -744,7 +744,7 @@ def make_validate_and_assemble_node():
                     risk = RiskAssessment(
                         title=description[:160],
                         description=description,
-                        business_rationale=details.rationale,
+                        rationale=details.rationale,
                         potential_consequences=[description],
                         likelihood=likelihood,
                         impact=impact,

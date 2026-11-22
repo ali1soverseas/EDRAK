@@ -171,7 +171,7 @@ def _plan_sections(plan: dict[str, Any]) -> list[tuple[str, list[str]]]:
 
 def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitations: bool, lang: str = "en") -> list[tuple[str, list[str]]]:
     cards = doc.get("cards") or {}
-    out: list[tuple[str, list[str]]] = [("Headline", [doc.get("headline") or doc.get("summary_text") or ""])]
+    out: list[tuple[str, list[str]]] = [("Headline", [doc.get("headline") or ""])]
     kpis = doc.get("kpis") or []
     if kpis:
         def _kpi_name(k: dict[str, Any]) -> str:
@@ -196,7 +196,10 @@ def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitati
     for sec in doc.get("sections") or []:
         rows = [_card_line(cards[k]) for k in [*sec.get("cards", []), *sec.get("gap_cards", [])] if k in cards]
         if rows:
-            out.append((sec.get("label") or sec.get("lens"), rows))
+            label = sec.get("label") or sec.get("lens")
+            if isinstance(label, dict):
+                label = label.get(lang) or label.get("en") or sec.get("lens")
+            out.append((str(label), rows))
     if include_limitations and (doc.get("gaps_panel") or {}).get("gaps"):
         out.append(("Gaps", [f"{g['title']}: {g['explanation']}" for g in doc["gaps_panel"]["gaps"]]))
     emphasis = _emphasis(doc)
@@ -205,7 +208,7 @@ def _typed_sections(doc: dict[str, Any], include_sources: bool, include_limitati
     if doc.get("options"):
         rows = []
         for o in doc["options"]:
-            rows.append(f"{o['key']}. {o['title']}: {o.get('thesis') or o.get('description', '')}")
+            rows.append(f"{o['key']}. {o['title']}: {o.get('description', '')}")
             rows += [f"   Opportunity: {x['text']}" for x in o.get("opportunities", [])] + [f"   Risk: {x['text']}" for x in o.get("risks", [])]
             if o.get("would_change_if"):
                 rows.append(f"   Would change if: {o['would_change_if']}")

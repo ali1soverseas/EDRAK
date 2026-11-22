@@ -57,7 +57,11 @@ def coverage(outcomes: list[dict[str, Any]], usable_keys: set[tuple[str, str]], 
 
 
 def sections(cards: list[dict[str, Any]], evidence_by_lens: dict[str, int], template: UseCaseTemplate, lang: str = "en") -> tuple[list[dict[str, Any]], list[str]]:
-    """Fixed order from the template. A lens with too little evidence collapses into the gaps panel."""
+    """Fixed order from the template. A lens with too little evidence collapses into the gaps panel.
+
+    `label` is both languages. `lang` stays in the signature so existing callers keep working.
+    """
+    del lang
     out, collapsed = [], []
     for lens in template.lens_order:
         keys = [c["card_key"] for c in cards if c["section"] == lens and c["component"] != "gap"]
@@ -68,6 +72,6 @@ def sections(cards: list[dict[str, Any]], evidence_by_lens: dict[str, int], temp
             collapsed.append(lens)
         if not keys and not gap_keys:
             continue
-        out.append({"lens": lens, "label": LENS_LABELS.get(lens, {}).get(lang) or lens, "weight": template.lens_weights.get(lens, 0.5),
+        out.append({"lens": lens, "label": LENS_LABELS.get(lens) or {"en": lens, "ar": lens}, "weight": template.lens_weights.get(lens, 0.5),
                     "cards": keys, "gap_cards": gap_keys, "evidence_count": n, "collapsed": is_collapsed})
     return out, collapsed

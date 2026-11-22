@@ -42,7 +42,7 @@ export function MetricsSlide({ slide }: { slide: MetricsSlideData }) {
 
   return (
     <div className="slide">
-      <SlideHead no={2} name={L("Business metrics", "مقاييس الأعمال")} title={slide.title} sub={slide.subtitle}
+      <SlideHead no={2} name={L("Business metrics", "مقاييس الأعمال")} title={phrase(slide.title, slide.title_key)} sub={phrase(slide.subtitle, slide.subtitle_key)}
         aside={<button type="button" className="btn ghost sm" onClick={() => ask({ title: slide.title })}><Icon name="sparkle" size={13} /> {L("Ask about these figures", "اسأل عن هذه الأرقام")}</button>} />
       <div className="slide-body">
         {slide.collapsed ? (

@@ -17,6 +17,7 @@ class MetricDef(BaseModel):
     name: dict[str, str]
     aliases: list[str] = Field(default_factory=list)
     definition: str
+    definition_ar: str = ""
     unit_kind: str
     period: str
     owner: str
@@ -42,6 +43,7 @@ class UseCaseTemplate(BaseModel):
     metrics_theme: dict[str, str] = Field(default_factory=lambda: {"title": "Business metrics", "subtitle": ""})
     signal_emphasis: dict[str, float] = Field(default_factory=dict)
     decision_framing: str = ""
+    decision_framing_key: str = ""
 
     def emphasis(self, lens: str) -> float:
         return self.signal_emphasis.get(lens, self.lens_weights.get(lens, 0.5))

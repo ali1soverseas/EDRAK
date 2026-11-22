@@ -88,7 +88,7 @@ function OptionCard({ o, chosen, onChoose }: { o: BriefOption; chosen: boolean; 
         <span className="b6 grow" dir="auto" style={{ fontSize: 17 }}>{o.title}</span>
         <AskButton label={L("Ask about this option", "اسأل عن هذا الخيار")} onAsk={() => ask({ title: `${L("Option", "الخيار")} ${o.key}: ${o.title}` })} />
       </div>
-      <p className="t2 lh14 opt-thesis" dir="auto">{o.thesis || o.description}</p>
+      <p className="t2 lh14 opt-thesis" dir="auto">{o.description}</p>
       {o.trade_offs?.length > 0 && (
         <div className="opt-sec"><span className="t3 s13">{L("Trade-offs", "المفاضلات")}</span>
           <ul className="plain-list">{o.trade_offs.slice(0, 3).map((x) => <li key={x} className="s13 lh14" dir="auto">{x}</li>)}</ul></div>
@@ -137,7 +137,6 @@ export function DecisionsSlide({ slide }: { slide: DecisionsSlideData }) {
     <div className="slide">
       <SlideHead no={4} name={L("Decisions", "القرارات")}
         title={options.length ? L(`${options.length} ways forward, not ranked`, `${options.length} طرق للمضي، غير مرتبة`) : L("No options were drafted", "لم تُكتب خيارات")}
-        sub={slide.framing}
         aside={<span className="chip c-line"><Icon name="lock" size={12} /> {brief.lifecycle === "decided" ? L("Decision recorded", "سُجّل القرار") : L("The decision stays with you.", "القرار لك.")}</span>} />
       <div className="slide-body">
         {slide.personalization && <EmphasisNote personalization={slide.personalization} />}

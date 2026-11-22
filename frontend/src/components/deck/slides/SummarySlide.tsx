@@ -108,7 +108,7 @@ export function SummarySlide({ slide }: { slide: SummarySlideData }) {
             <div className="mini-signals">
               {signals.map((s) => s && (
                 <button key={s.signal_id} type="button" className={`mini-signal tap-lite ${s.type === "conflict" ? "conflict" : ""}`} onClick={() => openSignal(s.signal_id)}>
-                  <b className="s13 lh12" dir="auto">{s.title}</b>
+                  <b className="s13 lh12" dir="auto">{phrase(s.title, s.title_key, s.title_params)}</b>
                   {s.why_it_matters && <span className="s12 t2 lh14 clamp2" dir="auto">{s.why_it_matters}</span>}
                 </button>
               ))}

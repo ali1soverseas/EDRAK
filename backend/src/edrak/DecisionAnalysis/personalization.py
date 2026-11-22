@@ -139,7 +139,7 @@ def _option_text(option: dict[str, Any]) -> str:
         opportunities.append(item.get("text") if isinstance(item, dict) else str(item))
     return " ".join([
         option.get("title") or "",
-        option.get("thesis") or "",
+        option.get("description") or "",
         *(option.get("what_we_would_do") or []),
         *opportunities,
     ])

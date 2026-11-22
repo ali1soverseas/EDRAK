@@ -1,4 +1,5 @@
 import type { BriefCard } from "../../types/brief3";
+import { usePhrase, useShown } from "../../lib/phrase";
 import { useL } from "../../lib/useL";
 
 /** The closed set of card bodies. The same metric type always renders as the same component. */
@@ -41,17 +42,19 @@ export function LadderBody({ card }: { card: BriefCard }) {
 
 export function SegmentedBody({ card }: { card: BriefCard }) {
   const L = useL();
-  const parts = (card.slots.parts ?? []) as { label: string; value: number; display: string; computed?: boolean }[];
+  const phrase = usePhrase();
+  const parts = (card.slots.parts ?? []) as { label: string; label_key?: string; value: number; display: string; computed?: boolean }[];
+  const name = (p: { label: string; label_key?: string }) => phrase(p.label, p.label_key);
   const total = parts.reduce((a, p) => a + p.value, 0) || 1;
   let hue = 0;
   const colors = parts.map((p) => (p.computed ? "var(--sunk)" : PALETTE[hue++ % PALETTE.length]));
   return (
     <div className="stack gap8">
-      <div className="seg-bar" role="img" aria-label={parts.map((p) => `${p.label} ${p.display}`).join(", ")}>
-        {parts.map((p, i) => <i key={p.label} className={p.computed ? "hatch" : ""} style={{ width: `${(p.value / total) * 100}%`, background: p.computed ? undefined : colors[i] }} title={`${p.label} ${p.display}`} />)}
+      <div className="seg-bar" role="img" aria-label={parts.map((p) => `${name(p)} ${p.display}`).join(", ")}>
+        {parts.map((p, i) => <i key={p.label} className={p.computed ? "hatch" : ""} style={{ width: `${(p.value / total) * 100}%`, background: p.computed ? undefined : colors[i] }} title={`${name(p)} ${p.display}`} />)}
       </div>
       <div className="row g12 wrap s12">
-        {parts.map((p, i) => <span key={p.label} className="row g4"><i className={`dot ${p.computed ? "hatch dot-line" : ""}`} style={{ background: p.computed ? undefined : colors[i] }} />{p.label} <b>{p.display}</b></span>)}
+        {parts.map((p, i) => <span key={p.label} className="row g4"><i className={`dot ${p.computed ? "hatch dot-line" : ""}`} style={{ background: p.computed ? undefined : colors[i] }} />{name(p)} <b>{p.display}</b></span>)}
       </div>
       <div className="row g8 s12 muted">
         {card.slots.n ? <span>n = {card.slots.n}</span> : null}
@@ -108,10 +111,12 @@ export function TableBody({ card }: { card: BriefCard }) {
 
 export function GapBody({ card }: { card: BriefCard }) {
   const L = useL();
+  const phrase = usePhrase();
+  const shown = useShown();
   return (
     <div className="stack gap4">
-      <span className="s13">{card.slots.explanation}</span>
-      <span className="s12 muted">{card.slots.definition}</span>
+      <span className="s13">{phrase(String(card.slots.explanation ?? ""), card.slots.explanation_key)}</span>
+      <span className="s12 muted">{shown(card.slots.definition)}</span>
       <span className="s12 muted">{L("Shown as a gap: Edrak never fills it with a guess.", "يظهر كفجوة: لا يملؤها إدراك بتخمين.")}</span>
     </div>
   );

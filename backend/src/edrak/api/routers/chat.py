@@ -11,7 +11,7 @@ import re
 from typing import Any, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -74,28 +74,24 @@ async def _thread(db, session, thread_id):
     return t
 
 
-async def _show_assistant(db: aiosqlite.Connection, text: str, lang: str) -> dict[str, Any]:
-    """A fixed assistant sentence keeps its dictionary key. Generated text is translated once."""
-    from edrak.i18n.localize import localize_text
+def _show_assistant(text: str) -> dict[str, Any]:
+    """A fixed assistant sentence keeps its dictionary key. Generated replies stay English."""
     from edrak.i18n.phrases import CHAT_ERRORS
 
     key = CHAT_ERRORS.get(text)
     if key:
         return {"content": text, "content_key": key}
-    return {"content": await localize_text(db, text, lang)}
+    return {"content": text}
 
 
 @router.get("/threads/{thread_id}/messages")
-async def messages(thread_id: str, request: Request, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)):
-    from edrak.i18n.localize import ui_language
-
+async def messages(thread_id: str, session: SessionOut = Depends(get_current_session), db: aiosqlite.Connection = Depends(get_db_conn)):
     await _thread(db, session, thread_id)
-    lang = ui_language(request)
     rows = await fetch_all(db, "SELECT * FROM chat_messages WHERE thread_id = ? ORDER BY created_at", (thread_id,))
     for r in rows:
         r["cards"] = loads(r["cards"], [])
         if r.get("role") == "assistant":
-            r.update(await _show_assistant(db, r.get("content") or "", lang))
+            r.update(_show_assistant(r.get("content") or ""))
     return rows
 
 
@@ -141,7 +137,7 @@ async def _context(db, ws: str, thread: dict[str, Any], question: str) -> tuple[
 
 
 @router.post("/threads/{thread_id}/messages")
-async def ask(thread_id: str, body: MessageIn, request: Request, session: SessionOut = Depends(get_current_session),
+async def ask(thread_id: str, body: MessageIn, session: SessionOut = Depends(get_current_session),
               db: aiosqlite.Connection = Depends(get_db_conn)) -> dict[str, Any]:
     thread = await _thread(db, session, thread_id)
     ws = session.workspace.workspace_id
@@ -153,17 +149,10 @@ async def ask(thread_id: str, body: MessageIn, request: Request, session: Sessio
             if event["type"] == "answer":
                 answer = event
         mid = await _save_exchange(db, thread_id, request_id, question, answer)
-        from edrak.i18n.localize import localize_text, ui_language
-
-        lang = ui_language(request)
-        shown = await _show_assistant(db, answer["answer"], lang)
-        notes = [await localize_text(db, note, lang) for note in (answer["notes"] or [])]
-        proposal = answer.get("proposal")
-        if isinstance(proposal, str):
-            proposal = await localize_text(db, proposal, lang)
+        shown = _show_assistant(answer["answer"])
         return {"message_id": mid, "content": shown["content"], "content_key": shown.get("content_key"),
                 "cited": answer["cited"], "label": answer["label"], "metric_uids": answer["metric_uids"],
-                "notes": notes, "proposal": proposal}
+                "notes": answer["notes"], "proposal": answer.get("proposal")}
     verdict = check_query(body.content, use_model=settings.GUARDRAIL_SCOPE_CHECK)
     await guardrails_repo.record_checks(db, workspace_id=ws, stage="chat", checks=verdict.checks)
     if verdict.blocked:
@@ -196,9 +185,7 @@ async def ask(thread_id: str, body: MessageIn, request: Request, session: Sessio
             await db.execute("INSERT OR IGNORE INTO chat_message_evidence (message_id, evidence_uid) VALUES (?, ?)", (mid, r["uid"]))
     await db.execute("UPDATE chat_threads SET title = coalesce(title, ?) WHERE id = ?", (question[:80], thread_id))
     await db.commit()
-    from edrak.i18n.localize import ui_language
-
-    shown = await _show_assistant(db, text, ui_language(request))
+    shown = _show_assistant(text)
     return {"message_id": mid, "content": shown["content"], "content_key": shown.get("content_key"), "cited": sorted(cited)}
 
 
@@ -253,7 +240,7 @@ async def _agent_result(db: aiosqlite.Connection, thread: dict[str, Any], sessio
 
 
 @router.post("/threads/{thread_id}/stream")
-async def stream_message(thread_id: str, body: MessageIn, request: Request, session: SessionOut = Depends(get_current_session),
+async def stream_message(thread_id: str, body: MessageIn, session: SessionOut = Depends(get_current_session),
                          db: aiosqlite.Connection = Depends(get_db_conn)) -> StreamingResponse:
     """Server-sent events: `step` while the agent uses a tool, then one `answer`."""
     from edrak.api.streaming import format_sse_event
@@ -261,11 +248,9 @@ async def stream_message(thread_id: str, body: MessageIn, request: Request, sess
     thread = await _thread(db, session, thread_id)
     if not thread.get("brief_id"):
         raise HTTPException(status_code=400, detail="streaming_needs_a_brief_thread")
-    from edrak.i18n.localize import localize_text, ui_language
     from edrak.i18n.phrases import CHAT_ERRORS
 
     question = await _guarded_question(db, session, body.content)
-    lang = ui_language(request)
 
     async def events():
         try:
@@ -273,13 +258,10 @@ async def stream_message(thread_id: str, body: MessageIn, request: Request, sess
                 if event["type"] == "answer":
                     english = event.get("answer") or ""
                     event["message_id"] = await _save_exchange(db, thread_id, request_id, question, event)
-                    shown = await _show_assistant(db, english, lang)
+                    shown = _show_assistant(english)
                     event["answer"] = shown["content"]
                     if shown.get("content_key"):
                         event["content_key"] = shown["content_key"]
-                    event["notes"] = [await localize_text(db, note, lang) for note in (event.get("notes") or [])]
-                    if isinstance(event.get("proposal"), str):
-                        event["proposal"] = await localize_text(db, event["proposal"], lang)
                 yield format_sse_event(event["type"], event)
         except Exception:  # noqa: BLE001
             yield format_sse_event("error", {"message": "Ask Edrak could not answer right now.", "content_key": CHAT_ERRORS["Ask Edrak could not answer right now."]})

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from typing import Any, Optional
+from typing import Any, NamedTuple, Optional
 
 from edrak.briefing.derive import VS_SUFFIX
 from edrak.metrics.format import format_value
@@ -41,19 +41,44 @@ def _worst(rows: list[dict[str, Any]]) -> str:
     return min((r["status"] for r in rows), key=lambda s: order.index(s) if s in order else 0)
 
 
+class Caveat(NamedTuple):
+    text: str
+    key: str
+    params: dict[str, Any]
+
+
+def _named(defn: MetricDef, entity: str) -> tuple[str, str, dict[str, str]]:
+    metric, metric_ar = defn.label("en"), defn.label("ar")
+    params = {"metric": metric, "metric_ar": metric_ar, "entity": entity or ""}
+    if entity:
+        return f"{metric} · {entity}", "brief.figure.entity", params
+    return metric, "brief.figure", params
+
+
 def _card(defn: MetricDef, entity: str, component: str, rows: list[dict[str, Any]], slots: dict[str, Any], *,
-          status: Optional[str] = None, caveat: Optional[str] = None, title: Optional[str] = None, key: Optional[str] = None) -> dict[str, Any]:
-    return {
+          status: Optional[str] = None, caveat: Optional[str] = None, caveat_key: Optional[str] = None,
+          caveat_params: Optional[dict[str, Any]] = None, title: Optional[str] = None, key: Optional[str] = None) -> dict[str, Any]:
+    auto_title, title_key, title_params = _named(defn, entity)
+    card: dict[str, Any] = {
         "card_key": key or f"{defn.id}:{slug(entity)}", "section": defn.owner, "component": component,
-        "metric_id": defn.id, "entity": entity, "title": title or f"{defn.label()} · {entity}" if entity else defn.label(),
+        "metric_id": defn.id, "entity": entity, "title": title or auto_title,
         "status": status or _worst(rows), "slots": slots, "caveat": caveat, "refs": _refs(rows), "metric_uids": _uids(rows),
         "derived": any(r.get("derived") for r in rows), "why_visual": None, "headline": None,
     }
+    if not title:
+        card["title_key"] = title_key
+        card["title_params"] = title_params
+    if caveat_key:
+        card["caveat_key"] = caveat_key
+        card["caveat_params"] = caveat_params or {}
+    return card
 
 
-def _table(defn: MetricDef, entity: str, rows: list[dict[str, Any]], caveat: str, *, key: Optional[str] = None) -> dict[str, Any]:
+def _table(defn: MetricDef, entity: str, rows: list[dict[str, Any]], caveat: str | Caveat, *, key: Optional[str] = None) -> dict[str, Any]:
     body = [{"entity": r["entity"], "label": r.get("label"), "period": r.get("period"), "value": format_value(r["value"], r["unit"]),
              "uid": r["uid"], "refs": _refs([r])} for r in rows]
+    if isinstance(caveat, Caveat):
+        return _card(defn, entity, "table", rows, {"rows": body}, caveat=caveat.text, caveat_key=caveat.key, caveat_params=caveat.params, key=key)
     return _card(defn, entity, "table", rows, {"rows": body}, caveat=caveat, key=key)
 
 
@@ -61,17 +86,19 @@ def _norm(s: Optional[str]) -> str:
     return " ".join((s or "").lower().split())
 
 
-def comparable(rows: list[dict[str, Any]], defn: MetricDef) -> Optional[str]:
+def comparable(rows: list[dict[str, Any]], defn: MetricDef) -> Optional[Caveat]:
     """None when the rows can share one chart; otherwise why they cannot (period, unit or definition differ)."""
     periods = {_norm(r.get("period")) for r in rows}
     if len(periods) > 1:
-        return "Not charted together: the figures cover different periods (" + ", ".join(sorted(p or "unstated" for p in periods)) + ")."
+        listed = ", ".join(sorted(p or "unstated" for p in periods))
+        return Caveat(f"Not charted together: the figures cover different periods ({listed}).", "brief.chart.periods", {"periods": listed})
     units = {r.get("unit") for r in rows}
     if len(units) > 1:
-        return "Not charted together: the figures are in different units (" + ", ".join(sorted(u or "none" for u in units)) + ")."
+        listed = ", ".join(sorted(u or "none" for u in units))
+        return Caveat(f"Not charted together: the figures are in different units ({listed}).", "brief.chart.units", {"units": listed})
     defs = {_norm(r.get("definition")) for r in rows if r.get("definition") and _norm(r.get("definition")) != _norm(defn.definition)}
     if len(defs) > 1:
-        return "Not charted together: the sources define the figure differently."
+        return Caveat("Not charted together: the sources define the figure differently.", "brief.chart.definitions", {})
     return None
 
 
@@ -129,8 +156,8 @@ def build_cards(rows: list[dict[str, Any]], conflicts: list[dict[str, Any]], out
                     slots["range"] = {"low": format_value(c["low"], head["unit"]), "high": format_value(c["high"], head["unit"]),
                                       "sources": [{"uid": r["uid"], "value": format_value(r["value"], r["unit"]), "refs": _refs([r])} for r in same]}
                 cards.append(_card(defn, entity, "kpi", same, slots, status=status))
-        elif visual == "ladder" and comparable([r for r in group if r["status"] != "conflict"] or group, defn):
-            cards.append(_table(defn, "", group, comparable([r for r in group if r["status"] != "conflict"] or group, defn), key=defn.id))
+        elif visual == "ladder" and (note := comparable([r for r in group if r["status"] != "conflict"] or group, defn)):
+            cards.append(_table(defn, "", group, note, key=defn.id))
         elif visual == "ladder":
             by_row: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
             for r in group:
@@ -188,7 +215,7 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
         small = need and any((r["sample_size"] or 0) < need for r in rs)
         mismatch = comparable(rs, defn)
         if small:
-            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} items behind it.", key=key))
+            out.append(_table(defn, entity, rs, Caveat(f"Not shown as a chart: fewer than {need} items behind it.", "brief.chart.fewItems", {"n": need}), key=key))
             continue
         if mismatch:
             out.append(_table(defn, entity, rs, mismatch, key=key))
@@ -199,23 +226,26 @@ def _segmented(defn: MetricDef, group: list[dict[str, Any]], conflicts: list[dic
             slots = {"value": format_value(r["value"], r["unit"]), "uid": r["uid"], "period": r["period"], "comparator": None,
                      "part_of": label}
             out.append(_card(defn, entity or r["entity"], "kpi", rs, slots, key=key,
-                             caveat="Only this part was found, so it is shown on its own, not as a share of a whole."))
+                             caveat="Only this part was found, so it is shown on its own, not as a share of a whole.",
+                             caveat_key="brief.chart.onePart"))
             continue
         parts = [{"label": r["label"] or r["entity"], "value": r["value"], "display": format_value(r["value"], r["unit"]),
                   "uid": r["uid"], "refs": _refs([r])} for r in sorted(rs, key=lambda r: -r["value"])]
         slots: dict[str, Any] = {"parts": parts, "n": min((r["sample_size"] for r in rs if r["sample_size"]), default=None)}
         caveat = None
+        caveat_key = None
         if defn.check.get("parts_sum_100") or defn.unit_kind == "percent":
             if total > 100 + PARTS_TOLERANCE:
-                out.append(_table(defn, entity, rs, "Not shown as a chart: the parts add up to more than 100%.", key=key))
+                out.append(_table(defn, entity, rs, Caveat("Not shown as a chart: the parts add up to more than 100%.", "brief.chart.over100", {}), key=key))
                 continue
             if total < 100 - PARTS_TOLERANCE:
                 rest = round(100 - total, 1)
-                parts.append({"label": "Others and unknown", "value": rest, "display": format_value(rest, "%"), "uid": None, "refs": [],
+                parts.append({"label": "Others and unknown", "label_key": "brief.othersUnknown", "value": rest, "display": format_value(rest, "%"), "uid": None, "refs": [],
                               "computed": True, "formula": f"100% − {format_value(round(total, 1), '%')} found"})
                 slots["incomplete"] = True
                 caveat = "Incomplete: only the parts found are named. The rest is Others and unknown, computed as 100% minus what was found."
-        out.append(_card(defn, entity, "segmented", rs, slots, key=key, caveat=caveat))
+                caveat_key = "brief.chart.incomplete"
+        out.append(_card(defn, entity, "segmented", rs, slots, key=key, caveat=caveat, caveat_key=caveat_key if caveat else None))
     return out
 
 
@@ -229,7 +259,7 @@ def _lines(defn: MetricDef, group: list[dict[str, Any]]) -> list[dict[str, Any]]
     for entity, rs in by_entity.items():
         rs.sort(key=lambda r: r["period"])
         if len({r["period"] for r in rs}) < need:
-            out.append(_table(defn, entity, rs, f"Not shown as a chart: fewer than {need} data points."))
+            out.append(_table(defn, entity, rs, Caveat(f"Not shown as a chart: fewer than {need} data points.", "brief.chart.fewPoints", {"n": need})))
             continue
         pts = [{"x": r["period"], "y": r["value"], "display": format_value(r["value"], r["unit"]), "uid": r["uid"]} for r in rs]
         out.append(_card(defn, entity, "line", rs, {"points": pts, "unit": rs[0]["unit"]}))
@@ -284,12 +314,24 @@ REASONS = {
     "conflict": "Sources disagree and none is authoritative.",
     "unverified": "Found, but the number could not be matched to its saved source.",
 }
+REASON_KEYS = {
+    "not_found": "brief.gap.notFound",
+    "not_publicly_disclosed": "brief.gap.notPublic",
+    "only_third_party_source": "brief.gap.thirdParty",
+    "below_min_sample": "brief.gap.thin",
+    "conflict": "brief.gap.conflict",
+    "unverified": "brief.gap.unverified",
+}
 
 
 def _gap(defn: MetricDef, entity: str, reason: str, blocking: bool) -> dict[str, Any]:
+    title, title_key, title_params = _named(defn, entity)
     return {
         "card_key": f"gap:{defn.id}:{slug(entity)}", "section": defn.owner, "component": "gap", "metric_id": defn.id, "entity": entity,
-        "title": f"{defn.label()} · {entity}" if entity else defn.label(), "status": "gap", "blocking": blocking,
-        "slots": {"reason": reason, "explanation": REASONS.get(reason, reason), "definition": defn.definition},
+        "title": title, "title_key": title_key, "title_params": title_params, "status": "gap", "blocking": blocking,
+        "slots": {
+            "reason": reason, "explanation": REASONS.get(reason, reason), "explanation_key": REASON_KEYS.get(reason),
+            "definition": {"en": defn.definition, "ar": defn.definition_ar or defn.definition},
+        },
         "refs": [], "metric_uids": [], "derived": False, "caveat": None, "why_visual": None, "headline": None,
     }

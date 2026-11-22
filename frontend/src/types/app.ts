@@ -302,15 +302,19 @@ export interface BriefOption {
 /** The cross-signal hypothesis and synthesis structure. */
 export interface BriefSynthesis {
   statement: string;
+  statement_key?: string | null;
+  statement_params?: Record<string, string | number>;
   highlight: string;
   /** Support line, for example "A hypothesis backed by four independent lines of evidence." */
   support: string;
-  patterns?: string[];
+  support_key?: string | null;
+  support_params?: Record<string, string | number>;
   themes?: string[];
   impacts?: string[];
   signals?: Array<{
     signal_id?: string;
     title: string;
+    signal?: string;
     description: string;
     tension_or_alignment?: string;
     confidence?: number;

@@ -182,6 +182,7 @@ export const edrak = {
   reviewBrief: (briefId: string, action: string, note?: string) => req<Dict>("POST", `/briefs/${briefId}/review`, { action, note }),
   recordDecision: (briefId: string, body: Dict) => req<Dict>("POST", `/briefs/${briefId}/decision`, body),
   undoDecision: (briefId: string) => req("DELETE", `/briefs/${briefId}/decision`),
+  deleteBrief: (briefId: string) => req<{ status: string }>("DELETE", `/briefs/${briefId}`),
   evidence: (briefId: string) => req<Dict[]>("GET", `/briefs/${briefId}/evidence`),
   annotate: (briefId: string, body: Dict) => req("POST", `/briefs/${briefId}/annotations`, body),
 

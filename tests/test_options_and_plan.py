@@ -105,7 +105,7 @@ def _seed_brief(client, monkeypatch):
             if not await db.execute_fetchall("SELECT 1 FROM runs WHERE request_id = ?", (aid,)):
                 await runs_repo.create_run(db, request_id=aid, plan_id=plan_id, triggered_by=me)
             saved = await briefs_repo.save_brief(db, workspace_id=ws, request_id=aid, requested_by=None, build=lambda b, n: {
-                "brief_id": b, "brief_no": n, "title": "T", "use_case": "competitive_intelligence", "question": "q", "summary_text": "s",
+                "brief_id": b, "brief_no": n, "title": "T", "use_case": "competitive_intelligence", "question": "q", "headline": "s",
                 "evidence": [], "lenses": [], "options": BRIEF["options"], "metrics": BRIEF["metrics"], "cards": {}})
             return saved["id"]
     return asyncio.run(go())
@@ -200,7 +200,7 @@ def test_export_renders_typed_cards_and_the_action_plan():
         "price_per_tier": {"card_key": "price_per_tier", "title": "Price per tier", "component": "ladder", "status": "conflict", "refs": [1],
                            "section": "competitor_intelligence", "slots": {"rows": [{"label": "Fawry", "value": "$19–$23"}]}, "caveat": "Sources disagree."}},
         "sections": [{"lens": "competitor_intelligence", "label": "Competitors", "cards": ["price_per_tier"], "gap_cards": []}],
-        "kpis": [], "coverage": {"required": 2, "met": 1, "score": 0.5}, "options": [{"key": "A", "title": "Premium", "thesis": "Hold price"}],
+        "kpis": [], "coverage": {"required": 2, "met": 1, "score": 0.5}, "options": [{"key": "A", "title": "Premium", "description": "Hold price"}],
         "action_plan": plan, "evidence": []}
     md = exporter.to_markdown(doc).decode()
     assert "Fawry $19–$23" in md and "Action plan: option A" in md and "Risk register" in md and "baseline $19" in md

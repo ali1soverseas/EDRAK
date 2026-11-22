@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { usePhrase } from "../../lib/phrase";
 import { useL } from "../../lib/useL";
 import { edrak, type Dict } from "../../services/edrak";
 import type { BriefCard, BriefEvidenceItem, BriefV3, ChallengeResult } from "../../types/brief3";
@@ -15,6 +16,7 @@ const WORKER: Record<string, [string, string]> = {
 
 export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3; card: BriefCard; onClose: () => void; onChanged: () => void }) {
   const L = useL();
+  const phrase = usePhrase();
   const { ask, openEvidence } = useDeck();
   const [table, setTable] = useState(false);
   const [versions, setVersions] = useState<Dict[]>([]);
@@ -46,16 +48,16 @@ export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3
   };
 
   return (
-    <Overlay variant="drawer" label={card.title} onClose={onClose}>
+    <Overlay variant="drawer" label={phrase(card.title, card.title_key, card.title_params)} onClose={onClose}>
       {(close) => (
         <div className="drawer-body">
           <div className="row g8">
-            <div className="stack grow"><span className="eyebrow">{card.title}</span><h3 style={{ margin: 0 }}>{card.headline ?? card.title}</h3></div>
+            <div className="stack grow"><span className="eyebrow">{phrase(card.title, card.title_key, card.title_params)}</span><h3 style={{ margin: 0 }}>{phrase(card.headline ?? card.title, card.headline_key || card.title_key, card.headline_params || card.title_params)}</h3></div>
             <StatusBadge status={card.status} />
             <button type="button" className="iconbtn" data-autofocus onClick={close} aria-label={L("Close", "إغلاق")}><Icon name="x" size={16} /></button>
           </div>
           {card.component !== "gap" && (
-            <button type="button" className="btn ink" onClick={() => { close(); ask({ cardKey: card.card_key, title: card.title }); }}>
+            <button type="button" className="btn ink" onClick={() => { close(); ask({ cardKey: card.card_key, title: phrase(card.title, card.title_key, card.title_params) }); }}>
               <Icon name="sparkle" size={14} /> {L("Ask Edrak about this card", "اسأل إدراك عن هذه البطاقة")}
             </button>
           )}
@@ -65,7 +67,7 @@ export function CardDrawer({ brief, card, onClose, onChanged }: { brief: BriefV3
 
           <section className="stack gap8">
             <span className="eyebrow">{L("Why this visual", "لماذا هذا الشكل")}</span>
-            <span className="s13">{card.why_visual ?? "—"}</span>
+            <span className="s13">{card.why_visual ? phrase(card.why_visual, card.why_visual_key, card.why_visual_params) : "—"}</span>
           </section>
 
           <section className="stack gap8">

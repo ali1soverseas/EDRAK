@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any, Optional
 
 import aiosqlite
@@ -34,8 +35,10 @@ async def get_brief(
     document["evidence_status"] = row["evidence_status"]
     document["document_version"] = row["document_version"]
     await merge_live(db, row["id"], document)
+    from edrak.briefing.deck import build_deck, omit_internal_gaps
+
+    omit_internal_gaps(document)
     if document.get("cards") is not None and not document.get("deck"):
-        from edrak.briefing.deck import build_deck
 
         try:  # briefs frozen before the five-slide deck existed get one built from their own content
             document["deck"] = build_deck(document)
@@ -101,6 +104,32 @@ async def brief_quality(
         "guardrails": events,
         "evaluated": bool(metrics),
     }
+
+
+@router.delete("/{brief_id}")
+async def delete_brief(
+    brief_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> dict[str, str]:
+    """Delete a brief. The analysis, its run and its sources stay.
+
+    A brief with a recorded decision cannot be deleted: the decision's evidence snapshot is kept.
+    """
+    outcome = await briefs_repo.delete_brief(db, brief_id, session.workspace.workspace_id)
+    if outcome == "missing":
+        raise HTTPException(status_code=404, detail="not_found")
+    if outcome == "locked":
+        raise HTTPException(status_code=409, detail="brief_has_decision")
+    from edrak.briefing.index import drop_vector_index
+    from edrak.db.repositories import audit as audit_repo
+
+    await asyncio.to_thread(drop_vector_index, brief_id)
+    await audit_repo.record(
+        db, workspace_id=session.workspace.workspace_id, action="brief.deleted",
+        target_type="brief", target_id=brief_id, actor_id=session.user.user_id,
+    )
+    return {"status": "deleted"}
 
 
 # ------------------------------------------------------------------ export, review, decision

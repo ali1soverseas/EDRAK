@@ -58,12 +58,13 @@ async def home(
                   (SELECT count(*) FROM entities WHERE workspace_id = ? AND kind = 'competitor' AND is_tracked = 1) AS competitors""",
         (ws,) * 7,
     )
-    from edrak.i18n.localize import localize_generated, ui_language
     from edrak.i18n.phrases import classify_alert
 
     for alert in alerts:
         classify_alert(alert)
-    alerts = await localize_generated(db, alerts, ui_language(request), keys={"title", "statement"})
+    from edrak.i18n.localize import localize_generated, ui_language
+
+    needs = await localize_generated(db, needs, ui_language(request), keys={"title"}, fill=False)
     return {"needs_you": needs, "alerts": alerts, "monitors": monitors, "counts": counts,
             "first_time": (counts or {}).get("analyses", 0) == 0}
 
@@ -141,14 +142,22 @@ async def notifications(
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> dict[str, Any]:
-    from edrak.i18n.localize import localize_generated, ui_language
     from edrak.i18n.phrases import classify_notification
 
     uid, ws = session.user.user_id, session.workspace.workspace_id
+    from edrak.i18n.localize import localize_generated, ui_language
+
     items = await notifications_repo.list_notifications(db, uid, ws, unread_only=unread_only)
     for item in items:
         item.update(classify_notification(item.get("title") or "", item.get("body")))
-    items = await localize_generated(db, items, ui_language(request), keys={"title", "body", "statement"})
+    titles = [p["title"] for item in items if isinstance((p := item.get("title_params")), dict) and isinstance(p.get("title"), str)]
+    if titles:
+        shown = await localize_generated(db, [{"title": text} for text in titles], ui_language(request), keys={"title"}, fill=False)
+        arabic = {src: row["title"] for src, row in zip(titles, shown)}
+        for item in items:
+            params = item.get("title_params")
+            if isinstance(params, dict) and params.get("title") in arabic:
+                params["title"] = arabic[params["title"]]
     return {"items": items, "unread": await notifications_repo.unread_count(db, uid, ws)}
 
 
@@ -198,6 +207,7 @@ async def search(
                                           WHERE b.workspace_id = ? AND (e.source_title LIKE ? OR e.extracted_fact LIKE ?) LIMIT 5""", (ws, like, like)),
     }
     found["briefs"] = await localize_generated(db, found["briefs"], lang, keys={"title", "summary"})
+    found["analyses"] = await localize_generated(db, found["analyses"], lang, keys={"title"}, fill=False)
     return found
 
 

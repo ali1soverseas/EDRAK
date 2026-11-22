@@ -29,7 +29,7 @@ function destination(row: AnalysisSummary): string {
       return `/analyses/${row.analysis_id}/run`;
     case "completed":
     case "partial":
-      return `/briefs/${row.brief_id}`;
+      return row.brief_id ? `/briefs/${row.brief_id}` : `/analyses/${row.analysis_id}/run`;
     case "draft":
       return `/analyses/new?draft=${row.analysis_id}`;
     default:
@@ -67,16 +67,18 @@ function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: ()
       break;
     case "partial":
       when = formatWhen(row.updated_at);
-      result = t("home.result.partial", { no: briefNumber(row.brief_no ?? 0), failed: tn("plural.failedWorkers", row.tasks_failed) });
+      result = row.brief_id
+        ? t("home.result.partial", { no: briefNumber(row.brief_no ?? 0), failed: tn("plural.failedWorkers", row.tasks_failed) })
+        : t("home.result.briefRemoved");
       action = (
         <Link to={go} className="btn sm">
-          {t("home.action.brief")}
+          {row.brief_id ? t("home.action.brief") : t("home.action.run")}
         </Link>
       );
       break;
     case "completed":
       when = formatWhen(row.updated_at);
-      result = (
+      result = row.brief_id ? (
         <>
           {t("home.result.brief", { no: briefNumber(row.brief_no ?? 0) })}{" "}
           {row.repeat_weekly && (
@@ -85,10 +87,10 @@ function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: ()
             </Chip>
           )}
         </>
-      );
+      ) : t("home.result.briefRemoved");
       action = (
         <Link to={go} className="btn sm">
-          {t("home.action.brief")}
+          {row.brief_id ? t("home.action.brief") : t("home.action.run")}
         </Link>
       );
       break;

@@ -36,7 +36,7 @@ def test_brief_check_blocks_invented_numbers_in_card_text_and_unsourced_cards():
     doc = {"cards": {"k1": {"card_key": "k1", "component": "kpi", "title": "Fawry price", "headline": "Fawry costs $99", "refs": [1], "metric_uids": ["u1"], "status": "verified"},
                      "k2": {"card_key": "k2", "component": "kpi", "title": "Orphan", "headline": "Fawry costs $19", "refs": [], "metric_uids": [], "status": "verified"}},
            "metrics": {"u1": {"value": 19.0}}, "headline": "Fawry leads at $19", "evidence": [], "lenses": [], "options": [
-               {"key": "A", "title": "Hold", "thesis": "We recommend holding", "supporting_signal_ids": []}],
+               {"key": "A", "title": "Hold", "description": "We recommend holding", "supporting_signal_ids": []}],
            "signals_view": [{"signal_id": "s1", "why_it_matters": "Margins fall 40%"}], "question": "q"}
     out = check_brief(doc)
     assert out["cards"]["k1"]["headline"] == "Fawry price"       # $99 is not a stored value

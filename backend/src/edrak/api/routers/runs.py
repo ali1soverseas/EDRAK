@@ -41,8 +41,9 @@ async def get_run_view(
     from edrak.i18n.phrases import annotate_run
 
     data = annotate_run(view.model_dump(mode="json"))
-    localized = await localize_generated(db, data, ui_language(request))
-    return RunViewOut.model_validate(localized)
+    shown = await localize_generated(db, {"title": data.get("title") or ""}, ui_language(request), keys={"title"}, fill=False)
+    data["title"] = shown["title"]
+    return RunViewOut.model_validate(data)
 
 
 @router.get("/{analysis_id}/run/stream")
