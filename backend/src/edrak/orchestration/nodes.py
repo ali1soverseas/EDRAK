@@ -302,6 +302,16 @@ def make_dispatch_worker(
 
     def dispatch_worker(payload: dict) -> dict:
         task = payload["task"]
+        worker_name = task.worker.value if hasattr(task.worker, "value") else str(task.worker)
+        # Propagate ambient agent identity and request ID to Langfuse observability
+        try:
+            from edrak.core.observability import set_current_agent, set_current_session_id
+            set_current_agent(worker_name)
+            if hasattr(task, "parent_request_id") and task.parent_request_id:
+                set_current_session_id(task.parent_request_id)
+        except Exception:
+            pass
+
         print(f"\n[{task.worker.value}] NODE: dispatch")
         try:
             _save_worker_artifact(task, "input", task.model_dump(mode="json"))

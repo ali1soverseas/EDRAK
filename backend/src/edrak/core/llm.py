@@ -77,12 +77,15 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
 
 
 def nvidia_key(agent: str | None = None) -> str:
-    key, variable = provider_key("NVIDIA_API_KEY", agent)
+    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
+    prefix = "OLLAMA_API_KEY" if provider == "ollama" else "NVIDIA_API_KEY"
+    key, variable = provider_key(prefix, agent)
+    if not key:
+        key, variable = provider_key("LLM_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set NVIDIA_API_KEY (or legacy LLM_API_KEY) "
-            "in the environment or .env. Create a key at "
-            "https://build.nvidia.com/settings/api-keys"
+            f"{variable} is not configured. Set {prefix} (or legacy LLM_API_KEY) "
+            "in the environment or .env."
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
@@ -108,37 +111,80 @@ def get_chat_model(
 ) -> EdrakChat:
     """The chat model every component uses.
 
-    `agent` selects which credential is used.
+    `agent` selects which credential and tracing tags are used.
     """
-    provider = os.getenv("LLM_PROVIDER", settings.LLM_PROVIDER).strip().lower()
-    if provider != "nvidia":
+    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
+    if provider not in ("nvidia", "ollama", "openai"):
         raise RuntimeError(
-            f"Unsupported LLM_PROVIDER {provider!r}; this build uses NVIDIA."
+            f"Unsupported LLM_PROVIDER {provider!r}; supported providers: nvidia, ollama, openai."
         )
 
-    extra_kwargs = {}
+    # Resolve effective agent from parameter or ambient contextvar
+    effective_agent = agent
+    try:
+        from edrak.core.observability import get_current_agent
+        if not effective_agent:
+            effective_agent = get_current_agent()
+    except Exception:
+        pass
+
+    agent_tag = f"agent:{effective_agent}" if effective_agent else "agent:default"
+    trace_name = f"agent-{effective_agent}" if effective_agent else "agent-default"
+    trace_tags = [agent_tag]
+    trace_metadata = {
+        "agent": effective_agent or "default",
+        "langfuse_tags": trace_tags,
+        "langfuse_trace_name": trace_name,
+    }
+    try:
+        from edrak.core.observability import get_current_session_id
+        sid = get_current_session_id()
+        if sid:
+            trace_metadata["langfuse_session_id"] = str(sid)
+    except Exception:
+        pass
+
+    extra_kwargs = {
+        "tags": trace_tags,
+        "metadata": trace_metadata,
+    }
     if callbacks is not None:
-        extra_kwargs["callbacks"] = callbacks
+        extra_kwargs["callbacks"] = list(callbacks)
+    else:
+        # Automatically attach Langfuse tracing for worker and orchestrator calls
+        try:
+            from edrak.core.observability import get_langfuse_callback_handler, is_observability_enabled
+
+            if is_observability_enabled():
+                handler = get_langfuse_callback_handler(tags=trace_tags, trace_name=trace_name)
+                if handler is not None:
+                    extra_kwargs["callbacks"] = [handler]
+        except Exception as exc:
+            logger.debug("Failed to auto-attach Langfuse callback to chat model: %s", exc)
+
+    prefix = "OLLAMA" if provider == "ollama" else "NVIDIA"
     configured_temperature = _float_setting(
-        "NVIDIA_TEMPERATURE",
-        _float_setting("LLM_TEMPERATURE", settings.NVIDIA_TEMPERATURE),
+        f"{prefix}_TEMPERATURE",
+        _float_setting("LLM_TEMPERATURE", getattr(settings, f"{prefix}_TEMPERATURE", 0.2)),
     )
     configured_timeout = _float_setting(
-        "NVIDIA_TIMEOUT_S", settings.NVIDIA_TIMEOUT_S
+        f"{prefix}_TIMEOUT_S", getattr(settings, f"{prefix}_TIMEOUT_S", 60.0)
     )
     configured_model = (
-        os.getenv("NVIDIA_MODEL")
+        os.getenv(f"{prefix}_MODEL")
         or os.getenv("LLM_MODEL")
-        or settings.NVIDIA_MODEL
-        or settings.LLM_MODEL
+        or getattr(settings, f"{prefix}_MODEL", None)
+        or getattr(settings, "LLM_MODEL", "gpt-oss:120b")
     )
     configured_base_url = (
         base_url
-        or os.getenv("NVIDIA_BASE_URL")
+        or os.getenv(f"{prefix}_BASE_URL")
         or os.getenv("LLM_BASE_URL")
-        or settings.NVIDIA_BASE_URL
-        or settings.LLM_BASE_URL
+        or getattr(settings, f"{prefix}_BASE_URL", None)
+        or getattr(settings, "LLM_BASE_URL", "https://ollama.com/v1")
     )
+    if configured_base_url and not configured_base_url.rstrip("/").endswith("/v1") and "api.openai.com" not in configured_base_url:
+        configured_base_url = configured_base_url.rstrip("/") + "/v1"
     return EdrakChat(
         model=model or configured_model,
         base_url=configured_base_url,
@@ -194,8 +240,24 @@ def get_structured(
     The schema is also restated in the prompt to keep the requested object
     shape explicit for NVIDIA's OpenAI-compatible endpoint.
     """
+    effective_agent = agent
+    try:
+        from edrak.core.observability import get_current_agent
+        if not effective_agent:
+            effective_agent = get_current_agent()
+    except Exception:
+        pass
+
+    agent_tag = f"agent:{effective_agent}" if effective_agent else "agent:default"
+    trace_name = f"agent-{effective_agent}" if effective_agent else "agent-default"
+    trace_meta = {
+        "agent": effective_agent or "default",
+        "langfuse_tags": [agent_tag],
+        "langfuse_trace_name": trace_name,
+    }
+
     runnable = get_chat_model(
-        model, agent=agent, temperature=temperature
+        model, agent=effective_agent, temperature=temperature
     ).with_structured_output(
         schema, method=method, max_tokens=DEFAULT_MAX_TOKENS
     )
@@ -203,10 +265,11 @@ def get_structured(
         from edrak.core.observability import get_current_prompt_obj
         prompt_obj = get_current_prompt_obj()
         if prompt_obj is not None:
-            return runnable.with_config(metadata={"langfuse_prompt": prompt_obj})
+            trace_meta["langfuse_prompt"] = prompt_obj
     except Exception:
         pass
-    return runnable
+
+    return runnable.with_config(metadata=trace_meta, tags=[agent_tag])
 
 
 def get_json_object(
@@ -223,14 +286,33 @@ def get_json_object(
     For callers whose reply shape is large, optional or still evolving, where
     pinning a pydantic schema would be more churn than the guarantee is worth.
     """
+    effective_agent = agent
+    try:
+        from edrak.core.observability import get_current_agent
+        if not effective_agent:
+            effective_agent = get_current_agent()
+    except Exception:
+        pass
+
+    agent_tag = f"agent:{effective_agent}" if effective_agent else "agent:default"
+    trace_name = f"agent-{effective_agent}" if effective_agent else "agent-default"
+    trace_meta = {
+        "agent": effective_agent or "default",
+        "langfuse_tags": [agent_tag],
+        "langfuse_trace_name": trace_name,
+    }
+
     try:
         from edrak.core.observability import get_current_prompt_obj
         prompt_obj = get_current_prompt_obj()
-        cfg = {"metadata": {"langfuse_prompt": prompt_obj}} if prompt_obj is not None else None
+        if prompt_obj is not None:
+            trace_meta["langfuse_prompt"] = prompt_obj
     except Exception:
-        cfg = None
+        pass
+
+    cfg = {"metadata": trace_meta, "tags": [agent_tag]}
     message = get_chat_model(
-        model, agent=agent, temperature=temperature, callbacks=callbacks
+        model, agent=effective_agent, temperature=temperature, callbacks=callbacks
     ).invoke(
         [{"role": "system", "content": system}, {"role": "user", "content": user}],
         config=cfg,

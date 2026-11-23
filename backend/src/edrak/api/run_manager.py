@@ -496,11 +496,15 @@ class RunManager:
         *,
         company_name: str = "",
         user_id: str = "",
+        worker_types: Optional[list[str]] = None,
     ) -> dict[str, Any]:
         cfg: dict[str, Any] = {"configurable": {"thread_id": request_id}, "recursion_limit": 100}
         try:
             from edrak.core.observability import build_observability_config
-            tags = [company_name, "orchestration"] if company_name else ["orchestration"]
+            base_tags = [company_name, "orchestration"] if company_name else ["orchestration"]
+            agent_tags = [f"agent:{w}" for w in (worker_types or [])]
+            # Ensure workflow agents are tagged on the trace level for Langfuse filtering
+            tags = list(dict.fromkeys(base_tags + agent_tags + ["agent:orchestrator", "agent:cross_signal", "agent:verification"]))
             obs_cfg = build_observability_config(
                 trace_name=f"edrak-analysis-{request_id}",
                 session_id=request_id,
@@ -567,7 +571,8 @@ class RunManager:
             )
             company_name = getattr(getattr(request, "company_profile", None), "name", "") or ""
             workspace_id = getattr(getattr(request, "company_profile", None), "workspace_id", "") or ""
-            config = self._graph_config(analysis_id, company_name=company_name, user_id=workspace_id)
+            worker_types = [t.worker.value if hasattr(t.worker, "value") else str(t.worker) for t in (plan.tasks or []) if getattr(t, "worker", None)]
+            config = self._graph_config(analysis_id, company_name=company_name, user_id=workspace_id, worker_types=worker_types)
             async with AsyncSqliteSaver.from_conn_string(str(settings.get_checkpoint_path())) as saver:
                 graph = build_graph(get_default_registry(), checkpointer=saver)
                 if resuming:
