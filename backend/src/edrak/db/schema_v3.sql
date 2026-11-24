@@ -173,6 +173,18 @@ CREATE INDEX IF NOT EXISTS company_facts_conflict_idx ON company_facts (workspac
 CREATE TRIGGER IF NOT EXISTS company_facts_set_updated_at AFTER UPDATE ON company_facts FOR EACH ROW WHEN NEW.updated_at IS OLD.updated_at
 BEGIN UPDATE company_facts SET updated_at = (strftime('%Y-%m-%dT%H:%M:%fZ','now')) WHERE id = NEW.id; END;
 
+-- What the knowledge graph already holds of an approved fact: one row per published fact, with a hash of the
+-- published content. A fact whose hash differs is republished; a row whose fact is no longer approved (or no
+-- longer exists) is retracted. Kept apart from company_facts so syncing never touches a fact's updated_at, and
+-- without a foreign key to it so a deleted fact can still be found and removed from the graph.
+CREATE TABLE IF NOT EXISTS company_fact_graph_sync (
+  fact_id      text PRIMARY KEY,
+  workspace_id text NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  content_hash text NOT NULL,
+  synced_at    text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX IF NOT EXISTS company_fact_graph_sync_ws_idx ON company_fact_graph_sync (workspace_id);
+
 -- The canonical keys a fact is filed under. Global, not per workspace. synonyms is {"en": [...], "ar": [...]}.
 CREATE TABLE IF NOT EXISTS fact_keys (
   id         text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
