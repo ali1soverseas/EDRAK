@@ -11,8 +11,9 @@ from agent_fixtures import (
     ALL_RULES, HOME, Model, acme_site, deps, held, report_pdf, row,
 )
 from fastapi.testclient import TestClient
+from graph_sync_fixtures import FakeGraph
 
-from edrak.company_research import CATEGORIES, FactStatus, NewFact, SourceTier
+from edrak.company_research import CATEGORIES, FactStatus, NewFact, SourceTier, graph_sync
 from edrak.company_research.agent import research_manager
 from edrak.core.config import settings
 from edrak.db import connection
@@ -86,7 +87,7 @@ def wait_for(client, run_id, until=("done", "failed", "cancelled"), stage=None, 
 ENDPOINTS = [
     ("post", RUNS, {}), ("get", RUNS, None), ("get", f"{RUNS}/x", None), ("post", f"{RUNS}/x/cancel", None), ("get", FACTS, None),
     ("patch", f"{FACTS}/x", {"status": "approved"}), ("post", f"{FACTS}/bulk", {"ids": ["x"], "action": "approve"}),
-    ("get", "/api/company/fact-categories", None),
+    ("get", "/api/company/fact-categories", None), ("post", f"{FACTS}/graph-sync", None),
 ]
 
 
@@ -381,3 +382,120 @@ def test_the_endpoints_are_in_the_openapi_document(client):
         "/api/company/facts/{fact_id}": {"patch"}, "/api/company/facts/bulk": {"post"}, "/api/company/fact-categories": {"get"},
     }.items():
         assert methods <= set(paths[path]), path
+
+
+# ------------------------------------------------------------------ sharing approved facts with the knowledge graph
+
+
+@pytest.fixture
+def graph(monkeypatch):
+    """The sync switched on, with a fake graph in place of Neo4j."""
+    fake = FakeGraph()
+    monkeypatch.setattr(settings, "COMPANY_RESEARCH_GRAPH_SYNC", True)
+    monkeypatch.setattr("edrak.graph.connection.effective_graph_workspace_id", lambda ws: ws)
+    monkeypatch.setattr(graph_sync, "_connection", lambda: fake)
+    graph_sync._schema_ready.clear()
+    return fake
+
+
+def company_with_fact(client, **fields):
+    ws = sign_in(client)
+    save_website(ws)
+    return ws, add_fact(ws, **fields)
+
+
+def test_approving_a_fact_shares_it_with_the_graph_after_the_response(client, graph):
+    ws, fact = company_with_fact(client)
+    resp = client.patch(f"{FACTS}/{fact.id}", json={"status": "approved"})
+    assert resp.status_code == 200 and resp.json()["status"] == "approved"
+    assert graph.published() == [fact.id]
+    assert row(settings.EDRAK_DB_PATH, "SELECT action FROM audit_log WHERE action LIKE 'company_fact.graph_%'") == [("company_fact.graph_published",)]
+
+
+def test_rejecting_an_approved_fact_takes_it_out_of_the_graph(client, graph):
+    ws, fact = company_with_fact(client)
+    client.patch(f"{FACTS}/{fact.id}", json={"status": "approved"})
+    graph.calls.clear()
+    assert client.patch(f"{FACTS}/{fact.id}", json={"status": "rejected"}).status_code == 200
+    assert len(graph.retracted()) == 1
+
+
+def test_an_edit_approves_the_fact_and_sends_the_new_value(client, graph):
+    ws, fact = company_with_fact(client)
+    assert client.patch(f"{FACTS}/{fact.id}", json={"value": "Amal Nasr-Hassan"}).status_code == 200
+    sent = next(p["rows"][0]["props"] for q, p in graph.calls if "MERGE (f:CompanyFact" in q)
+    assert sent["value"] == "Amal Nasr-Hassan" and sent["edited_by_user"] is True
+
+
+def test_a_bulk_review_shares_every_approved_fact_in_one_sync(client, graph):
+    ws = sign_in(client)
+    save_website(ws)
+    ids = [add_fact(ws, key=k, value=v).id for k, v in (("ceo", "Amal Nasr"), ("cfo", "Mona Said"), ("cto", "Omar Adel"))]
+    assert client.post(f"{FACTS}/bulk", json={"ids": ids, "action": "approve"}).status_code == 200
+    assert sorted(graph.published()) == sorted(ids)
+    assert len([q for q, _ in graph.calls if "MERGE (f:CompanyFact" in q]) == 1  # one write for all three
+
+    graph.calls.clear()
+    client.post(f"{FACTS}/bulk", json={"ids": ids[:2], "action": "reject"})
+    assert len(graph.retracted()) == 2
+
+
+def test_a_suggested_fact_that_is_rejected_never_reaches_the_graph(client, graph):
+    ws, fact = company_with_fact(client)
+    assert client.patch(f"{FACTS}/{fact.id}", json={"status": "rejected"}).status_code == 200
+    assert graph.calls == [] and graph.available_checks == 0
+
+
+def test_reviews_do_not_touch_the_graph_unless_the_sync_is_on(client, monkeypatch):
+    fake = FakeGraph()
+    monkeypatch.setattr(settings, "COMPANY_RESEARCH_GRAPH_SYNC", False)
+    monkeypatch.setattr(graph_sync, "_connection", lambda: fake)
+    ws, fact = company_with_fact(client)
+    assert client.patch(f"{FACTS}/{fact.id}", json={"status": "approved"}).status_code == 200
+    assert fake.calls == [] and fake.available_checks == 0
+
+
+def test_a_review_still_succeeds_when_the_graph_is_down_and_a_later_sync_catches_up(client, graph):
+    graph.is_available = False
+    ws, fact = company_with_fact(client)
+    resp = client.patch(f"{FACTS}/{fact.id}", json={"status": "approved"})
+    assert resp.status_code == 200 and resp.json()["status"] == "approved"
+    assert row(settings.EDRAK_DB_PATH, "SELECT action FROM audit_log WHERE action = 'company_fact.approved'") == [("company_fact.approved",)]
+    assert graph.calls == []
+
+    graph.is_available = True
+    synced = client.post(f"{FACTS}/graph-sync")
+    assert synced.status_code == 200
+    assert synced.json() == {"published": 1, "retracted": 0, "failed": 0, "pending": 0, "skipped_reason": None, "error": None}
+    assert graph.published() == [fact.id]
+
+
+def test_a_graph_error_during_a_review_does_not_fail_it(client, graph):
+    graph.fail_on = "MERGE (f:CompanyFact"
+    ws, fact = company_with_fact(client)
+    resp = client.patch(f"{FACTS}/{fact.id}", json={"status": "approved"})
+    assert resp.status_code == 200 and resp.json()["status"] == "approved"
+
+    graph.fail_on = None
+    assert client.post(f"{FACTS}/graph-sync").json()["published"] == 1
+
+
+def test_the_manual_sync_reports_when_the_graph_is_off_or_unreachable(client, monkeypatch, graph):
+    ws, fact = company_with_fact(client, status=FactStatus.APPROVED)
+    graph.is_available = False
+    down = client.post(f"{FACTS}/graph-sync").json()
+    assert down["pending"] == 1 and "unreachable" in down["skipped_reason"] and down["published"] == 0
+
+    monkeypatch.setattr(settings, "COMPANY_RESEARCH_GRAPH_SYNC", False)
+    off = client.post(f"{FACTS}/graph-sync")
+    assert off.status_code == 200 and "off" in off.json()["skipped_reason"]
+
+
+def test_the_manual_sync_only_sends_the_callers_own_facts(client, graph):
+    mine, _ = company_with_fact(client, status=FactStatus.APPROVED)
+    other_ws = sign_in(TestClient(client.app), "Other Co")  # a second account, so its own workspace
+    save_website(other_ws)
+    other_fact = add_fact(other_ws, key="cfo", value="Karim Zaki", status=FactStatus.APPROVED)
+
+    assert client.post(f"{FACTS}/graph-sync").json()["published"] == 1
+    assert other_fact.id not in graph.published()

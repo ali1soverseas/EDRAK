@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any, Literal, Optional
 
 import aiosqlite
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from edrak.api.deps import get_current_session, get_db_conn
@@ -17,6 +17,8 @@ from edrak.api.schemas import SessionOut
 from edrak.company_profile.url_import import UrlBlocked
 from edrak.company_research import CATEGORIES, CompanyFact, FactStatus, ResearchRunStatus, SourceTier, ValueType, is_category
 from edrak.company_research.agent import NoWebsite, research_manager
+from edrak.company_research.graph_sync import sync_in_background, sync_workspace
+from edrak.core.config import settings
 from edrak.db.repositories import audit as audit_repo
 from edrak.db.repositories import company_facts as facts_repo
 from edrak.db.repositories import fact_keys as keys_repo
@@ -115,6 +117,23 @@ class BulkOut(BaseModel):
     action: str
     updated: list[str]
     not_found: list[str]
+
+
+class GraphSyncOut(BaseModel):
+    """What one sync did. A sync never fails the request: a graph that is off or down is reported here."""
+
+    published: int = Field(description="Approved facts written to the knowledge graph.")
+    retracted: int = Field(description="Facts removed from the graph because they are no longer approved.")
+    failed: int = Field(description="Facts the graph refused; they stay pending and the next sync retries them.")
+    pending: int = Field(description="Facts waiting because the graph is off or unreachable.")
+    skipped_reason: Optional[str] = None
+    error: Optional[str] = None
+
+
+def _share_with_graph(background: BackgroundTasks, workspace_id: str) -> None:
+    """After a review, bring the knowledge graph in line, once the response is sent and never as part of it."""
+    if settings.COMPANY_RESEARCH_GRAPH_SYNC:
+        background.add_task(sync_in_background, workspace_id)
 
 
 def _run_out(run: Any) -> ResearchRunOut:
@@ -262,6 +281,7 @@ async def list_company_facts(
 async def update_company_fact(
     fact_id: str,
     body: FactPatch,
+    background: BackgroundTasks,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> FactOut:
@@ -290,6 +310,7 @@ async def update_company_fact(
         actor_id=session.user.user_id, commit=False,
     )
     await db.commit()
+    _share_with_graph(background, ws)
     fact = await facts_repo.get_fact(db, ws, fact_id)
     assert fact is not None
     return _fact_out(fact, await _labels(db))
@@ -298,6 +319,7 @@ async def update_company_fact(
 @router.post("/company/facts/bulk", response_model=BulkOut)
 async def bulk_update_company_facts(
     body: BulkIn,
+    background: BackgroundTasks,
     session: SessionOut = Depends(get_current_session),
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> BulkOut:
@@ -316,4 +338,19 @@ async def bulk_update_company_facts(
             actor_id=session.user.user_id, metadata={"count": len(updated)}, commit=False,
         )
     await db.commit()
+    if updated:
+        _share_with_graph(background, ws)
     return BulkOut(action=body.action, updated=updated, not_found=missing)
+
+
+@router.post("/company/facts/graph-sync", response_model=GraphSyncOut)
+async def sync_company_facts_with_graph(
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> GraphSyncOut:
+    """Make the knowledge graph agree with this company's approved facts, and report what changed.
+
+    Reviews already do this in the background; call it to catch up after the graph was down or switched on later.
+    """
+    result = await sync_workspace(db, session.workspace.workspace_id)
+    return GraphSyncOut.model_validate(result.as_dict())
