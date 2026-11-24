@@ -43,6 +43,11 @@ CREATE CONSTRAINT regulation_id    IF NOT EXISTS FOR (n:Regulation)         REQU
 CREATE CONSTRAINT platform_id      IF NOT EXISTS FOR (n:Platform)           REQUIRE n.id IS UNIQUE;
 CREATE CONSTRAINT industry_id      IF NOT EXISTS FOR (n:Industry)           REQUIRE n.id IS UNIQUE;
 
+// Company research (company_research/graph_sync.py): approved, human-reviewed facts about the user's company
+CREATE CONSTRAINT company_fact_id  IF NOT EXISTS FOR (n:CompanyFact)        REQUIRE n.id IS UNIQUE;    // stable_id(workspace|company_fact|fact id)
+CREATE CONSTRAINT person_id        IF NOT EXISTS FOR (n:Person)             REQUIRE n.id IS UNIQUE;    // canonical slug of the name
+CREATE CONSTRAINT location_id      IF NOT EXISTS FOR (n:Location)           REQUIRE n.id IS UNIQUE;    // canonical slug of the place
+
 // Company systems the internal worker reads (CompanyProfile.db_config / api_config, tri_modal_retriever.py)
 CREATE CONSTRAINT data_source_id   IF NOT EXISTS FOR (n:DataSource)         REQUIRE n.id IS UNIQUE;    // stable_id(workspace|channel|db_id or api_id)
 CREATE CONSTRAINT data_asset_id    IF NOT EXISTS FOR (n:DataAsset)          REQUIRE n.id IS UNIQUE;    // stable_id(source|kind|table or endpoint)
@@ -95,6 +100,7 @@ CREATE INDEX assessment_ws    IF NOT EXISTS FOR (n:Assessment)        ON (n.work
 CREATE INDEX theme_obs_ws     IF NOT EXISTS FOR (n:ThemeObservation)  ON (n.workspace_id, n.request_id);
 CREATE INDEX trend_ws         IF NOT EXISTS FOR (n:TrendSeries)       ON (n.workspace_id, n.keyword);
 CREATE INDEX data_source_ws   IF NOT EXISTS FOR (n:DataSource)        ON (n.workspace_id);
+CREATE INDEX company_fact_ws  IF NOT EXISTS FOR (n:CompanyFact)       ON (n.workspace_id, n.category, n.key);
 // Adding a label to an existing full-text index needs DROP INDEX entity_names; then this file again.
 CREATE FULLTEXT INDEX entity_names IF NOT EXISTS
   FOR (n:Company|Product|Market|Topic|Feature|PricingPlan|Regulation|Theme|Platform|Industry) ON EACH [n.name, n.aliases];
@@ -159,6 +165,17 @@ CREATE FULLTEXT INDEX claim_text IF NOT EXISTS
 //    (sample_data.json "catalog"), never from model output. The workspace TRACKS them.
 // (:SearchTerm {id, name})                                                a keyword whose search interest the customer worker measured
 //                                                                         (WorkerResult.metadata.trend_series[].keyword)
+//
+// --- Company research (approved facts about the user's own company) -----------
+// (:CompanyFact {id, workspace_id, category, key, label, value, value_type, quote, source_url,
+//    pdf_page, source_tier, confidence, edited_by_user, conflict_group, observed_at, source})
+//                                                                         company_facts (SQLite), status approved only
+//    quote is the exact text of the source that states the fact; source = 'company_research'.
+//    source_tier ∈ own_site | own_pdf | own_social | third_party
+// (:Person {id, name, source})                                            leadership and team facts
+// (:Location {id, name, source})                                          locations facts
+//    Person and Location are written only by company research (source = 'company_research'),
+//    keyed by slug of the name. They are never matched by name across companies beyond that slug.
 //
 // --- Company data sources (internal worker, tri-modal retrieval) ---------------
 // (:DataSource {id, name, kind, description, allowed_tables[], workspace_id})
@@ -289,6 +306,21 @@ CREATE FULLTEXT INDEX claim_text IF NOT EXISTS
 // (Finding)-[:ABOUT]->(Feature|PricingPlan|Regulation|Theme|Industry)   whole-word match on name or aliases
 // Rule: domain edges are written only when a verified Finding is ABOUT both ends,
 //       and carry {finding_ids[], first_seen, last_seen}.
+//
+// --- Company research (every edge carries {fact_id, workspace_id} so a retracted fact removes only its own) ---
+// (CompanyFact)-[:IN_WORKSPACE]->(Workspace)
+// (Company)-[:HAS_FACT]->(CompanyFact)
+// (Company)-[:LED_BY {role}]->(Person)                            ceo, cfo, cto, coo, chairman, managing_director, board_member, executive_team_member
+// (Company)-[:FOUNDED_BY]->(Person)                               leadership.founder
+// (Company)-[:HAS_SHAREHOLDER]->(Company)                         ownership_and_funding.shareholder
+// (Company)-[:FUNDED_BY]->(Company)                               ownership_and_funding.investor
+// (Company)-[:HAS_SUBSIDIARY]->(Company)                          ownership_and_funding.subsidiary
+// (Company)-[:SUBSIDIARY_OF]->(Company)                           ownership_and_funding.parent_company
+// (Company)-[:PARTNERS_WITH]->(Company)                           partners.partner
+// (Company)-[:SUPPLIED_BY]->(Company)                             partners.supplier
+// (Company)-[:DISTRIBUTED_BY]->(Company)                          partners.distributor
+// (Company)-[:HAS_CUSTOMER]->(Company)                            customers.customer_name
+// (Company)-[:LOCATED_IN {kind}]->(Location)                      locations: headquarters, branch, factory, warehouse, country_presence
 //
 // --- Metrics -----------------------------------------------------------------
 // (MetricObservation)-[:MEASURES]->(Metric)
