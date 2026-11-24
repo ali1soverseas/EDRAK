@@ -178,6 +178,11 @@ MATCH (c:Company {id: $company_id}), (w:Workspace {id: $ws})
 MERGE (f:CompanyFact {id: row.id})
 SET f += row.props
 MERGE (f)-[:IN_WORKSPACE]->(w)
+WITH f, c
+OPTIONAL MATCH (other:Company)-[old:HAS_FACT]->(f)
+WHERE other <> c
+DELETE old
+WITH DISTINCT f, c
 MERGE (c)-[:HAS_FACT]->(f)
 """
 

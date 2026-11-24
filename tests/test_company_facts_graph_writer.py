@@ -108,6 +108,16 @@ def test_cleared_optional_properties_are_sent_as_null_so_an_edit_leaves_nothing_
     assert props["pdf_page"] is None and props["conflict_group"] is None  # SET f += map removes these
 
 
+def test_a_renamed_company_takes_its_facts_over_instead_of_sharing_them_with_the_old_node():
+    rec = Recorder()
+    publish_facts(rec, WS, "Acme Group", [fact()])
+    query = rec.calls[1][0]
+    # facts hang off one company: a HAS_FACT from any other Company is removed before the new one is merged
+    assert "OPTIONAL MATCH (other:Company)-[old:HAS_FACT]->(f)" in query
+    assert "WHERE other <> c" in query and "DELETE old" in query
+    assert query.index("DELETE old") < query.index("MERGE (c)-[:HAS_FACT]->(f)")
+
+
 def test_node_ids_are_scoped_to_the_workspace():
     assert fact_node_id("workspace-a", "f1") != fact_node_id("workspace-b", "f1")
     assert fact_node_id("workspace-a", "f1") == fact_node_id("workspace-a", "f1")
