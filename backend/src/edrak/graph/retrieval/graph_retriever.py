@@ -11,13 +11,14 @@ worker that asks for graph context never fails because of Neo4j.
 
 from __future__ import annotations
 
+import json
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Iterable, Sequence
 
 from ..connection import GraphConnection, GraphUnavailable, get_connection
-from ..entities import slugify
+from ..entities import host_of, slugify
 from .ranking import lucene_query
 
 logger = logging.getLogger(__name__)
@@ -262,6 +263,15 @@ WHERE (x:Company OR x:Product OR x:Market OR x:Topic OR x:CustomerSegment
 RETURN DISTINCT labels(x)[0] AS label, x.id AS id, x.name AS name
 """
 
+Q_COMPANY_FACTS = """
+MATCH (f:CompanyFact {workspace_id: $ws})
+WHERE ($category IS NULL OR f.category = $category)
+  AND ($key IS NULL OR f.key = $key)
+RETURN f {.*} AS f
+ORDER BY f.category, f.key, f.id
+LIMIT $limit
+"""
+
 Q_NEIGHBOURHOOD = """
 MATCH (c {id: $id})
 WHERE (c:Company OR c:Product OR c:Market OR c:Topic OR c:Feature OR c:PricingPlan OR c:Regulation OR c:Theme OR c:Platform)
@@ -296,6 +306,42 @@ LIMIT $limit
 
 
 # ============================================================================= retriever
+
+
+def _company_fact_evidence(fact: dict[str, Any]) -> Any:
+    """One CompanyFact node as an Evidence contract. None when it has no usable value."""
+    value = str(fact.get("value") or "").strip()
+    if fact.get("value_type") == "list":
+        try:
+            items = json.loads(value)
+            value = ", ".join(str(i) for i in items) if isinstance(items, list) else value
+        except ValueError:
+            pass
+    if not value or not fact.get("fact_id"):
+        return None
+    name = str(fact.get("key") or "fact").replace("_", " ")
+    is_pdf = fact.get("source_tier") == "own_pdf"
+    return GraphEvidence(
+        evidence_id=f"company_fact:{fact['fact_id']}",
+        source_type="official_documentation" if is_pdf else "web_page",
+        source_title=f"Company profile · {str(fact.get('category') or '').replace('_', ' ')}",
+        source_url=fact.get("source_url"),
+        publisher=host_of(fact.get("source_url")),
+        extracted_fact=f"{name}: {value}",
+        excerpt=fact.get("quote"),
+        is_synthetic=False,
+        retrieved_at=fact.get("observed_at"),
+    ).to_contract(
+        company_fact_id=fact["fact_id"],
+        category=fact.get("category"),
+        key=fact.get("key"),
+        source_tier=fact.get("source_tier"),
+        confidence=fact.get("confidence"),
+        pdf_page=fact.get("pdf_page"),
+        conflict_group=fact.get("conflict_group"),
+        edited_by_user=bool(fact.get("edited_by_user")),
+        human_reviewed=True,
+    )
 
 
 class GraphRetriever:
@@ -449,6 +495,25 @@ class GraphRetriever:
             exclude_request_id=exclude_request_id, limit=limit,
         )
         return self.evidence_from_findings(findings, source_types=source_types)[:limit]
+
+    def company_facts(
+        self, workspace_id: str | None, *, category: str | None = None, key: str | None = None, limit: int = 100
+    ) -> list[Any]:
+        """What a person approved about the company, as Evidence contracts.
+
+        These are durable facts, not findings of a run, so they skip the verified-only and 14-day filters that
+        ``find_findings`` applies: a person approving a fact is the verification, and a chief executive does not
+        age out after two weeks. Each carries the exact quote and source it was approved against.
+        """
+        if not workspace_id:
+            return []
+        rows = self._read(Q_COMPANY_FACTS, ws=workspace_id, category=category, key=key, limit=limit)
+        out = []
+        for row in rows:
+            contract = _company_fact_evidence(row["f"])
+            if contract is not None:
+                out.append(contract)
+        return out
 
     # ------------------------------------------------------------------ signals, gaps, metrics
 
