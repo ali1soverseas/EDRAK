@@ -60,6 +60,7 @@ Using async SQLite via `aiosqlite` with zero external heavy dependencies:
 | | `/api/company/facts` | `GET` | Facts grouped by category with en/ar labels; filters `status`, `category`, `source_tier`; conflicts together |
 | | `/api/company/facts/{id}` | `PATCH` | Approve or reject a fact, or edit its value (an edit approves it) |
 | | `/api/company/facts/bulk` | `POST` | Approve or reject many facts at once |
+| | `/api/company/facts/graph-sync` | `POST` | Bring the knowledge graph in line with the approved facts; reports what changed (off by default, see `COMPANY_RESEARCH_GRAPH_SYNC`) |
 | | `/api/company/fact-categories` | `GET` | The category list with English and Arabic labels |
 | **Analyses** | `/api/analyses` | `GET` | List analyses summary |
 | | `/api/analyses/{id}` | `GET` | Get analysis detail, request, and plan |

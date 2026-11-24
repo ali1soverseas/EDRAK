@@ -138,6 +138,38 @@ New relationships between existing labels:
 
 Two fixes came with this. SQL and REST evidence used to become `Document` nodes, because their `sql://` and `api://` URLs fell into the internal-document branch; they are now `DataAsset`s. And a market evidence item with an `endpoint` key (a public API) is not mistaken for a company API: only `metadata.channel` decides.
 
+## 3b. Company research facts
+
+Company research (`edrak.company_research`) collects facts about the user's own company and a person approves them. With `COMPANY_RESEARCH_GRAPH_SYNC=true` the approved ones are written here; rejecting or changing one removes or replaces it. SQLite stays the source of truth. Written by `ingestion/company_facts.py`, read by `GraphRetriever.company_facts`. How and when it runs is described in `documents/COMPANY_RESEARCH.md`.
+
+| Label | Written from | Links |
+|---|---|---|
+| `CompanyFact` | one approved company fact: category, key, value, exact `quote`, `source_url`, `pdf_page`, `source_tier`, `confidence`, `edited_by_user` | `(Company)-[:HAS_FACT]->`, `-[:IN_WORKSPACE]->(Workspace)` |
+| `Person` | leadership facts (`ceo`, `cfo`, `cto`, `coo`, `chairman`, `managing_director`, `board_member`, `executive_team_member`, `founder`) | `(Company)-[:LED_BY {role}]->`, `(Company)-[:FOUNDED_BY]->` |
+| `Location` | locations facts (`headquarters`, `branch`, `factory`, `warehouse`, `country_presence`) | `(Company)-[:LOCATED_IN {kind}]->` |
+| `Company` (other organisations) | shareholder, investor, subsidiary, parent, partner, supplier, distributor, customer facts | `HAS_SHAREHOLDER`, `FUNDED_BY`, `HAS_SUBSIDIARY`, `SUBSIDIARY_OF`, `PARTNERS_WITH`, `SUPPLIED_BY`, `DISTRIBUTED_BY`, `HAS_CUSTOMER` |
+
+- Every link carries `fact_id` and `workspace_id`, so removing a fact removes exactly its own links.
+- `Person` and `Location` nodes carry `source = 'company_research'` and are removed only when nothing points at them. `Company` nodes are shared with the competitor analyses: they are created when missing, never changed, and never deleted by this feature.
+- A fact is read with `GraphRetriever.company_facts(workspace_id)`. It does not apply the 14-day and verified-only filters of `find_findings`: a person approving a fact is the verification, and a chief executive does not age out. No agent calls it yet.
+
+**Not yet verified against a running Neo4j.** The writer and reader are tested with a recording connection, which checks the queries and parameters but not that Neo4j accepts the Cypher. To check it:
+
+```bash
+docker run -d --name edrak-neo4j -p 7687:7687 -p 7474:7474 -e NEO4J_AUTH=neo4j/<password> neo4j:5
+# in .env: GRAPH_ENABLED=true, NEO4J_PASSWORD=<password>, COMPANY_RESEARCH_GRAPH_SYNC=true
+# approve a fact in the app, then (or instead) call POST /api/company/facts/graph-sync
+```
+
+Then in the Neo4j browser (`http://localhost:7474`):
+
+```cypher
+MATCH (c:Company)-[:HAS_FACT]->(f:CompanyFact) RETURN c, f LIMIT 25;
+MATCH (c:Company)-[r:LED_BY|FOUNDED_BY|LOCATED_IN|PARTNERS_WITH]->(x) RETURN c.name, type(r), x.name, r.fact_id LIMIT 25;
+```
+
+Reject the fact and call the sync again: both queries should no longer return it, and a `Person` or `Location` it created should be gone.
+
 ## 4. Rules the code enforces
 
 - **Workspace isolation.** Every read filters on `workspace_id`. A call without one returns nothing, the same rule as `InternalRetriever`. Evidence is reached only through a finding of that workspace.

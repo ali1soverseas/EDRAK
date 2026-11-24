@@ -115,6 +115,7 @@ Errors have the form `{"detail": {"code": "...", "message": "..."}}`.
 | `GET /company/facts` | Facts grouped by category, with English and Arabic labels. Filters (repeatable): `status`, `category`, `source_tier`. Each category lists `facts` and `conflicts` (facts of one key that disagree, together). |
 | `PATCH /company/facts/{id}` | `{"status": "approved" \| "rejected"}`, or `{"value": "...", "value_type": "..."}`. An edit sets `edited_by_user` and approves the fact; the quote and source stay as found. |
 | `POST /company/facts/bulk` | `{"ids": [...], "action": "approve" \| "reject"}`, up to 500. Ids that are not the company's are reported in `not_found`. |
+| `POST /company/facts/graph-sync` | Make the knowledge graph agree with the company's approved facts (see [Knowledge graph](#knowledge-graph)). Returns `{published, retracted, failed, pending, skipped_reason, error}`. It never fails because the graph is off or down; it says so in `skipped_reason`. |
 | `GET /company/fact-categories` | The category list with English and Arabic labels. |
 
 Review actions are recorded in the audit log. The OpenAPI document (`/openapi.json`) describes all
@@ -139,6 +140,61 @@ of the above.
 - **Top bar.** While a run is going, the top bar says so and names the step. When it finishes with facts to
   review it says how many, until the person opens the research page. A failed run is reported once.
 - **Company profile.** A card shows the latest run and the counts to review, approved and rejected.
+
+## Knowledge graph
+
+Approved facts can be shared with the project's knowledge graph (`edrak.graph`, Neo4j), so the other
+workers can read what a person confirmed about the company. It is **off by default**
+(`COMPANY_RESEARCH_GRAPH_SYNC=false`) and also needs `GRAPH_ENABLED=true` and a reachable Neo4j.
+SQLite stays the source of truth; the graph is a copy that can be rebuilt from it.
+
+**What is shared.** Only approved facts. A run produces suggestions, so nothing reaches the graph until a
+person approves it, and rejecting or changing a fact removes or replaces it.
+
+**How it is stored.**
+
+- Each fact is a `CompanyFact` node attached to the `Company` with `HAS_FACT`. It keeps the value, the
+  exact quote, the source URL, the PDF page, the source tier, the confidence and whether a person edited
+  it. Facts of every category are stored this way.
+- Facts that name a person, an organisation or a place are also linked: a leader (`LED_BY`, with the
+  role) or founder (`FOUNDED_BY`) to a `Person`; a shareholder, investor, subsidiary, parent, partner,
+  supplier, distributor or customer (`HAS_SHAREHOLDER`, `FUNDED_BY`, `HAS_SUBSIDIARY`, `SUBSIDIARY_OF`,
+  `PARTNERS_WITH`, `SUPPLIED_BY`, `DISTRIBUTED_BY`, `HAS_CUSTOMER`) to a `Company`; a headquarters,
+  branch, factory, warehouse or country (`LOCATED_IN`, with the kind) to a `Location`. The full list is
+  in `graph/schema.cypher`.
+- Amounts, dates, awards, news, pricing, technology, certifications and the rest are stored as facts
+  only.
+
+**When it happens.**
+
+- After a person approves, edits or rejects facts (singly or in bulk), a background task brings the graph
+  in line. It runs after the response is sent, so a review is never slowed or failed by the graph.
+- `POST /company/facts/graph-sync` does the same on request. Use it after the graph was down or after
+  switching the setting on. It reports what it did.
+- The sync compares state rather than reacting to events. A table, `company_fact_graph_sync`, remembers a
+  hash of what was published for each fact: a fact whose hash differs is published again, and a fact the
+  graph holds that is no longer approved (or no longer exists) is removed. Repeating a sync changes
+  nothing, and when nothing changed the graph is not contacted.
+- If the graph is off or unreachable the facts stay pending and the next sync sends them.
+
+**Reading it back.** `GraphRetriever.company_facts(workspace_id, category=None, key=None)` returns a
+workspace's approved facts as `Evidence`: the quote as the excerpt, the source URL, and in the metadata the
+category, key, tier, confidence, PDF page and `human_reviewed`. No agent calls it yet; giving these facts
+to an agent is a separate decision.
+
+**Limits.**
+
+- Values are free text ("Alexandria, Egypt"), so a link is made from the slug of the name and no entity
+  resolution is attempted. Two people with the same name become one `Person` node. A value longer than 80
+  characters, or one that names the company itself, is stored as a fact but not linked.
+- A partner or customer attaches to the `Company` node for that name, which competitor analyses share. The
+  sync only creates such a node when it is missing and never changes an existing one. It never deletes a
+  `Company` node; it removes only the `Person` and `Location` nodes it created, once nothing points at them.
+- A company rename creates a new `Company` node (the id is a slug of the name). The facts move to it on the
+  next sync.
+- Deleting a whole workspace removes its rows in SQLite but not its nodes in the graph.
+- The queries have been checked with a recording connection, not against a running Neo4j. See the
+  verification steps in `graph/README.md`.
 
 ## Configuration
 
@@ -174,6 +230,7 @@ All keys are environment variables (see `.env.example`).
 | `COMPANY_RESEARCH_THIRD_PARTY_MAX_SEARCHES` | 4 | Searches per run |
 | `COMPANY_RESEARCH_THIRD_PARTY_RESULTS_PER_SEARCH` | 3 | Top results read per search |
 | `COMPANY_RESEARCH_THIRD_PARTY_MAX_PAGES` | 6 | Third-party pages read per run |
+| `COMPANY_RESEARCH_GRAPH_SYNC` | false | Share approved facts with the knowledge graph (also needs `GRAPH_ENABLED` and Neo4j) |
 
 Company research extraction and company profile URL/PDF imports use the shared
 NVIDIA model (`NVIDIA_API_KEY`, `NVIDIA_MODEL`). Invalid extracted replies are
