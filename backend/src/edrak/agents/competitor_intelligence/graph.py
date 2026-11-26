@@ -5,14 +5,13 @@
     assess_coverage            4. covered / insufficient / stale / unverified / missing; reuse what is known
     generate_queries           5. queries only for what is not covered
     search -> synthesize -> ground -> check_requirements   6. web research, looped by stage
-    final_report -> comparison
+    final_report
 """
 
 from langgraph.graph import END, START, StateGraph
 
 from .nodes import (
     check_research_requirements_node,
-    comparison_node,
     final_report_node,
     generate_queries_node,
     identify_research_requirements_node,
@@ -65,8 +64,6 @@ graph.add_node("prepare_next_stage", prepare_next_stage_node)
 
 graph.add_node("final_report", final_report_node)
 
-graph.add_node("comparison", comparison_node)
-
 graph.add_edge(START, "identify_requirements")
 
 graph.add_edge("identify_requirements", "hybrid_retrieval")
@@ -96,8 +93,6 @@ graph.add_conditional_edges(
 
 graph.add_edge("prepare_next_stage", "generate_queries")
 
-graph.add_edge("final_report", "comparison")
-
-graph.add_edge("comparison", END)
+graph.add_edge("final_report", END)
 
 app = graph.compile()

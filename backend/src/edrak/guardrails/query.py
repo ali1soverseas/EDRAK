@@ -103,12 +103,16 @@ def scope_of(text: str) -> Optional[tuple[str, str]]:
     return _scope_cached(hashlib.sha256(text.encode("utf-8")).hexdigest(), text)
 
 
-def check_query(text: str, *, use_model: bool = True, use_jev: bool | None = None, context: str = "") -> QueryVerdict:
-    """Check a question (plus any context the form adds) before it is planned or answered."""
+def check_query(text: str, *, use_model: bool = True, use_jev: bool | None = None, context: str = "",
+                min_chars: int = MIN_CHARS) -> QueryVerdict:
+    """Check a question (plus any context the form adds) before it is planned or answered.
+
+    Chat follow-ups can be shorter than a standalone analysis question.
+    """
     raw = (text or "").strip()
     checks: list[Check] = []
 
-    if len(raw) < MIN_CHARS:
+    if len(raw) < min_chars:
         return QueryVerdict("blocked", raw, "Describe the decision or question in a sentence.", "query_too_short",
                             [Check("length", "low", "blocked", {"chars": len(raw)})])
     if len(raw) > MAX_CHARS:

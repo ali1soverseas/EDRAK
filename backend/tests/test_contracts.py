@@ -140,3 +140,16 @@ def test_gitlab_company_profile():
     assert "financial_profile" in detailed
 
 
+def test_nvidia_company_profile():
+    from edrak.core.profiles import get_company_profile, get_nvidia_profile
+
+    profile = get_nvidia_profile()
+    assert profile.name == "NVIDIA"
+    assert "Blackwell GPUs (B200, GB200 NVL72)" in profile.products
+    assert profile.db_config is not None
+    assert profile.api_config is not None
+
+    lookup = get_company_profile("NVDA")
+    assert lookup.name == "NVIDIA"
+
+

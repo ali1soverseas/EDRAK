@@ -18,8 +18,6 @@ from ..contracts.CrossSignal import (
     CrossSignalSummary,
     DecisionReadyContext,
 )
-from ..core.llm import DEFAULT_MAX_TOKENS
-
 from ..contracts.base import new_id
 
 from ..core.llm import schema_instruction
@@ -1042,8 +1040,12 @@ def _build_findings_digest(
 
     rows: list[str] = []
 
+    # Cross-Signal prompts stay bounded even when a large run returns many
+    # findings.  The verifier already ranked them; retain the first 32 unique
+    # findings and keep statements concise.
+    bounded = findings[:32]
     for index, finding in enumerate(
-        findings,
+        bounded,
         start=1,
     ):
 
@@ -1059,7 +1061,7 @@ def _build_findings_digest(
                     f"worker: {_finding_domain(finding)}",
                     (
                         "statement: "
-                        f"{_finding_statement(finding)}"
+                        f"{_finding_statement(finding)[:800]}"
                     ),
                     (
                         "evidence_quality: "
@@ -1092,22 +1094,23 @@ def _build_business_digest(
     )
 
     try:
-
-        payload = (
-            business_request.model_dump(
-                mode="json"
-            )
-        )
-
+        payload = business_request.model_dump(mode="json")
     except AttributeError:
+        payload = dict(business_request)
 
-        payload = dict(
-            business_request
-        )
-
-    return _safe_json(
-        payload
-    )
+    context = payload.get("business_context") or {}
+    compact = {
+        "goal": payload.get("goal") or "",
+        "company": (payload.get("company_profile") or {}).get("name") or "",
+        "industry": (payload.get("company_profile") or {}).get("industry") or "",
+        "use_case": context.get("use_case") or payload.get("use_case") or "",
+        "targets": context.get("targets") or [],
+        "competitors": context.get("competitors") or [],
+        "markets": context.get("markets") or [],
+        "offering": context.get("offering") or "",
+        "target_customers": context.get("target_customers") or "",
+    }
+    return _safe_json(compact)
 
 
 # ============================================================================
@@ -1634,6 +1637,8 @@ class CrossSignalNodes:
             CrossSignal
         ] = []
 
+        warnings: list[str] = []
+
         per_lens_limit = min(
             self.settings.max_signals_per_lens,
             self.settings.max_signals,
@@ -1649,7 +1654,7 @@ class CrossSignalNodes:
         structured_llm = self.llm.with_structured_output(
             SignalDetectionResult,
             method="json_schema",
-            max_tokens=DEFAULT_MAX_TOKENS,
+            max_tokens=self.settings.max_output_tokens,
         )
 
         for lens in LENSES:
@@ -1674,40 +1679,46 @@ class CrossSignalNodes:
                 )
             )
 
-            response = await (
-                structured_llm.ainvoke(
-                    [
-                        SystemMessage(
-                            content=system_prompt
-                        ),
-                        HumanMessage(
-                            content=human_prompt
-                        ),
-                        HumanMessage(
-                            content=schema_instruction(
-                                SignalDetectionResult
-                            )["content"]
-                        ),
-                    ]
-                )
-            )
-
-            if isinstance(
-                response,
-                SignalDetectionResult,
-            ):
-
-                signals = response.signals
-
-            else:
-
-                signals = (
-                    SignalDetectionResult
-                    .model_validate(
-                        response
+            try:
+                response = await (
+                    structured_llm.ainvoke(
+                        [
+                            SystemMessage(
+                                content=system_prompt
+                            ),
+                            HumanMessage(
+                                content=human_prompt
+                            ),
+                            HumanMessage(
+                                content=schema_instruction(
+                                    SignalDetectionResult
+                                )["content"]
+                            ),
+                        ]
                     )
-                    .signals
                 )
+
+                if isinstance(
+                    response,
+                    SignalDetectionResult,
+                ):
+                    signals = response.signals
+                else:
+                    signals = (
+                        SignalDetectionResult
+                        .model_validate(response)
+                        .signals
+                    )
+            except Exception as exc:  # noqa: BLE001 - one lens must not discard another
+                logger.warning(
+                    "Cross-Signal lens=%s failed; no signals emitted: %s",
+                    lens,
+                    exc,
+                )
+                warnings.append(
+                    f"Cross-Signal lens '{lens}' failed; no signals were emitted for this lens."
+                )
+                signals = []
 
             logger.info(
                 "Lens %s produced %d candidates",
@@ -1736,6 +1747,7 @@ class CrossSignalNodes:
 
         return {
             "candidate_signals": all_signals,
+            "warnings": warnings,
         }
 
     # ========================================================================

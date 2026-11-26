@@ -1,0 +1,1490 @@
+{
+  "worker": "internal_intelligence",
+  "task_id": "996abbe5-74d3-4023-a07b-2100ece99e49",
+  "attempt": 1,
+  "source_input": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\internal_intelligence\\996abbe5-74d3-4023-a07b-2100ece99e49.a1\\input.json",
+  "source_output": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\internal_intelligence\\996abbe5-74d3-4023-a07b-2100ece99e49.a1\\output.json",
+  "status": "completed",
+  "finding_count": 12,
+  "evidence_count": 12,
+  "gap_count": 1,
+  "error": null,
+  "evaluation": {
+    "worker": "internal_intelligence",
+    "task_goal": "What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 12,
+      "evidence_item_count": 12,
+      "gap_count": 1,
+      "evidence_reference_rate": 1.0,
+      "reference_resolution_rate": 1.0,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 3,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": 0.6217,
+      "per_finding": [
+        {
+          "finding_id": "6092c738-8e6b-4fe6-aa92-6bc5078c622c",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "4ac5d72e-2294-430a-98d9-65444d6fb26f",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "19e56586-8785-4fb5-8e04-ca7c20f23c78",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [
+            "200",
+            "72"
+          ],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "a2b9ad50-ebff-4933-a307-e8acd3e5faf6",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [
+            "72"
+          ],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "b282601b-d115-4c42-be13-5827ab9ee2ef",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [
+            "200",
+            "72"
+          ],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "8821064a-3b2b-4436-86e6-4c986f378be7",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "f69e2b28-62dc-493d-9e46-491e36514b52",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "d0016662-cd62-4c71-a14d-f03424ca9787",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "4f628e48-1726-42f3-bb7b-4735a847f9fc",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "fc9e1685-cf9b-41e1-a708-21cfe74ab4ea",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "1ad8a7eb-7ef2-42c6-93ff-ed8e511e8d59",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        },
+        {
+          "finding_id": "f82c63fd-4eb6-4065-b7ba-aa9a053744e2",
+          "has_evidence_reference": true,
+          "references_resolve": true,
+          "reference_note": null,
+          "quote_found": null,
+          "unsupported_numbers": [],
+          "status_claim_conflict": null
+        }
+      ],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": "2026-11-24",
+    "ground_truth_dataset_version": "2.0.0-blackwell-usecase",
+    "finding_count": 8,
+    "mandatory_finding_count": 8,
+    "coverage_score": 0.5625,
+    "strict_coverage_score": 0.125,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 65,
+      "initial_missing_count": 1,
+      "initial_partial_count": 7,
+      "findings_reviewed": 8,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 13,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [
+        "NVIDIA"
+      ],
+      "comparison_targets": [],
+      "entity_presence": {
+        "NVIDIA": true
+      },
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {
+        "NVIDIA": true
+      },
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": "Stay focused on NVIDIA Blackwell capabilities, constraints, software, and prior decisions. Regional, pricing, and adoption coverage is not required for this goal. Separate documented facts from planning material and assumptions. Do not treat synthetic documents or Neo4j sandbox claims as verified real-world facts."
+    },
+    "finding_results": [
+      {
+        "finding_id": "INT-01",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-UC-001",
+        "title": "Blackwell product scope",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "covered: Names the Blackwell products in scope (B200, GB200 NVL72). — The Actual Output explicitly names both Blackwell products, B200 and GB200 NVL72, fulfilling the requirement to identify the products in scope. The Expected Output specifies the need to name these products, which is met. Additionally, the Retrieval Context provides relevant information about the products without being treated as report content. Therefore, the response aligns strongly with the evaluation steps.; missing: Distinguishes the GPU from boards and systems (e.g., HGX/DGX B200) and from the GB200 NVL72 rack. — The Actual Output fails to explicitly distinguish the Blackwell GPU from the boards and systems like HGX/DGX B200, as well as from the GB200 NVL72 rack. While it mentions both the B200 and GB200 NVL72, it does not clarify their differences or categorize them appropriately. Additionally, the Expected Output criteria for distinguishing these products are not met, leading to a lack of alignment with the evaluation steps.; partial: Attributes product details to the document they come from. — The Actual Output identifies the Blackwell products (B200, GB200 NVL72) and distinguishes between the GPU and the rack, meeting the requirement to name the products in scope. However, it lacks clear attribution of product details to specific documents, which is a critical aspect of the evaluation steps. The retrieval context does not contain content that could be mistaken for report content, but the overall attribution is not sufficiently explicit. Therefore, while it meets some criteria, it does not fully align with the expectations.",
+        "criteria_results": [
+          {
+            "criterion": "Names the Blackwell products in scope (B200, GB200 NVL72).",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The Actual Output explicitly names both Blackwell products, B200 and GB200 NVL72, fulfilling the requirement to identify the products in scope. The Expected Output specifies the need to name these products, which is met. Additionally, the Retrieval Context provides relevant information about the products without being treated as report content. Therefore, the response aligns strongly with the evaluation steps."
+          },
+          {
+            "criterion": "Distinguishes the GPU from boards and systems (e.g., HGX/DGX B200) and from the GB200 NVL72 rack.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output fails to explicitly distinguish the Blackwell GPU from the boards and systems like HGX/DGX B200, as well as from the GB200 NVL72 rack. While it mentions both the B200 and GB200 NVL72, it does not clarify their differences or categorize them appropriately. Additionally, the Expected Output criteria for distinguishing these products are not met, leading to a lack of alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Attributes product details to the document they come from.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies the Blackwell products (B200, GB200 NVL72) and distinguishes between the GPU and the rack, meeting the requirement to name the products in scope. However, it lacks clear attribution of product details to specific documents, which is a critical aspect of the evaluation steps. The retrieval context does not contain content that could be mistaken for report content, but the overall attribution is not sufficiently explicit. Therefore, while it meets some criteria, it does not fully align with the expectations."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-01",
+          "requirement_id": "REQ-CAPABILITIES",
+          "test_case_id": "INT-UC-001",
+          "title": "Blackwell product scope",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output mentions the Blackwell products B200 and GB200 NVL72, fulfilling the requirement to name the products in scope. However, it does not clearly distinguish between the GPU, boards, and systems, nor does it specify the HGX/DGX B200 and GB200 NVL72 rack. Additionally, while some product details are attributed to documents, the lack of clear differentiation affects the overall completeness. Therefore, the acceptance criteria are partially met.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.business_context.offering",
+              "text": "Blackwell GPUs (B200, GB200 NVL72)",
+              "similarity": 0.69913
+            },
+            {
+              "source_path": "$.findings[1].statement",
+              "text": "Direct database extraction from 'gpu_products' returned 2 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.639991
+            },
+            {
+              "source_path": "$.findings[9].limitations[1]",
+              "text": "Supporting quote: # nvidia_internal_strategy_2026.md ## Internal ASP Targets - GB200 NVL72 rack-s",
+              "similarity": 0.594588
+            },
+            {
+              "source_path": "$.findings[2].statement",
+              "text": "Direct database extraction from 'software_arr' returned 3 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.589874
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.584432
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-02",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-UC-001",
+        "title": "Capabilities with measurement context",
+        "priority": "mandatory",
+        "score": 0.3666666666666667,
+        "status": "partial",
+        "reason": "partial: Gives concrete capability figures (e.g., memory, bandwidth, precision formats, throughput) with the source of each. — The Actual Output provides some capability figures related to NVIDIA's Blackwell GPUs, such as pricing and performance metrics, but lacks specific figures like memory, bandwidth, or throughput. While it includes sources for some claims, many figures are derived from synthetic or adapted internal data, which are not clearly labeled as unverified. Additionally, the context does not sufficiently clarify workload or configuration details for the performance figures provided. Overall, it does not fully meet the acceptance criteria outlined in the Expected Output.; missing: States workload, precision, or configuration context for performance figures. — The Actual Output lacks explicit capability figures with their corresponding workload or configuration context, which is a critical requirement. While it provides some findings related to NVIDIA's Blackwell GPU capabilities, it does not clearly state the performance figures or label internal-corpus figures as unverified. Additionally, the summary does not meet the acceptance criteria for clarity and completeness regarding the required findings. Therefore, it does not align well with the evaluation steps.; partial: Labels figures that come only from internal or synthetic documents as unverified internal-corpus figures. — The actual output does not fully meet the labeling criterion as it includes figures derived from synthetic or adapted internal documents without clearly labeling them as unverified internal-corpus figures. While it provides some capability figures, it lacks explicit context regarding workloads or configurations for these figures. Additionally, the output does not sufficiently differentiate between verified and unverified claims, which is crucial for the evaluation.",
+        "criteria_results": [
+          {
+            "criterion": "Gives concrete capability figures (e.g., memory, bandwidth, precision formats, throughput) with the source of each.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides some capability figures related to NVIDIA's Blackwell GPUs, such as pricing and performance metrics, but lacks specific figures like memory, bandwidth, or throughput. While it includes sources for some claims, many figures are derived from synthetic or adapted internal data, which are not clearly labeled as unverified. Additionally, the context does not sufficiently clarify workload or configuration details for the performance figures provided. Overall, it does not fully meet the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "States workload, precision, or configuration context for performance figures.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output lacks explicit capability figures with their corresponding workload or configuration context, which is a critical requirement. While it provides some findings related to NVIDIA's Blackwell GPU capabilities, it does not clearly state the performance figures or label internal-corpus figures as unverified. Additionally, the summary does not meet the acceptance criteria for clarity and completeness regarding the required findings. Therefore, it does not align well with the evaluation steps."
+          },
+          {
+            "criterion": "Labels figures that come only from internal or synthetic documents as unverified internal-corpus figures.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The actual output does not fully meet the labeling criterion as it includes figures derived from synthetic or adapted internal documents without clearly labeling them as unverified internal-corpus figures. While it provides some capability figures, it lacks explicit context regarding workloads or configurations for these figures. Additionally, the output does not sufficiently differentiate between verified and unverified claims, which is crucial for the evaluation."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3666666666666667,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-02",
+          "requirement_id": "REQ-CAPABILITIES",
+          "test_case_id": "INT-UC-001",
+          "title": "Capabilities with measurement context",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides some capability figures but lacks clear labeling of unverified internal-corpus figures. While it mentions derived data for pilot demonstration purposes, it does not explicitly state the workload or configuration context for the performance figures. Additionally, not all acceptance criteria are fully met, particularly regarding the clarity of sources and context for the figures provided.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.findings[0].limitations[0]",
+              "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+              "similarity": 0.356857
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.34736
+            },
+            {
+              "source_path": "$.findings[3].limitations[2]",
+              "text": "Supporting quote: { \"as_of\": \"2025-Q2\", \"average_nvidia_advantage_pct\": 69.5, \"benchmarks\":",
+              "similarity": 0.343467
+            },
+            {
+              "source_path": "$.findings[11].limitations[1]",
+              "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+              "similarity": 0.306283
+            },
+            {
+              "source_path": "$.findings[7].limitations[1]",
+              "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+              "similarity": 0.30532
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3666666666666667,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-03",
+        "requirement_id": "REQ-CONSTRAINTS",
+        "test_case_id": "INT-UC-001",
+        "title": "Documented constraints",
+        "priority": "mandatory",
+        "score": 0.3333333333333333,
+        "status": "partial",
+        "reason": "missing: Identifies operational or commercial constraints relevant to Blackwell (e.g., supply, power density, liquid cooling, lead times, export controls, cost), each with a cited source. — The Actual Output does not explicitly mention operational or commercial constraints relevant to Blackwell, such as supply, power density, cooling, lead times, export controls, or cost. While it includes some findings related to pricing and operational aspects, these do not directly address the required constraints as specified in the Expected Output. Additionally, the gaps section notes that some evidence comes from synthetic or adapted internal documents, which may undermine the credibility of the findings. Therefore, the response does not meet the acceptance criteria.; missing: Separates documented constraints from assumptions or planning notes. — The Actual Output does not clearly separate documented constraints from assumptions or planning notes. While it mentions limitations and gaps, it fails to explicitly identify operational or commercial constraints relevant to Blackwell, such as supply, power density, and cooling, as required by the evaluation steps. The findings do not adequately address the acceptance criteria for separating constraints from assumptions, leading to a low score.; partial: Records constraints that could not be established as gaps. — The Actual Output identifies some constraints related to the Blackwell GPUs, such as limitations derived from synthetic data and mentions gaps in evidence authenticity. However, it does not explicitly document operational or commercial constraints like supply, power density, or cooling, which are required by the evaluation steps. The gaps section indicates that some evidence is not from authentic records, which further detracts from meeting the acceptance criteria. Therefore, while some aspects are addressed, the overall clarity and completeness regarding documented constraints are insufficient.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies operational or commercial constraints relevant to Blackwell (e.g., supply, power density, liquid cooling, lead times, export controls, cost), each with a cited source.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention operational or commercial constraints relevant to Blackwell, such as supply, power density, cooling, lead times, export controls, or cost. While it includes some findings related to pricing and operational aspects, these do not directly address the required constraints as specified in the Expected Output. Additionally, the gaps section notes that some evidence comes from synthetic or adapted internal documents, which may undermine the credibility of the findings. Therefore, the response does not meet the acceptance criteria."
+          },
+          {
+            "criterion": "Separates documented constraints from assumptions or planning notes.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly separate documented constraints from assumptions or planning notes. While it mentions limitations and gaps, it fails to explicitly identify operational or commercial constraints relevant to Blackwell, such as supply, power density, and cooling, as required by the evaluation steps. The findings do not adequately address the acceptance criteria for separating constraints from assumptions, leading to a low score."
+          },
+          {
+            "criterion": "Records constraints that could not be established as gaps.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output identifies some constraints related to the Blackwell GPUs, such as limitations derived from synthetic data and mentions gaps in evidence authenticity. However, it does not explicitly document operational or commercial constraints like supply, power density, or cooling, which are required by the evaluation steps. The gaps section indicates that some evidence is not from authentic records, which further detracts from meeting the acceptance criteria. Therefore, while some aspects are addressed, the overall clarity and completeness regarding documented constraints are insufficient."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-03",
+          "requirement_id": "REQ-CONSTRAINTS",
+          "test_case_id": "INT-UC-001",
+          "title": "Documented constraints",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output identifies some limitations related to Blackwell but does not comprehensively cover all required operational or commercial constraints such as supply, power density, cooling, lead times, export controls, and cost. While there are cited sources, the output lacks a clear separation of documented constraints from assumptions or planning notes, and it does not explicitly state any gaps for constraints that could not be established. Therefore, the coverage is classified as partially covered.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.findings[11].limitations[1]",
+              "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+              "similarity": 0.340682
+            },
+            {
+              "source_path": "$.findings[0].limitations[0]",
+              "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+              "similarity": 0.33551
+            },
+            {
+              "source_path": "$.findings[0].statement",
+              "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.324976
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.31448
+            },
+            {
+              "source_path": "$.findings[5].limitations[0]",
+              "text": "Claim type: verified_fact",
+              "similarity": 0.306811
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-04",
+        "requirement_id": "REQ-SOFTWARE",
+        "test_case_id": "INT-UC-001",
+        "title": "Software stack role and compatibility",
+        "priority": "mandatory",
+        "score": 0.3333333333333333,
+        "status": "partial",
+        "reason": "missing: Explains the role of named components (e.g., CUDA, TensorRT-LLM, NCCL, NVIDIA AI Enterprise) for Blackwell training or inference, rather than only listing names. — The Actual Output does not adequately explain the roles of the named NVIDIA software components such as CUDA, TensorRT-LLM, NCCL, and NVIDIA AI Enterprise in relation to Blackwell workloads. While it lists some components and their pricing, it fails to provide a substantive explanation of how these components function for training or inference, which is a key requirement of the evaluation steps. Additionally, there is no mention of version claims or compatibility, which further detracts from meeting the acceptance criteria.; missing: States version or framework compatibility only with a cited source; otherwise marks it unverified. — The Actual Output does not explicitly state version or framework compatibility for the NVIDIA software components, which is a key requirement. While it lists various software offerings, it fails to provide version claims supported by cited sources, leading to a lack of verification. Additionally, the retrieval context does not clarify compatibility, further diminishing alignment with the evaluation steps. Therefore, the response does not meet the mandatory acceptance criteria.; partial: If licensing is discussed, distinguishes free or open components from paid enterprise offerings as the evidence states. — The actual output discusses licensing components, specifically mentioning the NVIDIA AI Enterprise subscription and its pricing. However, it does not clearly distinguish between free or open components and paid enterprise offerings, which is a critical requirement. Additionally, while it provides some information about software components, it lacks a comprehensive explanation of their roles and compatibility, failing to meet the acceptance criteria fully. Overall, the output partially addresses the requirements but misses key distinctions and explanations.",
+        "criteria_results": [
+          {
+            "criterion": "Explains the role of named components (e.g., CUDA, TensorRT-LLM, NCCL, NVIDIA AI Enterprise) for Blackwell training or inference, rather than only listing names.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not adequately explain the roles of the named NVIDIA software components such as CUDA, TensorRT-LLM, NCCL, and NVIDIA AI Enterprise in relation to Blackwell workloads. While it lists some components and their pricing, it fails to provide a substantive explanation of how these components function for training or inference, which is a key requirement of the evaluation steps. Additionally, there is no mention of version claims or compatibility, which further detracts from meeting the acceptance criteria."
+          },
+          {
+            "criterion": "States version or framework compatibility only with a cited source; otherwise marks it unverified.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state version or framework compatibility for the NVIDIA software components, which is a key requirement. While it lists various software offerings, it fails to provide version claims supported by cited sources, leading to a lack of verification. Additionally, the retrieval context does not clarify compatibility, further diminishing alignment with the evaluation steps. Therefore, the response does not meet the mandatory acceptance criteria."
+          },
+          {
+            "criterion": "If licensing is discussed, distinguishes free or open components from paid enterprise offerings as the evidence states.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The actual output discusses licensing components, specifically mentioning the NVIDIA AI Enterprise subscription and its pricing. However, it does not clearly distinguish between free or open components and paid enterprise offerings, which is a critical requirement. Additionally, while it provides some information about software components, it lacks a comprehensive explanation of their roles and compatibility, failing to meet the acceptance criteria fully. Overall, the output partially addresses the requirements but misses key distinctions and explanations."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-04",
+          "requirement_id": "REQ-SOFTWARE",
+          "test_case_id": "INT-UC-001",
+          "title": "Software stack role and compatibility",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately explain the roles of named NVIDIA software components related to Blackwell training or inference, as it primarily lists findings without detailed explanations. Additionally, it lacks any mention of version or framework compatibility, marking it unverified. There is no discussion of licensing or differentiation between free/open components and paid offerings. Overall, none of the acceptance criteria are substantively met.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.findings[7].limitations[1]",
+              "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+              "similarity": 0.676362
+            },
+            {
+              "source_path": "$.findings[8].limitations[1]",
+              "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.2 NVIDIA NIM (Inference Microservices)",
+              "similarity": 0.664092
+            },
+            {
+              "source_path": "$.findings[5].limitations[1]",
+              "text": "Supporting quote: # nvidia_pricing_commercial_2026.md ## Software Subscription Pricing: NVIDIA AI",
+              "similarity": 0.648549
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.621258
+            },
+            {
+              "source_path": "$.findings[11].limitations[1]",
+              "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+              "similarity": 0.613013
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-05",
+        "requirement_id": "REQ-STRATEGY",
+        "test_case_id": "INT-UC-002",
+        "title": "Prior strategic decisions",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "partial: Identifies prior strategic decisions in the internal evidence (e.g., pricing or packaging choices, roadmap cadence, partner or ecosystem commitments). — The Actual Output identifies several prior strategic decisions related to pricing and packaging, such as the pricing model for NVIDIA AI Enterprise and the target ASP for the GB200 NVL72 rack. However, it lacks explicit attribution of these decisions to specific documents with dates, and it does not clearly distinguish between decisions taken and proposals. This results in a partial fulfillment of the acceptance criteria.; partial: Attributes each decision to a specific document, with a date where the document gives one. — The Actual Output does not adequately identify prior strategic decisions as required. While it references internal evidence, it fails to clearly distinguish between decisions taken and proposals. Additionally, while some findings attribute decisions to specific documents, the lack of explicit dates in the claims undermines the support for those decisions. The gaps noted indicate reliance on synthetic data, which further detracts from the credibility of the findings. Overall, the output does not fully meet the acceptance criteria outlined in the Expected Output.; partial: Distinguishes decisions actually taken from proposals, options, or planning questions. — The Actual Output identifies some prior strategic decisions, such as pricing and packaging choices, but it does not clearly distinguish between decisions taken and proposals or options. While it references internal evidence, it lacks explicit attribution of each decision to specific documents with dates. Additionally, the gap statement regarding the use of synthetic data indicates a shortcoming in the authenticity of the evidence presented, which affects the overall reliability of the findings.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies prior strategic decisions in the internal evidence (e.g., pricing or packaging choices, roadmap cadence, partner or ecosystem commitments).",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies several prior strategic decisions related to pricing and packaging, such as the pricing model for NVIDIA AI Enterprise and the target ASP for the GB200 NVL72 rack. However, it lacks explicit attribution of these decisions to specific documents with dates, and it does not clearly distinguish between decisions taken and proposals. This results in a partial fulfillment of the acceptance criteria."
+          },
+          {
+            "criterion": "Attributes each decision to a specific document, with a date where the document gives one.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not adequately identify prior strategic decisions as required. While it references internal evidence, it fails to clearly distinguish between decisions taken and proposals. Additionally, while some findings attribute decisions to specific documents, the lack of explicit dates in the claims undermines the support for those decisions. The gaps noted indicate reliance on synthetic data, which further detracts from the credibility of the findings. Overall, the output does not fully meet the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "Distinguishes decisions actually taken from proposals, options, or planning questions.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies some prior strategic decisions, such as pricing and packaging choices, but it does not clearly distinguish between decisions taken and proposals or options. While it references internal evidence, it lacks explicit attribution of each decision to specific documents with dates. Additionally, the gap statement regarding the use of synthetic data indicates a shortcoming in the authenticity of the evidence presented, which affects the overall reliability of the findings."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-05",
+          "requirement_id": "REQ-STRATEGY",
+          "test_case_id": "INT-UC-002",
+          "title": "Prior strategic decisions",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output identifies some internal evidence sources and mentions prior strategic decisions, but it lacks specific attribution to documents and dates. It does not clearly distinguish between decisions taken and proposals, which is crucial for meeting the acceptance criteria. Therefore, it only partially meets the requirements.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.352532
+            },
+            {
+              "source_path": "$.findings[0].statement",
+              "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.322314
+            },
+            {
+              "source_path": "$.requirements[0].definition",
+              "text": "The company's own price for the offering, from internal documents.",
+              "similarity": 0.30205
+            },
+            {
+              "source_path": "$.findings[0].limitations[0]",
+              "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+              "similarity": 0.300752
+            },
+            {
+              "source_path": "$.findings[7].limitations[1]",
+              "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+              "similarity": 0.293327
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-06",
+        "requirement_id": "REQ-EXPOSURE",
+        "test_case_id": "INT-UC-002",
+        "title": "Exposure to competitor moves",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "covered: Explains which capabilities, constraints, or decisions increase or reduce NVIDIA's exposure to competitor moves (e.g., custom accelerators, lower-priced GPUs, Ethernet networking). — The Actual Output provides a detailed analysis of NVIDIA's Blackwell GPU capabilities, constraints, and strategic decisions, addressing how these factors influence exposure to competitor moves. It includes specific findings from internal sources that support the claims made, such as pricing models and competitive benchmarks. However, while it mentions competitor facts, it lacks explicit labeling of the exposure assessment as grounded in cited findings, which is a requirement in the Expected Output. This results in a score reflecting good but incomplete alignment with the evaluation steps.; missing: Labels the exposure assessment as analysis grounded in cited findings. — The Actual Output does not explicitly label the exposure assessment as an analysis, which is a key requirement. While it provides findings related to NVIDIA's capabilities and constraints, it lacks a clear connection to how these factors influence exposure to competitor moves. Additionally, the analysis is not sufficiently grounded in cited findings from the report, as required by the evaluation steps. The retrieval context is treated separately, but the overall alignment with the expected output is weak.; partial: Competitor facts used in the assessment are cited or explicitly deferred to competitor research. — The Actual Output does not include explicit citations or references to competitor research, which is a critical requirement outlined in the Expected Output. While it provides internal findings and data, it fails to label the exposure assessment as analysis grounded in cited findings or to cite competitor facts explicitly. This lack of adherence to the citation requirement results in a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "Explains which capabilities, constraints, or decisions increase or reduce NVIDIA's exposure to competitor moves (e.g., custom accelerators, lower-priced GPUs, Ethernet networking).",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's Blackwell GPU capabilities, constraints, and strategic decisions, addressing how these factors influence exposure to competitor moves. It includes specific findings from internal sources that support the claims made, such as pricing models and competitive benchmarks. However, while it mentions competitor facts, it lacks explicit labeling of the exposure assessment as grounded in cited findings, which is a requirement in the Expected Output. This results in a score reflecting good but incomplete alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Labels the exposure assessment as analysis grounded in cited findings.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly label the exposure assessment as an analysis, which is a key requirement. While it provides findings related to NVIDIA's capabilities and constraints, it lacks a clear connection to how these factors influence exposure to competitor moves. Additionally, the analysis is not sufficiently grounded in cited findings from the report, as required by the evaluation steps. The retrieval context is treated separately, but the overall alignment with the expected output is weak."
+          },
+          {
+            "criterion": "Competitor facts used in the assessment are cited or explicitly deferred to competitor research.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not include explicit citations or references to competitor research, which is a critical requirement outlined in the Expected Output. While it provides internal findings and data, it fails to label the exposure assessment as analysis grounded in cited findings or to cite competitor facts explicitly. This lack of adherence to the citation requirement results in a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-06",
+          "requirement_id": "REQ-EXPOSURE",
+          "test_case_id": "INT-UC-002",
+          "title": "Exposure to competitor moves",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides some analysis of NVIDIA's capabilities and constraints but lacks a clear explanation of how these factors specifically increase or reduce NVIDIA's exposure to competitor moves. While it mentions internal evidence sources and operational API lookups, it does not label the exposure assessment as grounded in cited findings or explicitly cite competitor facts. Therefore, it does not fully meet the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.672261
+            },
+            {
+              "source_path": "$.task_goal",
+              "text": "What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?",
+              "similarity": 0.586453
+            },
+            {
+              "source_path": "$.findings[3].statement",
+              "text": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.562324
+            },
+            {
+              "source_path": "$.findings[4].statement",
+              "text": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.55358
+            },
+            {
+              "source_path": "$.findings[0].statement",
+              "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+              "similarity": 0.553005
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "INT-07",
+        "requirement_id": "REQ-EVIDENCE",
+        "test_case_id": "INT-UC-003",
+        "title": "Internal and synthetic provenance",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "Second pass upgraded initial missing to covered. Initial: missing: Labels internal documents as internal evidence, distinct from public sources. — The report does not explicitly label internal documents as internal evidence, nor does it clearly distinguish internal evidence from public sources. While it mentions that some evidence is derived from synthetic or adapted internal data, it lacks a comprehensive disclosure regarding the synthetic status of all internal documents. This omission fails to meet the acceptance criteria for labeling and disclosing the nature of internal evidence, resulting in a low score.; missing: Discloses that the indexed internal documents identify themselves as synthetic or adapted; when all evidence is internal, a report-level disclosure plus per-finding limitations satisfies this criterion. — The Actual Output does not explicitly state that the indexed internal documents identify themselves as synthetic or adapted, which is a key requirement. While the limitations in the findings mention that the data is derived from adapted/synthetic internal data, there is no clear report-level disclosure regarding this in the summary or findings. Additionally, the per-finding limitations do not fully align with the expected report-level disclosure criteria. Therefore, the response does not meet the evaluation steps adequately.; missing: Does not use Neo4j sandbox fixture records or is_synthetic=false index metadata as proof that claims are real. — The Actual Output does not clearly state that it does not use Neo4j sandbox fixture records or is_synthetic=false index metadata as proof. While it mentions that some evidence comes from synthetic or adapted internal documents, it fails to explicitly label internal documents as internal evidence distinct from public sources. Additionally, the limitations in the findings indicate that the evidence is derived from synthetic data, which does not satisfy the acceptance criteria. Therefore, the response lacks clarity and does not fully meet the evaluation steps. Second pass: The Actual Output identifies internal documents as internal evidence and discloses their synthetic or adapted status, which aligns with the acceptance criteria. However, it does not explicitly confirm that Neo4j sandbox fixture records or is_synthetic=false index metadata are not used as proof, which is a critical requirement. Overall, while some criteria are met, the lack of clarity on the Neo4j records leads to a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "Labels internal documents as internal evidence, distinct from public sources.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The report does not explicitly label internal documents as internal evidence, nor does it clearly distinguish internal evidence from public sources. While it mentions that some evidence is derived from synthetic or adapted internal data, it lacks a comprehensive disclosure regarding the synthetic status of all internal documents. This omission fails to meet the acceptance criteria for labeling and disclosing the nature of internal evidence, resulting in a low score."
+          },
+          {
+            "criterion": "Discloses that the indexed internal documents identify themselves as synthetic or adapted; when all evidence is internal, a report-level disclosure plus per-finding limitations satisfies this criterion.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that the indexed internal documents identify themselves as synthetic or adapted, which is a key requirement. While the limitations in the findings mention that the data is derived from adapted/synthetic internal data, there is no clear report-level disclosure regarding this in the summary or findings. Additionally, the per-finding limitations do not fully align with the expected report-level disclosure criteria. Therefore, the response does not meet the evaluation steps adequately."
+          },
+          {
+            "criterion": "Does not use Neo4j sandbox fixture records or is_synthetic=false index metadata as proof that claims are real.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly state that it does not use Neo4j sandbox fixture records or is_synthetic=false index metadata as proof. While it mentions that some evidence comes from synthetic or adapted internal documents, it fails to explicitly label internal documents as internal evidence distinct from public sources. Additionally, the limitations in the findings indicate that the evidence is derived from synthetic data, which does not satisfy the acceptance criteria. Therefore, the response lacks clarity and does not fully meet the evaluation steps."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "INT-07",
+          "requirement_id": "REQ-EVIDENCE",
+          "test_case_id": "INT-UC-003",
+          "title": "Internal and synthetic provenance",
+          "priority": "mandatory",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The Actual Output identifies internal documents as internal evidence and discloses their synthetic or adapted status, which aligns with the acceptance criteria. However, it does not explicitly confirm that Neo4j sandbox fixture records or is_synthetic=false index metadata are not used as proof, which is a critical requirement. Overall, while some criteria are met, the lack of clarity on the Neo4j records leads to a lower score.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.gaps[0]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.498429
+            },
+            {
+              "source_path": "$.findings[0].limitations[1]",
+              "text": "Claim type: internal_claim",
+              "similarity": 0.419197
+            },
+            {
+              "source_path": "$.findings[5].limitations[0]",
+              "text": "Claim type: verified_fact",
+              "similarity": 0.399817
+            },
+            {
+              "source_path": "$.findings[0].limitations[0]",
+              "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+              "similarity": 0.318962
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.298695
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.7,
+        "final_status": "covered"
+      },
+      {
+        "finding_id": "INT-08",
+        "requirement_id": "REQ-EVIDENCE",
+        "test_case_id": "INT-UC-003",
+        "title": "Gaps and confidence calibration",
+        "priority": "mandatory",
+        "score": 0.3666666666666667,
+        "status": "partial",
+        "reason": "partial: Lists what the internal evidence did not establish (e.g., missing documents, unverified specifications, absent decisions). — The Actual Output identifies a gap regarding the use of synthetic or adapted internal documents, which aligns with the requirement to list what internal evidence did not establish. However, it does not sufficiently lower or explain confidence for findings based solely on synthetic documents, which is a critical aspect of the acceptance criteria. Additionally, while the output includes findings, it does not explicitly mention any missing documents or unverified specifications as required. Overall, it partially meets the expectations but lacks clarity in confidence calibration.; partial: Lowers or explains confidence for findings that rest only on synthetic documents. — The report identifies gaps in evidence, specifically noting that some findings are based on synthetic or adapted internal documents. However, it does not sufficiently lower or explain confidence for findings that rely solely on synthetic documents, which is a critical requirement. The report lists limitations but lacks a clear calibration of confidence for those findings. Overall, while it acknowledges the use of synthetic data, it fails to meet the expectation of explicitly lowering confidence for such findings.; missing: Query strings and research questions are not presented as findings. — The Actual Output fails to meet the evaluation criteria as it includes query strings and research questions in the findings, which is explicitly against the requirements. Additionally, while it mentions gaps in evidence, it does not adequately lower or explain confidence for findings based solely on synthetic documents. The presence of query strings undermines the clarity of the findings, leading to a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Lists what the internal evidence did not establish (e.g., missing documents, unverified specifications, absent decisions).",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies a gap regarding the use of synthetic or adapted internal documents, which aligns with the requirement to list what internal evidence did not establish. However, it does not sufficiently lower or explain confidence for findings based solely on synthetic documents, which is a critical aspect of the acceptance criteria. Additionally, while the output includes findings, it does not explicitly mention any missing documents or unverified specifications as required. Overall, it partially meets the expectations but lacks clarity in confidence calibration."
+          },
+          {
+            "criterion": "Lowers or explains confidence for findings that rest only on synthetic documents.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The report identifies gaps in evidence, specifically noting that some findings are based on synthetic or adapted internal documents. However, it does not sufficiently lower or explain confidence for findings that rely solely on synthetic documents, which is a critical requirement. The report lists limitations but lacks a clear calibration of confidence for those findings. Overall, while it acknowledges the use of synthetic data, it fails to meet the expectation of explicitly lowering confidence for such findings."
+          },
+          {
+            "criterion": "Query strings and research questions are not presented as findings.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output fails to meet the evaluation criteria as it includes query strings and research questions in the findings, which is explicitly against the requirements. Additionally, while it mentions gaps in evidence, it does not adequately lower or explain confidence for findings based solely on synthetic documents. The presence of query strings undermines the clarity of the findings, leading to a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3666666666666667,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "INT-08",
+          "requirement_id": "REQ-EVIDENCE",
+          "test_case_id": "INT-UC-003",
+          "title": "Gaps and confidence calibration",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by listing some limitations and claims related to internal evidence. However, it fails to fully cover the requirement to explain confidence levels for findings based solely on synthetic documents and does not provide a limitations register as an acceptable alternative. Additionally, query strings are not clearly distinguished from findings, which is a critical shortcoming.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.gaps[0]",
+              "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+              "similarity": 0.400528
+            },
+            {
+              "source_path": "$.findings[5].limitations[0]",
+              "text": "Claim type: verified_fact",
+              "similarity": 0.395419
+            },
+            {
+              "source_path": "$.findings[0].limitations[0]",
+              "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+              "similarity": 0.394449
+            },
+            {
+              "source_path": "$.findings[0].limitations[1]",
+              "text": "Claim type: internal_claim",
+              "similarity": 0.338158
+            },
+            {
+              "source_path": "$.summary",
+              "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+              "similarity": 0.301967
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3666666666666667,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "INT-01",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-UC-001",
+        "title": "Blackwell product scope",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output mentions the Blackwell products B200 and GB200 NVL72, fulfilling the requirement to name the products in scope. However, it does not clearly distinguish between the GPU, boards, and systems, nor does it specify the HGX/DGX B200 and GB200 NVL72 rack. Additionally, while some product details are attributed to documents, the lack of clear differentiation affects the overall completeness. Therefore, the acceptance criteria are partially met.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.business_context.offering",
+            "text": "Blackwell GPUs (B200, GB200 NVL72)",
+            "similarity": 0.69913
+          },
+          {
+            "source_path": "$.findings[1].statement",
+            "text": "Direct database extraction from 'gpu_products' returned 2 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.639991
+          },
+          {
+            "source_path": "$.findings[9].limitations[1]",
+            "text": "Supporting quote: # nvidia_internal_strategy_2026.md ## Internal ASP Targets - GB200 NVL72 rack-s",
+            "similarity": 0.594588
+          },
+          {
+            "source_path": "$.findings[2].statement",
+            "text": "Direct database extraction from 'software_arr' returned 3 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.589874
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.584432
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-02",
+        "requirement_id": "REQ-CAPABILITIES",
+        "test_case_id": "INT-UC-001",
+        "title": "Capabilities with measurement context",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output provides some capability figures but lacks clear labeling of unverified internal-corpus figures. While it mentions derived data for pilot demonstration purposes, it does not explicitly state the workload or configuration context for the performance figures. Additionally, not all acceptance criteria are fully met, particularly regarding the clarity of sources and context for the figures provided.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[0].limitations[0]",
+            "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+            "similarity": 0.356857
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.34736
+          },
+          {
+            "source_path": "$.findings[3].limitations[2]",
+            "text": "Supporting quote: { \"as_of\": \"2025-Q2\", \"average_nvidia_advantage_pct\": 69.5, \"benchmarks\":",
+            "similarity": 0.343467
+          },
+          {
+            "source_path": "$.findings[11].limitations[1]",
+            "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+            "similarity": 0.306283
+          },
+          {
+            "source_path": "$.findings[7].limitations[1]",
+            "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+            "similarity": 0.30532
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-03",
+        "requirement_id": "REQ-CONSTRAINTS",
+        "test_case_id": "INT-UC-001",
+        "title": "Documented constraints",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output identifies some limitations related to Blackwell but does not comprehensively cover all required operational or commercial constraints such as supply, power density, cooling, lead times, export controls, and cost. While there are cited sources, the output lacks a clear separation of documented constraints from assumptions or planning notes, and it does not explicitly state any gaps for constraints that could not be established. Therefore, the coverage is classified as partially covered.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[11].limitations[1]",
+            "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+            "similarity": 0.340682
+          },
+          {
+            "source_path": "$.findings[0].limitations[0]",
+            "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+            "similarity": 0.33551
+          },
+          {
+            "source_path": "$.findings[0].statement",
+            "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.324976
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.31448
+          },
+          {
+            "source_path": "$.findings[5].limitations[0]",
+            "text": "Claim type: verified_fact",
+            "similarity": 0.306811
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-04",
+        "requirement_id": "REQ-SOFTWARE",
+        "test_case_id": "INT-UC-001",
+        "title": "Software stack role and compatibility",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately explain the roles of named NVIDIA software components related to Blackwell training or inference, as it primarily lists findings without detailed explanations. Additionally, it lacks any mention of version or framework compatibility, marking it unverified. There is no discussion of licensing or differentiation between free/open components and paid offerings. Overall, none of the acceptance criteria are substantively met.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.findings[7].limitations[1]",
+            "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+            "similarity": 0.676362
+          },
+          {
+            "source_path": "$.findings[8].limitations[1]",
+            "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.2 NVIDIA NIM (Inference Microservices)",
+            "similarity": 0.664092
+          },
+          {
+            "source_path": "$.findings[5].limitations[1]",
+            "text": "Supporting quote: # nvidia_pricing_commercial_2026.md ## Software Subscription Pricing: NVIDIA AI",
+            "similarity": 0.648549
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.621258
+          },
+          {
+            "source_path": "$.findings[11].limitations[1]",
+            "text": "Supporting quote: # nvidia_internal_sovereign_ai_pipeline_2026.md ## Key Enterprise Customer Signa",
+            "similarity": 0.613013
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-05",
+        "requirement_id": "REQ-STRATEGY",
+        "test_case_id": "INT-UC-002",
+        "title": "Prior strategic decisions",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output identifies some internal evidence sources and mentions prior strategic decisions, but it lacks specific attribution to documents and dates. It does not clearly distinguish between decisions taken and proposals, which is crucial for meeting the acceptance criteria. Therefore, it only partially meets the requirements.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.352532
+          },
+          {
+            "source_path": "$.findings[0].statement",
+            "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.322314
+          },
+          {
+            "source_path": "$.requirements[0].definition",
+            "text": "The company's own price for the offering, from internal documents.",
+            "similarity": 0.30205
+          },
+          {
+            "source_path": "$.findings[0].limitations[0]",
+            "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+            "similarity": 0.300752
+          },
+          {
+            "source_path": "$.findings[7].limitations[1]",
+            "text": "Supporting quote: # nvidia_software_ecosystem_2026.md ## 3.1 Packaging & Pricing Structure - **NV",
+            "similarity": 0.293327
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-06",
+        "requirement_id": "REQ-EXPOSURE",
+        "test_case_id": "INT-UC-002",
+        "title": "Exposure to competitor moves",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output provides some analysis of NVIDIA's capabilities and constraints but lacks a clear explanation of how these factors specifically increase or reduce NVIDIA's exposure to competitor moves. While it mentions internal evidence sources and operational API lookups, it does not label the exposure assessment as grounded in cited findings or explicitly cite competitor facts. Therefore, it does not fully meet the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.672261
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?",
+            "similarity": 0.586453
+          },
+          {
+            "source_path": "$.findings[3].statement",
+            "text": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.562324
+          },
+          {
+            "source_path": "$.findings[4].statement",
+            "text": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.55358
+          },
+          {
+            "source_path": "$.findings[0].statement",
+            "text": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+            "similarity": 0.553005
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-07",
+        "requirement_id": "REQ-EVIDENCE",
+        "test_case_id": "INT-UC-003",
+        "title": "Internal and synthetic provenance",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "The Actual Output identifies internal documents as internal evidence and discloses their synthetic or adapted status, which aligns with the acceptance criteria. However, it does not explicitly confirm that Neo4j sandbox fixture records or is_synthetic=false index metadata are not used as proof, which is a critical requirement. Overall, while some criteria are met, the lack of clarity on the Neo4j records leads to a lower score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.498429
+          },
+          {
+            "source_path": "$.findings[0].limitations[1]",
+            "text": "Claim type: internal_claim",
+            "similarity": 0.419197
+          },
+          {
+            "source_path": "$.findings[5].limitations[0]",
+            "text": "Claim type: verified_fact",
+            "similarity": 0.399817
+          },
+          {
+            "source_path": "$.findings[0].limitations[0]",
+            "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+            "similarity": 0.318962
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.298695
+          }
+        ]
+      },
+      {
+        "finding_id": "INT-08",
+        "requirement_id": "REQ-EVIDENCE",
+        "test_case_id": "INT-UC-003",
+        "title": "Gaps and confidence calibration",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by listing some limitations and claims related to internal evidence. However, it fails to fully cover the requirement to explain confidence levels for findings based solely on synthetic documents and does not provide a limitations register as an acceptable alternative. Additionally, query strings are not clearly distinguished from findings, which is a critical shortcoming.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.gaps[0]",
+            "text": "Some evidence comes from synthetic or adapted internal documents, not authentic company records.",
+            "similarity": 0.400528
+          },
+          {
+            "source_path": "$.findings[5].limitations[0]",
+            "text": "Claim type: verified_fact",
+            "similarity": 0.395419
+          },
+          {
+            "source_path": "$.findings[0].limitations[0]",
+            "text": "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+            "similarity": 0.394449
+          },
+          {
+            "source_path": "$.findings[0].limitations[1]",
+            "text": "Claim type: internal_claim",
+            "similarity": 0.338158
+          },
+          {
+            "source_path": "$.summary",
+            "text": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+            "similarity": 0.301967
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [
+      {
+        "claim_id": "CLAIM-001",
+        "claim": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?': - Analyzed 12 internal evidence sources covering: market_signal, other, positioning, pricing_packaging.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides a general analysis of internal evidence sources but lacks specific details required by the Expected Output, such as identifying Blackwell products, capabilities with context, constraints, software stack roles, prior strategic decisions, exposure to competitor moves, and gaps in evidence. It does not meet any of the mandatory criteria outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-002",
+        "claim": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides a direct database extraction result but lacks detailed claims and specific findings related to the Blackwell GPU capabilities, constraints, software stack, and strategic decisions as outlined in the Expected Output. It does not address any of the mandatory findings or acceptance criteria, resulting in a significant gap in alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-003",
+        "claim": "Direct database extraction from 'gpu_products' returned 2 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides a direct database extraction result but lacks detailed claims and context required by the Expected Output. It does not address any of the mandatory findings such as capabilities, constraints, software stack, or strategic decisions, which are essential for a comprehensive report on NVIDIA's Blackwell GPU. Therefore, it fails to meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-004",
+        "claim": "Direct database extraction from 'software_arr' returned 3 records relevant to goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output identifies the retrieval of 3 records related to NVIDIA's Blackwell GPU capabilities but lacks detailed claims or findings that align with the specific requirements outlined in the Expected Output. It does not address any of the mandatory findings such as product scope, capabilities, constraints, or strategic decisions, which are critical for a comprehensive evaluation. Therefore, it fails to meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-005",
+        "claim": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a general overview of the operational REST API lookup and its alignment with the research goal but lacks specific details required by the Expected Output. It does not clearly identify or distinguish the Blackwell products, capabilities, constraints, or strategic decisions as mandated by the acceptance criteria. Additionally, it fails to address the specific findings and claims outlined in the Expected Output, indicating significant shortcomings in meeting the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-006",
+        "claim": "Operational REST API lookup at '/v1/finance/arr-summary' (Get Software ARR Breakdown (FY2026)) returned data matching research goal 'What are NVIDIA's Blackwell GPU (B200, GB200 NVL72) capabilities, constraints, software stack, and prior strategic decisions that determine how competitor moves affect NVIDIA?'.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a general overview of the operational REST API lookup and its alignment with the research goal but lacks specific details required by the Expected Output. It does not address the mandatory findings such as identifying Blackwell products, capabilities with measurement context, documented constraints, or any other specific claims outlined in the Expected Output. Therefore, it fails to meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-007",
+        "claim": "Included Toolsets: NVIDIA NIM microservices, NeMo Framework, Triton Inference Server Enterprise, RAPIDS Accelerator for Apache Spark, BioNeMo.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output lists specific toolsets related to NVIDIA technologies but does not address any of the required findings or claims outlined in the Expected Output. There is no comparison of factual claims, nor does it provide any details on Blackwell products, capabilities, constraints, or strategic decisions as required. Therefore, it fails to align with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-008",
+        "claim": "KR 1.1: Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides a specific claim about the delivery of the Blackwell cluster with a gross margin target, but it does not address any of the required findings or acceptance criteria outlined in the Expected Output. There is no mention of product scope, capabilities, constraints, software roles, strategic decisions, competitor exposure, internal provenance, or gaps in evidence, which are all mandatory elements. Therefore, the response lacks alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-009",
+        "claim": "Cloud Consumption: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Cloud Marketplace.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides a specific claim about cloud consumption pricing but does not address any of the required findings or claims outlined in the Expected Output. There is no mention of Blackwell products, capabilities, constraints, or any other mandatory criteria, indicating a complete lack of alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-010",
+        "claim": "Licensing: Included with NVIDIA AI Enterprise subscription ($4,500/GPU/yr or $1.00/GPU/hr).",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output only provides licensing information related to the NVIDIA AI Enterprise subscription, which does not address any of the required findings or claims outlined in the Expected Output. There is no comparison of factual claims, no identification of Blackwell products, capabilities, constraints, or any other mandatory criteria specified in the test case. Therefore, the response shows no alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-011",
+        "claim": "GB200 NVL72 rack-scale unit target ASP: ~$2.8M - $3.0M.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a specific target ASP for the GB200 NVL72 rack-scale unit, but it does not address any of the mandatory findings outlined in the Expected Output, such as identifying Blackwell products, capabilities with measurement context, or documented constraints. There is a lack of detail regarding the claims made in the Expected Output, leading to a significant misalignment.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-012",
+        "claim": "NVIDIA AI Enterprise; Per GPU / year; ~$4,500 per GPU per year",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides a specific pricing figure for NVIDIA AI Enterprise but fails to address any of the mandatory findings outlined in the Expected Output, such as identifying Blackwell products, capabilities, constraints, or strategic decisions. There is no comparison of factual claims or relevant details from the test case parameters, leading to a significant misalignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-013",
+        "claim": "Top objection: power and cooling readiness for GB200 NVL72 liquid-cooled racks.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output only addresses a specific concern regarding power and cooling readiness for the GB200 NVL72 racks, which does not align with the broader requirements outlined in the Expected Output. The Expected Output includes multiple mandatory findings related to product scope, capabilities, constraints, software roles, strategic decisions, competitor exposure, internal provenance, and gaps in evidence, none of which are addressed in the Actual Output. This significant lack of coverage results in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      }
+    ],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.625,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output provides a comprehensive analysis of NVIDIA's Blackwell GPU capabilities, constraints, software stack, and strategic decisions, directly addressing the input query. It includes multiple findings from internal sources that support the claims made, demonstrating a strong alignment with the evaluation steps. However, there is a notable reliance on synthetic or adapted internal documents, which raises concerns about the authenticity of some evidence. Despite this, the output effectively covers the requested topics and provides relevant data, leading to a high score.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive assessment of NVIDIA's Blackwell GPU capabilities, constraints, software stack, and strategic decisions. However, it lacks clear identification of constraints affecting Blackwell, as required by the evaluation steps. While it mentions some limitations and gaps, it does not explicitly separate documented constraints from assumptions or planning notes. Additionally, the report does not adequately explain the role of software components for Blackwell workloads, which is a critical requirement. Overall, while the output contains valuable information, it does not fully meet the mandatory criteria outlined in the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive assessment of NVIDIA's Blackwell GPU capabilities, supported by multiple internal evidence sources. However, it relies on synthetic or adapted data, which raises concerns about the authenticity of some claims. While the findings align with the retrieval context, the presence of gaps regarding the authenticity of evidence affects the overall reliability of the output. Additionally, some claims, such as the operational REST API lookups, are well-supported, but the limitations noted in the findings indicate a lack of complete transparency about the data sources used.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The response provides a comprehensive analysis of NVIDIA's Blackwell GPU capabilities, constraints, software stack, and strategic decisions, addressing most of the required elements. However, it lacks explicit identification of the Blackwell products in scope and does not clearly distinguish between the GPU and other components, which is critical for the product scope requirement. Additionally, while it mentions gaps in evidence provenance, it does not sufficiently label internal documents as internal evidence or disclose their synthetic status, which is necessary for the provenance requirement. Overall, the response meets several criteria but falls short in key areas.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Failure to distinguish between Blackwell GPU and associated systems.",
+          "evidence": "The Actual Output fails to explicitly distinguish the Blackwell GPU from the boards and systems like HGX/DGX B200, as well as from the GB200 NVL72 rack.",
+          "impact": "This leads to confusion regarding the specific capabilities and applications of the Blackwell GPU compared to other products."
+        },
+        {
+          "limitation": "Lack of concrete capability figures with context.",
+          "evidence": "The Actual Output provides some capability figures related to NVIDIA's Blackwell GPUs but lacks specific figures like memory, bandwidth, or throughput.",
+          "impact": "Without these figures, the assessment of the GPU's performance and capabilities is incomplete."
+        },
+        {
+          "limitation": "Inadequate identification of operational or commercial constraints.",
+          "evidence": "The Actual Output does not explicitly mention operational or commercial constraints relevant to Blackwell, such as supply, power density, cooling, lead times, export controls, or cost.",
+          "impact": "This omission prevents a comprehensive understanding of the challenges facing the Blackwell GPU."
+        },
+        {
+          "limitation": "Insufficient explanation of software components' roles.",
+          "evidence": "The Actual Output does not adequately explain the roles of the named NVIDIA software components such as CUDA, TensorRT-LLM, NCCL, and NVIDIA AI Enterprise in relation to Blackwell workloads.",
+          "impact": "This lack of clarity diminishes the understanding of how software interacts with the hardware."
+        },
+        {
+          "limitation": "Failure to attribute strategic decisions to specific documents.",
+          "evidence": "While it references internal evidence, it fails to clearly distinguish between decisions taken and proposals.",
+          "impact": "This results in a lack of credibility and traceability for the strategic decisions made."
+        },
+        {
+          "limitation": "Lack of explicit labeling of exposure assessment.",
+          "evidence": "The Actual Output does not explicitly label the exposure assessment as an analysis grounded in cited findings.",
+          "impact": "This reduces the perceived rigor and reliability of the analysis regarding competitor exposure."
+        },
+        {
+          "limitation": "Inadequate disclosure of evidence provenance.",
+          "evidence": "The report does not explicitly state that the indexed internal documents identify themselves as synthetic or adapted.",
+          "impact": "This lack of transparency affects the trustworthiness of the findings."
+        },
+        {
+          "limitation": "Insufficient calibration of confidence for findings based on synthetic documents.",
+          "evidence": "The report identifies gaps in evidence but does not sufficiently lower or explain confidence for findings that rely solely on synthetic documents.",
+          "impact": "This undermines the reliability of the conclusions drawn from those findings."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement clear distinctions between GPU and associated systems.",
+          "addresses": "The limitation regarding failure to distinguish between Blackwell GPU and associated systems.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Include specific capability figures with context.",
+          "addresses": "The limitation related to lack of concrete capability figures with context.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Identify and document operational and commercial constraints explicitly.",
+          "addresses": "The limitation regarding inadequate identification of operational or commercial constraints.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide detailed explanations of software components' roles.",
+          "addresses": "The limitation concerning insufficient explanation of software components' roles.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Attribute strategic decisions to specific documents with dates.",
+          "addresses": "The limitation regarding failure to attribute strategic decisions to specific documents.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Label exposure assessments clearly as grounded in cited findings.",
+          "addresses": "The limitation related to lack of explicit labeling of exposure assessment.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Enhance disclosure of evidence provenance and synthetic status.",
+          "addresses": "The limitation concerning inadequate disclosure of evidence provenance.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Calibrate confidence levels for findings based on synthetic documents.",
+          "addresses": "The limitation regarding insufficient calibration of confidence for findings based on synthetic documents.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Failure to distinguish between Blackwell GPU and associated systems.",
+        "evidence": "The Actual Output fails to explicitly distinguish the Blackwell GPU from the boards and systems like HGX/DGX B200, as well as from the GB200 NVL72 rack.",
+        "impact": "This leads to confusion regarding the specific capabilities and applications of the Blackwell GPU compared to other products."
+      },
+      {
+        "limitation": "Lack of concrete capability figures with context.",
+        "evidence": "The Actual Output provides some capability figures related to NVIDIA's Blackwell GPUs but lacks specific figures like memory, bandwidth, or throughput.",
+        "impact": "Without these figures, the assessment of the GPU's performance and capabilities is incomplete."
+      },
+      {
+        "limitation": "Inadequate identification of operational or commercial constraints.",
+        "evidence": "The Actual Output does not explicitly mention operational or commercial constraints relevant to Blackwell, such as supply, power density, cooling, lead times, export controls, or cost.",
+        "impact": "This omission prevents a comprehensive understanding of the challenges facing the Blackwell GPU."
+      },
+      {
+        "limitation": "Insufficient explanation of software components' roles.",
+        "evidence": "The Actual Output does not adequately explain the roles of the named NVIDIA software components such as CUDA, TensorRT-LLM, NCCL, and NVIDIA AI Enterprise in relation to Blackwell workloads.",
+        "impact": "This lack of clarity diminishes the understanding of how software interacts with the hardware."
+      },
+      {
+        "limitation": "Failure to attribute strategic decisions to specific documents.",
+        "evidence": "While it references internal evidence, it fails to clearly distinguish between decisions taken and proposals.",
+        "impact": "This results in a lack of credibility and traceability for the strategic decisions made."
+      },
+      {
+        "limitation": "Lack of explicit labeling of exposure assessment.",
+        "evidence": "The Actual Output does not explicitly label the exposure assessment as an analysis grounded in cited findings.",
+        "impact": "This reduces the perceived rigor and reliability of the analysis regarding competitor exposure."
+      },
+      {
+        "limitation": "Inadequate disclosure of evidence provenance.",
+        "evidence": "The report does not explicitly state that the indexed internal documents identify themselves as synthetic or adapted.",
+        "impact": "This lack of transparency affects the trustworthiness of the findings."
+      },
+      {
+        "limitation": "Insufficient calibration of confidence for findings based on synthetic documents.",
+        "evidence": "The report identifies gaps in evidence but does not sufficiently lower or explain confidence for findings that rely solely on synthetic documents.",
+        "impact": "This undermines the reliability of the conclusions drawn from those findings."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement clear distinctions between GPU and associated systems.",
+        "addresses": "The limitation regarding failure to distinguish between Blackwell GPU and associated systems.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Include specific capability figures with context.",
+        "addresses": "The limitation related to lack of concrete capability figures with context.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Identify and document operational and commercial constraints explicitly.",
+        "addresses": "The limitation regarding inadequate identification of operational or commercial constraints.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide detailed explanations of software components' roles.",
+        "addresses": "The limitation concerning insufficient explanation of software components' roles.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Attribute strategic decisions to specific documents with dates.",
+        "addresses": "The limitation regarding failure to attribute strategic decisions to specific documents.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Label exposure assessments clearly as grounded in cited findings.",
+        "addresses": "The limitation related to lack of explicit labeling of exposure assessment.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Enhance disclosure of evidence provenance and synthetic status.",
+        "addresses": "The limitation concerning inadequate disclosure of evidence provenance.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Calibrate confidence levels for findings based on synthetic documents.",
+        "addresses": "The limitation regarding insufficient calibration of confidence for findings based on synthetic documents.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "mandatory_evaluation_failures": [],
+  "evaluation_file": "Evaluation\\run_evaluations\\9e373b46748a80c11cc0949128b4e228\\workers\\internal_intelligence_996abbe5-74d3-4023-a07b-2100ece99e49.a1_evaluation.json"
+}

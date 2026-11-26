@@ -74,6 +74,21 @@ CREATE TABLE IF NOT EXISTS brief_cards (
 );
 CREATE INDEX IF NOT EXISTS brief_cards_brief_idx ON brief_cards (brief_id, card_key);
 
+-- A regenerated synthesis is a new frozen document revision; the original brief remains unchanged.
+CREATE TABLE IF NOT EXISTS brief_revisions (
+  id         text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  brief_id   text NOT NULL REFERENCES briefs(id) ON DELETE CASCADE,
+  revision   integer NOT NULL CHECK (revision > 0),
+  document   text NOT NULL CHECK (json_valid(document) AND json_type(document) = 'object'),
+  reason     text NOT NULL,
+  created_by text REFERENCES users(id) ON DELETE SET NULL,
+  created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UNIQUE (brief_id, revision)
+);
+CREATE INDEX IF NOT EXISTS brief_revisions_latest_idx ON brief_revisions (brief_id, revision DESC);
+CREATE TRIGGER IF NOT EXISTS brief_revisions_immutable_update BEFORE UPDATE ON brief_revisions
+BEGIN SELECT RAISE(ABORT, 'a brief revision cannot be changed'); END;
+
 -- The action plan that follows a chosen option. Every save is a new version; an approved version is frozen.
 CREATE TABLE IF NOT EXISTS action_plans (
   id            text PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -186,3 +201,13 @@ CREATE TABLE IF NOT EXISTS fact_keys (
   origin     text NOT NULL DEFAULT 'seed' CHECK (origin IN ('seed','promoted')),
   UNIQUE (category, key)
 );
+
+-- Ask Edrak: a person's rating of one answer (thumbs up or down, optional reason). One rating per answer.
+CREATE TABLE IF NOT EXISTS chat_feedback (
+  message_id text PRIMARY KEY REFERENCES chat_messages(id) ON DELETE CASCADE,
+  user_id    text REFERENCES users(id) ON DELETE SET NULL,
+  rating     text NOT NULL CHECK (rating IN ('up','down')),
+  reason     text,
+  created_at text NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX IF NOT EXISTS chat_feedback_rating_idx ON chat_feedback (rating, created_at DESC);

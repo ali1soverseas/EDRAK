@@ -158,6 +158,12 @@ export class HttpApi implements EdrakApi {
     );
   }
 
+  async deleteAnalysis(analysisId: string): Promise<void> {
+    await request<void>(`/api/analyses/${encodeURIComponent(analysisId)}`, {
+      method: "DELETE",
+    });
+  }
+
   async draftPlan(form: AnalysisForm, analysisId?: string): Promise<AnalysisDetail> {
     return await request<AnalysisDetail>("/api/analyses/draft", {
       method: "POST",

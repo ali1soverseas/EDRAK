@@ -1,11 +1,14 @@
 import asyncio
+from types import SimpleNamespace
 
 import pytest
 
 from edrak.briefing import index as index_mod
 from edrak.briefing.fill import build_cards
 from edrak.briefing.search import hybrid_search
+from edrak.chat import tools as chat_tools
 from edrak.chat.agent import BriefContext, Step, run_agent
+from edrak.chat.sources import SourceBook
 from edrak.db import connection
 from edrak.db.repositories import cards as cards_repo
 from edrak.db.repositories import metrics as metrics_repo
@@ -49,6 +52,89 @@ def _run(db, question, **kw):
     async def go():
         return [e async for e in run_agent(db, BriefContext("b1", DOC), question, **kw)]
     return asyncio.run(go())
+
+
+def test_workspace_context_includes_company_profile_and_approved_customer_facts(monkeypatch):
+    async def get_company(_db, _ws):
+        return {
+            "name": "Nile Ledger",
+            "aliases": ["Nile"],
+            "industries": ["fintech"],
+            "description": "Digital ledger software",
+            "offerings": ["Payments"],
+            "target_customer_groups": ["SMEs in Egypt", "Freelancers"],
+            "markets": [{"name": "Egypt"}],
+            "goals": ["Grow merchant adoption"],
+            "website": "https://nileledger.example",
+        }
+
+    facts = [
+        SimpleNamespace(
+            category="customers",
+            key="customer_segment",
+            key_label_en="Customer Segment",
+            key_label_ar=None,
+            value='["SME retailers", "Independent professionals"]',
+            quote="Our customers include SME retailers and independent professionals.",
+            proposed_category=None,
+            source_url="https://nileledger.example/customers",
+            pdf_page=None,
+        )
+    ]
+
+    async def list_facts(_db, _ws, *, status=None):
+        assert status == "approved"
+        return facts
+
+    async def no_briefs(*_args, **_kwargs):
+        return {"n": 0}
+
+    monkeypatch.setattr("edrak.db.repositories.company.get_company", get_company)
+    monkeypatch.setattr("edrak.db.repositories.company_facts.list_facts", list_facts)
+    monkeypatch.setattr(chat_tools, "fetch_one", no_briefs)
+
+    async def go():
+        workspace = await chat_tools.load_workspace(None, "w1")
+        book = SourceBook()
+        profile = chat_tools.register_profile(workspace, book)
+        facts = chat_tools.search_company_facts(workspace, book, "customers")
+        return profile, facts, book
+
+    profile, facts, book = asyncio.run(go())
+    assert "[P]" in profile and "SMEs in Egypt" in profile
+    assert "[CF1] (customers / Customer Segment)" in facts
+    assert "Independent professionals" in facts
+    assert "P" in book and "CF1" in book
+
+
+def test_workspace_chat_saves_history_and_answer_feedback(client):  # noqa: F811
+    _account(client)
+    thread_id = client.post("/api/chat/threads", json={"scope": "workspace"}).json()["thread_id"]
+
+    answer = client.post(f"/api/chat/threads/{thread_id}/messages", json={"content": "hello"})
+    assert answer.status_code == 200, answer.text
+    result = answer.json()
+    assert result["label"] == "conversation" and result["message_id"]
+
+    history = client.get(f"/api/chat/threads/{thread_id}/messages").json()
+    assert [message["role"] for message in history["messages"]] == ["user", "assistant"]
+    assistant_id = history["messages"][1]["id"]
+    rated = client.post(f"/api/chat/messages/{assistant_id}/feedback", json={"rating": "up"})
+    assert rated.status_code == 200 and rated.json()["rating"] == "up"
+    assert client.get("/api/chat/threads?scope=workspace").json()[0]["message_count"] == 2
+    assert client.get(f"/api/chat/threads/{thread_id}/messages").json()["messages"][1]["rating"] == "up"
+
+    async def thread_columns():
+        async with connection.get_db() as db:
+            cursor = await db.execute("PRAGMA table_info(chat_threads)")
+            return {row[1] for row in await cursor.fetchall()}
+
+    assert "signal_id" in asyncio.run(thread_columns())
+
+    stream_id = client.post("/api/chat/threads", json={"scope": "workspace"}).json()["thread_id"]
+    streamed = client.post(f"/api/chat/threads/{stream_id}/stream", json={"content": "hi"})
+    assert streamed.status_code == 200 and "text/event-stream" in streamed.headers["content-type"]
+    assert "event: delta" in streamed.text and "event: answer" in streamed.text
 
 
 def test_card_chat_reads_the_number_from_the_table_and_cites_evidence(monkeypatch):

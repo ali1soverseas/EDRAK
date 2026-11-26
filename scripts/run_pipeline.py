@@ -147,9 +147,15 @@ def build_request(query: str, args: argparse.Namespace) -> BusinessRequest:
             "pass --company (for example --company GitLab)"
         )
 
+    from edrak.core.profiles import get_company_profile
+
+    company_profile = get_company_profile(company)
+    if company_profile.name == "":  # pragma: no cover - get_company_profile always supplies a name
+        company_profile = CompanyProfile(name=company)
+
     return BusinessRequest(
         goal=intent.goal,
-        company_profile=CompanyProfile(name=company),
+        company_profile=company_profile,
         business_context=BusinessContext(
             use_case=UseCase.COMPETITIVE_INTELLIGENCE,
             targets=args.target or intent.targets,

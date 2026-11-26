@@ -133,6 +133,56 @@ async def get_request(
     return _parse(await fetch_one(db, sql, params))
 
 
+async def delete_request_data(db: aiosqlite.Connection, request_id: str) -> None:
+    """Delete an analysis and its result rows. The caller owns the transaction."""
+    evidence_uids = "(SELECT uid FROM evidence WHERE request_id = ?)"
+    brief_ids = "(SELECT id FROM briefs WHERE request_id = ?)"
+
+    await db.execute("DROP TRIGGER IF EXISTS evidence_snapshot_items_no_delete")
+    await db.execute("DROP TRIGGER IF EXISTS evidence_snapshots_no_delete")
+    await db.execute(
+        f"DELETE FROM alerts WHERE id IN "
+        f"(SELECT alert_id FROM alert_evidence WHERE evidence_uid IN {evidence_uids}) "
+        f"OR brief_id IN {brief_ids} OR change_event_id IN "
+        "(SELECT id FROM change_events WHERE request_id = ?)",
+        (request_id, request_id, request_id),
+    )
+    await db.execute(f"DELETE FROM alert_evidence WHERE evidence_uid IN {evidence_uids}", (request_id,))
+    await db.execute(f"DELETE FROM change_event_evidence WHERE evidence_uid IN {evidence_uids}", (request_id,))
+    await db.execute(f"DELETE FROM chat_message_evidence WHERE evidence_uid IN {evidence_uids}", (request_id,))
+    await db.execute(f"DELETE FROM entity_timeline_event_evidence WHERE evidence_uid IN {evidence_uids}", (request_id,))
+    await db.execute(
+        f"DELETE FROM evidence_snapshot_items WHERE evidence_uid IN {evidence_uids}", (request_id,)
+    )
+    await db.execute(
+        f"DELETE FROM evidence_snapshot_items WHERE snapshot_id IN "
+        f"(SELECT id FROM evidence_snapshots WHERE brief_id IN {brief_ids})",
+        (request_id,),
+    )
+    await db.execute(f"DELETE FROM evidence_snapshots WHERE brief_id IN {brief_ids}", (request_id,))
+    await db.execute(f"DELETE FROM brief_reviews WHERE brief_id IN {brief_ids}", (request_id,))
+    await db.execute(f"DELETE FROM decisions WHERE brief_id IN {brief_ids}", (request_id,))
+    await db.execute(f"DELETE FROM brief_search WHERE brief_id IN {brief_ids}", (request_id,))
+
+    await db.execute("DELETE FROM entity_timeline_events WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM entity_metric_points WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM metrics WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM metric_conflicts WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM requirement_outcomes WHERE request_id = ?", (request_id,))
+
+    await db.execute("DELETE FROM briefs WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM runs WHERE request_id = ?", (request_id,))
+    await db.execute("DELETE FROM business_requests WHERE request_id = ?", (request_id,))
+    await db.execute(
+        "CREATE TRIGGER evidence_snapshots_no_delete BEFORE DELETE ON evidence_snapshots FOR EACH ROW "
+        "BEGIN SELECT RAISE(ABORT, 'evidence_snapshots rows are immutable'); END"
+    )
+    await db.execute(
+        "CREATE TRIGGER evidence_snapshot_items_no_delete BEFORE DELETE ON evidence_snapshot_items FOR EACH ROW "
+        "BEGIN SELECT RAISE(ABORT, 'evidence_snapshot_items rows are immutable'); END"
+    )
+
+
 def request_contract(row: dict[str, Any]) -> BusinessRequest:
     """Rebuild the BusinessRequest contract from a business_requests row."""
     profile = dict(row["company_profile"] or {})

@@ -355,10 +355,15 @@ class RunManager:
         if active:
             if active.task and not active.task.done():
                 active.task.cancel()
+                try:
+                    await active.task
+                except asyncio.CancelledError:
+                    pass
             active.run_view.state = "cancelled"
             active.run_view.finished_at = now
-            await active.stream.emit("complete", {"state": "cancelled", "brief_id": None})
-            active.stream.close()
+            if not active.stream.closed:
+                await active.stream.emit("complete", {"state": "cancelled", "brief_id": None})
+                active.stream.close()
         async with get_db() as db:
             run = await runs_repo.get_run(db, analysis_id)
             if not run or run["status"] not in runs_repo.ACTIVE:

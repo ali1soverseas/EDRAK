@@ -11,7 +11,7 @@ import { Segmented } from "../ui/Controls";
 import { Icon } from "../ui/Icon";
 import { ThinkingMark } from "../ui/ThinkingMark";
 
-type Mode = "url" | "pdf";
+type Mode = "url" | "pdf" | "json";
 
 type View =
   | { kind: "idle" }
@@ -26,6 +26,7 @@ const LABELS: Record<ImportField, readonly [string, string]> = {
   aliases: ["Also known as", "يُعرف أيضًا باسم"],
   notes: ["What the company does", "ماذا تفعل الشركة"],
   products: ["Products and services", "المنتجات والخدمات"],
+  target_customers: ["Target customers", "العملاء المستهدفون"],
   industry: ["Industry", "المجال"],
   markets: ["Markets you sell in", "أسواق تبيع فيها"],
   goals: ["Goals", "الأهداف"],
@@ -105,6 +106,10 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
     if (!file || busy) return;
     void read(L(`Reading ${file.name}…`, `جارٍ قراءة ${file.name}…`), file.name, "file", () => edrak.importFromPdf(file));
   };
+  const readJson = (file: File | undefined) => {
+    if (!file || busy) return;
+    void read(L(`Reading ${file.name}…`, `جارٍ قراءة ${file.name}…`), file.name, "file", () => edrak.importFromJson(file));
+  };
   const cancel = () => {
     run.current += 1;
     setView({ kind: "idle" });
@@ -152,6 +157,7 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
               options={[
                 { value: "url", label: <><Icon name="globe" size={14} /> {L("Website", "الموقع الإلكتروني")}</> },
                 { value: "pdf", label: <><Icon name="file" size={14} /> PDF</> },
+                { value: "json", label: <><Icon name="file" size={14} /> JSON</> },
               ]}
             />
           </div>
@@ -180,7 +186,7 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
               )}
               {researchNote && <span className={`s13 ${researchNote.ok ? "t2" : ""}`} role="status" style={researchNote.ok ? undefined : { color: "var(--bad)" }}>{researchNote.text}</span>}
             </>
-          ) : (
+          ) : mode === "pdf" ? (
             <label
               className={`dropzone ${over ? "over" : ""}`.trim()}
               aria-disabled={busy}
@@ -198,6 +204,20 @@ export function ProfileImport<T extends ImportableForm>({ form, onApply, industr
                 aria-label={L("Choose a PDF", "اختر ملف PDF")}
                 onChange={(e) => { readPdf(e.target.files?.[0]); e.target.value = ""; }}
               />
+            </label>
+          ) : (
+            <label className={`dropzone ${over ? "over" : ""}`.trim()} aria-disabled={busy}
+              onDragOver={(e) => { e.preventDefault(); if (!busy) setOver(true); }}
+              onDragLeave={() => setOver(false)}
+              onDrop={(e) => { e.preventDefault(); setOver(false); readJson(e.dataTransfer.files[0]); }}>
+              <span className="doc-icon"><Icon name="upload" size={18} /></span>
+              <span className="stack grow">
+                <b className="s13">{L("Drop a profile JSON here, or choose one", "أفلت ملف JSON للشركة هنا، أو اختر ملفًا")}</b>
+                <span className="s12 t3">{L("NVIDIA, GitLab or any structured company profile.", "ملف شركة لشركة NVIDIA أو GitLab أو أي ملف منظم.")}</span>
+              </span>
+              <input type="file" className="sr-only" accept=".json,application/json" disabled={busy}
+                aria-label={L("Choose a profile JSON", "اختر ملف JSON للشركة")}
+                onChange={(e) => { readJson(e.target.files?.[0]); e.target.value = ""; }} />
             </label>
           )}
         </>

@@ -37,7 +37,7 @@ function destination(row: AnalysisSummary): string {
   }
 }
 
-function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: () => void; busy: boolean }) {
+function AnalysisRow({ row, onRerun, onDelete, busy }: { row: AnalysisSummary; onRerun: () => void; onDelete: () => void; busy: boolean }) {
   const { t, tn, formatWhen, formatClock } = useI18n();
   const meta = USE_CASE_META[row.use_case];
 
@@ -142,7 +142,14 @@ function AnalysisRow({ row, onRerun, busy }: { row: AnalysisSummary; onRerun: ()
       </td>
       <td className="s13 t2">{when}</td>
       <td className="s13 t2">{result}</td>
-      <td style={{ textAlign: "end" }}>{action}</td>
+      <td style={{ textAlign: "end" }}>
+        <div className="row g8" style={{ justifyContent: "flex-end" }}>
+          {action}
+          <button type="button" className="btn sm" disabled={busy} onClick={onDelete}>
+            {t("home.action.delete")}
+          </button>
+        </div>
+      </td>
     </tr>
   );
 }
@@ -153,6 +160,7 @@ export function Dashboard() {
   const analyses = useAsync(() => api.listAnalyses(), []);
   const [filter, setFilter] = useState<Filter>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState(false);
 
   const rows = analyses.data ?? [];
   const counts = useMemo(
@@ -171,6 +179,20 @@ export function Dashboard() {
       const { analysis_id } = await api.rerun(row.analysis_id);
       navigate(`/analyses/${analysis_id}/plan`);
     } catch {
+      setBusyId(null);
+    }
+  };
+
+  const remove = async (row: AnalysisSummary) => {
+    if (!window.confirm(t("home.delete.confirm", { title: row.title }))) return;
+    setDeleteError(false);
+    setBusyId(row.analysis_id);
+    try {
+      await api.deleteAnalysis(row.analysis_id);
+      analyses.reload();
+    } catch {
+      setDeleteError(true);
+    } finally {
       setBusyId(null);
     }
   };
@@ -230,6 +252,12 @@ export function Dashboard() {
         </div>
 
         <div className="card" style={{ padding: "4px 10px 2px" }}>
+          {deleteError && (
+            <div className="form-error" role="alert" style={{ margin: 10 }}>
+              <Icon name="warning" size={16} />
+              <span>{t("home.delete.error")}</span>
+            </div>
+          )}
           {analyses.error ? (
             <div className="form-error" role="alert" style={{ margin: 10 }}>
               <Icon name="warning" size={16} />
@@ -262,7 +290,8 @@ export function Dashboard() {
               </thead>
               <tbody>
                 {visible.map((row) => (
-                  <AnalysisRow key={row.analysis_id} row={row} busy={busyId === row.analysis_id} onRerun={() => void rerun(row)} />
+                  <AnalysisRow key={row.analysis_id} row={row} busy={busyId === row.analysis_id}
+                    onRerun={() => void rerun(row)} onDelete={() => void remove(row)} />
                 ))}
               </tbody>
             </table>

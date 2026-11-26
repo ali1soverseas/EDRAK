@@ -9,6 +9,11 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from edrak.api.deps import get_current_session, get_db_conn
 from edrak.api.schemas import SessionOut
+from edrak.api.brief_revision import (
+    BriefRevisionError,
+    build_revision_document,
+    load_completed_stage_outputs,
+)
 from edrak.db.repositories import briefs as briefs_repo
 from edrak.db.repositories import cards as cards_repo
 from edrak.db.util import loads
@@ -25,7 +30,7 @@ async def get_brief(
     row = await briefs_repo.get_brief(db, brief_id, session.workspace.workspace_id)
     if not row:
         raise HTTPException(status_code=404, detail="not_found")
-    document = dict(row["document"])
+    document = await effective_document(db, row)
     document["brief_id"] = row["id"]
     document["brief_no"] = row["number"]
     document["analysis_id"] = row["request_id"]
@@ -40,6 +45,55 @@ async def get_brief(
             document["deck"] = build_deck(document)
         except Exception:  # noqa: BLE001 - the frontend falls back to the document's own fields
             pass
+    return document
+
+
+@router.post("/{brief_id}/refresh-stage-results")
+async def refresh_stage_results(
+    brief_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> dict[str, Any]:
+    row = await _brief(db, session, brief_id)
+    try:
+        cross_signal, decision_analysis = load_completed_stage_outputs(row["request_id"])
+        document = await build_revision_document(db, row, cross_signal, decision_analysis)
+    except BriefRevisionError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    revision = await briefs_repo.save_revision(
+        db,
+        brief_id=brief_id,
+        document=document,
+        reason="Completed Cross-Signal and Decision Analysis outputs",
+        created_by=session.user.user_id,
+        commit=False,
+    )
+    await audit_repo.record(
+        db,
+        workspace_id=session.workspace.workspace_id,
+        action="brief.revision_created",
+        target_type="brief",
+        target_id=brief_id,
+        actor_id=session.user.user_id,
+        metadata={"revision": revision, "source": "stage_artifacts"},
+        commit=False,
+    )
+    await db.commit()
+    return {
+        "status": "updated",
+        "revision": revision,
+        "signals": len(cross_signal.signals),
+        "decision_questions": len(decision_analysis.decision_questions),
+    }
+
+
+async def effective_document(db: aiosqlite.Connection, row: dict[str, Any]) -> dict[str, Any]:
+    revision = await briefs_repo.get_latest_revision(db, row["id"])
+    document = dict(revision["document"] if revision else row["document"])
+    document["revision_number"] = revision["revision"] if revision else 0
+    if revision:
+        document["revision_created_at"] = revision["created_at"]
     return document
 
 
@@ -143,7 +197,11 @@ async def export_brief(
     defaults = await _fetch_one(db, "SELECT * FROM workspace_settings WHERE workspace_id = ?", (session.workspace.workspace_id,)) or {}
     inc_sources = bool(defaults.get("export_include_sources", 1)) if sources is None else sources
     inc_limits = bool(defaults.get("export_include_limitations", 1)) if limitations is None else limitations
-    doc = {**row["document"], "brief_no": row["number"], "evidence_status": row["evidence_status"]}
+    doc = {
+        **(await effective_document(db, row)),
+        "brief_no": row["number"],
+        "evidence_status": row["evidence_status"],
+    }
     if doc.get("cards") is not None:
         await merge_live(db, brief_id, doc)
         from edrak.db.repositories import action_plans as plans_repo
@@ -248,7 +306,7 @@ async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_i
         raise HTTPException(status_code=409, detail="already_decided")
     decision_id, snapshot_id = _new_id(), _new_id()
     uid = session.user.user_id
-    document = row["document"] if isinstance(row["document"], dict) else {}
+    document = await effective_document(db, row)
     from edrak.briefing.translate import translate_ar_to_en
 
     tags = tag_decision(document.get("options") or [], body.option_label, user_reason, translate=translate_ar_to_en)
@@ -265,7 +323,7 @@ async def create_decision(db: aiosqlite.Connection, session: SessionOut, brief_i
 
     await db.execute(
         "INSERT INTO evidence_snapshots (id, decision_id, brief_id, source_count, worker_count, brief_content) VALUES (?, ?, ?, ?, ?, ?)",
-        (snapshot_id, decision_id, brief_id, len(evidence), row["worker_count"], _dumps(row["document"])),
+        (snapshot_id, decision_id, brief_id, len(evidence), row["worker_count"], _dumps(document)),
     )
     for e in evidence:
         await db.execute("INSERT INTO evidence_snapshot_items (snapshot_id, evidence_uid) VALUES (?, ?)", (snapshot_id, e["uid"]))

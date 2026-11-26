@@ -65,6 +65,7 @@ export interface Preview {
 export interface ProfileDraft {
   profile: {
     name: string | null; aliases: string[]; notes: string | null; products: string[];
+    target_customers: string[];
     industry: string | null; markets: string[]; goals: string[];
   };
   links: { platform: string; url: string }[];
@@ -101,7 +102,32 @@ export interface FactsGrouped { total: number; categories: FactCategory[] }
 export interface FactsFilter { status?: FactStatus[]; category?: string[]; source_tier?: FactTier[] }
 export type Dict = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-export interface StreamEvent { type: "step" | "answer" | "error"; data: Dict }
+export interface StreamEvent { type: "step" | "delta" | "answer" | "error"; data: Dict }
+
+/* ---------------------------------------------------------------- Ask Edrak */
+
+/** Where an answer comes from. Decided by the server from what the answer cites, not by the model. */
+export type ChatLabel = "brief" | "workspace" | "company" | "documents" | "web_unverified" | "conversation" | "not_covered" | "declined";
+export type ChatSourceKind = "brief" | "workspace" | "company" | "documents" | "web";
+/** One cited source. `tag` is what the answer text shows in brackets: E12, B3:E4, P, CF2, D1, W1, C1, A1. */
+export interface ChatSource {
+  tag: string; kind: ChatSourceKind; title: string; excerpt: string; url?: string | null;
+  brief_id?: string | null; brief_no?: number | null; display_no?: number | null;
+}
+export interface ChatAnswer {
+  message_id?: string; answer: string; label: ChatLabel; kinds: ChatSourceKind[]; cited: number[]; metric_uids: string[];
+  sources: ChatSource[]; notes: string[]; proposal: string | null; follow_ups: string[]; steps?: { tool: string; input: string }[];
+  latency_ms?: number;
+}
+export interface ChatThreadRow {
+  id: string; scope: string; brief_id: string | null; card_key: string | null; signal_id: string | null; title: string | null;
+  created_at: string; updated_at: string; message_count: number; last_question: string | null;
+}
+export interface ChatMessageRow {
+  id: string; role: "user" | "assistant"; content: string; created_at: string; rating: "up" | "down" | null;
+  label: ChatLabel | null; kinds: ChatSourceKind[]; sources: ChatSource[]; follow_ups: string[]; notes: string[]; proposal: string | null;
+}
+export interface NewThread { scope: "workspace" | "brief" | "card" | "signal"; brief_id?: string; card_key?: string; signal_id?: string }
 
 /* ---------------------------------------------------------------- endpoints */
 
@@ -116,6 +142,11 @@ export const edrak = {
     const fd = new FormData();
     fd.append("file", file);
     return req<ProfileDraft>("POST", "/company/profile/import/pdf", fd);
+  },
+  importFromJson: (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return req<ProfileDraft>("POST", "/company/profile/import/json", fd);
   },
 
   researchRuns: (limit = 1) => req<ResearchRun[]>("GET", `/company/research/runs?limit=${limit}`),
@@ -196,10 +227,15 @@ export const edrak = {
   challengeCard: (briefId: string, cardKey: string, body: { source: "user" | "web"; text: string; url?: string; title?: string; entity?: string }) =>
     req<ChallengeResult>("POST", `/briefs/${briefId}/cards/${encodeURIComponent(cardKey)}/challenge`, body),
 
-  /** Streams an answer about a brief: `step` events while tools run, then one `answer`. */
-  streamAsk: async (thread: string, content: string, onEvent: (e: StreamEvent) => void): Promise<void> => {
+  /**
+   * Streams an answer in any scope: `step` events while tools run, `delta` chunks of the checked answer, then one
+   * `answer` (or one `error`). Pass an AbortSignal to stop; a stopped answer is not stored.
+   */
+  streamAsk: async (thread: string, content: string, onEvent: (e: StreamEvent) => void,
+                    opts: { signal?: AbortSignal; regenerate?: boolean } = {}): Promise<void> => {
     const res = await fetch(apiUrl(`/chat/threads/${thread}/stream`), {
-      method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }),
+      method: "POST", credentials: "include", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content, regenerate: !!opts.regenerate }), signal: opts.signal,
     });
     if (!res.ok || !res.body) {
       let detail: unknown = res.statusText;
@@ -227,7 +263,22 @@ export const edrak = {
     }
   },
 
-  newThread: (scope: Dict) => req<{ thread_id: string }>("POST", "/chat/threads", scope),
-  messages: (thread: string) => req<Dict[]>("GET", `/chat/threads/${thread}/messages`),
-  ask: (thread: string, content: string) => req<Dict>("POST", `/chat/threads/${thread}/messages`, { content }),
+  newThread: (scope: NewThread) => req<{ thread_id: string }>("POST", "/chat/threads", scope),
+  /** The person's conversations: `scope: "workspace"` for the global panel, `briefId` for one brief's chats. */
+  threads: (opts: { scope?: "workspace" | "brief"; briefId?: string; limit?: number } = {}) => {
+    const q = new URLSearchParams();
+    if (opts.scope) q.set("scope", opts.scope);
+    if (opts.briefId) q.set("brief_id", opts.briefId);
+    if (opts.limit) q.set("limit", String(opts.limit));
+    return req<ChatThreadRow[]>("GET", `/chat/threads${q.size ? `?${q}` : ""}`);
+  },
+  messages: (thread: string) =>
+    req<{ thread: { id: string; scope: string; brief_id: string | null; card_key: string | null; signal_id: string | null; title: string | null }; messages: ChatMessageRow[] }>(
+      "GET", `/chat/threads/${thread}/messages`),
+  /** One answer without streaming (same pipeline as streamAsk). */
+  ask: (thread: string, content: string) => req<ChatAnswer & { content: string }>("POST", `/chat/threads/${thread}/messages`, { content }),
+  renameThread: (thread: string, title: string) => req<{ thread_id: string; title: string }>("PATCH", `/chat/threads/${thread}`, { title }),
+  deleteThread: (thread: string) => req<void>("DELETE", `/chat/threads/${thread}`),
+  rateAnswer: (messageId: string, rating: "up" | "down", reason?: string) =>
+    req<{ message_id: string; rating: string }>("POST", `/chat/messages/${messageId}/feedback`, { rating, reason }),
 };

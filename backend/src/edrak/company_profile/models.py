@@ -96,6 +96,7 @@ class ProfileFields(BaseModel):
         default=None, description="One to three plain English sentences on what the company does."
     )
     products: list[str] = Field(default_factory=list, description="Short names of products or services.")
+    target_customers: list[str] = Field(default_factory=list, description="Groups of customers the company serves.")
     industry: Optional[str] = Field(default=None, description="One of the allowed industry values.")
     markets: list[str] = Field(default_factory=list, description="Countries or regions the company serves.")
     goals: list[str] = Field(default_factory=list, description="Goals the sources state explicitly.")

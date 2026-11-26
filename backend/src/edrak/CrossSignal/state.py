@@ -33,9 +33,13 @@ class CrossSignalSettings:
       deduplication, and output assembly
     """
 
-    model: str | None = None
+    provider: str | None = "openai"
+
+    model: str | None = "gpt-4.1"
 
     temperature: float = 0.2
+
+    max_output_tokens: int = 8192
 
     max_retries: int = 2
 

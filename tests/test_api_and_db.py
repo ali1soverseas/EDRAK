@@ -321,6 +321,114 @@ def test_draft_reject_redraft_and_approve_once(client, monkeypatch):
     assert started == [aid]
 
 
+def test_delete_analysis_removes_its_database_records_and_brief(client, isolated):
+    from edrak.db.repositories import analyses as analyses_repo
+    from edrak.db.repositories import briefs as briefs_repo
+    from edrak.db.repositories import runs as runs_repo
+
+    account = _account(client)
+    aid = client.post("/api/analyses/draft", json={"form": FORM}).json()["analysis_id"]
+    user_id = account["user"]["user_id"]
+    workspace_id = account["workspace"]["workspace_id"]
+
+    async def create_run_and_brief(request_id):
+        async with connection.get_db() as db:
+            plan = await analyses_repo.current_plan(db, request_id)
+            assert plan is not None
+            assert await analyses_repo.approve_plan(db, plan["plan_id"], user_id=user_id)
+            await runs_repo.create_run(db, request_id=request_id, plan_id=plan["plan_id"], triggered_by=user_id)
+
+            cursor = await db.execute(
+                "SELECT task_id FROM research_tasks WHERE parent_request_id = ? LIMIT 1", (request_id,)
+            )
+            task_id = (await cursor.fetchone())[0]
+            await db.execute("UPDATE runs SET status = 'completed' WHERE request_id = ?", (request_id,))
+            await db.execute("UPDATE business_requests SET status = 'completed' WHERE request_id = ?", (request_id,))
+            saved = await briefs_repo.save_brief(
+                db, workspace_id=workspace_id, request_id=request_id, requested_by=user_id,
+                build=lambda bid, no: {
+                    "brief_id": bid, "brief_no": no, "title": "Test brief", "use_case": "competitive_intelligence",
+                    "summary": {}, "evidence": [], "lenses": [], "options": [],
+                },
+            )
+            await db.execute(
+                "INSERT INTO brief_search (brief_id, kind, ref_id, card_version, text) VALUES (?, 'claim', 'claim-1', 1, 'data')",
+                (saved["id"],),
+            )
+            await db.execute(
+                "INSERT INTO metrics (request_id, entity, value_text) VALUES (?, 'Acme', '10')", (request_id,)
+            )
+            await db.execute(
+                "INSERT INTO metric_conflicts (request_id, entity, low, high, metric_uids) VALUES (?, 'Acme', 1, 2, '[]')",
+                (request_id,),
+            )
+            await db.execute(
+                "INSERT INTO requirement_outcomes (request_id, task_id, metric_id, entity, status) "
+                "VALUES (?, ?, 'revenue', 'Acme', 'gap')",
+                (request_id, task_id),
+            )
+            await db.commit()
+            return saved["id"]
+
+    brief_id = asyncio.run(create_run_and_brief(aid))
+
+    deleted = client.delete(f"/api/analyses/{aid}")
+    assert deleted.status_code == 200
+    assert deleted.json() == {"status": "deleted"}
+    assert all(row["analysis_id"] != aid for row in client.get("/api/analyses").json())
+    assert client.get(f"/api/analyses/{aid}").status_code == 404
+
+    db = sqlite3.connect(isolated / "edrak.db")
+    for table, column in (
+        ("business_requests", "request_id"), ("runs", "request_id"), ("briefs", "request_id"),
+        ("research_plans", "request_id"), ("decisions", "brief_id"), ("evidence_snapshots", "brief_id"),
+        ("metrics", "request_id"), ("metric_conflicts", "request_id"), ("requirement_outcomes", "request_id"),
+        ("brief_search", "brief_id"),
+    ):
+        value = aid if column != "brief_id" else brief_id
+        assert db.execute(f"SELECT count(*) FROM {table} WHERE {column} = ?", (value,)).fetchone()[0] == 0
+    assert db.execute(
+        "SELECT count(*) FROM audit_log WHERE action = 'analysis.deleted' AND target_id = ?", (aid,)
+    ).fetchone()[0] == 1
+
+    decided_aid = client.post("/api/analyses/draft", json={"form": FORM}).json()["analysis_id"]
+    decided_brief_id = asyncio.run(create_run_and_brief(decided_aid))
+    decision = client.post(f"/api/briefs/{decided_brief_id}/decision", json={"title": "Proceed"})
+    assert decision.status_code == 200
+    decided_deleted = client.delete(f"/api/analyses/{decided_aid}")
+    assert decided_deleted.status_code == 200
+    assert client.get(f"/api/analyses/{decided_aid}").status_code == 404
+    assert db.execute(
+        "SELECT count(*) FROM evidence_snapshots WHERE brief_id = ?", (decided_brief_id,)
+    ).fetchone()[0] == 0
+    assert db.execute(
+        "SELECT count(*) FROM sqlite_master WHERE type = 'trigger' "
+        "AND name IN ('evidence_snapshots_no_delete', 'evidence_snapshot_items_no_delete')"
+    ).fetchone()[0] == 2
+
+
+def test_delete_analysis_cancels_a_running_run(client):
+    from edrak.db.repositories import analyses as analyses_repo
+    from edrak.db.repositories import runs as runs_repo
+
+    account = _account(client)
+    aid = client.post("/api/analyses/draft", json={"form": FORM}).json()["analysis_id"]
+
+    async def start_run():
+        async with connection.get_db() as db:
+            plan = await analyses_repo.current_plan(db, aid)
+            assert plan is not None
+            assert await analyses_repo.approve_plan(db, plan["plan_id"], user_id=account["user"]["user_id"])
+            await runs_repo.create_run(
+                db, request_id=aid, plan_id=plan["plan_id"], triggered_by=account["user"]["user_id"]
+            )
+
+    asyncio.run(start_run())
+    response = client.delete(f"/api/analyses/{aid}")
+    assert response.status_code == 200
+    assert client.get(f"/api/analyses/{aid}").status_code == 404
+
+
 def test_another_workspace_cannot_see_an_analysis(client):
     _account(client, "Owner One")
     aid = client.post("/api/analyses/draft", json={"form": FORM}).json()["analysis_id"]
@@ -329,6 +437,7 @@ def test_another_workspace_cannot_see_an_analysis(client):
     assert client.get(f"/api/analyses/{aid}").status_code == 404
     assert client.get(f"/api/analyses/{aid}/run").status_code == 404
     assert client.post(f"/api/analyses/{aid}/approve").status_code == 404
+    assert client.delete(f"/api/analyses/{aid}").status_code == 404
     assert all(a["analysis_id"] != aid for a in client.get("/api/analyses").json())
 
 
@@ -431,6 +540,63 @@ def test_brief_numbers_are_per_workspace(isolated):
                 await db.execute("UPDATE briefs SET title = 'changed' WHERE id = ?", (saved["id"],))
 
     asyncio.run(go())
+
+
+def test_brief_read_uses_latest_immutable_revision(client, isolated):
+    from edrak.db.repositories import analyses as analyses_repo
+    from edrak.db.repositories import briefs as briefs_repo
+    from edrak.db.repositories import runs as runs_repo
+
+    account = _account(client)
+    aid = client.post("/api/analyses/draft", json={"form": FORM}).json()["analysis_id"]
+    user_id = account["user"]["user_id"]
+    workspace_id = account["workspace"]["workspace_id"]
+
+    async def create_brief_and_revision():
+        async with connection.get_db() as db:
+            plan = await analyses_repo.current_plan(db, aid)
+            assert plan is not None
+            assert await analyses_repo.approve_plan(db, plan["plan_id"], user_id=user_id)
+            await runs_repo.create_run(db, request_id=aid, plan_id=plan["plan_id"], triggered_by=user_id)
+            saved = await briefs_repo.save_brief(
+                db,
+                workspace_id=workspace_id,
+                request_id=aid,
+                requested_by=user_id,
+                build=lambda brief_id, number: {
+                    "brief_id": brief_id,
+                    "brief_no": number,
+                    "title": "Test brief",
+                    "use_case": "competitive_intelligence",
+                    "summary_text": "Original snapshot",
+                    "synthesis": {"statement": "Original snapshot"},
+                    "evidence": [],
+                    "lenses": [],
+                    "cards": {},
+                },
+            )
+            revision_document = {
+                **saved["document"],
+                "synthesis": {"statement": "Updated synthesis"},
+            }
+            revision = await briefs_repo.save_revision(
+                db,
+                brief_id=saved["id"],
+                document=revision_document,
+                reason="Stage results refreshed",
+                created_by=user_id,
+            )
+            original = await briefs_repo.get_brief(db, saved["id"], workspace_id)
+            assert original["document"]["synthesis"]["statement"] == "Original snapshot"
+            return saved["id"], revision
+
+    brief_id, revision = asyncio.run(create_brief_and_revision())
+    response = client.get(f"/api/briefs/{brief_id}")
+
+    assert revision == 1
+    assert response.status_code == 200
+    assert response.json()["revision_number"] == 1
+    assert response.json()["synthesis"]["statement"] == "Updated synthesis"
 
 
 # ------------------------------------------------------------------ migration from v1

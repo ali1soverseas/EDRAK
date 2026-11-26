@@ -56,6 +56,47 @@ def test_shared_factory_builds_nvidia_client_with_scoped_credential(monkeypatch)
     assert seen["callbacks"] == ["callback"]
 
 
+def test_shared_factory_builds_openai_client_for_cross_signal(monkeypatch):
+    seen = {}
+
+    class FakeChat:
+        def __init__(self, **kwargs):
+            seen.update(kwargs)
+
+    monkeypatch.setattr(llm_module, "EdrakChat", FakeChat)
+    monkeypatch.setenv("LLM_PROVIDER", "nvidia")
+    monkeypatch.setenv("OPENAI_API_KEY_CROSS_SIGNAL", "scoped-openai-token")
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.setenv("LLM_BASE_URL", "https://nvidia.example/v1")
+
+    model = llm_module.get_chat_model(
+        agent="cross_signal",
+        model="gpt-4.1",
+        provider="openai",
+    )
+
+    assert isinstance(model, FakeChat)
+    assert seen["model"] == "gpt-4.1"
+    assert seen["api_key"] == "scoped-openai-token"
+    assert seen["base_url"] == "https://api.openai.com/v1"
+
+
+def test_openai_override_does_not_use_nvidia_only_key(monkeypatch):
+    for name in (
+        "OPENAI_API_KEY",
+        "OPENAI_API_KEY_CROSS_SIGNAL",
+        "OPENAI_API_KEY_CROSS_SIGNAL_BACKUP",
+        "LLM_API_KEY",
+        "LLM_API_KEY_CROSS_SIGNAL",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(settings, "LLM_API_KEY", None)
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvidia-only-token")
+
+    with pytest.raises(RuntimeError, match="OPENAI_API_KEY is not configured"):
+        llm_module.get_chat_model(agent="cross_signal", provider="openai")
+
+
 def test_shared_factory_uses_nvidia_model_from_environment(monkeypatch):
     seen = {}
 

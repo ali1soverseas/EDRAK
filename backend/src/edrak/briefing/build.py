@@ -86,6 +86,22 @@ def _finding_refs(results: list[WorkerResult], numbers: dict[tuple[str, int, str
     return refs
 
 
+def build_signals_view(
+    cross_signal: Optional[dict[str, Any]],
+    results: list[WorkerResult],
+    numbers: dict[tuple[str, int, str], int],
+    conflicts: list[dict[str, Any]],
+    metrics_by_uid: dict[str, dict[str, Any]],
+    template: Any,
+) -> list[dict[str, Any]]:
+    signals = _signals(cross_signal)
+    refs = _finding_refs(results, numbers)
+    for signal in signals:
+        supporting_findings = signal.pop("supporting_findings")
+        signal["refs"] = sorted({number for fid in supporting_findings for number in refs.get(fid, [])})
+    return rank_signals([*conflict_signals(conflicts, metrics_by_uid), *signals], template)
+
+
 async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: list[WorkerResult], cross_signal: Optional[dict[str, Any]],
                    numbers: dict[tuple[str, int, str], int], *, lang: str = "en", goal: str = "") -> dict[str, Any]:
     """Everything the dashboard shows that comes from typed metrics. Raises nothing the caller must handle."""
@@ -102,12 +118,8 @@ async def build_v3(db: aiosqlite.Connection, request: BusinessRequest, results: 
     strip = kpi_strip(cards, template)
     cov = coverage(outcomes, usable, template)
 
-    signals = _signals(cross_signal)
-    refs = _finding_refs(results, numbers)
-    for s in signals:
-        s["refs"] = sorted({n for fid in s.pop("supporting_findings") for n in refs.get(fid, [])})
     metrics_by_uid = {r["uid"]: r for r in rows}
-    signals = rank_signals([*conflict_signals(conflicts, metrics_by_uid), *signals], template)
+    signals = build_signals_view(cross_signal, results, numbers, conflicts, metrics_by_uid, template)
 
     names = _names(request)
     found_ids = {m for m, _ in usable}

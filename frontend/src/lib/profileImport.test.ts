@@ -7,13 +7,13 @@ import {
 
 const form: ImportableForm = {
   name: "", aliases: [], industries: [], industry_other: null, description: "", offerings: [],
-  goals: [], website: "", serves: [], considers: [], links: {},
+  target_customer_groups: [], goals: [], website: "", serves: [], considers: [], links: {},
 };
 
 const draft: ProfileDraft = {
   profile: {
     name: "Nile Ledger", aliases: ["نايل ليدجر", "nile ledger"], notes: "Bookkeeping software for small shops.",
-    products: ["Ledger Lite", "Ledger POS"], industry: "saas", markets: ["Egypt", "Jordan"], goals: ["Give every shop a clear view of its money."],
+    products: ["Ledger Lite", "Ledger POS"], target_customers: ["Small shops", "Freelancers"], industry: "saas", markets: ["Egypt", "Jordan"], goals: ["Give every shop a clear view of its money."],
   },
   links: [
     { platform: "website", url: "https://nileledger.example" },
@@ -33,13 +33,13 @@ const en = (e: string) => e;
 describe("importRows", () => {
   it("makes a row for each field the draft has, in the order the form asks for them", () => {
     const rows = importRows(form, draft, label);
-    expect(rows.map((r) => r.key)).toEqual(["name", "aliases", "notes", "products", "industry", "markets", "goals", "links"]);
+    expect(rows.map((r) => r.key)).toEqual(["name", "aliases", "notes", "products", "target_customers", "industry", "markets", "goals", "links"]);
     expect(rows.find((r) => r.key === "industry")!.proposed).toEqual(["SaaS"]);
     expect(rows.find((r) => r.key === "products")!.sources).toEqual(["S2", "S3"]);
   });
 
   it("leaves out fields the draft is empty for", () => {
-    const sparse: ProfileDraft = { ...draft, profile: { ...draft.profile, name: null, aliases: [], notes: null, products: [], industry: null, markets: [], goals: [] }, links: [] };
+    const sparse: ProfileDraft = { ...draft, profile: { ...draft.profile, name: null, aliases: [], notes: null, products: [], target_customers: [], industry: null, markets: [], goals: [] }, links: [] };
     expect(importRows(form, sparse, label)).toEqual([]);
   });
 
@@ -53,7 +53,7 @@ describe("importRows", () => {
   });
 
   it("selects everything by default on an empty form", () => {
-    expect(defaultChoices(importRows(form, draft, label))).toEqual(new Set(["name", "aliases", "notes", "products", "industry", "markets", "goals", "links"]));
+    expect(defaultChoices(importRows(form, draft, label))).toEqual(new Set(["name", "aliases", "notes", "products", "target_customers", "industry", "markets", "goals", "links"]));
   });
 
   it("does not select a name or description that would overwrite what the person wrote, and says what is there", () => {

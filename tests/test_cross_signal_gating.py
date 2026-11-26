@@ -10,6 +10,8 @@ be rejected: CANNOT_COMPLETE, which means nothing passed, and a payload with no
 verified findings at all.
 """
 
+import asyncio
+
 import pytest
 from edrak.contracts import (
     BusinessContext,
@@ -34,6 +36,8 @@ from edrak.contracts.verification import (
     VerificationStatus,
 )
 from edrak.orchestration.routing import decide_after_verification
+from edrak.CrossSignal.nodes import CrossSignalNodes
+from edrak.CrossSignal.state import CrossSignalSettings
 
 
 def _request() -> BusinessRequest:
@@ -167,3 +171,34 @@ def test_contract_rejects_a_payload_with_nothing_verified():
 
     with pytest.raises(ValueError, match="no finding passed verification"):
         build_cross_signal_input(result, _request())
+
+
+def test_failed_cross_signal_lenses_emit_no_fabricated_signals_and_add_warnings():
+    class FailedStructuredModel:
+        async def ainvoke(self, _messages):
+            raise RuntimeError("completion limit reached")
+
+    class FailedModel:
+        def with_structured_output(self, *_args, **_kwargs):
+            return FailedStructuredModel()
+
+    nodes = CrossSignalNodes(
+        llm=FailedModel(),
+        settings=CrossSignalSettings(),
+    )
+
+    result = asyncio.run(
+        nodes.detect_signals(
+            {
+                "findings_digest": "verified findings",
+                "business_digest": "business goal",
+            }
+        )
+    )
+
+    assert result["candidate_signals"] == []
+    assert len(result["warnings"]) == 3
+    assert all(
+        "failed" in warning and "no signals were emitted" in warning
+        for warning in result["warnings"]
+    )

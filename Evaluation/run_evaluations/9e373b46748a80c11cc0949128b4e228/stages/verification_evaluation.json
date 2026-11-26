@@ -1,0 +1,1238 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\stages\\verification\\input.json",
+  "source_output": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\stages\\verification\\output.json",
+  "deterministic_checks": {
+    "input_finding_count": 67,
+    "assessed_finding_count": 67,
+    "assessment_coverage": 1.0,
+    "status_counts": {
+      "verified": 62,
+      "insufficient": 5
+    },
+    "duplicate_finding_ids": [],
+    "missing_finding_ids": [],
+    "unknown_finding_ids": [],
+    "evidence_reference_count": 78,
+    "unresolved_evidence_ids": []
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.5833,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "verification",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "verification-stage-rubric-2.0.0",
+    "finding_count": 6,
+    "mandatory_finding_count": 6,
+    "coverage_score": 0.5833,
+    "strict_coverage_score": 0.3333,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 315,
+      "initial_missing_count": 1,
+      "initial_partial_count": 4,
+      "findings_reviewed": 5,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 1,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 40,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "VS-01",
+        "requirement_id": "VS-COVERAGE",
+        "test_case_id": "VS-UC-001",
+        "title": "Complete, unique coverage",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "Second pass upgraded initial partial to covered. Initial: missing: Every input finding receives exactly one assessment carrying its original finding ID. — The actual report contains 67 findings, with 62 verified and 5 insufficient. However, the report does not provide a complete assessment for each finding, as it fails to include assessments for all findings, particularly those marked as insufficient. This results in a lack of unique coverage for all input findings, which is a critical requirement. Therefore, the score reflects the significant shortcoming in completeness and unique coverage.; covered: Reports counts of verified and insufficient findings. — The Actual Output successfully includes explicit counts of verified findings (62) and insufficient findings (5), aligning with the evaluation steps. It also matches the Expected Output's requirement for unique coverage of findings with their original IDs. However, the Retrieval Context does not contain content that could be mistaken for report content, which is a positive aspect. Overall, the response meets the evaluation criteria effectively. Second pass: The Actual Output identifies all input findings and provides corresponding assessments with correct finding IDs. It also reports the counts of verified (62) and insufficient (5) findings as required. However, it does not fully cover the acceptance criteria regarding the completeness and uniqueness of coverage, as it lacks explicit confirmation that every input finding receives exactly one assessment. Therefore, while it meets some criteria, it does not fully satisfy the mandatory requirements.",
+        "criteria_results": [
+          {
+            "criterion": "Every input finding receives exactly one assessment carrying its original finding ID.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The actual report contains 67 findings, with 62 verified and 5 insufficient. However, the report does not provide a complete assessment for each finding, as it fails to include assessments for all findings, particularly those marked as insufficient. This results in a lack of unique coverage for all input findings, which is a critical requirement. Therefore, the score reflects the significant shortcoming in completeness and unique coverage."
+          },
+          {
+            "criterion": "Reports counts of verified and insufficient findings.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The Actual Output successfully includes explicit counts of verified findings (62) and insufficient findings (5), aligning with the evaluation steps. It also matches the Expected Output's requirement for unique coverage of findings with their original IDs. However, the Retrieval Context does not contain content that could be mistaken for report content, which is a positive aspect. Overall, the response meets the evaluation criteria effectively."
+          }
+        ],
+        "method": "first pass + second-pass semantic retrieval",
+        "initial_score": 0.65,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-01",
+          "requirement_id": "VS-COVERAGE",
+          "test_case_id": "VS-UC-001",
+          "title": "Complete, unique coverage",
+          "priority": "mandatory",
+          "score": 0.7,
+          "status": "covered",
+          "reason": "The Actual Output identifies all input findings and provides corresponding assessments with correct finding IDs. It also reports the counts of verified (62) and insufficient (5) findings as required. However, it does not fully cover the acceptance criteria regarding the completeness and uniqueness of coverage, as it lacks explicit confirmation that every input finding receives exactly one assessment. Therefore, while it meets some criteria, it does not fully satisfy the mandatory requirements.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+              "similarity": 0.436519
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[2]",
+              "text": "Claim quantity 1.41 is not in the saved source.",
+              "similarity": 0.327619
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+              "text": "Claim quantity 1.92 is not in the saved source.",
+              "similarity": 0.326424
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+              "text": "Claim quantity 2.56 is not in the saved source.",
+              "similarity": 0.319043
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[3]",
+              "text": "Claim quantity 1.79 is not in the saved source.",
+              "similarity": 0.317077
+            }
+          ]
+        },
+        "second_pass_applied": true,
+        "reconciliation": "upgraded_by_second_pass",
+        "final_score": 0.7,
+        "final_status": "covered"
+      },
+      {
+        "finding_id": "VS-02",
+        "requirement_id": "VS-SUPPORT",
+        "test_case_id": "VS-UC-001",
+        "title": "Complete-claim support standard",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "partial: Marks a finding verified only when the cited evidence supports every part of the claim (entity attribution, numbers, dates, and scope). — The Actual Output demonstrates a thorough verification process, with 62 out of 67 findings being evidence-backed. However, several findings were marked as insufficient due to missing or unsupported claims, particularly regarding specific numbers and details that were not corroborated by the cited evidence. This indicates a partial alignment with the evaluation steps, as some claims lacked complete support, which is critical for marking findings as verified. Overall, while the output shows a strong effort in verification, the presence of insufficient findings detracts from its overall effectiveness.; partial: Marks findings insufficient when support is partial, attributed to a different company, undated for a time-sensitive claim, or ambiguous. — The Actual Output presents a comprehensive summary of findings, with 62 out of 67 findings being evidence-backed, which aligns with the requirement for complete-claim support. However, several findings were marked as insufficient due to missing or misattributed evidence, indicating partial support. The findings are attributed correctly to the respective companies, and the context is treated separately from the report content. However, the presence of insufficient findings suggests that not all claims were fully supported, impacting the overall alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Marks a finding verified only when the cited evidence supports every part of the claim (entity attribution, numbers, dates, and scope).",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output demonstrates a thorough verification process, with 62 out of 67 findings being evidence-backed. However, several findings were marked as insufficient due to missing or unsupported claims, particularly regarding specific numbers and details that were not corroborated by the cited evidence. This indicates a partial alignment with the evaluation steps, as some claims lacked complete support, which is critical for marking findings as verified. Overall, while the output shows a strong effort in verification, the presence of insufficient findings detracts from its overall effectiveness."
+          },
+          {
+            "criterion": "Marks findings insufficient when support is partial, attributed to a different company, undated for a time-sensitive claim, or ambiguous.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output presents a comprehensive summary of findings, with 62 out of 67 findings being evidence-backed, which aligns with the requirement for complete-claim support. However, several findings were marked as insufficient due to missing or misattributed evidence, indicating partial support. The findings are attributed correctly to the respective companies, and the context is treated separately from the report content. However, the presence of insufficient findings suggests that not all claims were fully supported, impacting the overall alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-02",
+          "requirement_id": "VS-SUPPORT",
+          "test_case_id": "VS-UC-001",
+          "title": "Complete-claim support standard",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output identifies several findings with missing information, indicating that the claims made are not fully supported by the cited evidence. Specifically, it notes that claim quantities are not found in the saved source, which directly contradicts the requirement for complete claim support. This demonstrates a significant shortcoming in meeting the acceptance criteria, as it fails to verify claims based on the necessary evidence attributes.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+              "similarity": 0.503462
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+              "text": "Claim quantity 2.56 is not in the saved source.",
+              "similarity": 0.402599
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+              "text": "Claim quantity 2.94 is not in the saved source.",
+              "similarity": 0.399632
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+              "text": "Claim quantity 1.92 is not in the saved source.",
+              "similarity": 0.397245
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[8]",
+              "text": "Claim quantity 3.84 is not in the saved source.",
+              "similarity": 0.394037
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.6,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-03",
+        "requirement_id": "VS-REFERENCES",
+        "test_case_id": "VS-UC-001",
+        "title": "Valid evidence references",
+        "priority": "mandatory",
+        "score": 0.9,
+        "status": "covered",
+        "reason": "covered: Each assessment cites one or more evidence IDs from the worker input. — The Actual Output includes multiple explicit citations of evidence IDs from the worker input, fulfilling the requirement to cite evidence for each finding. All findings that are marked as verified include corresponding evidence IDs, and there are no invented or unresolved citations. This aligns well with the acceptance criteria outlined in the Expected Output.; covered: No cited evidence ID is invented or unresolved. — The Actual Output includes multiple cited evidence IDs, all of which are clearly referenced and resolved. However, there are instances of insufficient verification where claims lack supporting evidence, which slightly detracts from full compliance with the evaluation steps. The Retrieval Context does not contain any report content or evidence IDs, aligning well with the requirements.",
+        "criteria_results": [
+          {
+            "criterion": "Each assessment cites one or more evidence IDs from the worker input.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The Actual Output includes multiple explicit citations of evidence IDs from the worker input, fulfilling the requirement to cite evidence for each finding. All findings that are marked as verified include corresponding evidence IDs, and there are no invented or unresolved citations. This aligns well with the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "No cited evidence ID is invented or unresolved.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output includes multiple cited evidence IDs, all of which are clearly referenced and resolved. However, there are instances of insufficient verification where claims lack supporting evidence, which slightly detracts from full compliance with the evaluation steps. The Retrieval Context does not contain any report content or evidence IDs, aligning well with the requirements."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.9,
+        "initial_status": "covered",
+        "final_score": 0.9,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "VS-04",
+        "requirement_id": "VS-REASONS",
+        "test_case_id": "VS-UC-001",
+        "title": "Finding-specific reasons",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "partial: Each insufficient assessment states what is missing or wrong (e.g., in missing_information). — The Actual Output provides a detailed summary of findings, including specific reasons for insufficient assessments, such as missing information and evidence quality. However, while it states what is missing for insufficient findings, it does not clearly articulate what the verified findings directly support, which is a requirement in the acceptance criteria. This partial fulfillment leads to an intermediate score.; partial: Verified assessments of claims with numbers or company attribution state what the evidence directly supports. — The Actual Output provides a detailed summary of findings, indicating that 62 out of 67 findings are evidence-backed, which aligns with the requirement for verified assessments. However, while it mentions what is missing for insufficient findings, it does not explicitly state what the evidence supports regarding the verified claims, which is a key requirement. Therefore, it partially meets the acceptance criteria but lacks completeness in addressing the expectations for verified assessments.",
+        "criteria_results": [
+          {
+            "criterion": "Each insufficient assessment states what is missing or wrong (e.g., in missing_information).",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed summary of findings, including specific reasons for insufficient assessments, such as missing information and evidence quality. However, while it states what is missing for insufficient findings, it does not clearly articulate what the verified findings directly support, which is a requirement in the acceptance criteria. This partial fulfillment leads to an intermediate score."
+          },
+          {
+            "criterion": "Verified assessments of claims with numbers or company attribution state what the evidence directly supports.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed summary of findings, indicating that 62 out of 67 findings are evidence-backed, which aligns with the requirement for verified assessments. However, while it mentions what is missing for insufficient findings, it does not explicitly state what the evidence supports regarding the verified claims, which is a key requirement. Therefore, it partially meets the acceptance criteria but lacks completeness in addressing the expectations for verified assessments."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-04",
+          "requirement_id": "VS-REASONS",
+          "test_case_id": "VS-UC-001",
+          "title": "Finding-specific reasons",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria. It identifies that 5 findings were insufficient but does not specify what is missing for each of those findings, which is required. Additionally, while it provides some verified assessments of claims, it lacks company attribution or specific evidence to support the claims, which is necessary for full compliance with the criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+              "similarity": 0.506593
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+              "text": "Claim quantity 2.56 is not in the saved source.",
+              "similarity": 0.292544
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[8]",
+              "text": "Claim quantity 3.84 is not in the saved source.",
+              "similarity": 0.289634
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+              "text": "Claim quantity 1.92 is not in the saved source.",
+              "similarity": 0.289572
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[17].missing_information[1]",
+              "text": "Claim quantity 6 is not in the saved source.",
+              "similarity": 0.289064
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-05",
+        "requirement_id": "VS-CALIBRATION",
+        "test_case_id": "VS-UC-001",
+        "title": "Conservative calibration",
+        "priority": "mandatory",
+        "score": 0.65,
+        "status": "partial",
+        "reason": "partial: Confidence is lower for insufficient findings and for findings resting on a single secondary source. — The Actual Output provides a detailed summary of findings, including confidence levels for each finding. However, it does not explicitly address the requirement that confidence should be lower for insufficient findings or those based on a single secondary source. While it does indicate which findings are insufficient, it fails to clearly articulate how confidence levels are calibrated in relation to these criteria. Therefore, it does not fully align with the expectations set in the Expected Output.; covered: No claim is labeled false without contradicting evidence; unsupported is reported as insufficient. — The Actual Output meets the evaluation criteria by correctly identifying findings as verified or insufficient based on the evidence provided. It accurately reports that 62 out of 67 findings are evidence-backed, with 5 findings marked as insufficient, which aligns with the requirement that unsupported claims are reported as insufficient. However, there are instances where claims labeled as insufficient lack sufficient detail on contradictions or missing information, which slightly detracts from the overall clarity. Overall, the output demonstrates a strong adherence to the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Confidence is lower for insufficient findings and for findings resting on a single secondary source.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed summary of findings, including confidence levels for each finding. However, it does not explicitly address the requirement that confidence should be lower for insufficient findings or those based on a single secondary source. While it does indicate which findings are insufficient, it fails to clearly articulate how confidence levels are calibrated in relation to these criteria. Therefore, it does not fully align with the expectations set in the Expected Output."
+          },
+          {
+            "criterion": "No claim is labeled false without contradicting evidence; unsupported is reported as insufficient.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output meets the evaluation criteria by correctly identifying findings as verified or insufficient based on the evidence provided. It accurately reports that 62 out of 67 findings are evidence-backed, with 5 findings marked as insufficient, which aligns with the requirement that unsupported claims are reported as insufficient. However, there are instances where claims labeled as insufficient lack sufficient detail on contradictions or missing information, which slightly detracts from the overall clarity. Overall, the output demonstrates a strong adherence to the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.65,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "VS-05",
+          "requirement_id": "VS-CALIBRATION",
+          "test_case_id": "VS-UC-001",
+          "title": "Conservative calibration",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output does not fully adhere to the acceptance criteria, as it fails to demonstrate that confidence is lower for insufficient findings and does not clarify that insufficient claims are not treated as false. While it provides some findings, it does not explicitly address the required conservative calibration or the treatment of unsupported claims, leading to a significant gap in coverage.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision.summary",
+              "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+              "similarity": 0.573039
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+              "text": "Claim quantity 2.56 is not in the saved source.",
+              "similarity": 0.385671
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+              "text": "Claim quantity 2.94 is not in the saved source.",
+              "similarity": 0.383325
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[17].missing_information[0]",
+              "text": "Claim quantity 5.5 is not in the saved source.",
+              "similarity": 0.378417
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+              "text": "Claim quantity 1.92 is not in the saved source.",
+              "similarity": 0.375028
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.65,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "VS-06",
+        "requirement_id": "VS-TRACEABILITY",
+        "test_case_id": "VS-UC-001",
+        "title": "Audit traceability",
+        "priority": "mandatory",
+        "score": 0.25,
+        "status": "missing",
+        "reason": "missing: Preserves the source type or publisher of the evidence used in each assessment. — The Actual Output does not explicitly mention the source type or publisher of the evidence used, which is a critical requirement. While some findings include statements attributed to Google or AWS, they do not clearly preserve the source type or publisher as required. Additionally, there is no indication of missing publication dates for time-sensitive claims, which further detracts from compliance with the acceptance criteria.; missing: If evidence has no publication date and the claim is time-sensitive, the assessment notes the missing date instead of treating the claim as current. — The Actual Output includes several time-sensitive claims regarding customer usage and pricing for Google Cloud TPUs and AWS services, but it fails to provide publication dates for these claims. This omission means that the claims cannot be treated as current, which is a critical requirement outlined in the evaluation steps. The absence of publication dates for time-sensitive claims directly contradicts the acceptance criteria, leading to a low score.",
+        "criteria_results": [
+          {
+            "criterion": "Preserves the source type or publisher of the evidence used in each assessment.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention the source type or publisher of the evidence used, which is a critical requirement. While some findings include statements attributed to Google or AWS, they do not clearly preserve the source type or publisher as required. Additionally, there is no indication of missing publication dates for time-sensitive claims, which further detracts from compliance with the acceptance criteria."
+          },
+          {
+            "criterion": "If evidence has no publication date and the claim is time-sensitive, the assessment notes the missing date instead of treating the claim as current.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output includes several time-sensitive claims regarding customer usage and pricing for Google Cloud TPUs and AWS services, but it fails to provide publication dates for these claims. This omission means that the claims cannot be treated as current, which is a critical requirement outlined in the evaluation steps. The absence of publication dates for time-sensitive claims directly contradicts the acceptance criteria, leading to a low score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.25,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "VS-06",
+          "requirement_id": "VS-TRACEABILITY",
+          "test_case_id": "VS-UC-001",
+          "title": "Audit traceability",
+          "priority": "mandatory",
+          "score": 0.0,
+          "status": "missing",
+          "reason": "The Actual Output fails to preserve the source type or publisher of the evidence used in the assessments, which is a mandatory requirement. Additionally, it does not address the absence of publication dates for time-sensitive claims, which is also critical. Therefore, it does not meet the acceptance criteria outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+              "text": "Claim quantity 2.56 is not in the saved source.",
+              "similarity": 0.436045
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[17].missing_information[1]",
+              "text": "Claim quantity 6 is not in the saved source.",
+              "similarity": 0.432946
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+              "text": "Claim quantity 2.94 is not in the saved source.",
+              "similarity": 0.430886
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[20].missing_information[2]",
+              "text": "Claim quantity 1.41 is not in the saved source.",
+              "similarity": 0.427775
+            },
+            {
+              "source_path": "$.stage_output.verification_result.findings[32].missing_information[0]",
+              "text": "Claim quantity 2.7 is not in the saved source.",
+              "similarity": 0.423022
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.25,
+        "final_status": "missing"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "VS-01",
+        "requirement_id": "VS-COVERAGE",
+        "test_case_id": "VS-UC-001",
+        "title": "Complete, unique coverage",
+        "priority": "mandatory",
+        "score": 0.7,
+        "status": "covered",
+        "reason": "The Actual Output identifies all input findings and provides corresponding assessments with correct finding IDs. It also reports the counts of verified (62) and insufficient (5) findings as required. However, it does not fully cover the acceptance criteria regarding the completeness and uniqueness of coverage, as it lacks explicit confirmation that every input finding receives exactly one assessment. Therefore, while it meets some criteria, it does not fully satisfy the mandatory requirements.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+            "similarity": 0.436519
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[2]",
+            "text": "Claim quantity 1.41 is not in the saved source.",
+            "similarity": 0.327619
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+            "text": "Claim quantity 1.92 is not in the saved source.",
+            "similarity": 0.326424
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+            "text": "Claim quantity 2.56 is not in the saved source.",
+            "similarity": 0.319043
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[3]",
+            "text": "Claim quantity 1.79 is not in the saved source.",
+            "similarity": 0.317077
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-02",
+        "requirement_id": "VS-SUPPORT",
+        "test_case_id": "VS-UC-001",
+        "title": "Complete-claim support standard",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output identifies several findings with missing information, indicating that the claims made are not fully supported by the cited evidence. Specifically, it notes that claim quantities are not found in the saved source, which directly contradicts the requirement for complete claim support. This demonstrates a significant shortcoming in meeting the acceptance criteria, as it fails to verify claims based on the necessary evidence attributes.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+            "similarity": 0.503462
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+            "text": "Claim quantity 2.56 is not in the saved source.",
+            "similarity": 0.402599
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+            "text": "Claim quantity 2.94 is not in the saved source.",
+            "similarity": 0.399632
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+            "text": "Claim quantity 1.92 is not in the saved source.",
+            "similarity": 0.397245
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[8]",
+            "text": "Claim quantity 3.84 is not in the saved source.",
+            "similarity": 0.394037
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-04",
+        "requirement_id": "VS-REASONS",
+        "test_case_id": "VS-UC-001",
+        "title": "Finding-specific reasons",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria. It identifies that 5 findings were insufficient but does not specify what is missing for each of those findings, which is required. Additionally, while it provides some verified assessments of claims, it lacks company attribution or specific evidence to support the claims, which is necessary for full compliance with the criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+            "similarity": 0.506593
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+            "text": "Claim quantity 2.56 is not in the saved source.",
+            "similarity": 0.292544
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[8]",
+            "text": "Claim quantity 3.84 is not in the saved source.",
+            "similarity": 0.289634
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+            "text": "Claim quantity 1.92 is not in the saved source.",
+            "similarity": 0.289572
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[17].missing_information[1]",
+            "text": "Claim quantity 6 is not in the saved source.",
+            "similarity": 0.289064
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-05",
+        "requirement_id": "VS-CALIBRATION",
+        "test_case_id": "VS-UC-001",
+        "title": "Conservative calibration",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output does not fully adhere to the acceptance criteria, as it fails to demonstrate that confidence is lower for insufficient findings and does not clarify that insufficient claims are not treated as false. While it provides some findings, it does not explicitly address the required conservative calibration or the treatment of unsupported claims, leading to a significant gap in coverage.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision.summary",
+            "text": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+            "similarity": 0.573039
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+            "text": "Claim quantity 2.56 is not in the saved source.",
+            "similarity": 0.385671
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+            "text": "Claim quantity 2.94 is not in the saved source.",
+            "similarity": 0.383325
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[17].missing_information[0]",
+            "text": "Claim quantity 5.5 is not in the saved source.",
+            "similarity": 0.378417
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[4]",
+            "text": "Claim quantity 1.92 is not in the saved source.",
+            "similarity": 0.375028
+          }
+        ]
+      },
+      {
+        "finding_id": "VS-06",
+        "requirement_id": "VS-TRACEABILITY",
+        "test_case_id": "VS-UC-001",
+        "title": "Audit traceability",
+        "priority": "mandatory",
+        "score": 0.0,
+        "status": "missing",
+        "reason": "The Actual Output fails to preserve the source type or publisher of the evidence used in the assessments, which is a mandatory requirement. Additionally, it does not address the absence of publication dates for time-sensitive claims, which is also critical. Therefore, it does not meet the acceptance criteria outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[7]",
+            "text": "Claim quantity 2.56 is not in the saved source.",
+            "similarity": 0.436045
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[17].missing_information[1]",
+            "text": "Claim quantity 6 is not in the saved source.",
+            "similarity": 0.432946
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[3].missing_information[2]",
+            "text": "Claim quantity 2.94 is not in the saved source.",
+            "similarity": 0.430886
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[20].missing_information[2]",
+            "text": "Claim quantity 1.41 is not in the saved source.",
+            "similarity": 0.427775
+          },
+          {
+            "source_path": "$.stage_output.verification_result.findings[32].missing_information[0]",
+            "text": "Claim quantity 2.7 is not in the saved source.",
+            "similarity": 0.423022
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [
+      {
+        "claim_id": "CLAIM-001",
+        "claim": "62 of 67 findings are evidence-backed; 5 were insufficient and recorded for follow-up.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a summary of findings but lacks detailed alignment with the Expected Output's specific requirements, such as the need for unique coverage, verification criteria, and finding-specific reasons. It does not address the mandatory priorities outlined in the Expected Output, resulting in a significant gap in compliance.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-002",
+        "claim": "Google states that TPUs now serve nearly 100 customers, including frontier labs, trading firms, retailers and universities, though no specific customers are named.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a factual claim about the number of customers using TPUs but lacks specific customer names, which may lead to ambiguity. It does not align with the Expected Output's requirements for complete and verified findings, as it does not cite evidence IDs or provide finding-specific reasons. Additionally, it does not address the necessary criteria for conservative calibration or audit traceability, resulting in a significant gap in alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-003",
+        "claim": "Google Cloud CEO Thomas Kurian stated that nearly 100 customers use TPUs today. Alphabet Q3 2026 earnings materials corroborate this, citing about 100 TPU customers including Anthropic and Apple.",
+        "novelty_status": "novelty_uncertain",
+        "novelty_score": 0.4,
+        "novelty_reason": "The Actual Output provides a factual claim about TPU customers that is corroborated by Alphabet's earnings materials, aligning with the requirement for complete claim support. However, it does not address the specific acceptance criteria regarding finding-specific reasons or the need for evidence references, which are mandatory in the Expected Output. This lack of comprehensive coverage and failure to meet all mandatory criteria results in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-004",
+        "claim": "Over 257 companies started using Google Cloud TPU as a networking-hardware tool in 2026, including 132 customers in the United States, 16 in the United Kingdom, and 15 in India.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific figures regarding the number of companies using Google Cloud TPU, but it does not align with the Expected Output's requirements for complete claim support and valid evidence references. There is no evidence cited to support the claims made in the Actual Output, which is a critical shortcoming. Additionally, the Actual Output lacks finding-specific reasons for the claims, failing to meet the criteria for sufficient assessments. Overall, the response does not fulfill the mandatory priorities outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-005",
+        "claim": "Google Cloud bills TPU v5p per chip-hour at $4.20 on demand in us-east5 (Columbus) and us-east1 (South Carolina), with flex-start pricing at $2.10 per chip-hour, a 1-year commitment rate of $2.94 per chip-hour, and a 3-year commitment rate of $1.89 per chip-hour. These rates apply to TPU chip-hour usage in the specified U.S. regions.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides specific pricing details for TPU v5p, including rates for on-demand and commitment pricing in specified U.S. regions. However, it does not address any of the required findings or claims outlined in the Expected Output, such as evidence referencing, finding-specific reasons, or audit traceability. Therefore, it fails to align with the evaluation steps, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-006",
+        "claim": "Google Cloud bills TPU Ironwood (v7) per chip-hour at $12.00 on demand in us-central1 (Iowa) and $13.20 on demand in europe-west2 (London), with flex-start pricing at $6.00 per chip-hour, a 1-year commitment rate of $8.40 per chip-hour, and a 3-year commitment rate of $5.40 per chip-hour in Iowa. These are published Google Cloud list prices for TPU chip-hour usage.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing details for TPU chip-hour usage, which aligns with factual claims but does not address the structured requirements of the Expected Output. It lacks the necessary assessments, evidence citations, and finding-specific reasons outlined in the evaluation steps. Therefore, it does not meet the criteria for completeness or verification as required.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-007",
+        "claim": "SemiAnalysis benchmarked Google TPU v7 Ironwood inference at approximately $0.181 per million tokens at 100 tokens per second per user.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides a specific benchmark figure for Google TPU v7 Ironwood inference, but it does not address any of the required findings or claims outlined in the Expected Output. There is no evidence of unique coverage, verification of claims, or assessment of findings as required by the evaluation steps. Therefore, it fails to meet any of the mandatory criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-008",
+        "claim": "Google Cloud lists Ironwood (TPU7x) at $12.00 per chip-hour on demand in us-central1 (Iowa) and $13.20 per chip-hour in London, with committed-use pricing of $8.40 per chip-hour for one year and $5.40 per chip-hour for three years in Iowa.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing details for Google Cloud's TPU7x, including different rates for on-demand and committed-use pricing in two locations. However, it does not align with the Expected Output's requirements for finding-specific reasons, valid evidence references, or complete claim support standards. The Actual Output lacks citations of evidence IDs and does not address the completeness or verification of claims as outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-009",
+        "claim": "AWS EC2 Capacity Blocks for ML bills Trainium2 capacity per accelerator per hour. The trn2.48xlarge effective hourly rate is $35.7608 per instance, equivalent to $2.235 per accelerator, and the trn2.3xlarge rate is $2.235 per instance for one Trainium2 accelerator. Prices are shown for multiple regions including US East (Ohio) and Asia Pacific (Hyderabad). Reservation prices are updated regularly based on supply and demand trends.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing details for AWS EC2 Capacity Blocks for ML, including effective hourly rates and regional pricing. However, it does not align with the Expected Output's requirements for complete coverage, valid evidence references, or finding-specific reasons. There is no assessment of findings or evidence IDs, and it lacks clarity on what is verified or insufficient, leading to a significant gap in meeting the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-010",
+        "claim": "AWS reports a per vCPU-hour spot price of $0.0537 for the trn2.48xlarge instance in its cheapest region. This metric is derived from the spot price divided by the 192 vCPUs on the instance. The pricing table shows on-demand and spot prices by region for Linux/UNIX, with the cheapest region listed first.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides specific pricing information for an AWS instance but does not address any of the required findings or claims outlined in the Expected Output. There is no assessment of findings, evidence references, or reasons for verification or insufficiency, which are all mandatory criteria. Therefore, it fails to align with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-011",
+        "claim": "AWS Q3 2026 segment sales were $46.0 billion, up 39% year over year, representing a $184 billion annualized revenue run rate. AWS segment operating income was $17.8 billion. These figures come from Amazon's earnings releases and SEC filings. AWS commitments not yet recognized stood at approximately $578 billion as of September 30, 2026.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific financial figures and claims regarding AWS's performance, but it does not align with the evaluation steps which require assessments to cite evidence IDs, provide finding-specific reasons, and ensure conservative calibration. There is no indication of how the claims are verified or if they meet the acceptance criteria outlined in the Expected Output. Additionally, the Actual Output lacks references to the required finding IDs and does not address the completeness or sufficiency of the claims, leading to a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-012",
+        "claim": "AWS Q2 2026 revenue was $42.2 billion, an annualized revenue run rate of $169 billion. Both Amazon's AI revenue and its custom chips business (Trainium and Graviton) surpassed a $25 billion annual run rate, each growing at triple-digit percentages. AWS operating income was $16.6 billion with a 39% margin. Amazon raised its 2026 capital expenditure forecast to approximately $220 billion.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific financial figures and growth rates for AWS and Amazon's AI revenue, which are factual claims. However, it does not align with the Expected Output's requirements for assessment IDs, verification of claims, or evidence references. The Actual Output lacks the structured assessment format and does not cite evidence IDs, leading to a significant gap in meeting the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-013",
+        "claim": "AWS revenue grew 39.3% year over year to $46.0 billion in Q3 2026, accelerating for the sixth consecutive quarter. AWS' annualized revenue run rate reached about $184 billion, with segment operating income of $17.8 billion and a 38.7% operating margin.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific financial figures and growth rates for AWS, but it does not align with the Expected Output's requirements for assessment IDs, verification of claims, or evidence referencing. There is no indication of how the claims are supported or assessed according to the criteria outlined, leading to a lack of completeness and traceability in the findings.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-014",
+        "claim": "Broadcom's VMware business has 300,000 customers, according to CEO Hock Tan. More than 90% of VMware's largest 10,000 customers have shifted from perpetual licenses to the subscription-based VMware Cloud Foundation bundle.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific claims about Broadcom's VMware business, including customer numbers and licensing shifts, but it lacks a structured assessment that aligns with the Expected Output's requirements for finding-specific reasons, evidence references, and verification standards. There is no clear mapping to the required IDs or criteria, indicating a significant gap in meeting the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-015",
+        "claim": "Broadcom reported having 10,000 largest customers as of its March 2026 earnings call. CEO Hock Tan stated that over 87% of these customers have adopted VMware Cloud Foundation (VCF). The figure reflects Broadcom's enterprise customer base following its shift from perpetual vSphere licenses to VCF software subscriptions. This customer count is specific to the largest enterprise accounts, not the total customer base.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific factual claims about Broadcom's customer base and the adoption of VMware Cloud Foundation, but it does not align with the Expected Output's requirements for assessment structure and criteria. The Expected Output outlines mandatory findings and criteria for verification, which are not addressed in the Actual Output. Therefore, it lacks the necessary completeness and adherence to the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-016",
+        "claim": "Broadcom reported fiscal year 2025 annual revenue of $63.89 billion USD. The company also reported Q1 2026 revenue of $19.31 billion and Q2 2026 revenue of $22.19 billion.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific revenue figures for Broadcom but does not address the required findings outlined in the Expected Output, such as the need for unique coverage, verification of claims, or evidence references. There is no indication of assessments or IDs as required, leading to a lack of alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-017",
+        "claim": "Broadcom's AI silicon and networking products ship on a staggered 2026 cadence. It began shipping a 2nm custom compute SoC on its 3.5D XDSiP platform for Fujitsu's MONAKA on February 26, 2026. Tomahawk 6, a 102.4 Tbps switch, was shipping in production volume as of March 2026, while Jericho 4, a 51.2 Tbps router launched in August 2025, is also shipping. XPUs for its broader customer base are scheduled to ship from the second half of 2026.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about Broadcom's product shipments, including dates and specifications, but it does not align with the Expected Output's requirements for structured assessments and evidence referencing. The Expected Output emphasizes the need for finding-specific reasons and proper citation of evidence, which are not present in the Actual Output. Therefore, it fails to meet the mandatory criteria outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-018",
+        "claim": "Intel: IBM Cloud lists on-demand Gaudi 3 instances at $7.58 per GPU-hour (EUR 6.89, CHF 6.36) in the United States and Germany, with pricing observed on November 21, 2026; an IBM Cloud offering that bundles Gaudi 3 with other data-center accelerators is available from 8 GPUs at a price on request. The Gaudi 3 instance configuration includes 8 GPUs, 1,792 GB RAM, and 8,160 vCPUs.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing and configuration details for Gaudi 3 instances, but it does not align with the Expected Output's requirements for structured assessments and evidence referencing. The Expected Output outlines mandatory criteria for assessments that are not addressed in the Actual Output, such as the need for finding-specific reasons and evidence traceability. Therefore, the Actual Output fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-019",
+        "claim": "Intel Gaudi 3 cloud instances are billed per GPU hour at observed on-demand rates of $6.00 per GPU·hr from CoreWeave and Intel Developer Cloud, $7.35 per hour from IBM Cloud, and $8.00 per hour from Oracle Cloud, spanning an approximate range of $5.50 to $9.00 per GPU hour across compared providers.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing information for Intel Gaudi 3 cloud instances across various providers, which aligns with factual claims. However, it does not address the structured requirements outlined in the Expected Output, such as the need for unique coverage, verification of claims, or evidence references. The lack of adherence to the mandatory acceptance criteria results in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-020",
+        "claim": "Advanced Micro Devices (AMD): AMD plans to sample MI350 lead customers this quarter and accelerate production shipments to mid-2025, moving volume production forward from the initially scheduled H2 2025. The acceleration follows strong customer feedback and deeper, broader engagements with existing and net new hyperscale customers preparing for at-scale MI350 deployments.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about AMD's plans regarding the MI350, including timelines and customer engagement, but it does not align with the Expected Output's requirements for structured assessments and evidence referencing. The Expected Output outlines mandatory criteria for assessments that are not addressed in the Actual Output, such as evidence citation and finding-specific reasons. Therefore, the response lacks the necessary structure and completeness required by the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-021",
+        "claim": "Advanced Micro Devices (AMD): AMD's MI400 lineup is slated for 2026 as part of the Instinct AI GPU roadmap.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides a specific claim about AMD's MI400 lineup and its timeline, but it does not address the required findings or criteria outlined in the Expected Output. There is no evidence cited, nor does it assess the claim against the standards for verification, completeness, or traceability. Therefore, it fails to meet any of the mandatory evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-022",
+        "claim": "Google Cloud bills TPU compute on-demand per core per hour. TPU v5e costs $0.32 per core per hour, with an 8-core pod at $2.56 per hour, 16-core at $5.12 per hour, and 32-core at $10.24 per hour. TPU v5p costs $0.48 per core per hour, with an 8-core pod at $3.84 per hour and 32-core at $15.36 per hour. TPU v4 costs $0.24 per core per hour, with an 8-core pod at $1.92 per hour and 32-core at $7.68 per hour. One-year commitments reduce v5e-8 to $1.79 per hour and three-year commitments to $1.41 per hour.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.1,
+        "novelty_reason": "The Actual Output provides detailed pricing information for TPU compute resources, which does not align with the Expected Output's focus on assessment criteria and claims verification. There is no comparison of factual claims or evaluation of evidence as outlined in the evaluation steps. The outputs are fundamentally different in nature, leading to a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-023",
+        "claim": "TPU v6e (Trillium) on-demand pricing is approximately $4.20 to $4.50 per chip-hour on Google Cloud as of early 2026, estimated with a 10% uplift over v5e pricing. Committed-use discounts apply to TPU v6e, but spot-equivalent pricing is not available for TPU in the same way as GPU cloud. Customers should verify current pricing at cloud.google.com before building a business case, as Google's TPU pricing changes with availability.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing information for TPU v6e, including a range and conditions for discounts, but it does not align with the Expected Output's requirements for structured assessments and evidence referencing. The Expected Output outlines mandatory criteria for assessments that are not addressed in the Actual Output, such as evidence citation and finding-specific reasons. Therefore, the Actual Output fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-024",
+        "claim": "TPU v7 Ironwood reached general availability on April 22, 2026, but Google had not published a public chip-hour list price as of July 2026. SemiAnalysis estimates that Anthropic pays about $1.60 per hour for Ironwood. Because no list price is public, Ironwood still requires a negotiated Google Cloud deal rather than self-service on-demand booking.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about TPU v7 Ironwood's availability and pricing, but it does not align with the evaluation steps regarding the completeness and verification of claims. It lacks clear evidence references, does not cite evidence IDs, and does not provide finding-specific reasons for the claims made. Additionally, it does not address the requirements for conservative calibration or audit traceability, leading to a significant gap in meeting the acceptance criteria outlined in the Expected Output.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-025",
+        "claim": "Gemini API usage exceeded 10 billion tokens per minute and is supported by over 8 million paid seats. The service also serves 120,000 enterprise customers. These figures document the scale of Google's paid AI customer base.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents specific metrics about Gemini API usage and customer base, but it does not align with the Expected Output's requirements for assessment criteria, such as providing evidence IDs, verifying claims, or addressing finding-specific reasons. There is no mention of the necessary assessments or the required finding IDs, leading to a lack of compliance with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-026",
+        "claim": "Google Cloud ended 2025 at an annual run rate of over $70 billion. In Q2 2026, Google Cloud segment revenue reached $24,768 million, representing 82% year-over-year growth. TPU systems were recognized as product sales for the first time in Q2 2026, contributing to cloud segment revenue.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific revenue figures and growth percentages for Google Cloud, but it does not align with the Expected Output's requirements for assessment IDs, verification of claims, or evidence referencing. There is no mention of finding-specific reasons or audit traceability, which are critical for compliance with the evaluation steps. Therefore, the response lacks the necessary structure and detail to meet the evaluation criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-027",
+        "claim": "Google introduced four TPU systems in a single year, marking the first time it launched four TPU systems in one year. TPU 8t for large-scale training and TPU 8i for real-time reasoning were announced in April 2026. TPU 8tx for confidential inference and small-scale training and TPU 8i Max for long context and rack density were announced on November 9, 2026.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about the introduction of TPU systems, including names and dates, but it does not align with the Expected Output's requirements for assessment criteria, such as evidence referencing and finding-specific reasons. There is no indication that the claims made in the Actual Output are assessed against the criteria outlined in the Expected Output, leading to a lack of completeness and verification. Therefore, the response does not meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-028",
+        "claim": "AWS EC2 Trn1 instances, powered by AWS Trainium chips, are sold by the hour. On-demand list prices are $1.34 per hour for trn1.2xlarge (one Trainium chip, 32 GB accelerator memory, 8 vCPUs), $21.50 per hour for trn1.32xlarge (16 Trainium chips, 512 GB accelerator memory, 128 vCPUs), and $24.78 per hour for trn1n.32xlarge (16 Trainium chips, 512 GB accelerator memory, 128 vCPUs, 1600 Gbps network). Reserved instance pricing lowers the effective hourly rate: one-year reserved is $0.79, $12.60, and $14.52 respectively; three-year reserved is $0.4744, $7.59, and $8.59 respectively.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides detailed pricing information for AWS EC2 Trn1 instances but does not address any of the required findings or claims outlined in the Expected Output. There is no mention of assessments, evidence IDs, or verification processes, which are critical for alignment with the evaluation steps. Therefore, it fails to meet any of the mandatory criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-029",
+        "claim": "AWS trn2.48xlarge, a Trainium2-generation instance with 16 accelerators, 192 vCPUs, 2 TB of memory, and 7.6 TB of NVMe storage, had observed spot pricing as of November 21, 2026. Spot rates were $8.5964 per hour in Ohio, $20.086625 per hour in Oregon, $19.760633 per hour in Tokyo, $27.076667 per hour in Quebec, $38.474533 per hour in Mumbai, and $10.3157 per hour in Hyderabad. Hyderabad also listed an on-demand rate of $103.157 per hour.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides detailed specifications and pricing for an AWS instance, but it does not align with the Expected Output's requirements for structured assessments, evidence referencing, or finding-specific reasons. There is no indication of how the findings are assessed or if they meet the acceptance criteria outlined in the Expected Output. Therefore, it fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-030",
+        "claim": "AWS Bedrock is used by more than 125,000 customers. Close to 80 percent of Fortune 100 companies use the service.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents claims about AWS Bedrock's customer base and usage among Fortune 100 companies, but it does not align with the Expected Output's requirements for specific finding assessments, evidence references, or reasons for verification. There is no mention of evidence IDs, nor does it address the completeness or verification standards outlined in the acceptance criteria. Therefore, it fails to meet the mandatory priorities set forth in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-031",
+        "claim": "AWS reported Q3 2026 revenue of $46 billion, up 39.3 percent year over year and adding $3.8 billion sequentially, reaching a $184 billion annualized revenue run rate. AWS operating income was $17.8 billion with a 38.7 percent operating margin.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific financial figures for AWS's Q3 2026 revenue and operating income, but it does not align with the Expected Output's requirements for assessment structure, evidence citation, or finding-specific reasons. There is no indication of how the claims are verified or insufficient, nor does it reference any evidence IDs, which are critical for compliance with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-032",
+        "claim": "AWS Trainium generations followed this release sequence: Trainium1 was announced at re:Invent 2020 and shipped in 2021-22; Trainium2 launched in late 2023; Trainium3 was announced at re:Invent 2025 and became generally available in December 2025. Trainium4 has been announced and is anticipated next year, roughly 18 months from wide release. Trainium3 and Trn3 UltraServers were generally available at re:Invent in December 2025.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides a sequence of AWS Trainium generations with specific dates and events, but it does not align with the Expected Output's requirements for assessment structure, evidence citation, or finding-specific reasons. There are no references to evidence IDs, and the claims lack the necessary verification and support details outlined in the acceptance criteria. Therefore, it fails to meet the mandatory priorities set forth in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-033",
+        "claim": "Broadcom has confirmed six major XPU customers, including Google, its longest-standing partner with seven generations of co-designed TPUs since 2014, and OpenAI, which signed a multi-year collaboration in October 2025 for 10 gigawatts of custom accelerators targeting first deployment in the second half of 2026.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific details about Broadcom's customers and collaborations, but it does not align with the evaluation steps regarding the completeness and verification of claims. It lacks clear evidence references, does not cite evidence IDs, and does not provide finding-specific reasons for any assessments made. Additionally, it does not address the requirements for conservative calibration or audit traceability, leading to a significant gap in meeting the mandatory criteria outlined in the Expected Output.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-034",
+        "claim": "Google Cloud offers Broadcom-developed TPU v6e Trillium on demand at $2.70 per chip-hour. Google's own benchmarks position this as roughly four-times better price-performance than H100 instances for LLM workloads.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents a specific claim about Google Cloud's TPU v6e Trillium pricing and performance compared to H100 instances, but it does not align with the Expected Output's requirements for structured assessments, evidence referencing, or finding-specific reasons. There is no indication of how the claim is verified or supported, nor does it address the necessary criteria for completeness and traceability outlined in the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-035",
+        "claim": "Broadcom reported Q3 FY2026 revenue of $29.6 billion, up 86% year-over-year, and guided Q4 FY2026 revenue to approximately $34.8 billion. Based on quarterly progression of $19.3 billion in Q1, $22.2 billion in Q2, $29.6 billion in Q3, plus Q4 guidance, full-year FY2026 revenue is approximately $105.9 billion, about 66% above fiscal 2025.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific financial figures and guidance for Broadcom's revenue, but it does not align with the evaluation steps which focus on the assessment of findings and evidence references. There are no assessments or evidence IDs cited, and the output lacks finding-specific reasons or traceability, leading to a significant misalignment with the required criteria.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-036",
+        "claim": "Intel Gaudi 2 is offered on-demand through cloud provider Shadeform at $1.10 per GPU-hour for the 8x Gaudi 2 96GB configuration. The median on-demand rate across the single tracked provider is also $1.10 per GPU-hour, and no provider changed its on-demand price in the last 30 days. Running one Gaudi 2 continuously for a month (730 hours) costs about $803 at the cheapest in-stock rate. Reserved terms typically come in below the on-demand rate.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing and configuration details for the Intel Gaudi 2, which are factual claims. However, it does not align with the Expected Output's requirements for structured assessments, evidence referencing, or finding-specific reasons. The Expected Output outlines mandatory criteria for assessments that are not addressed in the Actual Output, leading to a significant gap in alignment.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-037",
+        "claim": "Intel published list prices for its 8-chip OAM baseboard assembly inclusive of networking: $65,000 for Gaudi 2 and $125,000 for Gaudi 3, implying roughly $15,625 per Gaudi 3 accelerator. The Gaudi 3 processor was disclosed at approximately $15,650 in 2024. These figures have not been updated by a more recent Intel disclosure and should be read as the most recent list-adjacent prices rather than current 2026 market rates. Pricing is per accelerator or OAM baseboard, not per seat per month.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific pricing details for Intel's Gaudi 2 and Gaudi 3 processors, but it does not align with the Expected Output's requirements for structured assessments and evidence referencing. It lacks the necessary IDs, assessment statuses, and does not follow the outlined criteria for verification and support. Additionally, it does not mention source types or publication dates, which are critical for audit traceability. Therefore, it fails to meet the mandatory evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-038",
+        "claim": "Intel's FY2025 total revenue was $52.85 billion. Its Data Center and AI (DCAI) segment generated $16.92 billion in FY2025, up 4.9% year over year. In Q2 2026, DCAI revenue reached $6.26 billion, up 59% year over year.",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output provides specific revenue figures for Intel's FY2025 and Q2 2026, but it does not align with the Expected Output's requirements for assessment IDs, verification of claims, or evidence referencing. There is no indication of finding-specific reasons or audit traceability, which are mandatory criteria. Therefore, the response fails to meet the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-039",
+        "claim": "Roughly 10 percent of shipped packages sit in staging at any given time",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.0,
+        "novelty_reason": "The Actual Output provides a specific statistic about shipped packages in staging, which does not align with the detailed requirements and claims outlined in the Expected Output. The Expected Output focuses on assessment criteria related to findings, evidence, and verification processes, none of which are addressed in the Actual Output. Therefore, there is a complete lack of alignment with the evaluation steps.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      },
+      {
+        "claim_id": "CLAIM-040",
+        "claim": "Of the 2.88 million deployed packages, about a third (0.98 million) run as standalone nodes or micro-clusters rather than in 256-plus GPU clusters",
+        "novelty_status": "already_represented_in_golden",
+        "novelty_score": 0.2,
+        "novelty_reason": "The Actual Output presents a factual claim about the deployment of packages, but it does not align with the Expected Output, which outlines specific requirements for assessments and claims. There is no mention of evidence references, verification standards, or finding-specific reasons in the Actual Output, indicating a lack of adherence to the evaluation steps. The Actual Output fails to address the mandatory criteria outlined in the Expected Output, resulting in a low score.",
+        "evidence_status": "not_run_not_classified_as_additional",
+        "evidence_score": null
+      }
+    ],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.575,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output provides a comprehensive analysis of competitors' activities relevant to NVIDIA, addressing the research goal effectively. It includes numerous verified findings about competitors like Google, AWS, and Broadcom, detailing their product offerings, pricing, and market strategies. However, some findings are marked as insufficient, indicating gaps in evidence that could weaken the overall reliability of the output. Despite this, the majority of the findings are evidence-backed and relevant, demonstrating a strong alignment with the research goal.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The actual output demonstrates a thorough verification process, with 62 out of 67 findings being evidence-backed. However, it fails to fully meet the evaluation steps regarding the completeness of claims and the clarity of reasons for insufficient findings. Several findings marked as insufficient lack detailed explanations of what specific evidence is missing, which is a requirement for finding-specific reasons. Additionally, while the output cites evidence IDs, some findings do not have sufficient support for all parts of the claims, leading to potential misattribution. Overall, the output shows good alignment but has notable shortcomings in clarity and completeness.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output contains a mix of verified and insufficient claims. While 62 out of 67 findings are evidence-backed, the five insufficient claims indicate a lack of support for certain figures, particularly regarding pricing and customer counts. Unsupported figures and missing information were noted, which undermines the overall reliability of the conclusions drawn. The output does not sufficiently address the caution required when presenting unsupported claims, leading to potential overstatements.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive summary of competitor findings, but it fails to fully align with the Expected Output criteria. While it reports counts of verified and insufficient findings, it does not clearly state what is missing for each insufficient finding, nor does it ensure that every finding is assessed with its original ID. Additionally, some findings lack proper evidence references, and the confidence levels for insufficient findings are not conservatively calibrated. Overall, the output demonstrates some strengths in coverage but significant shortcomings in support, reasons, and calibration.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Incomplete coverage of findings",
+          "evidence": "The report does not provide a complete assessment for each finding, as it fails to include assessments for all findings, particularly those marked as insufficient.",
+          "impact": "This results in a lack of unique coverage for all input findings, which is a critical requirement."
+        },
+        {
+          "limitation": "Partial claim support",
+          "evidence": "Several findings were marked as insufficient due to missing or unsupported claims, particularly regarding specific numbers and details that were not corroborated by the cited evidence.",
+          "impact": "This indicates a partial alignment with the evaluation steps, as some claims lacked complete support, which is critical for marking findings as verified."
+        },
+        {
+          "limitation": "Lack of finding-specific reasons for verified claims",
+          "evidence": "While it states what is missing for insufficient findings, it does not clearly articulate what the verified findings directly support.",
+          "impact": "This leads to a lack of completeness in addressing the expectations for verified assessments."
+        },
+        {
+          "limitation": "Insufficient calibration of confidence levels",
+          "evidence": "The output does not explicitly address the requirement that confidence should be lower for insufficient findings or those based on a single secondary source.",
+          "impact": "This could mislead users regarding the reliability of findings marked as insufficient."
+        },
+        {
+          "limitation": "Missing source type and publisher information",
+          "evidence": "The Actual Output does not explicitly mention the source type or publisher of the evidence used in each assessment.",
+          "impact": "This omission detracts from compliance with the acceptance criteria and affects the traceability of claims."
+        },
+        {
+          "limitation": "Failure to note missing publication dates for time-sensitive claims",
+          "evidence": "The Actual Output includes several time-sensitive claims regarding customer usage and pricing but fails to provide publication dates for these claims.",
+          "impact": "This means that the claims cannot be treated as current, which is a critical requirement."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a comprehensive coverage check for all findings",
+          "addresses": "This will ensure that every input finding receives a unique assessment and meets the coverage requirement.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance verification processes to ensure complete claim support",
+          "addresses": "This will help in marking findings as verified only when all parts of the claims are supported by evidence.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide detailed finding-specific reasons for verified claims",
+          "addresses": "This will improve clarity on what each verified finding supports, enhancing the completeness of the assessments.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Calibrate confidence levels based on evidence quality and completeness",
+          "addresses": "This will ensure that confidence levels accurately reflect the reliability of findings, particularly for insufficient claims.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Include source type and publisher information in assessments",
+          "addresses": "This will improve traceability and compliance with the evaluation criteria.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Note missing publication dates for time-sensitive claims",
+          "addresses": "This will ensure that users are aware of the currency of the claims and can assess their relevance accurately.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Incomplete coverage of findings",
+        "evidence": "The report does not provide a complete assessment for each finding, as it fails to include assessments for all findings, particularly those marked as insufficient.",
+        "impact": "This results in a lack of unique coverage for all input findings, which is a critical requirement."
+      },
+      {
+        "limitation": "Partial claim support",
+        "evidence": "Several findings were marked as insufficient due to missing or unsupported claims, particularly regarding specific numbers and details that were not corroborated by the cited evidence.",
+        "impact": "This indicates a partial alignment with the evaluation steps, as some claims lacked complete support, which is critical for marking findings as verified."
+      },
+      {
+        "limitation": "Lack of finding-specific reasons for verified claims",
+        "evidence": "While it states what is missing for insufficient findings, it does not clearly articulate what the verified findings directly support.",
+        "impact": "This leads to a lack of completeness in addressing the expectations for verified assessments."
+      },
+      {
+        "limitation": "Insufficient calibration of confidence levels",
+        "evidence": "The output does not explicitly address the requirement that confidence should be lower for insufficient findings or those based on a single secondary source.",
+        "impact": "This could mislead users regarding the reliability of findings marked as insufficient."
+      },
+      {
+        "limitation": "Missing source type and publisher information",
+        "evidence": "The Actual Output does not explicitly mention the source type or publisher of the evidence used in each assessment.",
+        "impact": "This omission detracts from compliance with the acceptance criteria and affects the traceability of claims."
+      },
+      {
+        "limitation": "Failure to note missing publication dates for time-sensitive claims",
+        "evidence": "The Actual Output includes several time-sensitive claims regarding customer usage and pricing but fails to provide publication dates for these claims.",
+        "impact": "This means that the claims cannot be treated as current, which is a critical requirement."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a comprehensive coverage check for all findings",
+        "addresses": "This will ensure that every input finding receives a unique assessment and meets the coverage requirement.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance verification processes to ensure complete claim support",
+        "addresses": "This will help in marking findings as verified only when all parts of the claims are supported by evidence.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide detailed finding-specific reasons for verified claims",
+        "addresses": "This will improve clarity on what each verified finding supports, enhancing the completeness of the assessments.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Calibrate confidence levels based on evidence quality and completeness",
+        "addresses": "This will ensure that confidence levels accurately reflect the reliability of findings, particularly for insufficient claims.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Include source type and publisher information in assessments",
+        "addresses": "This will improve traceability and compliance with the evaluation criteria.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Note missing publication dates for time-sensitive claims",
+        "addresses": "This will ensure that users are aware of the currency of the claims and can assess their relevance accurately.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\9e373b46748a80c11cc0949128b4e228\\stages\\verification_evaluation.json"
+}

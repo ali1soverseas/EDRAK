@@ -76,19 +76,36 @@ def provider_key(name: str, agent: str | None = None, *, backup: bool = True) ->
     return "", name
 
 
-def nvidia_key(agent: str | None = None) -> str:
-    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
-    prefix = "OLLAMA_API_KEY" if provider == "ollama" else "NVIDIA_API_KEY"
-    key, variable = provider_key(prefix, agent)
+def provider_api_key(provider: str, agent: str | None = None) -> str:
+    key_names = {
+        "nvidia": "NVIDIA_API_KEY",
+        "ollama": "OLLAMA_API_KEY",
+        "openai": "OPENAI_API_KEY",
+    }
+    key_name = key_names.get(provider)
+    if key_name is None:
+        raise RuntimeError(
+            f"Unsupported LLM provider {provider!r}; supported providers: "
+            "nvidia, ollama, openai."
+        )
+    key, variable = provider_key(key_name, agent)
     if not key:
         key, variable = provider_key("LLM_API_KEY", agent)
     if not key:
         raise RuntimeError(
-            f"{variable} is not configured. Set {prefix} (or legacy LLM_API_KEY) "
+            f"{key_name} is not configured. Set {key_name} (or legacy LLM_API_KEY) "
             "in the environment or .env."
         )
     logger.info("LLM credential resolved from %s", variable)
     return key
+
+
+def nvidia_key(agent: str | None = None) -> str:
+    provider = os.getenv(
+        "LLM_PROVIDER",
+        getattr(settings, "LLM_PROVIDER", "nvidia"),
+    ).strip().lower()
+    return provider_api_key(provider, agent)
 
 
 DEFAULT_MAX_TOKENS = 16384
@@ -103,6 +120,7 @@ def get_chat_model(
     model: Optional[str] = None,
     *,
     agent: Optional[str] = None,
+    provider: Optional[str] = None,
     temperature: Optional[float] = None,
     timeout_seconds: Optional[float] = None,
     max_tokens: Optional[int] = None,
@@ -113,7 +131,12 @@ def get_chat_model(
 
     `agent` selects which credential and tracing tags are used.
     """
-    provider = os.getenv("LLM_PROVIDER", getattr(settings, "LLM_PROVIDER", "nvidia")).strip().lower()
+    provider_override = provider
+    configured_provider = os.getenv(
+        "LLM_PROVIDER",
+        getattr(settings, "LLM_PROVIDER", "nvidia"),
+    ).strip().lower()
+    provider = (provider_override or configured_provider).strip().lower()
     if provider not in ("nvidia", "ollama", "openai"):
         raise RuntimeError(
             f"Unsupported LLM_PROVIDER {provider!r}; supported providers: nvidia, ollama, openai."
@@ -162,7 +185,11 @@ def get_chat_model(
         except Exception as exc:
             logger.debug("Failed to auto-attach Langfuse callback to chat model: %s", exc)
 
-    prefix = "OLLAMA" if provider == "ollama" else "NVIDIA"
+    prefix = {
+        "nvidia": "NVIDIA",
+        "ollama": "OLLAMA",
+        "openai": "OPENAI",
+    }[provider]
     configured_temperature = _float_setting(
         f"{prefix}_TEMPERATURE",
         _float_setting("LLM_TEMPERATURE", getattr(settings, f"{prefix}_TEMPERATURE", 0.2)),
@@ -176,19 +203,32 @@ def get_chat_model(
         or getattr(settings, f"{prefix}_MODEL", None)
         or getattr(settings, "LLM_MODEL", "gpt-oss:120b")
     )
-    configured_base_url = (
-        base_url
-        or os.getenv(f"{prefix}_BASE_URL")
-        or os.getenv("LLM_BASE_URL")
-        or getattr(settings, f"{prefix}_BASE_URL", None)
-        or getattr(settings, "LLM_BASE_URL", "https://ollama.com/v1")
+    default_base_url = (
+        "https://api.openai.com/v1"
+        if provider == "openai"
+        else "https://ollama.com/v1"
     )
+    if provider_override is None:
+        configured_base_url = (
+            base_url
+            or os.getenv(f"{prefix}_BASE_URL")
+            or os.getenv("LLM_BASE_URL")
+            or getattr(settings, f"{prefix}_BASE_URL", None)
+            or getattr(settings, "LLM_BASE_URL", default_base_url)
+        )
+    else:
+        configured_base_url = (
+            base_url
+            or os.getenv(f"{prefix}_BASE_URL")
+            or getattr(settings, f"{prefix}_BASE_URL", None)
+            or default_base_url
+        )
     if configured_base_url and not configured_base_url.rstrip("/").endswith("/v1") and "api.openai.com" not in configured_base_url:
         configured_base_url = configured_base_url.rstrip("/") + "/v1"
     return EdrakChat(
         model=model or configured_model,
         base_url=configured_base_url,
-        api_key=nvidia_key(agent),
+        api_key=provider_api_key(provider, agent),
         temperature=configured_temperature if temperature is None else temperature,
         max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
         timeout=timeout_seconds if timeout_seconds is not None else configured_timeout,

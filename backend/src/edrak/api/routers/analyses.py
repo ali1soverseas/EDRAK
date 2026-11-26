@@ -37,6 +37,7 @@ from edrak.guardrails.query import check_query
 from edrak.db.repositories import analyses as analyses_repo
 from edrak.db.repositories import audit as audit_repo
 from edrak.db.repositories import company as company_repo
+from edrak.db.repositories import runs as runs_repo
 from edrak.db.util import new_id
 
 logger = logging.getLogger(__name__)
@@ -101,6 +102,55 @@ async def get_analysis(
     db: aiosqlite.Connection = Depends(get_db_conn),
 ) -> AnalysisDetailOut:
     return await _detail(db, await _require(db, session, analysis_id))
+
+
+@router.delete("/{analysis_id}")
+async def delete_analysis(
+    analysis_id: str,
+    session: SessionOut = Depends(get_current_session),
+    db: aiosqlite.Connection = Depends(get_db_conn),
+) -> dict[str, str]:
+    await _require(db, session, analysis_id)
+    run = await runs_repo.get_run(db, analysis_id)
+    if run_manager.is_active(analysis_id) or (run and run["status"] in runs_repo.ACTIVE):
+        await run_manager.cancel_run(analysis_id)
+
+    await db.execute("BEGIN IMMEDIATE")
+    try:
+        row = await analyses_repo.get_request(db, analysis_id, session.workspace.workspace_id)
+        if not row:
+            raise HTTPException(status_code=404, detail="not_found")
+
+        run = await runs_repo.get_run(db, analysis_id)
+        if run and run["status"] in runs_repo.ACTIVE:
+            raise HTTPException(status_code=409, detail="analysis_running")
+
+        cursor = await db.execute(
+            """
+            SELECT 1
+            FROM evidence_snapshot_items i
+            JOIN evidence_snapshots s ON s.id = i.snapshot_id
+            JOIN briefs b ON b.id = s.brief_id
+            WHERE i.evidence_uid IN (SELECT uid FROM evidence WHERE request_id = ?)
+              AND b.request_id != ?
+            LIMIT 1
+            """,
+            (analysis_id, analysis_id),
+        )
+        if await cursor.fetchone():
+            raise HTTPException(status_code=409, detail="analysis_evidence_locked")
+
+        await analyses_repo.delete_request_data(db, analysis_id)
+        await audit_repo.record(
+            db, workspace_id=session.workspace.workspace_id, action="analysis.deleted",
+            target_type="analysis", target_id=analysis_id, actor_id=session.user.user_id, commit=False,
+        )
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        raise
+
+    return {"status": "deleted"}
 
 
 async def draft(

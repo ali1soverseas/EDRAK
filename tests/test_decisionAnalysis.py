@@ -5,6 +5,8 @@ from edrak.contracts.DecisionAnalysis import (
 
 from edrak.contracts.DecisionAnalysis import CrossSignalOutput
 
+from edrak.DecisionAnalysis.nodes import _extract_questions
+
 
 def test_decision_analysis_input_requires_cross_signal():
     try:
@@ -38,6 +40,21 @@ def test_cross_signal_output_contract():
     )
 
     print("PASS: CrossSignalOutput contract is available.")
+
+
+def test_extract_questions_handles_null_decision_questions():
+    cross_signal = {
+        "decision_ready_context": {"decision_questions": None},
+        "decision_questions": None,
+    }
+
+    assert _extract_questions(cross_signal) == []
+
+
+def test_extract_questions_keeps_a_single_question_as_one_item():
+    assert _extract_questions({"decision_questions": "What should we do?"}) == [
+        "What should we do?"
+    ]
 
 
 if __name__ == "__main__":

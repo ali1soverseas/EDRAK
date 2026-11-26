@@ -93,6 +93,8 @@ def _apply_additions(path: Path) -> None:
         tcols = {r[1] for r in conn.execute("PRAGMA table_info(chat_threads)")}
         if tcols and "card_key" not in tcols:
             conn.execute("ALTER TABLE chat_threads ADD COLUMN card_key text")
+        if tcols and "signal_id" not in tcols:
+            conn.execute("ALTER TABLE chat_threads ADD COLUMN signal_id text")
         if "label" not in cols:  # databases created by an earlier build of this file
             conn.execute("ALTER TABLE metrics ADD COLUMN label text")
         ecols = {r[1] for r in conn.execute("PRAGMA table_info(evidence)")}

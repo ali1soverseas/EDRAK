@@ -56,6 +56,7 @@ export interface EdrakApi {
   /* analyses */
   listAnalyses(): Promise<AnalysisSummary[]>;
   getAnalysis(analysisId: string): Promise<AnalysisDetail>;
+  deleteAnalysis(analysisId: string): Promise<void>;
   /** Writes the request and has the Supervisor draft a plan. Reuses `analysisId` when given. */
   draftPlan(form: AnalysisForm, analysisId?: string): Promise<AnalysisDetail>;
   /** Approving starts the run. Nothing runs before this. */

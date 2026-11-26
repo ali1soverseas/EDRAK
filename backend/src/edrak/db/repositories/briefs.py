@@ -95,6 +95,40 @@ async def get_brief_for_request(db: aiosqlite.Connection, request_id: str) -> Op
     return row
 
 
+async def save_revision(
+    db: aiosqlite.Connection,
+    *,
+    brief_id: str,
+    document: dict[str, Any],
+    reason: str,
+    created_by: Optional[str],
+    commit: bool = True,
+) -> int:
+    current = await fetch_value(
+        db, "SELECT COALESCE(MAX(revision), 0) FROM brief_revisions WHERE brief_id = ?", (brief_id,)
+    )
+    revision = int(current or 0) + 1
+    await db.execute(
+        "INSERT INTO brief_revisions (brief_id, revision, document, reason, created_by) VALUES (?, ?, ?, ?, ?)",
+        (brief_id, revision, dumps(document), reason, created_by),
+    )
+    if commit:
+        await db.commit()
+    return revision
+
+
+async def get_latest_revision(db: aiosqlite.Connection, brief_id: str) -> Optional[dict[str, Any]]:
+    row = await fetch_one(
+        db,
+        "SELECT revision, document, reason, created_by, created_at FROM brief_revisions "
+        "WHERE brief_id = ? ORDER BY revision DESC LIMIT 1",
+        (brief_id,),
+    )
+    if row:
+        row["document"] = loads(row["document"], {})
+    return row
+
+
 async def list_briefs(db: aiosqlite.Connection, workspace_id: str) -> list[dict[str, Any]]:
     return await fetch_all(
         db,

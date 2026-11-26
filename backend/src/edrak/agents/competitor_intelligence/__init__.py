@@ -1,4 +1,4 @@
-"""Competitor intelligence worker: researches the competitors and compares them with the company."""
+"""Competitor intelligence worker: researches competitors and returns grounded findings."""
 
 from __future__ import annotations
 

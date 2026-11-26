@@ -68,7 +68,10 @@ def build_cross_signal_graph(
 
     if llm is None:
         llm = get_chat_model(
-            settings.model, agent="cross_signal", temperature=settings.temperature
+            settings.model,
+            agent="cross_signal",
+            provider=settings.provider,
+            temperature=settings.temperature,
         )
 
     nodes = CrossSignalNodes(

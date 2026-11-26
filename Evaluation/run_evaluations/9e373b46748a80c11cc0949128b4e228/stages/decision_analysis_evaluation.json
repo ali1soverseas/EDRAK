@@ -1,0 +1,1052 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\stages\\decision_analysis\\input.json",
+  "source_output": "artifacts\\runs\\9e373b46748a80c11cc0949128b4e228\\stages\\decision_analysis\\output.json",
+  "deterministic_checks": {
+    "known_signal_count": 6,
+    "question_recommendation_count": 6,
+    "option_count": 3,
+    "distinct_option_count": 3,
+    "duplicate_options": [],
+    "items_with_signal_references": 57,
+    "items_with_unknown_signal_references": {},
+    "empty_options": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.5714,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "decision_analysis",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "2.0.0-rubric-only",
+    "finding_count": 7,
+    "mandatory_finding_count": 7,
+    "coverage_score": 0.5714,
+    "strict_coverage_score": 0.1429,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 184,
+      "initial_missing_count": 0,
+      "initial_partial_count": 6,
+      "findings_reviewed": 6,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-UC-001",
+        "title": "Options framed as competitive responses",
+        "priority": "mandatory",
+        "score": 0.8500000000000001,
+        "status": "covered",
+        "reason": "covered: Presents at least two distinct response options or recommendations (e.g., lead, match, differentiate, hold and watch), using any labels. — The Actual Output presents multiple distinct response options, specifically addressing competitive strategies for NVIDIA in relation to its competitors. Each recommendation is tied to a specific question, fulfilling the requirement for at least two distinct options. The clarity of the recommendations and their alignment with the competitive problems they address are strong points. However, the output could be improved by organizing the options more clearly per decision question rather than as a single list, which is noted as an acceptable alternative in the Expected Output.; covered: Each option states the competitive problem or signal it responds to. — The output effectively identifies multiple competitive response options that directly address the competitive problems faced by NVIDIA, such as adapting to competitor pricing models and enhancing customer engagement with hyperscalers. Each recommendation is clearly tied to specific competitive signals, demonstrating a strong alignment with the evaluation steps. However, while the options are well-framed, the output could benefit from a more explicit statement of the competitive problems for each option.",
+        "criteria_results": [
+          {
+            "criterion": "Presents at least two distinct response options or recommendations (e.g., lead, match, differentiate, hold and watch), using any labels.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output presents multiple distinct response options, specifically addressing competitive strategies for NVIDIA in relation to its competitors. Each recommendation is tied to a specific question, fulfilling the requirement for at least two distinct options. The clarity of the recommendations and their alignment with the competitive problems they address are strong points. However, the output could be improved by organizing the options more clearly per decision question rather than as a single list, which is noted as an acceptable alternative in the Expected Output."
+          },
+          {
+            "criterion": "Each option states the competitive problem or signal it responds to.",
+            "score": 0.9,
+            "status": "covered",
+            "reason": "The output effectively identifies multiple competitive response options that directly address the competitive problems faced by NVIDIA, such as adapting to competitor pricing models and enhancing customer engagement with hyperscalers. Each recommendation is clearly tied to specific competitive signals, demonstrating a strong alignment with the evaluation steps. However, while the options are well-framed, the output could benefit from a more explicit statement of the competitive problems for each option."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.8500000000000001,
+        "initial_status": "covered",
+        "final_score": 0.8500000000000001,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-UC-001",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "covered: Each option or recommendation cites supporting signal IDs or finding IDs. — The Actual Output includes multiple options and recommendations, each citing supporting signal IDs, which aligns with the requirement for evidence traceability. However, while the recommendations are well-structured, there are instances where the evidence gaps are noted, indicating that some premises may not be fully substantiated. This affects the overall robustness of the recommendations. The retrieval context is appropriately separated from the report content. Overall, the output meets most criteria but lacks complete evidence for some claims, leading to a moderate score.; missing: No option relies on a finding marked insufficient upstream as a settled premise. — The Actual Output does not explicitly state that no option relies on a finding marked insufficient upstream as a settled premise, which is a critical requirement. While it does cite supporting signal IDs for each recommendation, it fails to clearly separate evidence-based premises from assumptions and strategic interpretations. This lack of clarity and completeness in addressing the evaluation steps results in a low score.; partial: Separates evidence-based premises from assumptions and strategic interpretation. — The Actual Output provides a comprehensive analysis with clear recommendations, but it does not sufficiently separate evidence-based premises from assumptions. While it cites supporting signal IDs, it lacks explicit differentiation between what is evidence and what is assumed, which is a critical requirement in the evaluation steps. Additionally, some recommendations rely on findings that are marked as insufficient, which further detracts from the clarity and completeness expected.",
+        "criteria_results": [
+          {
+            "criterion": "Each option or recommendation cites supporting signal IDs or finding IDs.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output includes multiple options and recommendations, each citing supporting signal IDs, which aligns with the requirement for evidence traceability. However, while the recommendations are well-structured, there are instances where the evidence gaps are noted, indicating that some premises may not be fully substantiated. This affects the overall robustness of the recommendations. The retrieval context is appropriately separated from the report content. Overall, the output meets most criteria but lacks complete evidence for some claims, leading to a moderate score."
+          },
+          {
+            "criterion": "No option relies on a finding marked insufficient upstream as a settled premise.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that no option relies on a finding marked insufficient upstream as a settled premise, which is a critical requirement. While it does cite supporting signal IDs for each recommendation, it fails to clearly separate evidence-based premises from assumptions and strategic interpretations. This lack of clarity and completeness in addressing the evaluation steps results in a low score."
+          },
+          {
+            "criterion": "Separates evidence-based premises from assumptions and strategic interpretation.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis with clear recommendations, but it does not sufficiently separate evidence-based premises from assumptions. While it cites supporting signal IDs, it lacks explicit differentiation between what is evidence and what is assumed, which is a critical requirement in the evaluation steps. Additionally, some recommendations rely on findings that are marked as insufficient, which further detracts from the clarity and completeness expected."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-02",
+          "requirement_id": "DA-EVIDENCE",
+          "test_case_id": "DA-UC-001",
+          "title": "Evidence traceability per option",
+          "priority": "mandatory",
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output partially meets the acceptance criteria by citing supporting signal IDs in some passages, but it does not consistently separate evidence-based premises from assumptions. Additionally, there is no clear indication that any options rely on findings marked insufficient, which is a requirement. Overall, the coverage of the criteria is incomplete.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.49065
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.426241
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+              "similarity": 0.322095
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+              "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+              "similarity": 0.299445
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+              "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+              "similarity": 0.264216
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-UC-001",
+        "title": "Materially different alternatives",
+        "priority": "mandatory",
+        "score": 0.3333333333333333,
+        "status": "partial",
+        "reason": "partial: Options differ in resource commitment, timing, or risk profile, not only in wording. — The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including recommendations that touch on resource commitment and risk factors. However, it lacks explicit distinctions regarding timing and does not clearly present a lower-commitment path or conditions under which each option would be preferred, which are critical elements outlined in the Expected Output.; missing: Includes a lower-commitment path (e.g., monitor, pilot, defer) or explains why none is appropriate. — The Actual Output does not explicitly mention a lower-commitment path such as monitoring, piloting, or deferring, which is a critical requirement. While it discusses various strategies and actions, it fails to include a clear lower-commitment option or justify its absence. The Expected Output also mandates the inclusion of such a path, which is not satisfied here. Therefore, the response does not align with the evaluation steps.; missing: States the conditions under which each option would be preferred. — The Actual Output provides detailed recommendations and analyses but lacks explicit statements about the conditions under which each option would be preferred, which is a key requirement. While it discusses various strategies and their implications, it does not clearly differentiate options based on resource commitment, timing, or risk, nor does it include a lower-commitment path or explain why none is appropriate. This results in a significant gap in meeting the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Options differ in resource commitment, timing, or risk profile, not only in wording.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, including recommendations that touch on resource commitment and risk factors. However, it lacks explicit distinctions regarding timing and does not clearly present a lower-commitment path or conditions under which each option would be preferred, which are critical elements outlined in the Expected Output."
+          },
+          {
+            "criterion": "Includes a lower-commitment path (e.g., monitor, pilot, defer) or explains why none is appropriate.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly mention a lower-commitment path such as monitoring, piloting, or deferring, which is a critical requirement. While it discusses various strategies and actions, it fails to include a clear lower-commitment option or justify its absence. The Expected Output also mandates the inclusion of such a path, which is not satisfied here. Therefore, the response does not align with the evaluation steps."
+          },
+          {
+            "criterion": "States the conditions under which each option would be preferred.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output provides detailed recommendations and analyses but lacks explicit statements about the conditions under which each option would be preferred, which is a key requirement. While it discusses various strategies and their implications, it does not clearly differentiate options based on resource commitment, timing, or risk, nor does it include a lower-commitment path or explain why none is appropriate. This results in a significant gap in meeting the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-03",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-UC-001",
+          "title": "Materially different alternatives",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately address the acceptance criteria. It lacks a clear presentation of materially different alternatives that vary in resource commitment, timing, or risk profile. Additionally, it does not include a lower-commitment path or explain why none is appropriate. The conditions under which each option would be preferred are also not stated, failing to meet the mandatory requirements outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.457966
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+              "similarity": 0.382625
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+              "similarity": 0.368593
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.322317
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+              "similarity": 0.312766
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.3333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-UC-002",
+        "title": "Tradeoffs and reversibility",
+        "priority": "mandatory",
+        "score": 0.39999999999999997,
+        "status": "partial",
+        "reason": "partial: States benefits, costs, and risks for each option. — The Actual Output provides detailed recommendations that include benefits, risks, and actions for each option, but it lacks explicit statements of costs associated with each option. While it addresses the risks and opportunities well, it does not fully meet the completeness requirement as it does not mention whether the options are reversible or create lasting commitments.; missing: Quantitative outcomes (ROI, market share, savings) appear only with a cited basis; otherwise outcomes are qualitative. — The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which is a key requirement outlined in the Expected Output. Additionally, while the output provides qualitative insights and recommendations, it fails to cite any quantitative basis for these insights, which is necessary for compliance with the evaluation steps. The Expected Output explicitly states that quantitative outcomes should only appear with a cited basis, which is not met here. Therefore, the response does not align with the evaluation criteria.; partial: Notes whether each option is reversible or creates lasting commitments. — The Actual Output provides detailed recommendations and analyses but lacks explicit statements regarding the reversibility of each option or whether they create lasting commitments. While it addresses benefits, costs, and risks, it does not clearly note the reversibility aspect, which is a critical requirement in the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "States benefits, costs, and risks for each option.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed recommendations that include benefits, risks, and actions for each option, but it lacks explicit statements of costs associated with each option. While it addresses the risks and opportunities well, it does not fully meet the completeness requirement as it does not mention whether the options are reversible or create lasting commitments."
+          },
+          {
+            "criterion": "Quantitative outcomes (ROI, market share, savings) appear only with a cited basis; otherwise outcomes are qualitative.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which is a key requirement outlined in the Expected Output. Additionally, while the output provides qualitative insights and recommendations, it fails to cite any quantitative basis for these insights, which is necessary for compliance with the evaluation steps. The Expected Output explicitly states that quantitative outcomes should only appear with a cited basis, which is not met here. Therefore, the response does not align with the evaluation criteria."
+          },
+          {
+            "criterion": "Notes whether each option is reversible or creates lasting commitments.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed recommendations and analyses but lacks explicit statements regarding the reversibility of each option or whether they create lasting commitments. While it addresses benefits, costs, and risks, it does not clearly note the reversibility aspect, which is a critical requirement in the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.39999999999999997,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-04",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-UC-002",
+          "title": "Tradeoffs and reversibility",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not clearly state the benefits, costs, and risks for each option as required. While it mentions actions and success criteria, it lacks a comprehensive analysis of tradeoffs and reversibility. Additionally, there are no quantitative outcomes provided, which are necessary unless qualitative outcomes are cited. Overall, the coverage is missing key elements outlined in the acceptance criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.398346
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+              "similarity": 0.336695
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+              "similarity": 0.311224
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[2]",
+              "text": "Conduct structured interviews with 10 to 20 enterprise and hyperscaler buyers on pricing flexibility preferences.",
+              "similarity": 0.30566
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.success_criteria[2]",
+              "text": "Pilot pricing program launched with measurable adoption and margin targets.",
+              "similarity": 0.291413
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.39999999999999997,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-UC-002",
+        "title": "Horizon, assumptions, and triggers",
+        "priority": "mandatory",
+        "score": 0.6666666666666666,
+        "status": "partial",
+        "reason": "partial: Gives a time horizon for each recommendation. — The Actual Output includes time horizons for some recommendations, such as 'within two quarters' for the multi-generation roadmap and 'within one quarter' for the pricing audit. However, not all recommendations explicitly state a time horizon, which is a requirement for a high score. Additionally, while measurable success criteria are defined, the lack of consistent time horizons across all recommendations prevents a full alignment with the evaluation steps.; covered: Defines measurable success criteria or observable decision triggers. — The Actual Output provides detailed recommendations with specific success criteria, including time horizons and measurable decision triggers. Each recommendation outlines actions, risks, and opportunities, aligning well with the evaluation steps. However, while it defines measurable success criteria, it lacks explicit mention of key assumptions for each recommendation, which is a requirement in the Expected Output. This results in a strong but not perfect alignment with the evaluation criteria.; partial: States the key assumptions behind each recommendation. — The Actual Output provides detailed recommendations with clear rationale, actions, opportunities, risks, and success criteria for each question. However, it lacks explicit statements of key assumptions behind each recommendation, which is a critical requirement in the evaluation steps. This omission affects the overall clarity and completeness of the output, leading to a lower score.",
+        "criteria_results": [
+          {
+            "criterion": "Gives a time horizon for each recommendation.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output includes time horizons for some recommendations, such as 'within two quarters' for the multi-generation roadmap and 'within one quarter' for the pricing audit. However, not all recommendations explicitly state a time horizon, which is a requirement for a high score. Additionally, while measurable success criteria are defined, the lack of consistent time horizons across all recommendations prevents a full alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Defines measurable success criteria or observable decision triggers.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output provides detailed recommendations with specific success criteria, including time horizons and measurable decision triggers. Each recommendation outlines actions, risks, and opportunities, aligning well with the evaluation steps. However, while it defines measurable success criteria, it lacks explicit mention of key assumptions for each recommendation, which is a requirement in the Expected Output. This results in a strong but not perfect alignment with the evaluation criteria."
+          },
+          {
+            "criterion": "States the key assumptions behind each recommendation.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed recommendations with clear rationale, actions, opportunities, risks, and success criteria for each question. However, it lacks explicit statements of key assumptions behind each recommendation, which is a critical requirement in the evaluation steps. This omission affects the overall clarity and completeness of the output, leading to a lower score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-05",
+          "requirement_id": "DA-EXECUTION",
+          "test_case_id": "DA-UC-002",
+          "title": "Horizon, assumptions, and triggers",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not provide a time horizon for each recommendation, nor does it define measurable success criteria or observable decision triggers. While it mentions actions and rationale, it fails to state the key assumptions behind the recommendations. Therefore, it does not meet the mandatory acceptance criteria outlined in the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.542381
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.418271
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+              "similarity": 0.324976
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+              "similarity": 0.302807
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+              "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+              "similarity": 0.302698
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.6666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-UC-002",
+        "title": "Evidence strength and asymmetry",
+        "priority": "mandatory",
+        "score": 0.5333333333333333,
+        "status": "partial",
+        "reason": "missing: Identifies which recommendations rest on stronger versus weaker evidence. — The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence, nor does it articulate evidence strength in a way that aligns with the Expected Output. While it mentions limitations and evidence gaps, it fails to explicitly categorize recommendations based on the strength of their supporting evidence. This lack of clarity and completeness in identifying evidence strength leads to a low score.; covered: Carries forward upstream evidence gaps that could change a recommendation. — The output identifies several upstream evidence gaps, such as the lack of direct customer migration data and comparative workload performance analysis, which could impact the recommendations. However, while it carries forward these gaps, it does not explicitly compare the strength of evidence for different recommendations or note where evidence is stronger for some competitors or segments, which is a key requirement of the evaluation steps.; partial: Notes where evidence is stronger for some competitors, regions, or segments than others and avoids generalizing from the best-documented one. — The output identifies several recommendations and their associated evidence strengths, but it lacks clarity on which specific recommendations are based on stronger versus weaker evidence. While it mentions evidence gaps, it does not effectively highlight where evidence is stronger for certain competitors or regions, leading to a generalization that does not fully align with the evaluation criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies which recommendations rest on stronger versus weaker evidence.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence, nor does it articulate evidence strength in a way that aligns with the Expected Output. While it mentions limitations and evidence gaps, it fails to explicitly categorize recommendations based on the strength of their supporting evidence. This lack of clarity and completeness in identifying evidence strength leads to a low score."
+          },
+          {
+            "criterion": "Carries forward upstream evidence gaps that could change a recommendation.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The output identifies several upstream evidence gaps, such as the lack of direct customer migration data and comparative workload performance analysis, which could impact the recommendations. However, while it carries forward these gaps, it does not explicitly compare the strength of evidence for different recommendations or note where evidence is stronger for some competitors or segments, which is a key requirement of the evaluation steps."
+          },
+          {
+            "criterion": "Notes where evidence is stronger for some competitors, regions, or segments than others and avoids generalizing from the best-documented one.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The output identifies several recommendations and their associated evidence strengths, but it lacks clarity on which specific recommendations are based on stronger versus weaker evidence. While it mentions evidence gaps, it does not effectively highlight where evidence is stronger for certain competitors or regions, leading to a generalization that does not fully align with the evaluation criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-06",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-UC-002",
+          "title": "Evidence strength and asymmetry",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by identifying some recommendations based on evidence strength, but it lacks a comprehensive analysis of upstream evidence gaps and does not note variations in evidence strength across competitors or regions. This results in a limited understanding of the evidence asymmetry required by the Expected Output.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.627785
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.508543
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+              "similarity": 0.280175
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+              "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+              "similarity": 0.258291
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.success_criteria[1]",
+              "text": "Customer feedback summary from at least ten buyers documented.",
+              "similarity": 0.250744
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.5333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-HUMAN-BOUNDARY",
+        "test_case_id": "DA-UC-002",
+        "title": "Human decision boundary",
+        "priority": "mandatory",
+        "score": 0.65,
+        "status": "partial",
+        "reason": "partial: Identifies unknowns that should be resolved before irreversible commitments. — The Actual Output identifies several unknowns, such as the feasibility of certain actions and the lack of direct customer migration data. However, it does not clearly present these unknowns as barriers to irreversible commitments, nor does it provide options for decision-makers in a way that aligns with the Expected Output's requirements. The recommendations are detailed but do not explicitly state which unknowns must be resolved before making decisions, leading to a lower score.; covered: Presents recommendations as options for the decision-maker; if evidence is insufficient for any defensible option, says so instead of manufacturing one. — The Actual Output effectively presents clear recommendations as options for the decision-maker, aligning well with the Expected Output's requirement. It identifies unknowns that could hinder irreversible commitments, such as the lack of direct customer migration data and comparative workload performance analysis. However, while it acknowledges these limitations, it does not explicitly state when evidence is insufficient for any defensible option, which is a minor shortcoming. Overall, the output meets most of the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies unknowns that should be resolved before irreversible commitments.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies several unknowns, such as the feasibility of certain actions and the lack of direct customer migration data. However, it does not clearly present these unknowns as barriers to irreversible commitments, nor does it provide options for decision-makers in a way that aligns with the Expected Output's requirements. The recommendations are detailed but do not explicitly state which unknowns must be resolved before making decisions, leading to a lower score."
+          },
+          {
+            "criterion": "Presents recommendations as options for the decision-maker; if evidence is insufficient for any defensible option, says so instead of manufacturing one.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively presents clear recommendations as options for the decision-maker, aligning well with the Expected Output's requirement. It identifies unknowns that could hinder irreversible commitments, such as the lack of direct customer migration data and comparative workload performance analysis. However, while it acknowledges these limitations, it does not explicitly state when evidence is insufficient for any defensible option, which is a minor shortcoming. Overall, the output meets most of the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.65,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-07",
+          "requirement_id": "DA-HUMAN-BOUNDARY",
+          "test_case_id": "DA-UC-002",
+          "title": "Human decision boundary",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by identifying some priorities and recommendations, but it fails to clearly name the unknowns that block irreversible commitments. Additionally, it does not present distinct options for the decision-maker, as indicated by the warning in Passage 2. Therefore, while some elements are covered, key aspects are missing.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+              "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+              "similarity": 0.455857
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.warnings[0]",
+              "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+              "similarity": 0.330441
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+              "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+              "similarity": 0.321326
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+              "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+              "similarity": 0.289252
+            },
+            {
+              "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+              "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+              "similarity": 0.279995
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.65,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-UC-001",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "The Actual Output partially meets the acceptance criteria by citing supporting signal IDs in some passages, but it does not consistently separate evidence-based premises from assumptions. Additionally, there is no clear indication that any options rely on findings marked insufficient, which is a requirement. Overall, the coverage of the criteria is incomplete.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.49065
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.426241
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+            "similarity": 0.322095
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[2].rationale",
+            "text": "Scored from likelihood, impact and urgency taken from the supporting signals.",
+            "similarity": 0.299445
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+            "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+            "similarity": 0.264216
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-UC-001",
+        "title": "Materially different alternatives",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately address the acceptance criteria. It lacks a clear presentation of materially different alternatives that vary in resource commitment, timing, or risk profile. Additionally, it does not include a lower-commitment path or explain why none is appropriate. The conditions under which each option would be preferred are also not stated, failing to meet the mandatory requirements outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.457966
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+            "similarity": 0.382625
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+            "similarity": 0.368593
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.322317
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+            "similarity": 0.312766
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-UC-002",
+        "title": "Tradeoffs and reversibility",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not clearly state the benefits, costs, and risks for each option as required. While it mentions actions and success criteria, it lacks a comprehensive analysis of tradeoffs and reversibility. Additionally, there are no quantitative outcomes provided, which are necessary unless qualitative outcomes are cited. Overall, the coverage is missing key elements outlined in the acceptance criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.398346
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+            "similarity": 0.336695
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+            "similarity": 0.311224
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[2]",
+            "text": "Conduct structured interviews with 10 to 20 enterprise and hyperscaler buyers on pricing flexibility preferences.",
+            "similarity": 0.30566
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.success_criteria[2]",
+            "text": "Pilot pricing program launched with measurable adoption and margin targets.",
+            "similarity": 0.291413
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-UC-002",
+        "title": "Horizon, assumptions, and triggers",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not provide a time horizon for each recommendation, nor does it define measurable success criteria or observable decision triggers. While it mentions actions and rationale, it fails to state the key assumptions behind the recommendations. Therefore, it does not meet the mandatory acceptance criteria outlined in the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.542381
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.418271
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+            "similarity": 0.324976
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.recommended_actions[15].title",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metri",
+            "similarity": 0.302807
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+            "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+            "similarity": 0.302698
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-UC-002",
+        "title": "Evidence strength and asymmetry",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by identifying some recommendations based on evidence strength, but it lacks a comprehensive analysis of upstream evidence gaps and does not note variations in evidence strength across competitors or regions. This results in a limited understanding of the evidence asymmetry required by the Expected Output.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.627785
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.508543
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+            "similarity": 0.280175
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[2].recommendation.actions[2]",
+            "text": "Establish joint product roadmap reviews or a hyperscaler advisory council with the top three cloud customers.",
+            "similarity": 0.258291
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.success_criteria[1]",
+            "text": "Customer feedback summary from at least ten buyers documented.",
+            "similarity": 0.250744
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-HUMAN-BOUNDARY",
+        "test_case_id": "DA-UC-002",
+        "title": "Human decision boundary",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by identifying some priorities and recommendations, but it fails to clearly name the unknowns that block irreversible commitments. Additionally, it does not present distinct options for the decision-maker, as indicated by the warning in Passage 2. Therefore, while some elements are covered, key aspects are missing.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[5].rationale",
+            "text": "Derived from the question-level recommendation; priority follows its evidence strength and urgency.",
+            "similarity": 0.455857
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.warnings[0]",
+            "text": "Distinct options could not be generated; the question-level directions are shown instead.",
+            "similarity": 0.330441
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.priorities[0].rationale",
+            "text": "Scored from the supporting signals' urgency and confidence and this recommendation's evidence strength.",
+            "similarity": 0.321326
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[3].recommendation.actions[3]",
+            "text": "Pilot a reserved-instance or commitment discount program for a subset of enterprise customers with defined success metrics.",
+            "similarity": 0.289252
+          },
+          {
+            "source_path": "$.stage_output.decision_analysis.question_recommendations[0].recommendation.success_criteria[1]",
+            "text": "Benchmark TCO studies completed for at least five priority AI workloads.",
+            "similarity": 0.279995
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.625,
+      "overall_status": "partial",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing a comprehensive analysis of competitors' strategies and their implications for NVIDIA. It includes specific recommendations, actions, and risks associated with adapting to the competitive landscape. However, while the output is detailed, it could be considered somewhat verbose, which may detract from clarity. Overall, it aligns well with the evaluation steps, particularly in addressing the specified entities and topics, but the presence of excessive detail slightly impacts its effectiveness.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.5,
+          "status": "partial",
+          "reason": "The Actual Output presents multiple competitive response options, aligning with the requirement to frame options as responses to competitive problems. However, it lacks clear differentiation in resource commitment, timing, or risk among the options, which is necessary for a higher score. Additionally, while it cites supporting signal IDs, it does not adequately separate evidence-based premises from assumptions, nor does it clearly state benefits, costs, and risks for each option. The absence of measurable success criteria and observable decision triggers further detracts from its alignment with the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape and strategic recommendations. However, it includes claims about NVIDIA's current share and engagement with hyperscaler customers that are not supported by evidence in the Retrieval Context. Additionally, while the recommendations are well-aligned with the task goal, some conclusions drawn about competitor strategies lack direct evidence, which affects the overall reliability of the analysis.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing the input question effectively. It includes multiple recommendations tied to specific competitive challenges, aligning with the requirement for distinct response options. However, it lacks explicit citations of supporting signal IDs for each recommendation, which is a critical requirement for evidence traceability. Additionally, while it discusses risks and benefits, it does not clearly state the conditions under which each option would be preferred, which is necessary for differentiation. Overall, the output is informative but falls short in key areas of traceability and clarity regarding option preferences.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Lacks clear differentiation in resource commitment, timing, or risk among options.",
+          "evidence": "The Actual Output provides recommendations that touch on resource commitment and risk factors but does not clearly present a lower-commitment path or conditions under which each option would be preferred.",
+          "impact": "This limits the decision-maker's ability to assess the feasibility and appropriateness of each option."
+        },
+        {
+          "limitation": "Does not fully separate evidence-based premises from assumptions.",
+          "evidence": "While the output cites supporting signal IDs, it fails to clearly separate evidence-based premises from assumptions and strategic interpretations.",
+          "impact": "This affects the overall robustness and credibility of the recommendations."
+        },
+        {
+          "limitation": "Missing explicit statements of costs associated with each option.",
+          "evidence": "The Actual Output provides detailed recommendations that include benefits and risks but lacks explicit statements of costs.",
+          "impact": "This omission prevents a comprehensive understanding of the trade-offs involved in each recommendation."
+        },
+        {
+          "limitation": "Does not consistently provide time horizons for all recommendations.",
+          "evidence": "While some recommendations include time horizons, not all do, which is a requirement for a high score.",
+          "impact": "This inconsistency can lead to confusion regarding the urgency and planning of actions."
+        },
+        {
+          "limitation": "Fails to identify which recommendations rest on stronger versus weaker evidence.",
+          "evidence": "The Actual Output does not clearly identify the strength of evidence for different recommendations.",
+          "impact": "This lack of clarity can mislead decision-makers regarding the reliability of the recommendations."
+        },
+        {
+          "limitation": "Does not clearly present unknowns that must be resolved before irreversible commitments.",
+          "evidence": "While it identifies several unknowns, it does not clearly present these as barriers to irreversible commitments.",
+          "impact": "This can lead to premature decision-making without addressing critical uncertainties."
+        },
+        {
+          "limitation": "Lacks quantitative outcomes or metrics to support claims.",
+          "evidence": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings.",
+          "impact": "This absence limits the ability to evaluate the potential impact of the recommendations."
+        },
+        {
+          "limitation": "Does not adequately address evidence gaps that could change recommendations.",
+          "evidence": "While it mentions limitations and evidence gaps, it fails to explicitly compare the strength of evidence for different recommendations.",
+          "impact": "This can lead to a lack of confidence in the recommendations due to unaddressed uncertainties."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a structured framework for differentiating options based on resource commitment, timing, and risk.",
+          "addresses": "This will help clarify the feasibility and appropriateness of each option for decision-makers.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance evidence handling by clearly separating evidence-based premises from assumptions.",
+          "addresses": "This will improve the robustness and credibility of the recommendations.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Include explicit statements of costs associated with each option.",
+          "addresses": "This will provide a comprehensive understanding of the trade-offs involved in each recommendation.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Ensure consistent provision of time horizons for all recommendations.",
+          "addresses": "This will clarify the urgency and planning of actions for decision-makers.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Develop a method to categorize recommendations based on the strength of supporting evidence.",
+          "addresses": "This will enhance clarity regarding the reliability of the recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Clearly present unknowns that must be resolved before irreversible commitments.",
+          "addresses": "This will prevent premature decision-making and ensure critical uncertainties are addressed.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Incorporate quantitative outcomes or metrics to support claims.",
+          "addresses": "This will allow for better evaluation of the potential impact of the recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Address evidence gaps explicitly and discuss their potential impact on recommendations.",
+          "addresses": "This will increase confidence in the recommendations by acknowledging uncertainties.",
+          "priority": "low"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Lacks clear differentiation in resource commitment, timing, or risk among options.",
+        "evidence": "The Actual Output provides recommendations that touch on resource commitment and risk factors but does not clearly present a lower-commitment path or conditions under which each option would be preferred.",
+        "impact": "This limits the decision-maker's ability to assess the feasibility and appropriateness of each option."
+      },
+      {
+        "limitation": "Does not fully separate evidence-based premises from assumptions.",
+        "evidence": "While the output cites supporting signal IDs, it fails to clearly separate evidence-based premises from assumptions and strategic interpretations.",
+        "impact": "This affects the overall robustness and credibility of the recommendations."
+      },
+      {
+        "limitation": "Missing explicit statements of costs associated with each option.",
+        "evidence": "The Actual Output provides detailed recommendations that include benefits and risks but lacks explicit statements of costs.",
+        "impact": "This omission prevents a comprehensive understanding of the trade-offs involved in each recommendation."
+      },
+      {
+        "limitation": "Does not consistently provide time horizons for all recommendations.",
+        "evidence": "While some recommendations include time horizons, not all do, which is a requirement for a high score.",
+        "impact": "This inconsistency can lead to confusion regarding the urgency and planning of actions."
+      },
+      {
+        "limitation": "Fails to identify which recommendations rest on stronger versus weaker evidence.",
+        "evidence": "The Actual Output does not clearly identify the strength of evidence for different recommendations.",
+        "impact": "This lack of clarity can mislead decision-makers regarding the reliability of the recommendations."
+      },
+      {
+        "limitation": "Does not clearly present unknowns that must be resolved before irreversible commitments.",
+        "evidence": "While it identifies several unknowns, it does not clearly present these as barriers to irreversible commitments.",
+        "impact": "This can lead to premature decision-making without addressing critical uncertainties."
+      },
+      {
+        "limitation": "Lacks quantitative outcomes or metrics to support claims.",
+        "evidence": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings.",
+        "impact": "This absence limits the ability to evaluate the potential impact of the recommendations."
+      },
+      {
+        "limitation": "Does not adequately address evidence gaps that could change recommendations.",
+        "evidence": "While it mentions limitations and evidence gaps, it fails to explicitly compare the strength of evidence for different recommendations.",
+        "impact": "This can lead to a lack of confidence in the recommendations due to unaddressed uncertainties."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a structured framework for differentiating options based on resource commitment, timing, and risk.",
+        "addresses": "This will help clarify the feasibility and appropriateness of each option for decision-makers.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance evidence handling by clearly separating evidence-based premises from assumptions.",
+        "addresses": "This will improve the robustness and credibility of the recommendations.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Include explicit statements of costs associated with each option.",
+        "addresses": "This will provide a comprehensive understanding of the trade-offs involved in each recommendation.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Ensure consistent provision of time horizons for all recommendations.",
+        "addresses": "This will clarify the urgency and planning of actions for decision-makers.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Develop a method to categorize recommendations based on the strength of supporting evidence.",
+        "addresses": "This will enhance clarity regarding the reliability of the recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Clearly present unknowns that must be resolved before irreversible commitments.",
+        "addresses": "This will prevent premature decision-making and ensure critical uncertainties are addressed.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Incorporate quantitative outcomes or metrics to support claims.",
+        "addresses": "This will allow for better evaluation of the potential impact of the recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Address evidence gaps explicitly and discuss their potential impact on recommendations.",
+        "addresses": "This will increase confidence in the recommendations by acknowledging uncertainties.",
+        "priority": "low"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\9e373b46748a80c11cc0949128b4e228\\stages\\decision_analysis_evaluation.json"
+}

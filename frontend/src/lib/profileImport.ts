@@ -4,7 +4,7 @@
  */
 import type { ProfileDraft } from "../services/edrak";
 
-export type ImportField = "name" | "aliases" | "notes" | "products" | "industry" | "markets" | "goals" | "links";
+export type ImportField = "name" | "aliases" | "notes" | "products" | "target_customers" | "industry" | "markets" | "goals" | "links";
 
 /** The part of the onboarding form an import can fill. */
 export interface ImportableForm {
@@ -14,6 +14,7 @@ export interface ImportableForm {
   industry_other: string | null;
   description: string;
   offerings: string[];
+  target_customer_groups: string[];
   goals: string[];
   website: string;
   serves: string[];
@@ -21,7 +22,7 @@ export interface ImportableForm {
   links: Record<string, string>;
 }
 
-export const ROW_ORDER: readonly ImportField[] = ["name", "aliases", "notes", "products", "industry", "markets", "goals", "links"];
+export const ROW_ORDER: readonly ImportField[] = ["name", "aliases", "notes", "products", "target_customers", "industry", "markets", "goals", "links"];
 /** The accounts the form has a box for. */
 export const SOCIAL_PLATFORMS = ["x", "facebook", "instagram", "linkedin", "youtube", "tiktok"] as const;
 
@@ -80,7 +81,7 @@ export function importRows(form: ImportableForm, draft: ProfileDraft, industryLa
       defaultOn: !identical && !filled,
     });
   };
-  const list = (key: "aliases" | "products" | "markets" | "goals", items: string[], current: readonly string[]) => {
+  const list = (key: "aliases" | "products" | "target_customers" | "markets" | "goals", items: string[], current: readonly string[]) => {
     const proposed = union([], items);
     if (!proposed.length) return;
     const adds = proposed.filter((x) => !has(current, x));
@@ -91,6 +92,7 @@ export function importRows(form: ImportableForm, draft: ProfileDraft, industryLa
   list("aliases", p.aliases, form.aliases);
   text("notes", p.notes, form.description);
   list("products", p.products, form.offerings);
+  list("target_customers", p.target_customers ?? [], form.target_customer_groups);
   if (p.industry) {
     rows.push({
       key: "industry", kind: "list", proposed: [industryLabel(p.industry)],
@@ -130,6 +132,7 @@ export function applyDraft<T extends ImportableForm>(form: T, draft: ProfileDraf
   if (chosen.has("notes") && p.notes?.trim()) next.description = p.notes.trim();
   if (chosen.has("aliases")) next.aliases = union(next.aliases, p.aliases).filter((a) => !same(a, next.name));
   if (chosen.has("products")) next.offerings = union(next.offerings, p.products);
+  if (chosen.has("target_customers")) next.target_customer_groups = union(next.target_customer_groups, p.target_customers ?? []);
   if (chosen.has("industry") && p.industry && !next.industries.includes(p.industry)) next.industries = [...next.industries, p.industry];
   if (chosen.has("markets")) {
     next.serves = union(next.serves, p.markets);

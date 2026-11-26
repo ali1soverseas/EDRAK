@@ -263,6 +263,12 @@ def _extract_questions(cross_signal: CrossSignalOutput) -> list[str]:
         [],
     )
 
+    if questions is None:
+        return []
+
+    if not isinstance(questions, (list, tuple)):
+        questions = [questions]
+
     result: list[str] = []
 
     for item in questions:

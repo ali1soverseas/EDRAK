@@ -3191,12 +3191,10 @@ def _numeric_confidence(value: Any) -> float | None:
 def build_worker_result(
     state: CompetitorState,
 ) -> WorkerResult:
-    """The shared WorkerResult: grounded findings, the sources they cite, and the comparison.
+    """Build grounded findings and cited-source metadata for the shared worker result.
 
-    Only cited sources become evidence, and each one's fact is the passage that supports the
-    finding, not the whole page. The comparison with the user's company is returned twice: as
-    positioning findings (so verification checks them like any other claim) and as a structured
-    matrix in metadata, which the brief's "Alternatives compared" card draws.
+    Comparison generation is disabled in the graph; metadata retains an empty matrix for
+    compatibility with existing consumers.
     """
     from .prior import prior_evidence_fields, prior_evidence_metadata
 
