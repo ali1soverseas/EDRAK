@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "analysis_id": "adf7a97f24b114647c2db42fb262a8d0",
+  "status": "cancelled",
+  "started_at_utc": "2026-11-24T03:24:34.904495+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-24T03:24:35.098126+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T03:24:35.144231+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_baa377c6-165.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-24T03:24:35.314051+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-24T03:24:36.038194+00:00",
+      "artifacts": [
+        "outputs\\human_review_004.json"
+      ]
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-11-24T03:24:36.074420+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:baa377c6-1653-48aa-b597-6c3019490691:1": "inputs\\worker_competitor_intelligence_attempt_1_baa377c6-165.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "orchestration_result": "inputs\\orchestration_result.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-24T03:25:31.733359+00:00",
+  "completed_at_utc": "2026-11-24T03:25:31.733340+00:00"
+}

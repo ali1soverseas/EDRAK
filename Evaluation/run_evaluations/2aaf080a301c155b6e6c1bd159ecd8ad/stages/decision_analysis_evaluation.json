@@ -1,0 +1,1052 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\decision_analysis\\input.json",
+  "source_output": "artifacts\\runs\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\decision_analysis\\output.json",
+  "deterministic_checks": {
+    "known_signal_count": 6,
+    "question_recommendation_count": 0,
+    "option_count": 3,
+    "distinct_option_count": 3,
+    "duplicate_options": [],
+    "items_with_signal_references": 15,
+    "items_with_unknown_signal_references": {},
+    "empty_options": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.5714,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "decision_analysis",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "2.0.0-rubric-only",
+    "finding_count": 7,
+    "mandatory_finding_count": 7,
+    "coverage_score": 0.5714,
+    "strict_coverage_score": 0.1429,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 222,
+      "initial_missing_count": 0,
+      "initial_partial_count": 6,
+      "findings_reviewed": 6,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "DA-01",
+        "requirement_id": "DA-FRAMING",
+        "test_case_id": "DA-UC-001",
+        "title": "Options framed as competitive responses",
+        "priority": "mandatory",
+        "score": 0.9,
+        "status": "covered",
+        "reason": "covered: Presents at least two distinct response options or recommendations (e.g., lead, match, differentiate, hold and watch), using any labels. — The output presents two distinct competitive response options, 'Lead on Blackwell volume and packaging capacity against Broadcom custom silicon' and 'Differentiate with Hopper-to-Blackwell bridge programs while matching Broadcom timing.' Each option clearly addresses the competitive problem of responding to Broadcom's upcoming custom silicon production, fulfilling the requirement for distinct recommendations.; covered: Each option states the competitive problem or signal it responds to. — The Actual Output effectively presents two distinct competitive response options (A and B), each addressing the competitive problem of NVIDIA's positioning against Broadcom's custom silicon. Both options articulate specific strategies and trade-offs, aligning well with the requirement to frame options as competitive responses. However, while the competitive problems are implied, they could be more explicitly stated in relation to the options, which slightly detracts from clarity. Overall, the output meets the acceptance criteria but lacks full explicitness in problem articulation.",
+        "criteria_results": [
+          {
+            "criterion": "Presents at least two distinct response options or recommendations (e.g., lead, match, differentiate, hold and watch), using any labels.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The output presents two distinct competitive response options, 'Lead on Blackwell volume and packaging capacity against Broadcom custom silicon' and 'Differentiate with Hopper-to-Blackwell bridge programs while matching Broadcom timing.' Each option clearly addresses the competitive problem of responding to Broadcom's upcoming custom silicon production, fulfilling the requirement for distinct recommendations."
+          },
+          {
+            "criterion": "Each option states the competitive problem or signal it responds to.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The Actual Output effectively presents two distinct competitive response options (A and B), each addressing the competitive problem of NVIDIA's positioning against Broadcom's custom silicon. Both options articulate specific strategies and trade-offs, aligning well with the requirement to frame options as competitive responses. However, while the competitive problems are implied, they could be more explicitly stated in relation to the options, which slightly detracts from clarity. Overall, the output meets the acceptance criteria but lacks full explicitness in problem articulation."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.9,
+        "initial_status": "covered",
+        "final_score": 0.9,
+        "final_status": "covered",
+        "second_pass": null,
+        "reconciliation": "second_pass_not_needed"
+      },
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-UC-001",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.6666666666666666,
+        "status": "partial",
+        "reason": "partial: Each option or recommendation cites supporting signal IDs or finding IDs. — The Actual Output includes options that cite supporting signal IDs, fulfilling the requirement for evidence traceability. However, it does not explicitly separate evidence-based premises from assumptions and strategic interpretations, which is a critical aspect of the acceptance criteria. Therefore, while it meets some criteria, it falls short in others, leading to a moderate score.; covered: No option relies on a finding marked insufficient upstream as a settled premise. — The actual output effectively cites supporting signal IDs for each option, demonstrating evidence traceability. However, it does not explicitly state that no option relies on a finding marked insufficient upstream, which is a critical requirement. The separation of evidence-based premises from assumptions is generally clear, but the lack of a definitive statement regarding upstream findings slightly detracts from full compliance with the acceptance criteria.; partial: Separates evidence-based premises from assumptions and strategic interpretation. — The Actual Output provides a detailed analysis of opportunities and risks, including assumptions and evidence gaps. However, it does not clearly separate evidence-based premises from assumptions in a way that aligns with the Expected Output's requirement for explicit traceability. While supporting signal IDs are present, the distinction between what constitutes evidence and what are assumptions is not sufficiently clear, impacting the overall clarity of the analysis.",
+        "criteria_results": [
+          {
+            "criterion": "Each option or recommendation cites supporting signal IDs or finding IDs.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output includes options that cite supporting signal IDs, fulfilling the requirement for evidence traceability. However, it does not explicitly separate evidence-based premises from assumptions and strategic interpretations, which is a critical aspect of the acceptance criteria. Therefore, while it meets some criteria, it falls short in others, leading to a moderate score."
+          },
+          {
+            "criterion": "No option relies on a finding marked insufficient upstream as a settled premise.",
+            "score": 0.8,
+            "status": "covered",
+            "reason": "The actual output effectively cites supporting signal IDs for each option, demonstrating evidence traceability. However, it does not explicitly state that no option relies on a finding marked insufficient upstream, which is a critical requirement. The separation of evidence-based premises from assumptions is generally clear, but the lack of a definitive statement regarding upstream findings slightly detracts from full compliance with the acceptance criteria."
+          },
+          {
+            "criterion": "Separates evidence-based premises from assumptions and strategic interpretation.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of opportunities and risks, including assumptions and evidence gaps. However, it does not clearly separate evidence-based premises from assumptions in a way that aligns with the Expected Output's requirement for explicit traceability. While supporting signal IDs are present, the distinction between what constitutes evidence and what are assumptions is not sufficiently clear, impacting the overall clarity of the analysis."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-02",
+          "requirement_id": "DA-EVIDENCE",
+          "test_case_id": "DA-UC-001",
+          "title": "Evidence traceability per option",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially meets the acceptance criteria by citing some signal IDs and acknowledging limitations in evidence quality. However, it fails to ensure that all options rely solely on verified evidence, as indicated by the reliance on insufficient findings. Additionally, the separation of evidence-based premises from assumptions is not clearly established, particularly in the interpretation of cross-signal relationships. Overall, the output does not fully align with the required standards.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.limitations[2]",
+              "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+              "similarity": 0.451984
+            },
+            {
+              "source_path": "$.stage_output.limitations[3]",
+              "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+              "similarity": 0.440934
+            },
+            {
+              "source_path": "$.stage_output.limitations[0]",
+              "text": "The analysis relies solely on the supplied Cross-Signal output; no independent verification or new research was conducted.",
+              "similarity": 0.277021
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+              "text": "Hyperscaler procurement intent data",
+              "similarity": 0.265378
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[4]",
+              "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+              "similarity": 0.248697
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-UC-001",
+        "title": "Materially different alternatives",
+        "priority": "mandatory",
+        "score": 0.39999999999999997,
+        "status": "partial",
+        "reason": "partial: Options differ in resource commitment, timing, or risk profile, not only in wording. — The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including resource commitments, timing, and risks associated with Blackwell and Broadcom's custom silicon. However, it lacks explicit differentiation of options based on resource commitment and does not clearly state conditions under which each option would be preferred, which are critical aspects of the evaluation criteria. Therefore, while it addresses some required aspects, it does not fully meet the expectations outlined in the Expected Output.; missing: Includes a lower-commitment path (e.g., monitor, pilot, defer) or explains why none is appropriate. — The Actual Output does not explicitly include a lower-commitment path such as monitor, pilot, or defer, nor does it provide a rationale for its absence. The Expected Output mandates the inclusion of such a path or an explanation for why it is not included, which is not met in the Actual Output. Therefore, the response lacks alignment with the evaluation steps.; partial: States the conditions under which each option would be preferred. — The Actual Output provides detailed opportunities and risks but lacks explicit statements on the conditions under which each option would be preferred, which is a key requirement. While it outlines various options and their implications, it does not clearly differentiate them based on resource commitment, timing, or risk profile as required. Additionally, it does not include a lower-commitment path or explain why none is appropriate, which is necessary for full alignment with the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Options differ in resource commitment, timing, or risk profile, not only in wording.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including resource commitments, timing, and risks associated with Blackwell and Broadcom's custom silicon. However, it lacks explicit differentiation of options based on resource commitment and does not clearly state conditions under which each option would be preferred, which are critical aspects of the evaluation criteria. Therefore, while it addresses some required aspects, it does not fully meet the expectations outlined in the Expected Output."
+          },
+          {
+            "criterion": "Includes a lower-commitment path (e.g., monitor, pilot, defer) or explains why none is appropriate.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly include a lower-commitment path such as monitor, pilot, or defer, nor does it provide a rationale for its absence. The Expected Output mandates the inclusion of such a path or an explanation for why it is not included, which is not met in the Actual Output. Therefore, the response lacks alignment with the evaluation steps."
+          },
+          {
+            "criterion": "States the conditions under which each option would be preferred.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed opportunities and risks but lacks explicit statements on the conditions under which each option would be preferred, which is a key requirement. While it outlines various options and their implications, it does not clearly differentiate them based on resource commitment, timing, or risk profile as required. Additionally, it does not include a lower-commitment path or explain why none is appropriate, which is necessary for full alignment with the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.39999999999999997,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-03",
+          "requirement_id": "DA-DIFFERENTIATION",
+          "test_case_id": "DA-UC-001",
+          "title": "Materially different alternatives",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not adequately address the acceptance criteria. It fails to demonstrate that options differ in resource commitment, timing, or risk profile, as it primarily lists risks and considerations without clear differentiation. Additionally, there is no mention of a lower-commitment path or conditions for preference, which are critical for meeting the mandatory criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+              "text": "Qualify alternative packaging options",
+              "similarity": 0.325482
+            },
+            {
+              "source_path": "$.stage_output.options[0].trade_offs[0]",
+              "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+              "similarity": 0.313131
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[4].success_indicators[1]",
+              "text": "License approval rate and processing time baseline",
+              "similarity": 0.29487
+            },
+            {
+              "source_path": "$.stage_output.options[1].risks[1].early_warning",
+              "text": "License approval rates drop or processing times lengthen.",
+              "similarity": 0.287558
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[4]",
+              "text": "Remaining uncertainty: License approval rates and processing times; pending export license applications for NVIDIA products; enforcement of remote cloud access license requirements.",
+              "similarity": 0.283371
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.39999999999999997,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-UC-002",
+        "title": "Tradeoffs and reversibility",
+        "priority": "mandatory",
+        "score": 0.43333333333333335,
+        "status": "partial",
+        "reason": "partial: States benefits, costs, and risks for each option. — The Actual Output provides detailed benefits, costs, and risks for each option, aligning with the evaluation steps. However, it lacks explicit statements regarding the reversibility of each option and does not include quantitative outcomes, which are critical for full alignment with the Expected Output. While it covers many required elements, the absence of these specific details prevents a higher score.; missing: Quantitative outcomes (ROI, market share, savings) appear only with a cited basis; otherwise outcomes are qualitative. — The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which are explicitly required by the Expected Output. Additionally, while the output discusses various opportunities and risks, it fails to provide cited bases for any quantitative outcomes, which is a critical requirement. The retrieval context does not support the presence of any cited quantitative outcomes either. Therefore, the response does not align with the evaluation steps.; partial: Notes whether each option is reversible or creates lasting commitments. — The Actual Output provides detailed information about opportunities and risks but lacks explicit statements regarding the reversibility of each option or whether they create lasting commitments. While it addresses benefits, costs, and risks, it does not clearly note the reversibility aspect as required by the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "States benefits, costs, and risks for each option.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed benefits, costs, and risks for each option, aligning with the evaluation steps. However, it lacks explicit statements regarding the reversibility of each option and does not include quantitative outcomes, which are critical for full alignment with the Expected Output. While it covers many required elements, the absence of these specific details prevents a higher score."
+          },
+          {
+            "criterion": "Quantitative outcomes (ROI, market share, savings) appear only with a cited basis; otherwise outcomes are qualitative.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which are explicitly required by the Expected Output. Additionally, while the output discusses various opportunities and risks, it fails to provide cited bases for any quantitative outcomes, which is a critical requirement. The retrieval context does not support the presence of any cited quantitative outcomes either. Therefore, the response does not align with the evaluation steps."
+          },
+          {
+            "criterion": "Notes whether each option is reversible or creates lasting commitments.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed information about opportunities and risks but lacks explicit statements regarding the reversibility of each option or whether they create lasting commitments. While it addresses benefits, costs, and risks, it does not clearly note the reversibility aspect as required by the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.43333333333333335,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-04",
+          "requirement_id": "DA-TRADEOFFS",
+          "test_case_id": "DA-UC-002",
+          "title": "Tradeoffs and reversibility",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the evaluation steps by mentioning risks and trade-offs but fails to clearly state the benefits and costs for each option. It also does not provide quantitative outcomes, only qualitative statements about limitations. Additionally, while it notes some commitments related to packaging, it does not explicitly state the reversibility of each option. Overall, the coverage is partial as it meets some criteria but not all.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+              "text": "Qualify alternative packaging options",
+              "similarity": 0.303026
+            },
+            {
+              "source_path": "$.stage_output.limitations[1]",
+              "text": "Quantitative financial estimates such as revenue, market share, ROI, or percentages cannot be derived from the supplied signals and are intentionally omitted.",
+              "similarity": 0.302847
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].prerequisites[1]",
+              "text": "Sales and finance alignment on deal deferral definitions",
+              "similarity": 0.300773
+            },
+            {
+              "source_path": "$.stage_output.options[0].trade_offs[0]",
+              "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+              "similarity": 0.279391
+            },
+            {
+              "source_path": "$.stage_output.options[1].opportunities[0].how_to_capture",
+              "text": "Offer trade-in credits and priority Blackwell allocation for Hopper buyers.",
+              "similarity": 0.276343
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.43333333333333335,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-UC-002",
+        "title": "Horizon, assumptions, and triggers",
+        "priority": "mandatory",
+        "score": 0.5,
+        "status": "partial",
+        "reason": "partial: Gives a time horizon for each recommendation. — The Actual Output does not clearly provide a specific time horizon for each recommendation, which is a critical requirement. While some recommendations mention time horizons like 'immediate' and 'short_term', others lack this clarity. Additionally, the output does not consistently define measurable success criteria or observable decision triggers, which are essential for alignment with the Expected Output. Overall, the response lacks completeness in addressing the mandatory acceptance criteria.; partial: Defines measurable success criteria or observable decision triggers. — The Actual Output provides a comprehensive analysis and recommendations but lacks explicit definitions of measurable success criteria or observable decision triggers for each recommendation. While it includes time horizons and assumptions, it does not clearly state the success indicators as required by the evaluation steps. This results in a partial alignment with the expectations outlined in the Expected Output.; partial: States the key assumptions behind each recommendation. — The Actual Output provides a comprehensive analysis of opportunities and risks, including key assumptions for each recommendation. However, it lacks explicit statements of time horizons and measurable success criteria for all recommendations, which are critical for alignment with the Expected Output. While some assumptions are articulated, the overall clarity and completeness regarding the required findings are insufficient.",
+        "criteria_results": [
+          {
+            "criterion": "Gives a time horizon for each recommendation.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not clearly provide a specific time horizon for each recommendation, which is a critical requirement. While some recommendations mention time horizons like 'immediate' and 'short_term', others lack this clarity. Additionally, the output does not consistently define measurable success criteria or observable decision triggers, which are essential for alignment with the Expected Output. Overall, the response lacks completeness in addressing the mandatory acceptance criteria."
+          },
+          {
+            "criterion": "Defines measurable success criteria or observable decision triggers.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis and recommendations but lacks explicit definitions of measurable success criteria or observable decision triggers for each recommendation. While it includes time horizons and assumptions, it does not clearly state the success indicators as required by the evaluation steps. This results in a partial alignment with the expectations outlined in the Expected Output."
+          },
+          {
+            "criterion": "States the key assumptions behind each recommendation.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive analysis of opportunities and risks, including key assumptions for each recommendation. However, it lacks explicit statements of time horizons and measurable success criteria for all recommendations, which are critical for alignment with the Expected Output. While some assumptions are articulated, the overall clarity and completeness regarding the required findings are insufficient."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-05",
+          "requirement_id": "DA-EXECUTION",
+          "test_case_id": "DA-UC-002",
+          "title": "Horizon, assumptions, and triggers",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output does not fully meet the acceptance criteria. While it provides recommendations, it lacks explicit time horizons for each recommendation, does not clearly define measurable success criteria or observable decision triggers, and does not state the key assumptions behind each recommendation. Therefore, it is missing critical elements required for a complete evaluation.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.limitations[2]",
+              "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+              "similarity": 0.311901
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[4]",
+              "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+              "similarity": 0.28533
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[0]",
+              "text": "Recommendation: Treat Blackwell revenue recognition as supply-gated rather than demand-gated; prioritize obtaining quarterly Blackwell vs Hopper shipment data and customer-level deferral counts before forecasting revenue timing.",
+              "similarity": 0.264602
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+              "text": "Hyperscaler procurement intent data",
+              "similarity": 0.261081
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[4].success_indicators[1]",
+              "text": "License approval rate and processing time baseline",
+              "similarity": 0.258425
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.5,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-UC-002",
+        "title": "Evidence strength and asymmetry",
+        "priority": "mandatory",
+        "score": 0.4666666666666666,
+        "status": "partial",
+        "reason": "missing: Identifies which recommendations rest on stronger versus weaker evidence. — The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence, nor does it articulate the evidence strength in relation to the recommendations. While it lists evidence gaps, it fails to connect these gaps to specific recommendations or indicate how they might affect the recommendations' validity. This lack of clarity and completeness in addressing evidence strength leads to a low score.; partial: Carries forward upstream evidence gaps that could change a recommendation. — The Actual Output identifies several evidence gaps related to competitor commitments and shipment comparisons, which aligns with the requirement to carry forward upstream evidence gaps. However, it does not explicitly discuss how these gaps could alter the recommendations provided, which is a critical aspect of the evaluation steps. Additionally, while it mentions the strength of evidence for certain opportunities, it lacks a clear comparison of evidence strength across all recommendations. Therefore, it partially meets the criteria but falls short in key areas.; partial: Notes where evidence is stronger for some competitors, regions, or segments than others and avoids generalizing from the best-documented one. — The output identifies several recommendations and their associated evidence gaps, indicating an understanding of evidence strength. However, it lacks explicit notes on where evidence is stronger for specific competitors, regions, or segments, and does not fully avoid generalizations from the best-documented example. This limits its alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies which recommendations rest on stronger versus weaker evidence.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence, nor does it articulate the evidence strength in relation to the recommendations. While it lists evidence gaps, it fails to connect these gaps to specific recommendations or indicate how they might affect the recommendations' validity. This lack of clarity and completeness in addressing evidence strength leads to a low score."
+          },
+          {
+            "criterion": "Carries forward upstream evidence gaps that could change a recommendation.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output identifies several evidence gaps related to competitor commitments and shipment comparisons, which aligns with the requirement to carry forward upstream evidence gaps. However, it does not explicitly discuss how these gaps could alter the recommendations provided, which is a critical aspect of the evaluation steps. Additionally, while it mentions the strength of evidence for certain opportunities, it lacks a clear comparison of evidence strength across all recommendations. Therefore, it partially meets the criteria but falls short in key areas."
+          },
+          {
+            "criterion": "Notes where evidence is stronger for some competitors, regions, or segments than others and avoids generalizing from the best-documented one.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The output identifies several recommendations and their associated evidence gaps, indicating an understanding of evidence strength. However, it lacks explicit notes on where evidence is stronger for specific competitors, regions, or segments, and does not fully avoid generalizations from the best-documented example. This limits its alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4666666666666666,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-06",
+          "requirement_id": "DA-UNCERTAINTY",
+          "test_case_id": "DA-UC-002",
+          "title": "Evidence strength and asymmetry",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by acknowledging limitations in evidence quality and distinguishing between stronger and weaker evidence for recommendations. However, it fails to fully carry forward upstream evidence gaps that could change recommendations and does not note variations in evidence strength across competitors, regions, or segments. This lack of comprehensive coverage results in a lower score.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.limitations[2]",
+              "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+              "similarity": 0.477124
+            },
+            {
+              "source_path": "$.stage_output.limitations[3]",
+              "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+              "similarity": 0.392123
+            },
+            {
+              "source_path": "$.stage_output.decision_questions[4]",
+              "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+              "similarity": 0.261585
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[3].prerequisites[1]",
+              "text": "Local partner and data center readiness assessments",
+              "similarity": 0.230881
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+              "text": "Hyperscaler procurement intent data",
+              "similarity": 0.222159
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.4666666666666666,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-HUMAN-BOUNDARY",
+        "test_case_id": "DA-UC-002",
+        "title": "Human decision boundary",
+        "priority": "mandatory",
+        "score": 0.6499999999999999,
+        "status": "partial",
+        "reason": "partial: Identifies unknowns that should be resolved before irreversible commitments. — The Actual Output identifies several unknowns that need resolution, such as specific hyperscaler commitments and quarterly shipment comparisons, which are crucial for making informed decisions. However, while it presents options for decision-making, it lacks a clear statement indicating that these unknowns block irreversible commitments, which is a key requirement. The output is detailed but does not fully align with the expectation of explicitly stating the impact of these unknowns on decision-making. Therefore, the score reflects a moderate alignment with the evaluation steps.; covered: Presents recommendations as options for the decision-maker; if evidence is insufficient for any defensible option, says so instead of manufacturing one. — The Actual Output effectively presents clear recommendations as options for the decision-maker, aligning with the requirement to avoid fabricated solutions. It identifies unknowns that could block irreversible commitments, such as evidence gaps related to hyperscaler commitments and export control impacts. However, it does not explicitly state when there is insufficient evidence for any defensible option, which is a shortcoming against the Expected Output criteria. Overall, the output meets most evaluation steps but lacks clarity on evidence insufficiency.",
+        "criteria_results": [
+          {
+            "criterion": "Identifies unknowns that should be resolved before irreversible commitments.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies several unknowns that need resolution, such as specific hyperscaler commitments and quarterly shipment comparisons, which are crucial for making informed decisions. However, while it presents options for decision-making, it lacks a clear statement indicating that these unknowns block irreversible commitments, which is a key requirement. The output is detailed but does not fully align with the expectation of explicitly stating the impact of these unknowns on decision-making. Therefore, the score reflects a moderate alignment with the evaluation steps."
+          },
+          {
+            "criterion": "Presents recommendations as options for the decision-maker; if evidence is insufficient for any defensible option, says so instead of manufacturing one.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output effectively presents clear recommendations as options for the decision-maker, aligning with the requirement to avoid fabricated solutions. It identifies unknowns that could block irreversible commitments, such as evidence gaps related to hyperscaler commitments and export control impacts. However, it does not explicitly state when there is insufficient evidence for any defensible option, which is a shortcoming against the Expected Output criteria. Overall, the output meets most evaluation steps but lacks clarity on evidence insufficiency."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6499999999999999,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "DA-07",
+          "requirement_id": "DA-HUMAN-BOUNDARY",
+          "test_case_id": "DA-UC-002",
+          "title": "Human decision boundary",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output identifies some unknowns, such as the need for sales and finance alignment, but it does not clearly present recommendations as options for the decision-maker. Additionally, it lacks a comprehensive assessment of evidence sufficiency for each option. The coverage of acceptance criteria is partially met, as it mentions unknowns but does not fully align with the requirement to present defensible options. Overall, the output does not meet all mandatory criteria.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+              "text": "Qualify alternative packaging options",
+              "similarity": 0.327388
+            },
+            {
+              "source_path": "$.stage_output.recommended_actions[0].prerequisites[1]",
+              "text": "Sales and finance alignment on deal deferral definitions",
+              "similarity": 0.298015
+            },
+            {
+              "source_path": "$.stage_output.options[0].trade_offs[0]",
+              "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+              "similarity": 0.296772
+            },
+            {
+              "source_path": "$.stage_output.limitations[3]",
+              "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+              "similarity": 0.271556
+            },
+            {
+              "source_path": "$.stage_output.limitations[2]",
+              "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+              "similarity": 0.271288
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6499999999999999,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "DA-02",
+        "requirement_id": "DA-EVIDENCE",
+        "test_case_id": "DA-UC-001",
+        "title": "Evidence traceability per option",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially meets the acceptance criteria by citing some signal IDs and acknowledging limitations in evidence quality. However, it fails to ensure that all options rely solely on verified evidence, as indicated by the reliance on insufficient findings. Additionally, the separation of evidence-based premises from assumptions is not clearly established, particularly in the interpretation of cross-signal relationships. Overall, the output does not fully align with the required standards.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.limitations[2]",
+            "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+            "similarity": 0.451984
+          },
+          {
+            "source_path": "$.stage_output.limitations[3]",
+            "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+            "similarity": 0.440934
+          },
+          {
+            "source_path": "$.stage_output.limitations[0]",
+            "text": "The analysis relies solely on the supplied Cross-Signal output; no independent verification or new research was conducted.",
+            "similarity": 0.277021
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+            "text": "Hyperscaler procurement intent data",
+            "similarity": 0.265378
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[4]",
+            "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+            "similarity": 0.248697
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-03",
+        "requirement_id": "DA-DIFFERENTIATION",
+        "test_case_id": "DA-UC-001",
+        "title": "Materially different alternatives",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not adequately address the acceptance criteria. It fails to demonstrate that options differ in resource commitment, timing, or risk profile, as it primarily lists risks and considerations without clear differentiation. Additionally, there is no mention of a lower-commitment path or conditions for preference, which are critical for meeting the mandatory criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+            "text": "Qualify alternative packaging options",
+            "similarity": 0.325482
+          },
+          {
+            "source_path": "$.stage_output.options[0].trade_offs[0]",
+            "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+            "similarity": 0.313131
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[4].success_indicators[1]",
+            "text": "License approval rate and processing time baseline",
+            "similarity": 0.29487
+          },
+          {
+            "source_path": "$.stage_output.options[1].risks[1].early_warning",
+            "text": "License approval rates drop or processing times lengthen.",
+            "similarity": 0.287558
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[4]",
+            "text": "Remaining uncertainty: License approval rates and processing times; pending export license applications for NVIDIA products; enforcement of remote cloud access license requirements.",
+            "similarity": 0.283371
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-04",
+        "requirement_id": "DA-TRADEOFFS",
+        "test_case_id": "DA-UC-002",
+        "title": "Tradeoffs and reversibility",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the evaluation steps by mentioning risks and trade-offs but fails to clearly state the benefits and costs for each option. It also does not provide quantitative outcomes, only qualitative statements about limitations. Additionally, while it notes some commitments related to packaging, it does not explicitly state the reversibility of each option. Overall, the coverage is partial as it meets some criteria but not all.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+            "text": "Qualify alternative packaging options",
+            "similarity": 0.303026
+          },
+          {
+            "source_path": "$.stage_output.limitations[1]",
+            "text": "Quantitative financial estimates such as revenue, market share, ROI, or percentages cannot be derived from the supplied signals and are intentionally omitted.",
+            "similarity": 0.302847
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].prerequisites[1]",
+            "text": "Sales and finance alignment on deal deferral definitions",
+            "similarity": 0.300773
+          },
+          {
+            "source_path": "$.stage_output.options[0].trade_offs[0]",
+            "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+            "similarity": 0.279391
+          },
+          {
+            "source_path": "$.stage_output.options[1].opportunities[0].how_to_capture",
+            "text": "Offer trade-in credits and priority Blackwell allocation for Hopper buyers.",
+            "similarity": 0.276343
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-05",
+        "requirement_id": "DA-EXECUTION",
+        "test_case_id": "DA-UC-002",
+        "title": "Horizon, assumptions, and triggers",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output does not fully meet the acceptance criteria. While it provides recommendations, it lacks explicit time horizons for each recommendation, does not clearly define measurable success criteria or observable decision triggers, and does not state the key assumptions behind each recommendation. Therefore, it is missing critical elements required for a complete evaluation.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.limitations[2]",
+            "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+            "similarity": 0.311901
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[4]",
+            "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+            "similarity": 0.28533
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[0]",
+            "text": "Recommendation: Treat Blackwell revenue recognition as supply-gated rather than demand-gated; prioritize obtaining quarterly Blackwell vs Hopper shipment data and customer-level deferral counts before forecasting revenue timing.",
+            "similarity": 0.264602
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+            "text": "Hyperscaler procurement intent data",
+            "similarity": 0.261081
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[4].success_indicators[1]",
+            "text": "License approval rate and processing time baseline",
+            "similarity": 0.258425
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-06",
+        "requirement_id": "DA-UNCERTAINTY",
+        "test_case_id": "DA-UC-002",
+        "title": "Evidence strength and asymmetry",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by acknowledging limitations in evidence quality and distinguishing between stronger and weaker evidence for recommendations. However, it fails to fully carry forward upstream evidence gaps that could change recommendations and does not note variations in evidence strength across competitors, regions, or segments. This lack of comprehensive coverage results in a lower score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.limitations[2]",
+            "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+            "similarity": 0.477124
+          },
+          {
+            "source_path": "$.stage_output.limitations[3]",
+            "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+            "similarity": 0.392123
+          },
+          {
+            "source_path": "$.stage_output.decision_questions[4]",
+            "text": "Recommendation: Prioritize China and Country Group D:5 as the largest exposure because B200, H200, and GB200 fall under ECCN 3A090/4A090 requiring export licenses; obtain license approval rates, processing times, and pending applications to rank exposure precisely.",
+            "similarity": 0.261585
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[3].prerequisites[1]",
+            "text": "Local partner and data center readiness assessments",
+            "similarity": 0.230881
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[2].prerequisites[0]",
+            "text": "Hyperscaler procurement intent data",
+            "similarity": 0.222159
+          }
+        ]
+      },
+      {
+        "finding_id": "DA-07",
+        "requirement_id": "DA-HUMAN-BOUNDARY",
+        "test_case_id": "DA-UC-002",
+        "title": "Human decision boundary",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output identifies some unknowns, such as the need for sales and finance alignment, but it does not clearly present recommendations as options for the decision-maker. Additionally, it lacks a comprehensive assessment of evidence sufficiency for each option. The coverage of acceptance criteria is partially met, as it mentions unknowns but does not fully align with the requirement to present defensible options. Overall, the output does not meet all mandatory criteria.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.risks[0].mitigation_considerations[0]",
+            "text": "Qualify alternative packaging options",
+            "similarity": 0.327388
+          },
+          {
+            "source_path": "$.stage_output.recommended_actions[0].prerequisites[1]",
+            "text": "Sales and finance alignment on deal deferral definitions",
+            "similarity": 0.298015
+          },
+          {
+            "source_path": "$.stage_output.options[0].trade_offs[0]",
+            "text": "Packaging commitments raise fixed costs even if Blackwell demand softens.",
+            "similarity": 0.296772
+          },
+          {
+            "source_path": "$.stage_output.limitations[3]",
+            "text": "Cross-signal relationships are interpretations of verified findings, not independently confirmed facts.",
+            "similarity": 0.271556
+          },
+          {
+            "source_path": "$.stage_output.limitations[2]",
+            "text": "Evidence quality is rated medium across signals; confidence levels reflect this limitation.",
+            "similarity": 0.271288
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.75,
+      "overall_status": "pass",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 1.0,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing a detailed analysis of competitors' actions and their implications for NVIDIA. It includes specific insights into market dynamics, opportunities, and risks, directly related to the stated goal. There is no off-topic material present, and the content remains focused on the competitive landscape and strategic recommendations for NVIDIA. Overall, the output aligns well with the evaluation steps.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output presents multiple competitive response options that align with the task goal, addressing the competitive landscape for NVIDIA. However, while it cites supporting signal IDs, it lacks clear differentiation in resource commitment and risk profiles among the options. Additionally, some recommendations do not sufficiently highlight key assumptions or measurable success criteria, which are critical for execution and uncertainty assessment.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including specific references to competitors like Broadcom and their product timelines. However, it lacks direct citations from the Retrieval Context to support some claims, particularly regarding specific hyperscaler commitments and shipment figures. This indicates a partial alignment with the evaluation steps, as some conclusions drawn are not fully substantiated by the provided evidence.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing the input question effectively. It identifies key opportunities and risks, aligning well with the evaluation steps. However, it lacks explicit framing of options as competitive responses, which is a critical requirement in the Expected Output. Additionally, while it mentions evidence gaps, it does not clearly separate premises from assumptions in the recommendations. These shortcomings prevent it from fully meeting the expected criteria.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Lack of explicit differentiation in resource commitment and risk profiles among options.",
+          "evidence": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including resource commitments, timing, and risks associated with Blackwell and Broadcom's custom silicon. However, it lacks explicit differentiation of options based on resource commitment.",
+          "impact": "This limitation may lead to confusion regarding the strategic implications of each option and hinder decision-making."
+        },
+        {
+          "limitation": "Insufficient separation of evidence-based premises from assumptions.",
+          "evidence": "The Actual Output does not explicitly separate evidence-based premises from assumptions and strategic interpretations, which is a critical aspect of the acceptance criteria.",
+          "impact": "This could result in misinterpretation of the recommendations and weaken the credibility of the analysis."
+        },
+        {
+          "limitation": "Failure to include quantitative outcomes.",
+          "evidence": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which are explicitly required by the Expected Output.",
+          "impact": "The absence of quantitative data limits the ability to assess the potential impact of the recommendations."
+        },
+        {
+          "limitation": "Lack of clear time horizons for all recommendations.",
+          "evidence": "The Actual Output does not clearly provide a specific time horizon for each recommendation, which is a critical requirement.",
+          "impact": "This may lead to uncertainty in execution timelines and hinder effective planning."
+        },
+        {
+          "limitation": "Inadequate identification of evidence strength.",
+          "evidence": "The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence.",
+          "impact": "This could lead to overconfidence in recommendations that are based on weaker evidence."
+        },
+        {
+          "limitation": "Missing explicit statements regarding reversibility of options.",
+          "evidence": "The Actual Output lacks explicit statements regarding the reversibility of each option.",
+          "impact": "This omission may affect the understanding of the long-term implications of each recommendation."
+        },
+        {
+          "limitation": "Insufficient clarity on conditions under which options would be preferred.",
+          "evidence": "The Actual Output does not clearly state conditions under which each option would be preferred.",
+          "impact": "This could lead to indecision or misalignment in strategic execution."
+        },
+        {
+          "limitation": "Failure to articulate unknowns blocking irreversible commitments.",
+          "evidence": "While the output identifies several unknowns, it lacks a clear statement indicating that these unknowns block irreversible commitments.",
+          "impact": "This may result in premature decision-making without addressing critical uncertainties."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement a structured framework for differentiating options based on resource commitment and risk profiles.",
+          "addresses": "This will clarify the strategic implications of each option and aid decision-making.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance the separation of evidence-based premises from assumptions in the analysis.",
+          "addresses": "This will improve the credibility of the recommendations and reduce misinterpretation.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Incorporate quantitative outcomes into the analysis.",
+          "addresses": "This will provide a clearer assessment of the potential impact of recommendations.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Define clear time horizons for all recommendations.",
+          "addresses": "This will facilitate effective planning and execution.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Clearly identify the strength of evidence supporting each recommendation.",
+          "addresses": "This will help in assessing the reliability of the recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Explicitly state the reversibility of each option.",
+          "addresses": "This will enhance understanding of the long-term implications of recommendations.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Clarify the conditions under which each option would be preferred.",
+          "addresses": "This will guide strategic execution and decision-making.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Articulate unknowns that block irreversible commitments more explicitly.",
+          "addresses": "This will prevent premature decision-making and ensure critical uncertainties are addressed.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Lack of explicit differentiation in resource commitment and risk profiles among options.",
+        "evidence": "The Actual Output provides a detailed analysis of NVIDIA's competitive landscape, including resource commitments, timing, and risks associated with Blackwell and Broadcom's custom silicon. However, it lacks explicit differentiation of options based on resource commitment.",
+        "impact": "This limitation may lead to confusion regarding the strategic implications of each option and hinder decision-making."
+      },
+      {
+        "limitation": "Insufficient separation of evidence-based premises from assumptions.",
+        "evidence": "The Actual Output does not explicitly separate evidence-based premises from assumptions and strategic interpretations, which is a critical aspect of the acceptance criteria.",
+        "impact": "This could result in misinterpretation of the recommendations and weaken the credibility of the analysis."
+      },
+      {
+        "limitation": "Failure to include quantitative outcomes.",
+        "evidence": "The Actual Output does not include any quantitative outcomes such as ROI, market share, or savings, which are explicitly required by the Expected Output.",
+        "impact": "The absence of quantitative data limits the ability to assess the potential impact of the recommendations."
+      },
+      {
+        "limitation": "Lack of clear time horizons for all recommendations.",
+        "evidence": "The Actual Output does not clearly provide a specific time horizon for each recommendation, which is a critical requirement.",
+        "impact": "This may lead to uncertainty in execution timelines and hinder effective planning."
+      },
+      {
+        "limitation": "Inadequate identification of evidence strength.",
+        "evidence": "The Actual Output does not clearly identify which recommendations are based on stronger versus weaker evidence.",
+        "impact": "This could lead to overconfidence in recommendations that are based on weaker evidence."
+      },
+      {
+        "limitation": "Missing explicit statements regarding reversibility of options.",
+        "evidence": "The Actual Output lacks explicit statements regarding the reversibility of each option.",
+        "impact": "This omission may affect the understanding of the long-term implications of each recommendation."
+      },
+      {
+        "limitation": "Insufficient clarity on conditions under which options would be preferred.",
+        "evidence": "The Actual Output does not clearly state conditions under which each option would be preferred.",
+        "impact": "This could lead to indecision or misalignment in strategic execution."
+      },
+      {
+        "limitation": "Failure to articulate unknowns blocking irreversible commitments.",
+        "evidence": "While the output identifies several unknowns, it lacks a clear statement indicating that these unknowns block irreversible commitments.",
+        "impact": "This may result in premature decision-making without addressing critical uncertainties."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement a structured framework for differentiating options based on resource commitment and risk profiles.",
+        "addresses": "This will clarify the strategic implications of each option and aid decision-making.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance the separation of evidence-based premises from assumptions in the analysis.",
+        "addresses": "This will improve the credibility of the recommendations and reduce misinterpretation.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Incorporate quantitative outcomes into the analysis.",
+        "addresses": "This will provide a clearer assessment of the potential impact of recommendations.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Define clear time horizons for all recommendations.",
+        "addresses": "This will facilitate effective planning and execution.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Clearly identify the strength of evidence supporting each recommendation.",
+        "addresses": "This will help in assessing the reliability of the recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Explicitly state the reversibility of each option.",
+        "addresses": "This will enhance understanding of the long-term implications of recommendations.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Clarify the conditions under which each option would be preferred.",
+        "addresses": "This will guide strategic execution and decision-making.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Articulate unknowns that block irreversible commitments more explicitly.",
+        "addresses": "This will prevent premature decision-making and ensure critical uncertainties are addressed.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\decision_analysis_evaluation.json"
+}

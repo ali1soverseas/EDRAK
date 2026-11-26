@@ -1269,7 +1269,6 @@ def build_worker_result(state: CompetitorState) -> WorkerResult:
     company = state.get("company", "")
     search_results = state.get("search_results", [])
     report = state.get("final_report") or {}
-    comparison = state.get("comparison") or {}
     info = state.get("competitor_info", {})
 
     evidence_for: Dict[str, Evidence] = {}
@@ -1361,14 +1360,6 @@ def build_worker_result(state: CompetitorState) -> WorkerResult:
             "knowledge_base_coverage": {rid: c.get("status") for rid, c in (state.get("kb_coverage") or {}).items()},
             "sources_set_aside": len(dropped),
             "requirement_checks": state.get("requirement_checks", []),
-            "comparison_matrix": {
-                "company": company,
-                "executive_summary": comparison.get("executive_summary", ""),
-                "dimensions": comparison.get("dimensions", []),
-                "areas_where_target_appears_ahead": comparison.get("areas_where_target_appears_ahead", []),
-                "areas_where_competitors_appear_ahead": comparison.get("areas_where_competitors_appear_ahead", []),
-                "limitations": comparison.get("limitations", []),
-            },
             "competitor_profiles": report.get("competitor_profiles", {}),
         },
     )

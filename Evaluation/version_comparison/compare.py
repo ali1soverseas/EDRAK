@@ -12,8 +12,7 @@ Writes three files:
 How the winner is picked:
   1. If the reports can't be compared (same run, or different golden dataset) -> NO DECISION
   2. If one version has critical failures and the other doesn't -> the other one wins
-  3. Otherwise the version with the higher overall score wins,
-     unless the difference is TIE_MARGIN or less -> TIE
+  3. Otherwise the version with the higher overall score wins; identical scores are a tie.
 
 Score of one worker/stage = correctness 30% + faithfulness 30% + completeness 25% + coverage 15%.
 Overall score = simple average of all workers and stages.
@@ -26,6 +25,7 @@ from pathlib import Path
 
 WEIGHTS = {"correctness": 0.30, "faithfulness": 0.30, "completeness": 0.25, "coverage": 0.15}
 TIE_MARGIN = 0.01
+OVERALL_TIE_MARGIN = 0.0
 
 METRIC_LABELS = {
     "correctness": ("Correctness", "Are the facts right?"),
@@ -172,8 +172,8 @@ def compare(file_a, file_b, name_a, name_b):
         verdict, reason = "NO CLEAR WINNER", "Both versions have critical failures."
     elif overall_a is None or overall_b is None:
         verdict, reason = "NO DECISION", "No usable scores were found."
-    elif abs(overall_b - overall_a) <= TIE_MARGIN:
-        verdict, reason = "TIE", f"Overall scores differ by {abs(overall_b - overall_a):.3f}, which is within the tie margin of {TIE_MARGIN:.2f}."
+    elif abs(overall_b - overall_a) <= OVERALL_TIE_MARGIN:
+        verdict, reason = "TIE", f"Both versions have the same overall score ({overall_a:.3f})."
     else:
         verdict = name_b if overall_b > overall_a else name_a
         reason = (f"{verdict} has the higher overall score ({max(overall_a, overall_b):.3f} vs "
@@ -211,6 +211,7 @@ def compare(file_a, file_b, name_a, name_b):
         "metric_summary": metric_summary, "components": rows,
         "skipped": skipped, "only_in_a": only_a, "only_in_b": only_b,
         "blockers_a": bad_a, "blockers_b": bad_b, "compatibility_issues": issues,
+        "overall_tie_margin": OVERALL_TIE_MARGIN,
     }
 
 
@@ -253,7 +254,8 @@ def markdown(r):
             lines += [f"## {heading}", ""] + [f"- {x}" for x in items] + [""]
     lines += ["## Scoring", "",
               "Correctness 30%, faithfulness 30%, completeness 25%, coverage 15%; missing metrics are skipped and the weights rescaled.",
-              f"Overall score = simple average of workers and stages. A difference of {TIE_MARGIN} or less is a tie.",
+              "Overall score = simple average of workers and stages; the higher score wins, and only identical overall scores are a tie.",
+              f"Individual metric comparisons within {TIE_MARGIN} are labeled ties.",
               "This is a practical comparison, not a statistical test.", ""]
     return "\n".join(lines)
 
@@ -261,7 +263,13 @@ def markdown(r):
 # --------------------------------------------------------------------------- html output
 
 def html_page(r):
-    data = json.dumps({**r, "weights": WEIGHTS, "labels": METRIC_LABELS, "tie_margin": TIE_MARGIN})
+    data = json.dumps({
+        **r,
+        "weights": WEIGHTS,
+        "labels": METRIC_LABELS,
+        "tie_margin": TIE_MARGIN,
+        "overall_tie_margin": OVERALL_TIE_MARGIN,
+    })
     return HTML_TEMPLATE.replace("__DATA__", data.replace("</", "<\\/"))
 
 
@@ -398,22 +406,22 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
 <script>
 const R = __DATA__;
-const A = R.name_a, B = R.name_b, TM = R.tie_margin;
+const A = R.name_a, B = R.name_b, TM = R.tie_margin, OTM = R.overall_tie_margin;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const f = v => v == null ? "—" : v.toFixed(3);
 const pretty = k => k.replace(/^(worker|stage):/, "").replace(/_/g, " ");
 const dot = side => `<span class="dot" style="background:var(--${side})"></span>`;
 
-function diff(a, b) {
+function diff(a, b, margin = TM) {
   if (a == null || b == null) return `<span class="flat">—</span>`;
   const d = b - a;
-  if (Math.abs(d) <= TM) return `<span class="flat">${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(3)}</span>`;
+  if (Math.abs(d) <= margin) return `<span class="flat">${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(3)}</span>`;
   return d > 0 ? `<span class="up">▲ +${d.toFixed(3)}</span>` : `<span class="down">▼ −${Math.abs(d).toFixed(3)}</span>`;
 }
-function best(a, b) {
+function best(a, b, margin = TM) {
   if (a == null || b == null) return {html:`<span class="badge t">n/a</span>`, w:null};
-  if (Math.abs(b - a) <= TM) return {html:`<span class="badge t">= Tie</span>`, w:"tie"};
+  if (Math.abs(b - a) <= margin) return {html:`<span class="badge t">= Tie</span>`, w:"tie"};
   return b > a ? {html:`<span class="badge wb">${dot("b")}${esc(B)}</span>`, w:"b"}
                : {html:`<span class="badge wa">${dot("a")}${esc(A)}</span>`, w:"a"};
 }
@@ -445,7 +453,7 @@ $("legend").innerHTML = `<span>${dot("a")}${esc(A)}</span><span>${dot("b")}${esc
 
 // overall score boxes
 (() => {
-  const ov = best(R.overall_a, R.overall_b);
+  const ov = best(R.overall_a, R.overall_b, OTM);
   const box = (name, val, side, isBest) => `<div class="score ${isBest ? "best" : ""}">
       ${isBest ? `<span class="crown">Higher score</span>` : ""}
       <div class="name">${dot(side)}${esc(name)} — overall score</div>
@@ -465,10 +473,10 @@ $("legend").innerHTML = `<span>${dot("a")}${esc(A)}</span><span>${dot("b")}${esc
       <td class="num ${w.w === "b" ? "bold" : ""}">${f(b)}</td>
       <td class="num">${diff(a, b)}</td><td>${w.html}</td></tr>`;
   }
-  const ov = best(R.overall_a, R.overall_b);
+  const ov = best(R.overall_a, R.overall_b, OTM);
   rows += `<tr class="total"><td>Overall<span class="help">All metrics combined</span></td>
     <td class="num">${f(R.overall_a)}</td><td class="num">${f(R.overall_b)}</td>
-    <td class="num">${diff(R.overall_a, R.overall_b)}</td><td>${ov.html}</td></tr>`;
+    <td class="num">${diff(R.overall_a, R.overall_b, OTM)}</td><td>${ov.html}</td></tr>`;
   $("metrics").innerHTML = `<thead><tr><th>Metric</th><th class="num">${dot("a")}${esc(A)}</th>
     <th class="num">${dot("b")}${esc(B)}</th><th class="num">Difference</th><th>Best</th></tr></thead><tbody>${rows}</tbody>`;
 })();

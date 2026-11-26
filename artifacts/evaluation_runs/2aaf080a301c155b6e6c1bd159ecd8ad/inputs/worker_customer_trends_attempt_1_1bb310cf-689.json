@@ -1,0 +1,199 @@
+{
+  "task_id": "1bb310cf-6894-4a65-b327-010854ad8da6",
+  "worker": "customer_trends",
+  "status": "partial",
+  "attempt": 1,
+  "findings": [],
+  "evidence": [],
+  "gaps": [
+    "the demand branch reported an error: the branch did not finish in 73.4 s; providers: socialcrawl quota exceeded, google_trends_api not configured",
+    "the social branch reported an error: the branch did not finish in 74 s",
+    "no search interest series was collected, so demand over time is unknown",
+    "the run stopped at its time limit of 300 s"
+  ],
+  "conflicts": [],
+  "confidence": 0.3,
+  "started_at": "2026-11-24T02:21:05.047009Z",
+  "completed_at": "2026-11-24T02:26:05.397009Z",
+  "error": null,
+  "metadata": {
+    "worker_schema_version": "1.0",
+    "run_id": "1bb310cf-6894-4a65-b327-010854ad8da6.a1",
+    "control_summary": {
+      "status": "partial",
+      "headline": "263 evidence items were collected from 5 platform(s) and 0 finding(s) were written; 3 critical and 1 minor coverage gap(s) remain.",
+      "overall_confidence": "low",
+      "findings_count": 0,
+      "evidence_count": 263,
+      "coverage": {
+        "by_platform": {
+          "x": 69,
+          "reddit": 66,
+          "facebook": 52,
+          "instagram": 42,
+          "unknown": 20,
+          "youtube": 14
+        },
+        "by_source_type": {
+          "social_post": 209,
+          "social_comment": 34,
+          "news": 20
+        },
+        "by_language": {
+          "en": 198,
+          "ar": 46,
+          "unknown": 8,
+          "zh": 4,
+          "vi": 2,
+          "es": 1,
+          "fr": 1,
+          "ko": 1,
+          "no": 1,
+          "so": 1
+        },
+        "relevance_filter": {
+          "enabled": true,
+          "item_types": [
+            "social_comment"
+          ],
+          "token_estimate": "tokens are an estimate: characters divided by 4",
+          "comments_in": 44,
+          "dropped": {
+            "link_only": 1,
+            "mentions_only": 1,
+            "too_short": 3,
+            "empty": 5
+          },
+          "kept": 34,
+          "kept_by_reason": {
+            "kept_on_error": 20,
+            "term_match": 14
+          },
+          "sent_to_llm": 20,
+          "tokens_before": 1703,
+          "tokens_after": 1686,
+          "by_platform": {
+            "facebook": {
+              "comments_in": 25,
+              "dropped": {
+                "link_only": 1,
+                "mentions_only": 1,
+                "too_short": 1
+              },
+              "kept": 22,
+              "kept_by_reason": {
+                "kept_on_error": 11,
+                "term_match": 11
+              },
+              "sent_to_llm": 11,
+              "tokens_before": 1112,
+              "tokens_after": 1101
+            },
+            "instagram": {
+              "comments_in": 19,
+              "dropped": {
+                "empty": 5,
+                "too_short": 2
+              },
+              "kept": 12,
+              "kept_by_reason": {
+                "kept_on_error": 9,
+                "term_match": 3
+              },
+              "sent_to_llm": 9,
+              "tokens_before": 592,
+              "tokens_after": 585
+            }
+          }
+        }
+      },
+      "gaps": [
+        "the demand branch reported an error: the branch did not finish in 73.4 s; providers: socialcrawl quota exceeded, google_trends_api not configured",
+        "the social branch reported an error: the branch did not finish in 74 s",
+        "no search interest series was collected, so demand over time is unknown",
+        "the run stopped at its time limit of 300 s"
+      ],
+      "warnings": [
+        "the planner failed (OpenAIInvalidRequestError); a default plan was used",
+        "the relevance filter ran out of time (60 s) for 20 comment(s); they were kept",
+        "the run stopped at its time limit of 300 s"
+      ],
+      "budget_used": {
+        "tool_calls": 23.0,
+        "cost_usd": 0.2717,
+        "seconds": 300.35
+      }
+    },
+    "artifact": {
+      "result_location": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\artifacts\\runs\\2aaf080a301c155b6e6c1bd159ecd8ad\\customer_trends_tracing.json",
+      "evidence_store": "C:\\Users\\GIGA BYIT\\Desktop\\optimized_version2\\backend\\data\\evidence.db",
+      "evidence_count": 263,
+      "batch_ids": [
+        "b_319ff56e676f",
+        "b_8a93f0403815",
+        "b_ef0c40d67cb8",
+        "b_60825d4f1bd4",
+        "b_d019c98f4836",
+        "b_81155767f8f4",
+        "b_2934e4eddebc",
+        "b_74c6fdd15f27",
+        "b_34fa2a620d5d",
+        "b_c47e7ff3e967",
+        "b_6204c00bc178",
+        "b_05a8773304f3",
+        "b_072c06b230e9",
+        "b_6f40c86ef2f6",
+        "b_59207c93fd23",
+        "b_c41839406b38",
+        "b_17bbfa59bfec",
+        "b_b8f85269d3c1",
+        "b_39e25e4cdd8d",
+        "b_aed74139e3ed"
+      ]
+    },
+    "finding_metrics": {},
+    "themes": [],
+    "trend_series": [],
+    "official_accounts": [
+      {
+        "owner": "NVIDIA",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/nvidiageforceme",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/nvidiageforceme",
+        "is_entity": true
+      },
+      {
+        "owner": "NVIDIA",
+        "platform": "x",
+        "url": "https://x.com/nvidiageforceme",
+        "is_entity": true
+      },
+      {
+        "owner": "Intel",
+        "platform": "facebook",
+        "url": "https://www.facebook.com/Intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel",
+        "platform": "instagram",
+        "url": "https://www.instagram.com/intel",
+        "is_entity": false
+      },
+      {
+        "owner": "Intel",
+        "platform": "x",
+        "url": "https://x.com/intel",
+        "is_entity": false
+      }
+    ],
+    "stance_counts": {},
+    "research_goal": "What are cloud hyperscalers, enterprise data centers, sovereign AI nations, PC gamers, and AV/robotics OEMs saying about NVIDIA Blackwell GPUs versus competitor offerings?",
+    "research_focus": "Customer sentiment, needs, complaints, reviews, social conversation, and search interest around B200, GB200 NVL72, and rival AI hardware."
+  }
+}

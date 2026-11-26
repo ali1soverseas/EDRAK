@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "analysis_id": "2aaf080a301c155b6e6c1bd159ecd8ad",
+  "status": "completed",
+  "started_at_utc": "2026-11-24T02:21:01.652643+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-24T02:21:04.920020+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T02:23:57.453950+00:00",
+      "artifacts": [
+        "inputs\\worker_internal_intelligence_attempt_1_6d87370f-b13.json",
+        "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_001.json",
+        "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_002.json",
+        "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_003.json",
+        "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_004.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T02:26:05.494265+00:00",
+      "artifacts": [
+        "inputs\\worker_customer_trends_attempt_1_1bb310cf-689.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T02:44:29.735411+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_0221e05f-dcd.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T03:04:38.814244+00:00",
+      "artifacts": [
+        "inputs\\worker_market_intelligence_attempt_1_694c829a-817.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-24T03:05:14.185079+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-24T03:07:07.893925+00:00",
+      "artifacts": [
+        "outputs\\human_review_007.json"
+      ]
+    },
+    {
+      "node": "cross_signal",
+      "completed_at_utc": "2026-11-24T03:13:19.983670+00:00",
+      "artifacts": [
+        "inputs\\cross_signal.json"
+      ]
+    },
+    {
+      "node": "decision_analysis",
+      "completed_at_utc": "2026-11-24T03:17:02.531413+00:00",
+      "artifacts": [
+        "inputs\\decision_analysis.json"
+      ]
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-11-24T03:17:02.669322+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:6d87370f-b13c-46be-9a78-fca3038d3abb:1": "inputs\\worker_internal_intelligence_attempt_1_6d87370f-b13.json",
+    "rag:6d87370f-b13c-46be-9a78-fca3038d3abb:1:1": "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_001.json",
+    "rag:6d87370f-b13c-46be-9a78-fca3038d3abb:1:2": "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_002.json",
+    "rag:6d87370f-b13c-46be-9a78-fca3038d3abb:1:3": "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_003.json",
+    "rag:6d87370f-b13c-46be-9a78-fca3038d3abb:1:4": "inputs\\rag_internal_intelligence_attempt_1_6d87370f-b13_004.json",
+    "worker:1bb310cf-6894-4a65-b327-010854ad8da6:1": "inputs\\worker_customer_trends_attempt_1_1bb310cf-689.json",
+    "worker:0221e05f-dcd7-4511-a8e1-9eabac974cc5:1": "inputs\\worker_competitor_intelligence_attempt_1_0221e05f-dcd.json",
+    "worker:694c829a-817a-4a98-9cfb-8a7bb1183c53:1": "inputs\\worker_market_intelligence_attempt_1_694c829a-817.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "cross_signal": "inputs\\cross_signal.json",
+    "decision_analysis": "inputs\\decision_analysis.json",
+    "orchestration_result": "inputs\\orchestration_result.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-24T03:17:02.779607+00:00",
+  "completed_at_utc": "2026-11-24T03:17:02.779580+00:00"
+}

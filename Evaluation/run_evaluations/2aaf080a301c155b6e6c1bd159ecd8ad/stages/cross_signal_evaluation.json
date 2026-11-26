@@ -1,0 +1,1116 @@
+{
+  "status": "completed",
+  "source_input": "artifacts\\runs\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\cross_signal\\input.json",
+  "source_output": "artifacts\\runs\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\cross_signal\\output.json",
+  "deterministic_checks": {
+    "verified_input_finding_count": 107,
+    "signal_count": 6,
+    "signals_without_two_distinct_supporting_findings": [],
+    "signals_with_unverified_or_unknown_references": {},
+    "duplicate_signal_titles": [],
+    "empty_signal_output": false
+  },
+  "quality_judgment": {
+    "status": "partial",
+    "score": 0.4286,
+    "reason": "Combined-golden criteria evaluated with mandatory LLM judging and second-pass review.",
+    "method": "criterion-level DeepEval G-Eval with second-pass retrieval"
+  },
+  "benchmark_evaluation": {
+    "worker": "cross_signal",
+    "task_goal": "What are our competitors doing, and what does it mean for NVIDIA?",
+    "deterministic_checks": {
+      "finding_count": 0,
+      "evidence_item_count": 0,
+      "gap_count": 0,
+      "evidence_reference_rate": null,
+      "reference_resolution_rate": null,
+      "quote_verification_rate": null,
+      "findings_with_unsupported_numbers": 0,
+      "status_claim_conflicts": 0,
+      "mean_numeric_confidence": null,
+      "per_finding": [],
+      "note": "Deterministic string checks against extracted evidence; they flag review candidates, not proof of truth or falsehood."
+    },
+    "ground_truth_snapshot_date": null,
+    "ground_truth_dataset_version": "2.0.0-rubric-only",
+    "finding_count": 7,
+    "mandatory_finding_count": 7,
+    "coverage_score": 0.4286,
+    "strict_coverage_score": 0.0,
+    "coverage_definition": "Final reconciled mandatory findings: covered=1, partial=0.5, missing=0; errors excluded. Strict coverage counts covered findings only.",
+    "evaluation_config": {
+      "thresholds": {
+        "covered": 0.7,
+        "partial": 0.4
+      },
+      "embeddings": {
+        "provider": "sentence_transformers",
+        "model": "all-MiniLM-L6-v2",
+        "device": null,
+        "batch_size": 64
+      },
+      "scoring": {
+        "mandatory_only": true,
+        "partial_credit": 0.5
+      },
+      "worker_quality": {
+        "enabled": true,
+        "metrics": {},
+        "thresholds": {
+          "pass": 0.7,
+          "partial": 0.4
+        },
+        "max_report_chars": 30000,
+        "max_evidence_chars": 18000
+      }
+    },
+    "judge_status": "completed",
+    "judge_errors": [],
+    "second_pass_summary": {
+      "enabled": true,
+      "required": true,
+      "status": "completed",
+      "top_k": 5,
+      "retrieval_method": "sentence_transformers_cosine",
+      "passage_count": 162,
+      "initial_missing_count": 1,
+      "initial_partial_count": 6,
+      "findings_reviewed": 7,
+      "findings_skipped_partial": 0,
+      "findings_upgraded": 0,
+      "embedding_error": null,
+      "scope": "Missing and partial findings are eligible for second-pass retrieval and reassessment.",
+      "warning": "Retrieval similarity is not evidence of coverage or truth; review criterion-level judgments and passages."
+    },
+    "additional_claim_summary": {
+      "extracted_claim_count": 0,
+      "additional_candidates": 0,
+      "additional_candidates_supported_by_trace": 0,
+      "warning": "Novelty and support are separate LLM-assisted review signals, not proof of truth."
+    },
+    "scope_compliance": {
+      "enabled": true,
+      "required_entities": [],
+      "comparison_targets": [],
+      "entity_presence": {},
+      "all_required_entities_present": true,
+      "all_in_scope_competitors_present": true,
+      "competitor_presence": {},
+      "excluded_entities": [],
+      "excluded_entity_mentions": {},
+      "scope_violations": [],
+      "scope_policy_pass": true,
+      "policy": ""
+    },
+    "finding_results": [
+      {
+        "finding_id": "CS-01",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-UC-001",
+        "title": "Finding-level traceability",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "covered: Each signal lists the upstream finding IDs that support it. — The actual output successfully includes a list of upstream finding IDs for each signal, and each finding ID is explicitly linked to its corresponding signal with relevance explained. This aligns well with the expected output's requirement for finding-level traceability. However, the retrieval context does not contain content that could be mistaken for report content, which is a positive aspect. Overall, the output meets the acceptance criteria effectively.; missing: Supporting findings are verified upstream; no insufficient or unknown finding is used as support. — The Actual Output does not explicitly state that the supporting findings are verified upstream, which is a critical requirement outlined in the Expected Output. While the Actual Output lists supporting findings with their relevance, it fails to confirm their verification status, leading to a partial satisfaction of the acceptance criteria. Additionally, the retrieval context does not provide any content that could be mistaken for supporting findings, which is a positive aspect. However, the lack of explicit verification results in a low score.; partial: Each supporting finding's relevance to the signal is explained. — The actual output includes relevant supporting findings for each signal, and their relevance is explained. However, while the explanations are generally clear, they lack some depth and specificity in connecting the findings to the primary claims. Additionally, the summary section does not fully encapsulate the required finding-level traceability as outlined in the expected output, which affects the overall completeness of the response.",
+        "criteria_results": [
+          {
+            "criterion": "Each signal lists the upstream finding IDs that support it.",
+            "score": 1.0,
+            "status": "covered",
+            "reason": "The actual output successfully includes a list of upstream finding IDs for each signal, and each finding ID is explicitly linked to its corresponding signal with relevance explained. This aligns well with the expected output's requirement for finding-level traceability. However, the retrieval context does not contain content that could be mistaken for report content, which is a positive aspect. Overall, the output meets the acceptance criteria effectively."
+          },
+          {
+            "criterion": "Supporting findings are verified upstream; no insufficient or unknown finding is used as support.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that the supporting findings are verified upstream, which is a critical requirement outlined in the Expected Output. While the Actual Output lists supporting findings with their relevance, it fails to confirm their verification status, leading to a partial satisfaction of the acceptance criteria. Additionally, the retrieval context does not provide any content that could be mistaken for supporting findings, which is a positive aspect. However, the lack of explicit verification results in a low score."
+          },
+          {
+            "criterion": "Each supporting finding's relevance to the signal is explained.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The actual output includes relevant supporting findings for each signal, and their relevance is explained. However, while the explanations are generally clear, they lack some depth and specificity in connecting the findings to the primary claims. Additionally, the summary section does not fully encapsulate the required finding-level traceability as outlined in the expected output, which affects the overall completeness of the response."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-01",
+          "requirement_id": "CS-TRACEABILITY",
+          "test_case_id": "CS-UC-001",
+          "title": "Finding-level traceability",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output fails to list upstream finding IDs for all signals, particularly missing for some signals. Additionally, while some supporting findings are provided, there is no confirmation that all findings are verified upstream, and the relevance explanations are incomplete or missing for several signals. Overall, the acceptance criteria are not fully met.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].decision_areas[2]",
+              "text": "Sovereign AI infrastructure partnerships in Japan",
+              "similarity": 0.251777
+            },
+            {
+              "source_path": "$.stage_output.signals[4].supporting_findings[2].finding_id",
+              "text": "95ca26cb-0005-477a-b78d-7ac1c390e654",
+              "similarity": 0.229919
+            },
+            {
+              "source_path": "$.stage_output.signals[1].signal_id",
+              "text": "0c636210-5766-45e1-8d82-ce123ef2c2a6",
+              "similarity": 0.228696
+            },
+            {
+              "source_path": "$.stage_output.signals[5].supporting_findings[0].relevance",
+              "text": "Describes Broadcom custom accelerators built to customer specifications for hyperscalers and AI frontier model companies.",
+              "similarity": 0.22854
+            },
+            {
+              "source_path": "$.stage_output.signals[4].supporting_findings[0].relevance",
+              "text": "Classifies H100, H200, B100, B200, GB200 under ECCN 3A090/4A090.",
+              "similarity": 0.22742
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-02",
+        "requirement_id": "CS-CROSS-DOMAIN",
+        "test_case_id": "CS-UC-001",
+        "title": "Cross-domain construction",
+        "priority": "mandatory",
+        "score": 0.30000000000000004,
+        "status": "partial",
+        "reason": "partial: Each signal combines findings from at least two different workers or domains (e.g., competitor and market, internal and customer), or is explicitly labeled single-domain. — The Actual Output includes signals from multiple domains, specifically 'market_intelligence' and 'competitor_intelligence', which aligns with the requirement for cross-domain construction. However, several signals are primarily focused on a single domain, and some findings appear to be restatements rather than unique insights. This limits the overall effectiveness in meeting the acceptance criteria fully.; missing: No signal is a restatement of a single upstream finding. — The actual output fails to meet the acceptance criteria as it primarily consists of signals that restate findings from a single domain, specifically market intelligence, without effectively combining insights from multiple domains. This indicates a lack of cross-domain construction, which is a key requirement for the evaluation. Additionally, the summary does not demonstrate a clear synthesis of findings across different research areas, further supporting the conclusion that the output does not align with the expected output.",
+        "criteria_results": [
+          {
+            "criterion": "Each signal combines findings from at least two different workers or domains (e.g., competitor and market, internal and customer), or is explicitly labeled single-domain.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output includes signals from multiple domains, specifically 'market_intelligence' and 'competitor_intelligence', which aligns with the requirement for cross-domain construction. However, several signals are primarily focused on a single domain, and some findings appear to be restatements rather than unique insights. This limits the overall effectiveness in meeting the acceptance criteria fully."
+          },
+          {
+            "criterion": "No signal is a restatement of a single upstream finding.",
+            "score": 0.2,
+            "status": "missing",
+            "reason": "The actual output fails to meet the acceptance criteria as it primarily consists of signals that restate findings from a single domain, specifically market intelligence, without effectively combining insights from multiple domains. This indicates a lack of cross-domain construction, which is a key requirement for the evaluation. Additionally, the summary does not demonstrate a clear synthesis of findings across different research areas, further supporting the conclusion that the output does not align with the expected output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.30000000000000004,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-02",
+          "requirement_id": "CS-CROSS-DOMAIN",
+          "test_case_id": "CS-UC-001",
+          "title": "Cross-domain construction",
+          "priority": "mandatory",
+          "score": 0.3,
+          "status": "missing",
+          "reason": "The Actual Output does not demonstrate cross-domain construction as all signals appear to be derived from a single domain without clear evidence of combining findings from multiple workers or domains. Additionally, there is no indication that any signal is a restatement of a single upstream finding, but the lack of cross-domain integration is a significant shortcoming. Therefore, the acceptance criteria are not fully met.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[2].decision_areas[2]",
+              "text": "Sovereign AI infrastructure partnerships in Japan",
+              "similarity": 0.30507
+            },
+            {
+              "source_path": "$.stage_output.signals[5].affected_business_areas[1]",
+              "text": "Hyperscaler customer relationships",
+              "similarity": 0.258636
+            },
+            {
+              "source_path": "$.stage_output.signals[4].decision_areas[1]",
+              "text": "Regional go-to-market prioritization",
+              "similarity": 0.256231
+            },
+            {
+              "source_path": "$.stage_output.signals[5].evidence_gaps[0]",
+              "text": "Customer identities behind the $10 billion XPU orders",
+              "similarity": 0.215211
+            },
+            {
+              "source_path": "$.stage_output.signals[4].strategic_relevance",
+              "text": "Market access conditions determine where NVIDIA can compete freely versus where licensing friction or denial applies, directly affecting regional revenue and competitive positioning.",
+              "similarity": 0.206849
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.30000000000000004,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-03",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-UC-001",
+        "title": "Relationship and causal strength",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "partial: Explains the mechanism or logic linking the supporting findings. — The Actual Output lacks a clear explanation of the mechanism or logic linking the supporting findings to the primary claim. While it provides detailed information about the signals and their implications, it does not explicitly label the strength of the relationships as required by the evaluation steps. The absence of a summary that connects the findings to the primary claim weakens the overall clarity and completeness of the explanation.; partial: Labels the link's strength (association, plausible mechanism, or demonstrated causation), or uses wording that makes the strength clear. — The Actual Output does not explicitly label the link's strength as association, plausible mechanism, or demonstrated causation, which is a key requirement of the evaluation steps. While it provides detailed interpretations and implications, it lacks the necessary terminology to clearly indicate the strength of the relationships between findings. This omission leads to a lower score as it does not meet the acceptance criteria outlined in the Expected Output.",
+        "criteria_results": [
+          {
+            "criterion": "Explains the mechanism or logic linking the supporting findings.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output lacks a clear explanation of the mechanism or logic linking the supporting findings to the primary claim. While it provides detailed information about the signals and their implications, it does not explicitly label the strength of the relationships as required by the evaluation steps. The absence of a summary that connects the findings to the primary claim weakens the overall clarity and completeness of the explanation."
+          },
+          {
+            "criterion": "Labels the link's strength (association, plausible mechanism, or demonstrated causation), or uses wording that makes the strength clear.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output does not explicitly label the link's strength as association, plausible mechanism, or demonstrated causation, which is a key requirement of the evaluation steps. While it provides detailed interpretations and implications, it lacks the necessary terminology to clearly indicate the strength of the relationships between findings. This omission leads to a lower score as it does not meet the acceptance criteria outlined in the Expected Output."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.4,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-03",
+          "requirement_id": "CS-RELATIONSHIP",
+          "test_case_id": "CS-UC-001",
+          "title": "Relationship and causal strength",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output does not explain the mechanism or logic linking the supporting findings, nor does it label the link's strength as required by the acceptance criteria. The passages provide data points but lack the necessary context and clarity regarding the relationships between findings.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[5].affected_business_areas[1]",
+              "text": "Hyperscaler customer relationships",
+              "similarity": 0.204557
+            },
+            {
+              "source_path": "$.stage_output.signals[1].affected_business_areas[3]",
+              "text": "Blackwell hyperscale adoption",
+              "similarity": 0.181027
+            },
+            {
+              "source_path": "$.stage_output.signals[4].supporting_findings[0].relevance",
+              "text": "Classifies H100, H200, B100, B200, GB200 under ECCN 3A090/4A090.",
+              "similarity": 0.174982
+            },
+            {
+              "source_path": "$.stage_output.research_run_id",
+              "text": "2aaf080a301c155b6e6c1bd159ecd8ad",
+              "similarity": 0.17421
+            },
+            {
+              "source_path": "$.stage_output.signals[5].decision_areas[2]",
+              "text": "Custom silicon threat assessment",
+              "similarity": 0.173135
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.4,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-UC-002",
+        "title": "Scope, dates, and confidence preserved",
+        "priority": "mandatory",
+        "score": 0.6333333333333333,
+        "status": "partial",
+        "reason": "partial: Preserves the company, product, and region scope of supporting findings. — The Actual Output provides detailed insights into NVIDIA's Blackwell product and its competitive landscape, including specific mentions of the company (NVIDIA), product (Blackwell), and region (Japan). However, it lacks a clear summary of confidence levels for each signal and does not explicitly preserve the required scope of supporting findings as outlined in the Expected Output. Additionally, while it addresses some elements, it does not fully meet the acceptance criteria regarding the preservation of dates and confidence levels, leading to a lower score.; covered: Carries forward source dates where upstream findings include them; missing dates are noted rather than invented. — The Actual Output includes relevant source dates, such as the March 2025 general availability for Azure ND GB200 v6, which aligns with the requirement to carry forward source dates. However, it does not explicitly note any missing dates, which is a shortcoming. The confidence levels for each signal are stated, meeting the acceptance criteria. Overall, while it meets some criteria, the lack of noting missing dates affects its alignment with the evaluation steps.; covered: States a confidence level for each signal. — The Actual Output clearly states confidence levels for each signal, aligning with the requirement to state confidence. However, while it preserves the scope of supporting findings and carries forward relevant dates, it lacks explicit mention of the source dates for some findings, which is a shortcoming. Overall, the clarity and completeness of the confidence levels are good, but the absence of noted missing dates affects the score.",
+        "criteria_results": [
+          {
+            "criterion": "Preserves the company, product, and region scope of supporting findings.",
+            "score": 0.5,
+            "status": "partial",
+            "reason": "The Actual Output provides detailed insights into NVIDIA's Blackwell product and its competitive landscape, including specific mentions of the company (NVIDIA), product (Blackwell), and region (Japan). However, it lacks a clear summary of confidence levels for each signal and does not explicitly preserve the required scope of supporting findings as outlined in the Expected Output. Additionally, while it addresses some elements, it does not fully meet the acceptance criteria regarding the preservation of dates and confidence levels, leading to a lower score."
+          },
+          {
+            "criterion": "Carries forward source dates where upstream findings include them; missing dates are noted rather than invented.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output includes relevant source dates, such as the March 2025 general availability for Azure ND GB200 v6, which aligns with the requirement to carry forward source dates. However, it does not explicitly note any missing dates, which is a shortcoming. The confidence levels for each signal are stated, meeting the acceptance criteria. Overall, while it meets some criteria, the lack of noting missing dates affects its alignment with the evaluation steps."
+          },
+          {
+            "criterion": "States a confidence level for each signal.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output clearly states confidence levels for each signal, aligning with the requirement to state confidence. However, while it preserves the scope of supporting findings and carries forward relevant dates, it lacks explicit mention of the source dates for some findings, which is a shortcoming. Overall, the clarity and completeness of the confidence levels are good, but the absence of noted missing dates affects the score."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-04",
+          "requirement_id": "CS-CONTEXT",
+          "test_case_id": "CS-UC-002",
+          "title": "Scope, dates, and confidence preserved",
+          "priority": "mandatory",
+          "score": 0.4,
+          "status": "partial",
+          "reason": "The Actual Output partially meets the acceptance criteria by preserving the company and product scope, but it fails to carry forward source dates from upstream findings and does not state a confidence level for each signal. This results in significant shortcomings in alignment with the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[0].supporting_findings[1].relevance",
+              "text": "Provides the March 2025 general availability timing for Azure ND GB200 v6.",
+              "similarity": 0.317891
+            },
+            {
+              "source_path": "$.stage_output.signals[3].decision_areas[2]",
+              "text": "Alternative packaging qualification",
+              "similarity": 0.278365
+            },
+            {
+              "source_path": "$.stage_output.signals[2].evidence_gaps[0]",
+              "text": "Actual commercial launch dates for KDDI/HPE versus SoftBank Blackwell deployments in Japan.",
+              "similarity": 0.251529
+            },
+            {
+              "source_path": "$.stage_output.signals[4].evidence_gaps[0]",
+              "text": "License approval rates and processing times",
+              "similarity": 0.250319
+            },
+            {
+              "source_path": "$.stage_output.signals[0].dependencies[0]",
+              "text": "Blackwell supply availability relative to Hopper determines whether customers bridge with Hopper or adopt Blackwell immediately.",
+              "similarity": 0.239544
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-05",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-UC-002",
+        "title": "Calibrated impact and retained uncertainty",
+        "priority": "mandatory",
+        "score": 0.5333333333333333,
+        "status": "partial",
+        "reason": "partial: Quantitative impacts appear only when upstream findings contain the numbers. — The Actual Output includes some quantitative impacts, such as the deployment of nearly one thousand NVL72 racks per week and specific investment amounts from Microsoft and AWS. However, it lacks comprehensive quantitative analysis derived from upstream findings, as required by the Expected Output. While evidence gaps are mentioned, the report does not clearly state conflicts among supporting findings, which is a critical acceptance criterion.; partial: States evidence gaps or counterevidence for each signal. — The Actual Output identifies evidence gaps for each signal, which aligns with the requirement to state evidence gaps or counterevidence. However, it lacks a clear calibration of impact and retained uncertainty, as it does not quantify the impacts or explicitly state conflicts among supporting findings. While it provides substantial information, it does not fully meet the acceptance criteria outlined in the Expected Output.; partial: If supporting findings conflict, the conflict is stated rather than averaged away; if no conflict exists among supporting findings, this criterion is satisfied. — The Actual Output provides a comprehensive overview of the competitive landscape and identifies several signals, but it fails to explicitly state conflicts among supporting findings, which is a critical requirement. While it mentions evidence gaps, it does not adequately retain uncertainty or counterevidence for each signal, which is necessary to meet the acceptance criteria. Additionally, the summary lacks clarity on whether the impacts exceed the evidence, which further detracts from its alignment with the evaluation steps.",
+        "criteria_results": [
+          {
+            "criterion": "Quantitative impacts appear only when upstream findings contain the numbers.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output includes some quantitative impacts, such as the deployment of nearly one thousand NVL72 racks per week and specific investment amounts from Microsoft and AWS. However, it lacks comprehensive quantitative analysis derived from upstream findings, as required by the Expected Output. While evidence gaps are mentioned, the report does not clearly state conflicts among supporting findings, which is a critical acceptance criterion."
+          },
+          {
+            "criterion": "States evidence gaps or counterevidence for each signal.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output identifies evidence gaps for each signal, which aligns with the requirement to state evidence gaps or counterevidence. However, it lacks a clear calibration of impact and retained uncertainty, as it does not quantify the impacts or explicitly state conflicts among supporting findings. While it provides substantial information, it does not fully meet the acceptance criteria outlined in the Expected Output."
+          },
+          {
+            "criterion": "If supporting findings conflict, the conflict is stated rather than averaged away; if no conflict exists among supporting findings, this criterion is satisfied.",
+            "score": 0.4,
+            "status": "partial",
+            "reason": "The Actual Output provides a comprehensive overview of the competitive landscape and identifies several signals, but it fails to explicitly state conflicts among supporting findings, which is a critical requirement. While it mentions evidence gaps, it does not adequately retain uncertainty or counterevidence for each signal, which is necessary to meet the acceptance criteria. Additionally, the summary lacks clarity on whether the impacts exceed the evidence, which further detracts from its alignment with the evaluation steps."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.5333333333333333,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-05",
+          "requirement_id": "CS-QUALIFICATION",
+          "test_case_id": "CS-UC-002",
+          "title": "Calibrated impact and retained uncertainty",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output lacks quantitative impacts as it does not provide necessary numbers from upstream findings, which is a critical requirement. Additionally, while it mentions evidence gaps, it does not clearly state counterevidence for each signal. There is no indication of conflicts among supporting findings, which is essential for alignment with the Expected Output. Overall, the acceptance criteria are not fully covered, leading to a low score.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[5].decision_areas[2]",
+              "text": "Custom silicon threat assessment",
+              "similarity": 0.239635
+            },
+            {
+              "source_path": "$.stage_output.signals[4].implications[0]",
+              "text": "China revenue is exposed to licensing requirements and potential denial.",
+              "similarity": 0.223261
+            },
+            {
+              "source_path": "$.stage_output.signals[0].supporting_findings[1].relevance",
+              "text": "Provides the March 2025 general availability timing for Azure ND GB200 v6.",
+              "similarity": 0.195832
+            },
+            {
+              "source_path": "$.stage_output.signals[4].evidence_gaps[0]",
+              "text": "License approval rates and processing times",
+              "similarity": 0.194999
+            },
+            {
+              "source_path": "$.stage_output.signals[2].decision_areas[2]",
+              "text": "Sovereign AI infrastructure partnerships in Japan",
+              "similarity": 0.187499
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "initial_result_retained_second_pass_lower",
+        "final_score": 0.5333333333333333,
+        "final_status": "partial"
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-UC-002",
+        "title": "No unsupported signals",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "missing: Every emitted signal has the cross-domain support required by CS-02; candidate relationships lacking support are omitted or listed as evidence gaps. — The Actual Output does not explicitly state that every emitted signal has the required cross-domain support as per CS-02. While it lists several signals, it fails to confirm that all emitted signals are supported or that unsupported candidates are omitted or recorded as gaps. Additionally, it does not clearly indicate if any unsupported signals exist, which is a critical requirement of the evaluation steps. Therefore, it does not meet the acceptance criteria.; missing: If no defensible signal exists, the output says so and names the missing evidence; when supported signals are emitted, abstention is not expected and this criterion is satisfied. — The Actual Output does not explicitly state whether there is a defensible signal present or not, which is a critical requirement of the evaluation steps. While it provides detailed signals and supporting findings, it fails to address the absence of unsupported signals or name missing evidence clearly. Additionally, the Expected Output criteria are not fully met as the Actual Output does not confirm the presence of defensible signals. Therefore, the alignment with the evaluation steps is weak.",
+        "criteria_results": [
+          {
+            "criterion": "Every emitted signal has the cross-domain support required by CS-02; candidate relationships lacking support are omitted or listed as evidence gaps.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state that every emitted signal has the required cross-domain support as per CS-02. While it lists several signals, it fails to confirm that all emitted signals are supported or that unsupported candidates are omitted or recorded as gaps. Additionally, it does not clearly indicate if any unsupported signals exist, which is a critical requirement of the evaluation steps. Therefore, it does not meet the acceptance criteria."
+          },
+          {
+            "criterion": "If no defensible signal exists, the output says so and names the missing evidence; when supported signals are emitted, abstention is not expected and this criterion is satisfied.",
+            "score": 0.3,
+            "status": "missing",
+            "reason": "The Actual Output does not explicitly state whether there is a defensible signal present or not, which is a critical requirement of the evaluation steps. While it provides detailed signals and supporting findings, it fails to address the absence of unsupported signals or name missing evidence clearly. Additionally, the Expected Output criteria are not fully met as the Actual Output does not confirm the presence of defensible signals. Therefore, the alignment with the evaluation steps is weak."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.3,
+        "initial_status": "missing",
+        "second_pass": {
+          "finding_id": "CS-06",
+          "requirement_id": "CS-ABSTENTION",
+          "test_case_id": "CS-UC-002",
+          "title": "No unsupported signals",
+          "priority": "mandatory",
+          "score": 0.2,
+          "status": "missing",
+          "reason": "The Actual Output lists several signals but does not indicate whether any unsupported signals were omitted or recorded as gaps, which is a critical requirement. Additionally, it fails to state the absence of defensible signals or name any missing evidence, which is necessary for full compliance with the acceptance criteria. Therefore, it does not meet the expectations outlined in the evaluation steps.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[4].supporting_findings[0].finding_id",
+              "text": "cf3afa55-fefa-4cc9-af18-af1eeb527a25",
+              "similarity": 0.28066
+            },
+            {
+              "source_path": "$.stage_output.signals[1].signal_id",
+              "text": "0c636210-5766-45e1-8d82-ce123ef2c2a6",
+              "similarity": 0.277191
+            },
+            {
+              "source_path": "$.stage_output.signals[5].supporting_findings[2].finding_id",
+              "text": "f995be2b-3cd5-4a2f-96f1-b3e4cdbcdcb7",
+              "similarity": 0.268172
+            },
+            {
+              "source_path": "$.stage_output.signals[4].supporting_findings[2].finding_id",
+              "text": "95ca26cb-0005-477a-b78d-7ac1c390e654",
+              "similarity": 0.264996
+            },
+            {
+              "source_path": "$.stage_output.signals[3].supporting_findings[0].finding_id",
+              "text": "b9ea15e4-6b84-48c8-8da7-7eac028df005",
+              "similarity": 0.263747
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.3,
+        "final_status": "missing"
+      },
+      {
+        "finding_id": "CS-07",
+        "requirement_id": "CS-DECISION-RELEVANCE",
+        "test_case_id": "CS-UC-002",
+        "title": "Decision relevance for NVIDIA",
+        "priority": "mandatory",
+        "score": 0.6499999999999999,
+        "status": "partial",
+        "reason": "covered: Each signal states a decision question, strategic relevance, or risk relevance for NVIDIA. — The Actual Output effectively addresses the decision relevance for NVIDIA by including decision questions, strategic relevance, and risk relevance for each signal. However, while it provides a comprehensive summary and detailed implications, it lacks explicit labeling of implications as interpretations rather than facts, which is a key requirement from the Expected Output. This oversight affects the completeness of the response.; partial: Implications are labeled as interpretation rather than fact. — The Actual Output includes decision questions and strategic relevance for NVIDIA, which aligns with the evaluation steps. However, while implications are labeled as interpretations, the clarity of this labeling could be improved. Some implications could be misinterpreted as facts without clear differentiation, which partially satisfies the acceptance criteria.",
+        "criteria_results": [
+          {
+            "criterion": "Each signal states a decision question, strategic relevance, or risk relevance for NVIDIA.",
+            "score": 0.7,
+            "status": "covered",
+            "reason": "The Actual Output effectively addresses the decision relevance for NVIDIA by including decision questions, strategic relevance, and risk relevance for each signal. However, while it provides a comprehensive summary and detailed implications, it lacks explicit labeling of implications as interpretations rather than facts, which is a key requirement from the Expected Output. This oversight affects the completeness of the response."
+          },
+          {
+            "criterion": "Implications are labeled as interpretation rather than fact.",
+            "score": 0.6,
+            "status": "partial",
+            "reason": "The Actual Output includes decision questions and strategic relevance for NVIDIA, which aligns with the evaluation steps. However, while implications are labeled as interpretations, the clarity of this labeling could be improved. Some implications could be misinterpreted as facts without clear differentiation, which partially satisfies the acceptance criteria."
+          }
+        ],
+        "method": "criterion-level DeepEval G-Eval",
+        "initial_score": 0.6499999999999999,
+        "initial_status": "partial",
+        "second_pass": {
+          "finding_id": "CS-07",
+          "requirement_id": "CS-DECISION-RELEVANCE",
+          "test_case_id": "CS-UC-002",
+          "title": "Decision relevance for NVIDIA",
+          "priority": "mandatory",
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output partially addresses the acceptance criteria by including passages that discuss strategic relevance for NVIDIA, such as market access conditions and custom silicon substitution. However, it lacks clarity in labeling implications as interpretations rather than facts, which is a mandatory requirement. Therefore, while some criteria are met, the failure to fully comply with the labeling requirement significantly impacts the overall alignment.",
+          "method": "DeepEval second-pass retrieved passages",
+          "retrieval_method": "sentence_transformers_cosine",
+          "retrieved_candidates": [
+            {
+              "source_path": "$.stage_output.signals[4].strategic_relevance",
+              "text": "Market access conditions determine where NVIDIA can compete freely versus where licensing friction or denial applies, directly affecting regional revenue and competitive positioning.",
+              "similarity": 0.483873
+            },
+            {
+              "source_path": "$.task_goal",
+              "text": "What are our competitors doing, and what does it mean for NVIDIA?",
+              "similarity": 0.435212
+            },
+            {
+              "source_path": "$.stage_output.signals[5].implications[1]",
+              "text": "NVIDIA's GPU demand from hyperscalers is exposed to custom silicon substitution.",
+              "similarity": 0.395393
+            },
+            {
+              "source_path": "$.stage_output.signals[5].strategic_relevance",
+              "text": "Custom silicon is a structural substitute for NVIDIA GPUs in hyperscale training and inference, directly eroding NVIDIA's core data center market.",
+              "similarity": 0.393784
+            },
+            {
+              "source_path": "$.stage_output.signals[4].interpretation",
+              "text": "Export rules condition where NVIDIA can ship Blackwell without license friction, creating a split between open markets (Europe, Japan) and restricted markets (China) that shapes regional revenue potential.",
+              "similarity": 0.373594
+            }
+          ]
+        },
+        "second_pass_applied": false,
+        "reconciliation": "both_passes_agree",
+        "final_score": 0.6499999999999999,
+        "final_status": "partial"
+      }
+    ],
+    "second_pass_results": [
+      {
+        "finding_id": "CS-01",
+        "requirement_id": "CS-TRACEABILITY",
+        "test_case_id": "CS-UC-001",
+        "title": "Finding-level traceability",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output fails to list upstream finding IDs for all signals, particularly missing for some signals. Additionally, while some supporting findings are provided, there is no confirmation that all findings are verified upstream, and the relevance explanations are incomplete or missing for several signals. Overall, the acceptance criteria are not fully met.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].decision_areas[2]",
+            "text": "Sovereign AI infrastructure partnerships in Japan",
+            "similarity": 0.251777
+          },
+          {
+            "source_path": "$.stage_output.signals[4].supporting_findings[2].finding_id",
+            "text": "95ca26cb-0005-477a-b78d-7ac1c390e654",
+            "similarity": 0.229919
+          },
+          {
+            "source_path": "$.stage_output.signals[1].signal_id",
+            "text": "0c636210-5766-45e1-8d82-ce123ef2c2a6",
+            "similarity": 0.228696
+          },
+          {
+            "source_path": "$.stage_output.signals[5].supporting_findings[0].relevance",
+            "text": "Describes Broadcom custom accelerators built to customer specifications for hyperscalers and AI frontier model companies.",
+            "similarity": 0.22854
+          },
+          {
+            "source_path": "$.stage_output.signals[4].supporting_findings[0].relevance",
+            "text": "Classifies H100, H200, B100, B200, GB200 under ECCN 3A090/4A090.",
+            "similarity": 0.22742
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-02",
+        "requirement_id": "CS-CROSS-DOMAIN",
+        "test_case_id": "CS-UC-001",
+        "title": "Cross-domain construction",
+        "priority": "mandatory",
+        "score": 0.3,
+        "status": "missing",
+        "reason": "The Actual Output does not demonstrate cross-domain construction as all signals appear to be derived from a single domain without clear evidence of combining findings from multiple workers or domains. Additionally, there is no indication that any signal is a restatement of a single upstream finding, but the lack of cross-domain integration is a significant shortcoming. Therefore, the acceptance criteria are not fully met.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[2].decision_areas[2]",
+            "text": "Sovereign AI infrastructure partnerships in Japan",
+            "similarity": 0.30507
+          },
+          {
+            "source_path": "$.stage_output.signals[5].affected_business_areas[1]",
+            "text": "Hyperscaler customer relationships",
+            "similarity": 0.258636
+          },
+          {
+            "source_path": "$.stage_output.signals[4].decision_areas[1]",
+            "text": "Regional go-to-market prioritization",
+            "similarity": 0.256231
+          },
+          {
+            "source_path": "$.stage_output.signals[5].evidence_gaps[0]",
+            "text": "Customer identities behind the $10 billion XPU orders",
+            "similarity": 0.215211
+          },
+          {
+            "source_path": "$.stage_output.signals[4].strategic_relevance",
+            "text": "Market access conditions determine where NVIDIA can compete freely versus where licensing friction or denial applies, directly affecting regional revenue and competitive positioning.",
+            "similarity": 0.206849
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-03",
+        "requirement_id": "CS-RELATIONSHIP",
+        "test_case_id": "CS-UC-001",
+        "title": "Relationship and causal strength",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output does not explain the mechanism or logic linking the supporting findings, nor does it label the link's strength as required by the acceptance criteria. The passages provide data points but lack the necessary context and clarity regarding the relationships between findings.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[5].affected_business_areas[1]",
+            "text": "Hyperscaler customer relationships",
+            "similarity": 0.204557
+          },
+          {
+            "source_path": "$.stage_output.signals[1].affected_business_areas[3]",
+            "text": "Blackwell hyperscale adoption",
+            "similarity": 0.181027
+          },
+          {
+            "source_path": "$.stage_output.signals[4].supporting_findings[0].relevance",
+            "text": "Classifies H100, H200, B100, B200, GB200 under ECCN 3A090/4A090.",
+            "similarity": 0.174982
+          },
+          {
+            "source_path": "$.stage_output.research_run_id",
+            "text": "2aaf080a301c155b6e6c1bd159ecd8ad",
+            "similarity": 0.17421
+          },
+          {
+            "source_path": "$.stage_output.signals[5].decision_areas[2]",
+            "text": "Custom silicon threat assessment",
+            "similarity": 0.173135
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-04",
+        "requirement_id": "CS-CONTEXT",
+        "test_case_id": "CS-UC-002",
+        "title": "Scope, dates, and confidence preserved",
+        "priority": "mandatory",
+        "score": 0.4,
+        "status": "partial",
+        "reason": "The Actual Output partially meets the acceptance criteria by preserving the company and product scope, but it fails to carry forward source dates from upstream findings and does not state a confidence level for each signal. This results in significant shortcomings in alignment with the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[0].supporting_findings[1].relevance",
+            "text": "Provides the March 2025 general availability timing for Azure ND GB200 v6.",
+            "similarity": 0.317891
+          },
+          {
+            "source_path": "$.stage_output.signals[3].decision_areas[2]",
+            "text": "Alternative packaging qualification",
+            "similarity": 0.278365
+          },
+          {
+            "source_path": "$.stage_output.signals[2].evidence_gaps[0]",
+            "text": "Actual commercial launch dates for KDDI/HPE versus SoftBank Blackwell deployments in Japan.",
+            "similarity": 0.251529
+          },
+          {
+            "source_path": "$.stage_output.signals[4].evidence_gaps[0]",
+            "text": "License approval rates and processing times",
+            "similarity": 0.250319
+          },
+          {
+            "source_path": "$.stage_output.signals[0].dependencies[0]",
+            "text": "Blackwell supply availability relative to Hopper determines whether customers bridge with Hopper or adopt Blackwell immediately.",
+            "similarity": 0.239544
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-05",
+        "requirement_id": "CS-QUALIFICATION",
+        "test_case_id": "CS-UC-002",
+        "title": "Calibrated impact and retained uncertainty",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output lacks quantitative impacts as it does not provide necessary numbers from upstream findings, which is a critical requirement. Additionally, while it mentions evidence gaps, it does not clearly state counterevidence for each signal. There is no indication of conflicts among supporting findings, which is essential for alignment with the Expected Output. Overall, the acceptance criteria are not fully covered, leading to a low score.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[5].decision_areas[2]",
+            "text": "Custom silicon threat assessment",
+            "similarity": 0.239635
+          },
+          {
+            "source_path": "$.stage_output.signals[4].implications[0]",
+            "text": "China revenue is exposed to licensing requirements and potential denial.",
+            "similarity": 0.223261
+          },
+          {
+            "source_path": "$.stage_output.signals[0].supporting_findings[1].relevance",
+            "text": "Provides the March 2025 general availability timing for Azure ND GB200 v6.",
+            "similarity": 0.195832
+          },
+          {
+            "source_path": "$.stage_output.signals[4].evidence_gaps[0]",
+            "text": "License approval rates and processing times",
+            "similarity": 0.194999
+          },
+          {
+            "source_path": "$.stage_output.signals[2].decision_areas[2]",
+            "text": "Sovereign AI infrastructure partnerships in Japan",
+            "similarity": 0.187499
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-06",
+        "requirement_id": "CS-ABSTENTION",
+        "test_case_id": "CS-UC-002",
+        "title": "No unsupported signals",
+        "priority": "mandatory",
+        "score": 0.2,
+        "status": "missing",
+        "reason": "The Actual Output lists several signals but does not indicate whether any unsupported signals were omitted or recorded as gaps, which is a critical requirement. Additionally, it fails to state the absence of defensible signals or name any missing evidence, which is necessary for full compliance with the acceptance criteria. Therefore, it does not meet the expectations outlined in the evaluation steps.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[4].supporting_findings[0].finding_id",
+            "text": "cf3afa55-fefa-4cc9-af18-af1eeb527a25",
+            "similarity": 0.28066
+          },
+          {
+            "source_path": "$.stage_output.signals[1].signal_id",
+            "text": "0c636210-5766-45e1-8d82-ce123ef2c2a6",
+            "similarity": 0.277191
+          },
+          {
+            "source_path": "$.stage_output.signals[5].supporting_findings[2].finding_id",
+            "text": "f995be2b-3cd5-4a2f-96f1-b3e4cdbcdcb7",
+            "similarity": 0.268172
+          },
+          {
+            "source_path": "$.stage_output.signals[4].supporting_findings[2].finding_id",
+            "text": "95ca26cb-0005-477a-b78d-7ac1c390e654",
+            "similarity": 0.264996
+          },
+          {
+            "source_path": "$.stage_output.signals[3].supporting_findings[0].finding_id",
+            "text": "b9ea15e4-6b84-48c8-8da7-7eac028df005",
+            "similarity": 0.263747
+          }
+        ]
+      },
+      {
+        "finding_id": "CS-07",
+        "requirement_id": "CS-DECISION-RELEVANCE",
+        "test_case_id": "CS-UC-002",
+        "title": "Decision relevance for NVIDIA",
+        "priority": "mandatory",
+        "score": 0.6,
+        "status": "partial",
+        "reason": "The Actual Output partially addresses the acceptance criteria by including passages that discuss strategic relevance for NVIDIA, such as market access conditions and custom silicon substitution. However, it lacks clarity in labeling implications as interpretations rather than facts, which is a mandatory requirement. Therefore, while some criteria are met, the failure to fully comply with the labeling requirement significantly impacts the overall alignment.",
+        "method": "DeepEval second-pass retrieved passages",
+        "retrieval_method": "sentence_transformers_cosine",
+        "retrieved_candidates": [
+          {
+            "source_path": "$.stage_output.signals[4].strategic_relevance",
+            "text": "Market access conditions determine where NVIDIA can compete freely versus where licensing friction or denial applies, directly affecting regional revenue and competitive positioning.",
+            "similarity": 0.483873
+          },
+          {
+            "source_path": "$.task_goal",
+            "text": "What are our competitors doing, and what does it mean for NVIDIA?",
+            "similarity": 0.435212
+          },
+          {
+            "source_path": "$.stage_output.signals[5].implications[1]",
+            "text": "NVIDIA's GPU demand from hyperscalers is exposed to custom silicon substitution.",
+            "similarity": 0.395393
+          },
+          {
+            "source_path": "$.stage_output.signals[5].strategic_relevance",
+            "text": "Custom silicon is a structural substitute for NVIDIA GPUs in hyperscale training and inference, directly eroding NVIDIA's core data center market.",
+            "similarity": 0.393784
+          },
+          {
+            "source_path": "$.stage_output.signals[4].interpretation",
+            "text": "Export rules condition where NVIDIA can ship Blackwell without license friction, creating a split between open markets (Europe, Japan) and restricted markets (China) that shapes regional revenue potential.",
+            "similarity": 0.373594
+          }
+        ]
+      }
+    ],
+    "additional_claim_results": [],
+    "worker_result_quality": {
+      "enabled": true,
+      "metric_count": 4,
+      "scoreable_metric_count": 4,
+      "overall_score": 0.725,
+      "overall_status": "pass",
+      "aggregation": "Unweighted mean of scoreable metric scores; not a probability of correctness. Faithfulness is marked not evaluable when trace evidence is absent.",
+      "metrics": {
+        "relevancy": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The actual output effectively addresses the research goal by providing detailed insights into competitors' actions, specifically Broadcom's custom silicon production and its implications for NVIDIA. It discusses market dynamics, deployment timelines, and strategic relevance, aligning well with the input question. However, the summary lacks a clear synthesis of the findings, which could enhance clarity and focus. Overall, the output is relevant and informative but could benefit from improved organization.",
+          "method": "DeepEval G-Eval"
+        },
+        "correctness": {
+          "score": 0.8,
+          "status": "pass",
+          "reason": "The Actual Output demonstrates strong alignment with the evaluation steps, particularly in traceability and cross-domain construction, as each signal lists verified supporting findings from multiple domains. However, while the signals generally explain relationships and causal strength, some interpretations could benefit from clearer labeling of the link's strength. Additionally, while the output identifies evidence gaps, it could improve in explicitly stating conflicts among findings when they arise.",
+          "method": "DeepEval G-Eval"
+        },
+        "faithfulness": {
+          "score": 0.7,
+          "status": "pass",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, supported by specific evidence from the Retrieval Context. Claims about Blackwell's availability and deployment rates are well-supported, and the implications drawn regarding supply constraints and competitive pressures are appropriately cautious. However, there are some unsupported figures and evidence gaps noted, particularly regarding specific shipment data and customer purchase timing, which slightly detracts from the overall reliability of the conclusions. Overall, the output aligns well with the evaluation steps but lacks complete evidence for some claims.",
+          "method": "DeepEval G-Eval"
+        },
+        "completeness": {
+          "score": 0.6,
+          "status": "partial",
+          "reason": "The Actual Output provides a comprehensive analysis of NVIDIA's competitive landscape, addressing multiple signals and their implications. However, it lacks clarity in some areas, such as the relationship between findings and signals, which is essential for demonstrating causal strength. Additionally, while it mentions evidence gaps, it does not fully disclose all critical gaps as required by the evaluation steps. Overall, it meets some criteria but falls short in others, particularly in relationship explanation and gap disclosure.",
+          "method": "DeepEval G-Eval"
+        }
+      },
+      "limitations": [
+        "G-Eval scores are LLM-judge estimates, not objective probabilities.",
+        "Correctness is bounded by the supplied benchmark and extracted trace evidence.",
+        "Faithfulness depends on the completeness and quality of extracted trace evidence.",
+        "Missing trace evidence is not proof that a claim is false.",
+        "An overall mean can hide a weak individual dimension; inspect each reason."
+      ]
+    },
+    "agent_improvement_review": {
+      "enabled": true,
+      "status": "generated",
+      "limitations": [
+        {
+          "limitation": "Lack of explicit verification of supporting findings.",
+          "evidence": "The Actual Output does not explicitly state that the supporting findings are verified upstream.",
+          "impact": "This leads to a partial satisfaction of the acceptance criteria for traceability, potentially undermining the credibility of the signals."
+        },
+        {
+          "limitation": "Insufficient cross-domain construction.",
+          "evidence": "Several signals are primarily focused on a single domain, and some findings appear to be restatements rather than unique insights.",
+          "impact": "This limits the overall effectiveness in meeting the acceptance criteria for cross-domain construction, reducing the depth of analysis."
+        },
+        {
+          "limitation": "Unclear explanation of relationships and causal strength.",
+          "evidence": "The Actual Output lacks a clear explanation of the mechanism or logic linking the supporting findings to the primary claim.",
+          "impact": "This weakens the overall clarity and completeness of the explanation, making it harder to understand the implications of the findings."
+        },
+        {
+          "limitation": "Missing confidence level summaries.",
+          "evidence": "The output lacks a clear summary of confidence levels for each signal.",
+          "impact": "This omission affects the ability to assess the reliability of the signals and their implications."
+        },
+        {
+          "limitation": "Inadequate calibration of impact and uncertainty.",
+          "evidence": "The report does not clearly state conflicts among supporting findings and lacks comprehensive quantitative analysis derived from upstream findings.",
+          "impact": "This leads to a partial understanding of the impacts and uncertainties associated with the signals."
+        },
+        {
+          "limitation": "Failure to confirm all emitted signals have required cross-domain support.",
+          "evidence": "The Actual Output does not explicitly state that every emitted signal has the required cross-domain support.",
+          "impact": "This could lead to unsupported signals being included, which undermines the integrity of the analysis."
+        },
+        {
+          "limitation": "Lack of clarity in labeling implications.",
+          "evidence": "While implications are labeled as interpretations, the clarity of this labeling could be improved.",
+          "impact": "Some implications could be misinterpreted as facts, affecting the overall reliability of the conclusions drawn."
+        },
+        {
+          "limitation": "Incomplete disclosure of evidence gaps.",
+          "evidence": "While it mentions evidence gaps, it does not fully disclose all critical gaps as required by the evaluation steps.",
+          "impact": "This limits the ability to assess the completeness and reliability of the analysis."
+        }
+      ],
+      "recommended_enhancements": [
+        {
+          "enhancement": "Implement explicit verification of supporting findings.",
+          "addresses": "This will ensure that all supporting findings are confirmed as verified upstream, enhancing traceability.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Enhance cross-domain analysis by integrating insights from multiple domains.",
+          "addresses": "This will improve the depth of analysis and ensure that signals are not merely restatements of single-domain findings.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Provide clear explanations of relationships and causal strength.",
+          "addresses": "This will improve clarity and completeness in linking supporting findings to primary claims.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Include confidence level summaries for each signal.",
+          "addresses": "This will help assess the reliability of the signals and their implications.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Calibrate impact and uncertainty more comprehensively.",
+          "addresses": "This will ensure that conflicts among supporting findings are clearly stated and quantitative impacts are derived from upstream findings.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Confirm that all emitted signals have required cross-domain support.",
+          "addresses": "This will prevent unsupported signals from being included in the analysis.",
+          "priority": "high"
+        },
+        {
+          "enhancement": "Improve clarity in labeling implications as interpretations.",
+          "addresses": "This will reduce the risk of misinterpretation and enhance the reliability of conclusions.",
+          "priority": "medium"
+        },
+        {
+          "enhancement": "Fully disclose all critical evidence gaps.",
+          "addresses": "This will enhance the completeness and reliability of the analysis.",
+          "priority": "medium"
+        }
+      ],
+      "method": "OpenAI LLM judge"
+    },
+    "limitations": [
+      {
+        "limitation": "Lack of explicit verification of supporting findings.",
+        "evidence": "The Actual Output does not explicitly state that the supporting findings are verified upstream.",
+        "impact": "This leads to a partial satisfaction of the acceptance criteria for traceability, potentially undermining the credibility of the signals."
+      },
+      {
+        "limitation": "Insufficient cross-domain construction.",
+        "evidence": "Several signals are primarily focused on a single domain, and some findings appear to be restatements rather than unique insights.",
+        "impact": "This limits the overall effectiveness in meeting the acceptance criteria for cross-domain construction, reducing the depth of analysis."
+      },
+      {
+        "limitation": "Unclear explanation of relationships and causal strength.",
+        "evidence": "The Actual Output lacks a clear explanation of the mechanism or logic linking the supporting findings to the primary claim.",
+        "impact": "This weakens the overall clarity and completeness of the explanation, making it harder to understand the implications of the findings."
+      },
+      {
+        "limitation": "Missing confidence level summaries.",
+        "evidence": "The output lacks a clear summary of confidence levels for each signal.",
+        "impact": "This omission affects the ability to assess the reliability of the signals and their implications."
+      },
+      {
+        "limitation": "Inadequate calibration of impact and uncertainty.",
+        "evidence": "The report does not clearly state conflicts among supporting findings and lacks comprehensive quantitative analysis derived from upstream findings.",
+        "impact": "This leads to a partial understanding of the impacts and uncertainties associated with the signals."
+      },
+      {
+        "limitation": "Failure to confirm all emitted signals have required cross-domain support.",
+        "evidence": "The Actual Output does not explicitly state that every emitted signal has the required cross-domain support.",
+        "impact": "This could lead to unsupported signals being included, which undermines the integrity of the analysis."
+      },
+      {
+        "limitation": "Lack of clarity in labeling implications.",
+        "evidence": "While implications are labeled as interpretations, the clarity of this labeling could be improved.",
+        "impact": "Some implications could be misinterpreted as facts, affecting the overall reliability of the conclusions drawn."
+      },
+      {
+        "limitation": "Incomplete disclosure of evidence gaps.",
+        "evidence": "While it mentions evidence gaps, it does not fully disclose all critical gaps as required by the evaluation steps.",
+        "impact": "This limits the ability to assess the completeness and reliability of the analysis."
+      }
+    ],
+    "recommended_enhancements": [
+      {
+        "enhancement": "Implement explicit verification of supporting findings.",
+        "addresses": "This will ensure that all supporting findings are confirmed as verified upstream, enhancing traceability.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Enhance cross-domain analysis by integrating insights from multiple domains.",
+        "addresses": "This will improve the depth of analysis and ensure that signals are not merely restatements of single-domain findings.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Provide clear explanations of relationships and causal strength.",
+        "addresses": "This will improve clarity and completeness in linking supporting findings to primary claims.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Include confidence level summaries for each signal.",
+        "addresses": "This will help assess the reliability of the signals and their implications.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Calibrate impact and uncertainty more comprehensively.",
+        "addresses": "This will ensure that conflicts among supporting findings are clearly stated and quantitative impacts are derived from upstream findings.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Confirm that all emitted signals have required cross-domain support.",
+        "addresses": "This will prevent unsupported signals from being included in the analysis.",
+        "priority": "high"
+      },
+      {
+        "enhancement": "Improve clarity in labeling implications as interpretations.",
+        "addresses": "This will reduce the risk of misinterpretation and enhance the reliability of conclusions.",
+        "priority": "medium"
+      },
+      {
+        "enhancement": "Fully disclose all critical evidence gaps.",
+        "addresses": "This will enhance the completeness and reliability of the analysis.",
+        "priority": "medium"
+      }
+    ],
+    "evaluation_limitations": [
+      "Coverage measures report completeness against the supplied benchmark, not factual truth.",
+      "Acceptance criteria are evaluated individually in judge mode; scores remain model estimates.",
+      "Embeddings retrieve candidate passages only. On embedding failure, lexical fallback is recorded.",
+      "Evidence support is limited to evidence extracted from this trace; missing context means unverified, not false.",
+      "Scope checks are deterministic string-based checks and can miss semantic references.",
+      "LLM judge scores are model estimates, not ground-truth labels."
+    ]
+  },
+  "evaluation_file": "Evaluation\\run_evaluations\\2aaf080a301c155b6e6c1bd159ecd8ad\\stages\\cross_signal_evaluation.json"
+}

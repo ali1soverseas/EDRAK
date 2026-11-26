@@ -166,18 +166,13 @@ status/summary/release status/confidence/evidence quality/source references,
 and caveats. If model consolidation fails, requirement-level verified findings
 are retained as a deterministic fallback rather than being discarded.
 
-`comparison_node` asks for a comparison across focus areas and default
-use-case dimensions. It validates each assessment against known competitors and
-requirement IDs. A comparison cell without cited requirements and evidence is
-forced to `not_established`; confidence cannot exceed the supporting evidence
-confidence. If structured comparison output is unavailable, the report records
-a comparison error and still returns the worker result.
+`comparison_node` can ask for a comparison across focus areas and default
+use-case dimensions, but it is not wired into the graph. The worker therefore
+does not generate or publish a comparison report.
 
 `build_worker_result` converts only cited/verified source passages into shared
 `Evidence` records and creates shared `Finding` objects with resolving evidence
-references. Established comparison cells are also emitted as `POSITIONING`
-findings and represented in the `metadata.comparison_matrix` for consumers such
-as the brief builder. Result status is:
+references. Result status is:
 
 - `COMPLETED`: one or more findings and no unresolved requirements.
 - `PARTIAL`: one or more findings with unresolved requirements.
@@ -185,7 +180,7 @@ as the brief builder. Result status is:
 
 The result metadata includes competitor identity/website/domain/social
 information, discovery attribution, stage and query counts, sources read/set
-aside, requirement checks and the structured comparison matrix. Gaps carry
+aside and requirement checks. Gaps carry
 unresolved competitor requirements and, when applicable, a summary that sources
 were set aside.
 
@@ -285,7 +280,7 @@ adds non-duplicate user focus areas, and caps the result at eight.
 | `render_comparison_lines` | Renders the structured comparison portion of the report as Markdown lines. |
 | `render_markdown` | Renders the overall final research report as Markdown. |
 | `final_report_node` | Consolidates profiles and assembles report totals, requirements, profiles and unresolved gaps. |
-| `comparison_node` | Builds evidence-constrained comparison dimensions and records comparison output/error in the report. |
+| `comparison_node` | Optional comparison step; not wired into the graph or published in worker results. |
 | `_source_type_for` | Maps an evidence URL and official flag to a shared `SourceType`. |
 | `_numeric_confidence` | Converts normalized/named confidence into a numeric value suitable for comparison metadata. |
 | `build_worker_result` | Builds the shared result, findings/evidence links, comparison matrix, status, gaps and metadata. |

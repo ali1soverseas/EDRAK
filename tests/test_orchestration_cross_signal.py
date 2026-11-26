@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from edrak.contracts import (
     BusinessContext,
@@ -48,7 +49,8 @@ def test_verified_decision_routes_to_cross_signal():
     assert decide_after_verification({"verification": decision}) == "cross_signal"
 
 
-def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
+def test_orchestrator_runs_cross_signal_after_verification(monkeypatch, tmp_path):
+    monkeypatch.setenv("EDRAK_ARTIFACTS_DIR", str(tmp_path / "runs"))
     request = _request()
     task = ResearchTask(
         task_id="competitor-task",
@@ -149,6 +151,12 @@ def test_orchestrator_runs_cross_signal_after_verification(monkeypatch):
         "status": "completed",
         "signals": [],
     }
+    stages_dir = tmp_path / "runs" / request.request_id / "stages"
+    assert json.loads((stages_dir / "verification" / "output.json").read_text())["decision"]["status"] == "verified"
+    assert json.loads((stages_dir / "cross_signal" / "input.json").read_text())["research_run_id"] == request.request_id
+    assert json.loads((stages_dir / "cross_signal" / "output.json").read_text())["status"] == "completed"
+    assert (stages_dir / "decision" / "input.json").exists()
+    assert (stages_dir / "decision" / "output.json").exists()
 
 
 def _run_with_reviews(graph_module, registry, request, answers):

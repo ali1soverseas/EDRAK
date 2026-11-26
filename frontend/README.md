@@ -12,6 +12,11 @@ npm install
 npm run dev        # http://localhost:5173
 ```
 
+The `/api` development proxy targets `http://127.0.0.1:8000` by default. To use a backend on
+another port, set `VITE_API_PROXY_TARGET` before starting Vite (for example,
+`http://127.0.0.1:8001`), then restart the frontend dev server. In PowerShell:
+`$env:VITE_API_PROXY_TARGET = "http://127.0.0.1:8001"`.
+
 Open the app in a Chromium browser. The brief's blur and parallax use CSS scroll timelines, which Chrome, Edge and
 other Chromium browsers support. Other browsers get the same layout without that motion.
 

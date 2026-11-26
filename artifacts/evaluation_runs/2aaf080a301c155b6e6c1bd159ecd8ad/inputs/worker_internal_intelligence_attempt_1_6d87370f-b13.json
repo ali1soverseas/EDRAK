@@ -1,0 +1,534 @@
+{
+  "task_id": "6d87370f-b13c-46be-9a78-fca3038d3abb",
+  "worker": "internal_intelligence",
+  "status": "completed",
+  "attempt": 1,
+  "findings": [
+    {
+      "finding_id": "412040de-b5dc-4fcb-910b-38fc35888a53",
+      "statement": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "7b3238e5-55a4-4624-8d62-920b7d43b38b",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"deal_id\": \"DEAL-2026-014\",\n    \"customer_name\": \"NVIDIA DGX SuperPOD "
+      ]
+    },
+    {
+      "finding_id": "67d408ff-86fe-4521-a0bc-8dc32087fb60",
+      "statement": "Direct database extraction from 'gpu_products' returned 2 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "c9c2646d-7b4e-45b6-a4b4-0adba27499b8",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \""
+      ]
+    },
+    {
+      "finding_id": "d8446e01-d776-421b-8ff9-3c5ef0b45e80",
+      "statement": "Direct database extraction from 'software_arr' returned 1 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "a67d007d-c697-4f33-98ac-0d56b6dae587",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.78,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: [\n  {\n    \"fiscal_year\": 2026,\n    \"total_arr_usd\": 1506000000.0,\n    \"avg_yoy_g"
+      ]
+    },
+    {
+      "finding_id": "c964b05c-6ee4-4079-9781-366cb548fdc2",
+      "statement": "Operational REST API lookup at '/v1/supply-chain/lead-times' (Get Hardware Lead Times & Packaging Allocation) returned data matching research goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "ed91cb6b-1c89-421a-bd32-c15f5f1af788",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: {\n  \"as_of_quarter\": \"Q1 FY2026\",\n  \"cowos_packaging_allocation_pct\": 88.5,\n  \"l"
+      ]
+    },
+    {
+      "finding_id": "2cfadfad-ae9f-4027-b507-26ac2de64403",
+      "statement": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "17e776eb-96ce-444c-b691-3e257c542420",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.77,
+      "limitations": [
+        "Derived from adapted/synthetic internal data for pilot demonstration purposes in accordance with project constraints.",
+        "Claim type: internal_claim",
+        "Supporting quote: {\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": "
+      ]
+    },
+    {
+      "finding_id": "b9ea15e4-6b84-48c8-8da7-7eac028df005",
+      "statement": "Advanced dual-die packaging for Blackwell B200 and GB200 relies on TSMC CoWoS-L (Chip-on-Wafer-on-Substrate with Local Silicon Interconnect).",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "0b0d22b2-7f4d-47b5-95d6-cddac33aaaf1",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.59,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_regional_availability_2026.md\n## Supply Chain Constraints & Component B"
+      ]
+    },
+    {
+      "finding_id": "1ca4605f-4093-4d72-be0b-82102cd44b5b",
+      "statement": "Cloud Utility Model: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Marketplaces.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "85d39225-ed83-444d-a054-ccc83a44eaa0",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.55,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_pricing_commercial_2026.md\n## Software Subscription Pricing: NVIDIA AI "
+      ]
+    },
+    {
+      "finding_id": "d4f93149-8fe2-4c00-b3aa-ab60425e06fd",
+      "statement": "KR 1.2: Grow NVIDIA AI Enterprise and NIM microservices recurring revenue to a $2.0B annualized run rate.",
+      "category": "positioning",
+      "evidence_refs": [
+        {
+          "evidence_id": "77f78ef3-6fe8-42d2-b692-4944de2e2b8f",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.55,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_internal_strategy_2026.md\n## Objective 1: Accelerate Enterprise Full-St"
+      ]
+    },
+    {
+      "finding_id": "3698fac9-858f-4049-88ab-557966a2f07d",
+      "statement": "Enterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "a3911df5-c4e6-4930-8bd3-363b109fffff",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.54,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_customer_adoption_2026.md\n## Executive Summary\n\nEnterprise and hypersca"
+      ]
+    },
+    {
+      "finding_id": "1b61a882-0969-40b0-82bc-75c98b06a001",
+      "statement": "Lambda Labs: Dedicated developer cloud offering H100 and H200 instances at sub-$3.00/GPU/hour pricing under multi-year reservation commitments.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "4a6e1711-3175-42dc-b1d6-78d6c94301ee",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.54,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_customer_adoption_2026.md\n## 2.3 Tier-2 GPU Cloud Specialists (CoreWeav"
+      ]
+    },
+    {
+      "finding_id": "82894c3a-9127-47e5-b59e-93e340558463",
+      "statement": "Cloud Consumption: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Cloud Marketplace.",
+      "category": "pricing_packaging",
+      "evidence_refs": [
+        {
+          "evidence_id": "1d95b277-8f12-41a2-8575-7e8c0de18979",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.53,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_software_ecosystem_2026.md\n## 3.1 Packaging & Pricing Structure\n\n- **NV"
+      ]
+    },
+    {
+      "finding_id": "a4cab975-dfe5-4029-8d41-fe87ad5c297d",
+      "statement": "Rack Architecture: 18 compute trays containing 36 Grace CPUs and 72 Blackwell GPUs, linked via 9 NVLink switch trays with 18 NVLink 5.0 chips.",
+      "category": "product_feature",
+      "evidence_refs": [
+        {
+          "evidence_id": "421b8c46-e668-4e35-8c4e-2119d5821513",
+          "relation": "supports"
+        }
+      ],
+      "confidence": 0.53,
+      "limitations": [
+        "Claim type: verified_fact",
+        "Supporting quote: # nvidia_accelerator_portfolio_2026.md\n## 2.4 NVIDIA GB200 NVL72 Platform (Rack-"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "7b3238e5-55a4-4624-8d62-920b7d43b38b",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.enterprise_deals]",
+      "source_url": "sql://nvidia_enterprise_db/enterprise_deals",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'enterprise_deals' returned 8 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"deal_id\": \"DEAL-2026-014\",\n    \"customer_name\": \"NVIDIA DGX SuperPOD demo\",\n    \"segment\": \"Internal\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 4,\n    \"discount_pct\": 0.0,\n    \"total_deal_value_usd\": 11600000.0,\n    \"approval_status\": \"Internal Allocation\",\n    \"deal_date\": \"2026-05-15\",\n    \"deal_desk_owner\": \"Engineering\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-010\",\n    \"customer_name\": \"Softbank Japan\",\n    \"segment\": \"Tier 1 Cloud\",\n    \"region\": \"APAC\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 30,\n    \"discount_pct\": 11.5,\n    \"total_deal_value_usd\": 77085000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-04-18\",\n    \"deal_desk_owner\": \"Kevin Tanaka\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-008\",\n    \"customer_name\": \"Google Cloud (GCP)\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 20000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 552500000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-04-05\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-006\",\n    \"customer_name\": \"Meta Platforms\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 25000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 690625000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-03-22\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-005\",\n    \"customer_name\": \"Saudi Sovereign AI (SDAIA)\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"MENA\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 40,\n    \"discount_pct\": 12.0,\n    \"total_deal_value_usd\": 102080000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-10\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  }\n]",
+      "page_text": "[\n  {\n    \"deal_id\": \"DEAL-2026-014\",\n    \"customer_name\": \"NVIDIA DGX SuperPOD demo\",\n    \"segment\": \"Internal\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 4,\n    \"discount_pct\": 0.0,\n    \"total_deal_value_usd\": 11600000.0,\n    \"approval_status\": \"Internal Allocation\",\n    \"deal_date\": \"2026-05-15\",\n    \"deal_desk_owner\": \"Engineering\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-010\",\n    \"customer_name\": \"Softbank Japan\",\n    \"segment\": \"Tier 1 Cloud\",\n    \"region\": \"APAC\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 30,\n    \"discount_pct\": 11.5,\n    \"total_deal_value_usd\": 77085000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-04-18\",\n    \"deal_desk_owner\": \"Kevin Tanaka\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-008\",\n    \"customer_name\": \"Google Cloud (GCP)\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 20000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 552500000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-04-05\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-006\",\n    \"customer_name\": \"Meta Platforms\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 25000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 690625000.0,\n    \"approval_status\": \"Approved (CFO Review)\",\n    \"deal_date\": \"2026-03-22\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-005\",\n    \"customer_name\": \"Saudi Sovereign AI (SDAIA)\",\n    \"segment\": \"Sovereign AI\",\n    \"region\": \"MENA\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 40,\n    \"discount_pct\": 12.0,\n    \"total_deal_value_usd\": 102080000.0,\n    \"approval_status\": \"Approved (Govt Desk)\",\n    \"deal_date\": \"2026-03-10\",\n    \"deal_desk_owner\": \"Lena M\\u00fcller\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-003\",\n    \"customer_name\": \"CoreWeave\",\n    \"segment\": \"Tier 2 Cloud\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 6000,\n    \"discount_pct\": 11.0,\n    \"total_deal_value_usd\": 173550000.0,\n    \"approval_status\": \"Approved (Sales Director)\",\n    \"deal_date\": \"2026-02-18\",\n    \"deal_desk_owner\": \"James Park\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-002\",\n    \"customer_name\": \"Amazon AWS\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"B200 GPU\",\n    \"units_ordered\": 15000,\n    \"discount_pct\": 15.0,\n    \"total_deal_value_usd\": 414375000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-02-01\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  },\n  {\n    \"deal_id\": \"DEAL-2026-001\",\n    \"customer_name\": \"Microsoft Azure\",\n    \"segment\": \"Hyperscaler\",\n    \"region\": \"North America\",\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"units_ordered\": 120,\n    \"discount_pct\": 14.5,\n    \"total_deal_value_usd\": 297540000.0,\n    \"approval_status\": \"Approved (VP Deal Desk)\",\n    \"deal_date\": \"2026-01-15\",\n    \"deal_desk_owner\": \"Sarah Chen\"\n  }\n]",
+      "retrieved_at": "2026-11-24T02:21:28.053873Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "enterprise_deals",
+        "query": "SELECT deal_id, customer_name, segment, region, product_name, units_ordered, discount_pct, total_deal_value_usd, approval_status, deal_date, deal_desk_owner\nFROM enterprise_deals\nWHERE product_name LIKE '%Blackwell%' OR product_name LIKE '%GB200%' OR product_name LIKE '%B200%'\nORDER BY deal_date DESC;",
+        "row_count": 8,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 1
+      }
+    },
+    {
+      "evidence_id": "c9c2646d-7b4e-45b6-a4b4-0adba27499b8",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.gpu_products]",
+      "source_url": "sql://nvidia_enterprise_db/gpu_products",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'gpu_products' returned 2 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  },\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  }\n]",
+      "page_text": "[\n  {\n    \"product_id\": 2,\n    \"product_name\": \"B200 GPU\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Enterprise / Cloud\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 32500.0,\n    \"target_gross_margin_pct\": 73.5,\n    \"tdp_watts\": 700,\n    \"hbm_capacity_gb\": 192,\n    \"memory_bandwidth_tbps\": 8.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 9000.0,\n    \"bf16_tflops\": 4500.0\n  },\n  {\n    \"product_id\": 1,\n    \"product_name\": \"GB200 NVL72 rack\",\n    \"architecture\": \"Blackwell\",\n    \"segment\": \"Hyperscaler\",\n    \"release_quarter\": \"Q2 FY2026\",\n    \"target_asp_usd\": 2900000.0,\n    \"target_gross_margin_pct\": 75.0,\n    \"tdp_watts\": 120000,\n    \"hbm_capacity_gb\": 13824,\n    \"memory_bandwidth_tbps\": 576.0,\n    \"nvlink_version\": \"NVLink 5.0\",\n    \"nvlink_bandwidth_gbps\": 1800,\n    \"cuda_compute_capability\": \"10.0\",\n    \"fp8_tflops\": 1440000.0,\n    \"bf16_tflops\": 720000.0\n  }\n]",
+      "retrieved_at": "2026-11-24T02:21:33.624272Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "gpu_products",
+        "query": "SELECT product_id, product_name, architecture, segment, release_quarter, target_asp_usd, target_gross_margin_pct, tdp_watts, hbm_capacity_gb, memory_bandwidth_tbps, nvlink_version, nvlink_bandwidth_gbps, cuda_compute_capability, fp8_tflops, bf16_tflops\nFROM gpu_products\nWHERE architecture = 'Blackwell'\nORDER BY release_quarter, target_asp_usd;",
+        "row_count": 2,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 2
+      }
+    },
+    {
+      "evidence_id": "a67d007d-c697-4f33-98ac-0d56b6dae587",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal Database [nvidia_enterprise_db.software_arr]",
+      "source_url": "sql://nvidia_enterprise_db/software_arr",
+      "publisher": "Database System: nvidia_enterprise_db",
+      "extracted_fact": "Direct database extraction from 'software_arr' returned 1 records relevant to goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "excerpt": "[\n  {\n    \"fiscal_year\": 2026,\n    \"total_arr_usd\": 1506000000.0,\n    \"avg_yoy_growth_pct\": 35.5,\n    \"total_active_licenses\": 342000\n  }\n]",
+      "page_text": "[\n  {\n    \"fiscal_year\": 2026,\n    \"total_arr_usd\": 1506000000.0,\n    \"avg_yoy_growth_pct\": 35.5,\n    \"total_active_licenses\": 342000\n  }\n]",
+      "retrieved_at": "2026-11-24T02:21:39.521526Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "sql_database",
+        "db_name": "nvidia_enterprise_db",
+        "table": "software_arr",
+        "query": "SELECT fiscal_year,\n       SUM(total_arr_usd) AS total_arr_usd,\n       AVG(yoy_growth_pct) AS avg_yoy_growth_pct,\n       SUM(active_licenses) AS total_active_licenses\nFROM software_arr\nWHERE offering_name LIKE '%NVIDIA%'\nGROUP BY fiscal_year\nORDER BY fiscal_year DESC;",
+        "row_count": 1,
+        "relevance_score": 0.98,
+        "origin": "internal_db",
+        "rank": 3
+      }
+    },
+    {
+      "evidence_id": "ed91cb6b-1c89-421a-bd32-c15f5f1af788",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal REST API [nvidia_ops_api: /v1/supply-chain/lead-times]",
+      "source_url": "api://nvidia_ops_api/v1/supply-chain/lead-times",
+      "publisher": "Internal Microservice: nvidia_ops_api",
+      "extracted_fact": "Operational REST API lookup at '/v1/supply-chain/lead-times' (Get Hardware Lead Times & Packaging Allocation) returned data matching research goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "excerpt": "{\n  \"as_of_quarter\": \"Q1 FY2026\",\n  \"cowos_packaging_allocation_pct\": 88.5,\n  \"lead_times_weeks\": {\n    \"GB200 NVL72 rack\": 22,\n    \"B200 GPU\": 14,\n    \"H200 GPU\": 6,\n    \"H100 GPU (legacy)\": 2,\n    \"Spectrum-X switch bundle\": 8,\n    \"GB300 GPU (preview)\": 28,\n    \"DGX H200 system\": 10\n  },\n  \"bottlenecks\": [\n    \"TSMC CoWoS-L packaging capacity (GB200)\",\n    \"SK Hynix HBM3e yield ramp\",\n    \"Liquid cooling CDU lead times (Vertiv / Stulz)\"\n  ]\n}",
+      "page_text": "{\n  \"as_of_quarter\": \"Q1 FY2026\",\n  \"cowos_packaging_allocation_pct\": 88.5,\n  \"lead_times_weeks\": {\n    \"GB200 NVL72 rack\": 22,\n    \"B200 GPU\": 14,\n    \"H200 GPU\": 6,\n    \"H100 GPU (legacy)\": 2,\n    \"Spectrum-X switch bundle\": 8,\n    \"GB300 GPU (preview)\": 28,\n    \"DGX H200 system\": 10\n  },\n  \"bottlenecks\": [\n    \"TSMC CoWoS-L packaging capacity (GB200)\",\n    \"SK Hynix HBM3e yield ramp\",\n    \"Liquid cooling CDU lead times (Vertiv / Stulz)\"\n  ]\n}",
+      "retrieved_at": "2026-11-24T02:21:41.809374Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "rest_api",
+        "api_id": "nvidia_ops_api",
+        "endpoint": "/v1/supply-chain/lead-times",
+        "params": {},
+        "relevance_score": 0.96,
+        "origin": "internal_api",
+        "rank": 4
+      }
+    },
+    {
+      "evidence_id": "17e776eb-96ce-444c-b691-3e257c542420",
+      "source_type": "synthetic_internal",
+      "source_title": "Internal REST API [nvidia_ops_api: /v1/competitive/benchmark-summary]",
+      "source_url": "api://nvidia_ops_api/v1/competitive/benchmark-summary",
+      "publisher": "Internal Microservice: nvidia_ops_api",
+      "extracted_fact": "Operational REST API lookup at '/v1/competitive/benchmark-summary' (Get Competitive Benchmark Summary vs AMD & Google) returned data matching research goal 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?'.",
+      "excerpt": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "page_text": "{\n  \"as_of\": \"2025-Q2\",\n  \"average_nvidia_advantage_pct\": 69.5,\n  \"benchmarks\": [\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Training\",\n      \"workload_type\": \"LLM Training (GPT-3)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 6.1,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI300X 8-GPU\",\n      \"competitor_score\": 3.3,\n      \"nvidia_advantage_pct\": 84.8\n    },\n    {\n      \"benchmark_name\": \"MLPerf v4.1 LLM Inference\",\n      \"workload_type\": \"LLM Inference (Llama2-70B)\",\n      \"nvidia_product\": \"H200 SXM5 8-GPU\",\n      \"nvidia_score\": 78000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"Google TPUv5e (256-chip)\",\n      \"competitor_score\": 55000.0,\n      \"nvidia_advantage_pct\": 41.8\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Training\",\n      \"workload_type\": \"LLM Training (GPT-4 scale)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 9.8,\n      \"nvidia_score_unit\": \"samples/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 5.1,\n      \"nvidia_advantage_pct\": 92.2\n    },\n    {\n      \"benchmark_name\": \"Blackwell B200 Inference\",\n      \"workload_type\": \"LLM Inference (Llama3-70B)\",\n      \"nvidia_product\": \"B200 SXM5 8-GPU\",\n      \"nvidia_score\": 140000.0,\n      \"nvidia_score_unit\": \"tokens/sec\",\n      \"competitor_product\": \"AMD MI325X 8-GPU\",\n      \"competitor_score\": 88000.0,\n      \"nvidia_advantage_pct\": 59.1\n    }\n  ]\n}",
+      "retrieved_at": "2026-11-24T02:21:44.034956Z",
+      "is_synthetic": true,
+      "metadata": {
+        "channel": "rest_api",
+        "api_id": "nvidia_ops_api",
+        "endpoint": "/v1/competitive/benchmark-summary",
+        "params": {},
+        "relevance_score": 0.96,
+        "origin": "internal_api",
+        "rank": 5
+      }
+    },
+    {
+      "evidence_id": "0b0d22b2-7f4d-47b5-95d6-cddac33aaaf1",
+      "source_type": "internal_document",
+      "source_title": "nvidia_regional_availability_2026.md",
+      "source_url": "internal://ebaaac6bf2d84d30de9ff6b4187e7bf2/nvidia_regional_availability_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Advanced dual-die packaging for Blackwell B200 and GB200 relies on TSMC CoWoS-L (Chip-on-Wafer-on-Substrate with Local Silicon Interconnect).",
+      "excerpt": "# nvidia_regional_availability_2026.md\n## Supply Chain Constraints & Component Bottlenecks\n\n1. **TSMC CoWoS-L Advanced Packaging**:\n   - Advanced dual-die packaging for Blackwell B200 and GB200 relies on TSMC CoWoS-L (Chip-on-Wafer-on-Substrate with Local Silicon Interconnect).\n   - Packaging capacity is currently running at 94% utilization globally. TSMC Fab 18 and AP6 expansions will not ease pressure until Q3 FY2026.\n2. **HBM3e Memory Sourcing (SK Hynix & Micron)**:\n   - 141GB H200 and 192GB B200 require 8-high and 12-high HBM3e stacks running at 9.6 Gbps.\n   - SK Hynix currently supplies 72% of NVIDIA's HBM3e volume, with Micron supplying 28%. Allocation remains tight through calendar year 2026.\n3. **Liquid Cooling Infrastructure (CDU & Manifolds)**:\n   - Rack-scale GB200 NVL72 deployments require liquid cooling loops with 120kW+ heat rejection capability per rack.\n   - Global shortages in certified Coolant Distribution Units (CDUs) from partners (Vertiv, Schneider Electric, CoolIT) have lengthened data center readiness lead times by 8 to 12 weeks.",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.637731Z",
+      "is_synthetic": false,
+      "metadata": {
+        "source_uri": "internal://ebaaac6bf2d84d30de9ff6b4187e7bf2/nvidia_regional_availability_2026.md",
+        "title": "nvidia_regional_availability_2026.md",
+        "is_synthetic": "false",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "origin": "internal",
+        "filename": "nvidia_regional_availability_2026.md",
+        "doc_type": "internal_doc",
+        "document_id": "ebaaac6bf2d84d30de9ff6b4187e7bf2",
+        "heading": "Supply Chain Constraints & Component Bottlenecks",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_c26894f52afb",
+        "search_query": "NVIDIA Blackwell GPU supply chain constraints including TSMC CoWoS packaging capacity and production yield issues affecting B200 and GB200 NVL72",
+        "confidence_score": 0.71,
+        "relevance_score": 0.696,
+        "rank": 6
+      }
+    },
+    {
+      "evidence_id": "85d39225-ed83-444d-a054-ccc83a44eaa0",
+      "source_type": "internal_document",
+      "source_title": "nvidia_pricing_commercial_2026.md",
+      "source_url": "internal://aeda82cfe9a66fc2feef8de036edf7b0/nvidia_pricing_commercial_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Cloud Utility Model: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Marketplaces.",
+      "excerpt": "# nvidia_pricing_commercial_2026.md\n## Software Subscription Pricing: NVIDIA AI Enterprise\n\nSoftware subscriptions provide critical enterprise IP, security maintenance, and production support:\n\n- **NVIDIA AI Enterprise (NVAIE) 5.x**:\n  - **List Price**: $4,500 per GPU per year (perpetual license option: $10,125 + $2,025/year support).\n  - **Cloud Utility Model**: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Marketplaces.\n  - **Included Toolsets**: NVIDIA NIM microservices, NeMo Framework, Triton Inference Server Enterprise, RAPIDS Accelerator for Apache Spark, BioNeMo.\n- **DGX Cloud Fully Managed Service**:\n  - **Pricing**: $36,900 per node per month (includes 8× H100 or H200 GPUs, 3.2Tb/s fabric, and complete NVAIE software stack).",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.738397Z",
+      "is_synthetic": false,
+      "metadata": {
+        "origin": "internal",
+        "heading": "Software Subscription Pricing: NVIDIA AI Enterprise",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "doc_type": "internal_doc",
+        "title": "nvidia_pricing_commercial_2026.md",
+        "source_uri": "internal://aeda82cfe9a66fc2feef8de036edf7b0/nvidia_pricing_commercial_2026.md",
+        "filename": "nvidia_pricing_commercial_2026.md",
+        "is_synthetic": "false",
+        "document_id": "aeda82cfe9a66fc2feef8de036edf7b0",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_c5070ccad85c",
+        "search_query": "NVIDIA Blackwell GPU pricing tiers and packaging options for cloud hyperscalers Microsoft Azure, AWS, Google Cloud, and OCI",
+        "confidence_score": 0.7,
+        "relevance_score": 0.65,
+        "rank": 7
+      }
+    },
+    {
+      "evidence_id": "77f78ef3-6fe8-42d2-b692-4944de2e2b8f",
+      "source_type": "internal_document",
+      "source_title": "nvidia_internal_strategy_2026.md",
+      "source_url": "internal://8beeedad7d02742f094f905004ca761e/nvidia_internal_strategy_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "KR 1.2: Grow NVIDIA AI Enterprise and NIM microservices recurring revenue to a $2.0B annualized run rate.",
+      "excerpt": "# nvidia_internal_strategy_2026.md\n## Objective 1: Accelerate Enterprise Full-Stack AI Platform (Blackwell & NIM)\n\n- **KR 1.1:** Drive Blackwell (GB200 NVL72) cluster delivery to hyperscalers with an average gross margin target of 74-76%.\n- **KR 1.2:** Grow NVIDIA AI Enterprise and NIM microservices recurring revenue to a $2.0B annualized run rate.\n- **KR 1.3:** Maintain 85%+ developer stickiness on CUDA / TensorRT despite open-source alternatives (ROCm, PyTorch Triton).",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.689892Z",
+      "is_synthetic": false,
+      "metadata": {
+        "is_synthetic": "false",
+        "classification": "Internal Strategic Telemetry (Adapted / Synthetic)",
+        "document_id": "8beeedad7d02742f094f905004ca761e",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "last_updated": "Q1 FY2026",
+        "origin": "internal",
+        "doc_type": "internal_doc",
+        "title": "nvidia_internal_strategy_2026.md",
+        "filename": "nvidia_internal_strategy_2026.md",
+        "heading": "Objective 1: Accelerate Enterprise Full-Stack AI Platform (Blackwell & NIM)",
+        "source_uri": "internal://8beeedad7d02742f094f905004ca761e/nvidia_internal_strategy_2026.md",
+        "author": "Corporate Strategy & Hyperscaler GTM",
+        "note": "Synthetic document for EDRAK testing. Figures are illustrative, not real NVIDIA data.",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_4ea8406fb7f4",
+        "search_query": "NVIDIA CUDA software platform and NIM microservices competitive advantages compared to AMD ROCm, Intel oneAPI, and Google TPU software stacks",
+        "confidence_score": 0.69,
+        "relevance_score": 0.644,
+        "rank": 8
+      }
+    },
+    {
+      "evidence_id": "a3911df5-c4e6-4930-8bd3-363b109fffff",
+      "source_type": "internal_document",
+      "source_title": "nvidia_customer_adoption_2026.md",
+      "source_url": "internal://2e8ad0a7b492c8c12331153ed4b39851/nvidia_customer_adoption_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Enterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "excerpt": "# nvidia_customer_adoption_2026.md\n## Executive Summary\n\nEnterprise and hyperscale adoption of NVIDIA Hopper (H100/H200) and Blackwell (B200/GB200) architectures continues to expand across four distinct customer segments: Hyperscale Cloud Service Providers (Tier-1 CSPs), Emerging GPU Cloud Specialists (Tier-2 Neoclouds), Sovereign AI Programs, and Fortune 500 Enterprise On-Premises deployments.",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.738562Z",
+      "is_synthetic": false,
+      "metadata": {
+        "source_uri": "internal://2e8ad0a7b492c8c12331153ed4b39851/nvidia_customer_adoption_2026.md",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "filename": "nvidia_customer_adoption_2026.md",
+        "heading": "Executive Summary",
+        "origin": "internal",
+        "is_synthetic": "false",
+        "doc_type": "internal_doc",
+        "title": "nvidia_customer_adoption_2026.md",
+        "document_id": "2e8ad0a7b492c8c12331153ed4b39851",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_dabaf7112f45",
+        "search_query": "NVIDIA Blackwell GPU pricing tiers and packaging options for cloud hyperscalers Microsoft Azure, AWS, Google Cloud, and OCI",
+        "confidence_score": 0.7,
+        "relevance_score": 0.637,
+        "rank": 9
+      }
+    },
+    {
+      "evidence_id": "4a6e1711-3175-42dc-b1d6-78d6c94301ee",
+      "source_type": "internal_document",
+      "source_title": "nvidia_customer_adoption_2026.md",
+      "source_url": "internal://2e8ad0a7b492c8c12331153ed4b39851/nvidia_customer_adoption_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Lambda Labs: Dedicated developer cloud offering H100 and H200 instances at sub-$3.00/GPU/hour pricing under multi-year reservation commitments.",
+      "excerpt": "# nvidia_customer_adoption_2026.md\n## 2.3 Tier-2 GPU Cloud Specialists (CoreWeave, Lambda)\n\n- **CoreWeave**: Currently operates over 45,000 NVIDIA GPUs across 14 datacenters, with first wave of 6,000 Blackwell B200 nodes entering testing in New Jersey.\n- **Lambda Labs**: Dedicated developer cloud offering H100 and H200 instances at sub-$3.00/GPU/hour pricing under multi-year reservation commitments.",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.738744Z",
+      "is_synthetic": false,
+      "metadata": {
+        "filename": "nvidia_customer_adoption_2026.md",
+        "title": "nvidia_customer_adoption_2026.md",
+        "origin": "internal",
+        "source_uri": "internal://2e8ad0a7b492c8c12331153ed4b39851/nvidia_customer_adoption_2026.md",
+        "doc_type": "internal_doc",
+        "document_id": "2e8ad0a7b492c8c12331153ed4b39851",
+        "heading": "2.3 Tier-2 GPU Cloud Specialists (CoreWeave, Lambda)",
+        "is_synthetic": "false",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_eaa369daea06",
+        "search_query": "NVIDIA Blackwell GPU pricing tiers and packaging options for cloud hyperscalers Microsoft Azure, AWS, Google Cloud, and OCI",
+        "confidence_score": 0.69,
+        "relevance_score": 0.631,
+        "rank": 10
+      }
+    },
+    {
+      "evidence_id": "1d95b277-8f12-41a2-8575-7e8c0de18979",
+      "source_type": "internal_document",
+      "source_title": "nvidia_software_ecosystem_2026.md",
+      "source_url": "internal://3ee28af1269c4aaf1095ba98b04b1c55/nvidia_software_ecosystem_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Cloud Consumption: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Cloud Marketplace.",
+      "excerpt": "# nvidia_software_ecosystem_2026.md\n## 3.1 Packaging & Pricing Structure\n\n- **NVIDIA AI Enterprise (NVAIE) 5.x**:\n  - **Subscription Cost**: $4,500 per GPU per year (list price) for on-premises deployments.\n  - **Perpetual License**: $10,125 per GPU + $2,025/year for 24/7 business-critical support.\n  - **Cloud Consumption**: $1.00 per GPU hour across AWS, Azure, Google Cloud, and Oracle Cloud Marketplace.\n  - **Included SLA**: 24/7 enterprise support with guaranteed 1-hour response for severity-1 issues, long-term support (LTS) maintenance releases for 3 years, and direct access to NVIDIA solution architects.",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.738022Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_software_ecosystem_2026.md",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "document_id": "3ee28af1269c4aaf1095ba98b04b1c55",
+        "doc_type": "internal_doc",
+        "heading": "3.1 Packaging & Pricing Structure",
+        "is_synthetic": "false",
+        "origin": "internal",
+        "source_uri": "internal://3ee28af1269c4aaf1095ba98b04b1c55/nvidia_software_ecosystem_2026.md",
+        "filename": "nvidia_software_ecosystem_2026.md",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_0cee6da0e853",
+        "search_query": "NVIDIA Blackwell GPU pricing tiers and packaging options for cloud hyperscalers Microsoft Azure, AWS, Google Cloud, and OCI",
+        "confidence_score": 0.72,
+        "relevance_score": 0.622,
+        "rank": 11
+      }
+    },
+    {
+      "evidence_id": "421b8c46-e668-4e35-8c4e-2119d5821513",
+      "source_type": "internal_document",
+      "source_title": "nvidia_accelerator_portfolio_2026.md",
+      "source_url": "internal://2951dfef197215c6d30d4723869b79ca/nvidia_accelerator_portfolio_2026.md",
+      "publisher": "Company document",
+      "extracted_fact": "Rack Architecture: 18 compute trays containing 36 Grace CPUs and 72 Blackwell GPUs, linked via 9 NVLink switch trays with 18 NVLink 5.0 chips.",
+      "excerpt": "# nvidia_accelerator_portfolio_2026.md\n## 2.4 NVIDIA GB200 NVL72 Platform (Rack-Scale Supercomputer)\n\n- **Rack Architecture**: 18 compute trays containing 36 Grace CPUs and 72 Blackwell GPUs, linked via 9 NVLink switch trays with 18 NVLink 5.0 chips.\n- **Topology**: Single unified 72-GPU NVLink domain operating as a massive virtual accelerator.\n- **Aggregate Memory**: 13.8 TB of HBM3e + 17.2 TB of LPDDR5X system memory.\n- **Aggregate NVLink Bandwidth**: 130 TB/s bisection bandwidth within the rack.\n- **Cooling Architecture**: 100% liquid-cooled chassis requiring a dedicated Coolant Distribution Unit (CDU) with warm-water inlet (25°C to 32°C).\n- **Rack Power Budget**: 120 kW to 135 kW per fully configured 42U/48U rack.\n- **Peak Performance**: 1.44 ExaFLOPS FP8 inference, 720 PetaFLOPS BF16 training.",
+      "page_text": null,
+      "retrieved_at": "2026-11-24T02:21:21.582793Z",
+      "is_synthetic": false,
+      "metadata": {
+        "title": "nvidia_accelerator_portfolio_2026.md",
+        "filename": "nvidia_accelerator_portfolio_2026.md",
+        "workspace_id": "efda7ed22b2a4527035061196fac097e",
+        "document_id": "2951dfef197215c6d30d4723869b79ca",
+        "heading": "2.4 NVIDIA GB200 NVL72 Platform (Rack-Scale Supercomputer)",
+        "is_synthetic": "false",
+        "doc_type": "internal_doc",
+        "origin": "internal",
+        "source_uri": "internal://2951dfef197215c6d30d4723869b79ca/nvidia_accelerator_portfolio_2026.md",
+        "chunk_id": "efda7ed22b2a4527035061196fac097e_chunk_ed64337a3da3",
+        "search_query": "NVIDIA Blackwell B200 and GB200 NVL72 GPU specifications, memory capacity, NVLink interconnect bandwidth, and expected release dates",
+        "confidence_score": 0.65,
+        "relevance_score": 0.62,
+        "rank": 12
+      }
+    }
+  ],
+  "gaps": [
+    "Some evidence comes from synthetic or adapted internal documents, not authentic company records."
+  ],
+  "conflicts": [],
+  "confidence": 0.64,
+  "started_at": "2026-11-24T02:21:05.025993Z",
+  "completed_at": "2026-11-24T02:23:56.640971Z",
+  "error": null,
+  "metadata": {
+    "query_count": 10,
+    "evidence_count": 12,
+    "finding_count": 12,
+    "discarded_count": 0,
+    "discarded_evidence": [],
+    "llm_used": false,
+    "summary": "Internal Intelligence Assessment for 'What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?':\n- Analyzed 12 internal evidence sources covering: positioning, pricing_packaging, product_feature.",
+    "research_goal": "What are NVIDIA's Blackwell GPU capabilities, constraints, and prior decisions that shape how competitor moves affect NVIDIA?",
+    "research_focus": "Internal specifications for B200 and GB200 NVL72, CUDA and NIM software advantages, supply chain constraints, and prior pricing or go-to-market decisions."
+  }
+}

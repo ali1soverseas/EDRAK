@@ -1,0 +1,1395 @@
+{
+  "plan_id": "42cef4e4-28d5-4510-9fb2-d15ad5af8fe4",
+  "request_id": "21ed673c7d4e7e731f740c1ecd492781",
+  "tasks": [
+    {
+      "task_id": "b0450d9a-b959-4d1f-91dd-4de511e033c1",
+      "parent_request_id": "21ed673c7d4e7e731f740c1ecd492781",
+      "worker": "competitor_intelligence",
+      "goal": "What are the competitors doing? How do we compare with Kanz Pay?",
+      "focus": "Compare competitors' offerings, pricing and positioning from public sources. Focus on Pricing and packaging.",
+      "company_profile": {
+        "name": "Unnamed company",
+        "aliases": [],
+        "products": [],
+        "notes": null,
+        "website": null,
+        "social_accounts": [],
+        "workspace_id": "041a7535146291ca6fff59662d3ae484",
+        "db_config": {
+          "db_id": "nvidia_enterprise_db",
+          "connection_uri": "sqlite:///C:/Users/GIGA BYIT/Desktop/optimized_version2/mock_services/nvidia/nvidia_enterprise.db",
+          "allowed_tables": [
+            "gpu_products",
+            "enterprise_deals",
+            "software_arr"
+          ],
+          "description": "NVIDIA Enterprise relational database (hardware pricing, deals, software ARR)."
+        },
+        "api_config": {
+          "api_id": "nvidia_ops_api",
+          "base_url": "http://127.0.0.1:8088",
+          "openapi_spec_url": null,
+          "openapi_spec_inline": {
+            "openapi": "3.1.0",
+            "info": {
+              "title": "NVIDIA Internal Enterprise Operations API",
+              "description": "Operational microservices API for real-time cluster telemetry, pricing rules, competitive benchmarks, ARR financials, supply-chain constraints, and export control data. Read-only GET endpoints only. POST/PATCH/DELETE exist in spec for completeness but must never be invoked by AI agents.",
+              "version": "2.0.0"
+            },
+            "servers": [
+              {
+                "url": "http://127.0.0.1:8088",
+                "description": "Local Mock NVIDIA Enterprise Service"
+              }
+            ],
+            "paths": {
+              "/v1/telemetry/gpu-clusters": {
+                "get": {
+                  "summary": "Retrieve Global GPU Cluster Telemetry",
+                  "description": "Returns live operational metrics on NVIDIA global compute cluster utilization, deployed Blackwell units, and uptime.",
+                  "operationId": "get_cluster_telemetry_v1_telemetry_gpu_clusters_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/ClusterTelemetryResponse"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/pricing/discount-matrix": {
+                "get": {
+                  "summary": "Get Volume Discount Policy & Deal Desk Matrix",
+                  "description": "Returns current discount approval thresholds, volume tiers, and minimum margin floors.",
+                  "operationId": "get_discount_matrix_v1_pricing_discount_matrix_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/PricingDiscountMatrixResponse"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/supply-chain/lead-times": {
+                "get": {
+                  "summary": "Get Hardware Lead Times & Packaging Allocation",
+                  "description": "Returns estimated customer shipment lead times by GPU model and CoWoS packaging allocation.",
+                  "operationId": "get_supply_chain_lead_times_v1_supply_chain_lead_times_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/SupplyChainLeadTimesResponse"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/products": {
+                "get": {
+                  "summary": "List All GPU Products & ASP",
+                  "description": "Returns the full NVIDIA GPU product catalogue with ASP and gross margin targets.",
+                  "operationId": "list_products_v1_products_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "items": {
+                              "$ref": "#/components/schemas/ProductSummary"
+                            },
+                            "type": "array",
+                            "title": "Response List Products V1 Products Get"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/products/{product_name}/margin": {
+                "get": {
+                  "summary": "Get Gross Margin for a Specific Product",
+                  "description": "Looks up the gross margin target and remaining headroom above floor for a specific GPU product.",
+                  "operationId": "get_product_margin_v1_products__product_name__margin_get",
+                  "parameters": [
+                    {
+                      "name": "product_name",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                        "type": "string",
+                        "description": "Product name, e.g. B200 GPU",
+                        "title": "Product Name"
+                      },
+                      "description": "Product name, e.g. B200 GPU"
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/ProductMarginResponse"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/competitive/benchmark-summary": {
+                "get": {
+                  "summary": "Get Competitive Benchmark Summary vs AMD & Google",
+                  "description": "Returns training and inference benchmark comparisons between NVIDIA GPUs and competitors.",
+                  "operationId": "get_competitive_benchmarks_v1_competitive_benchmark_summary_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/CompetitiveBenchmarkSummary"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/finance/arr-summary": {
+                "get": {
+                  "summary": "Get Software ARR Breakdown (FY2026)",
+                  "description": "Returns the software and subscription ARR breakdown across NVIDIA AI Enterprise, NIM, DGX Cloud, and Omniverse.",
+                  "operationId": "get_arr_summary_v1_finance_arr_summary_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/ARRSummaryResponse"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/export-control/{country}": {
+                "get": {
+                  "summary": "Get Export Control Status for a Country or Entity",
+                  "description": "Returns the US BIS / OFAC export control status for a specific country or named entity.",
+                  "operationId": "get_export_control_v1_export_control__country__get",
+                  "parameters": [
+                    {
+                      "name": "country",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                        "type": "string",
+                        "description": "Country name or entity, e.g. China",
+                        "title": "Country"
+                      },
+                      "description": "Country name or entity, e.g. China"
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/ExportControlResponse"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/products/{product_name}/specifications": {
+                "get": {
+                  "summary": "Get Detailed Hardware Specifications for a GPU Product",
+                  "description": "Returns detailed microarchitecture specifications including memory bandwidth, NVLink rate, FP8/BF16 compute TFLOPS, and cooling requirements.",
+                  "operationId": "get_product_specifications_v1_products__product_name__specifications_get",
+                  "parameters": [
+                    {
+                      "name": "product_name",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                        "type": "string",
+                        "description": "GPU product name",
+                        "title": "Product Name"
+                      },
+                      "description": "GPU product name"
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/ProductSpecification"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/software/catalog": {
+                "get": {
+                  "summary": "List NVIDIA Enterprise & Open-Source Software Catalog",
+                  "description": "Returns all software offerings including CUDA, cuDNN, TensorRT-LLM, Triton, and NVIDIA AI Enterprise with license models.",
+                  "operationId": "get_software_catalog_v1_software_catalog_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "items": {
+                              "$ref": "#/components/schemas/SoftwareCatalogItem"
+                            },
+                            "type": "array",
+                            "title": "Response Get Software Catalog V1 Software Catalog Get"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/software/framework-compatibility": {
+                "get": {
+                  "summary": "Get Deep Learning Framework and Driver Compatibility Matrix",
+                  "description": "Returns the certified compatibility matrix for PyTorch, TensorFlow, JAX, and ONNX Runtime across CUDA versions.",
+                  "operationId": "get_framework_compatibility_v1_software_framework_compatibility_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "items": {
+                              "$ref": "#/components/schemas/FrameworkCompatibilityItem"
+                            },
+                            "type": "array",
+                            "title": "Response Get Framework Compatibility V1 Software Framework Compatibility Get"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/cloud/regional-pricing": {
+                "get": {
+                  "summary": "Get Cloud Provider Instance Pricing by Region",
+                  "description": "Returns hourly rental prices and availability status across AWS, Azure, Google Cloud, and Oracle Cloud.",
+                  "operationId": "get_cloud_regional_pricing_v1_cloud_regional_pricing_get",
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "items": {
+                              "$ref": "#/components/schemas/RegionalCloudPricingItem"
+                            },
+                            "type": "array",
+                            "title": "Response Get Cloud Regional Pricing V1 Cloud Regional Pricing Get"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/deals/create": {
+                "post": {
+                  "summary": "[WRITE] Create a New Enterprise Deal Record",
+                  "description": "WRITE OPERATION – AI agents are PROHIBITED from calling this endpoint. Reserved for Deal Desk system automation only.",
+                  "operationId": "create_deal_v1_deals_create_post",
+                  "requestBody": {
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/CreateDealRequest"
+                        }
+                      }
+                    },
+                    "required": true
+                  },
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object",
+                            "title": "Response Create Deal V1 Deals Create Post"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/supply-chain/emergency-order": {
+                "post": {
+                  "summary": "[WRITE] Place Emergency Supply Order",
+                  "description": "WRITE OPERATION – AI agents are PROHIBITED from calling this endpoint.",
+                  "operationId": "place_emergency_order_v1_supply_chain_emergency_order_post",
+                  "requestBody": {
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/EmergencyOrderRequest"
+                        }
+                      }
+                    },
+                    "required": true
+                  },
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": "object",
+                            "title": "Response Place Emergency Order V1 Supply Chain Emergency Order Post"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/pipeline/{opportunity_id}": {
+                "delete": {
+                  "summary": "[WRITE] Delete Sales Pipeline Opportunity",
+                  "description": "WRITE OPERATION – AI agents are PROHIBITED from calling this endpoint.",
+                  "operationId": "delete_opportunity_v1_pipeline__opportunity_id__delete",
+                  "parameters": [
+                    {
+                      "name": "opportunity_id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                        "type": "string",
+                        "title": "Opportunity Id"
+                      }
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "title": "Response Delete Opportunity V1 Pipeline  Opportunity Id  Delete"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "/v1/pricing/override": {
+                "patch": {
+                  "summary": "[WRITE] Override Pricing Policy",
+                  "description": "WRITE OPERATION – AI agents are PROHIBITED from calling this endpoint.",
+                  "operationId": "override_pricing_v1_pricing_override_patch",
+                  "parameters": [
+                    {
+                      "name": "margin_floor",
+                      "in": "query",
+                      "required": true,
+                      "schema": {
+                        "type": "number",
+                        "title": "Margin Floor"
+                      }
+                    }
+                  ],
+                  "responses": {
+                    "200": {
+                      "description": "Successful Response",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "title": "Response Override Pricing V1 Pricing Override Patch"
+                          }
+                        }
+                      }
+                    },
+                    "422": {
+                      "description": "Validation Error",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/HTTPValidationError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
+              "schemas": {
+                "ARRSubscription": {
+                  "properties": {
+                    "offering_name": {
+                      "type": "string",
+                      "title": "Offering Name"
+                    },
+                    "pricing_model": {
+                      "type": "string",
+                      "title": "Pricing Model"
+                    },
+                    "annual_list_price_usd": {
+                      "type": "number",
+                      "title": "Annual List Price Usd"
+                    },
+                    "active_licenses": {
+                      "type": "integer",
+                      "title": "Active Licenses"
+                    },
+                    "total_arr_usd": {
+                      "type": "number",
+                      "title": "Total Arr Usd"
+                    },
+                    "yoy_growth_pct": {
+                      "type": "number",
+                      "title": "Yoy Growth Pct"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "offering_name",
+                    "pricing_model",
+                    "annual_list_price_usd",
+                    "active_licenses",
+                    "total_arr_usd",
+                    "yoy_growth_pct"
+                  ],
+                  "title": "ARRSubscription"
+                },
+                "ARRSummaryResponse": {
+                  "properties": {
+                    "fiscal_year": {
+                      "type": "integer",
+                      "title": "Fiscal Year"
+                    },
+                    "total_software_arr_usd": {
+                      "type": "number",
+                      "title": "Total Software Arr Usd"
+                    },
+                    "subscriptions": {
+                      "items": {
+                        "$ref": "#/components/schemas/ARRSubscription"
+                      },
+                      "type": "array",
+                      "title": "Subscriptions"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "fiscal_year",
+                    "total_software_arr_usd",
+                    "subscriptions"
+                  ],
+                  "title": "ARRSummaryResponse"
+                },
+                "BenchmarkEntry": {
+                  "properties": {
+                    "benchmark_name": {
+                      "type": "string",
+                      "title": "Benchmark Name"
+                    },
+                    "workload_type": {
+                      "type": "string",
+                      "title": "Workload Type"
+                    },
+                    "nvidia_product": {
+                      "type": "string",
+                      "title": "Nvidia Product"
+                    },
+                    "nvidia_score": {
+                      "type": "number",
+                      "title": "Nvidia Score"
+                    },
+                    "nvidia_score_unit": {
+                      "type": "string",
+                      "title": "Nvidia Score Unit"
+                    },
+                    "competitor_product": {
+                      "type": "string",
+                      "title": "Competitor Product"
+                    },
+                    "competitor_score": {
+                      "type": "number",
+                      "title": "Competitor Score"
+                    },
+                    "nvidia_advantage_pct": {
+                      "type": "number",
+                      "title": "Nvidia Advantage Pct"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "benchmark_name",
+                    "workload_type",
+                    "nvidia_product",
+                    "nvidia_score",
+                    "nvidia_score_unit",
+                    "competitor_product",
+                    "competitor_score",
+                    "nvidia_advantage_pct"
+                  ],
+                  "title": "BenchmarkEntry"
+                },
+                "ClusterTelemetryResponse": {
+                  "properties": {
+                    "cluster_status": {
+                      "type": "string",
+                      "title": "Cluster Status",
+                      "description": "Operational health status of global compute clusters."
+                    },
+                    "fleet_total_gpus": {
+                      "type": "integer",
+                      "title": "Fleet Total Gpus",
+                      "description": "Total GPU count across all global datacenters."
+                    },
+                    "active_fleet_utilization_pct": {
+                      "type": "number",
+                      "title": "Active Fleet Utilization Pct",
+                      "description": "Current real-time fleet utilization %."
+                    },
+                    "blackwell_ramp_units_deployed": {
+                      "type": "integer",
+                      "title": "Blackwell Ramp Units Deployed",
+                      "description": "Newly deployed Blackwell B200/GB200 units."
+                    },
+                    "power_efficiency_pue": {
+                      "type": "number",
+                      "title": "Power Efficiency Pue",
+                      "description": "Global average Power Usage Effectiveness (PUE)."
+                    },
+                    "average_cluster_uptime_pct": {
+                      "type": "number",
+                      "title": "Average Cluster Uptime Pct",
+                      "description": "30-day trailing uptime percentage."
+                    },
+                    "telemetry_timestamp": {
+                      "type": "string",
+                      "title": "Telemetry Timestamp",
+                      "description": "ISO timestamp of telemetry snapshot."
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "cluster_status",
+                    "fleet_total_gpus",
+                    "active_fleet_utilization_pct",
+                    "blackwell_ramp_units_deployed",
+                    "power_efficiency_pue",
+                    "average_cluster_uptime_pct",
+                    "telemetry_timestamp"
+                  ],
+                  "title": "ClusterTelemetryResponse"
+                },
+                "CompetitiveBenchmarkSummary": {
+                  "properties": {
+                    "as_of": {
+                      "type": "string",
+                      "title": "As Of"
+                    },
+                    "average_nvidia_advantage_pct": {
+                      "type": "number",
+                      "title": "Average Nvidia Advantage Pct"
+                    },
+                    "benchmarks": {
+                      "items": {
+                        "$ref": "#/components/schemas/BenchmarkEntry"
+                      },
+                      "type": "array",
+                      "title": "Benchmarks"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "as_of",
+                    "average_nvidia_advantage_pct",
+                    "benchmarks"
+                  ],
+                  "title": "CompetitiveBenchmarkSummary"
+                },
+                "CreateDealRequest": {
+                  "properties": {
+                    "customer_name": {
+                      "type": "string",
+                      "title": "Customer Name"
+                    },
+                    "product_name": {
+                      "type": "string",
+                      "title": "Product Name"
+                    },
+                    "units_ordered": {
+                      "type": "integer",
+                      "title": "Units Ordered"
+                    },
+                    "discount_pct": {
+                      "type": "number",
+                      "title": "Discount Pct"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "customer_name",
+                    "product_name",
+                    "units_ordered",
+                    "discount_pct"
+                  ],
+                  "title": "CreateDealRequest"
+                },
+                "DiscountTierRule": {
+                  "properties": {
+                    "min_units": {
+                      "type": "integer",
+                      "title": "Min Units"
+                    },
+                    "max_discount_pct": {
+                      "type": "number",
+                      "title": "Max Discount Pct"
+                    },
+                    "requires_vp_approval": {
+                      "type": "boolean",
+                      "title": "Requires Vp Approval"
+                    },
+                    "approver": {
+                      "type": "string",
+                      "title": "Approver"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "min_units",
+                    "max_discount_pct",
+                    "requires_vp_approval",
+                    "approver"
+                  ],
+                  "title": "DiscountTierRule"
+                },
+                "EmergencyOrderRequest": {
+                  "properties": {
+                    "product_name": {
+                      "type": "string",
+                      "title": "Product Name"
+                    },
+                    "units_requested": {
+                      "type": "integer",
+                      "title": "Units Requested"
+                    },
+                    "justification": {
+                      "type": "string",
+                      "title": "Justification"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "product_name",
+                    "units_requested",
+                    "justification"
+                  ],
+                  "title": "EmergencyOrderRequest"
+                },
+                "ExportControlResponse": {
+                  "properties": {
+                    "country_or_entity": {
+                      "type": "string",
+                      "title": "Country Or Entity"
+                    },
+                    "control_status": {
+                      "type": "string",
+                      "title": "Control Status"
+                    },
+                    "license_type": {
+                      "type": "string",
+                      "title": "License Type"
+                    },
+                    "applies_to_products": {
+                      "type": "string",
+                      "title": "Applies To Products"
+                    },
+                    "restriction_basis": {
+                      "type": "string",
+                      "title": "Restriction Basis"
+                    },
+                    "notes": {
+                      "type": "string",
+                      "title": "Notes"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "country_or_entity",
+                    "control_status",
+                    "license_type",
+                    "applies_to_products",
+                    "restriction_basis",
+                    "notes"
+                  ],
+                  "title": "ExportControlResponse"
+                },
+                "FrameworkCompatibilityItem": {
+                  "properties": {
+                    "framework_name": {
+                      "type": "string",
+                      "title": "Framework Name"
+                    },
+                    "framework_version": {
+                      "type": "string",
+                      "title": "Framework Version"
+                    },
+                    "cuda_version_required": {
+                      "type": "string",
+                      "title": "Cuda Version Required"
+                    },
+                    "driver_version_min": {
+                      "type": "string",
+                      "title": "Driver Version Min"
+                    },
+                    "supported_gpus": {
+                      "type": "string",
+                      "title": "Supported Gpus"
+                    },
+                    "native_fp8_support": {
+                      "type": "string",
+                      "title": "Native Fp8 Support"
+                    },
+                    "status": {
+                      "type": "string",
+                      "title": "Status"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "framework_name",
+                    "framework_version",
+                    "cuda_version_required",
+                    "driver_version_min",
+                    "supported_gpus",
+                    "native_fp8_support",
+                    "status"
+                  ],
+                  "title": "FrameworkCompatibilityItem"
+                },
+                "HTTPValidationError": {
+                  "properties": {
+                    "detail": {
+                      "items": {
+                        "$ref": "#/components/schemas/ValidationError"
+                      },
+                      "type": "array",
+                      "title": "Detail"
+                    }
+                  },
+                  "type": "object",
+                  "title": "HTTPValidationError"
+                },
+                "PricingDiscountMatrixResponse": {
+                  "properties": {
+                    "policy_version": {
+                      "type": "string",
+                      "title": "Policy Version"
+                    },
+                    "margin_floor_pct": {
+                      "type": "number",
+                      "title": "Margin Floor Pct"
+                    },
+                    "rules": {
+                      "items": {
+                        "$ref": "#/components/schemas/DiscountTierRule"
+                      },
+                      "type": "array",
+                      "title": "Rules"
+                    },
+                    "sovereign_ai_cap_pct": {
+                      "type": "number",
+                      "title": "Sovereign Ai Cap Pct"
+                    },
+                    "notes": {
+                      "type": "string",
+                      "title": "Notes"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "policy_version",
+                    "margin_floor_pct",
+                    "rules",
+                    "sovereign_ai_cap_pct",
+                    "notes"
+                  ],
+                  "title": "PricingDiscountMatrixResponse"
+                },
+                "ProductMarginResponse": {
+                  "properties": {
+                    "product_name": {
+                      "type": "string",
+                      "title": "Product Name"
+                    },
+                    "target_gross_margin_pct": {
+                      "type": "number",
+                      "title": "Target Gross Margin Pct"
+                    },
+                    "margin_floor_pct": {
+                      "type": "number",
+                      "title": "Margin Floor Pct"
+                    },
+                    "headroom_pct": {
+                      "type": "number",
+                      "title": "Headroom Pct"
+                    },
+                    "note": {
+                      "type": "string",
+                      "title": "Note"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "product_name",
+                    "target_gross_margin_pct",
+                    "margin_floor_pct",
+                    "headroom_pct",
+                    "note"
+                  ],
+                  "title": "ProductMarginResponse"
+                },
+                "ProductSpecification": {
+                  "properties": {
+                    "product_name": {
+                      "type": "string",
+                      "title": "Product Name"
+                    },
+                    "architecture": {
+                      "type": "string",
+                      "title": "Architecture"
+                    },
+                    "hbm_capacity_gb": {
+                      "type": "integer",
+                      "title": "Hbm Capacity Gb"
+                    },
+                    "memory_bandwidth_tbps": {
+                      "type": "number",
+                      "title": "Memory Bandwidth Tbps"
+                    },
+                    "nvlink_version": {
+                      "type": "string",
+                      "title": "Nvlink Version"
+                    },
+                    "nvlink_bandwidth_gbps": {
+                      "type": "integer",
+                      "title": "Nvlink Bandwidth Gbps"
+                    },
+                    "cuda_compute_capability": {
+                      "type": "string",
+                      "title": "Cuda Compute Capability"
+                    },
+                    "fp8_tflops": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "title": "Fp8 Tflops"
+                    },
+                    "bf16_tflops": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "title": "Bf16 Tflops"
+                    },
+                    "tdp_watts": {
+                      "type": "integer",
+                      "title": "Tdp Watts"
+                    },
+                    "cooling_type": {
+                      "type": "string",
+                      "title": "Cooling Type"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "product_name",
+                    "architecture",
+                    "hbm_capacity_gb",
+                    "memory_bandwidth_tbps",
+                    "nvlink_version",
+                    "nvlink_bandwidth_gbps",
+                    "cuda_compute_capability",
+                    "tdp_watts",
+                    "cooling_type"
+                  ],
+                  "title": "ProductSpecification"
+                },
+                "ProductSummary": {
+                  "properties": {
+                    "product_name": {
+                      "type": "string",
+                      "title": "Product Name"
+                    },
+                    "architecture": {
+                      "type": "string",
+                      "title": "Architecture"
+                    },
+                    "segment": {
+                      "type": "string",
+                      "title": "Segment"
+                    },
+                    "target_asp_usd": {
+                      "type": "number",
+                      "title": "Target Asp Usd"
+                    },
+                    "target_gross_margin_pct": {
+                      "type": "number",
+                      "title": "Target Gross Margin Pct"
+                    },
+                    "release_quarter": {
+                      "type": "string",
+                      "title": "Release Quarter"
+                    },
+                    "tdp_watts": {
+                      "anyOf": [
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "title": "Tdp Watts"
+                    },
+                    "hbm_capacity_gb": {
+                      "anyOf": [
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "title": "Hbm Capacity Gb"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "product_name",
+                    "architecture",
+                    "segment",
+                    "target_asp_usd",
+                    "target_gross_margin_pct",
+                    "release_quarter"
+                  ],
+                  "title": "ProductSummary"
+                },
+                "RegionalCloudPricingItem": {
+                  "properties": {
+                    "cloud_provider": {
+                      "type": "string",
+                      "title": "Cloud Provider"
+                    },
+                    "region_name": {
+                      "type": "string",
+                      "title": "Region Name"
+                    },
+                    "gpu_product": {
+                      "type": "string",
+                      "title": "Gpu Product"
+                    },
+                    "instance_type": {
+                      "type": "string",
+                      "title": "Instance Type"
+                    },
+                    "hourly_price_usd": {
+                      "type": "number",
+                      "title": "Hourly Price Usd"
+                    },
+                    "availability_status": {
+                      "type": "string",
+                      "title": "Availability Status"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "cloud_provider",
+                    "region_name",
+                    "gpu_product",
+                    "instance_type",
+                    "hourly_price_usd",
+                    "availability_status"
+                  ],
+                  "title": "RegionalCloudPricingItem"
+                },
+                "SoftwareCatalogItem": {
+                  "properties": {
+                    "component_name": {
+                      "type": "string",
+                      "title": "Component Name"
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Category"
+                    },
+                    "license_type": {
+                      "type": "string",
+                      "title": "License Type"
+                    },
+                    "purpose_description": {
+                      "type": "string",
+                      "title": "Purpose Description"
+                    },
+                    "supported_gpus": {
+                      "type": "string",
+                      "title": "Supported Gpus"
+                    },
+                    "cuda_version_min": {
+                      "type": "string",
+                      "title": "Cuda Version Min"
+                    },
+                    "pricing_model": {
+                      "type": "string",
+                      "title": "Pricing Model"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "component_name",
+                    "category",
+                    "license_type",
+                    "purpose_description",
+                    "supported_gpus",
+                    "cuda_version_min",
+                    "pricing_model"
+                  ],
+                  "title": "SoftwareCatalogItem"
+                },
+                "SupplyChainLeadTimesResponse": {
+                  "properties": {
+                    "as_of_quarter": {
+                      "type": "string",
+                      "title": "As Of Quarter"
+                    },
+                    "cowos_packaging_allocation_pct": {
+                      "type": "number",
+                      "title": "Cowos Packaging Allocation Pct"
+                    },
+                    "lead_times_weeks": {
+                      "additionalProperties": {
+                        "type": "integer"
+                      },
+                      "type": "object",
+                      "title": "Lead Times Weeks"
+                    },
+                    "bottlenecks": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "title": "Bottlenecks"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "as_of_quarter",
+                    "cowos_packaging_allocation_pct",
+                    "lead_times_weeks",
+                    "bottlenecks"
+                  ],
+                  "title": "SupplyChainLeadTimesResponse"
+                },
+                "ValidationError": {
+                  "properties": {
+                    "loc": {
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      },
+                      "type": "array",
+                      "title": "Location"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "Message"
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Error Type"
+                    },
+                    "input": {
+                      "title": "Input"
+                    },
+                    "ctx": {
+                      "type": "object",
+                      "title": "Context"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                  ],
+                  "title": "ValidationError"
+                }
+              }
+            }
+          },
+          "auth_headers": null,
+          "description": "NVIDIA operational cluster telemetry and deal desk microservices API."
+        }
+      },
+      "business_context": {
+        "use_case": "competitive_intelligence",
+        "targets": [
+          "Kanz Pay"
+        ],
+        "competitors": [
+          {
+            "name": "Kanz Pay",
+            "website": null,
+            "social_accounts": [],
+            "entity_id": null,
+            "discovered_by": "user"
+          }
+        ],
+        "markets": [
+          "Egypt"
+        ],
+        "offering": null,
+        "target_customers": null,
+        "focus_areas": [
+          "Pricing and packaging"
+        ],
+        "trigger": "on_demand",
+        "time_window_days": 90,
+        "constraints": []
+      },
+      "attempt": 1,
+      "requirements": [
+        {
+          "metric_id": "price_per_tier",
+          "entity": "Kanz Pay",
+          "required": true,
+          "definition": "List price of each paid plan, per seat per month unless stated.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Kanz Pay pricing",
+            "Kanz Pay plans price per user"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "paid_subscribers",
+          "entity": "Kanz Pay",
+          "required": true,
+          "definition": "Number of paying customers or subscribers.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Kanz Pay number of customers",
+            "Kanz Pay paying customers"
+          ],
+          "check_rule": null
+        },
+        {
+          "metric_id": "effective_price_usage",
+          "entity": "Kanz Pay",
+          "required": false,
+          "definition": "Price per billed unit (e.g. CI minute, API call) beyond the included allowance.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Kanz Pay usage based pricing",
+            "Kanz Pay overage"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "revenue_arr",
+          "entity": "Kanz Pay",
+          "required": false,
+          "definition": "Annual revenue or annual recurring revenue, if publicly reported.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Kanz Pay annual revenue",
+            "Kanz Pay ARR filing"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "release_cadence",
+          "entity": "Kanz Pay",
+          "required": false,
+          "definition": "Releases shipped per month or quarter.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Kanz Pay release notes",
+            "Kanz Pay changelog"
+          ],
+          "check_rule": "min_points=3"
+        },
+        {
+          "metric_id": "certifications",
+          "entity": "Kanz Pay",
+          "required": false,
+          "definition": "Security and compliance certifications held.",
+          "preferred_source_types": [
+            "official"
+          ],
+          "query_hints": [
+            "Kanz Pay security compliance certifications"
+          ],
+          "check_rule": "official_source_required=True"
+        },
+        {
+          "metric_id": "funding_total",
+          "entity": "Kanz Pay",
+          "required": false,
+          "definition": "Total external funding raised to date.",
+          "preferred_source_types": [
+            "official",
+            "third_party"
+          ],
+          "query_hints": [
+            "Kanz Pay funding round raised"
+          ],
+          "check_rule": null
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-11-24T03:23:38.508000Z",
+  "rationale": "Each of the 1 workers investigates its own angle in parallel; verification then checks what they found."
+}

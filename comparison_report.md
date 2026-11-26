@@ -1,62 +1,47 @@
 # Edrak comparison: Optimized vs GraphRAG
 
-## Verdict: Optimized
+- Optimized: `2aaf080a301c155b6e6c1bd159ecd8ad`
+- GraphRAG: `9e373b46748a80c11cc0949128b4e228`
 
-GraphRAG has critical failures: GraphRAG: worker:market_intelligence has an error
+## Verdict: GraphRAG
 
-| Overall score | Optimized | GraphRAG |
+GraphRAG has the higher overall score (0.584 vs 0.582) across 6 workers and stages.
+
+| | Optimized | GraphRAG |
 |---|---:|---:|
-| Score | 0.508 | 0.469 |
+| **Overall score** | 0.582 | 0.584 |
 
-## Worker and stage comparison
+## Best version per metric
+
+| Metric | Optimized | GraphRAG | Best |
+|---|---:|---:|---|
+| correctness | 0.650 | 0.567 | Optimized |
+| faithfulness | 0.583 | 0.700 | GraphRAG |
+| completeness | 0.550 | 0.500 | Optimized |
+| coverage | 0.497 | 0.530 | GraphRAG |
+
+## Worker and stage scores
 
 | Component | Optimized | GraphRAG | Difference (B - A) |
 |---|---:|---:|---:|
-| stage:cross_signal | 0.660 | 0.640 | -0.019 |
-| stage:decision_analysis | 0.548 | 0.559 | 0.011 |
-| stage:verification | 0.552 | 0.560 | 0.008 |
-| worker:competitor_intelligence | 0.562 | 0.506 | -0.056 |
-| worker:customer_trends | 0.184 | 0.159 | -0.024 |
-| worker:internal_intelligence | 0.470 | 0.373 | -0.097 |
-| worker:market_intelligence | 0.578 | 0.485 | -0.093 |
+| worker:competitor_intelligence | 0.463 | 0.535 | 0.072 |
+| worker:customer_trends (skipped: no findings) | 0.175 | 0.189 | 0.014 |
+| worker:internal_intelligence | 0.606 | 0.564 | -0.041 |
+| worker:market_intelligence | 0.498 | 0.623 | 0.125 |
+| stage:cross_signal | 0.664 | 0.701 | 0.037 |
+| stage:decision_analysis | 0.651 | 0.566 | -0.085 |
+| stage:verification | 0.610 | 0.517 | -0.093 |
 
 ## Metric breakdown
-
-### stage:cross_signal
-
-| Metric | Optimized | GraphRAG |
-|---|---:|---:|
-| correctness | 0.700 | 0.600 |
-| faithfulness | 0.900 | 0.800 |
-| completeness | 0.500 | 0.500 |
-| coverage | 0.364 | 0.636 |
-
-### stage:decision_analysis
-
-| Metric | Optimized | GraphRAG |
-|---|---:|---:|
-| correctness | 0.500 | 0.400 |
-| faithfulness | 0.500 | 0.700 |
-| completeness | 0.600 | 0.500 |
-| coverage | 0.654 | 0.692 |
-
-### stage:verification
-
-| Metric | Optimized | GraphRAG |
-|---|---:|---:|
-| correctness | 0.600 | 0.600 |
-| faithfulness | 0.700 | 0.600 |
-| completeness | 0.300 | 0.500 |
-| coverage | 0.583 | 0.500 |
 
 ### worker:competitor_intelligence
 
 | Metric | Optimized | GraphRAG |
 |---|---:|---:|
-| correctness | 0.600 | 0.500 |
-| faithfulness | 0.800 | 0.700 |
+| correctness | 0.500 | 0.500 |
+| faithfulness | 0.500 | 0.700 |
 | completeness | 0.400 | 0.400 |
-| coverage | 0.278 | 0.306 |
+| coverage | 0.423 | 0.500 |
 
 ### worker:customer_trends
 
@@ -64,35 +49,61 @@ GraphRAG has critical failures: GraphRAG: worker:market_intelligence has an erro
 |---|---:|---:|
 | correctness | 0.100 | 0.100 |
 | faithfulness | — | — |
-| completeness | 0.300 | 0.200 |
-| coverage | 0.158 | 0.210 |
+| completeness | 0.100 | 0.200 |
+| coverage | 0.450 | 0.350 |
 
 ### worker:internal_intelligence
 
 | Metric | Optimized | GraphRAG |
 |---|---:|---:|
-| correctness | 0.300 | 0.300 |
-| faithfulness | 0.600 | 0.500 |
-| completeness | 0.600 | 0.400 |
-| coverage | 0.333 | 0.222 |
+| correctness | 0.700 | 0.500 |
+| faithfulness | 0.600 | 0.600 |
+| completeness | 0.600 | 0.600 |
+| coverage | 0.438 | 0.562 |
 
 ### worker:market_intelligence
 
 | Metric | Optimized | GraphRAG |
 |---|---:|---:|
-| correctness | 0.600 | 0.300 |
+| correctness | 0.500 | 0.600 |
+| faithfulness | 0.600 | 0.900 |
+| completeness | 0.400 | 0.500 |
+| coverage | 0.455 | 0.318 |
+
+### stage:cross_signal
+
+| Metric | Optimized | GraphRAG |
+|---|---:|---:|
+| correctness | 0.800 | 0.700 |
 | faithfulness | 0.700 | 0.900 |
-| completeness | 0.500 | 0.300 |
-| coverage | 0.417 | 0.333 |
+| completeness | 0.600 | 0.500 |
+| coverage | 0.429 | 0.643 |
 
+### stage:decision_analysis
 
-## GraphRAG critical issues
+| Metric | Optimized | GraphRAG |
+|---|---:|---:|
+| correctness | 0.700 | 0.500 |
+| faithfulness | 0.600 | 0.600 |
+| completeness | 0.700 | 0.600 |
+| coverage | 0.571 | 0.571 |
 
-- GraphRAG: worker:market_intelligence has an error
+### stage:verification
+
+| Metric | Optimized | GraphRAG |
+|---|---:|---:|
+| correctness | 0.700 | 0.600 |
+| faithfulness | 0.500 | 0.500 |
+| completeness | 0.600 | 0.400 |
+| coverage | 0.667 | 0.583 |
+
+## Left out of the overall score (no findings)
+
+- worker:customer_trends
 
 ## Scoring
 
-Correctness 30%, faithfulness 30%, completeness 25%, coverage 15%.
-Available metric weights are renormalized when a metric is missing.
-The overall score is the simple average across matching workers and stages.
-This is a practical comparison, not a statistical significance test.
+Correctness 30%, faithfulness 30%, completeness 25%, coverage 15%; missing metrics are skipped and the weights rescaled.
+Overall score = simple average of workers and stages; the higher score wins, and only identical overall scores are a tie.
+Individual metric comparisons within 0.01 are labeled ties.
+This is a practical comparison, not a statistical test.

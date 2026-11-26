@@ -360,6 +360,10 @@ pytest                                  # backend tests
 cd frontend && npm test && npm run build
 ```
 
+Each run also stores the latest verification, cross-signal, and decision-stage
+inputs and outputs under `artifacts/runs/<run_id>/stages/<stage>/input.json`
+and `output.json`.
+
 ## Documentation
 
 `README.md` is the public overview. The team keeps deeper material locally — architecture notes,

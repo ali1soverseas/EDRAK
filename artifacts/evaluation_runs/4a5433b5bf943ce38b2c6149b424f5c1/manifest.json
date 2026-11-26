@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "analysis_id": "4a5433b5bf943ce38b2c6149b424f5c1",
+  "status": "running",
+  "started_at_utc": "2026-11-24T03:24:29.253228+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-24T03:24:29.517051+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T03:24:29.574988+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_6608b784-b08.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-24T03:24:29.787211+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-24T03:24:30.315245+00:00",
+      "artifacts": [
+        "outputs\\human_review_004.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T03:24:30.379101+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_2_6608b784-b08.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-24T03:24:30.573817+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_002.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:6608b784-b082-46a6-a370-e766b1628c9c:1": "inputs\\worker_competitor_intelligence_attempt_1_6608b784-b08.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "worker:6608b784-b082-46a6-a370-e766b1628c9c:2": "inputs\\worker_competitor_intelligence_attempt_2_6608b784-b08.json",
+    "verification:2": "inputs\\verification_pass_002.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-24T03:24:30.578271+00:00"
+}

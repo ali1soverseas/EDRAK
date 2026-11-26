@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "analysis_id": "21ed673c7d4e7e731f740c1ecd492781",
+  "status": "partial",
+  "started_at_utc": "2026-11-24T03:23:38.650262+00:00",
+  "stages": [
+    {
+      "node": "plan",
+      "completed_at_utc": "2026-11-24T03:23:39.409306+00:00",
+      "artifacts": [
+        "context/plan.json"
+      ]
+    },
+    {
+      "node": "dispatch",
+      "completed_at_utc": "2026-11-24T03:23:39.422636+00:00",
+      "artifacts": [
+        "inputs\\worker_competitor_intelligence_attempt_1_b0450d9a-b95.json"
+      ]
+    },
+    {
+      "node": "verify",
+      "completed_at_utc": "2026-11-24T03:23:39.506702+00:00",
+      "artifacts": [
+        "inputs\\verification_pass_001.json"
+      ]
+    },
+    {
+      "node": "human_review",
+      "completed_at_utc": "2026-11-24T03:23:41.335466+00:00",
+      "artifacts": [
+        "outputs\\human_review_004.json"
+      ]
+    },
+    {
+      "node": "cross_signal",
+      "completed_at_utc": "2026-11-24T03:23:41.397894+00:00",
+      "artifacts": []
+    },
+    {
+      "node": "decision_analysis",
+      "completed_at_utc": "2026-11-24T03:23:41.517814+00:00",
+      "artifacts": []
+    },
+    {
+      "node": "finalize",
+      "completed_at_utc": "2026-11-24T03:23:41.667904+00:00",
+      "artifacts": [
+        "inputs\\orchestration_result.json"
+      ]
+    }
+  ],
+  "artifacts": {
+    "initial_input": "inputs\\initial_input.json",
+    "plan": "context\\plan.json",
+    "worker:b0450d9a-b959-4d1f-91dd-4de511e033c1:1": "inputs\\worker_competitor_intelligence_attempt_1_b0450d9a-b95.json",
+    "verification:1": "inputs\\verification_pass_001.json",
+    "orchestration_result": "inputs\\orchestration_result.json"
+  },
+  "warnings": [],
+  "updated_at_utc": "2026-11-24T03:23:41.715988+00:00",
+  "completed_at_utc": "2026-11-24T03:23:41.715959+00:00"
+}

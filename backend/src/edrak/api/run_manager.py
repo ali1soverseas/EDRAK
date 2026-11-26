@@ -95,6 +95,7 @@ from edrak.evaluation_artifacts import EvaluationArtifactBundle
 from edrak.guardrails.output import check_brief
 from edrak.orchestration.graph import build_graph
 from edrak.orchestration.registry import get_default_registry
+from edrak.orchestration.stage_artifacts import save_stage_artifacts
 
 logger = logging.getLogger(__name__)
 
@@ -703,6 +704,12 @@ class RunManager:
         try:
             output = await run_cross_signal(cross_signal_input)
         except Exception as exc:
+            save_stage_artifacts(
+                analysis_id,
+                "cross_signal",
+                cross_signal_input,
+                {"status": "failed", "error": f"{type(exc).__name__}: {exc}"},
+            )
             trace_cross_signal(
                 "manual_failed",
                 trace_context,
@@ -712,6 +719,7 @@ class RunManager:
             raise
 
         result = output.model_dump(mode="json")
+        save_stage_artifacts(analysis_id, "cross_signal", cross_signal_input, result)
         trace_cross_signal(
             "manual_completed",
             trace_context,

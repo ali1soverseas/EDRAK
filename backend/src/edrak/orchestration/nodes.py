@@ -28,6 +28,7 @@ from ..core.action_log import log_action
 from ..DecisionAnalysis.service import run_decision_analysis
 from .artifacts import save_task_artifacts
 from .planner import LlmPlanner, PlanningError
+from .stage_artifacts import save_stage_artifacts
 from .state import RESET, OrchestrationState
 
 logger = logging.getLogger(__name__)
@@ -65,6 +66,13 @@ def make_decision_analysis_node():
     ) -> dict[str, Any]:
         raw_cross_signal = state.get("cross_signal")
         request = state.get("request")
+        run_id = getattr(request, "request_id", None)
+        if run_id is None:
+            run_id = (
+                raw_cross_signal.get("research_run_id")
+                if isinstance(raw_cross_signal, dict)
+                else getattr(raw_cross_signal, "research_run_id", None)
+            )
     
         if not raw_cross_signal:
             message = (
@@ -73,6 +81,12 @@ def make_decision_analysis_node():
             )
 
             logger.warning(message)
+            save_stage_artifacts(
+                run_id,
+                "decision",
+                {"business_request": request, "cross_signal": raw_cross_signal},
+                {"status": "skipped", "reason": message},
+            )
 
             return {
                 "decision_analysis": None,
@@ -86,12 +100,19 @@ def make_decision_analysis_node():
             )
 
             logger.error(message)
+            save_stage_artifacts(
+                run_id,
+                "decision",
+                {"business_request": request, "cross_signal": raw_cross_signal},
+                {"status": "skipped", "reason": message},
+            )
 
             return {
                 "decision_analysis": None,
                 "error": message,
             }
 
+        decision_input: DecisionAnalysisInput | None = None
         try:
             if isinstance(raw_cross_signal, CrossSignalOutput):
                 cross_signal = raw_cross_signal
@@ -125,6 +146,12 @@ def make_decision_analysis_node():
             )
 
             dumped_result = result.model_dump(mode="json")
+            save_stage_artifacts(
+                decision_input.research_run_id,
+                "decision",
+                decision_input,
+                dumped_result,
+            )
 
             logger.info(
                 "Decision Analysis finished for run %s with status %s",
@@ -139,6 +166,15 @@ def make_decision_analysis_node():
         except Exception as exc:
             logger.exception(
                 "Decision Analysis failed."
+            )
+            save_stage_artifacts(
+                run_id,
+                "decision",
+                decision_input or {
+                    "business_request": request,
+                    "cross_signal": raw_cross_signal,
+                },
+                {"status": "failed", "error": f"{type(exc).__name__}: {exc}"},
             )
 
             return {
@@ -267,30 +303,49 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
     from ..contracts.verification import VerificationInput
     from ..verification.graph import run as run_verification
 
+    verification_input = VerificationInput(
+        request=state["request"],
+        agent_outputs=state.get("results") or [],
+    )
     buffer = io.StringIO()
+    result = None
     try:
         with contextlib.redirect_stdout(buffer):
-            result = run_verification(
-                VerificationInput(
-                    request=state["request"],
-                    agent_outputs=state.get("results") or [],
-                )
-            )
+            result = run_verification(verification_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         # CANNOT_COMPLETE, not REPLAN_REQUIRED: the latter must name targeted actions, and nothing
         # here can. The person at the review checkpoint decides whether to re-plan.
-        return {
+        decision = VerificationDecision(
+            status=VerificationStatus.CANNOT_COMPLETE,
+            summary=f"verification stage raised {type(exc).__name__}: {exc}",
+        )
+        update = {
             **state,
-            "verification": VerificationDecision(
-                status=VerificationStatus.CANNOT_COMPLETE,
-                summary=f"verification stage raised {type(exc).__name__}: {exc}",
-            ),
+            "verification": decision,
         }
+        stage_output: Any = {"decision": decision, "error": f"{type(exc).__name__}: {exc}"}
+    else:
+        update = {
+            **state,
+            "verification": result.decision,
+            "verification_result": result,
+        }
+        stage_output = result
     finally:
         captured = buffer.getvalue()
 
     if captured.strip():
         log_action("verification", captured)
+
+    save_stage_artifacts(
+        verification_input.request.request_id,
+        "verification",
+        verification_input,
+        stage_output,
+    )
+
+    if result is None:
+        return update
 
     print(
         f"  [verification] {result.decision.status.value} "
@@ -298,11 +353,7 @@ def verification_gate_node(state: OrchestrationState) -> OrchestrationState:
         f"-> artifacts/logs/verification.log"
     )
 
-    return {
-        **state,
-        "verification": result.decision,
-        "verification_result": result,
-    }
+    return update
 
 
 async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
@@ -314,8 +365,18 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
     raw = state.get("verification_result")
     if raw is None:
         print("  [cross_signal] skipped: no verification result")
+        save_stage_artifacts(
+            getattr(state.get("request"), "request_id", None),
+            "cross_signal",
+            {"verification_result": raw, "business_request": state.get("request")},
+            {"status": "skipped", "reason": "No verification result."},
+        )
         return {**state, "cross_signal": None}
 
+    stage_input: Any = {
+        "verification_result": raw,
+        "business_request": state.get("request"),
+    }
     try:
         payload = (
             raw
@@ -334,12 +395,20 @@ async def cross_signal_node(state: OrchestrationState) -> OrchestrationState:
             }
         )
         cs_input = build_cross_signal_input(verified_only, state["request"])
+        stage_input = cs_input
         output = await run_cross_signal(cs_input)
     except Exception as exc:  # noqa: BLE001 - never crash the pipeline here
         print(f"  [cross_signal] failed: {type(exc).__name__}: {exc}")
+        save_stage_artifacts(
+            getattr(state.get("request"), "request_id", None),
+            "cross_signal",
+            stage_input,
+            {"status": "failed", "error": f"{type(exc).__name__}: {exc}"},
+        )
         return {**state, "cross_signal": None}
 
     dumped = output.model_dump(mode="json")
+    save_stage_artifacts(cs_input.research_run_id, "cross_signal", stage_input, dumped)
     print("\n" + "=" * 72)
     print("[cross_signal] OUTPUT")
     print("=" * 72)

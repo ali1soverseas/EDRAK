@@ -1,4 +1,4 @@
-"""The competitor worker: relevant sources only, a bounded loop, grounded findings, a comparison."""
+"""The competitor worker: relevant sources only, a bounded loop, grounded findings."""
 
 from __future__ import annotations
 
@@ -10,11 +10,8 @@ import pytest
 from edrak.agents.competitor_intelligence import nodes, sources
 from edrak.agents.competitor_intelligence.socials import normalise_profile, profiles_in_html
 from edrak.agents.competitor_intelligence.state import (
-    ComparisonReport,
-    CompetitorAssessment,
     CompetitorProfile,
     ConsolidatedRequirement,
-    DimensionComparison,
     FindingList,
     LLMFinding,
     MAX_QUERIES_TOTAL,
@@ -196,18 +193,6 @@ def fake_structured(prompt, model_class, strong=False, retries=1, **kwargs):
         return CompetitorProfile(overview="Kanz Pay sells invoicing plans.", requirements=[
             ConsolidatedRequirement(requirement_id="R1", summary="Growth is 299 EGP per month.", evidence_source_ids=["S1"]),
         ])
-    if model_class is ComparisonReport:
-        return ComparisonReport(
-            executive_summary="Comparable pricing structures.",
-            dimensions=[DimensionComparison(
-                dimension="Pricing and packaging",
-                target_position="Our entry plan is 89 EGP.",
-                assessments=[CompetitorAssessment(competitor="Kanz Pay", summary="Kanz Pay charges 99 EGP for Starter.",
-                                                  relative_to_target="comparable", confidence="medium",
-                                                  requirement_ids=["R1"])],
-                takeaway="Both sell monthly plans.",
-            )],
-        )
     raise AssertionError(model_class)
 
 
@@ -220,7 +205,22 @@ def offline(monkeypatch):
     return fake
 
 
-def test_a_run_is_bounded_grounded_and_returns_the_comparison(offline):
+def test_worker_result_omits_comparison_matrix_even_if_state_contains_one():
+    result = nodes.build_worker_result({
+        "task_id": "comparison-disabled",
+        "competitors": [],
+        "verified_findings": [],
+        "search_results": [],
+        "comparison": {
+            "executive_summary": "Comparison should not be published.",
+            "dimensions": [{"dimension": "Pricing"}],
+        },
+    })
+
+    assert "comparison_matrix" not in result.metadata
+
+
+def test_a_run_is_bounded_grounded_and_omits_the_comparison_report(offline):
     from edrak.agents.competitor_intelligence import run_research
 
     task = ResearchTask(
@@ -249,7 +249,6 @@ def test_a_run_is_bounded_grounded_and_returns_the_comparison(offline):
     # The invented customer count is not in the sources, so it was refused.
     assert not any("10,000" in s for s in statements)
     assert any(f.category is FindingCategory.PRICING_PACKAGING for f in result.findings)
-    assert any(f.category is FindingCategory.POSITIONING for f in result.findings)
 
     # Only cited sources are evidence, the content farm never is, and the fact is a passage.
     urls = {e.source_url for e in result.evidence}
@@ -257,7 +256,5 @@ def test_a_run_is_bounded_grounded_and_returns_the_comparison(offline):
     assert result.evidence[0].source_type is SourceType.PRICING_PAGE
     assert len(result.evidence[0].extracted_fact) <= 500
 
-    matrix = result.metadata["comparison_matrix"]
-    assert matrix["dimensions"][0]["cells"][0]["relative_to_target"] == "comparable"
-    assert matrix["dimensions"][0]["cells"][0]["evidence_ids"]
+    assert "comparison_matrix" not in result.metadata
     assert result.metadata["competitors"][0]["official_domains"] == ["kanzpay.example"]
